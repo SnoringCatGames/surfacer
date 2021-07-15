@@ -10,7 +10,7 @@ var _tween_animation_state := PlayerAnimationState.new()
 
 
 func set_up(player) -> void:
-    animator = Gs.utils.add_scene(
+    animator = Sc.utils.add_scene(
             self,
             player.movement_params.animator_params.player_animator_path_or_scene)
     animator.set_up(player, false)
@@ -46,7 +46,7 @@ func _update(
                 "_interpolate_player_position",
                 _tween_animation_state.player_position,
                 animation_state.player_position,
-                Surfacer.nav_selection_prediction_tween_duration,
+                Su.nav_selection_prediction_tween_duration,
                 "linear",
                 0.0,
                 TimeType.PLAY_PHYSICS)
@@ -66,7 +66,7 @@ func _update(
                 "_interpolate_animation_position",
                 start_position,
                 animation_state.animation_position,
-                Surfacer.nav_selection_prediction_tween_duration,
+                Su.nav_selection_prediction_tween_duration,
                 "linear",
                 0.0,
                 TimeType.PLAY_PHYSICS)

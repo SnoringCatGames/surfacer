@@ -69,9 +69,9 @@ I will not lie, this is a complex framework! Hopefully it's external API isn't _
     -   Surfacer currently depends on this additional framework.
     -   See the Scaffolder [README](https://github.com/snoringcatgames/scaffolder/README.md) for details on setting it up.
 -   Add the [Surfacer](https://github.com/snoringcatgames/surfacer/) library to your `addons/` folder.
--   Define `Surfacer` as an AutoLoad (in Project Settings).
-    -   It should point to the path `res://addons/surfacer/src/surfacer_config.gd`.
-    -   It should be the second AutoLoad in the list, just after `Gs` (for Scaffolder).
+-   Define `Su` as an AutoLoad (in Project Settings).
+    -   It should point to the path `res://addons/surfacer/src/su.gd`.
+    -   It should be the second AutoLoad in the list, just after `Sc` (for Scaffolder).
 -   Configure both the Surfacer and Scaffolder frameworks by calling `SurfacerBootstrap._initialize_framework` at the start of your Main Scene.
 -   Include `*.json` under "Filters to export non-resource files/folders" in your export settings.
 
@@ -429,7 +429,7 @@ We include a large collection of annotators that are useful for visually debuggi
 
 We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these player-level params, see [movement_params.gd](./src/platform_graph/edge/models/movement_params.gd).
 
-Also, [scaffolder_config.gd](https://github.com/SnoringCatGames/scaffolder/blob/master/src/config/scaffolder_config.gd) and [surfacer_config.gd](./src/config/surfacer_config.gd) contain lists of interesting app-level params.
+Also, [sc.gd](https://github.com/SnoringCatGames/scaffolder/blob/master/src/config/sc.gd) and [su.gd](./src/config/su.gd) contain lists of interesting app-level params.
 
 ## Extensible framework for custom movement mechanics
 

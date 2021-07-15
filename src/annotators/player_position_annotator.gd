@@ -2,23 +2,23 @@ class_name PlayerPositionAnnotator
 extends Node2D
 
 
-var PLAYER_POSITION_COLOR := Gs.colors.opacify(
-        Gs.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
-var GRAB_POSITION_COLOR := Gs.colors.opacify(
-        Gs.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
+var PLAYER_POSITION_COLOR := Sc.colors.opacify(
+        Sc.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
+var GRAB_POSITION_COLOR := Sc.colors.opacify(
+        Sc.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
 const PLAYER_POSITION_RADIUS := 3.0
 const GRAB_POSITION_LINE_WIDTH := 5.0
 const GRAB_POSITION_LINE_LENGTH := 10.0
 
-var POSITION_ALONG_SURFACE_COLOR := Gs.colors.opacify(
-        Gs.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
+var POSITION_ALONG_SURFACE_COLOR := Sc.colors.opacify(
+        Sc.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
 const POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS := 4.0
 const POSITION_ALONG_SURFACE_T_LENGTH_IN_SURFACE := 0.0
 const POSITION_ALONG_SURFACE_T_LENGTH_OUT_OF_SURFACE := 20.0
 const POSITION_ALONG_SURFACE_T_WIDTH := 4.0
 
-var COLLIDER_COLOR := Gs.colors.opacify(
-        Gs.colors.player_position, ScaffolderColors.ALPHA_XFAINT)
+var COLLIDER_COLOR := Sc.colors.opacify(
+        Sc.colors.player_position, ScaffolderColors.ALPHA_XFAINT)
 const COLLIDER_THICKNESS := 4.0
 
 var player: Player
@@ -58,7 +58,7 @@ func _draw_grab_position() -> void:
 
 
 func _draw_position_along_surface() -> void:
-    Gs.draw.draw_position_along_surface(
+    Sc.draw.draw_position_along_surface(
             self,
             player.surface_state.center_position_along_surface,
             POSITION_ALONG_SURFACE_COLOR,
@@ -73,7 +73,7 @@ func _draw_position_along_surface() -> void:
 
 
 func _draw_collider_outline() -> void:
-    Gs.draw.draw_shape_outline(
+    Sc.draw.draw_shape_outline(
             self,
             player.position,
             player.movement_params.collider_shape,
@@ -83,7 +83,7 @@ func _draw_collider_outline() -> void:
 
 
 func check_for_update() -> void:
-    if !Gs.geometry.are_points_equal_with_epsilon(
+    if !Sc.geometry.are_points_equal_with_epsilon(
             player.position,
             previous_position,
             0.001):

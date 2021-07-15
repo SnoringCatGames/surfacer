@@ -16,14 +16,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Surfacer.is_inspector_enabled = pressed
-    Gs.save_state.set_setting(
-            Surfacer.IS_INSPECTOR_ENABLED_SETTINGS_KEY,
-            Surfacer.is_inspector_enabled)
+    Su.is_inspector_enabled = pressed
+    Sc.save_state.set_setting(
+            Su.IS_INSPECTOR_ENABLED_SETTINGS_KEY,
+            Su.is_inspector_enabled)
 
 
 func get_is_pressed() -> bool:
-    return Surfacer.is_inspector_enabled
+    return Su.is_inspector_enabled
 
 
 func get_is_enabled() -> bool:

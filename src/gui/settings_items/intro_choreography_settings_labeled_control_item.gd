@@ -16,14 +16,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Surfacer.is_intro_choreography_shown = pressed
-    Gs.save_state.set_setting(
-            Surfacer.IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
+    Su.is_intro_choreography_shown = pressed
+    Sc.save_state.set_setting(
+            Su.IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Surfacer.is_intro_choreography_shown
+    return Su.is_intro_choreography_shown
 
 
 func get_is_enabled() -> bool:

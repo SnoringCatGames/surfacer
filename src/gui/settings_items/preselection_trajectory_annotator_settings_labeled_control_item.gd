@@ -14,14 +14,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Surfacer.is_preselection_trajectory_shown = pressed
-    Gs.save_state.set_setting(
-            Surfacer.PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
+    Su.is_preselection_trajectory_shown = pressed
+    Sc.save_state.set_setting(
+            Su.PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Surfacer.is_preselection_trajectory_shown
+    return Su.is_preselection_trajectory_shown
 
 
 func get_is_enabled() -> bool:

@@ -59,5 +59,5 @@ static func get_string(type: int) -> String:
         RELEASED_FACE_RIGHT:
             return "RELEASED_FACE_RIGHT"
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return "UNKNOWN"

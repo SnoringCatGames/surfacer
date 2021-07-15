@@ -94,14 +94,14 @@ func _get_text_for_description_index(description_index: int) -> String:
                             .replace("\n                ", " "),
                 ]
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return ""
 
 
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error(
+    Sc.logger.error(
             "find_and_expand_controller should not be called for " +
             "EDGE_STEP_CALC_RESULT_METADATA.")
     return false
@@ -162,8 +162,8 @@ static func _calculate_background_color(
             step_ratio
     return Color.from_hsv(
             step_hue,
-            Surfacer.ann_defaults \
+            Su.ann_defaults \
                     .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.s,
-            Surfacer.ann_defaults \
+            Su.ann_defaults \
                     .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.v,
             1.0)

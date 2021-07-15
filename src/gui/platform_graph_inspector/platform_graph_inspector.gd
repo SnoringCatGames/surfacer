@@ -88,10 +88,10 @@ func _init() -> void:
 
 
 func _ready() -> void:
-    assert(Surfacer.is_inspector_enabled)
+    assert(Su.is_inspector_enabled)
     
     inspector_selector = PlatformGraphInspectorSelector.new(self)
-    Gs.canvas_layers.layers.annotation \
+    Sc.canvas_layers.layers.annotation \
             .add_child(inspector_selector)
     
     _populate()
@@ -132,7 +132,7 @@ func _populate() -> void:
 
 
 func clear() -> void:
-    Gs.utils.release_focus(self)
+    Sc.utils.release_focus(self)
     _clear_selection()
     _should_be_populated = false
     .clear()
@@ -142,7 +142,7 @@ func collapse() -> void:
     for graph_item_controller in graph_item_controllers.values():
         graph_item_controller.collapse()
     
-    Gs.utils.release_focus(self)
+    Sc.utils.release_focus(self)
     _clear_selection()
 
 
@@ -161,15 +161,15 @@ func select_first_item() -> void:
 
 
 func _select_initial_item() -> void:
-    if !Gs.gui.hud.get_is_inspector_panel_open():
+    if !Sc.gui.hud.get_is_inspector_panel_open():
         # Don't auto-select anything if the panel isn't open.
         return
     
-    if !Surfacer.debug_params.has("limit_parsing") or \
-            !Surfacer.debug_params.limit_parsing.has("player_name"):
+    if !Su.debug_params.has("limit_parsing") or \
+            !Su.debug_params.limit_parsing.has("player_name"):
         select_first_item()
     else:
-        var limit_parsing: Dictionary = Surfacer.debug_params.limit_parsing
+        var limit_parsing: Dictionary = Su.debug_params.limit_parsing
         var player_name: String = limit_parsing.player_name
         
         if limit_parsing.has("edge") and \
@@ -276,12 +276,12 @@ func _find_matching_surface(
         var does_end_vertex_match: bool
         for surface in graph.surfaces_set:
             does_start_vertex_match = start_vertex == Vector2.INF or \
-                    Gs.geometry.are_points_equal_with_epsilon(
+                    Sc.geometry.are_points_equal_with_epsilon(
                             surface.first_point,
                             start_vertex,
                             epsilon)
             does_end_vertex_match = end_vertex == Vector2.INF or \
-                    Gs.geometry.are_points_equal_with_epsilon(
+                    Sc.geometry.are_points_equal_with_epsilon(
                             surface.last_point,
                             end_vertex,
                             epsilon)
@@ -294,15 +294,15 @@ func _on_tree_item_selected() -> void:
     var item := get_selected()
     var controller: InspectorItemController = item.get_metadata(0)
     
-    Surfacer.annotators.element_annotator \
+    Su.annotators.element_annotator \
             .erase_all(current_annotation_elements)
     
     current_annotation_elements = controller.get_annotation_elements()
-    Surfacer.annotators.element_annotator \
+    Su.annotators.element_annotator \
             .add_all(current_annotation_elements)
     
     if !get_is_find_and_expand_in_progress():
-        Surfacer.selection_description.set_text(controller.get_description())
+        Su.selection_description.set_text(controller.get_description())
     
     controller.call_deferred("on_item_selected")
     
@@ -325,7 +325,7 @@ func select_edge_or_surface(
         edge_type: int,
         graph: PlatformGraph) -> void:
     # Ensure that the inspector panel is open.
-    Gs.gui.hud.inspector_panel.is_open = true
+    Sc.gui.hud.inspector_panel.is_open = true
     
     if start_position.surface == end_position.surface:
         _select_canonical_origin_surface_item_controller(
@@ -458,7 +458,7 @@ func _on_find_and_expand_complete(
     
     var item := get_selected()
     if item == null:
-        Gs.logger.error("No tree item selected after search: %s" % metadata)
+        Sc.logger.error("No tree item selected after search: %s" % metadata)
         return
     var controller: InspectorItemController = item.get_metadata(0)
     
@@ -477,13 +477,13 @@ func _on_find_and_expand_complete(
         InspectorSearchType.EDGES_GROUP:
             assert(controller.type == InspectorItemType.EDGES_GROUP)
         _:
-            Gs.logger.error("Invalid InspectorSearchType: %s" % \
+            Sc.logger.error("Invalid InspectorSearchType: %s" % \
                     InspectorSearchType.get_string(search_type))
     
     if selection_failure_message != "":
-        Surfacer.selection_description.set_text(selection_failure_message)
+        Su.selection_description.set_text(selection_failure_message)
     else:
-        Surfacer.selection_description.set_text(controller.get_description())
+        Su.selection_description.set_text(controller.get_description())
 
 
 func get_is_find_and_expand_in_progress() -> bool:
@@ -522,7 +522,7 @@ func _clear_selection() -> void:
         item.deselect(0)
     
     # Remove the current annotations.
-    Surfacer.annotators.element_annotator \
+    Su.annotators.element_annotator \
             .erase_all(current_annotation_elements)
     current_annotation_elements = []
 
@@ -552,11 +552,11 @@ static func _find_closest_jump_land_positions(
 func print_msg(
         message_template: String,
         message_args = null) -> void:
-    if Surfacer.is_surfacer_logging and \
-            Surfacer.human_player != null and \
-            Surfacer.human_player.movement_params \
+    if Su.is_surfacer_logging and \
+            Su.human_player != null and \
+            Su.human_player.movement_params \
                     .logs_inspector_events:
         if message_args != null:
-            Gs.logger.print(message_template % message_args)
+            Sc.logger.print(message_template % message_args)
         else:
-            Gs.logger.print(message_template)
+            Sc.logger.print(message_template)

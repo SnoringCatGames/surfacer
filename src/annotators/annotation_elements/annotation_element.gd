@@ -19,14 +19,14 @@ func get_legend_items() -> Array:
 
 
 func _create_legend_items() -> Array:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract AnnotationElement._create_legend_items is not " +
             "implemented")
     return []
 
 
 func draw(canvas: CanvasItem) -> void:
-    Gs.logger.error("Abstract AnnotationElement.draw is not implemented")
+    Sc.logger.error("Abstract AnnotationElement.draw is not implemented")
 
 
 func _destroy() -> void:

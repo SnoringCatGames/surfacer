@@ -22,29 +22,29 @@ var level: SurfacerLevel
 
 
 func _ready() -> void:
-    Gs.gui.record_gui_original_size_recursively(self)
+    Sc.gui.record_gui_original_size_recursively(self)
     
-    if Gs.gui.is_loading_image_shown:
-        var loading_image: ScaffolderConfiguredImage = Gs.utils.add_scene(
+    if Sc.gui.is_loading_image_shown:
+        var loading_image: ScaffolderConfiguredImage = Sc.utils.add_scene(
                 $VBoxContainer,
-                Gs.gui.loading_image_scene,
+                Sc.gui.loading_image_scene,
                 true,
                 true,
                 0)
-        loading_image.original_scale = Gs.gui.loading_image_scale
+        loading_image.original_scale = Sc.gui.loading_image_scale
 
 
 func _on_transition_in_ended(previous_screen: Screen) -> void:
     ._on_transition_in_ended(previous_screen) 
-    Gs.time.set_timeout(funcref(self, "_compute"), 0.2)
+    Sc.time.set_timeout(funcref(self, "_compute"), 0.2)
 
 
 func _compute() -> void:
-    assert(Gs.device.get_is_pc_app())
-    assert(Surfacer.is_precomputing_platform_graphs)
-    assert(!Surfacer.precompute_platform_graph_for_levels.empty())
+    assert(Sc.device.get_is_pc_app())
+    assert(Su.is_precomputing_platform_graphs)
+    assert(!Su.precompute_platform_graph_for_levels.empty())
     
-    Surfacer.is_inspector_enabled = false
+    Su.is_inspector_enabled = false
     
     _initialize_metrics()
     
@@ -53,7 +53,7 @@ func _compute() -> void:
 
 
 func _initialize_metrics() -> void:
-    start_time = Gs.time.get_clock_time()
+    start_time = Sc.time.get_clock_time()
     
     for stage in STAGES_TO_DISPLAY_METRICS_FOR:
         stage_to_metric_items[stage] = [
@@ -73,61 +73,61 @@ func _initialize_metrics() -> void:
 
 
 func _initialize_next() -> void:
-    Gs.profiler.start("initialize")
-    level_id = Surfacer.precompute_platform_graph_for_levels[ \
+    Sc.profiler.start("initialize")
+    level_id = Su.precompute_platform_graph_for_levels[ \
             precompute_level_index]
-    level = Gs.utils.add_scene(
+    level = Sc.utils.add_scene(
             null,
-            Gs.level_config.get_level_config(level_id).scene_path,
+            Sc.level_config.get_level_config(level_id).scene_path,
             false,
             true)
-    Gs.level_session.reset(level_id)
+    Sc.level_session.reset(level_id)
     $VBoxContainer/LevelWrapper/Viewport.add_child(level)
     var graph_parser := PlatformGraphParser.new()
     level.add_child(graph_parser)
-    Gs.profiler.stop("initialize")
+    Sc.profiler.stop("initialize")
     _on_stage_progress("initialize")
     defer("_parse_next")
 
 
 func _parse_next() -> void:
-    Gs.profiler.start("parse")
-    Surfacer.graph_parser.connect(
+    Sc.profiler.start("parse")
+    Su.graph_parser.connect(
             "calculation_progressed",
             self,
             "_on_graph_parse_progress")
-    Surfacer.graph_parser.connect(
+    Su.graph_parser.connect(
             "parse_finished",
             self,
             "_on_calculation_finished")
-    Surfacer.graph_parser.parse(
+    Su.graph_parser.parse(
             level_id,
-            Surfacer.is_debug_only_platform_graph_state_included,
+            Su.is_debug_only_platform_graph_state_included,
             true)
 
 
 func _on_calculation_finished() -> void:
-    Gs.profiler.stop("parse")
+    Sc.profiler.stop("parse")
     _on_stage_progress("parse")
     defer("_save_next")
 
 
 func _save_next() -> void:
-    Gs.profiler.start("save")
-    Surfacer.graph_parser.save_platform_graphs()
-    Gs.profiler.stop("save")
+    Sc.profiler.start("save")
+    Su.graph_parser.save_platform_graphs()
+    Sc.profiler.stop("save")
     _on_stage_progress("save")
     defer("_clean_up_next")
 
 
 func _clean_up_next() -> void:
-    Gs.profiler.start("clean_up")
-    Surfacer.graph_parser.queue_free()
+    Sc.profiler.start("clean_up")
+    Su.graph_parser.queue_free()
     level._destroy()
-    Gs.profiler.stop("clean_up")
+    Sc.profiler.stop("clean_up")
     
     var finished: bool = precompute_level_index == \
-            Surfacer.precompute_platform_graph_for_levels.size() - 1
+            Su.precompute_platform_graph_for_levels.size() - 1
     _on_stage_progress("clean_up", finished)
     
     precompute_level_index += 1
@@ -138,7 +138,7 @@ func _clean_up_next() -> void:
 
 
 func defer(method: String) -> void:
-    Gs.time.set_timeout(funcref(self, method), 0.01)
+    Sc.time.set_timeout(funcref(self, method), 0.01)
 
 
 func _on_graph_parse_progress(
@@ -159,16 +159,16 @@ func _on_graph_parse_progress(
     
     var progress: float = \
             (precompute_level_index + sub_step_progress) / \
-            Surfacer.precompute_platform_graph_for_levels.size() * \
+            Su.precompute_platform_graph_for_levels.size() * \
             100.0
     
-    var player_name: String = Gs.level_config.get_level_config(level_id) \
+    var player_name: String = Sc.level_config.get_level_config(level_id) \
             .platform_graph_player_names[player_index]
     var label_1 := "Level %s (%s of %s)" % [
-        Surfacer.precompute_platform_graph_for_levels[ \
+        Su.precompute_platform_graph_for_levels[ \
                 precompute_level_index],
         precompute_level_index + 1,
-        Surfacer.precompute_platform_graph_for_levels.size(),
+        Su.precompute_platform_graph_for_levels.size(),
     ]
     var label_2 := "Parsing"
     var label_3 := "Player %s (%s of %s)" % [
@@ -212,11 +212,11 @@ func _on_stage_progress(
                     CLEAN_UP_SUB_STEP_PROGRESS_RATIO) / \
                     PROGRESS_RATIO_TOTAL
         _:
-            Gs.logger.error()
+            Sc.logger.error()
     
     var progress: float = \
             (precompute_level_index + sub_step_progress) / \
-            Surfacer.precompute_platform_graph_for_levels.size() * \
+            Su.precompute_platform_graph_for_levels.size() * \
             100.0
     
     var label_1: String
@@ -233,10 +233,10 @@ func _on_stage_progress(
         }[step]
         
         label_1 = "Level %s (%s of %s)" % [
-            Surfacer.precompute_platform_graph_for_levels[ \
+            Su.precompute_platform_graph_for_levels[ \
                     precompute_level_index],
             precompute_level_index + 1,
-            Surfacer.precompute_platform_graph_for_levels.size(),
+            Su.precompute_platform_graph_for_levels.size(),
         ]
         label_2 = "--- %s ---" % next_step_label
     
@@ -256,7 +256,7 @@ func _set_progress(
     $VBoxContainer/Labels/Label3.text = label_3
     $VBoxContainer/Labels/Label4.text = label_4
     
-    Gs.logger.print("Precompute progress: %s | %s | %s | %s" % \
+    Sc.logger.print("Precompute progress: %s | %s | %s | %s" % \
             [label_1, label_2, label_3, label_4])
     
     _update_metrics()
@@ -264,37 +264,37 @@ func _set_progress(
 
 func _update_metrics() -> void:
     $VBoxContainer/Metrics/DurationLabel.text = \
-            Gs.utils.get_time_string_from_seconds( \
-                    Gs.time.get_clock_time() - start_time, \
+            Sc.utils.get_time_string_from_seconds( \
+                    Sc.time.get_clock_time() - start_time, \
                     false, \
                     false, \
                     true)
     
     for stage in STAGES_TO_DISPLAY_METRICS_FOR:
         stage_to_metric_items[stage][1].text = \
-                Gs.utils.get_time_string_from_seconds( \
-                        Gs.profiler.get_sum(stage) / 1000.0, \
+                Sc.utils.get_time_string_from_seconds( \
+                        Sc.profiler.get_sum(stage) / 1000.0, \
                         true, \
                         false, \
                         false)
         stage_to_metric_items[stage][1].update_item()
         stage_to_metric_items[stage][2].text = \
-                Gs.utils.get_time_string_from_seconds( \
-                        Gs.profiler.get_mean(stage) / 1000.0, \
+                Sc.utils.get_time_string_from_seconds( \
+                        Sc.profiler.get_mean(stage) / 1000.0, \
                         true, \
                         false, \
                         false)
         stage_to_metric_items[stage][2].update_item()
         stage_to_metric_items[stage][3].text = \
-                Gs.utils.get_time_string_from_seconds( \
-                        Gs.profiler.get_min(stage) / 1000.0, \
+                Sc.utils.get_time_string_from_seconds( \
+                        Sc.profiler.get_min(stage) / 1000.0, \
                         true, \
                         false, \
                         false)
         stage_to_metric_items[stage][3].update_item()
         stage_to_metric_items[stage][4].text = \
-                Gs.utils.get_time_string_from_seconds( \
-                        Gs.profiler.get_max(stage) / 1000.0, \
+                Sc.utils.get_time_string_from_seconds( \
+                        Sc.profiler.get_max(stage) / 1000.0, \
                         true, \
                         false, \
                         false)
@@ -302,7 +302,7 @@ func _update_metrics() -> void:
 
 
 func _on_finished() -> void:
-    Gs.audio.play_sound("achievement")
+    Sc.audio.play_sound("achievement")
     $VBoxContainer/OpenFolderButton.visible = true
 
 
@@ -312,9 +312,9 @@ func _get_focused_button() -> ScaffolderButton:
 
 func _on_OpenFolderButton_pressed() -> void:
     var path := PlatformGraphParser.get_os_directory_path()
-    Gs.logger.print("Opening platform-graph folder: " + path)
+    Sc.logger.print("Opening platform-graph folder: " + path)
     OS.shell_open(path)
 
 
 func _on_CloseButton_pressed() -> void:
-    Gs.time.set_timeout(funcref(Gs.nav, "close_app"), 0.4)
+    Sc.time.set_timeout(funcref(Sc.nav, "close_app"), 0.4)

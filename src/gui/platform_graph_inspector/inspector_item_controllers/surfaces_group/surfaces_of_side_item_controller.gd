@@ -74,7 +74,7 @@ func _find_and_expand_controller_recursive(
             return
         child = child.get_next()
     select()
-    Gs.logger.error("No matching Surface found: %s" % metadata)
+    Sc.logger.error("No matching Surface found: %s" % metadata)
 
 
 func _create_children_inner() -> void:

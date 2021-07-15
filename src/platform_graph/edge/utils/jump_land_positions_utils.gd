@@ -87,7 +87,7 @@ static func calculate_jump_land_positions_for_surface_pair(
         
         # If either surface has only a single point, then we only want to
         # consider the one jump/land pair.
-        Gs.logger.error("Single-point surfaces are not yet supported in" +
+        Sc.logger.error("Single-point surfaces are not yet supported in" +
                 "calculate_jump_land_positions_for_surface_pair (but they " +
                 "should be easy to add support for).")
     
@@ -132,10 +132,10 @@ static func calculate_jump_land_positions_for_surface_pair(
     var jump_surface_far_end := Vector2.INF
     var jump_surface_near_end_wrapper: PositionAlongSurface
     var jump_surface_far_end_wrapper: PositionAlongSurface
-    if Gs.geometry.distance_squared_from_point_to_rect(
+    if Sc.geometry.distance_squared_from_point_to_rect(
             jump_surface_first_point,
             land_surface.bounding_box) < \
-            Gs.geometry.distance_squared_from_point_to_rect(
+            Sc.geometry.distance_squared_from_point_to_rect(
                     jump_surface_last_point,
                     land_surface.bounding_box):
         jump_surface_near_end = jump_surface_first_point
@@ -151,10 +151,10 @@ static func calculate_jump_land_positions_for_surface_pair(
     var land_surface_far_end := Vector2.INF
     var land_surface_near_end_wrapper: PositionAlongSurface
     var land_surface_far_end_wrapper: PositionAlongSurface
-    if Gs.geometry.distance_squared_from_point_to_rect(
+    if Sc.geometry.distance_squared_from_point_to_rect(
             land_surface_first_point,
             jump_surface.bounding_box) < \
-            Gs.geometry.distance_squared_from_point_to_rect(
+            Sc.geometry.distance_squared_from_point_to_rect(
                     land_surface_last_point,
                     jump_surface.bounding_box):
         land_surface_near_end = land_surface_first_point
@@ -217,7 +217,7 @@ static func calculate_jump_land_positions_for_surface_pair(
             jump_surface_top_end_wrapper = null
             jump_surface_bottom_end_wrapper = null
         _:
-            Gs.logger.error()
+            Sc.logger.error()
     var land_surface_left_end := Vector2.INF
     var land_surface_right_end := Vector2.INF
     var land_surface_top_end := Vector2.INF
@@ -264,10 +264,10 @@ static func calculate_jump_land_positions_for_surface_pair(
             land_surface_top_end_wrapper = null
             land_surface_bottom_end_wrapper = null
         _:
-            Gs.logger.error()
+            Sc.logger.error()
     
     var are_surfaces_at_same_height: bool = \
-            Gs.geometry.are_floats_equal_with_epsilon(
+            Sc.geometry.are_floats_equal_with_epsilon(
                     jump_surface_center.y,
                     land_surface_center.y,
                     1.0)
@@ -384,7 +384,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     # velocity, with the corresponding
                                     # horizontal displacement from movement.
                                     var jump_basis: Vector2 = \
-                                            Gs.geometry.project_point_onto_surface_with_offset(
+                                            Sc.geometry.project_point_onto_surface_with_offset(
                                                     land_surface_left_end,
                                                     jump_surface,
                                                     movement_params.collider_half_width_height)
@@ -476,7 +476,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     # corresponding horizontal displacement from movement.
                                     var jump_basis := jump_surface_left_end_wrapper.target_point
                                     var land_basis: Vector2 = \
-                                            Gs.geometry.project_point_onto_surface_with_offset(
+                                            Sc.geometry.project_point_onto_surface_with_offset(
                                                     jump_surface_left_end,
                                                     land_surface,
                                                     movement_params.collider_half_width_height)
@@ -610,7 +610,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     # Consider max-speed horizontal start velocity, with the
                                     # corresponding horizontal displacement from movement.
                                     var jump_basis: Vector2 = \
-                                            Gs.geometry.project_point_onto_surface_with_offset(
+                                            Sc.geometry.project_point_onto_surface_with_offset(
                                                     land_surface_right_end,
                                                     jump_surface,
                                                     movement_params.collider_half_width_height)
@@ -702,7 +702,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     # corresponding horizontal displacement from movement.
                                     var jump_basis := jump_surface_right_end_wrapper.target_point
                                     var land_basis: Vector2 = \
-                                            Gs.geometry.project_point_onto_surface_with_offset(
+                                            Sc.geometry.project_point_onto_surface_with_offset(
                                                     jump_surface_right_end,
                                                     land_surface,
                                                     movement_params.collider_half_width_height)
@@ -861,7 +861,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     does_velocity_start_moving_leftward,
                                     prefer_velocity_start_zero_horizontal_speed)
                             jump_basis = jump_surface_near_end_wrapper.target_point
-                            land_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                            land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     jump_surface_near_end,
                                     land_surface,
                                     movement_params.collider_half_width_height)
@@ -929,7 +929,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         prefer_velocity_start_zero_horizontal_speed)
                                 jump_position = jump_surface_far_end_wrapper
                                 jump_basis = jump_surface_far_end_wrapper.target_point
-                                land_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                                land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                         jump_surface_far_end,
                                         land_surface,
                                         movement_params.collider_half_width_height)
@@ -982,7 +982,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     is_landing_on_left_wall else \
                                     land_surface_bottom_end.x - \
                                     player_half_width_horizontal_offset
-                            jump_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                            jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     Vector2(goal_x, INF),
                                     jump_surface,
                                     movement_params.collider_half_width_height)
@@ -1230,7 +1230,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_basis = Vector2(
                                     goal_x,
                                     land_connected_region_top_bound)
-                            jump_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                            jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     Vector2(goal_x, INF),
                                     jump_surface,
                                     movement_params.collider_half_width_height)
@@ -1499,11 +1499,11 @@ static func calculate_jump_land_positions_for_surface_pair(
                             
                             # Consider the closest points.
                             var jump_surface_closest_point: Vector2 = \
-                                    Gs.geometry.get_closest_point_on_polyline_to_polyline(
+                                    Sc.geometry.get_closest_point_on_polyline_to_polyline(
                                             jump_surface.vertices,
                                             land_surface.vertices)
                             var land_surface_closest_point: Vector2 = \
-                                    Gs.geometry.get_closest_point_on_polyline_to_point(
+                                    Sc.geometry.get_closest_point_on_polyline_to_point(
                                             jump_surface_closest_point,
                                             land_surface.vertices)
                             var is_jump_point_distinct := \
@@ -1557,7 +1557,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         pass
                     
                 _:
-                    Gs.logger.error("Unknown land surface side (jump from floor)")
+                    Sc.logger.error("Unknown land surface side (jump from floor)")
             
         SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
             var is_jumping_from_left_wall := \
@@ -1608,7 +1608,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     jump_surface_bottom_end.x - \
                                     player_half_width_horizontal_offset
                             var land_basis: Vector2 = \
-                                    Gs.geometry.project_point_onto_surface_with_offset(
+                                    Sc.geometry.project_point_onto_surface_with_offset(
                                             Vector2(goal_x, INF),
                                             land_surface,
                                             movement_params.collider_half_width_height)
@@ -1757,7 +1757,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         
                     elif is_floor_fully_in_front_of_wall:
                         # The floor is fully in front of the wall.
-                        var jump_basis: Vector2 = Gs.geometry.project_point_onto_surface_with_offset(
+                        var jump_basis: Vector2 = Sc.geometry.project_point_onto_surface_with_offset(
                                 land_surface_near_end,
                                 jump_surface,
                                 movement_params.collider_half_width_height)
@@ -1866,7 +1866,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             # Jump surface is in front.
                             jump_position = jump_surface_top_end_wrapper
                             jump_basis = jump_position.target_point
-                            land_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                            land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     jump_surface_top_end,
                                     land_surface,
                                     movement_params.collider_half_width_height)
@@ -1905,7 +1905,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 # extra jump/land pair here.
                                 jump_position = jump_surface_bottom_end_wrapper
                                 jump_basis = jump_surface_bottom_end_wrapper.target_point
-                                land_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                                land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                         jump_surface_bottom_end,
                                         land_surface,
                                         movement_params.collider_half_width_height)
@@ -1951,7 +1951,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     land_surface_top_end_wrapper,
                                     land_surface_bottom_end_wrapper,
                                     false)
-                            jump_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                            jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     land_surface_top_end,
                                     jump_surface,
                                     movement_params.collider_half_width_height)
@@ -1992,7 +1992,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 # extra jump/land pair here.
                                 needs_extra_jump_duration = false
                                 land_position = land_surface_bottom_end_wrapper
-                                jump_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                                jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                         land_surface_bottom_end,
                                         jump_surface,
                                         movement_params.collider_half_width_height)
@@ -2049,7 +2049,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         
                         if top_end_displacement_y > 0.0:
                             # Jump-surface top-end is higher than land-surface top-end.
-                            jump_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                            jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     land_surface_top_end,
                                     jump_surface,
                                     movement_params.collider_half_width_height)
@@ -2057,7 +2057,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         else:
                             # Jump-surface top-end is lower than land-surface top-end.
                             jump_basis = jump_surface_top_end_wrapper.target_point
-                            land_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                            land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     jump_surface_top_end,
                                     land_surface,
                                     movement_params.collider_half_width_height)
@@ -2081,13 +2081,13 @@ static func calculate_jump_land_positions_for_surface_pair(
                         if bottom_end_displacement_y > 0.0:
                             # Jump-surface bottom-end is higher than land-surface bottom-end.
                             jump_basis = jump_surface_bottom_end_wrapper.target_point
-                            land_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                            land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     jump_surface_bottom_end,
                                     land_surface,
                                     movement_params.collider_half_width_height)
                         else:
                             # Jump-surface bottom-end is lower than land-surface bottom-end.
-                            jump_basis = Gs.geometry.project_point_onto_surface_with_offset(
+                            jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     land_surface_bottom_end,
                                     jump_surface,
                                     movement_params.collider_half_width_height)
@@ -2110,17 +2110,17 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         top_end_jump_land_positions)
                         
                         # Considering closest-points case.
-                        jump_basis = Gs.geometry.get_closest_point_on_polyline_to_polyline(
+                        jump_basis = Sc.geometry.get_closest_point_on_polyline_to_polyline(
                                 jump_surface.vertices,
                                 land_surface.vertices)
-                        jump_basis = Gs.geometry.offset_point_from_surface(
+                        jump_basis = Sc.geometry.offset_point_from_surface(
                                 jump_basis,
                                 jump_surface,
                                 movement_params.collider_half_width_height)
-                        land_basis = Gs.geometry.get_closest_point_on_polyline_to_point(
+                        land_basis = Sc.geometry.get_closest_point_on_polyline_to_point(
                                 land_basis,
                                 land_surface.vertices)
-                        land_basis = Gs.geometry.offset_point_from_surface(
+                        land_basis = Sc.geometry.offset_point_from_surface(
                                 land_basis,
                                 land_surface,
                                 movement_params.collider_half_width_height)
@@ -2194,12 +2194,12 @@ static func calculate_jump_land_positions_for_surface_pair(
                     # Jump from a wall, land on a ceiling.
                     
                     # TODO: Implement ceiling use-cases.
-                    Gs.logger.error( \
+                    Sc.logger.error( \
                             "calculate_jump_land_positions_for_surface_pair " +
                             "ceiling cases not implemented yet")
                     
                 _:
-                    Gs.logger.error("Unknown land surface side (jump from wall)")
+                    Sc.logger.error("Unknown land surface side (jump from wall)")
             
         SurfaceSide.CEILING:
             match land_surface.side:
@@ -2207,7 +2207,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                     # Jump from a ceiling, land on a floor.
                     
                     # TODO: Implement ceiling use-cases.
-                    Gs.logger.error(
+                    Sc.logger.error(
                             "calculate_jump_land_positions_for_surface_pair " +
                             "ceiling cases not implemented yet")
                     
@@ -2215,7 +2215,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                     # Jump from a ceiling, land on a wall.
                     
                     # TODO: Implement ceiling use-cases.
-                    Gs.logger.error(
+                    Sc.logger.error(
                             "calculate_jump_land_positions_for_surface_pair " +
                             "ceiling cases not implemented yet")
                     
@@ -2228,10 +2228,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                     pass
                     
                 _:
-                    Gs.logger.error("Unknown land surface side (jump from ceiling)")
+                    Sc.logger.error("Unknown land surface side (jump from ceiling)")
             
         _:
-            Gs.logger.error("Unknown jump surface side")
+            Sc.logger.error("Unknown jump surface side")
     
     if movement_params.always_includes_jump_land_positions_at_surface_ends:
         # Record jump/land position combinations for the surface-end points.
@@ -2331,7 +2331,7 @@ static func calculate_land_positions_on_surface(
                 # We may be able to reach the floor.
                 var result := []
                 var land_basis: Vector2 = \
-                        Gs.geometry.project_point_onto_surface_with_offset(
+                        Sc.geometry.project_point_onto_surface_with_offset(
                                 origin_target_point,
                                 land_surface,
                                 movement_params.collider_half_width_height)
@@ -2464,7 +2464,7 @@ static func calculate_land_positions_on_surface(
                 # We are in front of the wall and high enough, and we may be
                 # able to move horizontally directly into the wall.
                 var land_basis: Vector2 = \
-                        Gs.geometry.project_point_onto_surface_with_offset(
+                        Sc.geometry.project_point_onto_surface_with_offset(
                                 origin_target_point,
                                 land_surface,
                                 movement_params.collider_half_width_height)
@@ -2504,7 +2504,7 @@ static func calculate_land_positions_on_surface(
                 return []
             
         _:
-            Gs.logger.error("Unknown land surface side")
+            Sc.logger.error("Unknown land surface side")
             return []
 
 
@@ -2536,7 +2536,7 @@ static func get_velocity_start(
                 velocity_start_y = 0.0
                 
             _:
-                Gs.logger.error()
+                Sc.logger.error()
                 return Vector2.INF
     
     return Vector2(velocity_start_x, velocity_start_y)
@@ -2575,7 +2575,7 @@ static func get_horizontal_velocity_start(
                 return 0.0
             
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return INF
 
 
@@ -3011,7 +3011,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
         SurfaceSide.NONE:
             pass
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return false
     
     # Offset position if it's too close to either end.
@@ -3080,7 +3080,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
             pass
             
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return false
     
     return true

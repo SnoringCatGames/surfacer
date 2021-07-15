@@ -30,7 +30,7 @@ func _init(
 
 func get_text() -> String:
     return "%sms: %s" % [
-        Gs.profiler.get_sum(metric, metadata_container),
+        Sc.profiler.get_sum(metric, metadata_container),
         metric,
     ]
 
@@ -44,13 +44,13 @@ func get_description() -> String:
 
 
 func get_has_children() -> bool:
-    return Gs.profiler.get_count(metric, metadata_container) > 1
+    return Sc.profiler.get_count(metric, metadata_container) > 1
 
 
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error(
+    Sc.logger.error(
             "find_and_expand_controller should not be called for " +
             "PROFILER_TIMING.")
     return false
@@ -62,20 +62,20 @@ func _create_children_inner() -> void:
     
     _create_child(
             "Total",
-            Gs.profiler.get_sum(metric, metadata_container))
+            Sc.profiler.get_sum(metric, metadata_container))
     _create_child(
             "Average",
-            Gs.profiler.get_mean(metric, metadata_container))
+            Sc.profiler.get_mean(metric, metadata_container))
     _create_child(
             "Count",
-            Gs.profiler.get_count(metric, metadata_container),
+            Sc.profiler.get_count(metric, metadata_container),
             "")
     _create_child(
             "Min",
-            Gs.profiler.get_min(metric, metadata_container))
+            Sc.profiler.get_min(metric, metadata_container))
     _create_child(
             "Max",
-            Gs.profiler.get_max(metric, metadata_container))
+            Sc.profiler.get_max(metric, metadata_container))
 
 
 func _create_child(

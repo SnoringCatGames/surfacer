@@ -18,9 +18,9 @@ func _draw_shape(
     var offset_from_center := size * 0.35
     var start := center - offset_from_center
     var end := center + offset_from_center
-    var color: Color = Surfacer.ann_defaults \
+    var color: Color = Su.ann_defaults \
             .DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS.get_color()
-    Gs.draw.draw_dashed_line(
+    Sc.draw.draw_dashed_line(
             self,
             start,
             end,

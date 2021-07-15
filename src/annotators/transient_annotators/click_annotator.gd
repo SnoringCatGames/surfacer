@@ -5,11 +5,11 @@ extends TransientAnnotator
 const CLICK_INNER_END_RADIUS := 58.0
 const CLICK_OUTER_END_RADIUS := 100.0
 
-var CLICK_INNER_COLOR: Color = Gs.colors.click
-var CLICK_OUTER_COLOR: Color = Gs.colors.click
-var VALID_SURFACE_COLOR: Color = Gs.colors.surface_click_selection
-var INVALID_SURFACE_COLOR: Color = Gs.colors.opacify(
-        Gs.colors.invalid, ScaffolderColors.ALPHA_SOLID)
+var CLICK_INNER_COLOR: Color = Sc.colors.click
+var CLICK_OUTER_COLOR: Color = Sc.colors.click
+var VALID_SURFACE_COLOR: Color = Sc.colors.surface_click_selection
+var INVALID_SURFACE_COLOR: Color = Sc.colors.opacify(
+        Sc.colors.invalid, ScaffolderColors.ALPHA_SOLID)
 
 const CLICK_INNER_DURATION := 0.27
 const CLICK_OUTER_DURATION := 0.23
@@ -44,13 +44,13 @@ func _update() -> void:
     ._update()
     
     inner_progress = (current_time - start_time) / CLICK_INNER_DURATION
-    inner_progress = Gs.utils.ease_by_name(inner_progress, "ease_out")
+    inner_progress = Sc.utils.ease_by_name(inner_progress, "ease_out")
     
     outer_progress = (current_time - start_time) / CLICK_OUTER_DURATION
-    outer_progress = Gs.utils.ease_by_name(outer_progress, "ease_out")
+    outer_progress = Sc.utils.ease_by_name(outer_progress, "ease_out")
     
     surface_progress = (current_time - start_time) / SURFACE_DURATION
-    surface_progress = Gs.utils.ease_by_name(surface_progress, "ease_out")
+    surface_progress = Sc.utils.ease_by_name(surface_progress, "ease_out")
 
 
 func _draw() -> void:
@@ -67,7 +67,7 @@ func _draw() -> void:
         var alpha := color.a * (1 - surface_progress)
         color.a = alpha
         
-        Gs.draw.draw_surface(
+        Sc.draw.draw_surface(
                 self,
                 selected_surface,
                 color)

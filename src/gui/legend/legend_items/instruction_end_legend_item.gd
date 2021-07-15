@@ -17,11 +17,11 @@ func _init().(
 func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
-    Gs.draw.draw_instruction_indicator(
+    Sc.draw.draw_instruction_indicator(
             self,
             "mr",
             false,
             center,
             SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH * SCALE,
-            Surfacer.ann_defaults.DEFAULT_INSTRUCTION_COLOR_PARAMS \
+            Su.ann_defaults.DEFAULT_INSTRUCTION_COLOR_PARAMS \
                     .get_color())

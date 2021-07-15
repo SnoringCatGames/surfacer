@@ -9,7 +9,7 @@ extends Reference
 static func calculate_vertical_step(
         edge_result_metadata: EdgeCalcResultMetadata,
         edge_calc_params: EdgeCalcParams) -> VerticalEdgeStep:
-    Gs.profiler.start(
+    Sc.profiler.start(
             "calculate_vertical_step",
             edge_calc_params.collision_params.thread_id)
     
@@ -42,7 +42,7 @@ static func calculate_vertical_step(
             # We can't reach the given displacement with the given duration.
             edge_result_metadata.edge_calc_result_type = EdgeCalcResultType \
                     .OUT_OF_REACH_WHEN_CALCULATING_VERTICAL_STEP
-            Gs.profiler.stop_with_optional_metadata(
+            Sc.profiler.stop_with_optional_metadata(
                     "calculate_vertical_step",
                     edge_calc_params.collision_params.thread_id,
                     edge_result_metadata)
@@ -99,7 +99,7 @@ static func calculate_vertical_step(
             step,
             time_peak_height)
     
-    assert(Gs.geometry.are_floats_equal_with_epsilon(
+    assert(Sc.geometry.are_floats_equal_with_epsilon(
             step_end_state[0],
             position_end.y,
             0.2))
@@ -119,7 +119,7 @@ static func calculate_vertical_step(
     step.position_instruction_end = position_instruction_end
     step.velocity_instruction_end = velocity_instruction_end
     
-    Gs.profiler.stop_with_optional_metadata(
+    Sc.profiler.stop_with_optional_metadata(
             "calculate_vertical_step",
             edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
@@ -180,7 +180,7 @@ static func calculate_time_to_jump_to_waypoint(
             if distance_to_release_button_for_shorter_jump < displacement.y:
                 # We cannot jump high enough for the displacement. This should
                 # have been caught earlier.
-                Gs.logger.error()
+                Sc.logger.error()
                 return INF
             
             if distance_to_release_button_for_shorter_jump < 0:
@@ -403,13 +403,13 @@ static func calculate_time_to_release_jump_button(
     var t2 := (-b + discriminant_sqrt) / 2.0 / a
     
     var time_to_release_jump_button: float
-    if t1 < -Gs.geometry.FLOAT_EPSILON:
+    if t1 < -Sc.geometry.FLOAT_EPSILON:
         time_to_release_jump_button = t2
-    elif t2 < -Gs.geometry.FLOAT_EPSILON:
+    elif t2 < -Sc.geometry.FLOAT_EPSILON:
         time_to_release_jump_button = t1
     else:
         time_to_release_jump_button = min(t1, t2)
-    assert(time_to_release_jump_button >= -Gs.geometry.FLOAT_EPSILON)
+    assert(time_to_release_jump_button >= -Sc.geometry.FLOAT_EPSILON)
     
     time_to_release_jump_button = max(time_to_release_jump_button, 0.0)
     assert(time_to_release_jump_button <= duration)

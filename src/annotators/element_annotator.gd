@@ -48,7 +48,7 @@ func _draw() -> void:
             if is_instance_valid(legend_item):
                 legend_items[legend_item.type] = legend_item
     
-    if is_instance_valid(Surfacer.legend):
-        Surfacer.legend.clear()
+    if is_instance_valid(Su.legend):
+        Su.legend.clear()
         for legend_item_type in legend_items:
-            Surfacer.legend.add(legend_items[legend_item_type])
+            Su.legend.add(legend_items[legend_item_type])

@@ -49,12 +49,12 @@ var surface_exclusion_list := {}
 
 
 func calculate(player_name: String) -> void:
-    self.player_params = Surfacer.player_params[player_name]
+    self.player_params = Su.player_params[player_name]
     self.movement_params = player_params.movement_params
-    self.debug_params = Surfacer.debug_params
-    self.surface_parser = Surfacer.graph_parser.surface_parser
+    self.debug_params = Su.debug_params
+    self.surface_parser = Su.graph_parser.surface_parser
     
-    var fake_player = Surfacer.graph_parser.fake_players[player_name]
+    var fake_player = Su.graph_parser.fake_players[player_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
@@ -66,7 +66,7 @@ func calculate(player_name: String) -> void:
             movement_params.can_grab_walls,
             movement_params.can_grab_ceilings,
             movement_params.can_grab_floors)
-    self.surfaces_set = Gs.utils.array_to_set(surfaces_array)
+    self.surfaces_set = Sc.utils.array_to_set(surfaces_array)
     
     _calculate_nodes_and_edges()
 
@@ -259,7 +259,7 @@ static func _calculate_intra_surface_edge_weight(
         SurfaceSide.RIGHT_WALL:
             weight *= movement_params.climbing_edge_weight_multiplier
         _:
-            Gs.logger.error()
+            Sc.logger.error()
     
     # Give a constant extra weight for each additional edge in a path.
     weight += movement_params.additional_edge_weight_offset
@@ -329,14 +329,14 @@ func _calculate_nodes_and_edges() -> void:
     for origin_surface in surfaces_set:
         surfaces_to_inter_surface_edges_results[origin_surface] = []
     
-    if Surfacer.uses_threads_for_platform_graph_calculation:
+    if Su.uses_threads_for_platform_graph_calculation:
         var threads := []
-        threads.resize(Gs.metadata.thread_count)
+        threads.resize(Sc.metadata.thread_count)
         
         # Use child threads to parallelize graph parsing.
-        for i in Gs.metadata.thread_count:
+        for i in Sc.metadata.thread_count:
             var thread := Thread.new()
-            Gs.profiler.init_thread("parse_edges:" + str(i))
+            Sc.profiler.init_thread("parse_edges:" + str(i))
             threads[i] = thread
             thread.start(
                     self,
@@ -355,7 +355,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
     var thread_id := \
             "parse_edges:" + str(thread_index) if \
             thread_index >= 0 else \
-            Gs.profiler.DEFAULT_THREAD_ID
+            Sc.profiler.DEFAULT_THREAD_ID
     OS.set_thread_name(thread_id)
     
     var collision_params_for_thread := CollisionCalcParams.new(
@@ -383,7 +383,7 @@ func _calculate_inter_surface_edges_for_next_origin(
         collision_params: CollisionCalcParams) -> void:
     # Divide the origin surfaces across threads.
     if thread_index < 0 or \
-            origin_index % Gs.metadata.thread_count == thread_index:
+            origin_index % Sc.metadata.thread_count == thread_index:
         var origin_surface: Surface = surfaces[origin_index]
         # Array<InterSurfaceEdgesResult>
         var inter_surface_edges_results: Array = \
@@ -399,7 +399,7 @@ func _calculate_inter_surface_edges_for_next_origin(
     if thread_index < 0:
         emit_signal("calculation_progressed", origin_index, surfaces.size())
         if !was_last_iteration:
-            Gs.time.set_timeout(
+            Sc.time.set_timeout(
                     funcref(self,
                             "_calculate_inter_surface_edges_for_next_origin"),
                     0.1,
@@ -541,8 +541,8 @@ func _derive_nodes_to_nodes_to_edges() -> void:
 
 
 func _cleanup_edge_calc_results() -> void:
-    if !Surfacer.is_inspector_enabled and \
-            !Surfacer.is_precomputing_platform_graphs:
+    if !Su.is_inspector_enabled and \
+            !Su.is_precomputing_platform_graphs:
         # Free-up all calculation-debugging state from local memory if we don't
         # need to display the graph state in the inspector.
         surfaces_to_inter_surface_edges_results.clear()
@@ -613,7 +613,7 @@ func get_surfaces_in_jump_and_fall_range(
     
     # Get all surfaces that are within fall range from either end of the origin
     # surface.
-    Gs.profiler.start(
+    Sc.profiler.start(
             "find_surfaces_in_jump_fall_range_from_surface",
             collision_params.thread_id)
     FallMovementUtils.find_surfaces_in_fall_range_from_surface(
@@ -622,7 +622,7 @@ func get_surfaces_in_jump_and_fall_range(
             surfaces_in_fall_range_result_set,
             surfaces_in_jump_range_result_set,
             origin_surface)
-    Gs.profiler.stop(
+    Sc.profiler.stop(
             "find_surfaces_in_jump_fall_range_from_surface",
             collision_params.thread_id)
 
@@ -673,12 +673,12 @@ func load_from_json_object(
         context: Dictionary) -> void:
     var player_name: String = json_object.player_name
     
-    self.player_params = Surfacer.player_params[player_name]
+    self.player_params = Su.player_params[player_name]
     self.movement_params = player_params.movement_params
-    self.debug_params = Surfacer.debug_params
-    self.surface_parser = Surfacer.graph_parser.surface_parser
+    self.debug_params = Su.debug_params
+    self.surface_parser = Su.graph_parser.surface_parser
     
-    var fake_player = Surfacer.graph_parser.fake_players[player_name]
+    var fake_player = Su.graph_parser.fake_players[player_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
@@ -690,7 +690,7 @@ func load_from_json_object(
             movement_params.can_grab_walls,
             movement_params.can_grab_ceilings,
             movement_params.can_grab_floors)
-    self.surfaces_set = Gs.utils.array_to_set(surfaces_array)
+    self.surfaces_set = Sc.utils.array_to_set(surfaces_array)
     
     _load_position_along_surfaces_from_json_object(json_object, context)
     _load_jump_land_positions_from_json_object(json_object, context)

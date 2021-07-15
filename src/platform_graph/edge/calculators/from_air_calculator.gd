@@ -24,7 +24,7 @@ func get_all_inter_surface_edges_from_surface(
         origin_surface: Surface,
         surfaces_in_fall_range_set: Dictionary,
         surfaces_in_jump_range_set: Dictionary) -> void:
-    Gs.logger.error(
+    Sc.logger.error(
             "FromAirCalculator." +
             "get_all_inter_surface_edges_from_surface should not be called")
 

@@ -42,9 +42,9 @@ func _init(
                 player.movement_params.collider_half_width_height.y
     self.color = color
     if color == Color.white:
-        Surfacer.ann_defaults.HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
+        Su.ann_defaults.HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
         player.is_human_player else \
-        Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
+        Su.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
     self.width_start = width_start
     self.length_start = length_start
     self.stroke_width_start = stroke_width_start
@@ -63,7 +63,7 @@ func _update() -> void:
     
     var scale_progress := (current_time - start_time) / duration
     scale_progress = min(scale_progress, 1.0)
-    scale_progress = Gs.utils.ease_by_name(
+    scale_progress = Sc.utils.ease_by_name(
             scale_progress, "ease_out_very_strong")
     mark_scale = lerp(
             1.0,
@@ -77,7 +77,7 @@ func _update() -> void:
             opacity_progress,
             0.0,
             1.0)
-    opacity_progress = Gs.utils.ease_by_name(
+    opacity_progress = Sc.utils.ease_by_name(
             opacity_progress, "ease_out_very_strong")
     opacity = lerp(
             1.0,
@@ -105,7 +105,7 @@ func _draw() -> void:
     var stroke_color: Color = Color.white
     stroke_color.a = opacity
     
-    Gs.draw.draw_exclamation_mark(
+    Sc.draw.draw_exclamation_mark(
             self,
             center,
             width,
@@ -113,7 +113,7 @@ func _draw() -> void:
             stroke_color,
             false,
             stroke_width)
-    Gs.draw.draw_exclamation_mark(
+    Sc.draw.draw_exclamation_mark(
             self,
             center,
             width,

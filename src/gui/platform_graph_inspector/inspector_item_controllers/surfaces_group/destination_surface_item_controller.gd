@@ -80,7 +80,7 @@ func find_and_expand_controller(
             else:
                 return false
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return false
 
 

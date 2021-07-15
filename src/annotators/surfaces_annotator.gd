@@ -3,7 +3,7 @@ extends Node2D
 
 
 var surface_parser: SurfaceParser
-var color_params: ColorParams = Surfacer.ann_defaults.SURFACE_COLOR_PARAMS
+var color_params: ColorParams = Su.ann_defaults.SURFACE_COLOR_PARAMS
 var alpha_with_inspector_closed := AnnotationElementDefaults.SURFACE_ALPHA
 var alpha_with_inspector_open := alpha_with_inspector_closed * 0.2
 
@@ -16,7 +16,7 @@ func _init(surface_parser: SurfaceParser) -> void:
 
 func _process(_delta: float) -> void:
     var is_inspector_open: bool = \
-            Gs.gui.hud.inspector_panel.get_is_inspector_panel_open()
+            Sc.gui.hud.inspector_panel.get_is_inspector_panel_open()
     if is_inspector_open != was_inspector_open:
         was_inspector_open = is_inspector_open
         update()
@@ -33,7 +33,7 @@ func _draw_surface(surface: Surface) -> void:
             alpha_with_inspector_open if \
             was_inspector_open else \
             alpha_with_inspector_closed
-    Gs.draw.draw_surface(
+    Sc.draw.draw_surface(
             self,
             surface,
             color)

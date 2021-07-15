@@ -33,15 +33,15 @@ func get_description() -> String:
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error(
+    Sc.logger.error(
             "find_and_expand_controller should not be called for " +
             "SURFACE_PARSER_GROUP.")
     return false
 
 
 func _create_children_inner() -> void:
-    for metric in Surfacer.surface_parser_metric_keys:
-        if Gs.profiler.is_timing(metric):
+    for metric in Su.surface_parser_metric_keys:
+        if Sc.profiler.is_timing(metric):
             ProfilerTimingItemController.new(
                     tree_item,
                     tree,

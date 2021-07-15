@@ -9,7 +9,7 @@ static func calculate_horizontal_step(
         edge_result_metadata: EdgeCalcResultMetadata,
         step_calc_params: EdgeStepCalcParams,
         edge_calc_params: EdgeCalcParams) -> EdgeStep:
-    Gs.profiler.start(
+    Sc.profiler.start(
             "calculate_horizontal_step",
             edge_calc_params.collision_params.thread_id)
     
@@ -41,7 +41,7 @@ static func calculate_horizontal_step(
                     movement_params.in_air_horizontal_acceleration)
     if min_and_max_velocity_at_step_end.empty():
         # This waypoint cannot be reached.
-        Gs.profiler.stop_with_optional_metadata(
+        Sc.profiler.stop_with_optional_metadata(
                 "calculate_horizontal_step",
                 edge_calc_params.collision_params.thread_id,
                 edge_result_metadata)
@@ -85,8 +85,8 @@ static func calculate_horizontal_step(
         # There is no start velocity that can reach the target end
         # position/velocity/time. This should never happen, since we should
         # have failed earlier during waypoint calculations.
-        Gs.logger.error()
-        Gs.profiler.stop_with_optional_metadata(
+        Sc.logger.error()
+        Sc.profiler.stop_with_optional_metadata(
                 "calculate_horizontal_step",
                 edge_calc_params.collision_params.thread_id,
                 edge_result_metadata)
@@ -140,11 +140,11 @@ static func calculate_horizontal_step(
                     vertical_step,
                     time_step_end)
     
-    assert(Gs.geometry.are_floats_equal_with_epsilon(
+    assert(Sc.geometry.are_floats_equal_with_epsilon(
             step_end_state[0],
             position_end.y,
             0.2))
-    assert(Gs.geometry.are_floats_equal_with_epsilon(
+    assert(Sc.geometry.are_floats_equal_with_epsilon(
             step_start_state[0],
             position_step_start.y,
             0.2))
@@ -176,7 +176,7 @@ static func calculate_horizontal_step(
     
     end_waypoint.actual_velocity_x = velocity_end_x
     
-    Gs.profiler.stop_with_optional_metadata(
+    Sc.profiler.stop_with_optional_metadata(
             "calculate_horizontal_step",
             edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
@@ -199,7 +199,7 @@ static func _calculate_acceleration_start_and_end_time(
         acceleration: float) -> Array:
     var velocity_change := velocity_end - velocity_start
     
-    if Gs.geometry.are_floats_equal_with_epsilon(
+    if Sc.geometry.are_floats_equal_with_epsilon(
             velocity_change,
             0.0,
             0.0001):
@@ -234,7 +234,7 @@ static func _calculate_acceleration_start_and_end_time(
     var time_acceleration_end := \
             time_acceleration_start + duration_during_acceleration
     
-    if Gs.geometry.are_floats_equal_with_epsilon(
+    if Sc.geometry.are_floats_equal_with_epsilon(
             time_acceleration_end,
             duration):
         time_acceleration_end = duration
@@ -244,7 +244,7 @@ static func _calculate_acceleration_start_and_end_time(
             time_acceleration_start < -0.0001 or \
             time_acceleration_end < -0.0001:
         # Something went wrong.
-        Gs.logger.error()
+        Sc.logger.error()
         return []
     
     return [time_acceleration_start, time_acceleration_end]
@@ -257,8 +257,8 @@ static func calculate_horizontal_state_for_time(
         movement_params: MovementParams,
         horizontal_step: EdgeStep,
         time: float) -> Array:
-    assert(time >= horizontal_step.time_step_start - Gs.geometry.FLOAT_EPSILON)
-    assert(time <= horizontal_step.time_step_end + Gs.geometry.FLOAT_EPSILON)
+    assert(time >= horizontal_step.time_step_start - Sc.geometry.FLOAT_EPSILON)
+    assert(time <= horizontal_step.time_step_end + Sc.geometry.FLOAT_EPSILON)
     
     var position: float
     var velocity: float
@@ -414,12 +414,12 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
         return []
     
     # Account for round-off error.
-    if Gs.geometry.are_floats_equal_with_epsilon(
+    if Sc.geometry.are_floats_equal_with_epsilon(
             min_velocity_end,
             max_velocity_end_for_valid_next_step,
             0.001):
         min_velocity_end = max_velocity_end_for_valid_next_step
-    if Gs.geometry.are_floats_equal_with_epsilon(
+    if Sc.geometry.are_floats_equal_with_epsilon(
             max_velocity_end,
             min_velocity_end_for_valid_next_step,
             0.001):

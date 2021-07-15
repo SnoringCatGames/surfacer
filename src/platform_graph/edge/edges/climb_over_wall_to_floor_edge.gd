@@ -137,7 +137,7 @@ func _update_navigation_state_expected_surface_air_helper(
         is_starting_navigation_retry: bool) -> void:
     if is_starting_navigation_retry:
         # This should never happen.
-        Gs.logger.error()
+        Sc.logger.error()
         return
     
     var is_grabbed_surface_expected: bool = \

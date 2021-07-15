@@ -17,16 +17,16 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Surfacer.annotators.set_annotator_enabled(
+    Su.annotators.set_annotator_enabled(
             annotator_type,
             pressed)
-    Gs.save_state.set_setting(
+    Sc.save_state.set_setting(
             settings_key,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Surfacer.annotators.is_annotator_enabled(annotator_type)
+    return Su.annotators.is_annotator_enabled(annotator_type)
 
 
 func get_is_enabled() -> bool:

@@ -25,6 +25,6 @@ func process(player) -> bool:
     # give false negatives.
     player.velocity.y = \
             PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION / \
-            Gs.time.get_combined_scale()
+            Sc.time.get_combined_scale()
 
     return true

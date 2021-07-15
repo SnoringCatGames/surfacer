@@ -18,14 +18,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Surfacer.is_surfacer_logging = pressed
-    Gs.save_state.set_setting(
-            Surfacer.IS_SURFACER_LOGGING_SETTINGS_KEY,
+    Su.is_surfacer_logging = pressed
+    Sc.save_state.set_setting(
+            Su.IS_SURFACER_LOGGING_SETTINGS_KEY,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Surfacer.is_surfacer_logging
+    return Su.is_surfacer_logging
 
 
 func get_is_enabled() -> bool:

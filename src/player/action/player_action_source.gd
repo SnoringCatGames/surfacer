@@ -34,7 +34,7 @@ func update(
         time_scaled: float,
         delta_scaled: float,
         navigation_state: PlayerNavigationState) -> void:
-    Gs.logger.error("Abstract PlayerActionSource.update is not implemented")
+    Sc.logger.error("Abstract PlayerActionSource.update is not implemented")
 
 
 static func update_for_key_press(

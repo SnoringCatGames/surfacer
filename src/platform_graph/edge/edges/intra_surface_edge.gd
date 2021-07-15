@@ -148,7 +148,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
                             acceleration_x,
                             movement_params.max_horizontal_speed_default)
             var position_x := start.x + displacement_x
-            return Gs.geometry.project_point_onto_surface_with_offset(
+            return Sc.geometry.project_point_onto_surface_with_offset(
                     Vector2(position_x, 0.0),
                     surface,
                     movement_params.collider_half_width_height)
@@ -159,12 +159,12 @@ func get_position_at_time(edge_time: float) -> Vector2:
                     displacement.y < 0.0 else \
                     movement_params.climb_down_speed
             var position_y := start.y + velocity_y * edge_time
-            return Gs.geometry.project_point_onto_surface_with_offset(
+            return Sc.geometry.project_point_onto_surface_with_offset(
                     Vector2(0.0, position_y),
                     surface,
                     movement_params.collider_half_width_height)
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return Vector2.INF
 
 
@@ -192,7 +192,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
                     surface.side == SurfaceSide.FLOOR else \
                     -PlayerActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
-            velocity_y /= Gs.time.get_combined_scale()
+            velocity_y /= Sc.time.get_combined_scale()
             return Vector2(velocity_x, velocity_y)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
@@ -202,14 +202,14 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
                     surface.side == SurfaceSide.LEFT_WALL else \
                     PlayerActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
-            velocity_x /= Gs.time.get_combined_scale()
+            velocity_x /= Sc.time.get_combined_scale()
             var velocity_y := \
                     movement_params.climb_up_speed if \
                     displacement.y < 0.0 else \
                     movement_params.climb_down_speed
             return Vector2(velocity_x, velocity_y)
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return Vector2.INF
 
 
@@ -235,7 +235,7 @@ func get_animation_state_at_time(
                     PlayerAnimationType.CLIMB_DOWN
             result.facing_left = side == SurfaceSide.LEFT_WALL
         _:
-            Gs.logger.error()
+            Sc.logger.error()
 
 
 func _check_did_just_reach_surface_destination(
@@ -417,5 +417,5 @@ static func calculate_duration_to_move_along_surface(
                     is_climbing_upward,
                     movement_params)
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return INF

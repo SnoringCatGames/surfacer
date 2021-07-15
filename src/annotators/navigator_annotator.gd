@@ -43,7 +43,7 @@ func _process(_delta: float) -> void:
         current_path_beats = navigator.path_beats
         if current_path != null:
             if _get_is_exclamation_mark_shown():
-                Surfacer.annotators.add_transient(
+                Su.annotators.add_transient(
                         ExclamationMarkAnnotator.new(
                                 navigator.player))
             if is_enabled:
@@ -55,10 +55,10 @@ func _process(_delta: float) -> void:
         previous_path_beats = navigator.previous_path_beats
         update()
     
-    if Gs.slow_motion.get_is_enabled_or_transitioning() != \
+    if Sc.slow_motion.get_is_enabled_or_transitioning() != \
             is_slow_motion_enabled:
         is_slow_motion_enabled = \
-                Gs.slow_motion.get_is_enabled_or_transitioning()
+                Sc.slow_motion.get_is_enabled_or_transitioning()
         is_enabled = _get_is_enabled()
         _trigger_fade_in(is_enabled)
         update()
@@ -84,20 +84,20 @@ func _draw() -> void:
         _draw_current_path(current_path)
     
     elif previous_path != null and \
-            Surfacer.is_previous_trajectory_shown and \
+            Su.is_previous_trajectory_shown and \
             navigator.player.is_human_player:
         _draw_previous_path()
 
 
 func _draw_current_path(current_path: PlatformGraphPath) -> void:
-    if Surfacer.is_active_trajectory_shown:
+    if Su.is_active_trajectory_shown:
         var current_path_color: Color = \
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
                 navigator.player.is_human_player else \
-                Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
+                Su.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
         current_path_color.a *= fade_progress
-        Gs.draw.draw_path(
+        Sc.draw.draw_path(
                 self,
                 current_path,
                 AnnotationElementDefaults \
@@ -122,10 +122,10 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
         
         # Draw the origin indicator.
         var origin_indicator_fill_color: Color = \
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .HUMAN_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR if \
                 navigator.player.is_human_player else \
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR
         origin_indicator_fill_color.a *= fade_progress
         self.draw_circle(
@@ -133,13 +133,13 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
                 origin_indicator_fill_color)
         var origin_indicator_stroke_color: Color = \
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .HUMAN_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR if \
                 navigator.player.is_human_player else \
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR
         origin_indicator_stroke_color.a *= fade_progress
-        Gs.draw.draw_circle_outline(
+        Sc.draw.draw_circle_outline(
                 self,
                 current_path.origin.target_point,
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
@@ -147,7 +147,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
                 4.0)
     
-    if Surfacer.is_navigation_destination_shown:
+    if Su.is_navigation_destination_shown:
         # Draw the destination indicator.
         var cone_length: float = \
                 AnnotationElementDefaults \
@@ -155,13 +155,13 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 AnnotationElementDefaults \
                         .NAVIGATOR_DESTINATION_INDICATOR_RADIUS
         var destination_indicator_fill_color: Color = \
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .HUMAN_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR if \
                 navigator.player.is_human_player else \
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
         destination_indicator_fill_color.a *= fade_progress
-        Gs.draw.draw_destination_marker(
+        Sc.draw.draw_destination_marker(
                 self,
                 current_path.destination,
                 false,
@@ -173,13 +173,13 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 INF,
                 4.0)
         var destination_indicator_stroke_color: Color = \
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .HUMAN_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR if \
                 navigator.player.is_human_player else \
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
         destination_indicator_stroke_color *= fade_progress
-        Gs.draw.draw_destination_marker(
+        Sc.draw.draw_destination_marker(
                 self,
                 current_path.destination,
                 false,
@@ -194,10 +194,10 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
 
 func _draw_previous_path() -> void:
     var previous_path_color: Color = \
-            Surfacer.ann_defaults.HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR if \
+            Su.ann_defaults.HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR if \
             navigator.player.is_human_player else \
-            Surfacer.ann_defaults.COMPUTER_NAVIGATOR_PREVIOUS_PATH_COLOR
-    Gs.draw.draw_path(
+            Su.ann_defaults.COMPUTER_NAVIGATOR_PREVIOUS_PATH_COLOR
+    Sc.draw.draw_path(
             self,
             previous_path,
             AnnotationElementDefaults \
@@ -217,7 +217,7 @@ func _draw_previous_path() -> void:
 func _draw_beat_hashes(
         beats: Array,
         color: Color) -> void:
-    Gs.draw.draw_beat_hashes(
+    Sc.draw.draw_beat_hashes(
             self,
             beats,
             AnnotationElementDefaults \
@@ -235,24 +235,20 @@ func _draw_beat_hashes(
 func _get_is_enabled() -> bool:
     if navigator.player.is_human_player:
         if is_slow_motion_enabled:
-            return Surfacer \
-                    .is_human_current_nav_trajectory_shown_with_slow_mo
+            return Su.is_human_current_nav_trajectory_shown_with_slow_mo
         else:
-            return Surfacer \
-                    .is_human_current_nav_trajectory_shown_without_slow_mo
+            return Su.is_human_current_nav_trajectory_shown_without_slow_mo
     else:
         if is_slow_motion_enabled:
-            return Surfacer \
-                    .is_computer_current_nav_trajectory_shown_with_slow_mo
+            return Su.is_computer_current_nav_trajectory_shown_with_slow_mo
         else:
-            return Surfacer \
-                    .is_computer_current_nav_trajectory_shown_without_slow_mo
+            return Su.is_computer_current_nav_trajectory_shown_without_slow_mo
 
 
 func _get_is_exclamation_mark_shown() -> bool:
-    return Surfacer.is_human_new_nav_exclamation_mark_shown if \
+    return Su.is_human_new_nav_exclamation_mark_shown if \
             navigator.player.is_human_player else \
-            Surfacer.is_computer_new_nav_exclamation_mark_shown
+            Su.is_computer_new_nav_exclamation_mark_shown
 
 
 func _get_last_beat_from_navigator() -> PathBeatPrediction:
@@ -260,7 +256,7 @@ func _get_last_beat_from_navigator() -> PathBeatPrediction:
         return null
     
     var current_path_time := \
-            Gs.time.get_scaled_play_time() - navigator.path_start_time_scaled
+            Sc.time.get_scaled_play_time() - navigator.path_start_time_scaled
     var last_beat: PathBeatPrediction = null
     for next_beat in navigator.path_beats:
         if next_beat.time > current_path_time:
@@ -276,7 +272,7 @@ func _trigger_fade_in(is_fade_in := true) -> void:
             "fade_progress",
             0.0 if is_fade_in else 1.0,
             1.0 if is_fade_in else 0.0,
-            Surfacer.nav_path_fade_in_duration,
+            Su.nav_path_fade_in_duration,
             "ease_out",
             0.0,
             TimeType.PLAY_PHYSICS)
@@ -285,13 +281,13 @@ func _trigger_fade_in(is_fade_in := true) -> void:
 
 func _trigger_beat_hash_animation(beat: PathBeatPrediction) -> void:
     var current_path_color: Color = \
-            Surfacer.ann_defaults \
+            Su.ann_defaults \
                     .HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
             navigator.player.is_human_player else \
-            Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
+            Su.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
     current_path_color.a *= fade_progress
     
-    Surfacer.annotators.add_transient(OnBeatHashAnnotator.new(
+    Su.annotators.add_transient(OnBeatHashAnnotator.new(
             beat,
             AnnotationElementDefaults \
                     .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,

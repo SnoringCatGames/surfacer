@@ -10,5 +10,5 @@ func _init(type: int) -> void:
 
 
 func get_color() -> Color:
-    Gs.logger.error("Abstract ColorParams.get_color is not implemented")
+    Sc.logger.error("Abstract ColorParams.get_color is not implemented")
     return Color.black

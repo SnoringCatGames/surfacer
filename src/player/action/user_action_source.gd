@@ -33,8 +33,8 @@ func update(
         navigation_state: PlayerNavigationState) -> void:
     for action in ACTIONS_TO_INPUT_KEYS:
         var input_key: String = ACTIONS_TO_INPUT_KEYS[action]
-        var is_pressed: bool = Gs.level_input.is_action_pressed(action)
-        if !Gs.level_input.is_key_pressed(KEY_CONTROL):
+        var is_pressed: bool = Sc.level_input.is_action_pressed(action)
+        if !Sc.level_input.is_key_pressed(KEY_CONTROL):
             PlayerActionSource.update_for_key_press(
                     actions,
                     previous_actions,
@@ -46,6 +46,6 @@ func update(
 
 static func get_is_some_user_action_pressed() -> bool:
     for action in ACTIONS_TO_INPUT_KEYS:
-        if Gs.level_input.is_action_pressed(action):
+        if Sc.level_input.is_action_pressed(action):
             return true
     return false

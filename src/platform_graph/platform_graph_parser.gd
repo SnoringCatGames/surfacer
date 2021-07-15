@@ -29,11 +29,11 @@ var is_parse_finished := false
 
 
 func _enter_tree() -> void:
-    Surfacer.graph_parser = self
+    Su.graph_parser = self
 
 
 func _exit_tree() -> void:
-    Surfacer.graph_parser = null
+    Su.graph_parser = null
 
 
 func parse(
@@ -45,7 +45,7 @@ func parse(
     _create_fake_players_for_collision_calculations()
     force_calculation_from_tile_maps = \
             force_calculation_from_tile_maps or \
-            Surfacer.ignores_platform_graph_save_files
+            Su.ignores_platform_graph_save_files
     _instantiate_platform_graphs(
             includes_debug_only_state,
             force_calculation_from_tile_maps)
@@ -55,10 +55,10 @@ func parse(
 # level.
 func _record_tile_maps() -> void:
     surface_tile_maps = \
-            Gs.utils.get_all_nodes_in_group(Surfacer.group_name_surfaces)
+            Sc.utils.get_all_nodes_in_group(Su.group_name_surfaces)
     
     # Validate the TileMaps.
-    if Gs.metadata.debug or Gs.metadata.playtest:
+    if Sc.metadata.debug or Sc.metadata.playtest:
         assert(surface_tile_maps.size() > 0)
         var tile_map_ids := {}
         for tile_map in surface_tile_maps:
@@ -71,8 +71,8 @@ func _record_tile_maps() -> void:
 func _create_fake_players_for_collision_calculations() -> void:
     for player_name in _get_player_names():
         var movement_params: MovementParams = \
-                Surfacer.player_params[player_name].movement_params
-        var fake_player: Player = Gs.utils.add_scene(
+                Su.player_params[player_name].movement_params
+        var fake_player: Player = Sc.utils.add_scene(
                 self,
                 movement_params.player_path_or_scene,
                 false,
@@ -96,20 +96,20 @@ func _instantiate_platform_graphs(
                     _get_path(includes_debug_only_state))
     if is_loaded_from_file:
         emit_signal("load_started")
-        Gs.time.set_timeout(
+        Sc.time.set_timeout(
                 funcref(self, "_load_platform_graphs"),
                 0.01,
                 [includes_debug_only_state])
     else:
         emit_signal("calculation_started")
-        Gs.time.set_timeout(
+        Sc.time.set_timeout(
                 funcref(self, "_calculate_platform_graphs"),
                 0.01)
 
 
 func _on_graphs_parsed() -> void:
-    if Surfacer.is_inspector_enabled:
-        Surfacer.graph_inspector.set_graphs(platform_graphs.values())
+    if Su.is_inspector_enabled:
+        Su.graph_inspector.set_graphs(platform_graphs.values())
     
     for platform_graph in platform_graphs.values():
         if platform_graph.is_connected(
@@ -138,7 +138,7 @@ func _calculate_platform_graphs() -> void:
     surface_parser = SurfaceParser.new()
     surface_parser.calculate(surface_tile_maps)
     platform_graphs = {}
-    assert(!Surfacer.player_params.empty())
+    assert(!Su.player_params.empty())
     _defer_calculate_next_platform_graph(-1)
 
 
@@ -151,9 +151,9 @@ func _calculate_next_platform_graph(player_index: int) -> void:
     #######################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     var should_skip_player: bool = \
-            Surfacer.debug_params.has("limit_parsing") and \
-            Surfacer.debug_params.limit_parsing.has("player_name") and \
-            player_name != Surfacer.debug_params.limit_parsing.player_name
+            Su.debug_params.has("limit_parsing") and \
+            Su.debug_params.limit_parsing.has("player_name") and \
+            player_name != Su.debug_params.limit_parsing.player_name
     #######################################################################
     
     if !should_skip_player:
@@ -201,7 +201,7 @@ func _on_graph_calculation_finished(
 
 
 func _defer_calculate_next_platform_graph(last_player_index: int) -> void:
-    Gs.time.set_timeout(
+    Sc.time.set_timeout(
             funcref(self, "_calculate_next_platform_graph"),
             0.01,
             [last_player_index + 1])
@@ -213,14 +213,14 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
     var file := File.new()
     var status := file.open(platform_graphs_path, File.READ)
     if status != OK:
-        Gs.logger.error("Unable to open file: " + platform_graphs_path)
+        Sc.logger.error("Unable to open file: " + platform_graphs_path)
         return
     var serialized_string := file.get_as_text()
     file.close()
 
     var parse_result := JSON.parse(serialized_string)
     if parse_result.error != OK:
-        Gs.logger.error("Unable to parse JSON: %s; %s:%s:%s" % [
+        Sc.logger.error("Unable to parse JSON: %s; %s:%s:%s" % [
             platform_graphs_path,
             parse_result.error,
             parse_result.error_line,
@@ -243,7 +243,7 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
             json_object.surface_parser,
             context)
     
-    if Gs.metadata.debug or Gs.metadata.playtest:
+    if Sc.metadata.debug or Sc.metadata.playtest:
         _validate_tile_maps(json_object)
         _validate_players(json_object)
         _validate_surfaces(surface_parser)
@@ -291,7 +291,7 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
         expected_id_set.erase(tile_map.id)
     assert(expected_id_set.empty())
     
-    if Surfacer.are_loaded_surfaces_deeply_validated:
+    if Su.are_loaded_surfaces_deeply_validated:
         var expected_surface_parser = SurfaceParser.new()
         expected_surface_parser.calculate(surface_tile_maps)
         
@@ -339,9 +339,9 @@ func _validate_platform_graphs(json_object: Dictionary) -> void:
 
 
 func save_platform_graphs() -> void:
-    assert(Gs.device.get_is_pc_app())
+    assert(Sc.device.get_is_pc_app())
     
-    if !Gs.utils.ensure_directory_exists(get_os_directory_path()):
+    if !Sc.utils.ensure_directory_exists(get_os_directory_path()):
         return
     
     var includes_debug_only_state := false
@@ -353,7 +353,7 @@ func save_platform_graphs() -> void:
     var file := File.new()
     var status := file.open(path, File.WRITE)
     if status != OK:
-        Gs.logger.error("Unable to open file: " + path)
+        Sc.logger.error("Unable to open file: " + path)
     file.store_string(serialized_string)
     file.close()
 
@@ -378,7 +378,7 @@ func _get_surfaces_tile_map_ids() -> Array:
 
 
 func _get_player_names() -> Array:
-    return Gs.level_config.get_level_config(level_id) \
+    return Sc.level_config.get_level_config(level_id) \
             .platform_graph_player_names
 
 

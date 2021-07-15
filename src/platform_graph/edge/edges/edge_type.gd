@@ -35,7 +35,7 @@ static func get_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.logger.error("Invalid EdgeType: %s" % type)
+            Sc.logger.error("Invalid EdgeType: %s" % type)
             return "???"
 
 
@@ -73,7 +73,7 @@ static func get_description(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.logger.error("Invalid EdgeType: %s" % type)
+            Sc.logger.error("Invalid EdgeType: %s" % type)
             return "???"
 
 const KEYS = [

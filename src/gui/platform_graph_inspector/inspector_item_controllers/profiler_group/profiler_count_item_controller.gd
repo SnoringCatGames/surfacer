@@ -30,7 +30,7 @@ func _init(
 
 func get_text() -> String:
     return "%s: %s" % [
-        Gs.profiler.get_count(metric, metadata_container),
+        Sc.profiler.get_count(metric, metadata_container),
         metric,
     ]
 
@@ -50,7 +50,7 @@ func get_has_children() -> bool:
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error(
+    Sc.logger.error(
             "find_and_expand_controller should not be called for " +
             "PROFILER_COUNT.")
     return false

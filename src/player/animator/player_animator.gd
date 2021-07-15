@@ -23,27 +23,27 @@ func set_up(
             player_on_animator_params.movement_params.animator_params
     
     var animation_players: Array = \
-            Gs.utils.get_children_by_type(self, AnimationPlayer)
+            Sc.utils.get_children_by_type(self, AnimationPlayer)
     assert(animation_players.size() == 1)
     animation_player = animation_players[0]
     
     if is_desaturatable:
         # Register these as desaturatable for the slow-motion effect.
-        var sprites: Array = Gs.utils.get_children_by_type(self, Sprite, true)
+        var sprites: Array = Sc.utils.get_children_by_type(self, Sprite, true)
         for sprite in sprites:
-            sprite.add_to_group(Gs.slow_motion.GROUP_NAME_DESATURATABLES)
+            sprite.add_to_group(Sc.slow_motion.GROUP_NAME_DESATURATABLES)
     
-    Gs.slow_motion.add_animator(self)
+    Sc.slow_motion.add_animator(self)
 
 
 func _destroy() -> void:
-    Gs.slow_motion.remove_animator(self)
+    Sc.slow_motion.remove_animator(self)
     if !is_queued_for_deletion():
         queue_free()
 
 
 func _get_animation_player() -> AnimationPlayer:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract PlayerAnimator._get_animation_player is not implemented")
     return null
             
@@ -91,7 +91,7 @@ func set_static_frame_position(animation_position: float) -> void:
 
 
 func match_rate_to_time_scale() -> void:
-    animation_player.playback_speed = _base_rate * Gs.time.get_combined_scale()
+    animation_player.playback_speed = _base_rate * Sc.time.get_combined_scale()
 
 
 func get_current_animation_type() -> int:
@@ -146,7 +146,7 @@ func animation_type_to_name(animation_type: int) -> String:
         PlayerAnimationType.CLIMB_DOWN:
             return animator_params.climb_down_name
         _:
-            Gs.logger.error(
+            Sc.logger.error(
                     "Unrecognized PlayerAnimationType: %s" % animation_type)
             return ""
 
@@ -168,6 +168,6 @@ func animation_type_to_playback_rate(animation_type: int) -> float:
         PlayerAnimationType.CLIMB_DOWN:
             return animator_params.climb_down_playback_rate
         _:
-            Gs.logger.error(
+            Sc.logger.error(
                     "Unrecognized PlayerAnimationType: %s" % animation_type)
             return 0.0

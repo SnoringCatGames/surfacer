@@ -72,7 +72,7 @@ func get_description() -> String:
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error(
+    Sc.logger.error(
             "find_and_expand_controller should not be called for " +
             "EDGE_CALC_RESULT_METADATA.")
     return false
@@ -110,9 +110,9 @@ func get_annotation_elements() -> Array:
     elif edge_attempt is FailedEdgeAttempt:
         var element := FailedEdgeAttemptAnnotationElement.new(
                 edge_attempt,
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,
-                Surfacer.ann_defaults.INVALID_EDGE_COLOR_PARAMS,
+                Su.ann_defaults.INVALID_EDGE_COLOR_PARAMS,
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH,
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP,
                 AnnotationElementDefaults \

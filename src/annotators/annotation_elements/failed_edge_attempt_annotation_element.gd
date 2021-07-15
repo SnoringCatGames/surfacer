@@ -16,10 +16,10 @@ var includes_surfaces: bool
 
 func _init(
         failed_edge_attempt: FailedEdgeAttempt,
-        end_color_params := Surfacer.ann_defaults \
+        end_color_params := Su.ann_defaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,
         line_color_params := \
-                Surfacer.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS,
+                Su.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS,
         dash_length := \
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH,
         dash_gap := \
@@ -46,7 +46,7 @@ func draw(canvas: CanvasItem) -> void:
     var start := failed_edge_attempt.get_start()
     var end := failed_edge_attempt.get_end()
     var middle: Vector2 = start.linear_interpolate(end, 0.5)
-    Gs.draw.draw_dashed_line(
+    Sc.draw.draw_dashed_line(
             canvas,
             start,
             end,
@@ -55,18 +55,18 @@ func draw(canvas: CanvasItem) -> void:
             dash_gap,
             0.0,
             dash_stroke_width)
-    Gs.draw.draw_x(
+    Sc.draw.draw_x(
             canvas,
             middle,
             AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_WIDTH,
             AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_HEIGHT,
             line_color,
             dash_stroke_width)
-    Gs.draw.draw_origin_marker(
+    Sc.draw.draw_origin_marker(
             canvas,
             start,
             end_color)
-    Gs.draw.draw_destination_marker(
+    Sc.draw.draw_destination_marker(
             canvas,
             failed_edge_attempt.end_position_along_surface,
             true,

@@ -124,7 +124,7 @@ func _get_all_edges_from_one_side(
     assert(!needs_extra_wall_land_horizontal_speed or \
             exclusive_land_position != null)
     
-    Gs.profiler.start(
+    Sc.profiler.start(
             "fall_from_floor_walk_to_fall_off_point_calculation",
             collision_params.thread_id)
     
@@ -153,7 +153,7 @@ func _get_all_edges_from_one_side(
             position_start,
             null,
             null):
-        Gs.profiler.stop(
+        Sc.profiler.stop(
                 "fall_from_floor_walk_to_fall_off_point_calculation",
                 collision_params.thread_id,
                 records_profile)
@@ -205,7 +205,7 @@ func _get_all_edges_from_one_side(
     
     var fall_off_point_velocity_start := Vector2(velocity_x_fall_off, 0.0)
     
-    Gs.profiler.stop(
+    Sc.profiler.stop(
             "fall_from_floor_walk_to_fall_off_point_calculation",
             collision_params.thread_id,
             records_profile)
@@ -328,7 +328,7 @@ static func _prepend_walk_to_fall_off_portion(
             floor(time_fall_off / Time.PHYSICS_TIME_STEP)
     time_fall_off = \
             frame_count_before_fall_off * Time.PHYSICS_TIME_STEP + \
-            Gs.geometry.FLOAT_EPSILON
+            Sc.geometry.FLOAT_EPSILON
     
     # Increment instruction times.
     
@@ -446,10 +446,10 @@ static func _calculate_player_center_at_fall_off_point(
         collider_rotation: float) -> Vector2:
     var is_rotated_90_degrees = \
             abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Gs.geometry.FLOAT_EPSILON
+            Sc.geometry.FLOAT_EPSILON
     # Ensure that collision boundaries are only ever axially aligned.
     assert(is_rotated_90_degrees or \
-            abs(collider_rotation) < Gs.geometry.FLOAT_EPSILON)
+            abs(collider_rotation) < Sc.geometry.FLOAT_EPSILON)
     
     var right_side_fall_off_displacement_x: float
     var fall_off_displacement_y: float
@@ -476,7 +476,7 @@ static func _calculate_player_center_at_fall_off_point(
             fall_off_displacement_y = -collider_shape.extents.y
         
     else:
-        Gs.logger.error((
+        Sc.logger.error((
                 "Invalid Shape2D provided for " +
                 "_calculate_player_center_at_fall_off_point: %s. " +
                 "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
@@ -498,7 +498,7 @@ static func _calculate_displacement_y_for_horizontal_distance_past_edge( \
         collider_rotation: float) -> float:
     var is_rotated_90_degrees = \
             abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Gs.geometry.FLOAT_EPSILON
+            Sc.geometry.FLOAT_EPSILON
     
     if collider_shape is CircleShape2D:
         if distance_past_edge >= collider_shape.radius:
@@ -531,7 +531,7 @@ static func _calculate_displacement_y_for_horizontal_distance_past_edge( \
             return -collider_shape.extents.y
         
     else:
-        Gs.logger.error((
+        Sc.logger.error((
                 "Invalid Shape2D provided for " +
                 "_calculate_displacement_y_for_horizontal_distance_past_edge: %s. " +
                 "The supported shapes are: CircleShape2D, CapsuleShape2D, " +

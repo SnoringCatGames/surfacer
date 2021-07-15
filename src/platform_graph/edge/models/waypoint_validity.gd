@@ -44,7 +44,7 @@ static func get_string(validity: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.logger.error("Invalid WaypointValidity: %s" % validity)
+            Sc.logger.error("Invalid WaypointValidity: %s" % validity)
             return "UNKNOWN"
 
 
@@ -100,5 +100,5 @@ static func get_description(validity: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.logger.error("Invalid WaypointValidity: %s" % validity)
+            Sc.logger.error("Invalid WaypointValidity: %s" % validity)
             return "UNKNOWN"

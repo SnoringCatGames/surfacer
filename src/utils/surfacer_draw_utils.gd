@@ -61,7 +61,7 @@ static func draw_surface(
             var translation: Vector2 = \
                     surface_depth_division_perpendicular_offset * i
             var polyline: PoolVector2Array = \
-                    Gs.utils.translate_polyline(vertices, translation)
+                    Sc.utils.translate_polyline(vertices, translation)
             
             # TODO: Update this to consider non-axially-aligned surface
             #       segments.
@@ -98,7 +98,7 @@ static func draw_position_along_surface(
     if t_value_drawn:
         if position.target_projection_onto_surface == Vector2.INF:
             position.target_projection_onto_surface = \
-                    Gs.geometry.project_point_onto_surface(
+                    Sc.geometry.project_point_onto_surface(
                             position.target_point,
                             position.surface)
         var normal := position.surface.normal
@@ -233,7 +233,7 @@ static func draw_instruction_indicator(
         "mr":
             end_offset_from_mid = Vector2(half_length, 0.0)
         _:
-            Gs.logger.error("Invalid input_key: %s" % input_key)
+            Sc.logger.error("Invalid input_key: %s" % input_key)
     
     var start := position - end_offset_from_mid
     var end := position + end_offset_from_mid
@@ -392,7 +392,7 @@ static func draw_path_duration_segment(
         if is_start_of_segment and \
                 is_end_of_segment:
             # Capture part of the edge.
-            vertices = Gs.utils.sub_pool_vector2_array(
+            vertices = Sc.utils.sub_pool_vector2_array(
                     edge_vertices,
                     index_before_segment,
                     index_after_segment + 1 - index_before_segment)
@@ -404,7 +404,7 @@ static func draw_path_duration_segment(
         elif is_start_of_segment:
             has_segment_started = true
             # Capture part of the edge.
-            vertices = Gs.utils.sub_pool_vector2_array(
+            vertices = Sc.utils.sub_pool_vector2_array(
                     edge_vertices,
                     index_before_segment)
             # Substitute the first vertex for a temp end point that aligns with
@@ -412,7 +412,7 @@ static func draw_path_duration_segment(
             vertices[0] = first_vertex_in_segment
         elif is_end_of_segment:
             # Capture part of the edge.
-            var sub_edge_vertices := Gs.utils.sub_pool_vector2_array(
+            var sub_edge_vertices := Sc.utils.sub_pool_vector2_array(
                     edge_vertices,
                     0,
                     index_after_segment + 1)
@@ -470,13 +470,13 @@ static func _trim_front_end(
     front_index -= 1
     
     var start_replacement := \
-            Gs.geometry.get_intersection_of_segment_and_circle(
+            Sc.geometry.get_intersection_of_segment_and_circle(
                     vertices[front_index + 1],
                     vertices[front_index],
                     end_position,
                     trim_radius)
     
-    vertices = Gs.utils.sub_pool_vector2_array(
+    vertices = Sc.utils.sub_pool_vector2_array(
             vertices,
             front_index)
     
@@ -509,13 +509,13 @@ static func _trim_back_end(
     back_index += 1
     
     var end_replacement := \
-            Gs.geometry.get_intersection_of_segment_and_circle(
+            Sc.geometry.get_intersection_of_segment_and_circle(
                     vertices[back_index - 1],
                     vertices[back_index],
                     end_position,
                     trim_radius)
     
-    vertices = Gs.utils.sub_pool_vector2_array(
+    vertices = Sc.utils.sub_pool_vector2_array(
             vertices,
             0,
             back_index + 1)
@@ -570,7 +570,7 @@ static func draw_edge(
         includes_continuous_positions := true,
         includes_discrete_positions := false) -> void:
     if base_color == Color.white:
-        base_color = Surfacer.ann_defaults \
+        base_color = Su.ann_defaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS.get_color()
     
     if edge.includes_air_trajectory:
@@ -607,7 +607,7 @@ static func _draw_edge_from_end_points(
             stroke_width)
     
     if includes_waypoints:
-        var waypoint_color: Color = Surfacer.ann_defaults \
+        var waypoint_color: Color = Su.ann_defaults \
                 .WAYPOINT_COLOR_PARAMS.get_color()
         waypoint_color.h = base_color.h
         waypoint_color.a = base_color.a
@@ -623,7 +623,7 @@ static func _draw_edge_from_end_points(
                 waypoint_color)
     
     if includes_instruction_indicators:
-        var instruction_color: Color = Surfacer.ann_defaults \
+        var instruction_color: Color = Su.ann_defaults \
                 .INSTRUCTION_COLOR_PARAMS.get_color()
         instruction_color.h = base_color.h
         instruction_color.a = base_color.a
@@ -642,14 +642,14 @@ static func _draw_edge_from_instructions_positions(
         includes_discrete_positions: bool,
         origin_position_override := Vector2.INF) -> void:
     # Set up colors.
-    var continuous_trajectory_color: Color = Surfacer.ann_defaults \
+    var continuous_trajectory_color: Color = Su.ann_defaults \
             .EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS.get_color()
     continuous_trajectory_color.h = discrete_trajectory_color.h
-    var waypoint_color: Color = Surfacer.ann_defaults \
+    var waypoint_color: Color = Su.ann_defaults \
             .WAYPOINT_COLOR_PARAMS.get_color()
     waypoint_color.h = discrete_trajectory_color.h
     waypoint_color.a = discrete_trajectory_color.a
-    var instruction_color: Color = Surfacer.ann_defaults \
+    var instruction_color: Color = Su.ann_defaults \
             .INSTRUCTION_COLOR_PARAMS.get_color()
     instruction_color.h = discrete_trajectory_color.h
     instruction_color.a = discrete_trajectory_color.a

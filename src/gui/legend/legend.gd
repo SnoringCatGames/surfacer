@@ -8,7 +8,7 @@ var _items := {}
 var grid: GridContainer
 var label: ScaffolderLabel
 
-var _debounced_on_gui_scale_changed: FuncRef = Gs.time.debounce(
+var _debounced_on_gui_scale_changed: FuncRef = Sc.time.debounce(
         funcref(self, "_on_gui_scale_changed_debounced"),
         0.05)
 
@@ -22,7 +22,7 @@ func _ready() -> void:
 
 
 func _destroy() -> void:
-    Gs.time.clear_debounce(_debounced_on_gui_scale_changed)
+    Sc.time.clear_debounce(_debounced_on_gui_scale_changed)
 
 
 func _on_gui_scale_changed() -> bool:

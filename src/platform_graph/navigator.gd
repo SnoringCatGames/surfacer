@@ -56,7 +56,7 @@ func _init(
 func navigate_path(
         path: PlatformGraphPath,
         is_retry := false) -> bool:
-    Gs.profiler.start("navigator_navigate_path")
+    Sc.profiler.start("navigator_navigate_path")
     
     var previous_navigation_attempt_count := current_navigation_attempt_count
     _reset()
@@ -64,7 +64,7 @@ func navigate_path(
         current_navigation_attempt_count = previous_navigation_attempt_count
     
     if path != null and \
-            !Gs.geometry.are_points_equal_with_epsilon(
+            !Sc.geometry.are_points_equal_with_epsilon(
                     player.position,
                     path.origin.target_point,
                     4.0):
@@ -76,7 +76,7 @@ func navigate_path(
     
     if path == null:
         # Destination cannot be reached from origin.
-        Gs.profiler.stop("navigator_navigate_path")
+        Sc.profiler.stop("navigator_navigate_path")
         print_msg("CANNOT NAVIGATE NULL PATH")
         return false
         
@@ -97,8 +97,8 @@ func navigate_path(
                 path)
         
         self.path = path
-        self.path_start_time_scaled = Gs.time.get_scaled_play_time()
-        self.path_beats = Gs.beats.calculate_path_beat_hashes_for_current_mode(
+        self.path_start_time_scaled = Sc.time.get_scaled_play_time()
+        self.path_beats = Sc.beats.calculate_path_beat_hashes_for_current_mode(
                 path, path_start_time_scaled)
         is_currently_navigating = true
         just_started_navigating = true
@@ -107,7 +107,7 @@ func navigate_path(
         current_navigation_attempt_count += 1
         
         var duration_navigate_to_position: float = \
-                Gs.profiler.stop("navigator_navigate_path")
+                Sc.profiler.stop("navigator_navigate_path")
         
         var format_string_template := (
                 "STARTING PATH NAV:   %8.3fs; {" +
@@ -118,7 +118,7 @@ func navigate_path(
                 "\n\t}" +
                 "\n}")
         var format_string_arguments := [
-            Gs.time.get_play_time(),
+            Sc.time.get_play_time(),
             path.destination.to_string(),
             path.to_string_with_newlines(1),
             duration_navigate_to_position,
@@ -169,7 +169,7 @@ func find_path(
         destination: PositionAlongSurface,
         graph_destination_for_in_air_destination: PositionAlongSurface = \
                 null) -> PlatformGraphPath:
-    Gs.profiler.start("navigator_find_path")
+    Sc.profiler.start("navigator_find_path")
     
     var graph_origin: PositionAlongSurface
     var prefix_edge: FromAirEdge
@@ -207,7 +207,7 @@ func find_path(
             
             # TODO: This case shouldn't be needed; in theory, we should have
             #       been able to find a valid land trajectory above.
-            Gs.logger.print("Unable to calculate air-to-surface edge")
+            Sc.logger.print("Unable to calculate air-to-surface edge")
             
             var elapsed_edge_time := playback.get_elapsed_time_scaled()
             if elapsed_edge_time < edge.duration:
@@ -217,7 +217,7 @@ func find_path(
                                 elapsed_edge_time,
                                 player)
             else:
-                Gs.logger.print(
+                Sc.logger.print(
                         "Unable to re-use current edge as air-to-surface " +
                         "edge: edge playback time exceeds edge duration")
         
@@ -226,7 +226,7 @@ func find_path(
             graph_origin = from_air_edge.end_position_along_surface
             prefix_edge = from_air_edge
         else:
-            Gs.profiler.stop("navigator_find_path")
+            Sc.profiler.stop("navigator_find_path")
             return null
     
     # Handle the end of the path.
@@ -247,8 +247,8 @@ func find_path(
             # We were able to calculate a valid surface-to-air edge.
             suffix_edge = surface_to_air_edge
         else:
-            Gs.logger.print("Unable to calculate surface-to-air edge")
-            Gs.profiler.stop("navigator_find_path")
+            Sc.logger.print("Unable to calculate surface-to-air edge")
+            Sc.profiler.stop("navigator_find_path")
             return null
     
     var path := graph.find_path(
@@ -262,7 +262,7 @@ func find_path(
         if suffix_edge != null:
             path.push_back(suffix_edge)
     
-    Gs.profiler.stop("navigator_find_path")
+    Sc.profiler.stop("navigator_find_path")
     
     if path != null:
         if movement_params.also_optimizes_preselection_path:
@@ -312,13 +312,13 @@ func _set_reached_destination() -> void:
             SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
                 player.velocity.y = 0.0
             _:
-                Gs.logger.error("Invalid SurfaceSide")
+                Sc.logger.error("Invalid SurfaceSide")
     
     _reset()
     has_reached_destination = true
     just_reached_destination = true
     
-    print_msg("REACHED END OF PATH: %8.3fs", Gs.time.get_play_time())
+    print_msg("REACHED END OF PATH: %8.3fs", Sc.time.get_play_time())
     
     emit_signal("destination_reached")
 
@@ -348,7 +348,7 @@ func _reset() -> void:
 func _start_edge(
         index: int,
         is_starting_navigation_retry := false) -> void:
-    Gs.profiler.start("navigator_start_edge")
+    Sc.profiler.start("navigator_start_edge")
     
     edge_index = index
     edge = path.edges[index]
@@ -366,15 +366,15 @@ func _start_edge(
     
     playback = instructions_action_source.start_instructions(
             edge,
-            Gs.time.get_scaled_play_time())
+            Sc.time.get_scaled_play_time())
     
     var duration_start_edge: float = \
-            Gs.profiler.stop("navigator_start_edge")
+            Sc.profiler.stop("navigator_start_edge")
     
     var format_string_template := \
             "STARTING EDGE NAV:   %8.3fs; %s; calc duration=%sms"
     var format_string_arguments := [
-            Gs.time.get_play_time(),
+            Sc.time.get_play_time(),
             edge.to_string_with_newlines(0),
             str(duration_start_edge),
         ]
@@ -403,7 +403,7 @@ func update(
 #            !just_started_navigating:
 #        # FIXME: ------------
 #        # - This work-around shouldn't be needed. What's the underlying problem?
-#        Gs.logger.print(
+#        Sc.logger.print(
 #                "Navigator.is_currently_navigating and " +
 #                "!Player.did_move_last_frame")
 #        var destination := path.destination
@@ -434,7 +434,7 @@ func update(
             interruption_type_label = \
                     "navigation_state.just_interrupted_by_user_action"
         print_msg("EDGE MVT INTERRUPTED:%8.3fs; %s",
-                [Gs.time.get_play_time(), interruption_type_label])
+                [Sc.time.get_play_time(), interruption_type_label])
         
         if movement_params.retries_navigation_when_interrupted:
             navigate_to_position(
@@ -447,7 +447,7 @@ func update(
         
     elif navigation_state.just_reached_end_of_edge:
         print_msg("REACHED END OF EDGE: %8.3fs; %s", [
-            Gs.time.get_play_time(),
+            Sc.time.get_play_time(),
             edge.get_name(),
         ])
     else:
@@ -464,7 +464,7 @@ func update(
         # clear itself).
         instructions_action_source.cancel_playback(
                 playback,
-                Gs.time.get_scaled_play_time())
+                Sc.time.get_scaled_play_time())
         playback = null
         
         # Check for the next edge to navigate.
@@ -482,7 +482,7 @@ func update(
             else:
                 var format_string_template := "INSRT CTR-PROTR EDGE:%8.3fs; %s"
                 var format_string_arguments := [
-                        Gs.time.get_play_time(),
+                        Sc.time.get_play_time(),
                         backtracking_edge.to_string_with_newlines(0),
                     ]
                 print_msg(format_string_template, format_string_arguments)
@@ -512,7 +512,7 @@ func predict_animation_state(
         return false
     
     var current_path_elapsed_time: float = \
-            Gs.time.get_scaled_play_time() - \
+            Sc.time.get_scaled_play_time() - \
             path_start_time_scaled
     var prediction_path_time := \
             current_path_elapsed_time + elapsed_time_from_now
@@ -537,14 +537,14 @@ func get_previous_destination() -> PositionAlongSurface:
 func print_msg(
         message_template: String,
         message_args = null) -> void:
-    if Surfacer.is_surfacer_logging and \
+    if Su.is_surfacer_logging and \
             movement_params.logs_navigator_events and \
             (player.is_human_player or \
                     movement_params.logs_computer_player_events):
         if message_args != null:
-            Gs.logger.print(message_template % message_args)
+            Sc.logger.print(message_template % message_args)
         else:
-            Gs.logger.print(message_template)
+            Sc.logger.print(message_template)
 
 
 static func _possibly_backtrack_to_not_protrude_past_surface_end(
@@ -661,7 +661,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                                 PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                 surface.last_point.y)
         _:
-            Gs.logger.error("Invalid SurfaceSide")
+            Sc.logger.error("Invalid SurfaceSide")
     
     if !would_protrude_past_surface_end_after_coming_to_a_stop:
         return null
@@ -699,7 +699,7 @@ func _optimize_edges_for_approach(
         # Already optimized.
         return
     
-    Gs.profiler.start("navigator_optimize_edges_for_approach")
+    Sc.profiler.start("navigator_optimize_edges_for_approach")
     
     var movement_params := collision_params.movement_params
     
@@ -791,7 +791,7 @@ func _optimize_edges_for_approach(
         # remove the first, intra-surface, edge.
         if path.edges.size() > 1 and \
                 path.edges[0] is IntraSurfaceEdge and \
-                Gs.geometry.are_points_equal_with_epsilon(
+                Sc.geometry.are_points_equal_with_epsilon(
                         path.edges[0].get_start(),
                         path.edges[1].get_start(),
                         1.0):
@@ -884,7 +884,7 @@ func _optimize_edges_for_approach(
                                 PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                 surface.last_point.y)
                 _:
-                    Gs.logger.error("Invalid SurfaceSide")
+                    Sc.logger.error("Invalid SurfaceSide")
             
             if target_point != Vector2.INF:
                 last_edge.update_terminal(
@@ -899,7 +899,7 @@ func _optimize_edges_for_approach(
     
     path.is_optimized = true
     
-    Gs.profiler.stop("navigator_optimize_edges_for_approach")
+    Sc.profiler.stop("navigator_optimize_edges_for_approach")
 
 
 func _ensure_edges_have_trajectory_state(
@@ -910,7 +910,7 @@ func _ensure_edges_have_trajectory_state(
         # Edges in the path should already contain trajectory state.
         return
     
-    Gs.profiler.start("navigator_ensure_edges_have_trajectory_state")
+    Sc.profiler.start("navigator_ensure_edges_have_trajectory_state")
     
     for i in path.edges.size():
         var edge: Edge = path.edges[i]
@@ -931,7 +931,7 @@ func _ensure_edges_have_trajectory_state(
             # TODO: I may be able to remove this, and may have only hit this
             #       bug because I was using stale platform graph files after
             #       updating movement_params?
-            Gs.logger.print(
+            Sc.logger.print(
                     "Unable to calculate trajectory for edge: %s" % 
                     edge.to_string())
             var placeholder_trajectory_hack := EdgeTrajectoryUtils \
@@ -941,17 +941,17 @@ func _ensure_edges_have_trajectory_state(
             # **Did you change the tile map or movement params and forget to
             #   update the platform graph??**
             assert(edge_with_trajectory != null and 
-                    Gs.geometry.are_floats_equal_with_epsilon(
+                    Sc.geometry.are_floats_equal_with_epsilon(
                             edge_with_trajectory.duration,
                             edge.duration,
                             0.001) and \
-                    Gs.geometry.are_floats_equal_with_epsilon(
+                    Sc.geometry.are_floats_equal_with_epsilon(
                             edge_with_trajectory.distance,
                             edge.distance,
                             1.0))
             path.edges[i] = edge_with_trajectory
     
-    Gs.profiler.stop("navigator_ensure_edges_have_trajectory_state")
+    Sc.profiler.stop("navigator_ensure_edges_have_trajectory_state")
 
 
 # Inserts extra intra-surface between any edges that land and then immediately

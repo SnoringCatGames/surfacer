@@ -67,21 +67,21 @@ func _destroy() -> void:
 
 
 func on_item_selected() -> void:
-    if Gs.gui.hud.get_is_inspector_panel_open() and \
+    if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
         print_msg("Inspector item selected: %s", to_string())
 
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
-    if Gs.gui.hud.get_is_inspector_panel_open() and \
+    if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
         print_msg("Inspector item expanded: %s", to_string())
 
 
 func on_item_collapsed() -> void:
     _destroy_children_if_needed()
-    if Gs.gui.hud.get_is_inspector_panel_open() and \
+    if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress() and \
             get_has_children():
         print_msg("Inspector item collapsed: %s", to_string())
@@ -119,7 +119,7 @@ func select() -> void:
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract InspectorItemController" +
             ".find_and_expand_controller is not implemented")
     return false
@@ -147,19 +147,19 @@ func _find_and_expand_controller_recursive_wrapper(
 func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract InspectorItemController" +
             "._find_and_expand_controller_recursive is not implemented")
 
 
 func get_text() -> String:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract InspectorItemController.get_text is not implemented")
     return ""
 
 
 func get_description() -> String:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract InspectorItemController.get_description is not " +
             "implemented")
     return ""
@@ -222,19 +222,19 @@ func _update_text() -> void:
 
 
 func _create_children_inner() -> void:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract InspectorItemController._create_children_inner is " +
             "not implemented")
 
 
 func _destroy_children_inner() -> void:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract InspectorItemController._destroy_children_inner is " +
             "not implemented")
 
 
 func get_annotation_elements() -> Array:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract InspectorItemController.get_annotation_elements is " +
             "not implemented")
     return []
@@ -245,9 +245,9 @@ func get_annotation_elements() -> Array:
 func print_msg(
         message_template: String,
         message_args = null) -> void:
-    if Surfacer.is_surfacer_logging and \
+    if Su.is_surfacer_logging and \
             graph.movement_params.logs_inspector_events:
         if message_args != null:
-            Gs.logger.print(message_template % message_args)
+            Sc.logger.print(message_template % message_args)
         else:
-            Gs.logger.print(message_template)
+            Sc.logger.print(message_template)

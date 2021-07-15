@@ -22,29 +22,29 @@ func _physics_process(_delta: float) -> void:
     if navigator.path != current_path:
         current_path = navigator.path
         if current_path != null:
-            current_path_start_time = Gs.time.get_play_time()
+            current_path_start_time = Sc.time.get_play_time()
             is_pulse_active = true
             current_path_pulse_delay = \
-                    Surfacer.nav_path_fade_in_duration * 0.85
+                    Su.nav_path_fade_in_duration * 0.85
             current_path_pulse_duration = max(
-                    Surfacer.new_path_pulse_duration,
+                    Su.new_path_pulse_duration,
                     current_path.duration * 0.5)
             does_pulse_grow = \
-                    Surfacer.does_human_nav_pulse_grow if \
+                    Su.does_human_nav_pulse_grow if \
                     navigator.player.is_human_player else \
-                    Surfacer.does_computer_nav_pulse_grow
+                    Su.does_computer_nav_pulse_grow
         update()
     
-    if Gs.slow_motion.get_is_enabled_or_transitioning() != \
+    if Sc.slow_motion.get_is_enabled_or_transitioning() != \
             is_slow_motion_enabled:
         is_slow_motion_enabled = \
-                Gs.slow_motion.get_is_enabled_or_transitioning()
+                Sc.slow_motion.get_is_enabled_or_transitioning()
         is_enabled = _get_is_pulse_enabled()
         update()
     
     if is_pulse_active:
         current_path_elapsed_time = \
-                Gs.time.get_play_time() - current_path_start_time
+                Sc.time.get_play_time() - current_path_start_time
         is_pulse_active = \
                 current_path_elapsed_time < \
                 current_path_pulse_duration + current_path_pulse_delay
@@ -55,7 +55,7 @@ func _draw() -> void:
     if current_path == null or \
             !is_enabled or \
             !is_pulse_active or \
-            Gs.level.get_is_intro_choreography_running():
+            Sc.level.get_is_intro_choreography_running():
         return
     
     var progress := max(
@@ -64,8 +64,8 @@ func _draw() -> void:
             0.0)
     
     var opacity_multiplier := \
-            1.0 - Gs.utils.ease_by_name(progress, "ease_in_strong")
-    progress = Gs.utils.ease_by_name(progress, "ease_out")
+            1.0 - Sc.utils.ease_by_name(progress, "ease_in_strong")
+    progress = Sc.utils.ease_by_name(progress, "ease_out")
     
     if progress < 0.0001 or \
             progress > 0.9999:
@@ -78,9 +78,9 @@ func _draw() -> void:
         path_segment_time_end = current_path.duration * progress
     else:
         var half_pulse_time_length: float = \
-                Surfacer.new_path_pulse_time_length / 2.0
+                Su.new_path_pulse_time_length / 2.0
         var path_duration_with_margin: float = \
-                current_path.duration + Surfacer.new_path_pulse_time_length
+                current_path.duration + Su.new_path_pulse_time_length
         var path_segment_time_center := \
                 path_duration_with_margin * progress - half_pulse_time_length
         path_segment_time_start = max(
@@ -91,15 +91,15 @@ func _draw() -> void:
                 current_path.duration)
     
     var path_color: Color = \
-            Surfacer.ann_defaults \
+            Su.ann_defaults \
                     .HUMAN_NAVIGATOR_PULSE_PATH_COLOR if \
             navigator.player.is_human_player else \
-            Surfacer.ann_defaults.COMPUTER_NAVIGATOR_PULSE_PATH_COLOR
+            Su.ann_defaults.COMPUTER_NAVIGATOR_PULSE_PATH_COLOR
     path_color.a *= opacity_multiplier
     var trim_front_end_radius := 0.0
     var trim_back_end_radius := 0.0
     
-    Gs.draw.draw_path_duration_segment(
+    Sc.draw.draw_path_duration_segment(
             self,
             current_path,
             path_segment_time_start,
@@ -113,11 +113,11 @@ func _draw() -> void:
 func _get_is_pulse_enabled() -> bool:
     if navigator.player.is_human_player:
         if is_slow_motion_enabled:
-            return Surfacer.is_human_nav_pulse_shown_with_slow_mo
+            return Su.is_human_nav_pulse_shown_with_slow_mo
         else:
-            return Surfacer.is_human_nav_pulse_shown_without_slow_mo
+            return Su.is_human_nav_pulse_shown_without_slow_mo
     else:
         if is_slow_motion_enabled:
-            return Surfacer.is_computer_nav_pulse_shown_with_slow_mo
+            return Su.is_computer_nav_pulse_shown_with_slow_mo
         else:
-            return Surfacer.is_computer_nav_pulse_shown_without_slow_mo
+            return Su.is_computer_nav_pulse_shown_without_slow_mo

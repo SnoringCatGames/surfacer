@@ -25,16 +25,16 @@ func _init() -> void:
 
 
 func _destroy() -> void:
-    Gs.time.clear_interval(_interval_id)
+    Sc.time.clear_interval(_interval_id)
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if !Gs.gui.is_user_interaction_enabled:
+    if !Sc.gui.is_user_interaction_enabled:
         return
     
     var is_control_pressed: bool = \
-            Gs.level_input.is_key_pressed(KEY_CONTROL) or \
-            Gs.level_input.is_key_pressed(KEY_META)
+            Sc.level_input.is_key_pressed(KEY_CONTROL) or \
+            Sc.level_input.is_key_pressed(KEY_META)
     
     if is_control_pressed:
         _stop_drag()
@@ -49,40 +49,40 @@ func _unhandled_input(event: InputEvent) -> void:
     # Touch-down: Position pre-selection.
     if event is InputEventScreenTouch and \
             event.pressed:
-        pointer_drag_position = Gs.utils.get_level_touch_position(event)
+        pointer_drag_position = Sc.utils.get_level_touch_position(event)
     
     # Touch-move: Position pre-selection.
     if event is InputEventScreenDrag:
-        pointer_drag_position = Gs.utils.get_level_touch_position(event)
+        pointer_drag_position = Sc.utils.get_level_touch_position(event)
     
     if pointer_drag_position != Vector2.INF:
         _update_drag(pointer_drag_position)
 
 
 func _validate() -> void:
-    assert(Surfacer.max_zoom_multiplier_from_pointer >= 1.0)
-    assert(Surfacer.max_pan_distance_from_pointer >= 0.0)
-    assert(Surfacer.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer <= \
+    assert(Su.max_zoom_multiplier_from_pointer >= 1.0)
+    assert(Su.max_pan_distance_from_pointer >= 0.0)
+    assert(Su.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer <= \
             0.5 and \
-            Surfacer.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer > \
+            Su.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer > \
             0.0)
 
 
 func _stop_drag() -> void:
-    Gs.time.clear_interval(_interval_id)
+    Sc.time.clear_interval(_interval_id)
     _interval_id = -1
     
     _delta_offset = Vector2.INF
     _delta_zoom_multiplier = INF
     
-    if Surfacer.snaps_camera_back_to_player:
+    if Su.snaps_camera_back_to_player:
         _update_camera(Vector2.ZERO, 1.0)
 
 
 func _update_drag(pointer_position: Vector2) -> void:
     _update_pan_and_zoom_delta_from_pointer(pointer_position)
     if _interval_id < 0:
-        _interval_id = Gs.time.set_interval(
+        _interval_id = Sc.time.set_interval(
                 funcref(self, "_update_camera_from_deltas"),
                 _PAN_AND_ZOOM_INTERVAL)
 
@@ -90,18 +90,18 @@ func _update_drag(pointer_position: Vector2) -> void:
 func _update_pan_and_zoom_delta_from_pointer(
         pointer_position: Vector2) -> void:
     # Calculate the camera bounds and the region that controls pan and zoom.
-    var pointer_max_control_bounds: Rect2 = Gs.camera_controller.get_bounds()
+    var pointer_max_control_bounds: Rect2 = Sc.camera_controller.get_bounds()
     var camera_center := \
             pointer_max_control_bounds.position + \
             pointer_max_control_bounds.size / 2.0
     var min_control_bounds_size: Vector2 = \
             pointer_max_control_bounds.size * \
             (1 - \
-            Surfacer.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer * 2)
+            Su.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer * 2)
     var min_control_bounds_position: Vector2 = \
             pointer_max_control_bounds.position + \
             pointer_max_control_bounds.size * \
-            Surfacer.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer
+            Su.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer
     var pointer_min_control_bounds := Rect2(
             min_control_bounds_position,
             min_control_bounds_size)
@@ -159,14 +159,14 @@ func _update_pan_and_zoom_delta_from_pointer(
     # Calcute the pan and zoom deltas for the current frame and drag weight.
     var per_frame_pan_ratio: float = \
             _PAN_AND_ZOOM_INTERVAL / \
-            Surfacer.duration_to_max_pan_from_pointer_at_max_control
+            Su.duration_to_max_pan_from_pointer_at_max_control
     var per_frame_zoom_ratio: float = \
             _PAN_AND_ZOOM_INTERVAL / \
-            Surfacer.duration_to_max_zoom_from_pointer_at_max_control
+            Su.duration_to_max_zoom_from_pointer_at_max_control
     var max_pan_distance_per_frame: float = \
-            Surfacer.max_pan_distance_from_pointer * per_frame_pan_ratio
+            Su.max_pan_distance_from_pointer * per_frame_pan_ratio
     var max_zoom_delta_per_frame: float = \
-            Surfacer.max_zoom_multiplier_from_pointer * per_frame_zoom_ratio
+            Su.max_zoom_multiplier_from_pointer * per_frame_zoom_ratio
     _delta_offset = Vector2(
             pan_zoom_control_weight_x * max_pan_distance_per_frame,
             pan_zoom_control_weight_y * max_pan_distance_per_frame)
@@ -183,7 +183,7 @@ func _update_camera_from_deltas() -> void:
     # Calculate the next values.
     var next_offset: Vector2
     var next_zoom_multiplier: float
-    if Surfacer.snaps_camera_back_to_player:
+    if Su.snaps_camera_back_to_player:
         next_offset = _target_offset + _delta_offset
         next_zoom_multiplier = _target_zoom_multiplier + _delta_zoom_multiplier
     else:
@@ -193,16 +193,16 @@ func _update_camera_from_deltas() -> void:
     # Don't let the pan and zoom exceed their max bounds.
     next_offset.x = clamp(
             next_offset.x,
-            -Surfacer.max_pan_distance_from_pointer,
-            Surfacer.max_pan_distance_from_pointer)
+            -Su.max_pan_distance_from_pointer,
+            Su.max_pan_distance_from_pointer)
     next_offset.y = clamp(
             next_offset.y,
-            -Surfacer.max_pan_distance_from_pointer,
-            Surfacer.max_pan_distance_from_pointer)
+            -Su.max_pan_distance_from_pointer,
+            Su.max_pan_distance_from_pointer)
     next_zoom_multiplier = clamp(
             next_zoom_multiplier,
             1.0,
-            Surfacer.max_zoom_multiplier_from_pointer)
+            Su.max_zoom_multiplier_from_pointer)
     
     _update_camera(next_offset, next_zoom_multiplier)
 
@@ -239,10 +239,10 @@ func _update_camera(
 func _update_pan(offset: Vector2) -> void:
     var delta := offset - self._tween_offset
     self._tween_offset = offset
-    Gs.camera_controller.offset += delta
+    Sc.camera_controller.offset += delta
 
 
 func _update_zoom(zoom_multiplier: float) -> void:
     var delta := zoom_multiplier - self._tween_zoom_multiplier
     self._tween_zoom_multiplier = zoom_multiplier
-    Gs.camera_controller.zoom_factor += delta
+    Sc.camera_controller.zoom_factor += delta

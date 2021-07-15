@@ -144,7 +144,7 @@ static func _calculate_trajectory(
                 PoolVector2Array(),
                 PoolVector2Array(),
                 [],
-                Gs.geometry.calculate_manhattan_distance(
+                Sc.geometry.calculate_manhattan_distance(
                         start.target_point, end.target_point))
     
     var frame_discrete_positions_from_test: PoolVector2Array
@@ -215,7 +215,7 @@ static func _calculate_displacement_x_for_vertical_distance_past_edge( \
         collider_rotation: float) -> float:
     var is_rotated_90_degrees = \
             abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Gs.geometry.FLOAT_EPSILON
+            Sc.geometry.FLOAT_EPSILON
     
     if collider_shape is CircleShape2D:
         if distance_past_edge >= collider_shape.radius:
@@ -261,7 +261,7 @@ static func _calculate_displacement_x_for_vertical_distance_past_edge( \
                     -collider_shape.extents.x
         
     else:
-        Gs.logger.error((
+        Sc.logger.error((
                 "Invalid Shape2D provided for " +
                 "_calculate_displacement_x_for_vertical_distance_past_edge: %s. " +
                 "The supported shapes are: CircleShape2D, CapsuleShape2D, " +

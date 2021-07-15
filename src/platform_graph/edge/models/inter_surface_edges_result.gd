@@ -36,16 +36,16 @@ func _init(
 
 
 func merge(other) -> void:
-    Gs.utils.concat(
+    Sc.utils.concat(
             self.all_jump_land_positions,
             other.all_jump_land_positions)
-    Gs.utils.concat(
+    Sc.utils.concat(
             self.failed_edge_attempts,
             other.failed_edge_attempts)
-    Gs.utils.concat(
+    Sc.utils.concat(
             self.valid_edges,
             other.valid_edges)
-    Gs.utils.concat(
+    Sc.utils.concat(
             self.edge_calc_results,
             other.edge_calc_results)
 
@@ -116,7 +116,7 @@ func _load_valid_edges_json_array(
     result.resize(json_object.size())
     for i in json_object.size():
         result[i] = \
-                Surfacer.edge_from_json_factory.create(json_object[i], context)
+                Su.edge_from_json_factory.create(json_object[i], context)
     return result
 
 

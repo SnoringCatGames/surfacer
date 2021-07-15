@@ -82,7 +82,7 @@ func _init(
             !movement_params.includes_continuous_trajectory_positions))
     
     if start_position_along_surface != null:
-        self.is_degenerate = Gs.geometry.are_points_equal_with_epsilon(
+        self.is_degenerate = Sc.geometry.are_points_equal_with_epsilon(
                 start_position_along_surface.target_point,
                 end_position_along_surface.target_point,
                 0.00001)
@@ -212,7 +212,7 @@ func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
-    Gs.logger.error("Abstract Edge._calculate_distance is not implemented")
+    Sc.logger.error("Abstract Edge._calculate_distance is not implemented")
     return INF
 
 
@@ -221,7 +221,7 @@ func _calculate_duration(
         end: PositionAlongSurface,
         instructions: EdgeInstructions,
         distance: float) -> float:
-    Gs.logger.error("Abstract Edge._calculate_duration is not implemented")
+    Sc.logger.error("Abstract Edge._calculate_duration is not implemented")
     return INF
 
 
@@ -229,7 +229,7 @@ static func _calculate_instructions(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         duration: float) -> EdgeInstructions:
-    Gs.logger.error("Abstract Edge._calculate_instructions is not implemented")
+    Sc.logger.error("Abstract Edge._calculate_instructions is not implemented")
     return null
 
 
@@ -268,7 +268,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
 func get_animation_state_at_time(
         result: PlayerAnimationState,
         edge_time: float) -> void:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract Edge.get_animation_state_at_time is not implemented")
 
 
@@ -308,7 +308,7 @@ func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract Edge._check_did_just_reach_surface_destination is not " +
             "implemented")
     return false
@@ -349,7 +349,7 @@ func _get_weight_multiplier() -> float:
         SurfaceType.AIR:
             return movement_params.air_edge_weight_multiplier
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return INF
 
 
@@ -470,15 +470,15 @@ func _load_edge_state_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_attempt_state_from_json_object(json_object, context)
-    movement_params = Surfacer.player_params[json_object.pn].movement_params
+    movement_params = Su.player_params[json_object.pn].movement_params
     is_optimized_for_path = json_object.io
     instructions = EdgeInstructions.new()
     instructions.load_from_json_object(json_object.in, context)
     if json_object.has("tr") and \
-            !Surfacer.ignores_platform_graph_save_file_trajectory_state:
+            !Su.ignores_platform_graph_save_file_trajectory_state:
         trajectory = EdgeTrajectory.new()
         trajectory.load_from_json_object(json_object.tr, context)
-    velocity_end = Gs.json.decode_vector2(json_object.ve)
+    velocity_end = Sc.json.decode_vector2(json_object.ve)
     distance = json_object.di
     duration = json_object.du
 
@@ -490,8 +490,8 @@ func _edge_state_to_json_object(json_object: Dictionary) -> void:
     json_object.in = instructions.to_json_object()
     if trajectory != null and \
             movement_params.is_trajectory_state_stored_at_build_time and \
-            !Surfacer.ignores_platform_graph_save_file_trajectory_state:
+            !Su.ignores_platform_graph_save_file_trajectory_state:
         json_object.tr = trajectory.to_json_object()
-    json_object.ve = Gs.json.encode_vector2(velocity_end)
+    json_object.ve = Sc.json.encode_vector2(velocity_end)
     json_object.di = distance
     json_object.du = duration

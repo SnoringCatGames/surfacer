@@ -2,30 +2,30 @@ class_name PathPreselectionAnnotator
 extends Node2D
 
 
-var HUMAN_PRESELECTION_SURFACE_COLOR := Gs.colors.opacify(
-        Gs.colors.human_navigation,
+var HUMAN_PRESELECTION_SURFACE_COLOR := Sc.colors.opacify(
+        Sc.colors.human_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var HUMAN_PRESELECTION_POSITION_INDICATOR_COLOR := Gs.colors.opacify(
-        Gs.colors.human_navigation,
+var HUMAN_PRESELECTION_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
+        Sc.colors.human_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var HUMAN_PRESELECTION_PATH_COLOR := Gs.colors.opacify(
-        Gs.colors.human_navigation,
+var HUMAN_PRESELECTION_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.human_navigation,
         ScaffolderColors.ALPHA_FAINT)
 
-var COMPUTER_PRESELECTION_SURFACE_COLOR := Gs.colors.opacify(
-        Gs.colors.computer_navigation,
+var COMPUTER_PRESELECTION_SURFACE_COLOR := Sc.colors.opacify(
+        Sc.colors.computer_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var COMPUTER_PRESELECTION_POSITION_INDICATOR_COLOR := Gs.colors.opacify(
-        Gs.colors.computer_navigation,
+var COMPUTER_PRESELECTION_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
+        Sc.colors.computer_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var COMPUTER_PRESELECTION_PATH_COLOR := Gs.colors.opacify(
-        Gs.colors.computer_navigation,
+var COMPUTER_PRESELECTION_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.computer_navigation,
         ScaffolderColors.ALPHA_FAINT)
 
-var INVALID_SURFACE_COLOR := Gs.colors.opacify(
-        Gs.colors.invalid, ScaffolderColors.ALPHA_XFAINT)
-var INVALID_POSITION_INDICATOR_COLOR := Gs.colors.opacify(
-        Gs.colors.invalid, ScaffolderColors.ALPHA_XFAINT)
+var INVALID_SURFACE_COLOR := Sc.colors.opacify(
+        Sc.colors.invalid, ScaffolderColors.ALPHA_XFAINT)
+var INVALID_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
+        Sc.colors.invalid, ScaffolderColors.ALPHA_XFAINT)
 
 const PRESELECTION_MIN_OPACITY := 0.5
 const PRESELECTION_MAX_OPACITY := 1.0
@@ -69,11 +69,11 @@ func _init(player: Player) -> void:
     self._predictions_container = Node2D.new()
     _predictions_container.visible = false
     _predictions_container.modulate.a = \
-            Surfacer.nav_selection_prediction_opacity
+            Su.nav_selection_prediction_opacity
     add_child(_predictions_container)
-    Gs.slow_motion.connect(
+    Sc.slow_motion.connect(
             "slow_motion_toggled", self, "_on_slow_motion_toggled")
-    Gs.slow_motion.music.connect(
+    Sc.slow_motion.music.connect(
             "tick_tock_beat", self, "_on_slow_motion_tick_tock_beat")
 
 
@@ -87,7 +87,7 @@ func _on_slow_motion_tick_tock_beat(
         meter: int) -> void:
     if is_downbeat or \
             animation_start_time < 0:
-        animation_start_time = Gs.time.get_play_time()
+        animation_start_time = Sc.time.get_play_time()
 
 
 func add_prediction(prediction: PlayerPrediction) -> void:
@@ -95,7 +95,7 @@ func add_prediction(prediction: PlayerPrediction) -> void:
 
 
 func _process(_delta: float) -> void:
-    var current_time: float = Gs.time.get_play_time()
+    var current_time: float = Sc.time.get_play_time()
     
     var did_preselection_change := \
             preselection_destination != \
@@ -136,8 +136,8 @@ func _process(_delta: float) -> void:
                         preselection_path.duration)
                 
                 # Update computer-player predictions.
-                for computer_player in Gs.utils.get_all_nodes_in_group(
-                        Surfacer.group_name_computer_players):
+                for computer_player in Sc.utils.get_all_nodes_in_group(
+                        Su.group_name_computer_players):
                     computer_player.prediction.match_navigator_or_path(
                             computer_player.navigator,
                             preselection_path.duration)
@@ -152,11 +152,11 @@ func _process(_delta: float) -> void:
     
     if preselection_destination != null:
         var preselection_duration: float = \
-                Gs.slow_motion.music \
+                Sc.slow_motion.music \
                         .tick_tock_beat_duration_unscaled * \
-                    Gs.slow_motion.tick_tock_tempo_multiplier * \
+                    Sc.slow_motion.tick_tock_tempo_multiplier * \
                     2.0 if \
-                Gs.slow_motion.is_enabled else \
+                Sc.slow_motion.is_enabled else \
                 PRESELECTION_DEFAULT_DURATION
         animation_progress = fmod((current_time - animation_start_time) / \
                 preselection_duration, 1.0)
@@ -191,7 +191,7 @@ func _draw() -> void:
         surface_base_color = INVALID_SURFACE_COLOR
         position_indicator_base_color = INVALID_POSITION_INDICATOR_COLOR
     
-    if Surfacer.is_preselection_trajectory_shown:
+    if Su.is_preselection_trajectory_shown:
         # Draw path.
         if preselection_path != null:
             var path_alpha := \
@@ -201,7 +201,7 @@ func _draw() -> void:
                     path_base_color.g,
                     path_base_color.b,
                     path_alpha)
-            Gs.draw.draw_path(
+            Sc.draw.draw_path(
                     self,
                     preselection_path,
                     PRESELECTION_PATH_STROKE_WIDTH,
@@ -213,7 +213,7 @@ func _draw() -> void:
                     true,
                     false)
             
-            Gs.draw.draw_beat_hashes(
+            Sc.draw.draw_beat_hashes(
                     self,
                     preselection_path_beats,
                     PRESELECTION_PATH_DOWNBEAT_HASH_LENGTH,
@@ -231,13 +231,13 @@ func _draw() -> void:
                     surface_base_color.g,
                     surface_base_color.b,
                     surface_alpha)
-            Gs.draw.draw_surface(
+            Sc.draw.draw_surface(
                     self,
                     phantom_surface,
                     surface_color,
                     PRESELECTION_SURFACE_DEPTH)
     
-    if Surfacer.is_navigation_destination_shown:
+    if Su.is_navigation_destination_shown:
         # Draw destination marker.
         var position_indicator_alpha := \
                 position_indicator_base_color.a * alpha_multiplier
@@ -248,7 +248,7 @@ func _draw() -> void:
                 position_indicator_alpha)
         var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
                 PRESELECTION_POSITION_INDICATOR_RADIUS
-        Gs.draw.draw_destination_marker(
+        Sc.draw.draw_destination_marker(
                 self,
                 phantom_position_along_surface,
                 false,
@@ -299,7 +299,7 @@ func _update_phantom_surface() -> void:
             phantom_surface.vertices[i] = \
                     transform.xform(phantom_surface.vertices[i])
         
-        phantom_surface.bounding_box = Gs.geometry.get_bounding_box_for_points(
+        phantom_surface.bounding_box = Sc.geometry.get_bounding_box_for_points(
                 phantom_surface.vertices)
 
 

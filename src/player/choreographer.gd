@@ -91,22 +91,22 @@ func start() -> void:
             "_execute_next_step")
     
     _initial_is_previous_trajectory_shown = \
-            Surfacer.is_previous_trajectory_shown
-    Surfacer.is_previous_trajectory_shown = false
-    _initial_is_active_trajectory_shown = Surfacer.is_active_trajectory_shown
-    Surfacer.is_active_trajectory_shown = false
+            Su.is_previous_trajectory_shown
+    Su.is_previous_trajectory_shown = false
+    _initial_is_active_trajectory_shown = Su.is_active_trajectory_shown
+    Su.is_active_trajectory_shown = false
     _initial_is_navigation_destination_shown = \
-            Surfacer.is_navigation_destination_shown
-    Surfacer.is_navigation_destination_shown = false
+            Su.is_navigation_destination_shown
+    Su.is_navigation_destination_shown = false
     
-    _initial_zoom = Gs.camera_controller.zoom_factor
-    _initial_time_scale = Gs.time.time_scale
+    _initial_zoom = Sc.camera_controller.zoom_factor
+    _initial_time_scale = Sc.time.time_scale
     _current_zoom = _initial_zoom
     _current_time_scale = _initial_time_scale
     
     _execute_next_step()
     
-    if !Surfacer.is_intro_choreography_shown:
+    if !Su.is_intro_choreography_shown:
         skip()
 
 
@@ -118,13 +118,13 @@ func _on_finished() -> void:
             "_execute_next_step")
     index = -1
     is_finished = true
-    Surfacer.is_previous_trajectory_shown = \
+    Su.is_previous_trajectory_shown = \
             _initial_is_previous_trajectory_shown
-    Surfacer.is_active_trajectory_shown = _initial_is_active_trajectory_shown
-    Surfacer.is_navigation_destination_shown = \
+    Su.is_active_trajectory_shown = _initial_is_active_trajectory_shown
+    Su.is_navigation_destination_shown = \
             _initial_is_navigation_destination_shown
-    Gs.camera_controller.zoom_factor = _initial_zoom
-    Gs.time.time_scale = _initial_time_scale
+    Sc.camera_controller.zoom_factor = _initial_zoom
+    Sc.time.time_scale = _initial_time_scale
     emit_signal("finished")
 
 
@@ -147,8 +147,8 @@ func _execute_next_step() -> void:
             step.duration if \
             step.has("duration") else \
             0.0
-    if !Surfacer.is_intro_choreography_shown:
-        duration /= Surfacer.skip_choreography_framerate_multiplier
+    if !Su.is_intro_choreography_shown:
+        duration /= Su.skip_choreography_framerate_multiplier
     var is_step_immediate := duration == 0.0
     
     var is_tween_registered := false
@@ -157,7 +157,7 @@ func _execute_next_step() -> void:
         match key:
             "destination":
                 var target: Vector2 = \
-                        Gs.utils.get_node_in_group(step.destination) \
+                        Sc.utils.get_node_in_group(step.destination) \
                                 .position if \
                         step.destination is String else \
                         step.destination
@@ -173,12 +173,12 @@ func _execute_next_step() -> void:
                         !is_inf(step.zoom) else \
                         _initial_zoom
                 if is_step_immediate:
-                    Gs.camera_controller.zoom_factor = _current_zoom
+                    Sc.camera_controller.zoom_factor = _current_zoom
                 else:
                     _tween.interpolate_property(
-                            Gs.camera_controller,
+                            Sc.camera_controller,
                             "zoom_factor",
-                            Gs.camera_controller.zoom_factor,
+                            Sc.camera_controller.zoom_factor,
                             _current_zoom,
                             duration,
                             ease_name)
@@ -187,28 +187,28 @@ func _execute_next_step() -> void:
                 _current_time_scale = \
                         _initial_time_scale * \
                         step.time_scale
-                if Surfacer.is_intro_choreography_shown:
+                if Su.is_intro_choreography_shown:
                     _current_time_scale *= \
-                            Surfacer.skip_choreography_framerate_multiplier
+                            Su.skip_choreography_framerate_multiplier
                 if is_step_immediate:
-                    Gs.time.time_scale = \
+                    Sc.time.time_scale = \
                             _current_time_scale
                 else:
                     _tween.interpolate_property(
-                            Gs.time,
+                            Sc.time,
                             "time_scale",
-                            Gs.time.time_scale,
+                            Sc.time.time_scale,
                             _current_time_scale,
                             duration,
                             ease_name)
                     is_tween_registered = true
             "is_user_interaction_enabled":
-                Gs.gui.is_user_interaction_enabled = \
+                Sc.gui.is_user_interaction_enabled = \
                         step.is_user_interaction_enabled
             "sound":
-                Gs.audio.play_sound(step.sound)
+                Sc.audio.play_sound(step.sound)
             "music":
-                Gs.audio.play_music(step.music)
+                Sc.audio.play_music(step.music)
             "animation":
                 # TODO: Implement Choreographer `animation` triggers.
                 pass
@@ -224,7 +224,7 @@ func _execute_next_step() -> void:
                 # Do nothing. Handled elsewhere.
                 pass
             _:
-                Gs.logger.error("Unrecognized Choreographer step key: " + key)
+                Sc.logger.error("Unrecognized Choreographer step key: " + key)
     
     if is_tween_registered:
         _tween.start()
@@ -235,7 +235,7 @@ func _execute_next_step() -> void:
             # Schedule the next step to happen after a delay if we didn't just
             # start any other events that would otherwise trigger the next step
             # after they complete.
-            Gs.time.set_timeout(
+            Sc.time.set_timeout(
                     funcref(self, "_execute_next_step"),
                     step.duration + 0.0001,
                     [],
@@ -252,13 +252,13 @@ func on_interaction() -> void:
 func skip() -> void:
     if _is_skipped:
         return
-    Gs.logger.print("Skipping choreography")
+    Sc.logger.print("Skipping choreography")
     _is_skipped = true
-    _current_time_scale *= Surfacer.skip_choreography_framerate_multiplier
+    _current_time_scale *= Su.skip_choreography_framerate_multiplier
     _tween.stop_all()
     # TODO: Consider tweening these very quickly instead of setting them
     #       immediately.
-    if Gs.time.time_scale != _current_time_scale:
-        Gs.time.time_scale = _current_time_scale
-    if Gs.camera_controller.zoom_factor != _current_zoom:
-        Gs.camera_controller.zoom_factor = _current_zoom
+    if Sc.time.time_scale != _current_time_scale:
+        Sc.time.time_scale = _current_time_scale
+    if Sc.camera_controller.zoom_factor != _current_zoom:
+        Sc.camera_controller.zoom_factor = _current_zoom

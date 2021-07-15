@@ -27,7 +27,7 @@ static func convert_calculation_steps_to_movement_instructions(
         calc_result: EdgeCalcResult,
         includes_jump: bool,
         destination_side: int) -> EdgeInstructions:
-    Gs.profiler.start(
+    Sc.profiler.start(
             "convert_calculation_steps_to_movement_instructions",
             collision_params.thread_id)
     
@@ -123,7 +123,7 @@ static func convert_calculation_steps_to_movement_instructions(
             instructions,
             duration)
     
-    Gs.profiler.stop_with_optional_metadata(
+    Sc.profiler.stop_with_optional_metadata(
             "convert_calculation_steps_to_movement_instructions",
             collision_params.thread_id,
             records_profile_or_edge_result_metadata)
@@ -177,7 +177,7 @@ static func sub_instructions(
         # FIXME: REMOVE: This shouldn't be needed anymore.
         assert(base_instruction.time - start_time >= 0.0)
     
-    Gs.utils.concat(
+    Sc.utils.concat(
             instructions,
             remaining_instructions)
     
