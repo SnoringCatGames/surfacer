@@ -1,25 +1,75 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/inspector_panel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/spacer.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_panel_container.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_s.tres" type="DynamicFont" id=4]
+[ext_resource path="res://addons/scaffolder/src/gui/style_box_flat_scalable.gd" type="Script" id=5]
+[ext_resource path="res://addons/scaffolder/src/gui/style_box_texture_scalable.gd" type="Script" id=6]
+[ext_resource path="res://src/config/default_theme.tres" type="Theme" id=7]
+[ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_xs.tres" type="DynamicFont" id=8]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/gear_circle_hover.png" type="Texture" id=9]
 [ext_resource path="res://addons/surfacer/src/gui/selection_description.tscn" type="PackedScene" id=10]
 [ext_resource path="res://addons/surfacer/src/gui/legend/legend.tscn" type="PackedScene" id=11]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/gear_circle_active.png" type="Texture" id=12]
 [ext_resource path="res://addons/surfacer/src/gui/platform_graph_inspector/platform_graph_inspector.tscn" type="PackedScene" id=13]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_texture_button.tscn" type="PackedScene" id=14]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/gear_circle_normal.png" type="Texture" id=15]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/pause_circle_normal.png" type="Texture" id=16]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/close_hover.png" type="Texture" id=17]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/close_active.png" type="Texture" id=18]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/close_normal.png" type="Texture" id=19]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_label.tscn" type="PackedScene" id=20]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/pause_circle_hover.png" type="Texture" id=21]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/pause_circle_active.png" type="Texture" id=22]
+[ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_h_separator.tscn" type="PackedScene" id=23]
 
-[sub_resource type="StyleBoxLine" id=1]
+[sub_resource type="Image" id=6]
+data = {
+"data": PoolByteArray( 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 127, 0, 0, 0, 127, 0, 0, 0, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0 ),
+"format": "RGBA8",
+"height": 21,
+"mipmaps": false,
+"width": 21
+}
+
+[sub_resource type="ImageTexture" id=2]
+image = SubResource( 6 )
+size = Vector2( 21, 21 )
+
+[sub_resource type="StyleBoxTexture" id=3]
+content_margin_left = 3.0
+content_margin_right = 3.0
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+texture = SubResource( 2 )
+region_rect = Rect2( 0, 0, 21, 21 )
+margin_left = 10.5
+margin_right = 10.5
+margin_top = 10.5
+margin_bottom = 10.5
+script = ExtResource( 6 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+content_margin_left = 3.0
+content_margin_right = 3.0
+bg_color = Color( 0.184314, 0.25098, 0.203922, 1 )
+script = ExtResource( 5 )
 
 [node name="InspectorPanel" type="VBoxContainer"]
-margin_right = 360.0
-margin_bottom = 684.0
+margin_left = 1540.0
+margin_top = -601.0
+margin_right = 1900.0
+margin_bottom = 83.0
 rect_min_size = Vector2( 360, 0 )
 mouse_filter = 2
+theme = ExtResource( 7 )
 custom_constants/separation = 0
 script = ExtResource( 1 )
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": false,
+"gs_rect_min_size": Vector2( 360, 0 ),
+"gs_rect_size": Vector2( 360, 684 )
 }
 
 [node name="ScaffolderPanelContainer" parent="." instance=ExtResource( 3 )]
@@ -30,99 +80,129 @@ margin_bottom = 600.0
 rect_min_size = Vector2( 360, 600 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
+custom_styles/panel = SubResource( 3 )
 style = 1
 is_unique = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScaffolderPanelContainer"]
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 353.0
-margin_bottom = 593.0
+margin_left = 3.0
+margin_top = 3.0
+margin_right = 357.0
+margin_bottom = 597.0
 custom_constants/separation = 0
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": false,
+"gs_rect_size": Vector2( 354, 594 ),
+"gs_separation": 0
 }
 
 [node name="Spacer" parent="ScaffolderPanelContainer/VBoxContainer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 173.0
-margin_right = 173.0
+margin_left = 177.0
+margin_right = 177.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 0, 8 )
 size = Vector2( 0, 8 )
 
 [node name="Header" type="HBoxContainer" parent="ScaffolderPanelContainer/VBoxContainer"]
-margin_right = 346.0
-margin_bottom = 20.0
+margin_top = 8.0
+margin_right = 354.0
+margin_bottom = 44.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
 custom_constants/separation = 0
+__meta__ = {
+"gs_rect_size": Vector2( 354, 20 ),
+"gs_separation": 0
+}
 
 [node name="Spacer" parent="ScaffolderPanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 10.0
-margin_bottom = 10.0
+margin_top = 18.0
+margin_right = 8.0
+margin_bottom = 18.0
+rect_min_size = Vector2( 8, 0 )
 size = Vector2( 8, 0 )
 
 [node name="PauseButton" type="Button" parent="ScaffolderPanelContainer/VBoxContainer/Header"]
-margin_right = 140.0
-margin_bottom = 20.0
+margin_left = 8.0
+margin_right = 148.0
+margin_bottom = 36.0
 rect_min_size = Vector2( 140, 0 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
+custom_fonts/font = ExtResource( 8 )
 text = "Pause"
+__meta__ = {
+"gs_rect_min_size": Vector2( 140, 0 ),
+"gs_rect_size": Vector2( 140, 20 )
+}
 
 [node name="Spacer5" parent="ScaffolderPanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 140.0
-margin_top = 10.0
-margin_right = 346.0
-margin_bottom = 10.0
+margin_left = 148.0
+margin_top = 18.0
+margin_right = 354.0
+margin_bottom = 18.0
 size_flags_horizontal = 3
 
 [node name="XButtonWrapper" type="Control" parent="ScaffolderPanelContainer/VBoxContainer/Header"]
-margin_left = 346.0
-margin_top = 10.0
-margin_right = 346.0
-margin_bottom = 10.0
+margin_left = 354.0
+margin_top = 18.0
+margin_right = 354.0
+margin_bottom = 18.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="XButton" parent="ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper" instance=ExtResource( 14 )]
 margin_left = -30.0
 margin_top = -12.0
-margin_right = -30.0
-margin_bottom = -12.0
+margin_right = -6.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 24, 24 )
+texture_normal = ExtResource( 19 )
+texture_pressed = ExtResource( 18 )
+texture_hover = ExtResource( 17 )
+texture_scale = Vector2( 2, 2 )
 size_override = Vector2( 24, 24 )
 
 [node name="Spacer6" parent="ScaffolderPanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 346.0
-margin_top = 10.0
-margin_right = 346.0
-margin_bottom = 10.0
+margin_left = 354.0
+margin_top = 18.0
+margin_right = 354.0
+margin_bottom = 18.0
 
 [node name="Sections" type="VBoxContainer" parent="ScaffolderPanelContainer/VBoxContainer"]
-margin_top = 20.0
-margin_right = 346.0
-margin_bottom = 586.0
+margin_top = 44.0
+margin_right = 354.0
+margin_bottom = 594.0
 size_flags_vertical = 3
 custom_constants/separation = 0
+__meta__ = {
+"gs_rect_size": Vector2( 354, 566 ),
+"gs_separation": 0
+}
 
 [node name="Spacer" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 173.0
-margin_right = 173.0
+margin_left = 177.0
+margin_right = 177.0
+margin_bottom = 4.0
+rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
 
 [node name="SelectionDescription" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 10 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 346.0
-margin_bottom = 34.0
+margin_top = 4.0
+margin_right = 354.0
+margin_bottom = 44.0
 size_flags_vertical = 4
 custom_constants/margin_right = 8
 custom_constants/margin_top = 12
@@ -132,19 +212,21 @@ custom_constants/margin_bottom = 8
 [node name="Spacer8" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 173.0
-margin_top = 34.0
-margin_right = 173.0
-margin_bottom = 34.0
+margin_left = 177.0
+margin_top = 44.0
+margin_right = 177.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
 
 [node name="ScaffolderPanelContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 34.0
-margin_right = 346.0
-margin_bottom = 62.0
+margin_top = 48.0
+margin_right = 354.0
+margin_bottom = 71.0
 size_flags_vertical = 4
+custom_styles/panel = SubResource( 5 )
 style = 2
 is_unique = true
 content_margin_left_override = 3
@@ -153,10 +235,10 @@ content_margin_right_override = 3
 [node name="LegendHeader" parent="ScaffolderPanelContainer/VBoxContainer/Sections/ScaffolderPanelContainer" instance=ExtResource( 20 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 339.0
-margin_bottom = 21.0
+margin_left = 3.0
+margin_right = 351.0
+margin_bottom = 23.0
+custom_fonts/font = ExtResource( 4 )
 text = "Legend"
 valign = 0
 font_size = "S"
@@ -164,41 +246,48 @@ font_size = "S"
 [node name="Spacer9" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 173.0
-margin_top = 62.0
-margin_right = 173.0
-margin_bottom = 62.0
+margin_left = 177.0
+margin_top = 71.0
+margin_right = 177.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
 
 [node name="Legend" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 11 )]
-margin_top = 62.0
-margin_right = 346.0
-margin_bottom = 76.0
+margin_top = 75.0
+margin_right = 354.0
+margin_bottom = 95.0
 size_flags_vertical = 4
 
 [node name="Spacer10" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 173.0
-margin_top = 76.0
-margin_right = 173.0
-margin_bottom = 76.0
+margin_left = 177.0
+margin_top = 95.0
+margin_right = 177.0
+margin_bottom = 99.0
+rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
 
 [node name="InspectorContainer" type="VBoxContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections"]
-margin_top = 76.0
-margin_right = 346.0
-margin_bottom = 558.0
+margin_top = 99.0
+margin_right = 354.0
+margin_bottom = 538.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
+__meta__ = {
+"gs_rect_size": Vector2( 354, 459 ),
+"gs_separation": 0
+}
 
 [node name="ScaffolderPanelContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections/InspectorContainer" instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 346.0
-margin_bottom = 28.0
+margin_right = 354.0
+margin_bottom = 23.0
 size_flags_vertical = 4
+custom_styles/panel = SubResource( 5 )
 style = 2
 is_unique = true
 content_margin_left_override = 3
@@ -207,10 +296,10 @@ content_margin_right_override = 3
 [node name="InspectorHeader" parent="ScaffolderPanelContainer/VBoxContainer/Sections/InspectorContainer/ScaffolderPanelContainer" instance=ExtResource( 20 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 339.0
-margin_bottom = 21.0
+margin_left = 3.0
+margin_right = 351.0
+margin_bottom = 23.0
+custom_fonts/font = ExtResource( 4 )
 text = "Platform graph inspector"
 valign = 0
 font_size = "S"
@@ -218,37 +307,48 @@ font_size = "S"
 [node name="PlatformGraphInspector" parent="ScaffolderPanelContainer/VBoxContainer/Sections/InspectorContainer" instance=ExtResource( 13 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 28.0
-margin_right = 346.0
-margin_bottom = 482.0
+margin_top = 23.0
+margin_right = 354.0
+margin_bottom = 439.0
 size_flags_vertical = 3
+custom_fonts/font = ExtResource( 8 )
 
-[node name="HSeparator" type="HSeparator" parent="ScaffolderPanelContainer/VBoxContainer/Sections"]
-margin_top = 558.0
-margin_right = 346.0
-margin_bottom = 558.0
-custom_styles/separator = SubResource( 1 )
-custom_constants/separation = 0
+[node name="ScaffolderHSeparator" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 23 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 538.0
+margin_right = 3.0
+margin_bottom = 542.0
 
 [node name="MarginContainer" type="MarginContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections"]
-margin_top = 558.0
-margin_right = 346.0
-margin_bottom = 566.0
+margin_top = 542.0
+margin_right = 354.0
+margin_bottom = 550.0
 custom_constants/margin_right = 4
 custom_constants/margin_top = 4
 custom_constants/margin_left = 4
 custom_constants/margin_bottom = 4
+__meta__ = {
+"gs_margin_bottom": 4,
+"gs_margin_left": 4,
+"gs_margin_right": 4,
+"gs_margin_top": 4,
+"gs_rect_size": Vector2( 354, 8 )
+}
 
 [node name="Annotators" type="GridContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections/MarginContainer"]
 margin_left = 4.0
 margin_top = 4.0
-margin_right = 342.0
+margin_right = 350.0
 margin_bottom = 4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/vseparation = 2
 custom_constants/hseparation = 16
 columns = 2
+__meta__ = {
+"gs_rect_size": Vector2( 346, 0 )
+}
 
 [node name="Spacer" parent="." instance=ExtResource( 2 )]
 anchor_right = 0.0
@@ -256,50 +356,78 @@ anchor_bottom = 0.0
 margin_left = 180.0
 margin_top = 600.0
 margin_right = 180.0
-margin_bottom = 600.0
+margin_bottom = 620.0
+rect_min_size = Vector2( 0, 20 )
 size = Vector2( 0, 20 )
 
 [node name="Footer" type="HBoxContainer" parent="."]
-margin_left = 360.0
-margin_top = 600.0
+margin_left = 180.0
+margin_top = 620.0
 margin_right = 360.0
-margin_bottom = 600.0
+margin_bottom = 684.0
 mouse_filter = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
 custom_constants/separation = 0
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": false,
+"gs_rect_size": Vector2( 180, 64 ),
+"gs_separation": 0
 }
 
 [node name="Spacer" parent="Footer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
+margin_top = 32.0
+margin_right = 32.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 32, 0 )
 size_flags_horizontal = 3
 size = Vector2( 32, 0 )
 
 [node name="GearButton" parent="Footer" instance=ExtResource( 14 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 0.0
-margin_bottom = 0.0
+margin_left = 32.0
+margin_right = 96.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+texture_normal = ExtResource( 15 )
+texture_pressed = ExtResource( 12 )
+texture_hover = ExtResource( 9 )
+texture_scale = Vector2( 4, 4 )
 size_override = Vector2( 64, 64 )
 
 [node name="Spacer13" parent="Footer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
+margin_left = 96.0
+margin_top = 32.0
+margin_right = 116.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 20, 0 )
 size = Vector2( 20, 0 )
 
 [node name="PauseButton" parent="Footer" instance=ExtResource( 14 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 0.0
-margin_bottom = 0.0
+margin_left = 116.0
+margin_right = 180.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+texture_normal = ExtResource( 16 )
+texture_pressed = ExtResource( 22 )
+texture_hover = ExtResource( 21 )
+texture_scale = Vector2( 4, 4 )
 size_override = Vector2( 64, 64 )
 
 [node name="Spacer4" parent="Footer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
+margin_left = 180.0
+margin_top = 32.0
+margin_right = 180.0
+margin_bottom = 32.0
 
 [connection signal="pressed" from="ScaffolderPanelContainer/VBoxContainer/Header/PauseButton" to="." method="_on_HeaderPauseButton_pressed"]
 [connection signal="pressed" from="ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper/XButton" to="." method="_on_HeaderXButton_pressed"]

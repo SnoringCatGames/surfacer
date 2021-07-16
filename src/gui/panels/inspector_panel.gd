@@ -1,3 +1,4 @@
+tool
 class_name InspectorPanel, \
 "res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
 extends VBoxContainer
@@ -137,12 +138,6 @@ func _deferred_on_gui_scale_changed() -> void:
             $ScaffolderPanelContainer.get_stylebox("panel")
     if panel_stylebox is StyleBoxFlatScalable:
         panel_stylebox.border_width_top = 0.0
-    
-    var separator_stylebox: StyleBoxLine = \
-            $ScaffolderPanelContainer/VBoxContainer/Sections/HSeparator \
-            .get_stylebox("separator")
-    separator_stylebox.color = Sc.colors.overlay_panel_border
-    separator_stylebox.thickness = Sc.styles.overlay_panel_border_width
 
 
 func _initialize_annotator_checkboxes() -> void:
