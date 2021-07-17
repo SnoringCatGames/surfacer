@@ -1,3 +1,4 @@
+tool
 class_name PlatformGraphInspector
 extends Tree
 
@@ -90,9 +91,10 @@ func _init() -> void:
 func _ready() -> void:
     assert(Su.is_inspector_enabled)
     
-    inspector_selector = PlatformGraphInspectorSelector.new(self)
-    Sc.canvas_layers.layers.annotation \
-            .add_child(inspector_selector)
+    if !Engine.editor_hint:
+        inspector_selector = PlatformGraphInspectorSelector.new(self)
+        Sc.canvas_layers.layers.annotation \
+                .add_child(inspector_selector)
     
     _populate()
 
