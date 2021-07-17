@@ -321,7 +321,7 @@ func _ready() -> void:
     Sc._bootstrap = SurfacerBootstrap.new()
 
 
-func amend_app_manifest(manifest: Dictionary) -> void:
+func _amend_app_manifest(manifest: Dictionary) -> void:
     if !manifest.has("colors_class"):
             manifest.colors_class = SurfacerColors
     if !manifest.has("geometry_class"):
@@ -363,7 +363,7 @@ func amend_app_manifest(manifest: Dictionary) -> void:
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
-func register_app_manifest(manifest: Dictionary) -> void:
+func _register_app_manifest(manifest: Dictionary) -> void:
     self.manifest = manifest
     var surfacer_manifest: Dictionary = manifest.surfacer_manifest
     
@@ -478,7 +478,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     assert(Sc._manifest.metadata.must_restart_level_to_change_settings)
 
 
-func set_up() -> void:
+func _set_up() -> void:
     assert(Sc.colors is SurfacerColors)
     assert(Sc.draw is SurfacerDrawUtils)
     assert(Sc.level_config is MommaDuckLevelConfig)

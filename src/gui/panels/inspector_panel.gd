@@ -84,11 +84,12 @@ func _ready() -> void:
             !OS.has_touchscreen_ui_hint():
         _set_is_open(true)
     
-    # Tell the element annotator to populate the legend, now that it's
-    # available.
-    Su.annotators.element_annotator.update()
-    
-    _initialize_annotator_checkboxes()
+    if !Engine.editor_hint:
+        # Tell the element annotator to populate the legend, now that it's
+        # available.
+        Su.annotators.element_annotator.update()
+        
+        _initialize_annotator_checkboxes()
     
     _on_gui_scale_changed()
 
