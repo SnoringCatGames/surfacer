@@ -32,8 +32,14 @@ func set_up(
         var sprites: Array = Sc.utils.get_children_by_type(self, Sprite, true)
         for sprite in sprites:
             sprite.add_to_group(Sc.slow_motion.GROUP_NAME_DESATURATABLES)
-    
+
+
+func _enter_tree() -> void:
     Sc.slow_motion.add_animator(self)
+
+
+func _exit_tree() -> void:
+    Sc.slow_motion.remove_animator(self)
 
 
 func _destroy() -> void:
@@ -91,7 +97,9 @@ func set_static_frame_position(animation_position: float) -> void:
 
 
 func match_rate_to_time_scale() -> void:
-    animation_player.playback_speed = _base_rate * Sc.time.get_combined_scale()
+    if is_instance_valid(animation_player):
+        animation_player.playback_speed = \
+                _base_rate * Sc.time.get_combined_scale()
 
 
 func get_current_animation_type() -> int:
