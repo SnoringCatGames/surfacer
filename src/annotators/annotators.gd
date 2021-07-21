@@ -125,6 +125,8 @@ func create_player_annotator(
 
 
 func destroy_player_annotator(player: Player) -> void:
+    if !player_annotators.has(player):
+        return
     player_annotators[player].queue_free()
     player_annotators.erase(player)
 

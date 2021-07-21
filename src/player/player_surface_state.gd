@@ -56,6 +56,7 @@ var previous_grabbed_surface: Surface
 var grabbed_side: int
 var grabbed_surface_normal := Vector2.INF
 var center_position_along_surface := PositionAlongSurface.new()
+var last_position_along_surface := PositionAlongSurface.new()
 
 var velocity := Vector2.INF
 
