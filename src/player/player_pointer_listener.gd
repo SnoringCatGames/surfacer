@@ -66,8 +66,8 @@ func _unhandled_input(event: InputEvent) -> void:
 #                Sc.utils.get_level_touch_position(event)
     
     var is_control_pressed: bool = \
-            Sc.level_input.is_key_pressed(KEY_CONTROL) or \
-            Sc.level_input.is_key_pressed(KEY_META)
+            Sc.level_button_input.is_key_pressed(KEY_CONTROL) or \
+            Sc.level_button_input.is_key_pressed(KEY_META)
     
     # Touch-up: Position selection.
     if event is InputEventScreenTouch and \
