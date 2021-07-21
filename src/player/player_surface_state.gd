@@ -389,51 +389,6 @@ func _update_which_surface_is_grabbed(
         var next_grab_position_tile_map_coord := \
                 collision_tile_map_coord_result.tile_map_coord
         
-        # FIXME: ----------------------------------
-        if Sc.geometry.get_tile_map_index_from_grid_coord(
-                next_grab_position_tile_map_coord,
-                grabbed_tile_map) == 2006:
-            print(">>>>>>>> break")
-            Sc.geometry.get_collision_tile_map_coord(
-                    collision_tile_map_coord_result,
-                    grab_position,
-                    grabbed_tile_map,
-                    is_touching_floor,
-                    is_touching_ceiling,
-                    is_touching_left_wall,
-                    is_touching_right_wall)
-        
-        if !collision_tile_map_coord_result \
-                .is_godot_floor_ceiling_detection_correct:
-            match collision_tile_map_coord_result.surface_side:
-                SurfaceSide.FLOOR:
-                    is_touching_floor = true
-                    is_grabbing_floor = true
-                    is_touching_ceiling = false
-                    is_grabbing_ceiling = false
-                    just_grabbed_ceiling = false
-                    grabbed_side = SurfaceSide.FLOOR
-                    grabbed_surface_normal = Sc.geometry.UP
-                SurfaceSide.CEILING:
-                    is_touching_ceiling = true
-                    is_grabbing_ceiling = true
-                    is_touching_floor = false
-                    is_grabbing_floor = false
-                    just_grabbed_floor = false
-                    grabbed_side = SurfaceSide.CEILING
-                    grabbed_surface_normal = Sc.geometry.DOWN
-                SurfaceSide.LEFT_WALL, \
-                SurfaceSide.RIGHT_WALL:
-                    is_touching_ceiling = \
-                            !is_touching_ceiling
-                    is_touching_floor = \
-                            !is_touching_floor
-                    is_grabbing_ceiling = false
-                    is_grabbing_floor = false
-                    just_grabbed_floor = false
-                    just_grabbed_ceiling = false
-                _:
-                    Sc.logger.error()
         just_changed_tile_map_coord = \
                 (preserves_just_changed_state and \
                         just_changed_tile_map_coord) or \

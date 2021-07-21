@@ -502,13 +502,10 @@ static func check_frame_for_collision(
                         expected_touching_right_wall,
                         true)
                 
-                if tile_map_result \
-                        .is_godot_floor_ceiling_detection_correct and \
-                        tile_map_result.error_message == "":
+                if tile_map_result.error_message == "":
                     surface_side = expected_surface_side_for_displacement
     
-    if tile_map_result.tile_map_coord == Vector2.INF or \
-            !tile_map_result.is_godot_floor_ceiling_detection_correct:
+    if tile_map_result.tile_map_coord == Vector2.INF:
         # Consider the default collision point returned from move_and_collide.
         
         tile_map_result.reset()
@@ -525,11 +522,6 @@ static func check_frame_for_collision(
                 is_touching_ceiling,
                 is_touching_left_wall,
                 is_touching_right_wall)
-        if !tile_map_result.is_godot_floor_ceiling_detection_correct:
-            # TODO: This may never happen anymore?
-            is_touching_floor = !is_touching_floor
-            is_touching_ceiling = !is_touching_ceiling
-            surface_side = tile_map_result.surface_side
         
         if tile_map_result.tile_map_coord == Vector2.INF:
             # Invalid collision state.
