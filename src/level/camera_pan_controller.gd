@@ -33,8 +33,8 @@ func _unhandled_input(event: InputEvent) -> void:
         return
     
     var is_control_pressed: bool = \
-            Sc.level_input.is_key_pressed(KEY_CONTROL) or \
-            Sc.level_input.is_key_pressed(KEY_META)
+            Sc.level_button_input.is_key_pressed(KEY_CONTROL) or \
+            Sc.level_button_input.is_key_pressed(KEY_META)
     
     if is_control_pressed:
         _stop_drag()

@@ -376,7 +376,7 @@ func _update_actions(delta_scaled: float) -> void:
                 navigation_state)
     
     actions.start_dash = \
-            Sc.level_input.is_action_just_pressed("dash") and \
+            Sc.level_button_input.is_action_just_pressed("dash") and \
             movement_params.can_dash and \
             _can_dash
 

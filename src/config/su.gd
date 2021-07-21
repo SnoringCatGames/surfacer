@@ -88,6 +88,7 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
             label = "Miscellaneous",
             is_collapsible = true,
             item_classes = [
+                ButtonControlsSettingsLabeledControlItem,
                 WelcomePanelSettingsLabeledControlItem,
                 IntroChoreographySettingsLabeledControlItem,
                 CameraZoomSettingsLabeledControlItem,
