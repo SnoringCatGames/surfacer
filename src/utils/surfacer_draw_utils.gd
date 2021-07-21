@@ -1,3 +1,4 @@
+tool
 class_name SurfacerDrawUtils
 extends ScaffolderDrawUtils
 
@@ -775,3 +776,44 @@ static func _remove_too_close_neighbors(
     
     result.resize(result_size)
     return result
+
+
+func draw_tile_map_indices( \
+        canvas: CanvasItem,
+        tile_map: TileMap,
+        color: Color,
+        only_renders_used_indices := false) -> void:
+    var half_cell_size: Vector2 = tile_map.cell_size * 0.5
+    
+    var positions: Array
+    if only_renders_used_indices:
+        positions = tile_map.get_used_cells()
+    else:
+        var tile_map_used_rect: Rect2 = tile_map.get_used_rect()
+        var tile_map_start_x := tile_map_used_rect.position.x
+        var tile_map_start_y := tile_map_used_rect.position.y
+        var tile_map_width := tile_map_used_rect.size.x
+        var tile_map_height := tile_map_used_rect.size.y
+        positions = []
+        positions.resize(tile_map_width * tile_map_height)
+        for y in tile_map_height:
+            for x in tile_map_width:
+                positions[y * tile_map_width + x] = \
+                        Vector2(x + tile_map_start_x, y + tile_map_start_y)
+    
+    for position in positions:
+        # Draw the grid index of the cell.
+        var cell_top_left_corner: Vector2 = tile_map.map_to_world(position)
+        var cell_center := cell_top_left_corner + half_cell_size
+        var tile_map_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+                position,
+                tile_map)
+        canvas.draw_string(
+                Sc.gui.fonts.main_xs,
+                cell_center,
+                str(tile_map_index),
+                color)
+        canvas.draw_circle(
+                cell_center,
+                1.0,
+                color)
