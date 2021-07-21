@@ -22,7 +22,7 @@ func process(player) -> bool:
             player.surface_state.is_touching_wall and \
             player.surface_state.is_touching_floor and \
             player.actions.pressed_down:
-        player.release_wall()
+        player.surface_state.release_wall(player)
         return true
     else:
         return false
