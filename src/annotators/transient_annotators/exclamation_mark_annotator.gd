@@ -92,6 +92,7 @@ func _draw() -> void:
     var width := width_start * mark_scale
     var length := length_start * mark_scale
     var stroke_width := stroke_width_start * mark_scale
+    var arc_length := clamp(width / 4.0, 2.0, 6.0)
     
     var center: Vector2 = player.position + Vector2(
             0.0,
@@ -112,7 +113,8 @@ func _draw() -> void:
             length,
             stroke_color,
             false,
-            stroke_width)
+            stroke_width,
+            arc_length)
     Sc.draw.draw_exclamation_mark(
             self,
             center,
@@ -120,4 +122,5 @@ func _draw() -> void:
             length,
             fill_color,
             true,
-            0.0)
+            0.0,
+            arc_length)

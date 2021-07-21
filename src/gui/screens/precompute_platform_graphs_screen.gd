@@ -171,7 +171,7 @@ func _on_graph_parse_progress(
         precompute_level_index + 1,
         Su.precompute_platform_graph_for_levels.size(),
     ]
-    var label_2 := "Parsing"
+    var label_2 := "--- Parsing ---"
     var label_3 := "Player %s (%s of %s)" % [
         player_name,
         player_index + 1,

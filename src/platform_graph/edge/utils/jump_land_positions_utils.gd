@@ -2295,7 +2295,12 @@ static func calculate_land_positions_on_surface(
                 movement_params,
                 origin_position,
                 land_surface_first_point_wrapper,
-                velocity_start)
+                velocity_start,
+                null,
+                false,
+                false,
+                true,
+                false)
         return [jump_land_positions] if \
                 jump_land_positions != null else \
                 []
@@ -2367,7 +2372,12 @@ static func calculate_land_positions_on_surface(
                                     movement_params,
                                     origin_position,
                                     land_position_with_horizontal_movement_distance,
-                                    velocity_start)
+                                    velocity_start,
+                                    null,
+                                    false,
+                                    false,
+                                    true,
+                                    false)
                     if jump_land_positions_with_horizontal_movement_distance != null:
                         result.push_back( \
                                 jump_land_positions_with_horizontal_movement_distance)
@@ -2386,7 +2396,12 @@ static func calculate_land_positions_on_surface(
                                     movement_params,
                                     origin_position,
                                     land_position_without_horizontal_movement_distance,
-                                    velocity_start)
+                                    velocity_start,
+                                    null,
+                                    false,
+                                    false,
+                                    true,
+                                    false)
                     if jump_land_positions_without_horizontal_movement_distance != null:
                         result.push_back( \
                                 jump_land_positions_without_horizontal_movement_distance)
@@ -2435,7 +2450,12 @@ static func calculate_land_positions_on_surface(
                         movement_params,
                         origin_position,
                         land_surface_bottom_end_wrapper,
-                        velocity_start)
+                        velocity_start,
+                        null,
+                        false,
+                        false,
+                        true,
+                        false)
                 return [jump_land_positions] if \
                         jump_land_positions != null else \
                         []
@@ -2455,7 +2475,12 @@ static func calculate_land_positions_on_surface(
                         movement_params,
                         origin_position,
                         land_position,
-                        velocity_start)
+                        velocity_start,
+                        null,
+                        false,
+                        false,
+                        true,
+                        false)
                 return [jump_land_positions] if \
                         jump_land_positions != null else \
                         []
@@ -2488,7 +2513,12 @@ static func calculate_land_positions_on_surface(
                         movement_params,
                         origin_position,
                         land_position,
-                        velocity_start)
+                        velocity_start,
+                        null,
+                        false,
+                        false,
+                        true,
+                        false)
                 return [jump_land_positions] if \
                         jump_land_positions != null else \
                         []
@@ -2954,6 +2984,8 @@ static func _create_jump_land_positions(
         return null
     
     var is_close_to_wall_bottom := \
+            is_land_position_close_to_wall_bottom(land_position) if \
+            preserves_land_position else \
             _possibly_offset_wall_bottom_land_position(
                     movement_params,
                     land_position)

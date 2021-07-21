@@ -51,13 +51,12 @@ func match_surface_target_and_collider(
         clips_to_surface_bounds := false,
         matches_target_to_player_dimensions := true) -> void:
     self.surface = surface
-    self.target_point = \
-            _clip_and_project_target_point_for_center_of_collider(
-                    surface,
-                    target_point,
-                    collider_half_width_height,
-                    clips_to_surface_bounds,
-                    matches_target_to_player_dimensions)
+    self.target_point = _clip_and_project_target_point_for_center_of_collider(
+            surface,
+            target_point,
+            collider_half_width_height,
+            clips_to_surface_bounds,
+            matches_target_to_player_dimensions)
 
 
 func update_target_projection_onto_surface() -> void:

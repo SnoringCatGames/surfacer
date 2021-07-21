@@ -940,7 +940,7 @@ func _ensure_edges_have_trajectory_state(
         else:
             # **Did you change the tile map or movement params and forget to
             #   update the platform graph??**
-            assert(edge_with_trajectory != null and 
+            assert(edge_with_trajectory != null and \
                     Sc.geometry.are_floats_equal_with_epsilon(
                             edge_with_trajectory.duration,
                             edge.duration,
