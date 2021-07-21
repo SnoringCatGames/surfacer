@@ -9,7 +9,7 @@ var animator_params: PlayerAnimatorParams
 var animation_player: AnimationPlayer
 
 var is_desaturatable: bool
-var _animation_type := PlayerAnimationType.UNKNOWN
+var _animation_type := PlayerAnimationType.REST
 var _base_rate := 1.0
 
 

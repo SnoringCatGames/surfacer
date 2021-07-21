@@ -816,6 +816,10 @@ func _update_which_surface_is_grabbed(
                 surface_state.grabbed_surface,
                 surface_state.center_position)
         
+        PositionAlongSurface.copy(
+                surface_state.last_position_along_surface,
+                surface_state.center_position_along_surface)
+        
     else:
         if surface_state.just_entered_air:
             surface_state.just_changed_grab_position = true
@@ -1009,6 +1013,41 @@ func set_position(position: Vector2) -> void:
     surface_state.center_position_along_surface.match_current_grab(
             surface_state.grabbed_surface,
             surface_state.center_position)
+
+
+func get_intended_position(type: int) -> PositionAlongSurface:
+    match type:
+        IntendedPositionType.CENTER_POSITION:
+            return surface_state.center_position_along_surface if \
+                    surface_state.is_grabbing_a_surface else \
+                    PositionAlongSurfaceFactory.create_position_without_surface(
+                            surface_state.center_position)
+        IntendedPositionType.CENTER_POSITION_ALONG_SURFACE:
+            return surface_state.center_position_along_surface
+        IntendedPositionType.LAST_POSITION_ALONG_SURFACE:
+            return surface_state.last_position_along_surface
+        IntendedPositionType.CLOSEST_SURFACE_POSITION:
+            return SurfaceParser.find_closest_position_on_a_surface(
+                    surface_state.center_position, self)
+        IntendedPositionType.EDGE_ORIGIN:
+            return navigator.edge.start_position_along_surface if \
+                    navigator.is_currently_navigating else \
+                    null
+        IntendedPositionType.EDGE_DESTINATION:
+            return navigator.edge.end_position_along_surface if \
+                    navigator.is_currently_navigating else \
+                    null
+        IntendedPositionType.PATH_ORIGIN:
+            return navigator.path.origin if \
+                    navigator.is_currently_navigating else \
+                    null
+        IntendedPositionType.PATH_DESTINATION:
+            return navigator.path.destination if \
+                    navigator.is_currently_navigating else \
+                    null
+        _:
+            Sc.logger.error("Invalid IntendedPositionType: %d" % type)
+            return null
 
 
 func get_current_animation_state(result: PlayerAnimationState) -> void:
