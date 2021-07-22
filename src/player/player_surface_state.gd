@@ -143,13 +143,10 @@ func update(
         next_is_touching_floor = player.is_on_floor()
         next_is_touching_ceiling = player.is_on_ceiling()
         next_is_touching_wall = player.is_on_wall()
-        which_wall = \
-                Sc.geometry.get_which_wall_collided_for_body(player)
+        which_wall = Sc.geometry.get_which_wall_collided_for_body(player)
     
-    is_touching_left_wall = \
-            which_wall == SurfaceSide.LEFT_WALL
-    is_touching_right_wall = \
-            which_wall == SurfaceSide.RIGHT_WALL
+    is_touching_left_wall = which_wall == SurfaceSide.LEFT_WALL
+    is_touching_right_wall = which_wall == SurfaceSide.RIGHT_WALL
     
     var next_is_touching_a_surface := \
             next_is_touching_floor or \
@@ -157,48 +154,34 @@ func update(
             next_is_touching_wall
     
     just_touched_floor = \
-            (preserves_just_changed_state and \
-                    just_touched_floor) or \
-            (next_is_touching_floor and \
-                    !is_touching_floor)
+            (preserves_just_changed_state and just_touched_floor) or \
+            (next_is_touching_floor and !is_touching_floor)
     just_stopped_touching_floor = \
-            (preserves_just_changed_state and \
-                    just_stopped_touching_floor) or \
-            (!next_is_touching_floor and \
-                    is_touching_floor)
+            (preserves_just_changed_state and just_stopped_touching_floor) or \
+            (!next_is_touching_floor and is_touching_floor)
     
     just_touched_ceiling = \
-            (preserves_just_changed_state and \
-                    just_touched_ceiling) or \
-            (next_is_touching_ceiling and \
-                    !is_touching_ceiling)
+            (preserves_just_changed_state and just_touched_ceiling) or \
+            (next_is_touching_ceiling and !is_touching_ceiling)
     just_stopped_touching_ceiling = \
             (preserves_just_changed_state and \
                     just_stopped_touching_ceiling) or \
-            (!next_is_touching_ceiling and \
-                    is_touching_ceiling)
+            (!next_is_touching_ceiling and is_touching_ceiling)
     
     just_touched_wall = \
-            (preserves_just_changed_state and \
-                    just_touched_wall) or \
-            (next_is_touching_wall and \
-                    !is_touching_wall)
+            (preserves_just_changed_state and just_touched_wall) or \
+            (next_is_touching_wall and !is_touching_wall)
     just_stopped_touching_wall = \
-            (preserves_just_changed_state and \
-                    just_stopped_touching_wall) or \
-            (!next_is_touching_wall and \
-                    is_touching_wall)
+            (preserves_just_changed_state and just_stopped_touching_wall) or \
+            (!next_is_touching_wall and is_touching_wall)
     
     just_touched_a_surface = \
-            (preserves_just_changed_state and \
-                    just_touched_a_surface) or \
-            (next_is_touching_a_surface and \
-                    !is_touching_a_surface)
+            (preserves_just_changed_state and just_touched_a_surface) or \
+            (next_is_touching_a_surface and !is_touching_a_surface)
     just_stopped_touching_a_surface = \
             (preserves_just_changed_state and \
                     just_stopped_touching_a_surface) or \
-            (!next_is_touching_a_surface and \
-                    is_touching_a_surface)
+            (!next_is_touching_a_surface and is_touching_a_surface)
     
     is_touching_floor = next_is_touching_floor
     is_touching_ceiling = next_is_touching_ceiling
@@ -229,15 +212,12 @@ func update(
     
     var facing_into_wall_and_pressing_up: bool = \
             player.actions.pressed_up and \
-            (is_facing_wall or \
-                    is_pressing_into_wall)
+            (is_facing_wall or is_pressing_into_wall)
     var facing_into_wall_and_pressing_grab: bool = \
             player.actions.pressed_grab_wall and \
-            (is_facing_wall or \
-                    is_pressing_into_wall)
+            (is_facing_wall or is_pressing_into_wall)
     var touching_floor_and_pressing_down: bool = \
-            is_touching_floor and \
-            player.actions.pressed_down
+            is_touching_floor and player.actions.pressed_down
     is_triggering_wall_grab = \
             (is_pressing_into_wall or \
             facing_into_wall_and_pressing_up or \
@@ -245,15 +225,13 @@ func update(
             !touching_floor_and_pressing_down
     
     is_triggering_fall_through = \
-            player.actions.pressed_down and \
-            player.actions.just_pressed_jump
+            player.actions.pressed_down and player.actions.just_pressed_jump
     
     # Whether we are grabbing a wall.
     is_grabbing_wall = \
             player.movement_params.can_grab_walls and (
                 is_touching_wall and \
-                (is_grabbing_wall or \
-                        is_triggering_wall_grab) and \
+                (is_grabbing_wall or is_triggering_wall_grab) and \
                 !touching_floor_and_pressing_down
             )
     
@@ -261,17 +239,14 @@ func update(
     if is_grabbing_wall:
         is_falling_through_floors = player.actions.pressed_down
     elif is_touching_floor:
-        is_falling_through_floors = \
-                is_triggering_fall_through
+        is_falling_through_floors = is_triggering_fall_through
     else:
         is_falling_through_floors = player.actions.pressed_down
     
     # Whether we should fall through fall-through floors.
     is_grabbing_walk_through_walls = \
-            player.movement_params.can_grab_walls and (
-                is_grabbing_wall or \
-                player.actions.pressed_up
-            )
+            player.movement_params.can_grab_walls and \
+                (is_grabbing_wall or player.actions.pressed_up)
     
     velocity = velocity
     
@@ -302,25 +277,17 @@ func _update_which_side_is_grabbed(
             next_is_grabbing_right_wall
     
     just_grabbed_floor = \
-            (preserves_just_changed_state and \
-                    just_grabbed_floor) or \
-            (next_is_grabbing_floor and \
-                    !is_grabbing_floor)
+            (preserves_just_changed_state and just_grabbed_floor) or \
+            (next_is_grabbing_floor and !is_grabbing_floor)
     just_grabbed_ceiling = \
-            (preserves_just_changed_state and \
-                    just_grabbed_ceiling) or \
-            (next_is_grabbing_ceiling and \
-                    !is_grabbing_ceiling)
+            (preserves_just_changed_state and just_grabbed_ceiling) or \
+            (next_is_grabbing_ceiling and !is_grabbing_ceiling)
     just_grabbed_left_wall = \
-            (preserves_just_changed_state and \
-                    just_grabbed_left_wall) or \
-            (next_is_grabbing_left_wall and \
-                    !is_grabbing_left_wall)
+            (preserves_just_changed_state and just_grabbed_left_wall) or \
+            (next_is_grabbing_left_wall and !is_grabbing_left_wall)
     just_grabbed_right_wall = \
-            (preserves_just_changed_state and \
-                    just_grabbed_right_wall) or \
-            (next_is_grabbing_right_wall and \
-                    !is_grabbing_right_wall)
+            (preserves_just_changed_state and just_grabbed_right_wall) or \
+            (next_is_grabbing_right_wall and !is_grabbing_right_wall)
     just_grabbed_a_surface = \
             just_grabbed_floor or \
             just_grabbed_ceiling or \
@@ -328,15 +295,11 @@ func _update_which_side_is_grabbed(
             just_grabbed_right_wall
     
     just_entered_air = \
-            (preserves_just_changed_state and \
-                    just_entered_air) or \
-            (!next_is_grabbing_a_surface and \
-                    is_grabbing_a_surface)
+            (preserves_just_changed_state and just_entered_air) or \
+            (!next_is_grabbing_a_surface and is_grabbing_a_surface)
     just_left_air = \
-            (preserves_just_changed_state and \
-                    just_left_air) or \
-            (next_is_grabbing_a_surface and \
-                    !is_grabbing_a_surface)
+            (preserves_just_changed_state and just_left_air) or \
+            (next_is_grabbing_a_surface and !is_grabbing_a_surface)
     
     is_grabbing_floor = next_is_grabbing_floor
     is_grabbing_ceiling = next_is_grabbing_ceiling
@@ -395,11 +358,9 @@ func _update_which_surface_is_grabbed(
                 (just_left_air or \
                         next_grab_position_tile_map_coord != \
                                 grab_position_tile_map_coord)
-        grab_position_tile_map_coord = \
-                next_grab_position_tile_map_coord
+        grab_position_tile_map_coord = next_grab_position_tile_map_coord
         
-        if just_changed_tile_map_coord or \
-                just_changed_tile_map:
+        if just_changed_tile_map_coord or just_changed_tile_map:
             grabbed_tile_map_index = \
                     Sc.geometry.get_tile_map_index_from_grid_coord(
                             grab_position_tile_map_coord,
@@ -411,10 +372,8 @@ func _update_which_surface_is_grabbed(
                         grabbed_tile_map_index,
                         grabbed_side)
         just_changed_surface = \
-                (preserves_just_changed_state and \
-                        just_changed_surface) or \
-                (just_left_air or \
-                        next_grabbed_surface != grabbed_surface)
+                (preserves_just_changed_state and just_changed_surface) or \
+                (just_left_air or next_grabbed_surface != grabbed_surface)
         if just_changed_surface:
             previous_grabbed_surface = \
                     previous_grabbed_surface if \
@@ -457,19 +416,14 @@ func _update_grab_state_from_expected_navigation(
     var next_grab_position := \
             position_along_surface.target_projection_onto_surface
     just_changed_grab_position = \
-            (preserves_just_changed_state and \
-                    just_changed_grab_position) or \
-            (just_left_air or \
-                    next_grab_position != grab_position)
+            (preserves_just_changed_state and just_changed_grab_position) or \
+            (just_left_air or next_grab_position != grab_position)
     grab_position = next_grab_position
     
     var next_grabbed_tile_map := position_along_surface.surface.tile_map
     just_changed_tile_map = \
-            (preserves_just_changed_state and \
-                    just_changed_tile_map) or \
-            (just_left_air or \
-                    next_grabbed_tile_map != \
-                            grabbed_tile_map)
+            (preserves_just_changed_state and just_changed_tile_map) or \
+            (just_left_air or next_grabbed_tile_map != grabbed_tile_map)
     grabbed_tile_map = next_grabbed_tile_map
 
 
@@ -491,19 +445,14 @@ func _update_grab_state_from_collision(
     
     var next_grab_position := collision.position
     just_changed_grab_position = \
-            (preserves_just_changed_state and \
-                    just_changed_grab_position) or \
-            (just_left_air or \
-                    next_grab_position != grab_position)
+            (preserves_just_changed_state and just_changed_grab_position) or \
+            (just_left_air or next_grab_position != grab_position)
     grab_position = next_grab_position
     
     var next_grabbed_tile_map := collision.collider
     just_changed_tile_map = \
-            (preserves_just_changed_state and \
-                    just_changed_tile_map) or \
-            (just_left_air or \
-                    next_grabbed_tile_map != \
-                            grabbed_tile_map)
+            (preserves_just_changed_state and just_changed_tile_map) or \
+            (just_left_air or next_grabbed_tile_map != grabbed_tile_map)
     grabbed_tile_map = next_grabbed_tile_map
 
 
