@@ -40,7 +40,8 @@ var is_triggering_fall_through := false
 var is_falling_through_floors := false
 var is_grabbing_walk_through_walls := false
 
-var which_wall: int = SurfaceSide.NONE
+var which_wall := SurfaceSide.NONE
+var surface_type := SurfaceType.AIR
 
 var center_position := Vector2.INF
 var previous_center_position := Vector2.INF
@@ -234,6 +235,13 @@ func update(
                 (is_grabbing_wall or is_triggering_wall_grab) and \
                 !touching_floor_and_pressing_down
             )
+    
+    if is_grabbing_wall:
+        surface_type = SurfaceType.WALL
+    elif is_grabbing_floor:
+        surface_type = SurfaceType.FLOOR
+    else:
+        surface_type = SurfaceType.AIR
     
     # Whether we should fall through fall-through floors.
     if is_grabbing_wall:

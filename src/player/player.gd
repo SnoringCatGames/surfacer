@@ -6,23 +6,11 @@ const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 
 var player_name: String
-var can_grab_walls: bool
-var can_grab_ceilings: bool
-var can_grab_floors: bool
 var movement_params: MovementParams
 # Array<EdgeCalculator>
 var edge_calculators: Array
 # Array<Surface>
 var possible_surfaces_set: Dictionary
-var actions_from_previous_frame := PlayerActionState.new()
-var actions := PlayerActionState.new()
-var surface_state := PlayerSurfaceState.new()
-var navigation_state: PlayerNavigationState
-var pointer_listener: PlayerPointerListener
-
-var new_selection: PointerSelectionPosition
-var last_selection: PointerSelectionPosition
-var pre_selection: PointerSelectionPosition
 
 var is_human_player := false
 var is_fake := false
@@ -31,22 +19,7 @@ var _is_destroyed := false
 var _is_navigator_initialized := false
 var _is_ready := false
 
-var graph: PlatformGraph
-var surface_parser: SurfaceParser
-var navigator: Navigator
 var velocity := Vector2.ZERO
-var level
-var collider: CollisionShape2D
-var animator: PlayerAnimator
-var prediction: PlayerPrediction
-# Array<PlayerActionSource>
-var action_sources := []
-# Dictionary<String, bool>
-var _previous_actions_this_frame := {}
-# Array<PlayerActionHandler>
-var action_handlers: Array
-# SurfaceType
-var current_action_type: int
 
 var just_triggered_jump := false
 var is_rising_from_jump := false
@@ -56,6 +29,32 @@ var did_move_last_frame := false
 
 var current_max_horizontal_speed: float
 var _can_dash := true
+
+var _actions_from_previous_frame := PlayerActionState.new()
+var actions := PlayerActionState.new()
+var surface_state := PlayerSurfaceState.new()
+var navigation_state: PlayerNavigationState
+
+var new_selection: PointerSelectionPosition
+var last_selection: PointerSelectionPosition
+var pre_selection: PointerSelectionPosition
+
+var graph: PlatformGraph
+var surface_parser: SurfaceParser
+var navigator: Navigator
+var level
+var collider: CollisionShape2D
+var animator: PlayerAnimator
+var prediction: PlayerPrediction
+var pointer_listener: PlayerPointerListener
+
+# Array<PlayerActionSource>
+var _action_sources := []
+# Dictionary<String, bool>
+var _previous_actions_this_frame := {}
+# Array<PlayerActionHandler>
+var _action_handlers: Array
+
 var _dash_cooldown_timeout: int
 var _dash_fade_tween: ScaffolderTween
 
@@ -66,14 +65,11 @@ func _init(player_name: String) -> void:
     self.level = Sc.level
     
     var player_params: PlayerParams = Su.player_params[player_name]
-    self.can_grab_walls = player_params.movement_params.can_grab_walls
-    self.can_grab_ceilings = player_params.movement_params.can_grab_ceilings
-    self.can_grab_floors = player_params.movement_params.can_grab_floors
     self.movement_params = player_params.movement_params
     self.current_max_horizontal_speed = \
             player_params.movement_params.max_horizontal_speed_default
     self.edge_calculators = player_params.edge_calculators
-    self.action_handlers = player_params.action_handlers
+    self._action_handlers = player_params.action_handlers
     
     self.new_selection = PointerSelectionPosition.new(self)
     self.last_selection = PointerSelectionPosition.new(self)
@@ -228,13 +224,13 @@ func _set_camera() -> void:
 
 
 func _init_user_controller_action_source() -> void:
-    action_sources.push_back(UserActionSource.new(self, true))
+    _action_sources.push_back(UserActionSource.new(self, true))
 
 
 func _init_navigator() -> void:
     navigator = Navigator.new(self, graph)
     navigation_state = navigator.navigation_state
-    action_sources.push_back(navigator.instructions_action_source)
+    _action_sources.push_back(navigator.instructions_action_source)
 
 
 func _physics_process(delta: float) -> void:
@@ -331,7 +327,7 @@ func _update_navigator(delta_scaled: float) -> void:
     
     # TODO: There's probably a more efficient way to do this.
     if navigator.actions_might_be_dirty:
-        actions.copy(actions_from_previous_frame)
+        actions.copy(_actions_from_previous_frame)
         _update_actions(delta_scaled)
         _update_surface_state(true)
 
@@ -361,16 +357,16 @@ func _handle_pointer_selections() -> void:
 
 func _update_actions(delta_scaled: float) -> void:
     # Record actions for the previous frame.
-    actions_from_previous_frame.copy(actions)
+    _actions_from_previous_frame.copy(actions)
     
     # Clear actions for the current frame.
     actions.clear()
     
     # Update actions for the current frame.
-    for action_source in action_sources:
+    for action_source in _action_sources:
         action_source.update(
                 actions,
-                actions_from_previous_frame,
+                _actions_from_previous_frame,
                 Sc.time.get_scaled_play_time(),
                 delta_scaled,
                 navigation_state)
@@ -385,16 +381,9 @@ func _update_actions(delta_scaled: float) -> void:
 func _process_actions() -> void:
     _previous_actions_this_frame.clear()
     
-    if surface_state.is_grabbing_wall:
-        current_action_type = SurfaceType.WALL
-    elif surface_state.is_grabbing_floor:
-        current_action_type = SurfaceType.FLOOR
-    else:
-        current_action_type = SurfaceType.AIR
-    
-    for action_handler in action_handlers:
+    for action_handler in _action_handlers:
         var is_action_relevant_for_surface: bool = \
-                action_handler.type == current_action_type or \
+                action_handler.type == surface_state.surface_type or \
                 action_handler.type == SurfaceType.OTHER
         var is_action_relevant_for_physics_mode: bool = \
                 !movement_params.bypasses_runtime_physics or \
@@ -406,7 +395,7 @@ func _process_actions() -> void:
 
 
 func _process_animation() -> void:
-    match current_action_type:
+    match surface_state.surface_type:
         SurfaceType.FLOOR:
             if actions.pressed_left or actions.pressed_right:
                 animator.play(PlayerAnimationType.WALK)
