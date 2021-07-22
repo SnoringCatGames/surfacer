@@ -25,6 +25,8 @@ var collider_shape: Shape2D
 var collider_rotation: float
 var collider_half_width_height := Vector2.INF
 
+var collision_detection_layers := []
+
 # -   This shape is used for calculating trajectories that approximate what
 #     might normally happen at runtime.
 # -   These trajectories could be used both for rendering navigation paths, as

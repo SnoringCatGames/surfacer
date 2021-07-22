@@ -58,6 +58,8 @@ var _action_handlers: Array
 var _dash_cooldown_timeout: int
 var _dash_fade_tween: ScaffolderTween
 
+var _extra_collision_detection_area: Area2D
+
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
@@ -146,6 +148,9 @@ func _ready() -> void:
     
     surface_state.previous_center_position = self.position
     surface_state.center_position = self.position
+    
+    for layer_name in movement_params.collision_detection_layers:
+        _add_layer_for_collision_detection(layer_name)
     
     Sc.device.connect(
             "display_resized",
@@ -514,6 +519,14 @@ func get_is_sprite_visible() -> bool:
     return animator.visible
 
 
+func get_current_animation_state(result: PlayerAnimationState) -> void:
+    result.player_position = position
+    result.animation_type = animator.get_current_animation_type()
+    result.animation_position = \
+            animator.animation_player.current_animation_position
+    result.facing_left = surface_state.horizontal_facing_sign == -1
+
+
 func set_position(position: Vector2) -> void:
     self.position = position
     surface_state.center_position = position
@@ -557,9 +570,178 @@ func get_intended_position(type: int) -> PositionAlongSurface:
             return null
 
 
-func get_current_animation_state(result: PlayerAnimationState) -> void:
-    result.player_position = position
-    result.animation_type = animator.get_current_animation_type()
-    result.animation_position = \
-            animator.animation_player.current_animation_position
-    result.facing_left = surface_state.horizontal_facing_sign == -1
+# Uses physics layers and an auxiliary Area2D to detect collisions with areas
+# and objects.
+func _add_layer_for_collision_detection(layer_name: String) -> void:
+    # Create the Area2D if it doesn't exist yet.
+    if !is_instance_valid(_extra_collision_detection_area):
+        _extra_collision_detection_area = Area2D.new()
+        _extra_collision_detection_area.monitoring = true
+        _extra_collision_detection_area.monitorable = false
+        _extra_collision_detection_area.collision_layer = 0
+        _extra_collision_detection_area.collision_mask = 0
+        _extra_collision_detection_area.connect(
+                "area_entered", self, "_on_area_entered", [layer_name])
+        _extra_collision_detection_area.connect(
+                "area_exited", self, "_on_area_exited", [layer_name])
+        _extra_collision_detection_area.connect(
+                "body_entered", self, "_on_body_entered", [layer_name])
+        _extra_collision_detection_area.connect(
+                "body_exited", self, "_on_body_exited", [layer_name])
+        
+        var collision_shape := CollisionShape2D.new()
+        collision_shape.shape = movement_params.collider_shape
+        collision_shape.rotation = movement_params.collider_rotation
+        
+        _extra_collision_detection_area.add_child(collision_shape)
+        add_child(_extra_collision_detection_area)
+    
+    # Enable the bit for this layer.
+    var layer_bit_mask: int = \
+            Sc.utils.get_physics_layer_bitmask_from_name(layer_name)
+    _extra_collision_detection_area.collision_mask |= layer_bit_mask
+
+
+func _remove_layer_for_collision_detection(layer_name: String) -> void:
+    if !is_instance_valid(_extra_collision_detection_area):
+        return
+    
+    # Disable the bit for this layer.
+    var layer_bit_mask: int = \
+            Sc.utils.get_physics_layer_bitmask_from_name(layer_name)
+    _extra_collision_detection_area.collision_mask &= ~layer_bit_mask
+    
+    # Destroy the Area2D if it is no longer listening to anything.
+    if _extra_collision_detection_area.collision_mask == 0:
+        _extra_collision_detection_area.queue_free()
+        _extra_collision_detection_area = null
+
+
+func _on_area_entered(
+        area: Area2D,
+        layer_name: String) -> void:
+    if _is_destroyed or \
+            is_fake or \
+            !Sc.level_session.has_started:
+        return
+    _on_target_started_colliding(area, layer_name)
+
+
+func _on_area_exited(
+        area: Area2D,
+        layer_name: String) -> void:
+    if _is_destroyed or \
+            is_fake or \
+            !Sc.level_session.has_started:
+        return
+    _on_target_stopped_colliding(area, layer_name)
+
+
+func _on_body_entered(
+        body: Node,
+        layer_name: String) -> void:
+    if _is_destroyed or \
+            is_fake or \
+            !Sc.level_session.has_started:
+        return
+    _on_target_started_colliding(body, layer_name)
+
+
+func _on_body_exited(
+        body: Node,
+        layer_name: String) -> void:
+    if _is_destroyed or \
+            is_fake or \
+            !Sc.level_session.has_started:
+        return
+    _on_target_stopped_colliding(body, layer_name)
+
+
+func _on_target_started_colliding(
+        target: Node2D,
+        layer_name: String) -> void:
+    pass
+
+
+func _on_target_stopped_colliding(
+        target: Node2D,
+        layer_name: String) -> void:
+    pass
+
+
+# FIXME: ---------------------------------
+# 
+# - New Player sub-classes:
+#   - walk/climb back and forth
+#     - surface ends or with a given range
+#     - with a given pause time (or a min/max to randomly pick from)
+#     - optionally jump/climb across nearby surfaces?
+#   - jump back and forth
+#     - surface ends or with a given range
+#     - with a given pause time (or a min/max to randomly pick from)
+#     - optionally jump/climb across nearby surfaces?
+#   - walk/climb along connected surfaces
+#     - with a given max speed
+#   - randomly select destinations within range
+# 
+# - New Player methods: ...
+# 
+# 
+# - follow target player (or nearest player of group)
+#   - configure stopping and starting distance for close-enough
+#   - configure stopping and starting distance for too-far
+# - collide target player (or nearest player of group)
+#   - only collide jumping down onto?
+#   - only collide while at a higher center position?
+#   - only collide while facing?
+#   - configure stopping and starting distance for too-far
+# - avoid players of group
+#   - configure stopping and starting distance
+#   - configure stopping and starting distance for too-far
+# 
+# - custom
+# 
+# - Some general params:
+#   - throttle delay before re-calculating decisions
+#     - also, don't re-calculate until landing?
+#   - 
+
+
+func _add_group_for_entered_proximity_detection(
+        group_name: String,
+        trigger_distance: float) -> void:
+    pass
+
+
+func _add_group_for_exited_proximity_detection(
+        group_name: String,
+        trigger_distance: float) -> void:
+    pass
+
+
+func _remove_group_for_proximity_detection(group_name: String) -> void:
+    pass
+
+
+func _check_for_entered_proximity() -> void:
+    pass
+
+
+func _check_for_exited_proximity() -> void:
+    pass
+
+
+# NOTE: group_name is empty if we're only listening to the individual target.
+func _on_target_entered_proximity(
+        target: Node2D,
+        group_name: String,
+        trigger_distance: float) -> void:
+    pass
+
+
+# NOTE: group_name is empty if we're only listening to the individual target.
+func _on_target_exited_proximity(
+        target: Node2D,
+        group_name: String,
+        trigger_distance: float) -> void:
+    pass
