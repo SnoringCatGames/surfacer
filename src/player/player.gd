@@ -59,6 +59,10 @@ var _dash_cooldown_timeout: int
 var _dash_fade_tween: ScaffolderTween
 
 var _extra_collision_detection_area: Area2D
+# Dictionary<String, Area2D>
+var _layers_for_entered_proximity_detection := {}
+# Dictionary<String, Area2D>
+var _layers_for_exited_proximity_detection := {}
 
 
 func _init(player_name: String) -> void:
@@ -151,6 +155,28 @@ func _ready() -> void:
     
     for layer_name in movement_params.collision_detection_layers:
         _add_layer_for_collision_detection(layer_name)
+    
+    for proximity_config in movement_params.proximity_entered_detection_layers:
+        if proximity_config.has("radius"):
+            _add_layer_for_entered_radius_proximity_detection(
+                    proximity_config.layer_name,
+                    proximity_config.radius)
+        else:
+            _add_layer_for_entered_shape_proximity_detection(
+                    proximity_config.layer_name,
+                    proximity_config.shape,
+                    proximity_config.rotation)
+    
+    for proximity_config in movement_params.proximity_exited_detection_layers:
+        if proximity_config.has("radius"):
+            _add_layer_for_exited_radius_proximity_detection(
+                    proximity_config.layer_name,
+                    proximity_config.radius)
+        else:
+            _add_layer_for_exited_shape_proximity_detection(
+                    proximity_config.layer_name,
+                    proximity_config.shape,
+                    proximity_config.rotation)
     
     Sc.device.connect(
             "display_resized",
@@ -570,106 +596,8 @@ func get_intended_position(type: int) -> PositionAlongSurface:
             return null
 
 
-# Uses physics layers and an auxiliary Area2D to detect collisions with areas
-# and objects.
-func _add_layer_for_collision_detection(layer_name: String) -> void:
-    # Create the Area2D if it doesn't exist yet.
-    if !is_instance_valid(_extra_collision_detection_area):
-        _extra_collision_detection_area = Area2D.new()
-        _extra_collision_detection_area.monitoring = true
-        _extra_collision_detection_area.monitorable = false
-        _extra_collision_detection_area.collision_layer = 0
-        _extra_collision_detection_area.collision_mask = 0
-        _extra_collision_detection_area.connect(
-                "area_entered", self, "_on_area_entered", [layer_name])
-        _extra_collision_detection_area.connect(
-                "area_exited", self, "_on_area_exited", [layer_name])
-        _extra_collision_detection_area.connect(
-                "body_entered", self, "_on_body_entered", [layer_name])
-        _extra_collision_detection_area.connect(
-                "body_exited", self, "_on_body_exited", [layer_name])
-        
-        var collision_shape := CollisionShape2D.new()
-        collision_shape.shape = movement_params.collider_shape
-        collision_shape.rotation = movement_params.collider_rotation
-        
-        _extra_collision_detection_area.add_child(collision_shape)
-        add_child(_extra_collision_detection_area)
-    
-    # Enable the bit for this layer.
-    var layer_bit_mask: int = \
-            Sc.utils.get_physics_layer_bitmask_from_name(layer_name)
-    _extra_collision_detection_area.collision_mask |= layer_bit_mask
-
-
-func _remove_layer_for_collision_detection(layer_name: String) -> void:
-    if !is_instance_valid(_extra_collision_detection_area):
-        return
-    
-    # Disable the bit for this layer.
-    var layer_bit_mask: int = \
-            Sc.utils.get_physics_layer_bitmask_from_name(layer_name)
-    _extra_collision_detection_area.collision_mask &= ~layer_bit_mask
-    
-    # Destroy the Area2D if it is no longer listening to anything.
-    if _extra_collision_detection_area.collision_mask == 0:
-        _extra_collision_detection_area.queue_free()
-        _extra_collision_detection_area = null
-
-
-func _on_area_entered(
-        area: Area2D,
-        layer_name: String) -> void:
-    if _is_destroyed or \
-            is_fake or \
-            !Sc.level_session.has_started:
-        return
-    _on_target_started_colliding(area, layer_name)
-
-
-func _on_area_exited(
-        area: Area2D,
-        layer_name: String) -> void:
-    if _is_destroyed or \
-            is_fake or \
-            !Sc.level_session.has_started:
-        return
-    _on_target_stopped_colliding(area, layer_name)
-
-
-func _on_body_entered(
-        body: Node,
-        layer_name: String) -> void:
-    if _is_destroyed or \
-            is_fake or \
-            !Sc.level_session.has_started:
-        return
-    _on_target_started_colliding(body, layer_name)
-
-
-func _on_body_exited(
-        body: Node,
-        layer_name: String) -> void:
-    if _is_destroyed or \
-            is_fake or \
-            !Sc.level_session.has_started:
-        return
-    _on_target_stopped_colliding(body, layer_name)
-
-
-func _on_target_started_colliding(
-        target: Node2D,
-        layer_name: String) -> void:
-    pass
-
-
-func _on_target_stopped_colliding(
-        target: Node2D,
-        layer_name: String) -> void:
-    pass
-
-
 # FIXME: ---------------------------------
+# # Thoughts for high-level navigation behavior:
 # 
 # - New Player sub-classes:
 #   - walk/climb back and forth
@@ -683,8 +611,6 @@ func _on_target_stopped_colliding(
 #   - walk/climb along connected surfaces
 #     - with a given max speed
 #   - randomly select destinations within range
-# 
-# - New Player methods: ...
 # 
 # 
 # - follow target player (or nearest player of group)
@@ -707,41 +633,222 @@ func _on_target_stopped_colliding(
 #   - 
 
 
-func _add_group_for_entered_proximity_detection(
-        group_name: String,
-        trigger_distance: float) -> void:
+# Uses physics layers and an auxiliary Area2D to detect collisions with areas
+# and objects.
+func _add_layer_for_collision_detection(layer_name_or_names) -> void:
+    # Create the Area2D if it doesn't exist yet.
+    if !is_instance_valid(_extra_collision_detection_area):
+        _extra_collision_detection_area = _add_detection_area(
+                movement_params.collider_shape,
+                movement_params.collider_rotation,
+                "_on_started_colliding",
+                "_on_stopped_colliding")
+    _enable_layer(layer_name_or_names, _extra_collision_detection_area)
+
+
+func _remove_layer_for_collision_detection(layer_name_or_names) -> void:
+    if !is_instance_valid(_extra_collision_detection_area):
+        return
+    
+    _disable_layer(layer_name_or_names, _extra_collision_detection_area)
+    
+    # Destroy the Area2D if it is no longer listening to anything.
+    if _extra_collision_detection_area.collision_mask == 0:
+        _extra_collision_detection_area.queue_free()
+        _extra_collision_detection_area = null
+
+
+func _add_layer_for_entered_radius_proximity_detection(
+        layer_name_or_names,
+        radius: float) -> void:
+    var shape := CircleShape2D.new()
+    shape.radius = radius
+    _add_layer_for_entered_shape_proximity_detection(
+            layer_name_or_names,
+            shape,
+            0.0)
+
+
+func _add_layer_for_exited_radius_proximity_detection(
+        layer_name_or_names,
+        radius: float) -> void:
+    var shape := CircleShape2D.new()
+    shape.radius = radius
+    _add_layer_for_exited_shape_proximity_detection(
+            layer_name_or_names,
+            shape,
+            0.0)
+
+
+func _add_layer_for_entered_shape_proximity_detection(
+        layer_name_or_names,
+        detection_shape: Shape2D,
+        detection_shape_rotation: float) -> void:
+    var area := _add_detection_area(
+            detection_shape,
+            detection_shape_rotation,
+            "_on_entered_proximity",
+            "")
+    _enable_layer(layer_name_or_names, area)
+    
+    var layer_names := \
+            [layer_name_or_names] if \
+            layer_name_or_names is String else \
+            layer_name_or_names
+    for layer_name in layer_names:
+        _layers_for_entered_proximity_detection[layer_name] = area
+
+
+func _add_layer_for_exited_shape_proximity_detection(
+        layer_name_or_names,
+        detection_shape: Shape2D,
+        detection_shape_rotation: float) -> void:
+    var area := _add_detection_area(
+            detection_shape,
+            detection_shape_rotation,
+            "",
+            "_on_exited_proximity")
+    _enable_layer(layer_name_or_names, area)
+    
+    var layer_names := \
+            [layer_name_or_names] if \
+            layer_name_or_names is String else \
+            layer_name_or_names
+    for layer_name in layer_names:
+        _layers_for_exited_proximity_detection[layer_name] = area
+
+
+func _remove_layer_for_proximity_detection(layer_name_or_names) -> void:
+    var layer_names := \
+            [layer_name_or_names] if \
+            layer_name_or_names is String else \
+            layer_name_or_names
+    for layer_name in layer_names:
+        if _layers_for_entered_proximity_detection.has(layer_name):
+            var area: Area2D = \
+                    _layers_for_entered_proximity_detection[layer_name]
+            if is_instance_valid(area):
+                area.queue_free()
+            _layers_for_entered_proximity_detection.erase(layer_name)
+        
+        if _layers_for_exited_proximity_detection.has(layer_name):
+            var area: Area2D = \
+                    _layers_for_exited_proximity_detection[layer_name]
+            if is_instance_valid(area):
+                area.queue_free()
+            _layers_for_exited_proximity_detection.erase(layer_name)
+
+
+func _on_detection_area_enter_exit(
+        target,
+        callback_name: String,
+        detection_area: Area2D) -> void:
+    # Ignore any events that are triggered at invalid times.
+    if _is_destroyed or \
+            is_fake or \
+            !Sc.level_session.has_started:
+        return
+    
+    # Get a list of the collision-layer names that are matched between the
+    # given detector and detectee.
+    var shared_bits: int = \
+            target.collision_layer & detection_area.collision_mask
+    var layer_names: Array = \
+            Sc.utils.get_physics_layer_names_from_bitmask(shared_bits)
+    assert(!layer_names.empty())
+    
+    self.call(callback_name, target, layer_names)
+
+
+func _on_started_colliding(target: Node2D, layer_names: Array) -> void:
     pass
 
 
-func _add_group_for_exited_proximity_detection(
-        group_name: String,
-        trigger_distance: float) -> void:
+func _on_stopped_colliding(target: Node2D, layer_names: Array) -> void:
     pass
 
 
-func _remove_group_for_proximity_detection(group_name: String) -> void:
+func _on_entered_proximity(target: Node2D, layer_names: Array) -> void:
     pass
 
 
-func _check_for_entered_proximity() -> void:
+func _on_exited_proximity(target: Node2D, layer_names: Array) -> void:
     pass
 
 
-func _check_for_exited_proximity() -> void:
-    pass
+func _add_detection_area(
+        detection_shape: Shape2D,
+        detection_shape_rotation: float,
+        enter_callback_name: String,
+        exit_callback_name: String) -> Area2D:
+    var area := Area2D.new()
+    area.monitoring = true
+    area.monitorable = false
+    area.collision_layer = 0
+    area.collision_mask = 0
+    
+    if enter_callback_name != "":
+        area.connect(
+                "area_entered",
+                self,
+                "_on_detection_area_enter_exit",
+                [enter_callback_name, area])
+        area.connect(
+                "body_entered",
+                self,
+                "_on_detection_area_enter_exit",
+                [enter_callback_name, area])
+    if exit_callback_name != "":
+        area.connect(
+                "area_exited",
+                self,
+                "_on_detection_area_enter_exit",
+                [enter_callback_name, area])
+        area.connect(
+                "body_exited",
+                self,
+                "_on_detection_area_enter_exit",
+                [enter_callback_name, area])
+    
+    var collision_shape := CollisionShape2D.new()
+    collision_shape.shape = detection_shape
+    collision_shape.rotation = detection_shape_rotation
+    
+    area.add_child(collision_shape)
+    self.add_child(area)
+    
+    return area
 
 
-# NOTE: group_name is empty if we're only listening to the individual target.
-func _on_target_entered_proximity(
-        target: Node2D,
-        group_name: String,
-        trigger_distance: float) -> void:
-    pass
+func _enable_layer(
+        layer_name_or_names,
+        area: Area2D) -> void:
+    assert(layer_name_or_names is String or \
+            layer_name_or_names is Array)
+    var layer_names := \
+            [layer_name_or_names] if \
+            layer_name_or_names is String else \
+            layer_name_or_names
+    
+    for layer_name in layer_names:
+        # Enable the bit for this layer.
+        var layer_bit_mask: int = \
+                Sc.utils.get_physics_layer_bitmask_from_name(layer_name)
+        area.collision_mask |= layer_bit_mask
 
 
-# NOTE: group_name is empty if we're only listening to the individual target.
-func _on_target_exited_proximity(
-        target: Node2D,
-        group_name: String,
-        trigger_distance: float) -> void:
-    pass
+func _disable_layer(
+        layer_name_or_names,
+        area: Area2D) -> void:
+    assert(layer_name_or_names is String or \
+            layer_name_or_names is Array)
+    var layer_names := \
+            [layer_name_or_names] if \
+            layer_name_or_names is String else \
+            layer_name_or_names
+    
+    for layer_name in layer_names:
+        # Disable the bit for this layer.
+        var layer_bit_mask: int = \
+                Sc.utils.get_physics_layer_bitmask_from_name(layer_name)
+        area.collision_mask &= ~layer_bit_mask

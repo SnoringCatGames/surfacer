@@ -25,7 +25,14 @@ var collider_shape: Shape2D
 var collider_rotation: float
 var collider_half_width_height := Vector2.INF
 
+# Array<String>
 var collision_detection_layers := []
+# Array<{layer_name: String, radius: float}|
+#       {layer_name: String, shape: Shape2D, rotation: float}>
+var proximity_entered_detection_layers := []
+# Array<{layer_name: String, radius: float}|
+#       {layer_name: String, shape: Shape2D, rotation: float}>
+var proximity_exited_detection_layers := []
 
 # -   This shape is used for calculating trajectories that approximate what
 #     might normally happen at runtime.
