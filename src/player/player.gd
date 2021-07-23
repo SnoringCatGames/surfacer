@@ -1,11 +1,15 @@
-class_name Player
+tool
+class_name Player, \
+"res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
 extends KinematicBody2D
 
+
+export var player_name: String
+export(int, LAYERS_2D_PHYSICS) var collision_detection_layers := 0
 
 const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 
-var player_name: String
 var movement_params: MovementParams
 # Array<EdgeCalculator>
 var edge_calculators: Array
@@ -18,6 +22,8 @@ var _is_initialized := false
 var _is_destroyed := false
 var _is_navigator_initialized := false
 var _is_ready := false
+
+var _configuration_warning := ""
 
 var velocity := Vector2.ZERO
 
@@ -82,25 +88,23 @@ func _init(player_name: String) -> void:
     self.pre_selection = PointerSelectionPosition.new(self)
 
 
+func _enter_tree() -> void:
+    _update_editor_configuration()
+
+
 func _ready() -> void:
     if is_fake:
         # Fake players are only used for testing potential collisions under the
         # hood.
         return
     
-    # TODO: Somehow consolidate how collider shapes are defined?
+    _configure_children_from_scene()
     
-    var shape_owners := get_shape_owners()
-    assert(shape_owners.size() == 1)
-    var owner_id: int = shape_owners[0]
-    assert(shape_owner_get_shape_count(owner_id) == 1)
-    var collider_shape := shape_owner_get_shape(owner_id, 0)
-    assert(Sc.geometry.do_shapes_match(
-            collider_shape,
-            movement_params.collider_shape))
-    var transform := shape_owner_get_transform(owner_id)
-    assert(abs(transform.get_rotation() - \
-            movement_params.collider_rotation) < Sc.geometry.FLOAT_EPSILON)
+    var collision_detection_layer_names := \
+            Sc.utils.get_physics_layer_names_from_bitmask(
+                    collision_detection_layers)
+    for layer_name in collision_detection_layer_names:
+        _add_layer_for_collision_detection(layer_name)
     
     if movement_params.bypasses_runtime_physics:
         set_collision_mask_bit(
@@ -109,13 +113,6 @@ func _ready() -> void:
                 Su.FALL_THROUGH_FLOORS_COLLISION_MASK_BIT, false)
         set_collision_mask_bit(
                 Su.WALK_THROUGH_WALLS_COLLISION_MASK_BIT, false)
-    
-    # Ensure we use the actual Shape2D reference that is used by Godot's
-    # collision system.
-    movement_params.collider_shape = collider_shape
-    
-#    shape_owner_clear_shapes(owner_id)
-#    shape_owner_add_shape(owner_id, movement_params.collider_shape)
     
     self.pointer_listener = PlayerPointerListener.new(self)
     add_child(pointer_listener)
@@ -153,31 +150,6 @@ func _ready() -> void:
     surface_state.previous_center_position = self.position
     surface_state.center_position = self.position
     
-    for layer_name in movement_params.collision_detection_layers:
-        _add_layer_for_collision_detection(layer_name)
-    
-    for proximity_config in movement_params.proximity_entered_detection_layers:
-        if proximity_config.has("radius"):
-            _add_layer_for_entered_radius_proximity_detection(
-                    proximity_config.layer_name,
-                    proximity_config.radius)
-        else:
-            _add_layer_for_entered_shape_proximity_detection(
-                    proximity_config.layer_name,
-                    proximity_config.shape,
-                    proximity_config.rotation)
-    
-    for proximity_config in movement_params.proximity_exited_detection_layers:
-        if proximity_config.has("radius"):
-            _add_layer_for_exited_radius_proximity_detection(
-                    proximity_config.layer_name,
-                    proximity_config.radius)
-        else:
-            _add_layer_for_exited_shape_proximity_detection(
-                    proximity_config.layer_name,
-                    proximity_config.shape,
-                    proximity_config.rotation)
-    
     Sc.device.connect(
             "display_resized",
             self,
@@ -199,6 +171,71 @@ func _destroy() -> void:
         animator._destroy()
     if !is_queued_for_deletion():
         queue_free()
+
+
+func add_child(child: Node, legible_unique_name := false) -> void:
+    .add_child(child, legible_unique_name)
+    _update_editor_configuration()
+
+
+func remove_child(child: Node) -> void:
+    .remove_child(child)
+    _update_editor_configuration()
+
+
+func _update_editor_configuration() -> void:
+    if !Engine.editor_hint:
+        return
+    
+    # Get MovementParams from scene configuration.
+    var movement_params_matches: Array = Sc.utils.get_children_by_type(
+            self,
+            MovementParams)
+    if movement_params_matches.size() > 1:
+        _configuration_warning = \
+                "Must only define a single MovementParams child node."
+        update_configuration_warning()
+        return
+    elif movement_params_matches.size() < 1:
+        _configuration_warning = "Must define a MovementParams child node."
+        update_configuration_warning()
+        return
+    var movement_params: MovementParams = movement_params_matches[0]
+    
+    # FIXME: ------------------------------------- Verify this works.
+    # Record the collision shape on the movement_params scene.
+    var collision_shape_matches: Array = Sc.utils.get_children_by_type(
+            self,
+            CollisionShape2D)
+    if collision_shape_matches.size() == 1:
+        var collision_shape: CollisionShape2D = collision_shape_matches[0]
+        movement_params.collider_shape = collision_shape.shape
+        movement_params.collider_rotation = collision_shape.rotation
+    
+    _configuration_warning = ""
+    update_configuration_warning()
+
+
+func _get_configuration_warning() -> String:
+    return _configuration_warning
+
+
+func _configure_children_from_scene() -> void:
+    # Get MovementParams from scene configuration.
+    movement_params = Sc.utils.get_child_by_type(self, MovementParams)
+    
+    # Get ProximityDetectors from scene configuration.
+    for detector in Sc.utils.get_children_by_type(self, ProximityDetector):
+        if detector.is_detecting_enter:
+            _add_layer_for_entered_shape_proximity_detection(
+                    detector.get_layer_names(),
+                    detector.shape,
+                    detector.rotation)
+        if detector.is_detecting_exit:
+            _add_layer_for_exited_shape_proximity_detection(
+                    detector.get_layer_names(),
+                    detector.shape,
+                    detector.rotation)
 
 
 func _unhandled_input(event: InputEvent) -> void:

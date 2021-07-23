@@ -54,6 +54,11 @@ static func _calculate_dependent_movement_params(
             Sc.geometry.calculate_half_width_height(
                     movement_params.collider_shape,
                     movement_params.collider_rotation)
+    _calculate_fall_from_floor_corner_calc_shape(movement_params)
+    movement_params.climb_over_wall_corner_calc_shape = \
+            movement_params.collider_shape
+    movement_params.climb_over_wall_corner_calc_shape_rotation = \
+            movement_params.collider_rotation
     movement_params.min_upward_jump_distance = VerticalMovementUtils \
             .calculate_min_upward_distance(movement_params)
     movement_params.max_upward_jump_distance = VerticalMovementUtils \
@@ -101,12 +106,70 @@ static func _calculate_dependent_movement_params(
                     movement_params.gravity_fast_fall,
                     movement_params.friction_coefficient)
     
+    movement_params.action_handler_names = \
+            _get_action_handler_names(movement_params)
+    movement_params.edge_calculator_names = \
+            _get_edge_calculator_names(movement_params)
+    
     assert(movement_params.action_handler_names.find(
             MatchExpectedEdgeTrajectoryAction.NAME) < 0)
     if movement_params.syncs_player_position_to_edge_trajectory or \
             movement_params.syncs_player_velocity_to_edge_trajectory:
         movement_params.action_handler_names.push_back(
                 MatchExpectedEdgeTrajectoryAction.NAME)
+
+
+static func _calculate_fall_from_floor_corner_calc_shape(
+        movement_params: MovementParams) -> void:
+    var fall_from_floor_shape := RectangleShape2D.new()
+    fall_from_floor_shape.extents = movement_params.collider_half_width_height
+    movement_params.fall_from_floor_corner_calc_shape = fall_from_floor_shape
+    movement_params.fall_from_floor_corner_calc_shape_rotation = 0.0
+
+
+static func _get_action_handler_names(movement_params: MovementParams) -> Array:
+    var names := [
+        AirDefaultAction.NAME,
+        AllDefaultAction.NAME,
+        CapVelocityAction.NAME,
+        FloorDefaultAction.NAME,
+        FloorWalkAction.NAME,
+        FloorFrictionAction.NAME,
+    ]
+    if movement_params.can_grab_walls:
+        names.push_back(WallClimbAction.NAME)
+        names.push_back(WallDefaultAction.NAME)
+        names.push_back(WallWalkAction.NAME)
+        if movement_params.can_jump:
+            names.push_back(WallFallAction.NAME)
+            names.push_back(WallJumpAction.NAME)
+        if movement_params.can_dash:
+            names.push_back(WallDashAction.NAME)
+    if movement_params.can_grab_ceilings:
+        pass
+    if movement_params.can_jump:
+        names.push_back(FloorFallThroughAction.NAME)
+        names.push_back(FloorJumpAction.NAME)
+        if movement_params.can_double_jump:
+            names.push_back(AirJumpAction.NAME)
+    if movement_params.can_dash:
+        names.push_back(AirDashAction.NAME)
+        names.push_back(FloorDashAction.NAME)
+    return names
+
+
+static func _get_edge_calculator_names(movement_params: MovementParams) -> Array:
+    var names := []
+    if movement_params.can_grab_walls:
+        names.push_back(ClimbDownWallToFloorCalculator.NAME)
+        names.push_back(ClimbOverWallToFloorCalculator.NAME)
+        names.push_back(WalkToAscendWallFromFloorCalculator.NAME)
+        if movement_params.can_jump:
+            names.push_back(FallFromWallCalculator.NAME)
+    if movement_params.can_jump:
+        names.push_back(FallFromFloorCalculator.NAME)
+        names.push_back(JumpFromSurfaceCalculator.NAME)
+    return names
 
 
 static func _check_movement_params(movement_params: MovementParams) -> void:
