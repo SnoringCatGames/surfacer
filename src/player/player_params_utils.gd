@@ -172,6 +172,11 @@ static func _get_edge_calculator_names(movement_params: MovementParams) -> Array
     return names
 
 
+# FIXME: ------------------- Refactor this.
+# - Return a string.
+# - Call this anytime any MovementParam variable is assigned.
+# - Use the string to set the in-editor warning message.
+# - Use a non-empty string to trigger an assert at run-time.
 static func _check_movement_params(movement_params: MovementParams) -> void:
     for layer_name in movement_params.collision_detection_layers:
         assert(layer_name is String)
@@ -198,6 +203,10 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.jump_boost <= 0)
     assert(movement_params.in_air_horizontal_acceleration >= 0)
     assert(movement_params.max_jump_chain >= 0)
+    assert(movement_params.can_jump or \
+            movement_params.max_jump_chain == 0)
+    assert(movement_params.can_double_jump or \
+            movement_params.max_jump_chain <= 1)
     assert(movement_params.wall_jump_horizontal_boost >= 0 and \
             movement_params.wall_jump_horizontal_boost <= \
             movement_params.max_horizontal_speed_default)
@@ -214,11 +223,21 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
             abs(movement_params.jump_boost))
     assert(movement_params.min_vertical_speed >= 0)
     assert(movement_params.fall_through_floor_velocity_boost >= 0)
-    assert(movement_params.dash_speed_multiplier >= 0)
-    assert(movement_params.dash_duration >= movement_params.dash_fade_duration)
-    assert(movement_params.dash_fade_duration >= 0)
-    assert(movement_params.dash_cooldown >= 0)
-    assert(movement_params.dash_vertical_boost <= 0)
+    
+    if movement_params.can_dash:
+        assert(movement_params.dash_speed_multiplier >= 0)
+        assert(movement_params.dash_duration >= \
+                movement_params.dash_fade_duration)
+        assert(movement_params.dash_fade_duration >= 0)
+        assert(movement_params.dash_cooldown >= 0)
+        assert(movement_params.dash_vertical_boost <= 0)
+    else:
+        assert(movement_params.dash_speed_multiplier == -1)
+        assert(movement_params.dash_duration == -1)
+        assert(movement_params.dash_fade_duration == -1)
+        assert(movement_params.dash_cooldown == -1)
+        assert(movement_params.dash_vertical_boost == -1)
+
     # If we're tracking beats, then we need the preselection trajectories to
     # match the resulting navigation trajectories.
     assert(!Sc.audio_manifest.are_beats_tracked_by_default or \
