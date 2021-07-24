@@ -289,10 +289,13 @@ var surface_parser_metric_keys := [
     "assert_surfaces_fully_calculated_duration",
 ]
 
+# FIXME: -----------------------------------------------
 var player_actions := {}
 
+# FIXME: -----------------------------------------------
 var edge_movements := {}
 
+# FIXME: -----------------------------------------------
 # Dictionary<String, PlayerParams>
 var player_params := {}
 

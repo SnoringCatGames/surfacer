@@ -1,17 +1,17 @@
 tool
 class_name MovementParams, \
-"res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
+"res://addons/surfacer/assets/images/editor_icons/movement_params.png"
 extends Node2D
 
 
-# FIXME: ---------------------
+# FIXME: ----------------------
 #export var name: String
 
-# FIXME: ---------------------
+# FIXME: ----------------------
 # String|PackedScene
 #var player_path_or_scene
 
-# FIXME: ---------------------
+# FIXME: ----------------------
 #var animator_params: PlayerAnimatorParams
 
 # Array<String>
@@ -25,33 +25,6 @@ var can_grab_floors := true
 export var can_jump := true
 export var can_dash := false
 export var can_double_jump := false
-
-export var collider_shape: Shape2D
-# In radians.
-export var collider_rotation: float
-var collider_half_width_height := Vector2.INF
-
-# Array<String>
-export var collision_detection_layers := []
-# Array<{layer_name: String, radius: float}|
-#       {layer_name: String, shape: Shape2D, rotation: float}>
-export var proximity_entered_detection_layers := []
-# Array<{layer_name: String, radius: float}|
-#       {layer_name: String, shape: Shape2D, rotation: float}>
-export var proximity_exited_detection_layers := []
-
-# -   This shape is used for calculating trajectories that approximate what
-#     might normally happen at runtime.
-# -   These trajectories could be used both for rendering navigation paths, as
-#     well as for updating player positions at runtime.
-export var fall_from_floor_corner_calc_shape: Shape2D
-export var fall_from_floor_corner_calc_shape_rotation: float
-# -   This shape is used for calculating trajectories that approximate what
-#     might normally happen at runtime.
-# -   These trajectories could be used both for rendering navigation paths, as
-#     well as for updating player positions at runtime.
-export var climb_over_wall_corner_calc_shape: Shape2D
-export var climb_over_wall_corner_calc_shape_rotation: float
 
 export var gravity_fast_fall: float
 export var slow_rise_gravity_multiplier: float
@@ -264,6 +237,34 @@ export var additional_edge_weight_offset := 0.0
 export var walking_edge_weight_multiplier := 1.0
 export var climbing_edge_weight_multiplier := 1.0
 export var air_edge_weight_multiplier := 1.0
+
+export var collider_shape: Shape2D
+# In radians.
+export var collider_rotation: float
+var collider_half_width_height := Vector2.INF
+
+# -   This shape is used for calculating trajectories that approximate what
+#     might normally happen at runtime.
+# -   These trajectories could be used both for rendering navigation paths, as
+#     well as for updating player positions at runtime.
+var fall_from_floor_corner_calc_shape: Shape2D
+var fall_from_floor_corner_calc_shape_rotation: float
+# -   This shape is used for calculating trajectories that approximate what
+#     might normally happen at runtime.
+# -   These trajectories could be used both for rendering navigation paths, as
+#     well as for updating player positions at runtime.
+var climb_over_wall_corner_calc_shape: Shape2D
+var climb_over_wall_corner_calc_shape_rotation: float
+
+# Array<String>
+export var collision_detection_layers := []
+
+# Array<{layer_name: String, radius: float}|
+#       {layer_name: String, shape: Shape2D, rotation: float}>
+var proximity_entered_detection_layers := []
+# Array<{layer_name: String, radius: float}|
+#       {layer_name: String, shape: Shape2D, rotation: float}>
+var proximity_exited_detection_layers := []
 
 
 func _init() -> void:
