@@ -1,6 +1,6 @@
 tool
 class_name ProximityDetector, \
-"res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
+"res://addons/surfacer/assets/images/editor_icons/proximity_detector.png"
 extends Node2D
 
 
@@ -32,7 +32,7 @@ func _draw() -> void:
     if !is_axially_aligned:
         return
     
-    # FIXME: ------------------------------------- Verify this draws all shapes.
+    # FIXME: ------------------------------------ Verify this draws all shapes.
     Sc.draw.draw_dashed_shape(
             self,
             position,

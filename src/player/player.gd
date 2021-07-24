@@ -1,6 +1,6 @@
 tool
 class_name Player, \
-"res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
+"res://addons/surfacer/assets/images/editor_icons/surfacer_player.png"
 extends KinematicBody2D
 
 
@@ -202,7 +202,7 @@ func _update_editor_configuration() -> void:
         return
     var movement_params: MovementParams = movement_params_matches[0]
     
-    # FIXME: ------------------------------------- Verify this works.
+    # FIXME: -------------------------------------- Verify this works.
     # Record the collision shape on the movement_params scene.
     var collision_shape_matches: Array = Sc.utils.get_children_by_type(
             self,
@@ -633,7 +633,7 @@ func get_intended_position(type: int) -> PositionAlongSurface:
             return null
 
 
-# FIXME: ---------------------------------
+# FIXME: ----------------------------------
 # # Thoughts for high-level navigation behavior:
 # 
 # - New Player sub-classes:
