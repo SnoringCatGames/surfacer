@@ -32,7 +32,7 @@ func _draw() -> void:
     if !is_axially_aligned:
         return
     
-    # FIXME: ------------------------------------ Verify this draws all shapes.
+    # FIXME: ----------------------------------- Verify this draws all shapes.
     Sc.draw.draw_dashed_shape(
             self,
             position,
