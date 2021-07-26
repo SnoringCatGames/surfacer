@@ -470,7 +470,7 @@ func _load_edge_state_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_attempt_state_from_json_object(json_object, context)
-    movement_params = Su.player_movement_params[json_object.pn]
+    movement_params = Su.movement.player_movement_params[json_object.pn]
     is_optimized_for_path = json_object.io
     instructions = EdgeInstructions.new()
     instructions.load_from_json_object(json_object.in, context)

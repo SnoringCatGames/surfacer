@@ -50,7 +50,7 @@ var surface_exclusion_list := {}
 
 func calculate(player_name: String) -> void:
     self.player_name = player_name
-    self.movement_params = Su.player_movement_params[player_name]
+    self.movement_params = Su.movement.player_movement_params[player_name]
     self.debug_params = Su.debug_params
     self.surface_parser = Su.graph_parser.surface_parser
     
@@ -672,7 +672,7 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     self.player_name = json_object.player_name
-    self.movement_params = Su.player_movement_params[player_name]
+    self.movement_params = Su.movement.player_movement_params[player_name]
     self.debug_params = Su.debug_params
     self.surface_parser = Su.graph_parser.surface_parser
     

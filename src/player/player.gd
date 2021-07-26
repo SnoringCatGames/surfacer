@@ -72,7 +72,7 @@ func _init(player_name: String) -> void:
     
     self.level = Sc.level
     
-    self.movement_params = Su.player_movement_params[player_name]
+    self.movement_params = Su.movement.player_movement_params[player_name]
     self.current_max_horizontal_speed = \
             movement_params.max_horizontal_speed_default
     
@@ -124,8 +124,8 @@ func _ready() -> void:
     
     if Su.annotators.is_annotator_enabled(
             AnnotatorType.PATH_PRESELECTION) and \
-            (is_human_player and Su.is_human_prediction_shown or \
-            !is_human_player and Su.is_computer_prediction_shown):
+            (is_human_player and Su.ann_manifest.is_human_prediction_shown or \
+            !is_human_player and Su.ann_manifest.is_computer_prediction_shown):
         prediction = PlayerPrediction.new()
         prediction.set_up(self)
     

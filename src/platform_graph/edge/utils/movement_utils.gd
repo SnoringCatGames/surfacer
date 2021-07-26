@@ -403,8 +403,8 @@ static func cap_velocity(
             current_max_horizontal_speed)
     
     # Kill horizontal speed below a min value.
-    if velocity.x > -Su.min_horizontal_speed and \
-            velocity.x < Su.min_horizontal_speed:
+    if velocity.x > -Su.movement.min_horizontal_speed and \
+            velocity.x < Su.movement.min_horizontal_speed:
         velocity.x = 0
     
     # Cap vertical speed at a max value.
@@ -414,8 +414,8 @@ static func cap_velocity(
             movement_params.max_vertical_speed)
     
     # Kill vertical speed below a min value.
-    if velocity.y > -Su.min_vertical_speed and \
-            velocity.y < Su.min_vertical_speed:
+    if velocity.y > -Su.movement.min_vertical_speed and \
+            velocity.y < Su.movement.min_vertical_speed:
         velocity.y = 0
     
     return velocity
@@ -464,7 +464,7 @@ static func calculate_distance_to_stop_from_friction(
     var friction_deceleration_per_frame := friction_coefficient * gravity
     var distance := 0.0
     var speed := abs(velocity_x_start)
-    while speed > Su.min_horizontal_speed:
+    while speed > Su.movement.min_horizontal_speed:
         distance += speed * Time.PHYSICS_TIME_STEP
         speed -= friction_deceleration_per_frame
     return distance
@@ -520,8 +520,8 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
 #        #     s_1 = ((v_2^2 - v_0^2)/2 - s_2*a_1) / (a_0 - a_1)
 #        #     stopping_distance = s_2 - s_1
 #        var distance_to_instruction_end := \
-#                ((Su.min_horizontal_speed * \
-#                        Su.min_horizontal_speed - \
+#                ((Su.movement.min_horizontal_speed * \
+#                        Su.movement.min_horizontal_speed - \
 #                speed_start * speed_start) / 2.0 - \
 #                        distance_from_end * friction_deceleration) / \
 #                (movement_params.walk_acceleration - friction_deceleration)

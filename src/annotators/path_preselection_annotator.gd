@@ -69,7 +69,7 @@ func _init(player: Player) -> void:
     self._predictions_container = Node2D.new()
     _predictions_container.visible = false
     _predictions_container.modulate.a = \
-            Su.nav_selection_prediction_opacity
+            Su.ann_manifest.nav_selection_prediction_opacity
     add_child(_predictions_container)
     Sc.slow_motion.connect(
             "slow_motion_toggled", self, "_on_slow_motion_toggled")
@@ -191,7 +191,7 @@ func _draw() -> void:
         surface_base_color = INVALID_SURFACE_COLOR
         position_indicator_base_color = INVALID_POSITION_INDICATOR_COLOR
     
-    if Su.is_preselection_trajectory_shown:
+    if Su.ann_manifest.is_preselection_trajectory_shown:
         # Draw path.
         if preselection_path != null:
             var path_alpha := \
@@ -237,7 +237,7 @@ func _draw() -> void:
                     surface_color,
                     PRESELECTION_SURFACE_DEPTH)
     
-    if Su.is_navigation_destination_shown:
+    if Su.ann_manifest.is_navigation_destination_shown:
         # Draw destination marker.
         var position_indicator_alpha := \
                 position_indicator_base_color.a * alpha_multiplier

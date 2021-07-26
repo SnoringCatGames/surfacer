@@ -91,13 +91,13 @@ func start() -> void:
             "_execute_next_step")
     
     _initial_is_previous_trajectory_shown = \
-            Su.is_previous_trajectory_shown
-    Su.is_previous_trajectory_shown = false
-    _initial_is_active_trajectory_shown = Su.is_active_trajectory_shown
-    Su.is_active_trajectory_shown = false
+            Su.ann_manifest.is_previous_trajectory_shown
+    Su.ann_manifest.is_previous_trajectory_shown = false
+    _initial_is_active_trajectory_shown = Su.ann_manifest.is_active_trajectory_shown
+    Su.ann_manifest.is_active_trajectory_shown = false
     _initial_is_navigation_destination_shown = \
-            Su.is_navigation_destination_shown
-    Su.is_navigation_destination_shown = false
+            Su.ann_manifest.is_navigation_destination_shown
+    Su.ann_manifest.is_navigation_destination_shown = false
     
     _initial_zoom = Sc.camera_controller.zoom_factor
     _initial_time_scale = Sc.time.time_scale
@@ -118,10 +118,10 @@ func _on_finished() -> void:
             "_execute_next_step")
     index = -1
     is_finished = true
-    Su.is_previous_trajectory_shown = \
+    Su.ann_manifest.is_previous_trajectory_shown = \
             _initial_is_previous_trajectory_shown
-    Su.is_active_trajectory_shown = _initial_is_active_trajectory_shown
-    Su.is_navigation_destination_shown = \
+    Su.ann_manifest.is_active_trajectory_shown = _initial_is_active_trajectory_shown
+    Su.ann_manifest.is_navigation_destination_shown = \
             _initial_is_navigation_destination_shown
     Sc.camera_controller.zoom_factor = _initial_zoom
     Sc.time.time_scale = _initial_time_scale

@@ -84,13 +84,13 @@ func _draw() -> void:
         _draw_current_path(current_path)
     
     elif previous_path != null and \
-            Su.is_previous_trajectory_shown and \
+            Su.ann_manifest.is_previous_trajectory_shown and \
             navigator.player.is_human_player:
         _draw_previous_path()
 
 
 func _draw_current_path(current_path: PlatformGraphPath) -> void:
-    if Su.is_active_trajectory_shown:
+    if Su.ann_manifest.is_active_trajectory_shown:
         var current_path_color: Color = \
                 Su.ann_defaults \
                         .HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
@@ -147,7 +147,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
                 4.0)
     
-    if Su.is_navigation_destination_shown:
+    if Su.ann_manifest.is_navigation_destination_shown:
         # Draw the destination indicator.
         var cone_length: float = \
                 AnnotationElementDefaults \
@@ -235,20 +235,20 @@ func _draw_beat_hashes(
 func _get_is_enabled() -> bool:
     if navigator.player.is_human_player:
         if is_slow_motion_enabled:
-            return Su.is_human_current_nav_trajectory_shown_with_slow_mo
+            return Su.ann_manifest.is_human_current_nav_trajectory_shown_with_slow_mo
         else:
-            return Su.is_human_current_nav_trajectory_shown_without_slow_mo
+            return Su.ann_manifest.is_human_current_nav_trajectory_shown_without_slow_mo
     else:
         if is_slow_motion_enabled:
-            return Su.is_computer_current_nav_trajectory_shown_with_slow_mo
+            return Su.ann_manifest.is_computer_current_nav_trajectory_shown_with_slow_mo
         else:
-            return Su.is_computer_current_nav_trajectory_shown_without_slow_mo
+            return Su.ann_manifest.is_computer_current_nav_trajectory_shown_without_slow_mo
 
 
 func _get_is_exclamation_mark_shown() -> bool:
-    return Su.is_human_new_nav_exclamation_mark_shown if \
+    return Su.ann_manifest.is_human_new_nav_exclamation_mark_shown if \
             navigator.player.is_human_player else \
-            Su.is_computer_new_nav_exclamation_mark_shown
+            Su.ann_manifest.is_computer_new_nav_exclamation_mark_shown
 
 
 func _get_last_beat_from_navigator() -> PathBeatPrediction:
@@ -272,7 +272,7 @@ func _trigger_fade_in(is_fade_in := true) -> void:
             "fade_progress",
             0.0 if is_fade_in else 1.0,
             1.0 if is_fade_in else 0.0,
-            Su.nav_path_fade_in_duration,
+            Su.ann_manifest.nav_path_fade_in_duration,
             "ease_out",
             0.0,
             TimeType.PLAY_PHYSICS)
