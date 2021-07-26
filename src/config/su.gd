@@ -226,6 +226,8 @@ var wall_fall_horizontal_boost_default := 20.0
 
 var max_horizontal_speed_default_default := 320.0
 var max_vertical_speed_default := 2800.0
+var min_horizontal_speed := 5.0
+var min_vertical_speed := 0.0
 
 var dash_speed_multiplier_default := 3.0
 var dash_vertical_boost_default := -300.0
@@ -548,6 +550,12 @@ func _register_app_manifest(manifest: Dictionary) -> void:
     if surfacer_manifest.has("max_vertical_speed_default"):
         self.max_vertical_speed_default = \
                 surfacer_manifest.max_vertical_speed_default
+    if surfacer_manifest.has("min_horizontal_speed"):
+        self.min_horizontal_speed = \
+                surfacer_manifest.min_horizontal_speed
+    if surfacer_manifest.has("min_vertical_speed"):
+        self.min_vertical_speed = \
+                surfacer_manifest.min_vertical_speed
     
     if surfacer_manifest.has("dash_speed_multiplier_default"):
         self.dash_speed_multiplier_default = \
@@ -615,3 +623,36 @@ func _set_up() -> void:
     ann_defaults = AnnotationElementDefaults.new()
     annotators = Annotators.new()
     add_child(Su.annotators)
+    
+    _validate_configuration()
+
+
+func _validate_configuration() -> void:
+    assert(Su.gravity_default >= 0)
+    assert(Su.gravity_slow_rise_multiplier_default >= 0)
+    assert(Su.gravity_double_jump_slow_rise_multiplier_default >= 0)
+    
+    assert(Su.walk_acceleration_default >= 0)
+    assert(Su.in_air_horizontal_acceleration_default >= 0)
+    assert(Su.climb_up_speed_default <= 0)
+    assert(Su.climb_down_speed_default >= 0)
+    
+    assert(Su.jump_boost_default <= 0)
+    assert(Su.wall_jump_horizontal_boost_default >= 0 and \
+            Su.wall_jump_horizontal_boost_default <= \
+            Su.max_horizontal_speed_default_default)
+    assert(Su.wall_fall_horizontal_boost_default >= 0 and \
+            Su.wall_fall_horizontal_boost_default <= \
+            Su.max_horizontal_speed_default_default)
+    
+    assert(Su.max_horizontal_speed_default_default >= 0)
+    assert(Su.max_vertical_speed_default >= 0)
+    assert(Su.min_horizontal_speed >= 0)
+    assert(Su.max_vertical_speed_default >= abs(Su.jump_boost_default))
+    assert(Su.min_vertical_speed >= 0)
+    
+    assert(Su.dash_speed_multiplier_default >= 0)
+    assert(Su.dash_vertical_boost_default <= 0)
+    assert(Su.dash_duration_default >= Su.dash_fade_duration_default)
+    assert(Su.dash_fade_duration_default >= 0)
+    assert(Su.dash_cooldown_default >= 0)
