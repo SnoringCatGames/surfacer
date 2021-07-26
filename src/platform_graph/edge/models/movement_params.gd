@@ -299,11 +299,21 @@ export var logs_computer_player_events := false \
 export var fall_through_floor_velocity_boost := 100.0 \
         setget _set_fall_through_floor_velocity_boost
 
-export var collider_shape: Shape2D \
-        setget _set_collider_shape
-# In radians.
-export var collider_rotation: float \
-        setget _set_collider_rotation
+## -   An EdgeCalculator calculates possible edges between certain types of
+##     edge pairs.
+## -   For example, JumpFromSurfaceCalculator calculates edges that start from
+##     a position along a surfacer, but JumpFromSurfaceCalculator edges may end
+##     either along a surface or in the air.
+## -   A default set of ActionHandlers is usually assigned based on other
+##     movement properties, such as `can_jump`.
+export(Array, String) var edge_calculators_override
+## -   An ActionHandler updates a player's state each frame, in response to
+##     current events and the player's current state.
+## -   For example, FloorJumpAction listens for jump events while the player is
+##     on the ground, and triggers player jump state accordingly.
+## -   A default set of ActionHandlers is usually assigned based on other
+##     movement properties, such as `can_jump`.
+export(Array, String) var action_handlers_override
 
 # --- Derived parameters ---
 
@@ -346,6 +356,17 @@ var distance_to_max_horizontal_speed: float
 var distance_to_half_max_horizontal_speed: float
 var stopping_distance_on_default_floor_from_max_speed: float
 
+# Array<ActionHandler>
+var action_handlers: Array
+# Array<EdgeCalculator>
+var edge_calculators: Array
+
+var collider_shape: Shape2D \
+        setget _set_collider_shape
+# In radians.
+var collider_rotation: float \
+        setget _set_collider_rotation
+
 var collider_half_width_height := Vector2.INF
 
 ## -   This shape is used for calculating trajectories that approximate what
@@ -361,14 +382,24 @@ var fall_from_floor_corner_calc_shape_rotation: float
 var climb_over_wall_corner_calc_shape: Shape2D
 var climb_over_wall_corner_calc_shape_rotation: float
 
-# ---
-
 var _configuration_warning := ""
+
+# ---
 
 
 func _init() -> void:
     _init_params()
     _init_animator_params()
+
+
+# FIXME: --------------------- Test this
+func get_property_list() -> Array:
+    var default_list := .get_property_list()
+    for property_config in default_list:
+        if property_config.name == "collider_shape" or \
+                property_config.name == "collider_rotation":
+            property_config.usage = PROPERTY_USAGE_STORAGE
+    return default_list
 
 
 func _init_params() -> void:
@@ -470,6 +501,260 @@ func _derive_parameters() -> void:
             air_edge_weight_multiplier_override if \
             air_edge_weight_multiplier_override != -1.0 else \
             Su.air_edge_weight_multiplier_default
+    
+    action_handlers = _get_action_handlers_from_names(
+            action_handlers_override if \
+            action_handlers_override != null else \
+            _get_default_action_handler_names())
+    edge_calculators = _get_edge_calculators_from_names(
+            edge_calculators_override if \
+            edge_calculators_override != null else \
+            _get_default_edge_calculator_names())
+
+
+
+
+
+# FIXME: ---------------------------------
+
+func _calculate_dependent_movement_params() -> void:
+    gravity_slow_rise = \
+            gravity_fast_fall * \
+            slow_rise_gravity_multiplier
+    collider_half_width_height = Sc.geometry.calculate_half_width_height(
+            collider_shape,
+            collider_rotation)
+    
+    _calculate_fall_from_floor_corner_calc_shape()
+    _calculate_climb_over_wall_corner_calc_shape()
+    
+    min_upward_jump_distance = VerticalMovementUtils \
+            .calculate_min_upward_distance(self)
+    max_upward_jump_distance = VerticalMovementUtils \
+            .calculate_max_upward_distance(self)
+    max_upward_jump_distance = VerticalMovementUtils \
+            .calculate_max_upward_distance(self)
+    time_to_max_upward_jump_distance = \
+            MovementUtils.calculate_movement_duration(
+                    -max_upward_jump_distance,
+                    jump_boost,
+                    gravity_slow_rise)
+    # From a basic equation of motion:
+    #     v^2 = v_0^2 + 2*a*(s - s_0)
+    #     v_0 = 0
+    # Algebra:
+    #     (s - s_0) = v^2 / 2 / a
+    distance_to_max_horizontal_speed = \
+            max_horizontal_speed_default * \
+            max_horizontal_speed_default / \
+            2.0 / walk_acceleration
+    distance_to_half_max_horizontal_speed = \
+            max_horizontal_speed_default * 0.5 * \
+            max_horizontal_speed_default * 0.5 / \
+            2.0 / walk_acceleration
+    floor_jump_max_horizontal_jump_distance = \
+            HorizontalMovementUtils \
+                    .calculate_max_horizontal_displacement_before_returning_to_starting_height(
+                            0.0,
+                            jump_boost,
+                            max_horizontal_speed_default,
+                            gravity_slow_rise,
+                            gravity_fast_fall)
+    wall_jump_max_horizontal_jump_distance = \
+            HorizontalMovementUtils \
+                    .calculate_max_horizontal_displacement_before_returning_to_starting_height(
+                            wall_jump_horizontal_boost,
+                            jump_boost,
+                            max_horizontal_speed_default,
+                            gravity_slow_rise,
+                            gravity_fast_fall)
+    stopping_distance_on_default_floor_from_max_speed = \
+            MovementUtils.calculate_distance_to_stop_from_friction(
+                    self,
+                    max_horizontal_speed_default,
+                    gravity_fast_fall,
+                    friction_coefficient)
+    
+    
+    
+
+
+func _calculate_fall_from_floor_corner_calc_shape() -> void:
+    var fall_from_floor_shape := RectangleShape2D.new()
+    fall_from_floor_shape.extents = collider_half_width_height
+    fall_from_floor_corner_calc_shape = fall_from_floor_shape
+    fall_from_floor_corner_calc_shape_rotation = 0.0
+
+
+func _calculate_climb_over_wall_corner_calc_shape() -> void:
+    climb_over_wall_corner_calc_shape = collider_shape
+    climb_over_wall_corner_calc_shape_rotation = collider_rotation
+
+
+# FIXME: ------------------- Refactor this.
+# - Return a string.
+# - Call this anytime any MovementParam variable is assigned.
+# - Use the string to set the in-editor warning message.
+# - Use a non-empty string to trigger an assert at run-time.
+func _check_movement_params() -> void:
+    assert(action_handlers_override.find(
+            MatchExpectedEdgeTrajectoryAction.NAME) < 0)
+    
+    assert(gravity_fast_fall >= 0)
+    assert(slow_rise_gravity_multiplier >= 0)
+    assert(rise_double_jump_gravity_multiplier >= 0)
+    assert(jump_boost <= 0)
+    assert(in_air_horizontal_acceleration >= 0)
+    assert(max_jump_chain >= 0)
+    assert(can_jump or \
+            max_jump_chain == 0)
+    assert(can_double_jump or \
+            max_jump_chain <= 1)
+    assert(wall_jump_horizontal_boost >= 0 and \
+            wall_jump_horizontal_boost <= \
+            max_horizontal_speed_default)
+    assert(wall_fall_horizontal_boost >= 0 and \
+            wall_fall_horizontal_boost <= \
+            max_horizontal_speed_default)
+    assert(walk_acceleration >= 0)
+    assert(climb_up_speed <= 0)
+    assert(climb_down_speed >= 0)
+    assert(max_horizontal_speed_default >= 0)
+    assert(max_vertical_speed >= 0)
+    assert(max_vertical_speed >= \
+            abs(jump_boost))
+    assert(fall_through_floor_velocity_boost >= 0)
+    
+    if can_dash:
+        assert(dash_speed_multiplier >= 0)
+        assert(dash_duration >= \
+                dash_fade_duration)
+        assert(dash_fade_duration >= 0)
+        assert(dash_cooldown >= 0)
+        assert(dash_vertical_boost <= 0)
+    else:
+        assert(dash_speed_multiplier == -1)
+        assert(dash_duration == -1)
+        assert(dash_fade_duration == -1)
+        assert(dash_cooldown == -1)
+        assert(dash_vertical_boost == -1)
+
+    # If we're tracking beats, then we need the preselection trajectories to
+    # match the resulting navigation trajectories.
+    assert(!Sc.audio_manifest.are_beats_tracked_by_default or \
+            also_optimizes_preselection_path or \
+            !optimizes_edge_jump_positions_at_run_time and \
+            !optimizes_edge_land_positions_at_run_time)
+    assert(!stops_after_finding_first_valid_edge_for_a_surface_pair or \
+            !calculates_all_valid_edges_for_a_surface_pair)
+    assert(!forces_player_position_to_match_path_at_end or \
+            !prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets)
+    assert(!syncs_player_position_to_edge_trajectory or \
+            includes_continuous_trajectory_positions)
+    assert(!syncs_player_velocity_to_edge_trajectory or \
+            includes_continuous_trajectory_velocities)
+    assert(!bypasses_runtime_physics or \
+            syncs_player_position_to_edge_trajectory)
+    
+    # FIXME: -------------------------------------
+#    _check_animator_params(animator_params)
+
+
+func _check_animator_params(
+        animator_params: PlayerAnimatorParams) -> void:
+    assert(animator_params.rest_name != "")
+    assert(animator_params.rest_on_wall_name != "")
+    assert(animator_params.jump_rise_name != "")
+    assert(animator_params.jump_fall_name != "")
+    assert(animator_params.walk_name != "")
+    assert(animator_params.climb_up_name != "")
+    assert(animator_params.climb_down_name != "")
+    
+    assert(animator_params.rest_playback_rate != 0.0 and 
+            !is_inf(animator_params.rest_playback_rate))
+    assert(animator_params.rest_on_wall_playback_rate != 0.0 and 
+            !is_inf(animator_params.rest_on_wall_playback_rate))
+    assert(animator_params.jump_rise_playback_rate != 0.0 and 
+            !is_inf(animator_params.jump_rise_playback_rate))
+    assert(animator_params.jump_fall_playback_rate != 0.0 and 
+            !is_inf(animator_params.jump_fall_playback_rate))
+    assert(animator_params.walk_playback_rate != 0.0 and 
+            !is_inf(animator_params.walk_playback_rate))
+    assert(animator_params.climb_up_playback_rate != 0.0 and 
+            !is_inf(animator_params.climb_up_playback_rate))
+    assert(animator_params.climb_down_playback_rate != 0.0 and \
+            !is_inf(animator_params.climb_down_playback_rate))
+
+
+
+
+
+
+func _get_action_handlers_from_names(names: Array) -> Array:
+    # Include the edge-match action-handler according to other flags.
+    if syncs_player_position_to_edge_trajectory or \
+            syncs_player_velocity_to_edge_trajectory:
+        names.push_back(MatchExpectedEdgeTrajectoryAction.NAME)
+    else:
+        names.erase(MatchExpectedEdgeTrajectoryAction.NAME)
+    
+    var action_handlers := []
+    for name in names:
+        action_handlers.push_back(Su.action_handlers[name])
+    action_handlers.sort_custom(PlayerActionHandler, "sort")
+    return action_handlers
+
+
+func _get_edge_calculators_from_names(names: Array) -> Array:
+    var edge_calculators := []
+    for name in names:
+        edge_calculators.push_back(Su.edge_calculators[name])
+    return edge_calculators
+
+
+func _get_default_action_handler_names() -> Array:
+    var names := [
+        AirDefaultAction.NAME,
+        AllDefaultAction.NAME,
+        CapVelocityAction.NAME,
+        FloorDefaultAction.NAME,
+        FloorWalkAction.NAME,
+        FloorFrictionAction.NAME,
+    ]
+    if can_grab_walls:
+        names.push_back(WallClimbAction.NAME)
+        names.push_back(WallDefaultAction.NAME)
+        names.push_back(WallWalkAction.NAME)
+        if can_jump:
+            names.push_back(WallFallAction.NAME)
+            names.push_back(WallJumpAction.NAME)
+        if can_dash:
+            names.push_back(WallDashAction.NAME)
+    if can_grab_ceilings:
+        pass
+    if can_jump:
+        names.push_back(FloorFallThroughAction.NAME)
+        names.push_back(FloorJumpAction.NAME)
+        if can_double_jump:
+            names.push_back(AirJumpAction.NAME)
+    if can_dash:
+        names.push_back(AirDashAction.NAME)
+        names.push_back(FloorDashAction.NAME)
+    return names
+
+
+func _get_default_edge_calculator_names() -> Array:
+    var edge_calculators := []
+    if can_grab_walls:
+        edge_calculators.push_back(ClimbDownWallToFloorCalculator.NAME)
+        edge_calculators.push_back(ClimbOverWallToFloorCalculator.NAME)
+        edge_calculators.push_back(WalkToAscendWallFromFloorCalculator.NAME)
+        if can_jump:
+            edge_calculators.push_back(FallFromWallCalculator.NAME)
+    if can_jump:
+        edge_calculators.push_back(FallFromFloorCalculator.NAME)
+        edge_calculators.push_back(JumpFromSurfaceCalculator.NAME)
+    return edge_calculators
 
 
 func _get_configuration_warning() -> String:

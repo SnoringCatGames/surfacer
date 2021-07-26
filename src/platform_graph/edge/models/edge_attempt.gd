@@ -77,7 +77,7 @@ func _load_edge_attempt_state_from_json_object(
     velocity_start = Sc.json.decode_vector2(json_object.v)
     includes_extra_jump_duration = json_object.d
     includes_extra_wall_land_horizontal_speed = json_object.h
-    calculator = Su.edge_movements[json_object.c]
+    calculator = Su.edge_calculators[json_object.c]
 
 
 func _edge_attempt_state_to_json_object(json_object: Dictionary) -> void:

@@ -30,8 +30,7 @@ func _start() -> void:
     add_child(camera_pan_controller)
     
     add_player(
-            Su.player_params[Su.default_player_name] \
-                    .movement_params.player_path_or_scene,
+            Su.player_scenes[Su.default_player_name],
             get_player_start_position(),
             true)
     _execute_intro_choreography()

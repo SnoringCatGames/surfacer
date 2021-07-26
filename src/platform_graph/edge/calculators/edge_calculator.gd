@@ -1,5 +1,10 @@
 class_name EdgeCalculator
 extends Reference
+## An EdgeCalculator calculates possible edges between certain types of edge
+## pairs.
+## For example, JumpFromSurfaceCalculator calculates edges that start from a
+## position along a surfacer, but JumpFromSurfaceCalculator edges may end
+## either along a surface or in the air.
 
 
 # This is the minimum speed that we require edge calculations to have at the

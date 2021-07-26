@@ -11,8 +11,6 @@ const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 
 var movement_params: MovementParams
-# Array<EdgeCalculator>
-var edge_calculators: Array
 # Array<Surface>
 var possible_surfaces_set: Dictionary
 
@@ -58,8 +56,6 @@ var pointer_listener: PlayerPointerListener
 var _action_sources := []
 # Dictionary<String, bool>
 var _previous_actions_this_frame := {}
-# Array<PlayerActionHandler>
-var _action_handlers: Array
 
 var _dash_cooldown_timeout: int
 var _dash_fade_tween: ScaffolderTween
@@ -76,12 +72,9 @@ func _init(player_name: String) -> void:
     
     self.level = Sc.level
     
-    var player_params: PlayerParams = Su.player_params[player_name]
-    self.movement_params = player_params.movement_params
+    self.movement_params = Su.player_movement_params[player_name]
     self.current_max_horizontal_speed = \
-            player_params.movement_params.max_horizontal_speed_default
-    self.edge_calculators = player_params.edge_calculators
-    self._action_handlers = player_params.action_handlers
+            movement_params.max_horizontal_speed_default
     
     self.new_selection = PointerSelectionPosition.new(self)
     self.last_selection = PointerSelectionPosition.new(self)
@@ -171,6 +164,16 @@ func _destroy() -> void:
         animator._destroy()
     if !is_queued_for_deletion():
         queue_free()
+
+
+# FIXME: --------------------- Test this
+func get_property_list() -> Array:
+    var default_list := .get_property_list()
+    for property_config in default_list:
+        if property_config.name == "movement_params":
+            property_config.usage = PROPERTY_USAGE_STORAGE
+            break
+    return default_list
 
 
 func add_child(child: Node, legible_unique_name := false) -> void:
@@ -449,7 +452,7 @@ func _update_actions(delta_scaled: float) -> void:
 func _process_actions() -> void:
     _previous_actions_this_frame.clear()
     
-    for action_handler in _action_handlers:
+    for action_handler in movement_params.action_handlers:
         var is_action_relevant_for_surface: bool = \
                 action_handler.type == surface_state.surface_type or \
                 action_handler.type == SurfaceType.OTHER

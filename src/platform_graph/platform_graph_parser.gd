@@ -71,7 +71,7 @@ func _record_tile_maps() -> void:
 func _create_fake_players_for_collision_calculations() -> void:
     for player_name in _get_player_names():
         var movement_params: MovementParams = \
-                Su.player_params[player_name].movement_params
+                Su.player_movement_params[player_name]
         var fake_player: Player = Sc.utils.add_scene(
                 self,
                 movement_params.player_path_or_scene,
@@ -138,7 +138,7 @@ func _calculate_platform_graphs() -> void:
     surface_parser = SurfaceParser.new()
     surface_parser.calculate(surface_tile_maps)
     platform_graphs = {}
-    assert(!Su.player_params.empty())
+    assert(!Su.player_movement_params.empty())
     _defer_calculate_next_platform_graph(-1)
 
 
@@ -254,7 +254,7 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
         graph.load_from_json_object(
                 graph_json_object,
                 context)
-        platform_graphs[graph.player_params.name] = graph
+        platform_graphs[graph.player_name] = graph
     
     _on_graphs_parsed()
 
