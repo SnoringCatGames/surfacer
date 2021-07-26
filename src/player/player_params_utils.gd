@@ -178,25 +178,6 @@ static func _get_edge_calculator_names(movement_params: MovementParams) -> Array
 # - Use the string to set the in-editor warning message.
 # - Use a non-empty string to trigger an assert at run-time.
 static func _check_movement_params(movement_params: MovementParams) -> void:
-    for layer_name in movement_params.collision_detection_layers:
-        assert(layer_name is String)
-    for proximity_detection_configs in [
-                movement_params.proximity_entered_detection_layers,
-                movement_params.proximity_exited_detection_layers,
-            ]:
-        for proximity_config in proximity_detection_configs:
-            assert((
-                proximity_config.has("layer_name") and
-                proximity_config.layer_name is String and
-                proximity_config.has("radius")
-            ) or ( \
-                proximity_config.has("layer_name") and
-                proximity_config.layer_name is String and
-                proximity_config.has("shape") and
-                proximity_config.shape is Shape2D and
-                proximity_config.has("rotation")
-            ))
-    
     assert(movement_params.gravity_fast_fall >= 0)
     assert(movement_params.slow_rise_gravity_multiplier >= 0)
     assert(movement_params.rise_double_jump_gravity_multiplier >= 0)
