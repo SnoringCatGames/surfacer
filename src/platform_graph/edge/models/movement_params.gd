@@ -20,8 +20,6 @@ extends Node2D
 ## Array<String>
 #var action_handler_names: Array
 
-# FIXME: --------- Auto-update jump, dash, and double-jump params when changing these, and vice-versa.
-
 # --- Important parameters ---
 
 export var can_grab_walls := false setget _set_can_grab_walls
@@ -32,10 +30,6 @@ export var can_dash := false setget _set_can_dash
 export var can_double_jump := false setget _set_can_double_jump
 
 # --- Multipliers for parameters whose global defaults are configured in Su ---
-
-# FIXME: ----------- Move these to be global in Su.
-#var min_horizontal_speed: float
-#var min_vertical_speed: float
 
 export var gravity_multiplier := 1.0 \
         setget _set_gravity_multiplier
@@ -101,7 +95,7 @@ export var max_jump_chain := 1 \
 ##     jump rather than later.[br]
 ## -   That is, if this is true, jump trajectories will be less
 ##     up-sideways-then-down, and more parabolic and diagonal.[br]
-export var minimizes_velocity_change_when_jumping := true \
+export var minimizes_velocity_change_when_jumping := false \
         setget _set_minimizes_velocity_change_when_jumping
 ## -   If this is true, then at runtime, after finding a path through
 ##     build-time-calculated edges, the Navigator will try to optimize the
@@ -115,9 +109,9 @@ export var minimizes_velocity_change_when_jumping := true \
 ##     either the fixed zero or max-speed value used for the
 ##     build-time-calculated edge state.[br]
 ## -   However, these edge calculations can be expensive.[br]
-export var optimizes_edge_jump_positions_at_run_time := false \
+export var optimizes_edge_jump_positions_at_run_time := true \
         setget _set_optimizes_edge_jump_positions_at_run_time
-export var optimizes_edge_land_positions_at_run_time := false \
+export var optimizes_edge_land_positions_at_run_time := true \
         setget _set_optimizes_edge_land_positions_at_run_time
 ## -   Optimizing edges can be expensive.[br]
 ## -   Preselections can be updated very frequently (nearly every frame).[br]
@@ -125,11 +119,11 @@ export var optimizes_edge_land_positions_at_run_time := false \
 ## -   However, setting this to false means that the user will see inaccurate
 ##     trajectories, which could be especially significant if beat-tracking is
 ##     enabled or path timings are important.[br]
-export var also_optimizes_preselection_path := false \
+export var also_optimizes_preselection_path := true \
         setget _set_also_optimizes_preselection_path
-export var forces_player_position_to_match_edge_at_start := false \
+export var forces_player_position_to_match_edge_at_start := true \
         setget _set_forces_player_position_to_match_edge_at_start
-export var forces_player_velocity_to_match_edge_at_start := false \
+export var forces_player_velocity_to_match_edge_at_start := true \
         setget _set_forces_player_velocity_to_match_edge_at_start
 export var forces_player_position_to_match_path_at_end := false \
         setget _set_forces_player_position_to_match_path_at_end
@@ -139,13 +133,13 @@ export var forces_player_velocity_to_zero_at_path_end := false \
 ##     calculated edge-movement position during each frame.[br]
 ## -   Without this, there is typically some deviation at run-time from the
 ##     expected calculated edge trajectories.[br]
-export var syncs_player_position_to_edge_trajectory := false \
+export var syncs_player_position_to_edge_trajectory := true \
         setget _set_syncs_player_position_to_edge_trajectory
 ## -   If true, then player velocity will be forced to match the expected
 ##     calculated edge-movement velocity during each frame.[br]
 ## -   Without this, there is typically some deviation at run-time from the
 ##     expected calculated edge trajectories.[br]
-export var syncs_player_velocity_to_edge_trajectory := false \
+export var syncs_player_velocity_to_edge_trajectory := true \
         setget _set_syncs_player_velocity_to_edge_trajectory
 ## -   If true, then trajectory positions will be stored after performing edge
 ##     calculations.[br]
@@ -175,7 +169,7 @@ export var includes_discrete_trajectory_state := true \
 ##     its size.[br]
 ## -   If trajectory state is omitted at build time, and is still needed at
 ##     runtime, then it will be calculated on-the-fly as needed.[br]
-export var is_trajectory_state_stored_at_build_time := true \
+export var is_trajectory_state_stored_at_build_time := false \
         setget _set_is_trajectory_state_stored_at_build_time
 ## -   If true, then the player position will be updated according to
 ##     pre-calculated edge trajectories, and Godot's physics and collision
@@ -197,7 +191,7 @@ export var min_intra_surface_distance_to_optimize_jump_for := 16.0 \
 ##     we already found a valid edge for, on the same surface, for the same
 ##     surface pair.[br]
 ## -   We use this distance to determine threshold how far away is enough.[br]
-export var distance_squared_threshold_for_considering_additional_jump_land_points := 128.0 * 128.0 \
+export var distance_squared_threshold_for_considering_additional_jump_land_points := 32.0 * 32.0 \
         setget _set_distance_squared_threshold_for_considering_additional_jump_land_points
 ## -   If true, then edge calculations for a given surface pair will stop early
 ##     as soon as the first valid edge for the pair is found.[br]
@@ -219,7 +213,7 @@ export var calculates_all_valid_edges_for_a_surface_pair := false \
 ##     jump/land positions combinations.[br]
 export var always_includes_jump_land_positions_at_surface_ends := false \
         setget _set_always_includes_jump_land_positions_at_surface_ends
-export var includes_redundant_jump_land_positions_with_zero_start_velocity := false \
+export var includes_redundant_jump_land_positions_with_zero_start_velocity := true \
         setget _set_includes_redundant_jump_land_positions_with_zero_start_velocity
 ## -   This is a constant increase to all jump durations.[br]
 ## -   This could make it more likely for edge calculations to succeed earlier,
@@ -245,11 +239,11 @@ export var backtracks_to_consider_higher_jumps_during_horizontal_step_calculatio
         setget _set_backtracks_to_consider_higher_jumps_during_horizontal_step_calculations
 ## The amount of extra margin to include around the player collision boundary
 ## when performing collision detection for a given edge calculation.
-export var collision_margin_for_edge_calculations := 1.0 \
+export var collision_margin_for_edge_calculations := 4.0 \
         setget _set_collision_margin_for_edge_calculations
 ## The amount of extra margin to include for waypoint offsets, so that the
 ## player doesn't collide unexpectedly with the surface.
-export var collision_margin_for_waypoint_positions := 1.25 \
+export var collision_margin_for_waypoint_positions := 5.0 \
         setget _set_collision_margin_for_waypoint_positions
 ## -   Some jump/land posititions are less likely to produce valid movement,
 ##     simply because of how the surfaces are arranged.[br]
@@ -264,16 +258,16 @@ export var skips_less_likely_jump_land_positions := false \
 ##     a path.[br]
 ## -   This should be unnecessary if forces_player_position_to_match_path_at_end
 ##     is true.[br]
-export var prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets := false \
+export var prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets := true \
         setget _set_prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets
 ## -   If true, then edge calculations will re-use previously calculated
 ##     intermediate waypoints when attempting to backtrack and use a higher max
 ##     jump height.[br]
 ## -   Otherwise, intermediate waypoints are recalculated, which can be more
 ##     expensive, but could produce slightly more accurate results.[br]
-export var reuses_previous_waypoints_when_backtracking_on_jump_height := true \
+export var reuses_previous_waypoints_when_backtracking_on_jump_height := false \
         setget _set_reuses_previous_waypoints_when_backtracking_on_jump_height
-export var asserts_no_preexisting_collisions_during_edge_calculations := true \
+export var asserts_no_preexisting_collisions_during_edge_calculations := false \
         setget _set_asserts_no_preexisting_collisions_during_edge_calculations
 ## -   If true, then edge calculations will attempt to consider alternate
 ##     intersection points from shape-casting when calculating collision
