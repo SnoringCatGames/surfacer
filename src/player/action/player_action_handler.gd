@@ -30,9 +30,3 @@ func _init(
 func process(player) -> bool:
     Sc.logger.error("abstract PlayerActionHandler.process is not implemented")
     return false
-
-
-static func sort(
-        a: PlayerActionHandler,
-        b: PlayerActionHandler) -> bool:
-    return a.priority < b.priority
