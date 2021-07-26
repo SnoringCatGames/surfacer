@@ -25,14 +25,14 @@ func _physics_process(_delta: float) -> void:
             current_path_start_time = Sc.time.get_play_time()
             is_pulse_active = true
             current_path_pulse_delay = \
-                    Su.nav_path_fade_in_duration * 0.85
+                    Su.ann_manifest.nav_path_fade_in_duration * 0.85
             current_path_pulse_duration = max(
-                    Su.new_path_pulse_duration,
+                    Su.ann_manifest.new_path_pulse_duration,
                     current_path.duration * 0.5)
             does_pulse_grow = \
-                    Su.does_human_nav_pulse_grow if \
+                    Su.ann_manifest.does_human_nav_pulse_grow if \
                     navigator.player.is_human_player else \
-                    Su.does_computer_nav_pulse_grow
+                    Su.ann_manifest.does_computer_nav_pulse_grow
         update()
     
     if Sc.slow_motion.get_is_enabled_or_transitioning() != \
@@ -78,9 +78,9 @@ func _draw() -> void:
         path_segment_time_end = current_path.duration * progress
     else:
         var half_pulse_time_length: float = \
-                Su.new_path_pulse_time_length / 2.0
+                Su.ann_manifest.new_path_pulse_time_length / 2.0
         var path_duration_with_margin: float = \
-                current_path.duration + Su.new_path_pulse_time_length
+                current_path.duration + Su.ann_manifest.new_path_pulse_time_length
         var path_segment_time_center := \
                 path_duration_with_margin * progress - half_pulse_time_length
         path_segment_time_start = max(
@@ -113,11 +113,11 @@ func _draw() -> void:
 func _get_is_pulse_enabled() -> bool:
     if navigator.player.is_human_player:
         if is_slow_motion_enabled:
-            return Su.is_human_nav_pulse_shown_with_slow_mo
+            return Su.ann_manifest.is_human_nav_pulse_shown_with_slow_mo
         else:
-            return Su.is_human_nav_pulse_shown_without_slow_mo
+            return Su.ann_manifest.is_human_nav_pulse_shown_without_slow_mo
     else:
         if is_slow_motion_enabled:
-            return Su.is_computer_nav_pulse_shown_with_slow_mo
+            return Su.ann_manifest.is_computer_nav_pulse_shown_with_slow_mo
         else:
-            return Su.is_computer_nav_pulse_shown_without_slow_mo
+            return Su.ann_manifest.is_computer_nav_pulse_shown_without_slow_mo

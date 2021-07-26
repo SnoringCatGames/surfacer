@@ -10,8 +10,8 @@ func _initialize_framework() -> void:
     ._initialize_framework()
     
     _parse_player_scenes(Su._player_scenes_list)
-    _register_action_handlers(Su._action_handler_classes)
-    _register_edge_calculators(Su._edge_calculator_classes)
+    _register_action_handlers(Su.movement._action_handler_classes)
+    _register_edge_calculators(Su.movement._edge_calculator_classes)
 
 
 func _on_app_initialized() -> void:
@@ -33,14 +33,14 @@ func _on_splash_finished() -> void:
 func _register_action_handlers(action_handler_classes: Array) -> void:
     # Instantiate the various PlayerActions.
     for action_handler_class in action_handler_classes:
-        Su.action_handlers[action_handler_class.NAME] = \
+        Su.movement.action_handlers[action_handler_class.NAME] = \
                 action_handler_class.new()
 
 
 func _register_edge_calculators(edge_calculator_classes: Array) -> void:
     # Instantiate the various EdgeMovements.
     for edge_calculator_class in edge_calculator_classes:
-        Su.edge_calculators[edge_calculator_class.NAME] = \
+        Su.movement.edge_calculators[edge_calculator_class.NAME] = \
                 edge_calculator_class.new()
 
 
@@ -65,4 +65,4 @@ func _parse_player_scenes(scenes_array: Array) -> void:
                         !Engine.editor_hint)
         
         Su.player_scenes[player_name] = scene
-        Su.player_movement_params[player_name] = movement_params
+        Su.movement.player_movement_params[player_name] = movement_params

@@ -83,8 +83,6 @@ var _edge_calculator_classes: Array
 # ---
 
 
-# FIXME: ------------------
-
 func _register_manifest(manifest: Dictionary) -> void:
     self._action_handler_classes = surfacer_manifest.action_handler_classes
     self._edge_calculator_classes = surfacer_manifest.edge_calculator_classes
@@ -167,31 +165,31 @@ func _register_manifest(manifest: Dictionary) -> void:
 
 
 func _validate_configuration() -> void:
-    assert(Su.gravity_default >= 0)
-    assert(Su.gravity_slow_rise_multiplier_default >= 0)
-    assert(Su.gravity_double_jump_slow_rise_multiplier_default >= 0)
+    assert(Su.movement.gravity_default >= 0)
+    assert(Su.movement.gravity_slow_rise_multiplier_default >= 0)
+    assert(Su.movement.gravity_double_jump_slow_rise_multiplier_default >= 0)
     
-    assert(Su.walk_acceleration_default >= 0)
-    assert(Su.in_air_horizontal_acceleration_default >= 0)
-    assert(Su.climb_up_speed_default <= 0)
-    assert(Su.climb_down_speed_default >= 0)
+    assert(Su.movement.walk_acceleration_default >= 0)
+    assert(Su.movement.in_air_horizontal_acceleration_default >= 0)
+    assert(Su.movement.climb_up_speed_default <= 0)
+    assert(Su.movement.climb_down_speed_default >= 0)
     
-    assert(Su.jump_boost_default <= 0)
-    assert(Su.wall_jump_horizontal_boost_default >= 0 and \
-            Su.wall_jump_horizontal_boost_default <= \
-            Su.max_horizontal_speed_default_default)
-    assert(Su.wall_fall_horizontal_boost_default >= 0 and \
-            Su.wall_fall_horizontal_boost_default <= \
-            Su.max_horizontal_speed_default_default)
+    assert(Su.movement.jump_boost_default <= 0)
+    assert(Su.movement.wall_jump_horizontal_boost_default >= 0 and \
+            Su.movement.wall_jump_horizontal_boost_default <= \
+            Su.movement.max_horizontal_speed_default_default)
+    assert(Su.movement.wall_fall_horizontal_boost_default >= 0 and \
+            Su.movement.wall_fall_horizontal_boost_default <= \
+            Su.movement.max_horizontal_speed_default_default)
     
-    assert(Su.max_horizontal_speed_default_default >= 0)
-    assert(Su.max_vertical_speed_default >= 0)
-    assert(Su.min_horizontal_speed >= 0)
-    assert(Su.max_vertical_speed_default >= abs(Su.jump_boost_default))
-    assert(Su.min_vertical_speed >= 0)
+    assert(Su.movement.max_horizontal_speed_default_default >= 0)
+    assert(Su.movement.max_vertical_speed_default >= 0)
+    assert(Su.movement.min_horizontal_speed >= 0)
+    assert(Su.movement.max_vertical_speed_default >= abs(Su.movement.jump_boost_default))
+    assert(Su.movement.min_vertical_speed >= 0)
     
-    assert(Su.dash_speed_multiplier_default >= 0)
-    assert(Su.dash_vertical_boost_default <= 0)
-    assert(Su.dash_duration_default >= Su.dash_fade_duration_default)
-    assert(Su.dash_fade_duration_default >= 0)
-    assert(Su.dash_cooldown_default >= 0)
+    assert(Su.movement.dash_speed_multiplier_default >= 0)
+    assert(Su.movement.dash_vertical_boost_default <= 0)
+    assert(Su.movement.dash_duration_default >= Su.movement.dash_fade_duration_default)
+    assert(Su.movement.dash_fade_duration_default >= 0)
+    assert(Su.movement.dash_cooldown_default >= 0)

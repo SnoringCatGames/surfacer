@@ -14,14 +14,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Su.is_previous_trajectory_shown = pressed
+    Su.ann_manifest.is_previous_trajectory_shown = pressed
     Sc.save_state.set_setting(
             Su.PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Su.is_previous_trajectory_shown
+    return Su.ann_manifest.is_previous_trajectory_shown
 
 
 func get_is_enabled() -> bool:

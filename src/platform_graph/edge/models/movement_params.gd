@@ -430,77 +430,77 @@ func _validate_parameters() -> void:
 func _derive_parameters() -> void:
     gravity_fast_fall = \
             gravity_multiplier * \
-            Su.gravity_default
+            Su.movement.gravity_default
     slow_rise_gravity_multiplier = \
             gravity_slow_rise_multiplier_multiplier * \
-            Su.gravity_slow_rise_multiplier_default
+            Su.movement.gravity_slow_rise_multiplier_default
     rise_double_jump_gravity_multiplier = \
             gravity_double_jump_slow_rise_multiplier_multiplier * \
-            Su.gravity_double_jump_slow_rise_multiplier_default
+            Su.movement.gravity_double_jump_slow_rise_multiplier_default
     walk_acceleration = \
             walk_acceleration_multiplier * \
-            Su.walk_acceleration_default
+            Su.movement.walk_acceleration_default
     in_air_horizontal_acceleration = \
             in_air_horizontal_acceleration_multiplier * \
-            Su.in_air_horizontal_acceleration_default
+            Su.movement.in_air_horizontal_acceleration_default
     climb_up_speed = \
             climb_up_speed_multiplier * \
-            Su.climb_up_speed_default
+            Su.movement.climb_up_speed_default
     climb_down_speed = \
             climb_down_speed_multiplier * \
-            Su.climb_down_speed_default
+            Su.movement.climb_down_speed_default
     friction_coefficient = \
             friction_coefficient_multiplier * \
-            Su.friction_coefficient_default
+            Su.movement.friction_coefficient_default
     jump_boost = \
             jump_boost_multiplier * \
-            Su.jump_boost_default
+            Su.movement.jump_boost_default
     wall_jump_horizontal_boost = \
             wall_jump_horizontal_boost_multiplier * \
-            Su.wall_jump_horizontal_boost_default
+            Su.movement.wall_jump_horizontal_boost_default
     wall_fall_horizontal_boost = \
             wall_fall_horizontal_boost_multiplier * \
-            Su.wall_fall_horizontal_boost_default
+            Su.movement.wall_fall_horizontal_boost_default
     
     max_horizontal_speed_default = \
             max_horizontal_speed_default_multiplier * \
-            Su.max_horizontal_speed_default_default
+            Su.movement.max_horizontal_speed_default_default
     max_vertical_speed = \
             max_vertical_speed_multiplier * \
-            Su.max_vertical_speed_default
+            Su.movement.max_vertical_speed_default
     
     dash_speed_multiplier = \
             dash_speed_multiplier_multiplier * \
-            Su.dash_speed_multiplier_default
+            Su.movement.dash_speed_multiplier_default
     dash_vertical_boost = \
             dash_vertical_boost_multiplier * \
-            Su.dash_vertical_boost_default
+            Su.movement.dash_vertical_boost_default
     dash_duration = \
             dash_duration_multiplier * \
-            Su.dash_duration_default
+            Su.movement.dash_duration_default
     dash_fade_duration = \
             dash_fade_duration_multiplier * \
-            Su.dash_fade_duration_default
+            Su.movement.dash_fade_duration_default
     dash_cooldown = \
             dash_cooldown_multiplier * \
-            Su.dash_cooldown_default
+            Su.movement.dash_cooldown_default
     
     additional_edge_weight_offset = \
             additional_edge_weight_offset_override if \
             additional_edge_weight_offset_override != -1.0 else \
-            Su.additional_edge_weight_offset_default
+            Su.movement.additional_edge_weight_offset_default
     walking_edge_weight_multiplier = \
             walking_edge_weight_multiplier_override if \
             walking_edge_weight_multiplier_override != -1.0 else \
-            Su.walking_edge_weight_multiplier_default
+            Su.movement.walking_edge_weight_multiplier_default
     climbing_edge_weight_multiplier = \
             climbing_edge_weight_multiplier_override if \
             climbing_edge_weight_multiplier_override != -1.0 else \
-            Su.climbing_edge_weight_multiplier_default
+            Su.movement.climbing_edge_weight_multiplier_default
     air_edge_weight_multiplier = \
             air_edge_weight_multiplier_override if \
             air_edge_weight_multiplier_override != -1.0 else \
-            Su.air_edge_weight_multiplier_default
+            Su.movement.air_edge_weight_multiplier_default
     
     action_handlers = _get_action_handlers_from_names(
             action_handlers_override if \
@@ -700,7 +700,7 @@ func _get_action_handlers_from_names(names: Array) -> Array:
     
     var action_handlers := []
     for name in names:
-        action_handlers.push_back(Su.action_handlers[name])
+        action_handlers.push_back(Su.movement.action_handlers[name])
     action_handlers.sort_custom(PlayerActionHandler, "sort")
     return action_handlers
 
@@ -708,7 +708,7 @@ func _get_action_handlers_from_names(names: Array) -> Array:
 func _get_edge_calculators_from_names(names: Array) -> Array:
     var edge_calculators := []
     for name in names:
-        edge_calculators.push_back(Su.edge_calculators[name])
+        edge_calculators.push_back(Su.movement.edge_calculators[name])
     return edge_calculators
 
 

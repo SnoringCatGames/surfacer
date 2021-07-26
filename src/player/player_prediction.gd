@@ -46,7 +46,7 @@ func _update(
                 "_interpolate_player_position",
                 _tween_animation_state.player_position,
                 animation_state.player_position,
-                Su.nav_selection_prediction_tween_duration,
+                Su.ann_manifest.nav_selection_prediction_tween_duration,
                 "linear",
                 0.0,
                 TimeType.PLAY_PHYSICS)
@@ -66,7 +66,7 @@ func _update(
                 "_interpolate_animation_position",
                 start_position,
                 animation_state.animation_position,
-                Su.nav_selection_prediction_tween_duration,
+                Su.ann_manifest.nav_selection_prediction_tween_duration,
                 "linear",
                 0.0,
                 TimeType.PLAY_PHYSICS)
