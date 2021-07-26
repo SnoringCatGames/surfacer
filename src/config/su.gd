@@ -100,7 +100,7 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
     },
 }
 
-# --- Manifest additions ---
+# --- Scaffolder manifest additions ---
 
 var _screen_inclusions := [
     preload("res://addons/surfacer/src/gui/screens/precompute_platform_graphs_screen.tscn"),
@@ -154,7 +154,7 @@ var _surfacer_sounds := [
     },
 ]
 
-# --- Global state ---
+# --- Surfacer global state ---
 
 var manifest: Dictionary
 var is_inspector_enabled: bool
@@ -208,6 +208,35 @@ var duration_to_max_zoom_from_pointer_at_max_control := 3.0
 var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.3
 
 var skip_choreography_framerate_multiplier := 10.0
+
+var gravity_default := 5000.0
+var gravity_slow_rise_multiplier_default := 0.38
+var gravity_double_jump_slow_rise_multiplier_default := 0.68
+
+var walk_acceleration_default := 8000.0
+var in_air_horizontal_acceleration_default := 2500.0
+var climb_up_speed_default := -230.0
+var climb_down_speed_default := 120.0
+
+var friction_coefficient_default := 1.25
+
+var jump_boost_default := -900.0
+var wall_jump_horizontal_boost_default := 200.0
+var wall_fall_horizontal_boost_default := 20.0
+
+var max_horizontal_speed_default_default := 320.0
+var max_vertical_speed_default := 2800.0
+
+var dash_speed_multiplier_default := 3.0
+var dash_vertical_boost_default := -300.0
+var dash_duration_default := 0.3
+var dash_fade_duration_default := 0.1
+var dash_cooldown_default := 1.0
+
+var additional_edge_weight_offset_default := 128.0
+var walking_edge_weight_multiplier_default := 1.2
+var climbing_edge_weight_multiplier_default := 1.8
+var air_edge_weight_multiplier_default := 1.0
 
 # Here are some example fields for these debug params:
 #{
@@ -478,6 +507,76 @@ func _register_app_manifest(manifest: Dictionary) -> void:
     if surfacer_manifest.has("skip_choreography_framerate_multiplier"):
         self.skip_choreography_framerate_multiplier = \
                 surfacer_manifest.skip_choreography_framerate_multiplier
+    
+    if surfacer_manifest.has("gravity_default"):
+        self.gravity_default = \
+                surfacer_manifest.gravity_default
+    if surfacer_manifest.has("gravity_slow_rise_multiplier_default"):
+        self.gravity_slow_rise_multiplier_default = \
+                surfacer_manifest.gravity_slow_rise_multiplier_default
+    if surfacer_manifest.has("gravity_double_jump_slow_rise_multiplier_default"):
+        self.gravity_double_jump_slow_rise_multiplier_default = \
+                surfacer_manifest.gravity_double_jump_slow_rise_multiplier_default
+    if surfacer_manifest.has("walk_acceleration_default"):
+        self.walk_acceleration_default = \
+                surfacer_manifest.walk_acceleration_default
+    if surfacer_manifest.has("in_air_horizontal_acceleration_default"):
+        self.in_air_horizontal_acceleration_default = \
+                surfacer_manifest.in_air_horizontal_acceleration_default
+    if surfacer_manifest.has("climb_up_speed_default"):
+        self.climb_up_speed_default = \
+                surfacer_manifest.climb_up_speed_default
+    if surfacer_manifest.has("climb_down_speed_default"):
+        self.climb_down_speed_default = \
+                surfacer_manifest.climb_down_speed_default
+    if surfacer_manifest.has("friction_coefficient_default"):
+        self.friction_coefficient_default = \
+                surfacer_manifest.friction_coefficient_default
+    if surfacer_manifest.has("jump_boost_default"):
+        self.jump_boost_default = \
+                surfacer_manifest.jump_boost_default
+    if surfacer_manifest.has("wall_jump_horizontal_boost_default"):
+        self.wall_jump_horizontal_boost_default = \
+                surfacer_manifest.wall_jump_horizontal_boost_default
+    if surfacer_manifest.has("wall_fall_horizontal_boost_default"):
+        self.wall_fall_horizontal_boost_default = \
+                surfacer_manifest.wall_fall_horizontal_boost_default
+    
+    if surfacer_manifest.has("max_horizontal_speed_default_default"):
+        self.max_horizontal_speed_default_default = \
+                surfacer_manifest.max_horizontal_speed_default_default
+    if surfacer_manifest.has("max_vertical_speed_default"):
+        self.max_vertical_speed_default = \
+                surfacer_manifest.max_vertical_speed_default
+    
+    if surfacer_manifest.has("dash_speed_multiplier_default"):
+        self.dash_speed_multiplier_default = \
+                surfacer_manifest.dash_speed_multiplier_default
+    if surfacer_manifest.has("dash_vertical_boost_default"):
+        self.dash_vertical_boost_default = \
+                surfacer_manifest.dash_vertical_boost_default
+    if surfacer_manifest.has("dash_duration_default"):
+        self.dash_duration_default = \
+                surfacer_manifest.dash_duration_default
+    if surfacer_manifest.has("dash_fade_duration_default"):
+        self.dash_fade_duration_default = \
+                surfacer_manifest.dash_fade_duration_default
+    if surfacer_manifest.has("dash_cooldown_default"):
+        self.dash_cooldown_default = \
+                surfacer_manifest.dash_cooldown_default
+    
+    if surfacer_manifest.has("additional_edge_weight_offset_default"):
+        self.additional_edge_weight_offset_default = \
+                surfacer_manifest.additional_edge_weight_offset_default
+    if surfacer_manifest.has("walking_edge_weight_multiplier_default"):
+        self.walking_edge_weight_multiplier_default = \
+                surfacer_manifest.walking_edge_weight_multiplier_default
+    if surfacer_manifest.has("climbing_edge_weight_multiplier_default"):
+        self.climbing_edge_weight_multiplier_default = \
+                surfacer_manifest.climbing_edge_weight_multiplier_default
+    if surfacer_manifest.has("air_edge_weight_multiplier_default"):
+        self.air_edge_weight_multiplier_default = \
+                surfacer_manifest.air_edge_weight_multiplier_default
     
     assert(Sc._manifest.metadata.must_restart_level_to_change_settings)
 

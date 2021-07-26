@@ -22,7 +22,7 @@ extends Node2D
 
 # FIXME: --------- Auto-update jump, dash, and double-jump params when changing these, and vice-versa.
 
-# --- More important parameters. ---
+# --- Important parameters ---
 
 export var can_grab_walls := false setget _set_can_grab_walls
 export var can_grab_ceilings := false setget _set_can_grab_ceilings
@@ -31,75 +31,69 @@ export var can_jump := true setget _set_can_jump
 export var can_dash := false setget _set_can_dash
 export var can_double_jump := false setget _set_can_double_jump
 
-# Array<String>
-export var collision_detection_layers := [] \
-        setget _set_collision_detection_layers
-
-# --- Overrides for parameters whose global defaults are configured in Su. ---
+# --- Multipliers for parameters whose global defaults are configured in Su ---
 
 # FIXME: ----------- Move these to be global in Su.
 #var min_horizontal_speed: float
 #var min_vertical_speed: float
 
-# FIXME: ----------- Configure global defaults in Su.
+export var gravity_multiplier := 1.0 \
+        setget _set_gravity_multiplier
+export var gravity_slow_rise_multiplier_multiplier := 1.0  \
+        setget _set_gravity_slow_rise_multiplier_multiplier
+export var gravity_double_jump_slow_rise_multiplier_multiplier := 1.0 \
+        setget _set_gravity_double_jump_slow_rise_multiplier_multiplier
 
-export var gravity_override := -1.0 \
-        setget _set_gravity_override
-export var gravity_slow_rise_multiplier_override := -1.0  \
-        setget _set_gravity_slow_rise_multiplier_override
-export var gravity_double_jump_slow_rise_multiplier_override := -1.0 \
-        setget _set_gravity_double_jump_slow_rise_multiplier_override
+export var walk_acceleration_multiplier := 1.0 \
+        setget _set_walk_acceleration_multiplier
+export var in_air_horizontal_acceleration_multiplier := 1.0 \
+        setget _set_in_air_horizontal_acceleration_multiplier
+export var climb_up_speed_multiplier := 1.0 \
+        setget _set_climb_up_speed_multiplier
+export var climb_down_speed_multiplier := 1.0 \
+        setget _set_climb_down_speed_multiplier
 
-export var walk_acceleration_override := -1.0 \
-        setget _set_walk_acceleration_override
-export var in_air_horizontal_acceleration_override := -1.0 \
-        setget _set_in_air_horizontal_acceleration_override
-export var climb_up_speed_override := -1.0 \
-        setget _set_climb_up_speed_override
-export var climb_down_speed_override := -1.0 \
-        setget _set_climb_down_speed_override
+export var friction_coefficient_multiplier := 1.0 \
+        setget _set_friction_coefficient_multiplier
 
-export var friction_coefficient_override: float \
-        setget _set_friction_coefficient_override
+export var jump_boost_multiplier := 1.0 \
+        setget _set_jump_boost_multiplier
+export var wall_jump_horizontal_boost_multiplier := 1.0 \
+        setget _set_wall_jump_horizontal_boost_multiplier
+export var wall_fall_horizontal_boost_multiplier := 1.0 \
+        setget _set_wall_fall_horizontal_boost_multiplier
 
-export var jump_boost_override := -1.0 \
-        setget _set_jump_boost_override
-export var wall_jump_horizontal_boost_override := -1.0 \
-        setget _set_wall_jump_horizontal_boost_override
-export var wall_fall_horizontal_boost_override := -1.0 \
-        setget _set_wall_fall_horizontal_boost_override
+export var max_horizontal_speed_default_multiplier := 1.0 \
+        setget _set_max_horizontal_speed_default_multiplier
+export var max_vertical_speed_multiplier := 1.0 \
+        setget _set_max_vertical_speed_multiplier
 
-# --- Other parameters. ---
+export var dash_speed_multiplier_multiplier := 1.0 \
+        setget _set_dash_speed_multiplier_multiplier
+export var dash_vertical_boost_multiplier := 1.0 \
+        setget _set_dash_vertical_boost_multiplier
+export var dash_duration_multiplier := 1.0 \
+        setget _set_dash_duration_multiplier
+export var dash_fade_duration_multiplier := 1.0 \
+        setget _set_dash_fade_duration_multiplier
+export var dash_cooldown_multiplier := 1.0 \
+        setget _set_dash_cooldown_multiplier
 
-export var max_horizontal_speed_default := 400.0 \
-        setget _set_max_horizontal_speed_default
-export var max_vertical_speed := 2000.0 \
-        setget _set_max_vertical_speed
+export var uses_duration_instead_of_distance_for_edge_weight := true \
+        setget _set_uses_duration_instead_of_distance_for_edge_weight
+export var additional_edge_weight_offset_override := -1.0 \
+        setget _set_additional_edge_weight_offset_override
+export var walking_edge_weight_multiplier_override := -1.0 \
+        setget _set_walking_edge_weight_multiplier_override
+export var climbing_edge_weight_multiplier_override := -1.0 \
+        setget _set_climbing_edge_weight_multiplier_override
+export var air_edge_weight_multiplier_override := -1.0 \
+        setget _set_air_edge_weight_multiplier_override
 
-export var dash_speed_multiplier := -1.0 \
-        setget _set_dash_speed_multiplier
-export var dash_vertical_boost := -1.0 \
-        setget _set_dash_vertical_boost
-export var dash_duration := -1.0 \
-        setget _set_dash_duration
-export var dash_fade_duration := -1.0 \
-        setget _set_dash_fade_duration
-export var dash_cooldown := -1.0 \
-        setget _set_dash_cooldown
+# --- Other parameters ---
 
 export var max_jump_chain := 1 \
         setget _set_max_jump_chain
-
-export var uses_duration_instead_of_distance_for_edge_weight := false \
-        setget _set_uses_duration_instead_of_distance_for_edge_weight
-export var additional_edge_weight_offset := 0.0 \
-        setget _set_additional_edge_weight_offset
-export var walking_edge_weight_multiplier := 1.0 \
-        setget _set_walking_edge_weight_multiplier
-export var climbing_edge_weight_multiplier := 1.0 \
-        setget _set_climbing_edge_weight_multiplier
-export var air_edge_weight_multiplier := 1.0 \
-        setget _set_air_edge_weight_multiplier
 
 # TODO: For some reason, when this is true, we see fewer valid edges. In
 #       theory, this shouldn't be the case?
@@ -335,6 +329,20 @@ var jump_boost: float
 var wall_jump_horizontal_boost: float
 var wall_fall_horizontal_boost: float
 
+var max_horizontal_speed_default: float
+var max_vertical_speed: float
+
+var dash_speed_multiplier: float
+var dash_vertical_boost: float
+var dash_duration: float
+var dash_fade_duration: float
+var dash_cooldown: float
+
+var additional_edge_weight_offset: float
+var walking_edge_weight_multiplier: float
+var climbing_edge_weight_multiplier: float
+var air_edge_weight_multiplier: float
+
 var floor_jump_max_horizontal_jump_distance: float
 var wall_jump_max_horizontal_jump_distance: float
 var min_upward_jump_distance: float
@@ -358,16 +366,6 @@ var fall_from_floor_corner_calc_shape_rotation: float
 ##     well as for updating player positions at runtime.[br]
 var climb_over_wall_corner_calc_shape: Shape2D
 var climb_over_wall_corner_calc_shape_rotation: float
-
-## Auto-populated according to any children ProximityDetectors.[br]
-# Array<{layer_name: String, radius: float}|
-#       {layer_name: String, shape: Shape2D, rotation: float}>
-var proximity_entered_detection_layers := []
-
-## Auto-populated according to any children ProximityDetectors.[br]
-## Array<{layer_name: String, radius: float}|
-##       {layer_name: String, shape: Shape2D, rotation: float}>
-var proximity_exited_detection_layers := []
 
 # ---
 
@@ -405,8 +403,79 @@ func _validate_parameters() -> void:
 
 
 func _derive_parameters() -> void:
-    # FIXME: ---------------------------------
-    pass
+    gravity_fast_fall = \
+            gravity_multiplier * \
+            Su.gravity_default
+    slow_rise_gravity_multiplier = \
+            gravity_slow_rise_multiplier_multiplier * \
+            Su.gravity_slow_rise_multiplier_default
+    rise_double_jump_gravity_multiplier = \
+            gravity_double_jump_slow_rise_multiplier_multiplier * \
+            Su.gravity_double_jump_slow_rise_multiplier_default
+    walk_acceleration = \
+            walk_acceleration_multiplier * \
+            Su.walk_acceleration_default
+    in_air_horizontal_acceleration = \
+            in_air_horizontal_acceleration_multiplier * \
+            Su.in_air_horizontal_acceleration_default
+    climb_up_speed = \
+            climb_up_speed_multiplier * \
+            Su.climb_up_speed_default
+    climb_down_speed = \
+            climb_down_speed_multiplier * \
+            Su.climb_down_speed_default
+    friction_coefficient = \
+            friction_coefficient_multiplier * \
+            Su.friction_coefficient_default
+    jump_boost = \
+            jump_boost_multiplier * \
+            Su.jump_boost_default
+    wall_jump_horizontal_boost = \
+            wall_jump_horizontal_boost_multiplier * \
+            Su.wall_jump_horizontal_boost_default
+    wall_fall_horizontal_boost = \
+            wall_fall_horizontal_boost_multiplier * \
+            Su.wall_fall_horizontal_boost_default
+    
+    max_horizontal_speed_default = \
+            max_horizontal_speed_default_multiplier * \
+            Su.max_horizontal_speed_default_default
+    max_vertical_speed = \
+            max_vertical_speed_multiplier * \
+            Su.max_vertical_speed_default
+    
+    dash_speed_multiplier = \
+            dash_speed_multiplier_multiplier * \
+            Su.dash_speed_multiplier_default
+    dash_vertical_boost = \
+            dash_vertical_boost_multiplier * \
+            Su.dash_vertical_boost_default
+    dash_duration = \
+            dash_duration_multiplier * \
+            Su.dash_duration_default
+    dash_fade_duration = \
+            dash_fade_duration_multiplier * \
+            Su.dash_fade_duration_default
+    dash_cooldown = \
+            dash_cooldown_multiplier * \
+            Su.dash_cooldown_default
+    
+    additional_edge_weight_offset = \
+            additional_edge_weight_offset_override if \
+            additional_edge_weight_offset_override != -1.0 else \
+            Su.additional_edge_weight_offset_default
+    walking_edge_weight_multiplier = \
+            walking_edge_weight_multiplier_override if \
+            walking_edge_weight_multiplier_override != -1.0 else \
+            Su.walking_edge_weight_multiplier_default
+    climbing_edge_weight_multiplier = \
+            climbing_edge_weight_multiplier_override if \
+            climbing_edge_weight_multiplier_override != -1.0 else \
+            Su.climbing_edge_weight_multiplier_default
+    air_edge_weight_multiplier = \
+            air_edge_weight_multiplier_override if \
+            air_edge_weight_multiplier_override != -1.0 else \
+            Su.air_edge_weight_multiplier_default
 
 
 func _get_configuration_warning() -> String:
@@ -445,103 +514,93 @@ func _set_can_double_jump(value: bool) -> void:
     _update_parameters()
 
 
-func _set_collision_detection_layers(value: Array) -> void:
-    collision_detection_layers = value
+func _set_gravity_multiplier(value: float) -> void:
+    gravity_multiplier = value
     _update_parameters()
 
 
-func _set_gravity_override(value: float) -> void:
-    gravity_override = value
+func _set_gravity_slow_rise_multiplier_multiplier(value: float) -> void:
+    gravity_slow_rise_multiplier_multiplier = value
     _update_parameters()
 
 
-func _set_gravity_slow_rise_multiplier_override(value: float) -> void:
-    gravity_slow_rise_multiplier_override = value
+func _set_gravity_double_jump_slow_rise_multiplier_multiplier(value: float) -> void:
+    gravity_double_jump_slow_rise_multiplier_multiplier = value
     _update_parameters()
 
 
-func _set_gravity_double_jump_slow_rise_multiplier_override(value: float) -> void:
-    gravity_double_jump_slow_rise_multiplier_override = value
+func _set_walk_acceleration_multiplier(value: float) -> void:
+    walk_acceleration_multiplier = value
     _update_parameters()
 
 
-func _set_walk_acceleration_override(value: float) -> void:
-    walk_acceleration_override = value
+func _set_in_air_horizontal_acceleration_multiplier(value: float) -> void:
+    in_air_horizontal_acceleration_multiplier = value
     _update_parameters()
 
 
-func _set_in_air_horizontal_acceleration_override(value: float) -> void:
-    in_air_horizontal_acceleration_override = value
+func _set_climb_up_speed_multiplier(value: float) -> void:
+    climb_up_speed_multiplier = value
     _update_parameters()
 
 
-func _set_climb_up_speed_override(value: float) -> void:
-    climb_up_speed_override = value
+func _set_climb_down_speed_multiplier(value: float) -> void:
+    climb_down_speed_multiplier = value
     _update_parameters()
 
 
-func _set_climb_down_speed_override(value: float) -> void:
-    climb_down_speed_override = value
+func _set_friction_coefficient_multiplier(value: float) -> void:
+    friction_coefficient_multiplier = value
     _update_parameters()
 
 
-func _set_friction_coefficient_override(value: float) -> void:
-    friction_coefficient_override = value
+func _set_jump_boost_multiplier(value: float) -> void:
+    jump_boost_multiplier = value
     _update_parameters()
 
 
-func _set_jump_boost_override(value: float) -> void:
-    jump_boost_override = value
+func _set_wall_jump_horizontal_boost_multiplier(value: float) -> void:
+    wall_jump_horizontal_boost_multiplier = value
     _update_parameters()
 
 
-func _set_wall_jump_horizontal_boost_override(value: float) -> void:
-    wall_jump_horizontal_boost_override = value
+func _set_wall_fall_horizontal_boost_multiplier(value: float) -> void:
+    wall_fall_horizontal_boost_multiplier = value
     _update_parameters()
 
 
-func _set_wall_fall_horizontal_boost_override(value: float) -> void:
-    wall_fall_horizontal_boost_override = value
+func _set_max_horizontal_speed_default_multiplier(value: float) -> void:
+    max_horizontal_speed_default_multiplier = value
     _update_parameters()
 
 
-func _set_max_horizontal_speed_default(value: float) -> void:
-    max_horizontal_speed_default = value
+func _set_max_vertical_speed_multiplier(value: float) -> void:
+    max_vertical_speed_multiplier = value
     _update_parameters()
 
 
-func _set_max_vertical_speed(value: float) -> void:
-    max_vertical_speed = value
+func _set_dash_speed_multiplier_multiplier(value: float) -> void:
+    dash_speed_multiplier_multiplier = value
     _update_parameters()
 
 
-func _set_dash_speed_multiplier(value: float) -> void:
-    dash_speed_multiplier = value
+func _set_dash_vertical_boost_multiplier(value: float) -> void:
+    dash_vertical_boost_multiplier = value
     _update_parameters()
 
 
-func _set_dash_vertical_boost(value: float) -> void:
-    dash_vertical_boost = value
+func _set_dash_duration_multiplier(value: float) -> void:
+    dash_duration_multiplier = value
     _update_parameters()
 
 
-func _set_dash_duration(value: float) -> void:
-    dash_duration = value
+func _set_dash_fade_duration_multiplier(value: float) -> void:
+    dash_fade_duration_multiplier = value
     _update_parameters()
 
 
-func _set_dash_fade_duration(value: float) -> void:
-    dash_fade_duration = value
-    _update_parameters()
-
-
-func _set_dash_cooldown(value: float) -> void:
-    dash_cooldown = value
-    _update_parameters()
-
-
-func _set_max_jump_chain(value: int) -> void:
-    max_jump_chain = value
+func _set_dash_cooldown_multiplier(value: float) -> void:
+    dash_cooldown_multiplier = value
     _update_parameters()
 
 
@@ -550,23 +609,28 @@ func _set_uses_duration_instead_of_distance_for_edge_weight(value: bool) -> void
     _update_parameters()
 
 
-func _set_additional_edge_weight_offset(value: float) -> void:
-    additional_edge_weight_offset = value
+func _set_additional_edge_weight_offset_override(value: float) -> void:
+    additional_edge_weight_offset_override = value
     _update_parameters()
 
 
-func _set_walking_edge_weight_multiplier(value: float) -> void:
-    walking_edge_weight_multiplier = value
+func _set_walking_edge_weight_multiplier_override(value: float) -> void:
+    walking_edge_weight_multiplier_override = value
     _update_parameters()
 
 
-func _set_climbing_edge_weight_multiplier(value: float) -> void:
-    climbing_edge_weight_multiplier = value
+func _set_climbing_edge_weight_multiplier_override(value: float) -> void:
+    climbing_edge_weight_multiplier_override = value
     _update_parameters()
 
 
-func _set_air_edge_weight_multiplier(value: float) -> void:
-    air_edge_weight_multiplier = value
+func _set_air_edge_weight_multiplier_override(value: float) -> void:
+    air_edge_weight_multiplier_override = value
+    _update_parameters()
+
+
+func _set_max_jump_chain(value: int) -> void:
+    max_jump_chain = value
     _update_parameters()
 
 
