@@ -18,8 +18,8 @@ signal calculation_finished
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 
+var player_name: String
 var collision_params: CollisionCalcParams
-var player_params: PlayerParams
 var movement_params: MovementParams
 var surface_parser: SurfaceParser
 
@@ -49,8 +49,8 @@ var surface_exclusion_list := {}
 
 
 func calculate(player_name: String) -> void:
-    self.player_params = Su.player_params[player_name]
-    self.movement_params = player_params.movement_params
+    self.player_name = player_name
+    self.movement_params = Su.player_movement_params[player_name]
     self.debug_params = Su.debug_params
     self.surface_parser = Su.graph_parser.surface_parser
     
@@ -320,7 +320,7 @@ func _calculate_nodes_and_edges() -> void:
     # Allow for debug mode to limit the scope of what's calculated.
     if debug_params.has("limit_parsing") and \
             debug_params.limit_parsing.has("player_name") and \
-            player_params.name != debug_params.limit_parsing.player_name:
+            player_name != debug_params.limit_parsing.player_name:
         return
     ###########################################################################
     
@@ -434,7 +434,7 @@ func calculate_inter_surface_edges_for_origin(
             surfaces_in_jump_range_set,
             origin_surface)
     
-    for edge_calculator in player_params.edge_calculators:
+    for edge_calculator in movement_params.edge_calculators:
         #######################################################################
         # Allow for debug mode to limit the scope of what's calculated.
         if debug_params.has("limit_parsing") and \
@@ -671,10 +671,8 @@ func to_string() -> String:
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
-    var player_name: String = json_object.player_name
-    
-    self.player_params = Su.player_params[player_name]
-    self.movement_params = player_params.movement_params
+    self.player_name = json_object.player_name
+    self.movement_params = Su.player_movement_params[player_name]
     self.debug_params = Su.debug_params
     self.surface_parser = Su.graph_parser.surface_parser
     
@@ -758,7 +756,7 @@ func _load_surfaces_to_inter_surface_edges_results_from_json_object(
 
 func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     var json_object := {
-        player_name = player_params.name,
+        player_name = player_name,
         position_along_surface_id_to_json_object = \
                 _get_position_along_surface_id_to_json_object(
                         includes_debug_only_state),

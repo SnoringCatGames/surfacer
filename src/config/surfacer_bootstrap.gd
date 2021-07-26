@@ -9,9 +9,9 @@ func _init().("SurfacerBootstrap") -> void:
 func _initialize_framework() -> void:
     ._initialize_framework()
     
-    _register_player_actions(Su.player_action_classes)
-    _register_edge_movements(Su.edge_movement_classes)
-    _register_player_params(Su.player_param_classes)
+    _parse_player_scenes(Su._player_scenes_list)
+    _register_action_handlers(Su._action_handler_classes)
+    _register_edge_calculators(Su._edge_calculator_classes)
 
 
 func _on_app_initialized() -> void:
@@ -30,22 +30,39 @@ func _on_splash_finished() -> void:
         Sc.nav.open("precompute_platform_graphs")
 
 
-func _register_player_actions(player_action_classes: Array) -> void:
+func _register_action_handlers(action_handler_classes: Array) -> void:
     # Instantiate the various PlayerActions.
-    for player_action_class in player_action_classes:
-        Su.player_actions[player_action_class.NAME] = \
-                player_action_class.new()
+    for action_handler_class in action_handler_classes:
+        Su.action_handlers[action_handler_class.NAME] = \
+                action_handler_class.new()
 
 
-func _register_edge_movements(edge_movement_classes: Array) -> void:
+func _register_edge_calculators(edge_calculator_classes: Array) -> void:
     # Instantiate the various EdgeMovements.
-    for edge_movement_class in edge_movement_classes:
-        Su.edge_movements[edge_movement_class.NAME] = \
-                edge_movement_class.new()
+    for edge_calculator_class in edge_calculator_classes:
+        Su.edge_calculators[edge_calculator_class.NAME] = \
+                edge_calculator_class.new()
 
 
-func _register_player_params(player_param_classes: Array) -> void:
-    for param_class in player_param_classes:
-        var player_params: PlayerParams = \
-                PlayerParamsUtils.create_player_params(param_class)
-        Su.player_params[player_params.name] = player_params
+func _parse_player_scenes(scenes_array: Array) -> void:
+    # FIXME: ----------------- Test this
+    for scene in scenes_array:
+        assert(scene is PackedScene)
+        var state: SceneState = scene.get_state()
+        assert(state.get_node_type(0) == "KinematicBody2D")
+        
+        var player_name: String = \
+                Sc.utils.get_property_value_from_scene_state_node(
+                        state,
+                        0,
+                        "player_name",
+                        !Engine.editor_hint)
+        var movement_params: MovementParams = \
+                Sc.utils.get_property_value_from_scene_state_node(
+                        state,
+                        0,
+                        "movement_params",
+                        !Engine.editor_hint)
+        
+        Su.player_scenes[player_name] = scene
+        Su.player_movement_params[player_name] = movement_params

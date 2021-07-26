@@ -18,37 +18,6 @@ const PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY := \
 const NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
         "is_navigation_destination_shown"
 
-const DEFAULT_PLAYER_ACTION_CLASSES := [
-    preload("res://addons/surfacer/src/player/action/action_handlers/air_dash_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/air_default_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/air_jump_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/all_default_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/cap_velocity_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_dash_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_default_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/fall_through_floor_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_friction_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_jump_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_walk_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/match_expected_edge_trajectory_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_climb_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_dash_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_default_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_fall_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_jump_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_walk_action.gd"),
-]
-
-const DEFAULT_EDGE_MOVEMENT_CLASSES := [
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/from_air_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/climb_down_wall_to_floor_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/climb_over_wall_to_floor_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_floor_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_wall_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/jump_from_surface_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/walk_to_ascend_wall_from_floor_calculator.gd"),
-]
-
 var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
     groups = {
         main = {
@@ -170,32 +139,6 @@ var is_intro_choreography_shown: bool
 
 var default_player_name: String
 
-var is_active_trajectory_shown: bool
-var is_previous_trajectory_shown: bool
-var is_preselection_trajectory_shown: bool
-var is_navigation_destination_shown: bool
-
-var is_human_current_nav_trajectory_shown_with_slow_mo := false
-var is_computer_current_nav_trajectory_shown_with_slow_mo := true
-var is_human_current_nav_trajectory_shown_without_slow_mo := true
-var is_computer_current_nav_trajectory_shown_without_slow_mo := false
-var is_human_nav_pulse_shown_with_slow_mo := false
-var is_computer_nav_pulse_shown_with_slow_mo := true
-var is_human_nav_pulse_shown_without_slow_mo := true
-var is_computer_nav_pulse_shown_without_slow_mo := false
-var is_human_new_nav_exclamation_mark_shown := false
-var is_computer_new_nav_exclamation_mark_shown := true
-
-var does_human_nav_pulse_grow := false
-var does_computer_nav_pulse_grow := true
-var is_human_prediction_shown := true
-var is_computer_prediction_shown := true
-var nav_selection_prediction_opacity := 0.5
-var nav_selection_prediction_tween_duration := 0.15
-var nav_path_fade_in_duration := 0.2
-var new_path_pulse_duration := 0.7
-var new_path_pulse_time_length := 1.0
-
 var path_drag_update_throttle_interval := 0.2
 var path_beat_update_throttle_interval := 0.2
 
@@ -208,37 +151,6 @@ var duration_to_max_zoom_from_pointer_at_max_control := 3.0
 var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.3
 
 var skip_choreography_framerate_multiplier := 10.0
-
-var gravity_default := 5000.0
-var gravity_slow_rise_multiplier_default := 0.38
-var gravity_double_jump_slow_rise_multiplier_default := 0.68
-
-var walk_acceleration_default := 8000.0
-var in_air_horizontal_acceleration_default := 2500.0
-var climb_up_speed_default := -230.0
-var climb_down_speed_default := 120.0
-
-var friction_coefficient_default := 1.25
-
-var jump_boost_default := -900.0
-var wall_jump_horizontal_boost_default := 200.0
-var wall_fall_horizontal_boost_default := 20.0
-
-var max_horizontal_speed_default_default := 320.0
-var max_vertical_speed_default := 2800.0
-var min_horizontal_speed := 5.0
-var min_vertical_speed := 0.0
-
-var dash_speed_multiplier_default := 3.0
-var dash_vertical_boost_default := -300.0
-var dash_duration_default := 0.3
-var dash_fade_duration_default := 0.1
-var dash_cooldown_default := 1.0
-
-var additional_edge_weight_offset_default := 128.0
-var walking_edge_weight_multiplier_default := 1.2
-var climbing_edge_weight_multiplier_default := 1.8
-var air_edge_weight_multiplier_default := 1.0
 
 # Here are some example fields for these debug params:
 #{
@@ -320,28 +232,23 @@ var surface_parser_metric_keys := [
     "assert_surfaces_fully_calculated_duration",
 ]
 
-# FIXME: -----------------------------------------------
-var player_actions := {}
-
-# FIXME: -----------------------------------------------
-var edge_movements := {}
-
-# FIXME: -----------------------------------------------
-# Dictionary<String, PlayerParams>
-var player_params := {}
-
 var human_player: Player
 var graph_parser: PlatformGraphParser
 var graph_inspector: PlatformGraphInspector
 var legend: Legend
 var selection_description: SelectionDescription
+# TODO: Cleanup the annotator system.
 var annotators: Annotators
 var ann_defaults: AnnotationElementDefaults
+var ann_manifest: SurfacerAnnotationsManifest
+var movement: SurfacerMovementManifest
 var edge_from_json_factory := EdgeFromJsonFactory.new()
 
-var player_action_classes: Array
-var edge_movement_classes: Array
-var player_param_classes: Array
+# Dictionary<String, PackedScene>
+var player_scenes := {}
+
+# Array<PackedScene>
+var _player_scenes_list: Array
 
 # ---
 
@@ -356,235 +263,88 @@ func _ready() -> void:
     Sc._bootstrap = SurfacerBootstrap.new()
 
 
-func _amend_app_manifest(manifest: Dictionary) -> void:
-    if !manifest.has("colors_class"):
-            manifest.colors_class = SurfacerColors
-    if !manifest.has("geometry_class"):
-            manifest.geometry_class = SurfacerGeometry
-    if !manifest.has("draw_utils_class"):
-            manifest.draw_utils_class = SurfacerDrawUtils
+func _amend_app_manifest(app_manifest: Dictionary) -> void:
+    if !app_manifest.has("colors_class"):
+            app_manifest.colors_class = SurfacerColors
+    if !app_manifest.has("geometry_class"):
+            app_manifest.geometry_class = SurfacerGeometry
+    if !app_manifest.has("draw_utils_class"):
+            app_manifest.draw_utils_class = SurfacerDrawUtils
     
     var is_precomputing_platform_graphs: bool = \
-            manifest.surfacer_manifest \
+            app_manifest.surfacer_manifest \
                     .has("precompute_platform_graph_for_levels") and \
-            !manifest.surfacer_manifest \
+            !app_manifest.surfacer_manifest \
                     .precompute_platform_graph_for_levels.empty()
     if is_precomputing_platform_graphs:
-        manifest.metadata.is_splash_skipped = true
+        app_manifest.metadata.is_splash_skipped = true
     
     # Add Surfacer sounds to the front, so they can be overridden by the app.
     Sc.utils.concat(
-            manifest.audio_manifest.sounds_manifest,
+            app_manifest.audio_manifest.sounds_manifest,
             _surfacer_sounds,
             false)
     
     for inclusion in _screen_inclusions:
-        if !manifest.gui_manifest.screen_manifest.exclusions \
+        if !app_manifest.gui_manifest.screen_manifest.exclusions \
                 .has(inclusion) and \
-                !manifest.gui_manifest.screen_manifest.inclusions \
+                !app_manifest.gui_manifest.screen_manifest.inclusions \
                 .has(inclusion):
-            manifest.gui_manifest.screen_manifest.inclusions \
+            app_manifest.gui_manifest.screen_manifest.inclusions \
                     .push_back(inclusion)
     for exclusion in _screen_exclusions:
-        if !manifest.gui_manifest.screen_manifest.exclusions \
+        if !app_manifest.gui_manifest.screen_manifest.exclusions \
                 .has(exclusion) and \
-                !manifest.gui_manifest.screen_manifest.inclusions \
+                !app_manifest.gui_manifest.screen_manifest.inclusions \
                 .has(exclusion):
-            manifest.gui_manifest.screen_manifest.exclusions \
+            app_manifest.gui_manifest.screen_manifest.exclusions \
                     .push_back(exclusion)
     
-    if !manifest.gui_manifest.has("settings_item_manifest"):
-        manifest.gui_manifest.settings_item_manifest = \
+    if !app_manifest.gui_manifest.has("settings_item_manifest"):
+        app_manifest.gui_manifest.settings_item_manifest = \
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
-func _register_app_manifest(manifest: Dictionary) -> void:
-    self.manifest = manifest
-    var surfacer_manifest: Dictionary = manifest.surfacer_manifest
+func _register_app_manifest(app_manifest: Dictionary) -> void:
+    self.manifest = app_manifest.surfacer_manifest
     
     self.are_loaded_surfaces_deeply_validated = \
-            surfacer_manifest.are_loaded_surfaces_deeply_validated
+            manifest.are_loaded_surfaces_deeply_validated
     self.uses_threads_for_platform_graph_calculation = \
-            surfacer_manifest.uses_threads_for_platform_graph_calculation
-    self.player_action_classes = surfacer_manifest.player_action_classes
-    self.edge_movement_classes = surfacer_manifest.edge_movement_classes
-    self.player_param_classes = surfacer_manifest.player_param_classes
-    self.debug_params = surfacer_manifest.debug_params
-    self.default_player_name = surfacer_manifest.default_player_name
+            manifest.uses_threads_for_platform_graph_calculation
+    self._player_scenes_list = manifest.player_scenes
+    self.debug_params = manifest.debug_params
+    self.default_player_name = manifest.default_player_name
     
     self.is_precomputing_platform_graphs = \
-            surfacer_manifest.has("precompute_platform_graph_for_levels") and \
-            !surfacer_manifest.precompute_platform_graph_for_levels.empty()
+            manifest.has("precompute_platform_graph_for_levels") and \
+            !manifest.precompute_platform_graph_for_levels.empty()
     if self.is_precomputing_platform_graphs:
         self.precompute_platform_graph_for_levels = \
-                surfacer_manifest.precompute_platform_graph_for_levels
+                manifest.precompute_platform_graph_for_levels
     
-    if surfacer_manifest.has("ignores_platform_graph_save_files"):
+    if manifest.has("ignores_platform_graph_save_files"):
         self.ignores_platform_graph_save_files = \
-                surfacer_manifest.ignores_platform_graph_save_files
-    if surfacer_manifest.has(
+                manifest.ignores_platform_graph_save_files
+    if manifest.has(
             "ignores_platform_graph_save_file_trajectory_state"):
         self.ignores_platform_graph_save_file_trajectory_state = \
-                surfacer_manifest \
+                manifest \
                         .ignores_platform_graph_save_file_trajectory_state
-    if surfacer_manifest.has("is_debug_only_platform_graph_state_included"):
+    if manifest.has("is_debug_only_platform_graph_state_included"):
         self.is_debug_only_platform_graph_state_included = \
-                surfacer_manifest.is_debug_only_platform_graph_state_included
+                manifest.is_debug_only_platform_graph_state_included
     
-    if surfacer_manifest.has(
-            "is_human_current_nav_trajectory_shown_with_slow_mo"):
-        self.is_human_current_nav_trajectory_shown_with_slow_mo = \
-                surfacer_manifest \
-                        .is_human_current_nav_trajectory_shown_with_slow_mo
-    if surfacer_manifest.has(
-            "is_computer_current_nav_trajectory_shown_with_slow_mo"):
-        self.is_computer_current_nav_trajectory_shown_with_slow_mo = \
-                surfacer_manifest \
-                        .is_computer_current_nav_trajectory_shown_with_slow_mo
-    if surfacer_manifest.has(
-            "is_human_current_nav_trajectory_shown_without_slow_mo"):
-        self.is_human_current_nav_trajectory_shown_without_slow_mo = \
-                surfacer_manifest \
-                        .is_human_current_nav_trajectory_shown_without_slow_mo
-    if surfacer_manifest.has(
-            "is_computer_current_nav_trajectory_shown_without_slow_mo"):
-        self.is_computer_current_nav_trajectory_shown_without_slow_mo = \
-                surfacer_manifest \
-                    .is_computer_current_nav_trajectory_shown_without_slow_mo
-    if surfacer_manifest.has("is_human_nav_pulse_shown_with_slow_mo"):
-        self.is_human_nav_pulse_shown_with_slow_mo = \
-                surfacer_manifest.is_human_nav_pulse_shown_with_slow_mo
-    if surfacer_manifest.has("is_computer_nav_pulse_shown_with_slow_mo"):
-        self.is_computer_nav_pulse_shown_with_slow_mo = \
-                surfacer_manifest.is_computer_nav_pulse_shown_with_slow_mo
-    if surfacer_manifest.has("is_human_nav_pulse_shown_without_slow_mo"):
-        self.is_human_nav_pulse_shown_without_slow_mo = \
-                surfacer_manifest.is_human_nav_pulse_shown_without_slow_mo
-    if surfacer_manifest.has("is_computer_nav_pulse_shown_without_slow_mo"):
-        self.is_computer_nav_pulse_shown_without_slow_mo = \
-                surfacer_manifest.is_computer_nav_pulse_shown_without_slow_mo
-    if surfacer_manifest.has("is_human_new_nav_exclamation_mark_shown"):
-        self.is_human_new_nav_exclamation_mark_shown = \
-                surfacer_manifest.is_human_new_nav_exclamation_mark_shown
-    if surfacer_manifest.has("is_computer_new_nav_exclamation_mark_shown"):
-        self.is_computer_new_nav_exclamation_mark_shown = \
-                surfacer_manifest.is_computer_new_nav_exclamation_mark_shown
-    if surfacer_manifest.has("does_human_nav_pulse_grow"):
-        self.does_human_nav_pulse_grow = \
-                surfacer_manifest.does_human_nav_pulse_grow
-    if surfacer_manifest.has("does_computer_nav_pulse_grow"):
-        self.does_computer_nav_pulse_grow = \
-                surfacer_manifest.does_computer_nav_pulse_grow
-    if surfacer_manifest.has("nav_selection_prediction_opacity"):
-        self.nav_selection_prediction_opacity = \
-                surfacer_manifest.nav_selection_prediction_opacity
-    if surfacer_manifest.has("nav_path_fade_in_duration"):
-        self.nav_path_fade_in_duration = \
-                surfacer_manifest.nav_path_fade_in_duration
-    if surfacer_manifest.has("new_path_pulse_duration"):
-        self.new_path_pulse_duration = \
-                surfacer_manifest.new_path_pulse_duration
-    if surfacer_manifest.has("new_path_pulse_time_length"):
-        self.new_path_pulse_time_length = \
-                surfacer_manifest.new_path_pulse_time_length
-    
-    if surfacer_manifest.has("path_drag_update_throttle_interval"):
+    if manifest.has("path_drag_update_throttle_interval"):
         self.path_drag_update_throttle_interval = \
-                surfacer_manifest.path_drag_update_throttle_interval
-    if surfacer_manifest.has("path_beat_update_throttle_interval"):
+                manifest.path_drag_update_throttle_interval
+    if manifest.has("path_beat_update_throttle_interval"):
         self.path_beat_update_throttle_interval = \
-                surfacer_manifest.path_beat_update_throttle_interval
+                manifest.path_beat_update_throttle_interval
     
-    if surfacer_manifest.has("nav_selection_prediction_tween_duration"):
-        self.nav_selection_prediction_tween_duration = \
-                surfacer_manifest.nav_selection_prediction_tween_duration
-    
-    if surfacer_manifest.has("is_human_prediction_shown"):
-        self.is_human_prediction_shown = \
-                surfacer_manifest.is_human_prediction_shown
-    if surfacer_manifest.has("is_computer_prediction_shown"):
-        self.is_computer_prediction_shown = \
-                surfacer_manifest.is_computer_prediction_shown
-    
-    if surfacer_manifest.has("skip_choreography_framerate_multiplier"):
+    if manifest.has("skip_choreography_framerate_multiplier"):
         self.skip_choreography_framerate_multiplier = \
-                surfacer_manifest.skip_choreography_framerate_multiplier
-    
-    if surfacer_manifest.has("gravity_default"):
-        self.gravity_default = \
-                surfacer_manifest.gravity_default
-    if surfacer_manifest.has("gravity_slow_rise_multiplier_default"):
-        self.gravity_slow_rise_multiplier_default = \
-                surfacer_manifest.gravity_slow_rise_multiplier_default
-    if surfacer_manifest.has("gravity_double_jump_slow_rise_multiplier_default"):
-        self.gravity_double_jump_slow_rise_multiplier_default = \
-                surfacer_manifest.gravity_double_jump_slow_rise_multiplier_default
-    if surfacer_manifest.has("walk_acceleration_default"):
-        self.walk_acceleration_default = \
-                surfacer_manifest.walk_acceleration_default
-    if surfacer_manifest.has("in_air_horizontal_acceleration_default"):
-        self.in_air_horizontal_acceleration_default = \
-                surfacer_manifest.in_air_horizontal_acceleration_default
-    if surfacer_manifest.has("climb_up_speed_default"):
-        self.climb_up_speed_default = \
-                surfacer_manifest.climb_up_speed_default
-    if surfacer_manifest.has("climb_down_speed_default"):
-        self.climb_down_speed_default = \
-                surfacer_manifest.climb_down_speed_default
-    if surfacer_manifest.has("friction_coefficient_default"):
-        self.friction_coefficient_default = \
-                surfacer_manifest.friction_coefficient_default
-    if surfacer_manifest.has("jump_boost_default"):
-        self.jump_boost_default = \
-                surfacer_manifest.jump_boost_default
-    if surfacer_manifest.has("wall_jump_horizontal_boost_default"):
-        self.wall_jump_horizontal_boost_default = \
-                surfacer_manifest.wall_jump_horizontal_boost_default
-    if surfacer_manifest.has("wall_fall_horizontal_boost_default"):
-        self.wall_fall_horizontal_boost_default = \
-                surfacer_manifest.wall_fall_horizontal_boost_default
-    
-    if surfacer_manifest.has("max_horizontal_speed_default_default"):
-        self.max_horizontal_speed_default_default = \
-                surfacer_manifest.max_horizontal_speed_default_default
-    if surfacer_manifest.has("max_vertical_speed_default"):
-        self.max_vertical_speed_default = \
-                surfacer_manifest.max_vertical_speed_default
-    if surfacer_manifest.has("min_horizontal_speed"):
-        self.min_horizontal_speed = \
-                surfacer_manifest.min_horizontal_speed
-    if surfacer_manifest.has("min_vertical_speed"):
-        self.min_vertical_speed = \
-                surfacer_manifest.min_vertical_speed
-    
-    if surfacer_manifest.has("dash_speed_multiplier_default"):
-        self.dash_speed_multiplier_default = \
-                surfacer_manifest.dash_speed_multiplier_default
-    if surfacer_manifest.has("dash_vertical_boost_default"):
-        self.dash_vertical_boost_default = \
-                surfacer_manifest.dash_vertical_boost_default
-    if surfacer_manifest.has("dash_duration_default"):
-        self.dash_duration_default = \
-                surfacer_manifest.dash_duration_default
-    if surfacer_manifest.has("dash_fade_duration_default"):
-        self.dash_fade_duration_default = \
-                surfacer_manifest.dash_fade_duration_default
-    if surfacer_manifest.has("dash_cooldown_default"):
-        self.dash_cooldown_default = \
-                surfacer_manifest.dash_cooldown_default
-    
-    if surfacer_manifest.has("additional_edge_weight_offset_default"):
-        self.additional_edge_weight_offset_default = \
-                surfacer_manifest.additional_edge_weight_offset_default
-    if surfacer_manifest.has("walking_edge_weight_multiplier_default"):
-        self.walking_edge_weight_multiplier_default = \
-                surfacer_manifest.walking_edge_weight_multiplier_default
-    if surfacer_manifest.has("climbing_edge_weight_multiplier_default"):
-        self.climbing_edge_weight_multiplier_default = \
-                surfacer_manifest.climbing_edge_weight_multiplier_default
-    if surfacer_manifest.has("air_edge_weight_multiplier_default"):
-        self.air_edge_weight_multiplier_default = \
-                surfacer_manifest.air_edge_weight_multiplier_default
+                manifest.skip_choreography_framerate_multiplier
     
     assert(Sc._manifest.metadata.must_restart_level_to_change_settings)
 
@@ -594,6 +354,23 @@ func _set_up() -> void:
     assert(Sc.draw is SurfacerDrawUtils)
     assert(Sc.level_config is MommaDuckLevelConfig)
     assert(Sc.level_session is MommaDuckLevelSession)
+    
+    Sc.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
+    Sc.profiler.preregister_metric_keys(surface_parser_metric_keys)
+    
+    if _manifest.has("surfacer_annotations_manifest_class"):
+        self.ann_manifest = _manifest.surfacer_annotations_manifest_class.new()
+        assert(self.ann_manifest is SurfacerAnnotationsManifest)
+    else:
+        self.ann_manifest = SurfacerAnnotationsManifest.new()
+    add_child(self.ann_manifest)
+    
+    if _manifest.has("surfacer_movement_manifest_class"):
+        self.movement = _manifest.surfacer_movement_manifest_class.new()
+        assert(self.movement is SurfacerMovementManifest)
+    else:
+        self.movement = SurfacerMovementManifest.new()
+    add_child(self.movement)
     
     self.is_inspector_enabled = Sc.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
@@ -617,42 +394,21 @@ func _set_up() -> void:
             NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
             true)
     
-    Sc.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
-    Sc.profiler.preregister_metric_keys(surface_parser_metric_keys)
+    Su.ann_manifest._register_manifest(Su.manifest.annotations_manifest)
+    Su.movement._register_manifest(Su.manifest.movement_manifest)
     
-    ann_defaults = AnnotationElementDefaults.new()
-    annotators = Annotators.new()
-    add_child(Su.annotators)
+    Su.movement._validate_configuration()
     
-    _validate_configuration()
-
-
-func _validate_configuration() -> void:
-    assert(Su.gravity_default >= 0)
-    assert(Su.gravity_slow_rise_multiplier_default >= 0)
-    assert(Su.gravity_double_jump_slow_rise_multiplier_default >= 0)
+    if _manifest.has("annotation_element_defaults_class"):
+        self.ann_defaults = _manifest.annotation_element_defaults_class.new()
+        assert(self.ann_defaults is AnnotationElementDefaults)
+    else:
+        self.ann_defaults = AnnotationElementDefaults.new()
+    add_child(self.ann_defaults)
     
-    assert(Su.walk_acceleration_default >= 0)
-    assert(Su.in_air_horizontal_acceleration_default >= 0)
-    assert(Su.climb_up_speed_default <= 0)
-    assert(Su.climb_down_speed_default >= 0)
-    
-    assert(Su.jump_boost_default <= 0)
-    assert(Su.wall_jump_horizontal_boost_default >= 0 and \
-            Su.wall_jump_horizontal_boost_default <= \
-            Su.max_horizontal_speed_default_default)
-    assert(Su.wall_fall_horizontal_boost_default >= 0 and \
-            Su.wall_fall_horizontal_boost_default <= \
-            Su.max_horizontal_speed_default_default)
-    
-    assert(Su.max_horizontal_speed_default_default >= 0)
-    assert(Su.max_vertical_speed_default >= 0)
-    assert(Su.min_horizontal_speed >= 0)
-    assert(Su.max_vertical_speed_default >= abs(Su.jump_boost_default))
-    assert(Su.min_vertical_speed >= 0)
-    
-    assert(Su.dash_speed_multiplier_default >= 0)
-    assert(Su.dash_vertical_boost_default <= 0)
-    assert(Su.dash_duration_default >= Su.dash_fade_duration_default)
-    assert(Su.dash_fade_duration_default >= 0)
-    assert(Su.dash_cooldown_default >= 0)
+    if _manifest.has("annotators_class"):
+        self.annotators = _manifest.annotators_class.new()
+        assert(self.annotators is Annotators)
+    else:
+        self.annotators = Annotators.new()
+    add_child(self.annotators)
