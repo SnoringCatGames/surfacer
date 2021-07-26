@@ -671,7 +671,7 @@ var _default_slow_motion_manifest := {
     saturation = 0.5,
 }
 
-var _default_input_map = ScaffolderProjectSettings.DEFAULT_default_input_map
+var _default_input_map = ScaffolderProjectSettings.DEFAULT_INPUT_MAP
 
 var _default_is_using_pixel_style := true
 

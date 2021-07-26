@@ -358,15 +358,15 @@ func _set_up() -> void:
     Sc.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
     Sc.profiler.preregister_metric_keys(surface_parser_metric_keys)
     
-    if _manifest.has("surfacer_annotations_manifest_class"):
-        self.ann_manifest = _manifest.surfacer_annotations_manifest_class.new()
+    if manifest.has("surfacer_annotations_manifest_class"):
+        self.ann_manifest = manifest.surfacer_annotations_manifest_class.new()
         assert(self.ann_manifest is SurfacerAnnotationsManifest)
     else:
         self.ann_manifest = SurfacerAnnotationsManifest.new()
     add_child(self.ann_manifest)
     
-    if _manifest.has("surfacer_movement_manifest_class"):
-        self.movement = _manifest.surfacer_movement_manifest_class.new()
+    if manifest.has("surfacer_movement_manifest_class"):
+        self.movement = manifest.surfacer_movement_manifest_class.new()
         assert(self.movement is SurfacerMovementManifest)
     else:
         self.movement = SurfacerMovementManifest.new()
@@ -381,33 +381,37 @@ func _set_up() -> void:
     self.is_intro_choreography_shown = Sc.save_state.get_setting(
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
             true)
-    self.is_active_trajectory_shown = Sc.save_state.get_setting(
-            ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY,
-            true)
-    self.is_previous_trajectory_shown = Sc.save_state.get_setting(
-            PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
-            false)
-    self.is_preselection_trajectory_shown = Sc.save_state.get_setting(
-            PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
-            true)
-    self.is_navigation_destination_shown = Sc.save_state.get_setting(
-            NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
-            true)
+    self.ann_manifest.is_active_trajectory_shown = \
+            Sc.save_state.get_setting(
+                    ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    true)
+    self.ann_manifest.is_previous_trajectory_shown = \
+            Sc.save_state.get_setting(
+                    PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    false)
+    self.ann_manifest.is_preselection_trajectory_shown = \
+            Sc.save_state.get_setting(
+                    PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    true)
+    self.ann_manifest.is_navigation_destination_shown = \
+            Sc.save_state.get_setting(
+                    NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
+                    true)
     
     Su.ann_manifest._register_manifest(Su.manifest.annotations_manifest)
     Su.movement._register_manifest(Su.manifest.movement_manifest)
     
     Su.movement._validate_configuration()
     
-    if _manifest.has("annotation_element_defaults_class"):
-        self.ann_defaults = _manifest.annotation_element_defaults_class.new()
+    if manifest.has("annotation_element_defaults_class"):
+        self.ann_defaults = manifest.annotation_element_defaults_class.new()
         assert(self.ann_defaults is AnnotationElementDefaults)
     else:
         self.ann_defaults = AnnotationElementDefaults.new()
     add_child(self.ann_defaults)
     
-    if _manifest.has("annotators_class"):
-        self.annotators = _manifest.annotators_class.new()
+    if manifest.has("annotators_class"):
+        self.annotators = manifest.annotators_class.new()
         assert(self.annotators is Annotators)
     else:
         self.annotators = Annotators.new()
