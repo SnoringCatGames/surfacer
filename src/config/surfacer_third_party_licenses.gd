@@ -1,3 +1,4 @@
+tool
 class_name SurfacerThirdPartyLicenses
 extends Node
 
