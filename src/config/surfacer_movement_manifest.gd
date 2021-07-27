@@ -1,3 +1,4 @@
+tool
 class_name SurfacerMovementManifest
 extends Node
 
@@ -81,6 +82,10 @@ var _action_handler_classes: Array
 var _edge_calculator_classes: Array
 
 # ---
+
+
+func _init() -> void:
+    Sc.logger.on_global_init(self, "SurfacerMovementManifest")
 
 
 func _register_manifest(manifest: Dictionary) -> void:
@@ -432,14 +437,16 @@ func get_default_edge_calculator_names(
 func get_action_handlers_from_names(
         names: Array,
         includes_edge_match: bool) -> Array:
-    if includes_edge_match:
-        names.push_back("MatchExpectedEdgeTrajectoryAction")
-    else:
-        names.erase("MatchExpectedEdgeTrajectoryAction")
-    
     var action_handlers := []
     for name in names:
         action_handlers.push_back(Su.movement.action_handlers[name])
+    
+    var name := "MatchExpectedEdgeTrajectoryAction"
+    if includes_edge_match and !names.has(name):
+        action_handlers.push_back(Su.movement.action_handlers[name])
+    elif !includes_edge_match and names.has(name):
+        names.erase(Su.movement.action_handlers[name])
+    
     action_handlers.sort_custom(_PlayerActionHandlerComparator, "sort")
     return action_handlers
 

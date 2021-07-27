@@ -1,3 +1,4 @@
+tool
 class_name SurfacerBootstrap
 extends ScaffolderBootstrap
 
@@ -45,6 +46,8 @@ func _register_edge_calculators(edge_calculator_classes: Array) -> void:
 
 
 func _parse_player_scenes(scenes_array: Array) -> void:
+    # FIXME: ----------------------------------------------------
+    print(">>>>>>>>>>>>SurfacerBootstrap._parse_player_scenes %s" % scenes_array.size())
     # FIXME: ----------------- Test this
     for scene in scenes_array:
         assert(scene is PackedScene)
