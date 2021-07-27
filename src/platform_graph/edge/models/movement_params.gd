@@ -178,19 +178,20 @@ export var min_intra_surface_distance_to_optimize_jump_for := 16.0 \
 ##     we already found a valid edge for, on the same surface, for the same
 ##     surface pair.[br]
 ## -   We use this distance to determine threshold how far away is enough.[br]
-export var distance_squared_threshold_for_considering_additional_jump_land_points := 32.0 * 32.0 \
-        setget _set_distance_squared_threshold_for_considering_additional_jump_land_points
+export var dist_sq_thres_for_considering_additional_jump_land_points := \
+        32.0 * 32.0 \
+        setget _set_dist_sq_thres_for_considering_additional_jump_land_points
 ## -   If true, then edge calculations for a given surface pair will stop early
 ##     as soon as the first valid edge for the pair is found.[br]
 ## -   This overrides
-##     distance_squared_threshold_for_considering_additional_jump_land_points.[br]
+##     dist_sq_thres_for_considering_additional_jump_land_points.[br]
 export var stops_after_finding_first_valid_edge_for_a_surface_pair := false \
         setget _set_stops_after_finding_first_valid_edge_for_a_surface_pair
 ## -   If true, then valid edges will be calculated for every good jump/land
 ##     position between a given surface pair.[br]
 ## -   This will take more time to compute.[br]
 ## -   This overrides
-##     distance_squared_threshold_for_considering_additional_jump_land_points.[br]
+##     dist_sq_thres_for_considering_additional_jump_land_points.[br]
 export var calculates_all_valid_edges_for_a_surface_pair := false \
         setget _set_calculates_all_valid_edges_for_a_surface_pair
 ## -   If this is true, then extra jump/land position combinations will be
@@ -200,8 +201,8 @@ export var calculates_all_valid_edges_for_a_surface_pair := false \
 ##     jump/land positions combinations.[br]
 export var always_includes_jump_land_positions_at_surface_ends := false \
         setget _set_always_includes_jump_land_positions_at_surface_ends
-export var includes_redundant_jump_land_positions_with_zero_start_velocity := true \
-        setget _set_includes_redundant_jump_land_positions_with_zero_start_velocity
+export var includes_redundant_j_l_positions_with_zero_start_velocity := true \
+        setget _set_includes_redundant_j_l_positions_with_zero_start_velocity
 ## -   This is a constant increase to all jump durations.[br]
 ## -   This could make it more likely for edge calculations to succeed earlier,
 ##     or it could just make the player seem more floaty.[br]
@@ -222,8 +223,8 @@ export var recurses_when_colliding_during_horizontal_step_calculations := true \
 ## If false, then edge calculations will not try to consider higher jump height
 ## in order to move around intermediate surfaces, which will produce many false
 ## negatives.
-export var backtracks_to_consider_higher_jumps_during_horizontal_step_calculations := true \
-        setget _set_backtracks_to_consider_higher_jumps_during_horizontal_step_calculations
+export var backtracks_for_higher_jumps_during_hor_step_calculations := true \
+        setget _set_backtracks_for_higher_jumps_during_hor_step_calculations
 ## The amount of extra margin to include around the player collision boundary
 ## when performing collision detection for a given edge calculation.
 export var collision_margin_for_edge_calculations := 4.0 \
@@ -245,8 +246,8 @@ export var skips_less_likely_jump_land_positions := false \
 ##     a path.[br]
 ## -   This should be unnecessary if forces_player_position_to_match_path_at_end
 ##     is true.[br]
-export var prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets := true \
-        setget _set_prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets
+export var prevents_path_ends_from_exceeding_surface_ends_with_offsets := true \
+        setget _set_prevents_path_ends_from_exceeding_surface_ends_with_offsets
 ## -   If true, then edge calculations will re-use previously calculated
 ##     intermediate waypoints when attempting to backtrack and use a higher max
 ##     jump height.[br]
@@ -263,16 +264,17 @@ export var asserts_no_preexisting_collisions_during_edge_calculations := false \
 ## -   For example, move_and_collide could otherwise detect collisons with the
 ##     adjacent wall when moving vertically and colliding with the edge of a
 ##     ceiling.[br]
-export var checks_for_alternate_intersection_points_for_very_oblique_collisions := true \
-        setget _set_checks_for_alternate_intersection_points_for_very_oblique_collisions
+export var checks_for_alt_intersection_points_for_oblique_collisions := true \
+        setget _set_checks_for_alt_intersection_points_for_oblique_collisions
 export var oblique_collison_normal_aspect_ratio_threshold_threshold := 10.0 \
         setget _set_oblique_collison_normal_aspect_ratio_threshold_threshold
-export var min_valid_frame_count_when_colliding_early_with_expected_surface := 4 \
-        setget _set_min_valid_frame_count_when_colliding_early_with_expected_surface
-export var reached_in_air_destination_distance_squared_threshold := 16.0 * 16.0 \
+export var min_frame_count_when_colliding_early_with_expected_surface := 4 \
+        setget _set_min_frame_count_when_colliding_early_with_expected_surface
+export var reached_in_air_destination_distance_squared_threshold := \
+        16.0 * 16.0 \
         setget _set_reached_in_air_destination_distance_squared_threshold
-export var max_edges_to_remove_from_end_of_path_for_optimization_to_in_air_destination := 2 \
-        setget _set_max_edges_to_remove_from_end_of_path_for_optimization_to_in_air_destination
+export var max_edges_to_remove_from_path_for_opt_to_in_air_dest := 2 \
+        setget _set_max_edges_to_remove_from_path_for_opt_to_in_air_dest
 
 export var logs_navigator_events := false \
         setget _set_logs_navigator_events
@@ -443,8 +445,15 @@ func _update_parameters() -> void:
 
 
 func _validate_parameters() -> void:
-    # FIXME: ---------------------------------
-    pass
+    if name != "MovementParams":
+        _configuration_warning = \
+                "The MovementParams node must be named 'MovementParams'. " + \
+                "This is important for how it is parsed from the .tscn file."
+    else:
+        # FIXME: ---------------------------------
+        pass
+    
+    update_configuration_warning()
 
 
 func _derive_parameters() -> void:
@@ -538,6 +547,11 @@ func _get_configuration_warning() -> String:
     return _configuration_warning
 
 
+func set_name(value: String) -> void:
+    .set_name(value)
+    _update_parameters()
+
+
 func get_max_horizontal_jump_distance(surface_side: int) -> float:
     return wall_jump_max_horizontal_jump_distance if \
             surface_side == SurfaceSide.LEFT_WALL or \
@@ -580,7 +594,8 @@ func _set_gravity_slow_rise_multiplier_multiplier(value: float) -> void:
     _update_parameters()
 
 
-func _set_gravity_double_jump_slow_rise_multiplier_multiplier(value: float) -> void:
+func _set_gravity_double_jump_slow_rise_multiplier_multiplier(
+        value: float) -> void:
     gravity_double_jump_slow_rise_multiplier_multiplier = value
     _update_parameters()
 
@@ -660,7 +675,8 @@ func _set_dash_cooldown_multiplier(value: float) -> void:
     _update_parameters()
 
 
-func _set_uses_duration_instead_of_distance_for_edge_weight(value: bool) -> void:
+func _set_uses_duration_instead_of_distance_for_edge_weight(
+        value: bool) -> void:
     uses_duration_instead_of_distance_for_edge_weight = value
     _update_parameters()
 
@@ -775,12 +791,14 @@ func _set_min_intra_surface_distance_to_optimize_jump_for(value: float) -> void:
     _update_parameters()
 
 
-func _set_distance_squared_threshold_for_considering_additional_jump_land_points(value: float) -> void:
-    distance_squared_threshold_for_considering_additional_jump_land_points = value
+func _set_dist_sq_thres_for_considering_additional_jump_land_points(
+        value: float) -> void:
+    dist_sq_thres_for_considering_additional_jump_land_points = value
     _update_parameters()
 
 
-func _set_stops_after_finding_first_valid_edge_for_a_surface_pair(value: bool) -> void:
+func _set_stops_after_finding_first_valid_edge_for_a_surface_pair(
+        value: bool) -> void:
     stops_after_finding_first_valid_edge_for_a_surface_pair = value
     _update_parameters()
 
@@ -790,13 +808,15 @@ func _set_calculates_all_valid_edges_for_a_surface_pair(value: bool) -> void:
     _update_parameters()
 
 
-func _set_always_includes_jump_land_positions_at_surface_ends(value: bool) -> void:
+func _set_always_includes_jump_land_positions_at_surface_ends(
+        value: bool) -> void:
     always_includes_jump_land_positions_at_surface_ends = value
     _update_parameters()
 
 
-func _set_includes_redundant_jump_land_positions_with_zero_start_velocity(value: bool) -> void:
-    includes_redundant_jump_land_positions_with_zero_start_velocity = value
+func _set_includes_redundant_j_l_positions_with_zero_start_velocity(
+        value: bool) -> void:
+    includes_redundant_j_l_positions_with_zero_start_velocity = value
     _update_parameters()
 
 
@@ -810,13 +830,15 @@ func _set_exceptional_jump_instruction_duration_increase(value: float) -> void:
     _update_parameters()
 
 
-func _set_recurses_when_colliding_during_horizontal_step_calculations(value: bool) -> void:
+func _set_recurses_when_colliding_during_horizontal_step_calculations(
+        value: bool) -> void:
     recurses_when_colliding_during_horizontal_step_calculations = value
     _update_parameters()
 
 
-func _set_backtracks_to_consider_higher_jumps_during_horizontal_step_calculations(value: bool) -> void:
-    backtracks_to_consider_higher_jumps_during_horizontal_step_calculations = value
+func _set_backtracks_for_higher_jumps_during_hor_step_calculations(
+        value: bool) -> void:
+    backtracks_for_higher_jumps_during_hor_step_calculations = value
     _update_parameters()
 
 
@@ -835,43 +857,51 @@ func _set_skips_less_likely_jump_land_positions(value: bool) -> void:
     _update_parameters()
 
 
-func _set_prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets(value: bool) -> void:
-    prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets = value
+func _set_prevents_path_ends_from_exceeding_surface_ends_with_offsets(
+        value: bool) -> void:
+    prevents_path_ends_from_exceeding_surface_ends_with_offsets = value
     _update_parameters()
 
 
-func _set_reuses_previous_waypoints_when_backtracking_on_jump_height(value: bool) -> void:
+func _set_reuses_previous_waypoints_when_backtracking_on_jump_height(
+        value: bool) -> void:
     reuses_previous_waypoints_when_backtracking_on_jump_height = value
     _update_parameters()
 
 
-func _set_asserts_no_preexisting_collisions_during_edge_calculations(value: bool) -> void:
+func _set_asserts_no_preexisting_collisions_during_edge_calculations(
+        value: bool) -> void:
     asserts_no_preexisting_collisions_during_edge_calculations = value
     _update_parameters()
 
 
-func _set_checks_for_alternate_intersection_points_for_very_oblique_collisions(value: bool) -> void:
-    checks_for_alternate_intersection_points_for_very_oblique_collisions = value
+func _set_checks_for_alt_intersection_points_for_oblique_collisions(
+        value: bool) -> void:
+    checks_for_alt_intersection_points_for_oblique_collisions = value
     _update_parameters()
 
 
-func _set_oblique_collison_normal_aspect_ratio_threshold_threshold(value: float) -> void:
+func _set_oblique_collison_normal_aspect_ratio_threshold_threshold(
+        value: float) -> void:
     oblique_collison_normal_aspect_ratio_threshold_threshold = value
     _update_parameters()
 
 
-func _set_min_valid_frame_count_when_colliding_early_with_expected_surface(value: int) -> void:
-    min_valid_frame_count_when_colliding_early_with_expected_surface = value
+func _set_min_frame_count_when_colliding_early_with_expected_surface(
+        value: int) -> void:
+    min_frame_count_when_colliding_early_with_expected_surface = value
     _update_parameters()
 
 
-func _set_reached_in_air_destination_distance_squared_threshold(value: float) -> void:
+func _set_reached_in_air_destination_distance_squared_threshold(
+        value: float) -> void:
     reached_in_air_destination_distance_squared_threshold = value
     _update_parameters()
 
 
-func _set_max_edges_to_remove_from_end_of_path_for_optimization_to_in_air_destination(value: int) -> void:
-    max_edges_to_remove_from_end_of_path_for_optimization_to_in_air_destination = value
+func _set_max_edges_to_remove_from_path_for_opt_to_in_air_dest(
+        value: int) -> void:
+    max_edges_to_remove_from_path_for_opt_to_in_air_dest = value
     _update_parameters()
 
 

@@ -556,7 +556,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
     
     if surface == null or \
             !movement_params \
-            .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets or \
+            .prevents_path_ends_from_exceeding_surface_ends_with_offsets or \
             edge.is_backtracking_to_not_protrude_past_surface_end:
         return null
     
@@ -719,7 +719,7 @@ func _optimize_edges_for_approach(
         
         var index_of_earliest_possible_edge_to_replace := max(0,
                 path.edges.size() - 1 - movement_params \
-                        .max_edges_to_remove_from_end_of_path_for_optimization_to_in_air_destination)
+                        .max_edges_to_remove_from_path_for_opt_to_in_air_dest)
         for i in range(
                 index_of_earliest_possible_edge_to_replace, path.edges.size()):
             var edge: Edge = path.edges[i]
@@ -824,7 +824,7 @@ func _optimize_edges_for_approach(
                                 current_edge)
     
     if movement_params \
-            .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets:
+            .prevents_path_ends_from_exceeding_surface_ends_with_offsets:
         var last_edge: Edge = path.edges.back()
         if last_edge is IntraSurfaceEdge:
             var surface := last_edge.get_end_surface()
@@ -894,7 +894,7 @@ func _optimize_edges_for_approach(
     if movement_params.optimizes_edge_jump_positions_at_run_time or \
             movement_params.optimizes_edge_land_positions_at_run_time or \
             movement_params \
-            .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets:
+            .prevents_path_ends_from_exceeding_surface_ends_with_offsets:
         path.update_distance_and_duration()
     
     path.is_optimized = true

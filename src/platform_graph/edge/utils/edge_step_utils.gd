@@ -134,7 +134,7 @@ static func calculate_steps_between_waypoints(
         var frame_count := next_horizontal_step.frame_positions.size()
         
         if frame_count < edge_calc_params.movement_params \
-                .min_valid_frame_count_when_colliding_early_with_expected_surface:
+                .min_frame_count_when_colliding_early_with_expected_surface:
             # Hit the expected surface too early.
             if step_result_metadata != null:
                 step_result_metadata.edge_step_calc_result_type = \
@@ -230,7 +230,7 @@ static func calculate_steps_between_waypoints(
             vertical_step.time_instruction_end)
     
     if !edge_calc_params.movement_params \
-            .backtracks_to_consider_higher_jumps_during_horizontal_step_calculations:
+            .backtracks_for_higher_jumps_during_hor_step_calculations:
         # This player is configured to abandon any backtracking for higher
         # jumps.
         if step_result_metadata != null:

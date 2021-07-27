@@ -69,7 +69,7 @@ func is_far_enough_from_others(
             if self.jump_position.target_point.distance_squared_to(
                     other.jump_position.target_point) < \
                     movement_params \
-                            .distance_squared_threshold_for_considering_additional_jump_land_points:
+                            .dist_sq_thres_for_considering_additional_jump_land_points:
                 # Found jump positions that are too close to each other.
                 return false
     
@@ -78,7 +78,7 @@ func is_far_enough_from_others(
             if self.land_position.target_point.distance_squared_to(
                     other.land_position.target_point) < \
                     movement_params \
-                            .distance_squared_threshold_for_considering_additional_jump_land_points:
+                            .dist_sq_thres_for_considering_additional_jump_land_points:
                 # Found land positions that are too close to each other.
                 return false
     

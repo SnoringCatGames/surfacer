@@ -339,7 +339,7 @@ func _calculate_dependent_movement_params(
 #    assert(!stops_after_finding_first_valid_edge_for_a_surface_pair or \
 #            !calculates_all_valid_edges_for_a_surface_pair)
 #    assert(!forces_player_position_to_match_path_at_end or \
-#            !prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets)
+#            !prevents_path_ends_from_exceeding_surface_ends_with_offsets)
 #    assert(!syncs_player_position_to_edge_trajectory or \
 #            includes_continuous_trajectory_positions)
 #    assert(!syncs_player_velocity_to_edge_trajectory or \
