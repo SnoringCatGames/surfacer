@@ -67,18 +67,8 @@ var _layers_for_entered_proximity_detection := {}
 var _layers_for_exited_proximity_detection := {}
 
 
-func _init(player_name: String) -> void:
-    self.player_name = player_name
-    
+func _init() -> void:
     self.level = Sc.level
-    
-    self.movement_params = Su.movement.player_movement_params[player_name]
-    self.current_max_horizontal_speed = \
-            movement_params.max_horizontal_speed_default
-    
-    self.new_selection = PointerSelectionPosition.new(self)
-    self.last_selection = PointerSelectionPosition.new(self)
-    self.pre_selection = PointerSelectionPosition.new(self)
 
 
 func _enter_tree() -> void:
@@ -91,7 +81,12 @@ func _ready() -> void:
         # hood.
         return
     
-    _configure_children_from_scene()
+    _initialize_child_movement_params()
+    _initialize_children_proximity_detectors()
+    
+    self.new_selection = PointerSelectionPosition.new(self)
+    self.last_selection = PointerSelectionPosition.new(self)
+    self.pre_selection = PointerSelectionPosition.new(self)
     
     var collision_detection_layer_names := \
             Sc.utils.get_physics_layer_names_from_bitmask(
@@ -166,14 +161,15 @@ func _destroy() -> void:
         queue_free()
 
 
-# FIXME: --------------------- Test this
-func get_property_list() -> Array:
-    var default_list := .get_property_list()
-    for property_config in default_list:
-        if property_config.name == "movement_params":
-            property_config.usage = PROPERTY_USAGE_STORAGE
-            break
-    return default_list
+# FIXME: --------------------- Test this; Re-think this...
+func _get_property_list() -> Array:
+    return [
+        {
+            name = "movement_params",
+            type = TYPE_OBJECT,
+            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
+        },
+    ]
 
 
 func add_child(child: Node, legible_unique_name := false) -> void:
@@ -190,6 +186,11 @@ func _update_editor_configuration() -> void:
     if !Engine.editor_hint:
         return
     
+    if player_name == "":
+        _configuration_warning = "Must define player_name."
+        update_configuration_warning()
+        return
+    
     # Get MovementParams from scene configuration.
     var movement_params_matches: Array = Sc.utils.get_children_by_type(
             self,
@@ -203,30 +204,26 @@ func _update_editor_configuration() -> void:
         _configuration_warning = "Must define a MovementParams child node."
         update_configuration_warning()
         return
-    var movement_params: MovementParams = movement_params_matches[0]
-    
-    # FIXME: ------------------------------------- Verify this works.
-    # Record the collision shape on the movement_params scene.
-    var collision_shape_matches: Array = Sc.utils.get_children_by_type(
-            self,
-            CollisionShape2D)
-    if collision_shape_matches.size() == 1:
-        var collision_shape: CollisionShape2D = collision_shape_matches[0]
-        movement_params.collider_shape = collision_shape.shape
-        movement_params.collider_rotation = collision_shape.rotation
     
     _configuration_warning = ""
     update_configuration_warning()
+    
+    _initialize_child_movement_params()
 
 
 func _get_configuration_warning() -> String:
     return _configuration_warning
 
 
-func _configure_children_from_scene() -> void:
+func _initialize_child_movement_params() -> void:
     # Get MovementParams from scene configuration.
     movement_params = Sc.utils.get_child_by_type(self, MovementParams)
-    
+    self.current_max_horizontal_speed = \
+            movement_params.max_horizontal_speed_default
+    movement_params.call_deferred("_get_shape_from_parent")
+
+
+func _initialize_children_proximity_detectors() -> void:
     # Get ProximityDetectors from scene configuration.
     for detector in Sc.utils.get_children_by_type(self, ProximityDetector):
         if detector.is_detecting_enter:

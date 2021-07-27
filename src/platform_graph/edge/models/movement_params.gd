@@ -387,32 +387,50 @@ var _configuration_warning := ""
 # ---
 
 
-func _init() -> void:
-    _init_params()
-    _init_animator_params()
+func _enter_tree() -> void:
+    call_deferred("_get_shape_from_parent")
 
 
-# FIXME: --------------------- Test this
-func get_property_list() -> Array:
-    var default_list := .get_property_list()
-    for property_config in default_list:
-        if property_config.name == "collider_shape" or \
-                property_config.name == "collider_rotation":
-            property_config.usage = PROPERTY_USAGE_STORAGE
-    return default_list
+func _get_shape_from_parent() -> void:
+    var parent := get_parent()
+
+    var collision_shapes: Array = Sc.utils.get_children_by_type(
+            parent,
+            CollisionShape2D)
+    if !collision_shapes.empty():
+        var shape: CollisionShape2D = collision_shapes[0]
+        collider_shape = shape.shape
+        collider_rotation = shape.rotation
+    
+    if !(parent is KinematicBody2D) or \
+            !parent.has_method("_update_navigator"):
+        _configuration_warning = "Must define a Player parent."
+        update_configuration_warning()
+    elif collider_shape == null:
+        _configuration_warning = "Must define a CollisionShape2D sibling."
+        update_configuration_warning()
 
 
-func _init_params() -> void:
-    Sc.logger.error("Abstract MovementParams._init_params is not implemented")
-
-
-func _init_animator_params() -> void:
-    Sc.logger.error(
-            "Abstract MovementParams._init_animator_params is not implemented")
+# NOTE: _get_property_list **appends** to the default list of properties.
+#       It does not replace.
+func _get_property_list() -> Array:
+    return [
+        {
+            name = "collider_shape",
+            type = TYPE_OBJECT,
+            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
+        },
+        {
+            name = "collider_rotation",
+            type = TYPE_REAL,
+            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
+        },
+    ]
 
 
 func _update_parameters() -> void:
     _validate_parameters()
+    _get_shape_from_parent()
     if _configuration_warning == "":
         _derive_parameters()
     elif Engine.editor_hint:
@@ -505,13 +523,13 @@ func _derive_parameters() -> void:
     action_handlers = Su.movement.get_action_handlers_from_names(
             action_handlers_override if \
                     action_handlers_override != null else \
-                    Su.movement.get_default_action_handler_names(),
+                    Su.movement.get_default_action_handler_names(self),
             syncs_player_position_to_edge_trajectory or \
                     syncs_player_velocity_to_edge_trajectory)
     edge_calculators = Su.movement.get_edge_calculators_from_names(
             edge_calculators_override if \
             edge_calculators_override != null else \
-            Su.movement.get_default_edge_calculator_names())
+            Su.movement.get_default_edge_calculator_names(self))
 
 
 func _get_configuration_warning() -> String:

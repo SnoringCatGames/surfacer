@@ -1,3 +1,4 @@
+tool
 class_name SurfacerAnnotationsManifest
 extends Node
 
@@ -31,6 +32,10 @@ var new_path_pulse_duration := 0.7
 var new_path_pulse_time_length := 1.0
 
 # ---
+
+
+func _init() -> void:
+    Sc.logger.on_global_init(self, "SurfacerAnnotationsManifest")
 
 
 func _register_manifest(manifest: Dictionary) -> void:
