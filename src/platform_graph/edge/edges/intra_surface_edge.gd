@@ -225,14 +225,14 @@ func get_animation_state_at_time(
     match side:
         SurfaceSide.FLOOR, \
         SurfaceSide.CEILING:
-            result.animation_type = PlayerAnimationType.WALK
+            result.animation_name = "Walk"
             result.facing_left = displacement.x < 0.0
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
-            result.animation_type = \
-                    PlayerAnimationType.CLIMB_UP if \
+            result.animation_name = \
+                    "ClimbUp" if \
                     displacement.y < 0.0 else \
-                    PlayerAnimationType.CLIMB_DOWN
+                    "ClimbDown"
             result.facing_left = side == SurfaceSide.LEFT_WALL
         _:
             Sc.logger.error()

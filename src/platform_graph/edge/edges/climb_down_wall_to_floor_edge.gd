@@ -88,7 +88,7 @@ func get_animation_state_at_time(
         result: PlayerAnimationState,
         edge_time: float) -> void:
     result.player_position = get_position_at_time(edge_time)
-    result.animation_type = PlayerAnimationType.CLIMB_DOWN
+    result.animation_name = "ClimbDown"
     result.animation_position = edge_time
     result.facing_left = get_start_surface().side == SurfaceSide.LEFT_WALL
 
