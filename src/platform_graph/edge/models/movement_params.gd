@@ -375,13 +375,22 @@ var _configuration_warning := ""
 
 # ---
 
+var _is_instanced_from_bootstrap := false
+
+var _debounced_update_parameters: FuncRef = Sc.time.debounce(
+        funcref(self, "_update_parameters_debounced"),
+        0.02)
+
 
 func _enter_tree() -> void:
-    call_deferred("_get_shape_from_parent")
+    call_deferred("_parse_shape_from_parent")
 
 
-func _get_shape_from_parent() -> void:
+func _parse_shape_from_parent() -> void:
     var parent := get_parent()
+    
+    if !is_instance_valid(parent):
+        return
     
     if !(parent is KinematicBody2D) or \
             !parent.has_method("_update_navigator"):
@@ -424,18 +433,18 @@ func _get_property_list() -> Array:
 
 
 func _update_parameters() -> void:
-    _get_shape_from_parent()
-    if _configuration_warning != "" and \
-            !Engine.editor_hint:
-        Sc.logger.error("Invalid MovementParams configuration: %s" %
-                _configuration_warning)
+    _debounced_update_parameters.call_func()
+
+
+func _update_parameters_debounced() -> void:
+    _parse_shape_from_parent()
+    if _configuration_warning != "":
+        update_configuration_warning()
         return
     
     _validate_parameters()
-    if _configuration_warning != "" and \
-            !Engine.editor_hint:
-        Sc.logger.error("Invalid MovementParams configuration: %s" %
-                _configuration_warning)
+    if _configuration_warning != "":
+        update_configuration_warning()
         return
     
     _configuration_warning = ""
@@ -541,6 +550,15 @@ func _derive_parameters() -> void:
             edge_calculators_override if \
             edge_calculators_override != null else \
             Su.movement.get_default_edge_calculator_names(self))
+
+
+func update_configuration_warning() -> void:
+    .update_configuration_warning()
+    # Throw an error at run-time.
+    if _configuration_warning != "" and \
+            !Engine.editor_hint:
+        Sc.logger.error("Invalid MovementParams configuration: %s" %
+                _configuration_warning)
 
 
 func _get_configuration_warning() -> String:

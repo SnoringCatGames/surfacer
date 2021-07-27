@@ -226,10 +226,10 @@ func _get_configuration_warning() -> String:
 
 func _initialize_child_movement_params() -> void:
     # Get MovementParams from scene configuration.
-    movement_params = Sc.utils.get_child_by_type(self, MovementParams)
+    movement_params = Su.movement.player_movement_params[player_name]
     self.current_max_horizontal_speed = \
             movement_params.max_horizontal_speed_default
-    movement_params.call_deferred("_get_shape_from_parent")
+    movement_params.call_deferred("_parse_shape_from_parent")
 
 
 func _initialize_children_proximity_detectors() -> void:
