@@ -70,11 +70,12 @@ func _record_tile_maps() -> void:
 
 func _create_fake_players_for_collision_calculations() -> void:
     for player_name in _get_player_names():
+        var player_scene: PackedScene = Su.player_scenes[player_name]
         var movement_params: MovementParams = \
                 Su.movement.player_movement_params[player_name]
         var fake_player: Player = Sc.utils.add_scene(
                 self,
-                movement_params.player_path_or_scene,
+                player_scene,
                 false,
                 false)
         fake_player.is_fake = true
