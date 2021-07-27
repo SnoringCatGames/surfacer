@@ -411,7 +411,7 @@ static func check_frame_for_collision(
     var inverse_threshold := 1.0 / threshold
     var is_collision_normal_expected: bool = \
             !player.movement_params \
-            .checks_for_alternate_intersection_points_for_very_oblique_collisions or \
+            .checks_for_alt_intersection_points_for_oblique_collisions or \
             !(displacement_aspect_ratio > threshold and \
             collision_normal_aspect_ratio < inverse_threshold or \
             displacement_aspect_ratio < inverse_threshold and \

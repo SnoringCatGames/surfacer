@@ -2688,7 +2688,7 @@ static func _record_if_distinct(
             current_land_position.surface.normal.x == 0.0
     
     if !movement_params \
-            .includes_redundant_jump_land_positions_with_zero_start_velocity:
+            .includes_redundant_j_l_positions_with_zero_start_velocity:
         for previous_jump_land_positions in [
                 previous_jump_land_positions_1,
                 previous_jump_land_positions_2,
