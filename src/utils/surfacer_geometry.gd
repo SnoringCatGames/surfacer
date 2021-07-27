@@ -1,3 +1,4 @@
+tool
 class_name SurfacerGeometry
 extends ScaffolderGeometry
 
