@@ -3,6 +3,16 @@ class_name PlayerAnimator
 extends Node2D
 
 
+const DEFAULT_ANIMATION_NAMES := [
+    "Walk",
+    "ClimbUp",
+    "ClimbDown",
+    "Rest",
+    "RestOnWall",
+    "JumpFall",
+    "JumpRise",
+]
+
 const UNFLIPPED_HORIZONTAL_SCALE := Vector2(1, 1)
 const FLIPPED_HORIZONTAL_SCALE := Vector2(-1, 1)
 
@@ -10,7 +20,7 @@ var animator_params: PlayerAnimatorParams
 var animation_player: AnimationPlayer
 
 var is_desaturatable: bool
-var _animation_type := PlayerAnimationType.REST
+var _animation_name := "Rest"
 var _base_rate := 1.0
 
 var _configuration_warning := ""
@@ -97,15 +107,14 @@ func face_right() -> void:
     self.scale = scale
 
 
-func play(animation_type: int) -> void:
-    _play_animation(animation_type)
+func play(animation_name: String) -> void:
+    _play_animation(animation_name)
 
 
 func set_static_frame(animation_state: PlayerAnimationState) -> void:
-    _animation_type = animation_state.animation_type
+    _animation_name = animation_state.animation_name
     
-    var name := animation_type_to_name(_animation_type)
-    var playback_rate := animation_type_to_playback_rate(_animation_type)
+    var playback_rate := animation_type_to_playback_rate(_animation_name)
     var position := animation_state.animation_position * playback_rate
     
     if animation_state.facing_left:
@@ -113,13 +122,13 @@ func set_static_frame(animation_state: PlayerAnimationState) -> void:
     else:
         face_right()
     
-    animation_player.play(name)
+    animation_player.play(_animation_name)
     animation_player.seek(position, true)
     animation_player.stop(false)
 
 
 func set_static_frame_position(animation_position: float) -> void:
-    var playback_rate := animation_type_to_playback_rate(_animation_type)
+    var playback_rate := animation_type_to_playback_rate(_animation_name)
     var position := animation_position * playback_rate
     animation_player.seek(position, true)
 
@@ -130,8 +139,8 @@ func match_rate_to_time_scale() -> void:
                 _base_rate * Sc.time.get_combined_scale()
 
 
-func get_current_animation_type() -> int:
-    return _animation_type
+func get_current_animation_name() -> String:
+    return _animation_name
 
 
 func set_modulation(modulation: Color) -> void:
@@ -139,15 +148,15 @@ func set_modulation(modulation: Color) -> void:
 
 
 func _play_animation(
-        animation_type: int,
+        animation_name: String,
         blend := 0.1) -> bool:
-    var name := animation_type_to_name(animation_type)
-    var playback_rate := animation_type_to_playback_rate(animation_type)
+    var playback_rate := animation_type_to_playback_rate(animation_name)
     
-    _animation_type = animation_type
+    _animation_name = animation_name
     _base_rate = playback_rate
     
-    var is_current_animatior := animation_player.current_animation == name
+    var is_current_animatior := \
+            animation_player.current_animation == animation_name
     var is_playing := animation_player.is_playing()
     var is_changing_direction := \
             (animation_player.get_playing_speed() < 0) != (playback_rate < 0)
@@ -158,52 +167,36 @@ func _play_animation(
     
     if animation_was_not_playing or \
             animation_was_playing_in_wrong_direction:
-        animation_player.play(name, blend)
+        animation_player.play(animation_name, blend)
         match_rate_to_time_scale()
         return true
     else:
         return false
 
 
-func animation_type_to_name(animation_type: int) -> String:
-    match animation_type:
-        PlayerAnimationType.REST:
-            return animator_params.rest_name
-        PlayerAnimationType.REST_ON_WALL:
-            return animator_params.rest_on_wall_name
-        PlayerAnimationType.JUMP_RISE:
-            return animator_params.jump_rise_name
-        PlayerAnimationType.JUMP_FALL:
-            return animator_params.jump_fall_name
-        PlayerAnimationType.WALK:
-            return animator_params.walk_name
-        PlayerAnimationType.CLIMB_UP:
-            return animator_params.climb_up_name
-        PlayerAnimationType.CLIMB_DOWN:
-            return animator_params.climb_down_name
+func animation_type_to_playback_rate(animation_name: String) -> float:
+    match animation_name:
+        "Rest":
+            return 1.0
+        "RestOnWall":
+            return 1.0
+        "JumpRise":
+            return 1.0
+        "JumpFall":
+            return 1.0
+        "Walk":
+            return 1.0
+        "ClimbUp":
+            return 1.0
+        "ClimbDown":
+            return 1.0
         _:
-            Sc.logger.error(
-                    "Unrecognized PlayerAnimationType: %s" % animation_type)
-            return ""
-
-
-func animation_type_to_playback_rate(animation_type: int) -> float:
-    match animation_type:
-        PlayerAnimationType.REST:
-            return animator_params.rest_playback_rate
-        PlayerAnimationType.REST_ON_WALL:
-            return animator_params.rest_on_wall_playback_rate
-        PlayerAnimationType.JUMP_RISE:
-            return animator_params.jump_rise_playback_rate
-        PlayerAnimationType.JUMP_FALL:
-            return animator_params.jump_fall_playback_rate
-        PlayerAnimationType.WALK:
-            return animator_params.walk_playback_rate
-        PlayerAnimationType.CLIMB_UP:
-            return animator_params.climb_up_playback_rate
-        PlayerAnimationType.CLIMB_DOWN:
-            return animator_params.climb_down_playback_rate
-        _:
-            Sc.logger.error(
-                    "Unrecognized PlayerAnimationType: %s" % animation_type)
+            Sc.logger.error("Unrecognized animation name: %s" % animation_name)
             return 0.0
+
+
+func animation_name_to_sprite(name: String) -> Sprite:
+    Sc.logger.error(
+            "Abstract PlayerAnimator.animation_name_to_sprite " +
+            "is not implemented")
+    return null

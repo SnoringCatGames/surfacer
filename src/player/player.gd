@@ -475,24 +475,24 @@ func _process_animation() -> void:
     match surface_state.surface_type:
         SurfaceType.FLOOR:
             if actions.pressed_left or actions.pressed_right:
-                animator.play(PlayerAnimationType.WALK)
+                animator.play("Walk")
             else:
-                animator.play(PlayerAnimationType.REST)
+                animator.play("Rest")
         SurfaceType.WALL:
             if processed_action("WallClimbAction"):
                 if actions.pressed_up:
-                    animator.play(PlayerAnimationType.CLIMB_UP)
+                    animator.play("ClimbUp")
                 elif actions.pressed_down:
-                    animator.play(PlayerAnimationType.CLIMB_DOWN)
+                    animator.play("ClimbDown")
                 else:
                     Sc.logger.error()
             else:
-                animator.play(PlayerAnimationType.REST_ON_WALL)
+                animator.play("RestOnWall")
         SurfaceType.AIR:
             if velocity.y > 0:
-                animator.play(PlayerAnimationType.JUMP_FALL)
+                animator.play("JumpFall")
             else:
-                animator.play(PlayerAnimationType.JUMP_RISE)
+                animator.play("JumpRise")
         _:
             Sc.logger.error()
 
@@ -593,7 +593,7 @@ func get_is_sprite_visible() -> bool:
 
 func get_current_animation_state(result: PlayerAnimationState) -> void:
     result.player_position = position
-    result.animation_type = animator.get_current_animation_type()
+    result.animation_name = animator.get_current_animation_name()
     result.animation_position = \
             animator.animation_player.current_animation_position
     result.facing_left = surface_state.horizontal_facing_sign == -1

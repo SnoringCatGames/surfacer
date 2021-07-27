@@ -62,10 +62,10 @@ func get_animation_state_at_time(
         edge_time: float) -> void:
     result.player_position = get_position_at_time(edge_time)
     if edge_time < time_peak_height:
-        result.animation_type = PlayerAnimationType.JUMP_RISE
+        result.animation_name = "JumpRise"
         result.animation_position = edge_time
     else:
-        result.animation_type = PlayerAnimationType.JUMP_FALL
+        result.animation_name = "JumpFall"
         result.animation_position = edge_time - time_peak_height
     result.facing_left = instructions.get_is_facing_left_at_time(
             edge_time, velocity_start.x < 0.0)
