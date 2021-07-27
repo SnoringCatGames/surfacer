@@ -4,7 +4,7 @@ class_name Player, \
 extends KinematicBody2D
 
 
-export var player_name: String
+export var player_name := ""
 export(int, LAYERS_2D_PHYSICS) var collision_detection_layers := 0
 
 const GROUP_NAME_HUMAN_PLAYERS := "human_players"
@@ -69,6 +69,7 @@ var _layers_for_exited_proximity_detection := {}
 
 func _init() -> void:
     self.level = Sc.level
+    _update_editor_configuration()
 
 
 func _enter_tree() -> void:
@@ -164,11 +165,11 @@ func _destroy() -> void:
 # FIXME: --------------------- Test this; Re-think this...
 func _get_property_list() -> Array:
     return [
-        {
-            name = "movement_params",
-            type = TYPE_OBJECT,
-            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
-        },
+#        {
+#            name = "movement_params",
+#            type = TYPE_OBJECT,
+#            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
+#        },
     ]
 
 
@@ -184,6 +185,14 @@ func remove_child(child: Node) -> void:
 
 func _update_editor_configuration() -> void:
     if !Engine.editor_hint:
+        return
+    
+    if !Sc.utils.check_whether_sub_classes_are_tools(self):
+        _configuration_warning = "Subclasses of Player must be marked as tool."
+        update_configuration_warning()
+        # Also log an error at run-time, since the in-editor logic never
+        # actually executes, because the node isn't a tool!
+        Sc.logger.error("Subclasses of Player must be marked as tool.")
         return
     
     if player_name == "":

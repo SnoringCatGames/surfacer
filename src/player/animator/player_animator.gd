@@ -13,15 +13,18 @@ var is_desaturatable: bool
 var _animation_type := PlayerAnimationType.REST
 var _base_rate := 1.0
 
+var _configuration_warning := ""
+
 
 func set_up(
         player_on_animator_params,
         is_desaturatable: bool) -> void:
     self.is_desaturatable = is_desaturatable
-    self.animator_params = \
-            player_on_animator_params if \
-            player_on_animator_params is PlayerAnimatorParams else \
-            player_on_animator_params.movement_params.animator_params
+    # FIXME: -----------------------------------------
+#    self.animator_params = \
+#            player_on_animator_params if \
+#            player_on_animator_params is PlayerAnimatorParams else \
+#            player_on_animator_params.movement_params.animator_params
     
     var animation_players: Array = \
             Sc.utils.get_children_by_type(self, AnimationPlayer)
@@ -37,6 +40,7 @@ func set_up(
 
 func _enter_tree() -> void:
     Sc.slow_motion.add_animator(self)
+    _update_editor_configuration()
 
 
 func _exit_tree() -> void:
@@ -53,20 +57,43 @@ func _get_animation_player() -> AnimationPlayer:
     Sc.logger.error(
             "Abstract PlayerAnimator._get_animation_player is not implemented")
     return null
-            
+
+
+func _update_editor_configuration() -> void:
+    if !Engine.editor_hint:
+        return
+    
+    if !Sc.utils.check_whether_sub_classes_are_tools(self):
+        _configuration_warning = \
+                "Subclasses of PlayerAnimator must be marked as tool."
+        update_configuration_warning()
+        return
+    
+    _configuration_warning = ""
+    update_configuration_warning()
+
+
+func _get_configuration_warning() -> String:
+    return _configuration_warning
+
+
 func face_left() -> void:
-    var scale := \
-            FLIPPED_HORIZONTAL_SCALE if \
-            animator_params.faces_right_by_default else \
-            UNFLIPPED_HORIZONTAL_SCALE
+    # FIXME: -------------------------------
+    var scale := FLIPPED_HORIZONTAL_SCALE
+#    var scale := \
+#            FLIPPED_HORIZONTAL_SCALE if \
+#            animator_params.faces_right_by_default else \
+#            UNFLIPPED_HORIZONTAL_SCALE
     self.scale = scale
 
 
 func face_right() -> void:
-    var scale := \
-            UNFLIPPED_HORIZONTAL_SCALE if \
-            animator_params.faces_right_by_default else \
-            FLIPPED_HORIZONTAL_SCALE
+    # FIXME: -------------------------------
+    var scale := UNFLIPPED_HORIZONTAL_SCALE
+#    var scale := \
+#            UNFLIPPED_HORIZONTAL_SCALE if \
+#            animator_params.faces_right_by_default else \
+#            FLIPPED_HORIZONTAL_SCALE
     self.scale = scale
 
 

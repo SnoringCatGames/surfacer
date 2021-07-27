@@ -5,20 +5,7 @@ extends Node2D
 
 
 # FIXME: -----------------------
-#var name: String
-
-# FIXME: -----------------------
-# String|PackedScene
-#var player_path_or_scene
-
-# FIXME: -----------------------
 #var animator_params: PlayerAnimatorParams
-
-# FIXME: -----------------------
-## Array<String>
-#var edge_calculator_names: Array
-## Array<String>
-#var action_handler_names: Array
 
 # --- Important parameters ---
 
@@ -393,7 +380,13 @@ func _enter_tree() -> void:
 
 func _get_shape_from_parent() -> void:
     var parent := get_parent()
-
+    
+    if !(parent is KinematicBody2D) or \
+            !parent.has_method("_update_navigator"):
+        _configuration_warning = "Must define a Player parent."
+        update_configuration_warning()
+        return
+    
     var collision_shapes: Array = Sc.utils.get_children_by_type(
             parent,
             CollisionShape2D)
@@ -402,13 +395,13 @@ func _get_shape_from_parent() -> void:
         collider_shape = shape.shape
         collider_rotation = shape.rotation
     
-    if !(parent is KinematicBody2D) or \
-            !parent.has_method("_update_navigator"):
-        _configuration_warning = "Must define a Player parent."
-        update_configuration_warning()
-    elif collider_shape == null:
+    if collider_shape == null:
         _configuration_warning = "Must define a CollisionShape2D sibling."
         update_configuration_warning()
+        return
+    
+    _configuration_warning = ""
+    update_configuration_warning()
 
 
 # NOTE: _get_property_list **appends** to the default list of properties.
@@ -429,15 +422,24 @@ func _get_property_list() -> Array:
 
 
 func _update_parameters() -> void:
-    _validate_parameters()
     _get_shape_from_parent()
-    if _configuration_warning == "":
-        _derive_parameters()
-    elif Engine.editor_hint:
-        update_configuration_warning()
-    else:
+    if _configuration_warning != "" and \
+            !Engine.editor_hint:
         Sc.logger.error("Invalid MovementParams configuration: %s" %
                 _configuration_warning)
+        return
+    
+    _validate_parameters()
+    if _configuration_warning != "" and \
+            !Engine.editor_hint:
+        Sc.logger.error("Invalid MovementParams configuration: %s" %
+                _configuration_warning)
+        return
+    
+    _configuration_warning = ""
+    update_configuration_warning()
+    
+    _derive_parameters()
 
 
 func _validate_parameters() -> void:
