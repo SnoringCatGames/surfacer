@@ -124,6 +124,7 @@ func add_player(
             false,
             true)
     player.set_position(position)
+    all_players.push_back(player)
     add_child(player)
     
     var group: String = \

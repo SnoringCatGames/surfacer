@@ -196,20 +196,20 @@ func update(
             -1))
     
     is_facing_wall = \
-        (which_wall == SurfaceSide.RIGHT_WALL and \
-                horizontal_facing_sign > 0) or \
-        (which_wall == SurfaceSide.LEFT_WALL and \
-                horizontal_facing_sign < 0)
+            (which_wall == SurfaceSide.RIGHT_WALL and \
+                    horizontal_facing_sign > 0) or \
+            (which_wall == SurfaceSide.LEFT_WALL and \
+                    horizontal_facing_sign < 0)
     is_pressing_into_wall = \
-        (which_wall == SurfaceSide.RIGHT_WALL and \
-                player.actions.pressed_right) or \
-        (which_wall == SurfaceSide.LEFT_WALL and \
-                player.actions.pressed_left)
+            (which_wall == SurfaceSide.RIGHT_WALL and \
+                    player.actions.pressed_right) or \
+            (which_wall == SurfaceSide.LEFT_WALL and \
+                    player.actions.pressed_left)
     is_pressing_away_from_wall = \
-        (which_wall == SurfaceSide.RIGHT_WALL and \
-                player.actions.pressed_left) or \
-        (which_wall == SurfaceSide.LEFT_WALL and \
-                player.actions.pressed_right)
+            (which_wall == SurfaceSide.RIGHT_WALL and \
+                    player.actions.pressed_left) or \
+            (which_wall == SurfaceSide.LEFT_WALL and \
+                    player.actions.pressed_right)
     
     var facing_into_wall_and_pressing_up: bool = \
             player.actions.pressed_up and \
@@ -256,7 +256,7 @@ func update(
             player.movement_params.can_grab_walls and \
                 (is_grabbing_wall or player.actions.pressed_up)
     
-    velocity = velocity
+    self.velocity = player.velocity
     
     _update_which_side_is_grabbed(player, preserves_just_changed_state)
     _update_which_surface_is_grabbed(player, preserves_just_changed_state)

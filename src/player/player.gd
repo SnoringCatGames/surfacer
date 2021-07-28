@@ -117,6 +117,7 @@ func _ready() -> void:
             !is_human_player and Su.ann_manifest.is_computer_prediction_shown):
         prediction = PlayerPrediction.new()
         prediction.set_up(self)
+        _attach_prediction()
     
     # Set up a Tween for the fade-out at the end of a dash.
     _dash_fade_tween = ScaffolderTween.new()
@@ -140,6 +141,13 @@ func _ready() -> void:
 
 
 func _on_annotators_ready() -> void:
+    _attach_prediction()
+
+
+func _attach_prediction() -> void:
+    if !Sc.level_session.has_started:
+        return
+    
     if is_instance_valid(prediction):
         Su.annotators.path_preselection_annotator \
                 .add_prediction(prediction)
@@ -290,7 +298,8 @@ func _check_for_initialization_complete() -> void:
     self._is_initialized = \
             graph != null and \
             _is_navigator_initialized and \
-            _is_ready
+            _is_ready and \
+            animator._is_ready
 
 
 func _set_camera() -> void:

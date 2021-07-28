@@ -292,14 +292,14 @@ export var fall_through_floor_velocity_boost := 100.0 \
 ##     either along a surface or in the air.
 ## -   A default set of ActionHandlers is usually assigned based on other
 ##     movement properties, such as `can_jump`.
-export(Array, String) var edge_calculators_override
+export(Array, String) var edge_calculators_override := []
 ## -   An ActionHandler updates a player's state each frame, in response to
 ##     current events and the player's current state.
 ## -   For example, FloorJumpAction listens for jump events while the player is
 ##     on the ground, and triggers player jump state accordingly.
 ## -   A default set of ActionHandlers is usually assigned based on other
 ##     movement properties, such as `can_jump`.
-export(Array, String) var action_handlers_override
+export(Array, String) var action_handlers_override := []
 
 # --- Derived parameters ---
 
@@ -649,16 +649,23 @@ func _derive_parameters() -> void:
             air_edge_weight_multiplier_override != -1.0 else \
             Su.movement.air_edge_weight_multiplier_default
     
-    action_handlers = Su.movement.get_action_handlers_from_names(
+    var action_handler_names := \
             action_handlers_override if \
-                    action_handlers_override != null else \
-                    Su.movement.get_default_action_handler_names(self),
+            !action_handlers_override.empty() else \
+            Su.movement.get_default_action_handler_names(self)
+    var includes_edge_match := \
             syncs_player_position_to_edge_trajectory or \
-                    syncs_player_velocity_to_edge_trajectory)
-    edge_calculators = Su.movement.get_edge_calculators_from_names(
+            syncs_player_velocity_to_edge_trajectory
+    action_handlers = Su.movement.get_action_handlers_from_names(
+            action_handler_names,
+            includes_edge_match)
+    
+    var edge_calculator_names := \
             edge_calculators_override if \
-            edge_calculators_override != null else \
-            Su.movement.get_default_edge_calculator_names(self))
+            !edge_calculators_override.empty() else \
+            Su.movement.get_default_edge_calculator_names(self)
+    edge_calculators = Su.movement.get_edge_calculators_from_names(
+            edge_calculator_names)
     
     gravity_slow_rise = gravity_fast_fall * slow_rise_gravity_multiplier
     
