@@ -200,193 +200,6 @@ func _validate_configuration() -> void:
     assert(Su.movement.dash_cooldown_default >= 0)
 
 
-
-
-
-
-
-
-
-
-
-
-
-# FIXME: ---------------------------------
-
-func _calculate_dependent_movement_params(
-        movement_params: MovementParams) -> void:
-    movement_params.gravity_slow_rise = \
-            movement_params.gravity_fast_fall * \
-            movement_params.slow_rise_gravity_multiplier
-    movement_params.collider_half_width_height = \
-            Sc.geometry.calculate_half_width_height(
-                    movement_params.collider_shape,
-                    movement_params.collider_rotation)
-    
-    var fall_from_floor_shape := RectangleShape2D.new()
-    fall_from_floor_shape.extents = movement_params.collider_half_width_height
-    movement_params.fall_from_floor_corner_calc_shape = fall_from_floor_shape
-    movement_params.fall_from_floor_corner_calc_shape_rotation = 0.0
-    
-    movement_params.climb_over_wall_corner_calc_shape = \
-            movement_params.collider_shape
-    movement_params.climb_over_wall_corner_calc_shape_rotation = \
-            movement_params.collider_rotation
-    
-    movement_params.min_upward_jump_distance = VerticalMovementUtils \
-            .calculate_min_upward_distance(movement_params)
-    movement_params.max_upward_jump_distance = VerticalMovementUtils \
-            .calculate_max_upward_distance(movement_params)
-    movement_params.max_upward_jump_distance = VerticalMovementUtils \
-            .calculate_max_upward_distance(movement_params)
-    movement_params.time_to_max_upward_jump_distance = \
-            MovementUtils.calculate_movement_duration(
-                    -movement_params.max_upward_jump_distance,
-                    movement_params.jump_boost,
-                    movement_params.gravity_slow_rise)
-    # From a basic equation of motion:
-    #     v^2 = v_0^2 + 2*a*(s - s_0)
-    #     v_0 = 0
-    # Algebra:
-    #     (s - s_0) = v^2 / 2 / a
-    movement_params.distance_to_max_horizontal_speed = \
-            movement_params.max_horizontal_speed_default * \
-            movement_params.max_horizontal_speed_default / \
-            2.0 / movement_params.walk_acceleration
-    movement_params.distance_to_half_max_horizontal_speed = \
-            movement_params.max_horizontal_speed_default * 0.5 * \
-            movement_params.max_horizontal_speed_default * 0.5 / \
-            2.0 / movement_params.walk_acceleration
-    movement_params.floor_jump_max_horizontal_jump_distance = \
-            HorizontalMovementUtils \
-                    .calculate_max_horizontal_displacement_before_returning_to_starting_height(
-                            0.0,
-                            movement_params.jump_boost,
-                            movement_params.max_horizontal_speed_default,
-                            movement_params.gravity_slow_rise,
-                            movement_params.gravity_fast_fall)
-    movement_params.wall_jump_max_horizontal_jump_distance = \
-            HorizontalMovementUtils \
-                    .calculate_max_horizontal_displacement_before_returning_to_starting_height(
-                            movement_params.wall_jump_horizontal_boost,
-                            movement_params.jump_boost,
-                            movement_params.max_horizontal_speed_default,
-                            movement_params.gravity_slow_rise,
-                            movement_params.gravity_fast_fall)
-    movement_params.stopping_distance_on_default_floor_from_max_speed = \
-            MovementUtils.calculate_distance_to_stop_from_friction(
-                    movement_params,
-                    movement_params.max_horizontal_speed_default,
-                    movement_params.gravity_fast_fall,
-                    movement_params.friction_coefficient)
-
-
-
-# FIXME: ------------------- Refactor this.
-# - Return a string.
-# - Call this anytime any MovementParam variable is assigned.
-# - Use the string to set the in-editor warning message.
-# - Use a non-empty string to trigger an assert at run-time.
-#func _check_movement_params() -> void:
-#    assert(action_handlers_override.find(
-#            "MatchExpectedEdgeTrajectoryAction") < 0)
-#
-#    assert(gravity_fast_fall >= 0)
-#    assert(slow_rise_gravity_multiplier >= 0)
-#    assert(rise_double_jump_gravity_multiplier >= 0)
-#    assert(jump_boost <= 0)
-#    assert(in_air_horizontal_acceleration >= 0)
-#    assert(max_jump_chain >= 0)
-#    assert(can_jump or \
-#            max_jump_chain == 0)
-#    assert(can_double_jump or \
-#            max_jump_chain <= 1)
-#    assert(wall_jump_horizontal_boost >= 0 and \
-#            wall_jump_horizontal_boost <= \
-#            max_horizontal_speed_default)
-#    assert(wall_fall_horizontal_boost >= 0 and \
-#            wall_fall_horizontal_boost <= \
-#            max_horizontal_speed_default)
-#    assert(walk_acceleration >= 0)
-#    assert(climb_up_speed <= 0)
-#    assert(climb_down_speed >= 0)
-#    assert(max_horizontal_speed_default >= 0)
-#    assert(max_vertical_speed >= 0)
-#    assert(max_vertical_speed >= \
-#            abs(jump_boost))
-#    assert(fall_through_floor_velocity_boost >= 0)
-#
-#    if can_dash:
-#        assert(dash_speed_multiplier >= 0)
-#        assert(dash_duration >= \
-#                dash_fade_duration)
-#        assert(dash_fade_duration >= 0)
-#        assert(dash_cooldown >= 0)
-#        assert(dash_vertical_boost <= 0)
-#    else:
-#        assert(dash_speed_multiplier == -1)
-#        assert(dash_duration == -1)
-#        assert(dash_fade_duration == -1)
-#        assert(dash_cooldown == -1)
-#        assert(dash_vertical_boost == -1)
-#
-#    # If we're tracking beats, then we need the preselection trajectories to
-#    # match the resulting navigation trajectories.
-#    assert(!Sc.audio_manifest.are_beats_tracked_by_default or \
-#            also_optimizes_preselection_path or \
-#            !optimizes_edge_jump_positions_at_run_time and \
-#            !optimizes_edge_land_positions_at_run_time)
-#    assert(!stops_after_finding_first_valid_edge_for_a_surface_pair or \
-#            !calculates_all_valid_edges_for_a_surface_pair)
-#    assert(!forces_player_position_to_match_path_at_end or \
-#            !prevents_path_ends_from_exceeding_surface_ends_with_offsets)
-#    assert(!syncs_player_position_to_edge_trajectory or \
-#            includes_continuous_trajectory_positions)
-#    assert(!syncs_player_velocity_to_edge_trajectory or \
-#            includes_continuous_trajectory_velocities)
-#    assert(!bypasses_runtime_physics or \
-#            syncs_player_position_to_edge_trajectory)
-#
-#    # FIXME: -------------------------------------
-##    _check_animator_params(animator_params)
-#
-#
-#func _check_animator_params(
-#        animator_params: PlayerAnimatorParams) -> void:
-#    assert(animator_params.rest_name != "")
-#    assert(animator_params.rest_on_wall_name != "")
-#    assert(animator_params.jump_rise_name != "")
-#    assert(animator_params.jump_fall_name != "")
-#    assert(animator_params.walk_name != "")
-#    assert(animator_params.climb_up_name != "")
-#    assert(animator_params.climb_down_name != "")
-#
-#    assert(animator_params.rest_playback_rate != 0.0 and 
-#            !is_inf(animator_params.rest_playback_rate))
-#    assert(animator_params.rest_on_wall_playback_rate != 0.0 and 
-#            !is_inf(animator_params.rest_on_wall_playback_rate))
-#    assert(animator_params.jump_rise_playback_rate != 0.0 and 
-#            !is_inf(animator_params.jump_rise_playback_rate))
-#    assert(animator_params.jump_fall_playback_rate != 0.0 and 
-#            !is_inf(animator_params.jump_fall_playback_rate))
-#    assert(animator_params.walk_playback_rate != 0.0 and 
-#            !is_inf(animator_params.walk_playback_rate))
-#    assert(animator_params.climb_up_playback_rate != 0.0 and 
-#            !is_inf(animator_params.climb_up_playback_rate))
-#    assert(animator_params.climb_down_playback_rate != 0.0 and \
-#            !is_inf(animator_params.climb_down_playback_rate))
-
-
-
-
-
-
-
-
-
-
-
-
 func get_default_action_handler_names(
         movement_params: MovementParams) -> Array:
     var names := [
@@ -456,6 +269,59 @@ func get_edge_calculators_from_names(names: Array) -> Array:
     for name in names:
         edge_calculators.push_back(Su.movement.edge_calculators[name])
     return edge_calculators
+
+
+# These calculations reference other scripts, which in-turn reference
+# MovementParams, so we keep this logic here instead of in MovementParams,
+# where they would cause circular dependencies.
+func _calculate_dependent_movement_params(
+        movement_params: MovementParams) -> void:
+    movement_params.min_upward_jump_distance = VerticalMovementUtils \
+            .calculate_min_upward_distance(movement_params)
+    movement_params.max_upward_jump_distance = VerticalMovementUtils \
+            .calculate_max_upward_distance(movement_params)
+    movement_params.max_upward_jump_distance = VerticalMovementUtils \
+            .calculate_max_upward_distance(movement_params)
+    movement_params.time_to_max_upward_jump_distance = \
+            MovementUtils.calculate_movement_duration(
+                    -movement_params.max_upward_jump_distance,
+                    movement_params.jump_boost,
+                    movement_params.gravity_slow_rise)
+    # From a basic equation of motion:
+    #     v^2 = v_0^2 + 2*a*(s - s_0)
+    #     v_0 = 0
+    # Algebra:
+    #     (s - s_0) = v^2 / 2 / a
+    movement_params.distance_to_max_horizontal_speed = \
+            movement_params.max_horizontal_speed_default * \
+            movement_params.max_horizontal_speed_default / \
+            2.0 / movement_params.walk_acceleration
+    movement_params.distance_to_half_max_horizontal_speed = \
+            movement_params.max_horizontal_speed_default * 0.5 * \
+            movement_params.max_horizontal_speed_default * 0.5 / \
+            2.0 / movement_params.walk_acceleration
+    movement_params.floor_jump_max_horizontal_jump_distance = \
+            HorizontalMovementUtils \
+                    .calculate_max_horizontal_displacement_before_returning_to_starting_height(
+                            0.0,
+                            movement_params.jump_boost,
+                            movement_params.max_horizontal_speed_default,
+                            movement_params.gravity_slow_rise,
+                            movement_params.gravity_fast_fall)
+    movement_params.wall_jump_max_horizontal_jump_distance = \
+            HorizontalMovementUtils \
+                    .calculate_max_horizontal_displacement_before_returning_to_starting_height(
+                            movement_params.wall_jump_horizontal_boost,
+                            movement_params.jump_boost,
+                            movement_params.max_horizontal_speed_default,
+                            movement_params.gravity_slow_rise,
+                            movement_params.gravity_fast_fall)
+    movement_params.stopping_distance_on_default_floor_from_max_speed = \
+            MovementUtils.calculate_distance_to_stop_from_friction(
+                    movement_params,
+                    movement_params.max_horizontal_speed_default,
+                    movement_params.gravity_fast_fall,
+                    movement_params.friction_coefficient)
 
 
 class _PlayerActionHandlerComparator:

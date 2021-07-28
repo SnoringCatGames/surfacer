@@ -66,6 +66,11 @@ var _layers_for_entered_proximity_detection := {}
 # Dictionary<String, Area2D>
 var _layers_for_exited_proximity_detection := {}
 
+var _debounced_update_editor_configuration: FuncRef = Sc.time.debounce(
+        funcref(self, "_update_editor_configuration_debounced"),
+        0.02,
+        true)
+
 
 func _init() -> void:
     self.level = Sc.level
@@ -81,6 +86,7 @@ func _ready() -> void:
         # hood.
         return
     
+    _update_editor_configuration_debounced()
     _initialize_child_movement_params()
     _initialize_children_proximity_detectors()
     
@@ -160,6 +166,10 @@ func remove_child(child: Node) -> void:
 
 
 func _update_editor_configuration() -> void:
+    _debounced_update_editor_configuration.call_func()
+
+
+func _update_editor_configuration_debounced() -> void:
     if !Sc.utils.check_whether_sub_classes_are_tools(self):
         _set_configuration_warning(
                 "Subclasses of Player must be marked as tool.")
@@ -198,9 +208,10 @@ func _update_editor_configuration() -> void:
     
     collider = Sc.utils.get_child_by_type(self, CollisionShape2D)
     
-    _set_configuration_warning("")
-    
     _initialize_child_movement_params()
+    
+    property_list_changed_notify()
+    _set_configuration_warning("")
 
 
 func _set_configuration_warning(value: String) -> void:
