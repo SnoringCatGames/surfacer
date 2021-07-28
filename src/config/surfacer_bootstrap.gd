@@ -67,7 +67,6 @@ func _parse_player_scenes(scenes_array: Array) -> void:
                 assert(is_instance_valid(movement_params_scene))
                 movement_params = movement_params_scene.instance()
                 movement_params._is_instanced_from_bootstrap = true
-                
                 # Assign any overridden properties.
                 for property_index in \
                         state.get_node_property_count(node_index):
@@ -76,6 +75,7 @@ func _parse_player_scenes(scenes_array: Array) -> void:
                     var property_value = state.get_node_property_value(
                             node_index, property_index)
                     movement_params.set(property_name, property_value)
+                break
         assert(Engine.editor_hint or \
                 is_instance_valid(movement_params))
         
