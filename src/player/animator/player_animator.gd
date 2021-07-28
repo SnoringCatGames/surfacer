@@ -38,8 +38,18 @@ var _base_rate := 1.0
 var _is_ready := false
 var _configuration_warning := ""
 
+var _debounced_update_editor_configuration: FuncRef = Sc.time.debounce(
+        funcref(self, "_update_editor_configuration_debounced"),
+        0.02,
+        false)
+
 
 func _enter_tree() -> void:
+    var animation_players: Array = Sc.utils.get_children_by_type(
+            self, AnimationPlayer)
+    if !animation_players.empty():
+        animation_player = animation_players[0]
+    
     Sc.slow_motion.add_animator(self)
     _update_editor_configuration()
 
@@ -70,6 +80,10 @@ func remove_child(child: Node) -> void:
 
 
 func _update_editor_configuration() -> void:
+    _debounced_update_editor_configuration.call_func()
+
+
+func _update_editor_configuration_debounced() -> void:
     if !_is_ready:
         return
     
@@ -283,15 +297,8 @@ func _set_uses_standard_sprite_frame_animations(value: bool) -> void:
 
 func _set_animations(value: Array) -> void:
     for animation_config in value:
-        if _animations_by_name.has(animation_config.name):
-            _animations_by_name[animation_config.name] = animation_config
-        else:
-            _set_configuration_warning(
-                    "Animation names must match animations from the " +
-                    "AnimationPlayer.")
-            break
-    if _configuration_warning == "":
-        _update_editor_configuration()
+        _animations_by_name[animation_config.name] = animation_config
+    _update_editor_configuration()
 
 
 func _get_animations() -> Array:

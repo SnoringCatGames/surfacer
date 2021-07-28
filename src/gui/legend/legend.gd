@@ -11,7 +11,8 @@ var label: ScaffolderLabel
 
 var _debounced_on_gui_scale_changed: FuncRef = Sc.time.debounce(
         funcref(self, "_on_gui_scale_changed_debounced"),
-        0.05)
+        0.05,
+        true)
 
 
 func _ready() -> void:

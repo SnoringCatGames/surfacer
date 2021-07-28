@@ -368,6 +368,8 @@ var fall_from_floor_corner_calc_shape_rotation: float
 var climb_over_wall_corner_calc_shape: Shape2D
 var climb_over_wall_corner_calc_shape_rotation: float
 
+var player_name := ""
+
 var _configuration_warning := ""
 
 # ---
@@ -376,7 +378,8 @@ var _is_instanced_from_bootstrap := false
 
 var _debounced_update_parameters: FuncRef = Sc.time.debounce(
         funcref(self, "_update_parameters_debounced"),
-        0.02)
+        0.02,
+        true)
 
 
 func _enter_tree() -> void:
@@ -394,6 +397,8 @@ func _parse_shape_from_parent() -> void:
         _set_configuration_warning("Must define a Player parent.")
         return
     
+    player_name = parent.player_name
+    
     var collision_shapes: Array = Sc.utils.get_children_by_type(
             parent,
             CollisionShape2D)
@@ -402,12 +407,11 @@ func _parse_shape_from_parent() -> void:
         collider_shape = shape.shape
         collider_rotation = shape.rotation
     
-    if collider_shape == null:
+    if !is_instance_valid(collider_shape):
         _set_configuration_warning("Must define a CollisionShape2D sibling.")
         return
     
     property_list_changed_notify()
-    
     _set_configuration_warning("")
 
 
@@ -423,6 +427,11 @@ func _get_property_list() -> Array:
         {
             name = "collider_rotation",
             type = TYPE_REAL,
+            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
+        },
+        {
+            name = "player_name",
+            type = TYPE_STRING,
             usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
         },
     ]
@@ -441,11 +450,10 @@ func _update_parameters_debounced() -> void:
     if _configuration_warning != "":
         return
     
-    _set_configuration_warning("")
-    
     _derive_parameters()
     
     property_list_changed_notify()
+    _set_configuration_warning("")
 
 
 func _validate_parameters() -> void:
@@ -453,9 +461,117 @@ func _validate_parameters() -> void:
         _set_configuration_warning(
                 "The MovementParams node must be named 'MovementParams'. " + \
                 "This is important for how it is parsed from the .tscn file.")
-    else:
-        # FIXME: ---------------------------------
-        pass
+    elif (action_handlers_override.find(
+            "MatchExpectedEdgeTrajectoryAction") >= 0) == \
+            (syncs_player_position_to_edge_trajectory or \
+                    syncs_player_velocity_to_edge_trajectory):
+        _set_configuration_warning(
+                "MatchExpectedEdgeTrajectoryAction should be included iff " +
+                "syncs_player_position_to_edge_trajectory or " +
+                "syncs_player_velocity_to_edge_trajectory.")
+    elif gravity_fast_fall < 0:
+        _set_configuration_warning(
+                "gravity_fast_fall must be non-negative.")
+    elif slow_rise_gravity_multiplier < 0:
+        _set_configuration_warning(
+                "slow_rise_gravity_multiplier must be non-negative.")
+    elif rise_double_jump_gravity_multiplier < 0:
+        _set_configuration_warning(
+                "rise_double_jump_gravity_multiplier must be non-negative.")
+    elif jump_boost > 0:
+        _set_configuration_warning("")
+    elif in_air_horizontal_acceleration < 0:
+        _set_configuration_warning(
+                "in_air_horizontal_acceleration must be non-negative.")
+    elif max_jump_chain < 0:
+        _set_configuration_warning(
+                "max_jump_chain must be non-negative.")
+    elif wall_jump_horizontal_boost < 0:
+        _set_configuration_warning(
+                "wall_jump_horizontal_boost must be non-negative.")
+    elif wall_jump_horizontal_boost > max_horizontal_speed_default:
+        _set_configuration_warning(
+                "wall_jump_horizontal_boost must not be greater than " +
+                "max_horizontal_speed_default.")
+    elif wall_fall_horizontal_boost < 0:
+        _set_configuration_warning(
+                "wall_fall_horizontal_boost must be non-negative.")
+    elif wall_fall_horizontal_boost > max_horizontal_speed_default:
+        _set_configuration_warning(
+                "wall_fall_horizontal_boost must not be greater than " +
+                "max_horizontal_speed_default.")
+    elif walk_acceleration < 0:
+        _set_configuration_warning(
+                "walk_acceleration must be non-negative.")
+    elif climb_up_speed > 0:
+        _set_configuration_warning(
+                "climb_up_speed must be non-positive.")
+    elif climb_down_speed < 0:
+        _set_configuration_warning(
+                "climb_down_speed must be non-negative.")
+    elif max_horizontal_speed_default < 0:
+        _set_configuration_warning(
+                "max_horizontal_speed_default must be non-negative.")
+    elif max_vertical_speed < 0:
+        _set_configuration_warning(
+                "max_vertical_speed must be non-negative.")
+    elif max_vertical_speed < abs(jump_boost):
+        _set_configuration_warning(
+                "jump_boost must not exceed max_vertical_speed.")
+    elif fall_through_floor_velocity_boost < 0:
+        _set_configuration_warning(
+                "fall_through_floor_velocity_boost must be non-negative.")
+    elif dash_speed_multiplier < 0:
+        _set_configuration_warning(
+                "dash_speed_multiplier must be non-negative.")
+    elif dash_duration < \
+            dash_fade_duration:
+        _set_configuration_warning(
+                "dash_duration must not be less than dash_fade_duration.")
+    elif dash_fade_duration < 0:
+        _set_configuration_warning(
+                "dash_fade_duration must be non-negative.")
+    elif dash_cooldown < 0:
+        _set_configuration_warning(
+                "dash_cooldown must be non-negative.")
+    elif dash_vertical_boost > 0:
+        _set_configuration_warning(
+                "dash_vertical_boost must be non-positive.")
+    elif Sc.audio_manifest.are_beats_tracked_by_default and \
+            !also_optimizes_preselection_path and \
+            (optimizes_edge_jump_positions_at_run_time or \
+            optimizes_edge_land_positions_at_run_time):
+        _set_configuration_warning(
+                "If we're tracking beats, then the preselection " +
+                "trajectories must match the resulting navigation " +
+                "trajectories.")
+    elif stops_after_finding_first_valid_edge_for_a_surface_pair and \
+            calculates_all_valid_edges_for_a_surface_pair:
+        _set_configuration_warning(
+                "stops_after_finding_first_valid_edge_for_a_surface_pair " +
+                "and calculates_all_valid_edges_for_a_surface_pair " +
+                "cannot both be true.")
+    elif forces_player_position_to_match_path_at_end and \
+            prevents_path_ends_from_exceeding_surface_ends_with_offsets:
+        _set_configuration_warning(
+                "prevents_path_ends_from_exceeding_surface_ends_with_offsets " +
+                "and forces_player_position_to_match_path_at_end " +
+                "cannot both be true.")
+    elif syncs_player_position_to_edge_trajectory and \
+            !includes_continuous_trajectory_positions:
+        _set_configuration_warning(
+                "If syncs_player_position_to_edge_trajectory is true, " +
+                "then includes_continuous_trajectory_positions must be true.")
+    elif syncs_player_velocity_to_edge_trajectory and \
+            !includes_continuous_trajectory_velocities:
+        _set_configuration_warning(
+                "If syncs_player_velocity_to_edge_trajectory is true, " +
+                "then includes_continuous_trajectory_velocities must be true.")
+    elif bypasses_runtime_physics and \
+            !syncs_player_position_to_edge_trajectory:
+        _set_configuration_warning(
+                "If bypasses_runtime_physics is true, " +
+                "then syncs_player_position_to_edge_trajectory must be true.")
 
 
 func _derive_parameters() -> void:
@@ -543,6 +659,22 @@ func _derive_parameters() -> void:
             edge_calculators_override if \
             edge_calculators_override != null else \
             Su.movement.get_default_edge_calculator_names(self))
+    
+    gravity_slow_rise = gravity_fast_fall * slow_rise_gravity_multiplier
+    
+    if is_instance_valid(collider_shape):
+        collider_half_width_height = Sc.geometry.calculate_half_width_height(
+                collider_shape, collider_rotation)
+        
+        var fall_from_floor_shape := RectangleShape2D.new()
+        fall_from_floor_shape.extents = collider_half_width_height
+        fall_from_floor_corner_calc_shape = fall_from_floor_shape
+        fall_from_floor_corner_calc_shape_rotation = 0.0
+        
+        climb_over_wall_corner_calc_shape = collider_shape
+        climb_over_wall_corner_calc_shape_rotation = collider_rotation
+    
+    Su.movement._calculate_dependent_movement_params(self)
 
 
 func _set_configuration_warning(value: String) -> void:
