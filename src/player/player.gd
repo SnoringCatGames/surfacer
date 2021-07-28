@@ -69,7 +69,6 @@ var _layers_for_exited_proximity_detection := {}
 
 func _init() -> void:
     self.level = Sc.level
-    _update_editor_configuration()
 
 
 func _enter_tree() -> void:
@@ -105,18 +104,6 @@ func _ready() -> void:
     
     self.pointer_listener = PlayerPointerListener.new(self)
     add_child(pointer_listener)
-    
-    var animators: Array = Sc.utils.get_children_by_type(
-            self,
-            PlayerAnimator)
-    assert(animators.size() <= 1)
-    if animators.empty():
-        animator = Sc.utils.add_scene(
-                self,
-                movement_params.animator_params.player_animator_path_or_scene)
-    else:
-        animator = animators[0]
-    animator.set_up(self, true)
     
     if Su.annotators.is_annotator_enabled(
             AnnotatorType.PATH_PRESELECTION) and \
@@ -162,17 +149,6 @@ func _destroy() -> void:
         queue_free()
 
 
-# FIXME: --------------------- Test this; Re-think this...
-func _get_property_list() -> Array:
-    return [
-#        {
-#            name = "movement_params",
-#            type = TYPE_OBJECT,
-#            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
-#        },
-    ]
-
-
 func add_child(child: Node, legible_unique_name := false) -> void:
     .add_child(child, legible_unique_name)
     _update_editor_configuration()
@@ -184,20 +160,13 @@ func remove_child(child: Node) -> void:
 
 
 func _update_editor_configuration() -> void:
-    if !Engine.editor_hint:
-        return
-    
     if !Sc.utils.check_whether_sub_classes_are_tools(self):
-        _configuration_warning = "Subclasses of Player must be marked as tool."
-        update_configuration_warning()
-        # Also log an error at run-time, since the in-editor logic never
-        # actually executes, because the node isn't a tool!
-        Sc.logger.error("Subclasses of Player must be marked as tool.")
+        _set_configuration_warning(
+                "Subclasses of Player must be marked as tool.")
         return
     
     if player_name == "":
-        _configuration_warning = "Must define player_name."
-        update_configuration_warning()
+        _set_configuration_warning("Must define player_name.")
         return
     
     # Get MovementParams from scene configuration.
@@ -205,19 +174,41 @@ func _update_editor_configuration() -> void:
             self,
             MovementParams)
     if movement_params_matches.size() > 1:
-        _configuration_warning = \
-                "Must only define a single MovementParams child node."
-        update_configuration_warning()
+        _set_configuration_warning(
+                "Must only define a single MovementParams child node.")
         return
     elif movement_params_matches.size() < 1:
-        _configuration_warning = "Must define a MovementParams child node."
-        update_configuration_warning()
+        _set_configuration_warning("Must define a MovementParams child node.")
         return
     
-    _configuration_warning = ""
-    update_configuration_warning()
+    # Get AnimationPlayer from scene configuration.
+    var player_animators: Array = Sc.utils.get_children_by_type(
+            self,
+            PlayerAnimator)
+    if player_animators.size() > 1:
+        _set_configuration_warning(
+                "Must only define a single PlayerAnimator child node.")
+        return
+    elif player_animators.size() < 1:
+        _set_configuration_warning(
+                "Must define a PlayerAnimator-subclass child node.")
+        return
+    animator = player_animators[0]
+    animator.is_desaturatable = true
+    
+    collider = Sc.utils.get_child_by_type(self, CollisionShape2D)
+    
+    _set_configuration_warning("")
     
     _initialize_child_movement_params()
+
+
+func _set_configuration_warning(value: String) -> void:
+    _configuration_warning = value
+    update_configuration_warning()
+    if value != "" and \
+            !Engine.editor_hint:
+        Sc.logger.error(value)
 
 
 func _get_configuration_warning() -> String:

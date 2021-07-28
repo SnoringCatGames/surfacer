@@ -4,9 +4,6 @@ class_name MovementParams, \
 extends Node2D
 
 
-# FIXME: -----------------------
-#var animator_params: PlayerAnimatorParams
-
 # --- Important parameters ---
 
 export var can_grab_walls := false setget _set_can_grab_walls
@@ -394,8 +391,7 @@ func _parse_shape_from_parent() -> void:
     
     if !(parent is KinematicBody2D) or \
             !parent.has_method("_update_navigator"):
-        _configuration_warning = "Must define a Player parent."
-        update_configuration_warning()
+        _set_configuration_warning("Must define a Player parent.")
         return
     
     var collision_shapes: Array = Sc.utils.get_children_by_type(
@@ -407,12 +403,12 @@ func _parse_shape_from_parent() -> void:
         collider_rotation = shape.rotation
     
     if collider_shape == null:
-        _configuration_warning = "Must define a CollisionShape2D sibling."
-        update_configuration_warning()
+        _set_configuration_warning("Must define a CollisionShape2D sibling.")
         return
     
-    _configuration_warning = ""
-    update_configuration_warning()
+    property_list_changed_notify()
+    
+    _set_configuration_warning("")
 
 
 # NOTE: _get_property_list **appends** to the default list of properties.
@@ -439,30 +435,27 @@ func _update_parameters() -> void:
 func _update_parameters_debounced() -> void:
     _parse_shape_from_parent()
     if _configuration_warning != "":
-        update_configuration_warning()
         return
     
     _validate_parameters()
     if _configuration_warning != "":
-        update_configuration_warning()
         return
     
-    _configuration_warning = ""
-    update_configuration_warning()
+    _set_configuration_warning("")
     
     _derive_parameters()
+    
+    property_list_changed_notify()
 
 
 func _validate_parameters() -> void:
     if name != "MovementParams":
-        _configuration_warning = \
+        _set_configuration_warning(
                 "The MovementParams node must be named 'MovementParams'. " + \
-                "This is important for how it is parsed from the .tscn file."
+                "This is important for how it is parsed from the .tscn file.")
     else:
         # FIXME: ---------------------------------
         pass
-    
-    update_configuration_warning()
 
 
 func _derive_parameters() -> void:
@@ -552,13 +545,12 @@ func _derive_parameters() -> void:
             Su.movement.get_default_edge_calculator_names(self))
 
 
-func update_configuration_warning() -> void:
-    .update_configuration_warning()
-    # Throw an error at run-time.
-    if _configuration_warning != "" and \
+func _set_configuration_warning(value: String) -> void:
+    _configuration_warning = value
+    update_configuration_warning()
+    if value != "" and \
             !Engine.editor_hint:
-        Sc.logger.error("Invalid MovementParams configuration: %s" %
-                _configuration_warning)
+        Sc.logger.error(value)
 
 
 func _get_configuration_warning() -> String:

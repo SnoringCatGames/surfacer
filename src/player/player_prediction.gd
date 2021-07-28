@@ -12,8 +12,8 @@ var _tween_animation_state := PlayerAnimationState.new()
 func set_up(player) -> void:
     animator = Sc.utils.add_scene(
             self,
-            player.movement_params.animator_params.player_animator_path_or_scene)
-    animator.set_up(player, false)
+            player.animator.filename)
+    animator.is_desaturatable = false
     
     _tween = ScaffolderTween.new()
     add_child(_tween)
