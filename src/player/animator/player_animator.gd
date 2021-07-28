@@ -45,10 +45,13 @@ var _debounced_update_editor_configuration: FuncRef = Sc.time.debounce(
 
 
 func _enter_tree() -> void:
+    # Populate these references immediately, since _update_editor_configuration
+    # is debounced.
     var animation_players: Array = Sc.utils.get_children_by_type(
             self, AnimationPlayer)
     if !animation_players.empty():
         animation_player = animation_players[0]
+    _sprites = Sc.utils.get_children_by_type(self, Sprite)
     
     Sc.slow_motion.add_animator(self)
     _update_editor_configuration()
@@ -56,6 +59,9 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
     _is_ready = true
+    var parent := get_parent()
+    if parent.has_method("_check_for_initialization_complete"):
+        parent._check_for_initialization_complete()
     _update_editor_configuration()
 
 
@@ -242,15 +248,15 @@ func _play_animation(
     _animation_name = animation_name
     _base_rate = playback_rate
     
-    var is_current_animatior := \
+    var is_current_animator := \
             animation_player.current_animation == animation_name
     var is_playing := animation_player.is_playing()
     var is_changing_direction := \
             (animation_player.get_playing_speed() < 0) != (playback_rate < 0)
     
-    var animation_was_not_playing := !is_current_animatior or !is_playing
+    var animation_was_not_playing := !is_current_animator or !is_playing
     var animation_was_playing_in_wrong_direction := \
-            is_current_animatior and is_changing_direction
+            is_current_animator and is_changing_direction
     
     if animation_was_not_playing or \
             animation_was_playing_in_wrong_direction:
@@ -315,4 +321,6 @@ func _set_is_desaturatable(value: bool) -> void:
             sprite.add_to_group(Sc.slow_motion.GROUP_NAME_DESATURATABLES)
     else:
         for sprite in sprites:
-            sprite.remove_from_group(Sc.slow_motion.GROUP_NAME_DESATURATABLES)
+            if sprite.is_in_group(Sc.slow_motion.GROUP_NAME_DESATURATABLES):
+                sprite.remove_from_group(
+                        Sc.slow_motion.GROUP_NAME_DESATURATABLES)
