@@ -21,8 +21,7 @@ export var uses_standard_sprite_frame_animations := true \
 #   # The playback rate for the animation.
 #   speed: float,
 # }>
-export(Array, Dictionary) var animations: Array \
-        setget _set_animations,_get_animations
+export var animations := {} setget _set_animations
 
 var is_desaturatable := false setget _set_is_desaturatable
 
@@ -30,8 +29,6 @@ var animation_player: AnimationPlayer
 # Array<Sprite>
 var _sprites := []
 
-# Array<Dictionary>
-var _animations_by_name := {}
 var _animation_name := "Rest"
 var _base_rate := 1.0
 
@@ -114,13 +111,13 @@ func _update_editor_configuration_debounced() -> void:
     
     # Make a set of the animation names from the AnimationPlayer.
     var current_animation_names := animation_player.get_animation_list()
-    var current_animations_by_name := {}
+    var current_animations := {}
     
     # Add new animation configs.
     for animation_name in current_animation_names:
-        current_animations_by_name[animation_name] = true
-        if !_animations_by_name.has(animation_name):
-            _animations_by_name[animation_name] = {
+        current_animations[animation_name] = true
+        if !animations.has(animation_name):
+            animations[animation_name] = {
                 name = animation_name,
                 sprite_name = "",
                 speed = 1.0,
@@ -128,26 +125,26 @@ func _update_editor_configuration_debounced() -> void:
     
     # Remove old animation configs.
     var animations_to_remove := []
-    for animation_name in _animations_by_name:
-        if !current_animations_by_name.has(animation_name):
+    for animation_name in animations:
+        if !current_animations.has(animation_name):
             animations_to_remove.push_back(animation_name)
     for animation_name in animations_to_remove:
-        _animations_by_name.erase(animation_name)
+        animations.erase(animation_name)
     
     if uses_standard_sprite_frame_animations:
         # Auto-populate each animation config's `sprite_name` to match `name`.
-        for animation_config in _animations_by_name.values():
+        for animation_config in animations.values():
             animation_config.sprite_name = animation_config.name
     
     _sprites = Sc.utils.get_children_by_type(self, Sprite)
     
     # Ensure that each animation config sprite_name matches a corresponding
     # Sprite.
-    var animations_list := _get_animations()
+    var animations_list := animations.values()
     for i in animations_list.size():
         var animation_name: String = animations_list[i].name
         var sprite_name: String = \
-                _animations_by_name[animation_name].sprite_name
+                animations[animation_name].sprite_name
         if sprite_name != "":
             if !has_node(sprite_name):
                 _set_configuration_warning(
@@ -289,26 +286,21 @@ func animation_name_to_sprite(animation_name: String) -> Sprite:
 
 
 func animation_name_to_playback_rate(animation_name: String) -> float:
-    return _animations_by_name[animation_name].speed
+    return animations[animation_name].speed
 
 
 func _set_uses_standard_sprite_frame_animations(value: bool) -> void:
     uses_standard_sprite_frame_animations = value
     if !uses_standard_sprite_frame_animations:
         # Clear each animation config's `sprite_name`.
-        for animation_config in _animations_by_name.values():
+        for animation_config in animations.values():
             animation_config.sprite_name = ""
     _update_editor_configuration()
 
 
-func _set_animations(value: Array) -> void:
-    for animation_config in value:
-        _animations_by_name[animation_config.name] = animation_config
+func _set_animations(value: Dictionary) -> void:
+    animations = value
     _update_editor_configuration()
-
-
-func _get_animations() -> Array:
-    return _animations_by_name.values()
 
 
 func _set_is_desaturatable(value: bool) -> void:
