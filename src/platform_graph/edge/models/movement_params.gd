@@ -4,74 +4,113 @@ class_name MovementParams, \
 extends Node2D
 
 
-# --- Important parameters ---
+# --- Movement abilities ---
 
-export var can_grab_walls := false setget _set_can_grab_walls
-export var can_grab_ceilings := false setget _set_can_grab_ceilings
+const _MOVEMENT_ABILITIES_GROUP = {
+    group_name = "Movement abilities",
+    first_property_name = "can_grab_walls",
+}
+
+var can_grab_walls := false setget _set_can_grab_walls
+var can_grab_ceilings := false setget _set_can_grab_ceilings
 var can_grab_floors := true
-export var can_jump := true setget _set_can_jump
-export var can_dash := false setget _set_can_dash
-export var can_double_jump := false setget _set_can_double_jump
+var can_jump := true setget _set_can_jump
+var can_dash := false setget _set_can_dash
+var can_double_jump := false setget _set_can_double_jump
 
-# --- Multipliers for parameters whose global defaults are configured in Su ---
+# --- Physics movement ---
 
-export var gravity_multiplier := 1.0 \
+const _PHYSICS_MOVEMENT_GROUP = {
+    group_name = "physics_movement",
+    first_property_name = "gravity_multiplier",
+}
+
+var gravity_multiplier := 1.0 \
         setget _set_gravity_multiplier
-export var gravity_slow_rise_multiplier_multiplier := 1.0  \
+var gravity_slow_rise_multiplier_multiplier := 1.0  \
         setget _set_gravity_slow_rise_multiplier_multiplier
-export var gravity_double_jump_slow_rise_multiplier_multiplier := 1.0 \
+var gravity_double_jump_slow_rise_multiplier_multiplier := 1.0 \
         setget _set_gravity_double_jump_slow_rise_multiplier_multiplier
 
-export var walk_acceleration_multiplier := 1.0 \
+var walk_acceleration_multiplier := 1.0 \
         setget _set_walk_acceleration_multiplier
-export var in_air_horizontal_acceleration_multiplier := 1.0 \
+var in_air_horizontal_acceleration_multiplier := 1.0 \
         setget _set_in_air_horizontal_acceleration_multiplier
-export var climb_up_speed_multiplier := 1.0 \
+var climb_up_speed_multiplier := 1.0 \
         setget _set_climb_up_speed_multiplier
-export var climb_down_speed_multiplier := 1.0 \
+var climb_down_speed_multiplier := 1.0 \
         setget _set_climb_down_speed_multiplier
 
-export var friction_coefficient_multiplier := 1.0 \
+var friction_coefficient_multiplier := 1.0 \
         setget _set_friction_coefficient_multiplier
 
-export var jump_boost_multiplier := 1.0 \
+var jump_boost_multiplier := 1.0 \
         setget _set_jump_boost_multiplier
-export var wall_jump_horizontal_boost_multiplier := 1.0 \
+var wall_jump_horizontal_boost_multiplier := 1.0 \
         setget _set_wall_jump_horizontal_boost_multiplier
-export var wall_fall_horizontal_boost_multiplier := 1.0 \
+var wall_fall_horizontal_boost_multiplier := 1.0 \
         setget _set_wall_fall_horizontal_boost_multiplier
 
-export var max_horizontal_speed_default_multiplier := 1.0 \
+var max_horizontal_speed_default_multiplier := 1.0 \
         setget _set_max_horizontal_speed_default_multiplier
-export var max_vertical_speed_multiplier := 1.0 \
+var max_vertical_speed_multiplier := 1.0 \
         setget _set_max_vertical_speed_multiplier
 
-export var dash_speed_multiplier_multiplier := 1.0 \
+var fall_through_floor_velocity_boost := 100.0 \
+        setget _set_fall_through_floor_velocity_boost
+
+# --- Dash ---
+
+const _DASH_GROUP = {
+    group_name = "dash",
+    first_property_name = "dash_speed_multiplier_multiplier",
+}
+
+var dash_speed_multiplier_multiplier := 1.0 \
         setget _set_dash_speed_multiplier_multiplier
-export var dash_vertical_boost_multiplier := 1.0 \
+var dash_vertical_boost_multiplier := 1.0 \
         setget _set_dash_vertical_boost_multiplier
-export var dash_duration_multiplier := 1.0 \
+var dash_duration_multiplier := 1.0 \
         setget _set_dash_duration_multiplier
-export var dash_fade_duration_multiplier := 1.0 \
+var dash_fade_duration_multiplier := 1.0 \
         setget _set_dash_fade_duration_multiplier
-export var dash_cooldown_multiplier := 1.0 \
+var dash_cooldown_multiplier := 1.0 \
         setget _set_dash_cooldown_multiplier
 
-export var uses_duration_instead_of_distance_for_edge_weight := true \
+# --- Double jump ---
+
+const _DOUBLE_JUMP_GROUP = {
+    group_name = "double_jump",
+    first_property_name = "max_jump_chain",
+}
+
+var max_jump_chain := 1 \
+        setget _set_max_jump_chain
+
+# --- Edge weights ---
+
+const _EDGE_WEIGHTS_GROUP = {
+    group_name = "edge_weights",
+    first_property_name = "uses_duration_instead_of_distance_for_edge_weight",
+}
+
+var uses_duration_instead_of_distance_for_edge_weight := true \
         setget _set_uses_duration_instead_of_distance_for_edge_weight
-export var additional_edge_weight_offset_override := -1.0 \
+var additional_edge_weight_offset_override := -1.0 \
         setget _set_additional_edge_weight_offset_override
-export var walking_edge_weight_multiplier_override := -1.0 \
+var walking_edge_weight_multiplier_override := -1.0 \
         setget _set_walking_edge_weight_multiplier_override
-export var climbing_edge_weight_multiplier_override := -1.0 \
+var climbing_edge_weight_multiplier_override := -1.0 \
         setget _set_climbing_edge_weight_multiplier_override
-export var air_edge_weight_multiplier_override := -1.0 \
+var air_edge_weight_multiplier_override := -1.0 \
         setget _set_air_edge_weight_multiplier_override
 
-# --- Other parameters ---
+# --- Platform graph calculations ---
 
-export var max_jump_chain := 1 \
-        setget _set_max_jump_chain
+const _PLATFORM_GRAPH_CALCULATIONS_GROUP = {
+    group_name = "platform_graph_calculations",
+    first_property_name = "minimizes_velocity_change_when_jumping",
+}
 
 # TODO: For some reason, when this is true, we see fewer valid edges. In
 #       theory, this shouldn't be the case?
@@ -79,7 +118,7 @@ export var max_jump_chain := 1 \
 ##     jump rather than later.[br]
 ## -   That is, if this is true, jump trajectories will be less
 ##     up-sideways-then-down, and more parabolic and diagonal.[br]
-export var minimizes_velocity_change_when_jumping := false \
+var minimizes_velocity_change_when_jumping := false \
         setget _set_minimizes_velocity_change_when_jumping
 ## -   If this is true, then at runtime, after finding a path through
 ##     build-time-calculated edges, the Navigator will try to optimize the
@@ -93,9 +132,9 @@ export var minimizes_velocity_change_when_jumping := false \
 ##     either the fixed zero or max-speed value used for the
 ##     build-time-calculated edge state.[br]
 ## -   However, these edge calculations can be expensive.[br]
-export var optimizes_edge_jump_positions_at_run_time := true \
+var optimizes_edge_jump_positions_at_run_time := true \
         setget _set_optimizes_edge_jump_positions_at_run_time
-export var optimizes_edge_land_positions_at_run_time := true \
+var optimizes_edge_land_positions_at_run_time := true \
         setget _set_optimizes_edge_land_positions_at_run_time
 ## -   Optimizing edges can be expensive.[br]
 ## -   Preselections can be updated very frequently (nearly every frame).[br]
@@ -103,39 +142,39 @@ export var optimizes_edge_land_positions_at_run_time := true \
 ## -   However, setting this to false means that the user will see inaccurate
 ##     trajectories, which could be especially significant if beat-tracking is
 ##     enabled or path timings are important.[br]
-export var also_optimizes_preselection_path := true \
+var also_optimizes_preselection_path := true \
         setget _set_also_optimizes_preselection_path
-export var forces_player_position_to_match_edge_at_start := true \
+var forces_player_position_to_match_edge_at_start := true \
         setget _set_forces_player_position_to_match_edge_at_start
-export var forces_player_velocity_to_match_edge_at_start := true \
+var forces_player_velocity_to_match_edge_at_start := true \
         setget _set_forces_player_velocity_to_match_edge_at_start
-export var forces_player_position_to_match_path_at_end := false \
+var forces_player_position_to_match_path_at_end := false \
         setget _set_forces_player_position_to_match_path_at_end
-export var forces_player_velocity_to_zero_at_path_end := false \
+var forces_player_velocity_to_zero_at_path_end := false \
         setget _set_forces_player_velocity_to_zero_at_path_end
 ## -   If true, then player position will be forced to match the expected
 ##     calculated edge-movement position during each frame.[br]
 ## -   Without this, there is typically some deviation at run-time from the
 ##     expected calculated edge trajectories.[br]
-export var syncs_player_position_to_edge_trajectory := true \
+var syncs_player_position_to_edge_trajectory := true \
         setget _set_syncs_player_position_to_edge_trajectory
 ## -   If true, then player velocity will be forced to match the expected
 ##     calculated edge-movement velocity during each frame.[br]
 ## -   Without this, there is typically some deviation at run-time from the
 ##     expected calculated edge trajectories.[br]
-export var syncs_player_velocity_to_edge_trajectory := true \
+var syncs_player_velocity_to_edge_trajectory := true \
         setget _set_syncs_player_velocity_to_edge_trajectory
 ## -   If true, then trajectory positions will be stored after performing edge
 ##     calculations.[br]
 ## -   This state could be used for drawing path trajectories or updating player
 ##     positions at runtime.[br]
-export var includes_continuous_trajectory_positions := true \
+var includes_continuous_trajectory_positions := true \
         setget _set_includes_continuous_trajectory_positions
 ## -   If true, then trajectory velocities will be stored after performing edge
 ##     calculations.[br]
 ## -   This state could be used for drawing path trajectories or updating player
 ##     velocities at runtime.[br]
-export var includes_continuous_trajectory_velocities := true \
+var includes_continuous_trajectory_velocities := true \
         setget _set_includes_continuous_trajectory_velocities
 ## -   If true, then discrete trajectory state will be calculated and saved for
 ##     each edge.[br]
@@ -143,7 +182,7 @@ export var includes_continuous_trajectory_velocities := true \
 ##     by normal player movement at runtime, rather than the "continuous" state,
 ##     which doesn't take into account the error due to the calculation sampling
 ##     interval.[br]
-export var includes_discrete_trajectory_state := true \
+var includes_discrete_trajectory_state := true \
         setget _set_includes_discrete_trajectory_state
 ## -   If false, then any trajectory state that would have otherwise been stored
 ##     (according to other MovementParams flags), will not be stored in either
@@ -153,19 +192,19 @@ export var includes_discrete_trajectory_state := true \
 ##     its size.[br]
 ## -   If trajectory state is omitted at build time, and is still needed at
 ##     runtime, then it will be calculated on-the-fly as needed.[br]
-export var is_trajectory_state_stored_at_build_time := false \
+var is_trajectory_state_stored_at_build_time := false \
         setget _set_is_trajectory_state_stored_at_build_time
 ## -   If true, then the player position will be updated according to
 ##     pre-calculated edge trajectories, and Godot's physics and collision
 ##     engine will not be used to update player state.[br]
 ## -   This also means that the user will not be able to control movement with
 ##     standard move and jump key-press actions.[br]
-export var bypasses_runtime_physics := false \
+var bypasses_runtime_physics := false \
         setget _set_bypasses_runtime_physics
 
-export var retries_navigation_when_interrupted := true \
+var retries_navigation_when_interrupted := true \
         setget _set_retries_navigation_when_interrupted
-export var min_intra_surface_distance_to_optimize_jump_for := 16.0 \
+var min_intra_surface_distance_to_optimize_jump_for := 16.0 \
         setget _set_min_intra_surface_distance_to_optimize_jump_for
 ## -   When calculating possible edges between a given pair of surfaces, we
 ##     usually need to quit early (for performance) as soon as we've found
@@ -175,35 +214,35 @@ export var min_intra_surface_distance_to_optimize_jump_for := 16.0 \
 ##     we already found a valid edge for, on the same surface, for the same
 ##     surface pair.[br]
 ## -   We use this distance to determine threshold how far away is enough.[br]
-export var dist_sq_thres_for_considering_additional_jump_land_points := \
+var dist_sq_thres_for_considering_additional_jump_land_points := \
         32.0 * 32.0 \
         setget _set_dist_sq_thres_for_considering_additional_jump_land_points
 ## -   If true, then edge calculations for a given surface pair will stop early
 ##     as soon as the first valid edge for the pair is found.[br]
 ## -   This overrides
 ##     dist_sq_thres_for_considering_additional_jump_land_points.[br]
-export var stops_after_finding_first_valid_edge_for_a_surface_pair := false \
+var stops_after_finding_first_valid_edge_for_a_surface_pair := false \
         setget _set_stops_after_finding_first_valid_edge_for_a_surface_pair
 ## -   If true, then valid edges will be calculated for every good jump/land
 ##     position between a given surface pair.[br]
 ## -   This will take more time to compute.[br]
 ## -   This overrides
 ##     dist_sq_thres_for_considering_additional_jump_land_points.[br]
-export var calculates_all_valid_edges_for_a_surface_pair := false \
+var calculates_all_valid_edges_for_a_surface_pair := false \
         setget _set_calculates_all_valid_edges_for_a_surface_pair
 ## -   If this is true, then extra jump/land position combinations will be
 ##     considered for every surface pair for all combinations of surface ends
 ##     between the two surfaces.[br]
 ## -   This should always be redundant with the more intelligent and efficient
 ##     jump/land positions combinations.[br]
-export var always_includes_jump_land_positions_at_surface_ends := false \
+var always_includes_jump_land_positions_at_surface_ends := false \
         setget _set_always_includes_jump_land_positions_at_surface_ends
-export var includes_redundant_j_l_positions_with_zero_start_velocity := true \
+var includes_redundant_j_l_positions_with_zero_start_velocity := true \
         setget _set_includes_redundant_j_l_positions_with_zero_start_velocity
 ## -   This is a constant increase to all jump durations.[br]
 ## -   This could make it more likely for edge calculations to succeed earlier,
 ##     or it could just make the player seem more floaty.[br]
-export var normal_jump_instruction_duration_increase := 0.08 \
+var normal_jump_instruction_duration_increase := 0.08 \
         setget _set_normal_jump_instruction_duration_increase
 ## -   This is a constant increase to all jump durations.[br]
 ## -   Some edge calculations are identified early on as likely needing some
@@ -211,31 +250,31 @@ export var normal_jump_instruction_duration_increase := 0.08 \
 ##     surfaces.[br]
 ## -   This duration increase is used for those exceptional edge
 ##     calculations.[br]
-export var exceptional_jump_instruction_duration_increase := 0.2 \
+var exceptional_jump_instruction_duration_increase := 0.2 \
         setget _set_exceptional_jump_instruction_duration_increase
 ## If false, then edge calculations will not try to move around intermediate
 ## surfaces, which will produce many false negatives.
-export var recurses_when_colliding_during_horizontal_step_calculations := true \
+var recurses_when_colliding_during_horizontal_step_calculations := true \
         setget _set_recurses_when_colliding_during_horizontal_step_calculations
 ## If false, then edge calculations will not try to consider higher jump height
 ## in order to move around intermediate surfaces, which will produce many false
 ## negatives.
-export var backtracks_for_higher_jumps_during_hor_step_calculations := true \
+var backtracks_for_higher_jumps_during_hor_step_calculations := true \
         setget _set_backtracks_for_higher_jumps_during_hor_step_calculations
 ## The amount of extra margin to include around the player collision boundary
 ## when performing collision detection for a given edge calculation.
-export var collision_margin_for_edge_calculations := 4.0 \
+var collision_margin_for_edge_calculations := 4.0 \
         setget _set_collision_margin_for_edge_calculations
 ## The amount of extra margin to include for waypoint offsets, so that the
 ## player doesn't collide unexpectedly with the surface.
-export var collision_margin_for_waypoint_positions := 5.0 \
+var collision_margin_for_waypoint_positions := 5.0 \
         setget _set_collision_margin_for_waypoint_positions
 ## -   Some jump/land posititions are less likely to produce valid movement,
 ##     simply because of how the surfaces are arranged.[br]
 ## -   Usually there is another more likely pair for the given surfaces.[br]
 ## -   However, sometimes such pairs can be valid, and sometimes they can even
 ##     be the only valid pair for the given surfaces.[br]
-export var skips_less_likely_jump_land_positions := false \
+var skips_less_likely_jump_land_positions := false \
         setget _set_skips_less_likely_jump_land_positions
 ## -   If true, then the navigator will include extra offsets so that paths
 ##     don't end too close to surface ends, and will dynamically insert extra
@@ -243,16 +282,16 @@ export var skips_less_likely_jump_land_positions := false \
 ##     a path.[br]
 ## -   This should be unnecessary if forces_player_position_to_match_path_at_end
 ##     is true.[br]
-export var prevents_path_ends_from_exceeding_surface_ends_with_offsets := true \
+var prevents_path_ends_from_exceeding_surface_ends_with_offsets := true \
         setget _set_prevents_path_ends_from_exceeding_surface_ends_with_offsets
 ## -   If true, then edge calculations will re-use previously calculated
 ##     intermediate waypoints when attempting to backtrack and use a higher max
 ##     jump height.[br]
 ## -   Otherwise, intermediate waypoints are recalculated, which can be more
 ##     expensive, but could produce slightly more accurate results.[br]
-export var reuses_previous_waypoints_when_backtracking_on_jump_height := false \
+var reuses_previous_waypoints_when_backtracking_on_jump_height := false \
         setget _set_reuses_previous_waypoints_when_backtracking_on_jump_height
-export var asserts_no_preexisting_collisions_during_edge_calculations := false \
+var asserts_no_preexisting_collisions_during_edge_calculations := false \
         setget _set_asserts_no_preexisting_collisions_during_edge_calculations
 ## -   If true, then edge calculations will attempt to consider alternate
 ##     intersection points from shape-casting when calculating collision
@@ -261,29 +300,55 @@ export var asserts_no_preexisting_collisions_during_edge_calculations := false \
 ## -   For example, move_and_collide could otherwise detect collisons with the
 ##     adjacent wall when moving vertically and colliding with the edge of a
 ##     ceiling.[br]
-export var checks_for_alt_intersection_points_for_oblique_collisions := true \
+var checks_for_alt_intersection_points_for_oblique_collisions := true \
         setget _set_checks_for_alt_intersection_points_for_oblique_collisions
-export var oblique_collison_normal_aspect_ratio_threshold_threshold := 10.0 \
+var oblique_collison_normal_aspect_ratio_threshold_threshold := 10.0 \
         setget _set_oblique_collison_normal_aspect_ratio_threshold_threshold
-export var min_frame_count_when_colliding_early_with_expected_surface := 4 \
+var min_frame_count_when_colliding_early_with_expected_surface := 4 \
         setget _set_min_frame_count_when_colliding_early_with_expected_surface
-export var reached_in_air_destination_distance_squared_threshold := \
+var reached_in_air_destination_distance_squared_threshold := \
         16.0 * 16.0 \
         setget _set_reached_in_air_destination_distance_squared_threshold
-export var max_edges_to_remove_from_path_for_opt_to_in_air_dest := 2 \
+var max_edges_to_remove_from_path_for_opt_to_in_air_dest := 2 \
         setget _set_max_edges_to_remove_from_path_for_opt_to_in_air_dest
 
-export var logs_navigator_events := false \
+# --- Logs ---
+
+const _LOGS_GROUP = {
+    group_name = "logs",
+    first_property_name = "logs_navigator_events",
+}
+
+var logs_navigator_events := false \
         setget _set_logs_navigator_events
-export var logs_player_actions := false \
+var logs_player_actions := false \
         setget _set_logs_player_actions
-export var logs_inspector_events := false \
+var logs_inspector_events := false \
         setget _set_logs_inspector_events
-export var logs_computer_player_events := false \
+var logs_computer_player_events := false \
         setget _set_logs_computer_player_events
 
-export var fall_through_floor_velocity_boost := 100.0 \
-        setget _set_fall_through_floor_velocity_boost
+# --- Movement ability overrides ---
+
+const _MOVEMENT_ABILITY_OVERRIDES_GROUP = {
+    group_name = "movement_ability_overrides",
+    first_property_name = "edge_calculators_override",
+    last_property_name = "action_handlers_override",
+    overrides = {
+        "edge_calculators_override": {
+            # This corresponds to `export(Array, String) var ...`.
+            type = TYPE_ARRAY,
+            hint = 24,
+            hint_string = "4:",
+        },
+        "action_handlers_override": {
+            # This corresponds to `export(Array, String) var ...`.
+            type = TYPE_ARRAY,
+            hint = 24,
+            hint_string = "4:",
+        },
+    }
+}
 
 ## -   An EdgeCalculator calculates possible edges between certain types of
 ##     edge pairs.
@@ -292,14 +357,14 @@ export var fall_through_floor_velocity_boost := 100.0 \
 ##     either along a surface or in the air.
 ## -   A default set of ActionHandlers is usually assigned based on other
 ##     movement properties, such as `can_jump`.
-export(Array, String) var edge_calculators_override := []
+var edge_calculators_override := []
 ## -   An ActionHandler updates a player's state each frame, in response to
 ##     current events and the player's current state.
 ## -   For example, FloorJumpAction listens for jump events while the player is
 ##     on the ground, and triggers player jump state accordingly.
 ## -   A default set of ActionHandlers is usually assigned based on other
 ##     movement properties, such as `can_jump`.
-export(Array, String) var action_handlers_override := []
+var action_handlers_override := []
 
 # --- Derived parameters ---
 
@@ -370,9 +435,38 @@ var climb_over_wall_corner_calc_shape_rotation: float
 
 var player_name := ""
 
-var _configuration_warning := ""
-
 # ---
+
+const _PROPERTY_GROUPS := [
+    _MOVEMENT_ABILITIES_GROUP,
+    _PHYSICS_MOVEMENT_GROUP,
+    _DASH_GROUP,
+    _DOUBLE_JUMP_GROUP,
+    _EDGE_WEIGHTS_GROUP,
+    _PLATFORM_GRAPH_CALCULATIONS_GROUP,
+    _LOGS_GROUP,
+    _MOVEMENT_ABILITY_OVERRIDES_GROUP,
+]
+
+var _property_list_amendment := [
+    {
+        name = "collider_shape",
+        type = TYPE_OBJECT,
+        usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
+    },
+    {
+        name = "collider_rotation",
+        type = TYPE_REAL,
+        usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
+    },
+    {
+        name = "player_name",
+        type = TYPE_STRING,
+        usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
+    },
+]
+
+var _configuration_warning := ""
 
 var _is_instanced_from_bootstrap := false
 
@@ -380,6 +474,15 @@ var _debounced_update_parameters: FuncRef = Sc.time.debounce(
         funcref(self, "_update_parameters_debounced"),
         0.02,
         true)
+
+# ---
+
+
+func _init() -> void:
+    var property_list_amendment: Array = \
+            Sc.utils.get_property_list_for_inspector_groups(
+                    self, _PROPERTY_GROUPS)
+    Sc.utils.concat(_property_list_amendment, property_list_amendment)
 
 
 func _enter_tree() -> void:
@@ -418,23 +521,7 @@ func _parse_shape_from_parent() -> void:
 # NOTE: _get_property_list **appends** to the default list of properties.
 #       It does not replace.
 func _get_property_list() -> Array:
-    return [
-        {
-            name = "collider_shape",
-            type = TYPE_OBJECT,
-            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
-        },
-        {
-            name = "collider_rotation",
-            type = TYPE_REAL,
-            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
-        },
-        {
-            name = "player_name",
-            type = TYPE_STRING,
-            usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
-        },
-    ]
+    return _property_list_amendment
 
 
 func _update_parameters() -> void:
