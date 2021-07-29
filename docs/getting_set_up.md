@@ -41,7 +41,7 @@ _Probably the easiest way to get started with this is to copy/paste/edit the pre
 
 Hopefully, you shouldn't need to define too much level logic to make Surfacer happy.
 
-The main thing to know is that you will need to instance a `CollidableTileMap` as a sub-scene in order to define the shape of your level.
+The main thing to know is that you will need to instance a `SurfacesTileMap` as a sub-scene in order to define the shape of your level.
 
 ## Creating a player
 

@@ -138,6 +138,7 @@ var is_precomputing_platform_graphs: bool
 var is_intro_choreography_shown: bool
 
 var default_player_name: String
+var default_tile_set: TileSet
 
 var path_drag_update_throttle_interval := 0.2
 var path_beat_update_throttle_interval := 0.2
@@ -315,6 +316,8 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
     self._player_scenes_list = manifest.player_scenes
     self.debug_params = manifest.debug_params
     self.default_player_name = manifest.default_player_name
+    if manifest.has("default_tile_set"):
+        self.default_tile_set = manifest.default_tile_set
     
     self.is_precomputing_platform_graphs = \
             manifest.has("precompute_platform_graph_for_levels") and \

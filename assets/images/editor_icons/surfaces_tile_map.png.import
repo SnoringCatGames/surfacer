@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/collidable_tile_map.png-23a9bdc7e3883f4b78a7ac310b249f18.stex"
+path="res://.import/surfaces_tile_map.png-57c301d873d0d2d5c2d9456cf8557974.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/surfacer/assets/images/editor_icons/collidable_tile_map.png"
-dest_files=[ "res://.import/collidable_tile_map.png-23a9bdc7e3883f4b78a7ac310b249f18.stex" ]
+source_file="res://addons/surfacer/assets/images/editor_icons/surfaces_tile_map.png"
+dest_files=[ "res://.import/surfaces_tile_map.png-57c301d873d0d2d5c2d9456cf8557974.stex" ]
 
 [params]
 

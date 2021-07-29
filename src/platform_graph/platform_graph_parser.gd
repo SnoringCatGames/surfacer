@@ -13,7 +13,7 @@ signal parse_finished
 
 const PLATFORM_GRAPHS_DIRECTORY_NAME := "platform_graphs"
 
-const COLLISION_MASK_FOR_ONLY_COLLIDABLE_TILEMAP = 1
+const COLLISION_MASK_FOR_ONLY_SURFACES_TILE_MAP = 1
 
 var level_id: String
 # The TileMaps that define the collision boundaries of this level.
@@ -82,7 +82,7 @@ func _create_fake_players_for_collision_calculations() -> void:
         fake_player.name = "fake_" + fake_player.name
         fake_player.set_safe_margin(
                 movement_params.collision_margin_for_edge_calculations)
-        fake_player.collision_mask = COLLISION_MASK_FOR_ONLY_COLLIDABLE_TILEMAP
+        fake_player.collision_mask = COLLISION_MASK_FOR_ONLY_SURFACES_TILE_MAP
         fake_player.collision_layer = 0
         add_child(fake_player)
         fake_players[fake_player.player_name] = fake_player
