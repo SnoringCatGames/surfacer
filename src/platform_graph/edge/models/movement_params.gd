@@ -544,10 +544,12 @@ func _update_parameters_debounced() -> void:
 
 
 func _validate_parameters() -> void:
-    if name != "MovementParams":
+    if name != "MovementParams" and \
+            is_instance_valid(get_tree()):
         _set_configuration_warning(
-                "The MovementParams node must be named 'MovementParams'. " + \
-                "This is important for how it is parsed from the .tscn file.")
+                ("The MovementParams node must be named 'MovementParams'. " + 
+                "This is important for how it is parsed from the .tscn file. " +
+                "name=%s") % name)
     elif (action_handlers_override.find(
             "MatchExpectedEdgeTrajectoryAction") >= 0) == \
             (syncs_player_position_to_edge_trajectory or \
