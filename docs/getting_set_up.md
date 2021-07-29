@@ -37,13 +37,20 @@ I will not lie, **this is a complex framework**! Hopefully it's external API isn
 
 ## Creating a level
 
+In order to create levels, you'll need to override a few classes from Surfacer.
+
 _Probably the easiest way to get started with this is to copy/paste/edit the pre-existing level class from the Squirrel Away example app._
 
-Hopefully, you shouldn't need to define too much level logic to make Surfacer happy.
-
-The main thing to know is that you will need to instance a `SurfacesTileMap` as a sub-scene in order to define the shape of your level.
-
-> FIXME: ----- Describe level-configuration export variables
+-   [`SurfacerLevel`](./src/level/surfacer_level.gd).
+-   [`SurfacesTileMap`](./src/platform_graph/surfaces_tile_map.gd):
+    -   You will need to instance `SurfacesTileMap` as a sub-scene in order to define the shape of the collidable surfaces your level.
+-   [`SurfacerLevelConfig`](./src/config/surfacer_level_config.gd):
+    -   You will need to sub-class `SurfacerLevelConfig` and reference this in your `app_manifest`.
+    -   This defines some metadata for each of the levels in your game. For example:
+        -   `name`: The display name for the level.
+        -   `sort_priority`: The level's position relative to other levels.
+        -   `unlock_conditions`: How and when the level is unlocked.
+        -   `platform_graph_player_names`: The names of the players that might appear in the level. A platform graph will need to be calculated for each of these players.
 
 ## Creating a player
 
