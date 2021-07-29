@@ -1,5 +1,6 @@
 tool
-class_name PlayerAnimator
+class_name PlayerAnimator, \
+"res://addons/surfacer/assets/images/editor_icons/player_animator.png"
 extends Node2D
 
 
