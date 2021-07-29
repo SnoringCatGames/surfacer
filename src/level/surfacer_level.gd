@@ -60,7 +60,14 @@ func _destroy() -> void:
 #    .quit(has_finished, immediately)
 
 
+#func _update_editor_configuration() -> void
+#    ._update_editor_configuration()
+
+
 func _unhandled_input(event: InputEvent) -> void:
+    if Engine.editor_hint:
+        return
+    
     if event is InputEventMouseButton or \
             event is InputEventScreenTouch:
         # This ensures that pressing arrow keys won't change selections in the

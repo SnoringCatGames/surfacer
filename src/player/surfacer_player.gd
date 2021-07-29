@@ -94,7 +94,7 @@ func _ready() -> void:
     self.last_selection = PointerSelectionPosition.new(self)
     self.pre_selection = PointerSelectionPosition.new(self)
     
-    var collision_detection_layer_names := \
+    var collision_detection_layer_names: Array = \
             Sc.utils.get_physics_layer_names_from_bitmask(
                     collision_detection_layers)
     for layer_name in collision_detection_layer_names:
@@ -218,13 +218,13 @@ func _update_editor_configuration_debounced() -> void:
     
     _initialize_child_movement_params()
     
-    property_list_changed_notify()
     _set_configuration_warning("")
 
 
 func _set_configuration_warning(value: String) -> void:
     _configuration_warning = value
     update_configuration_warning()
+    property_list_changed_notify()
     if value != "" and \
             !Engine.editor_hint:
         Sc.logger.error(value)

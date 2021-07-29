@@ -23,7 +23,7 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 
 --------
 
-> **NOTE:** _Consider this a pre-alpha release. This framework still has many rough edges and is still changing a lot._
+> **NOTE:** _Consider this a **pre-alpha** release. This framework still has many rough edges and is still changing a lot._
 
 --------
 
