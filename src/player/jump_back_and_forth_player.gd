@@ -1,5 +1,5 @@
 class_name JumpBackAndForthPlayer
-extends Player
+extends SurfacerPlayer
 
 
 # FIXME: --------------------

@@ -2,7 +2,7 @@ class_name PlayerAnnotator
 extends Node2D
 
 
-var player: Player
+var player: SurfacerPlayer
 var is_human_player: bool
 var previous_position: Vector2
 
@@ -15,7 +15,7 @@ var tile_annotator: PlayerTileAnnotator
 
 
 func _init(
-        player: Player,
+        player: SurfacerPlayer,
         is_human_player: bool) -> void:
     self.player = player
     self.is_human_player = is_human_player

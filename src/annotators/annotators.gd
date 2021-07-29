@@ -36,7 +36,7 @@ var surfaces_annotator: SurfacesAnnotator
 var grid_indices_annotator: GridIndicesAnnotator
 var path_preselection_annotator: PathPreselectionAnnotator
 
-# Dictonary<Player, PlayerAnnotator>
+# Dictonary<SurfacerPlayer, PlayerAnnotator>
 var player_annotators := {}
 
 var element_annotator: ElementAnnotator
@@ -111,7 +111,7 @@ func on_level_destroyed() -> void:
 
 
 func create_player_annotator(
-        player: Player,
+        player: SurfacerPlayer,
         is_human_player: bool) -> void:
     var player_annotator := PlayerAnnotator.new(
             player,
@@ -125,14 +125,14 @@ func create_player_annotator(
                 _annotator_enablement[annotator_type])
 
 
-func destroy_player_annotator(player: Player) -> void:
+func destroy_player_annotator(player: SurfacerPlayer) -> void:
     if !player_annotators.has(player):
         return
     player_annotators[player].queue_free()
     player_annotators.erase(player)
 
 
-func get_player_annotator(player: Player) -> PlayerAnnotator:
+func get_player_annotator(player: SurfacerPlayer) -> PlayerAnnotator:
     return player_annotators[player]
 
 

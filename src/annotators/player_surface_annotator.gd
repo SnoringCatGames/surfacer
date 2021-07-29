@@ -2,13 +2,13 @@ class_name PlayerSurfaceAnnotator
 extends Node2D
 
 
-var player: Player
+var player: SurfacerPlayer
 
 var COLOR := Sc.colors.opacify(
         Sc.colors.player_position, ScaffolderColors.ALPHA_XFAINT)
 
 
-func _init(player: Player) -> void:
+func _init(player: SurfacerPlayer) -> void:
     self.player = player
 
 

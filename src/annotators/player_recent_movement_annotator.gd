@@ -21,7 +21,7 @@ const OFFBEAT_HASH_LENGTH := 8.0
 const DOWNBEAT_HASH_STROKE_WIDTH := 1.0
 const OFFBEAT_HASH_STROKE_WIDTH := 1.0
 
-var player: Player
+var player: SurfacerPlayer
 
 # We use this as a circular buffer.
 var recent_positions: PoolVector2Array
@@ -37,7 +37,7 @@ var current_position_index := -1
 var total_position_count := 0
 
 
-func _init(player: Player) -> void:
+func _init(player: SurfacerPlayer) -> void:
     self.player = player
     self.recent_positions = PoolVector2Array()
     self.recent_positions.resize(RECENT_POSITIONS_BUFFER_SIZE)

@@ -6,7 +6,7 @@ extends Reference
 # instructions.
 # 
 # -   This is calculated by stepping through each discrete physics frame, which
-#     should exactly emulate the actual Player trajectory that would be used.
+#     should exactly emulate the actual SurfacerPlayer trajectory that would be used.
 # -   This also records some trajectory state.
 static func check_instructions_discrete_trajectory_state(
         edge_calc_params: EdgeCalcParams,
@@ -90,7 +90,7 @@ static func check_instructions_discrete_trajectory_state(
             # these.
             collision = null
         
-        # This point corresponds to when Player._physics_process would be
+        # This point corresponds to when SurfacerPlayer._physics_process would be
         # called:
         # - The position for the current frame has been calculated from the
         #   previous frame's velocity.
@@ -211,7 +211,7 @@ static func check_instructions_discrete_trajectory_state(
 # Checks whether a collision would occur with any surface during the given
 # horizontal step. This is calculated by considering the continuous physics
 # state according to the parabolic equations of motion. This does not
-# necessarily accurately reflect the actual Player trajectory that would be
+# necessarily accurately reflect the actual SurfacerPlayer trajectory that would be
 # used.
 static func check_continuous_horizontal_step_for_collision(
         step_result_metadata: EdgeStepCalcResultMetadata,

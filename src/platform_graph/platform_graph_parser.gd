@@ -19,7 +19,7 @@ var level_id: String
 # The TileMaps that define the collision boundaries of this level.
 # Array<SurfacesTileMap>
 var surface_tile_maps: Array
-# Dictionary<String, Player>
+# Dictionary<String, SurfacerPlayer>
 var fake_players := {}
 var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
@@ -73,7 +73,7 @@ func _create_fake_players_for_collision_calculations() -> void:
         var player_scene: PackedScene = Su.player_scenes[player_name]
         var movement_params: MovementParams = \
                 Su.movement.player_movement_params[player_name]
-        var fake_player: Player = Sc.utils.add_scene(
+        var fake_player: SurfacerPlayer = Sc.utils.add_scene(
                 self,
                 player_scene,
                 false,

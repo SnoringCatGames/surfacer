@@ -405,7 +405,7 @@ func update(
 #        # - This work-around shouldn't be needed. What's the underlying problem?
 #        Sc.logger.print(
 #                "Navigator.is_currently_navigating and " +
-#                "!Player.did_move_last_frame")
+#                "!SurfacerPlayer.did_move_last_frame")
 #        var destination := path.destination
 #        var graph_destination_for_in_air_destination := \
 #                path.graph_destination_for_in_air_destination
@@ -532,7 +532,7 @@ func get_previous_destination() -> PositionAlongSurface:
             null
 
 
-# Conditionally prints the given message, depending on the Player's
+# Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
 func print_msg(
         message_template: String,

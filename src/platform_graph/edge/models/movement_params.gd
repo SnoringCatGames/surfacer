@@ -394,7 +394,7 @@ func _parse_shape_from_parent() -> void:
     
     if !(parent is KinematicBody2D) or \
             !parent.has_method("_update_navigator"):
-        _set_configuration_warning("Must define a Player parent.")
+        _set_configuration_warning("Must define a SurfacerPlayer parent.")
         return
     
     player_name = parent.player_name

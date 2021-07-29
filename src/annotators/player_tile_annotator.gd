@@ -6,11 +6,11 @@ var TILE_BORDER_COLOR := Sc.colors.opacify(
         Sc.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
 const TILE_BORDER_WIDTH := 6.0
 
-var player: Player
+var player: SurfacerPlayer
 var polyline: PoolVector2Array
 
 
-func _init(player: Player) -> void:
+func _init(player: SurfacerPlayer) -> void:
     self.player = player
     polyline = PoolVector2Array()
     polyline.resize(5)

@@ -1,5 +1,5 @@
 tool
-class_name Player, \
+class_name SurfacerPlayer, \
 "res://addons/surfacer/assets/images/editor_icons/surfacer_player.png"
 extends KinematicBody2D
 
@@ -180,7 +180,7 @@ func _update_editor_configuration() -> void:
 func _update_editor_configuration_debounced() -> void:
     if !Sc.utils.check_whether_sub_classes_are_tools(self):
         _set_configuration_warning(
-                "Subclasses of Player must be marked as tool.")
+                "Subclasses of SurfacerPlayer must be marked as tool.")
         return
     
     if player_name == "":
@@ -579,7 +579,7 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     _can_dash = false
 
 
-# Conditionally prints the given message, depending on the Player's
+# Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
 func print_msg(
         message_template: String,
@@ -656,7 +656,7 @@ func get_intended_position(type: int) -> PositionAlongSurface:
 # FIXME: ---------------------------------
 # # Thoughts for high-level navigation behavior:
 # 
-# - New Player sub-classes:
+# - New SurfacerPlayer sub-classes:
 #   - walk/climb back and forth
 #     - surface ends or with a given range
 #     - with a given pause time (or a min/max to randomly pick from)

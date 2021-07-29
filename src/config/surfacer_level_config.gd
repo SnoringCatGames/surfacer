@@ -22,7 +22,7 @@ func _sanitize_level_config(config: Dictionary) -> void:
             config.platform_graph_player_names is Array)
 
 
-func get_intro_choreographer(player: Player) -> Choreographer:
+func get_intro_choreographer(player: SurfacerPlayer) -> Choreographer:
     var config := get_level_config(Sc.level_session.id)
     
     var sequence: Array

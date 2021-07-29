@@ -49,7 +49,7 @@ In order to create a new player type, you'll need to override a few classes from
 
 _Probably the easiest way to get started with this is to copy/paste/edit a pre-existing player from the Squirrel Away example app._
 
--   `Player`
+-   `SurfacerPlayer`
     -   This defines how your player reacts to input and decides when and were to navigate within the level.
 -   `PlayerAnimator`
     -   This defines how your player is rendered and animated.

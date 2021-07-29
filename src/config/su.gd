@@ -183,8 +183,8 @@ var skip_choreography_framerate_multiplier := 10.0
 #}
 var debug_params: Dictionary
 
-var group_name_human_players := Player.GROUP_NAME_HUMAN_PLAYERS
-var group_name_computer_players := Player.GROUP_NAME_COMPUTER_PLAYERS
+var group_name_human_players := SurfacerPlayer.GROUP_NAME_HUMAN_PLAYERS
+var group_name_computer_players := SurfacerPlayer.GROUP_NAME_COMPUTER_PLAYERS
 var group_name_surfaces := SurfacesTileMap.GROUP_NAME_SURFACES
 
 var non_surface_parser_metric_keys := [
@@ -232,7 +232,7 @@ var surface_parser_metric_keys := [
     "assert_surfaces_fully_calculated_duration",
 ]
 
-var human_player: Player
+var human_player: SurfacerPlayer
 var graph_parser: PlatformGraphParser
 var graph_inspector: PlatformGraphInspector
 var legend: Legend
