@@ -55,6 +55,7 @@ func _update_configuration() -> void:
         _configuration_warning = ""
     
     update_configuration_warning()
+    property_list_changed_notify()
 
 
 func _get_configuration_warning() -> String:
