@@ -21,11 +21,11 @@ var COLLIDER_COLOR := Sc.colors.opacify(
         Sc.colors.player_position, ScaffolderColors.ALPHA_XFAINT)
 const COLLIDER_THICKNESS := 4.0
 
-var player: Player
+var player: SurfacerPlayer
 var previous_position: Vector2
 
 
-func _init(player: Player) -> void:
+func _init(player: SurfacerPlayer) -> void:
     self.player = player
 
 

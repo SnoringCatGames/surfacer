@@ -1,5 +1,5 @@
 class_name WalkBackAndForthPlayer
-extends Player
+extends SurfacerPlayer
 
 
 # FIXME: --------------------

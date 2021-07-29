@@ -7,7 +7,7 @@ var collision_params: CollisionCalcParams
 
 var movement_params: MovementParams
 
-# A margin to extend around the Player's Collider. This helps to compensate for
+# A margin to extend around the SurfacerPlayer's Collider. This helps to compensate for
 # the imprecision of these calculations.
 var waypoint_offset := Vector2.INF
 

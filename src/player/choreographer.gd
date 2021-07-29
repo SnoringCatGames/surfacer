@@ -50,7 +50,7 @@ var index := -1
 var is_finished := false
 var is_skippable := true
 var _is_skipped := false
-var player: Player
+var player: SurfacerPlayer
 var level
 
 var _tween: ScaffolderTween
@@ -72,7 +72,7 @@ func _ready() -> void:
 
 func configure(
         sequence: Array,
-        player: Player,
+        player: SurfacerPlayer,
         level) -> void:
     self.sequence = sequence
     self.player = player

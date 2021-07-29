@@ -10,9 +10,9 @@ export(int, LAYERS_2D_PHYSICS) var layer := 0 setget _set_layer
 export var is_detecting_enter := true setget _set_is_detecting_enter
 export var is_detecting_exit := false setget _set_is_detecting_exit
 
-const DASH_LENGTH := 6.0
-const DASH_GAP := 8.0
-const STROKE_WIDTH := 4.0
+const DASH_LENGTH := 3.0
+const DASH_GAP := 6.0
+const STROKE_WIDTH := 1.2
 const COLOR := Color.magenta
 
 var _configuration_warning := ""
@@ -32,7 +32,6 @@ func _draw() -> void:
     if !is_axially_aligned:
         return
     
-    # FIXME: ----------------------------------- Verify this draws all shapes.
     Sc.draw.draw_dashed_shape(
             self,
             position,

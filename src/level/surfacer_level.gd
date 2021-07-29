@@ -2,7 +2,7 @@ class_name SurfacerLevel
 extends ScaffolderLevel
 
 
-# Array<Player>
+# Array<SurfacerPlayer>
 var all_players: Array
 var camera_pan_controller: CameraPanController
 var intro_choreographer: Choreographer
@@ -117,8 +117,8 @@ func _initialize_annotators() -> void:
 func add_player(
         path_or_packed_scene,
         position: Vector2,
-        is_human_player: bool) -> Player:
-    var player: Player = Sc.utils.add_scene(
+        is_human_player: bool) -> SurfacerPlayer:
+    var player: SurfacerPlayer = Sc.utils.add_scene(
             self,
             path_or_packed_scene,
             false,
@@ -152,7 +152,7 @@ func add_player(
     return player
 
 
-func remove_player(player: Player) -> void:
+func remove_player(player: SurfacerPlayer) -> void:
     var group: String = \
             Su.group_name_human_players if \
             player.is_human_player else \

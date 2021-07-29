@@ -240,7 +240,7 @@ func get_annotation_elements() -> Array:
     return []
 
 
-# Conditionally prints the given message, depending on the Player's
+# Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
 func print_msg(
         message_template: String,

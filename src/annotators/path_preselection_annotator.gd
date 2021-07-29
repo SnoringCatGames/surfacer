@@ -45,7 +45,7 @@ const PRESELECTION_PATH_OFFBEAT_STROKE_WIDTH := PRESELECTION_PATH_STROKE_WIDTH
 const PATH_BACK_END_TRIM_RADIUS := 0.0
 
 var _predictions_container: Node2D
-var player: Player
+var player: SurfacerPlayer
 var path_front_end_trim_radius: float
 var preselection_destination: PositionAlongSurface = null
 var animation_start_time := -PRESELECTION_DEFAULT_DURATION
@@ -61,7 +61,7 @@ var preselection_path_beats_time_start: float
 var preselection_path_beats: Array
 
 
-func _init(player: Player) -> void:
+func _init(player: SurfacerPlayer) -> void:
     self.player = player
     self.path_front_end_trim_radius = min(
             player.movement_params.collider_half_width_height.x,
