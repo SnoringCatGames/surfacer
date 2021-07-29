@@ -211,7 +211,7 @@ var _default_styles_manifest_normal := {
     header_panel_content_margin_bottom = 0.0,
     
     hud_panel_nine_patch = \
-            preload("res://addons/scaffolder/assets/images/gui/overlay_panel.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/overlay_panel.png"),
     hud_panel_nine_patch_margin_left = 3.5,
     hud_panel_nine_patch_margin_top = 3.5,
     hud_panel_nine_patch_margin_right = 3.5,
@@ -239,7 +239,7 @@ var _default_styles_manifest_pixel := {
     button_shine_margin_bottom = 6.0,
     
     focus_border_nine_patch = \
-            preload("res://addons/scaffolder/assets/images/gui/focus_border.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/focus_border.png"),
     focus_border_nine_patch_margin_left = 3.5,
     focus_border_nine_patch_margin_top = 3.5,
     focus_border_nine_patch_margin_right = 3.5,
@@ -251,13 +251,13 @@ var _default_styles_manifest_pixel := {
     focus_border_expand_margin_bottom = 3.0,
     
     button_active_nine_patch = \
-            preload("res://assets/images/button_active.png"),
+            preload("res://assets/images/nine_patch/button_active.png"),
     button_disabled_nine_patch = \
-            preload("res://assets/images/button_hover.png"),
+            preload("res://assets/images/nine_patch/button_hover.png"),
     button_hover_nine_patch = \
-            preload("res://assets/images/button_hover.png"),
+            preload("res://assets/images/nine_patch/button_hover.png"),
     button_normal_nine_patch = \
-            preload("res://assets/images/button_normal.png"),
+            preload("res://assets/images/nine_patch/button_normal.png"),
     button_nine_patch_margin_left = 3.5,
     button_nine_patch_margin_top = 3.5,
     button_nine_patch_margin_right = 3.5,
@@ -265,13 +265,13 @@ var _default_styles_manifest_pixel := {
     button_nine_patch_scale = 3.0,
     
     dropdown_active_nine_patch = \
-            preload("res://assets/images/dropdown_active.png"),
+            preload("res://assets/images/nine_patch/dropdown_active.png"),
     dropdown_disabled_nine_patch = \
-            preload("res://assets/images/dropdown_hover.png"),
+            preload("res://assets/images/nine_patch/dropdown_hover.png"),
     dropdown_hover_nine_patch = \
-            preload("res://assets/images/dropdown_hover.png"),
+            preload("res://assets/images/nine_patch/dropdown_hover.png"),
     dropdown_normal_nine_patch = \
-            preload("res://assets/images/dropdown_normal.png"),
+            preload("res://assets/images/nine_patch/dropdown_normal.png"),
     dropdown_nine_patch_margin_left = 3.5,
     dropdown_nine_patch_margin_top = 3.5,
     dropdown_nine_patch_margin_right = 3.5,
@@ -279,7 +279,7 @@ var _default_styles_manifest_pixel := {
     dropdown_nine_patch_scale = 3.0,
     
     scroll_track_nine_patch = \
-            preload("res://assets/images/scroll_track.png"),
+            preload("res://assets/images/nine_patch/scroll_track.png"),
     scroll_track_nine_patch_margin_left = 3.5,
     scroll_track_nine_patch_margin_top = 3.5,
     scroll_track_nine_patch_margin_right = 3.5,
@@ -287,11 +287,11 @@ var _default_styles_manifest_pixel := {
     scroll_track_nine_patch_scale = 3.0,
     
     scroll_grabber_active_nine_patch = \
-            preload("res://assets/images/scroll_grabber_active.png"),
+            preload("res://assets/images/nine_patch/scroll_grabber_active.png"),
     scroll_grabber_hover_nine_patch = \
-            preload("res://assets/images/scroll_grabber_hover.png"),
+            preload("res://assets/images/nine_patch/scroll_grabber_hover.png"),
     scroll_grabber_normal_nine_patch = \
-            preload("res://assets/images/scroll_grabber_normal.png"),
+            preload("res://assets/images/nine_patch/scroll_grabber_normal.png"),
     scroll_grabber_nine_patch_margin_left = 3.5,
     scroll_grabber_nine_patch_margin_top = 3.5,
     scroll_grabber_nine_patch_margin_right = 3.5,
@@ -299,7 +299,7 @@ var _default_styles_manifest_pixel := {
     scroll_grabber_nine_patch_scale = 3.0,
     
     slider_track_nine_patch = \
-            preload("res://addons/scaffolder/assets/images/gui/slider_track.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/slider_track.png"),
     slider_track_nine_patch_margin_left = 1.5,
     slider_track_nine_patch_margin_top = 1.5,
     slider_track_nine_patch_margin_right = 1.5,
@@ -309,7 +309,7 @@ var _default_styles_manifest_pixel := {
     overlay_panel_border_width = 2,
     
     overlay_panel_nine_patch = \
-            preload("res://addons/scaffolder/assets/images/gui/overlay_panel.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/overlay_panel.png"),
     overlay_panel_nine_patch_margin_left = 3.5,
     overlay_panel_nine_patch_margin_top = 3.5,
     overlay_panel_nine_patch_margin_right = 3.5,
@@ -326,7 +326,7 @@ var _default_styles_manifest_pixel := {
     header_panel_content_margin_bottom = 0.0,
     
     hud_panel_nine_patch = \
-            preload("res://addons/scaffolder/assets/images/gui/overlay_panel.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/overlay_panel.png"),
     hud_panel_nine_patch_margin_left = 3.5,
     hud_panel_nine_patch_margin_top = 3.5,
     hud_panel_nine_patch_margin_right = 3.5,
@@ -389,54 +389,54 @@ var _default_icons_manifest_normal := {
     go_scale = 1.5,
     
     about_circle_active = \
-            preload("res://addons/scaffolder/assets/images/gui/about_circle_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/about_circle_active.png"),
     about_circle_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/about_circle_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/about_circle_hover.png"),
     about_circle_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/about_circle_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/about_circle_normal.png"),
     
     alert_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/alert_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/alert_normal.png"),
     
     close_active = \
-            preload("res://addons/scaffolder/assets/images/gui/close_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/close_active.png"),
     close_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/close_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/close_hover.png"),
     close_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/close_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/close_normal.png"),
     
     gear_circle_active = \
-            preload("res://addons/scaffolder/assets/images/gui/gear_circle_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/gear_circle_active.png"),
     gear_circle_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/gear_circle_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/gear_circle_hover.png"),
     gear_circle_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/gear_circle_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/gear_circle_normal.png"),
     
     home_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/home_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/home_normal.png"),
     
     left_caret_active = \
-            preload("res://addons/scaffolder/assets/images/gui/left_caret_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/left_caret_active.png"),
     left_caret_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/left_caret_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/left_caret_hover.png"),
     left_caret_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/left_caret_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/left_caret_normal.png"),
     
     pause_circle_active = \
-            preload("res://addons/scaffolder/assets/images/gui/pause_circle_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/pause_circle_active.png"),
     pause_circle_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/pause_circle_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/pause_circle_hover.png"),
     pause_circle_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/pause_circle_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/pause_circle_normal.png"),
     
     pause_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/pause_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/pause_normal.png"),
     play_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/play_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/play_normal.png"),
     retry_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/retry_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/retry_normal.png"),
     stop_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/stop_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/stop_normal.png"),
 }
 
 var _default_icons_manifest_pixel := {
@@ -486,54 +486,54 @@ var _default_icons_manifest_pixel := {
     go_scale = 1.5,
     
     about_circle_active = \
-            preload("res://addons/scaffolder/assets/images/gui/about_circle_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/about_circle_active.png"),
     about_circle_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/about_circle_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/about_circle_hover.png"),
     about_circle_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/about_circle_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/about_circle_normal.png"),
     
     alert_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/alert_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/alert_normal.png"),
     
     close_active = \
-            preload("res://addons/scaffolder/assets/images/gui/close_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/close_active.png"),
     close_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/close_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/close_hover.png"),
     close_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/close_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/close_normal.png"),
     
     gear_circle_active = \
-            preload("res://addons/scaffolder/assets/images/gui/gear_circle_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/gear_circle_active.png"),
     gear_circle_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/gear_circle_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/gear_circle_hover.png"),
     gear_circle_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/gear_circle_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/gear_circle_normal.png"),
     
     home_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/home_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/home_normal.png"),
     
     left_caret_active = \
-            preload("res://addons/scaffolder/assets/images/gui/left_caret_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/left_caret_active.png"),
     left_caret_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/left_caret_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/left_caret_hover.png"),
     left_caret_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/left_caret_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/left_caret_normal.png"),
     
     pause_circle_active = \
-            preload("res://addons/scaffolder/assets/images/gui/pause_circle_active.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/pause_circle_active.png"),
     pause_circle_hover = \
-            preload("res://addons/scaffolder/assets/images/gui/pause_circle_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/pause_circle_hover.png"),
     pause_circle_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/pause_circle_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/pause_circle_normal.png"),
     
     pause_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/pause_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/pause_normal.png"),
     play_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/play_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/play_normal.png"),
     retry_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/retry_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/retry_normal.png"),
     stop_normal = \
-            preload("res://addons/scaffolder/assets/images/gui/stop_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/icons/stop_normal.png"),
 }
 
 var _default_settings_item_manifest := {
