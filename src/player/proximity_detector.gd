@@ -13,7 +13,7 @@ export var is_detecting_exit := false setget _set_is_detecting_exit
 const DASH_LENGTH := 3.0
 const DASH_GAP := 6.0
 const STROKE_WIDTH := 1.2
-const COLOR := Color.magenta
+const COLOR := Color("00adad")
 
 var _configuration_warning := ""
 
@@ -45,12 +45,20 @@ func _draw() -> void:
 
 
 func _update_configuration() -> void:
+    var is_axially_aligned: bool = \
+            abs(fmod(rotation + PI * 2, PI) - PI / 2) < \
+                    Sc.geometry.FLOAT_EPSILON or \
+            abs(rotation) < Sc.geometry.FLOAT_EPSILON
+    
     if !is_instance_valid(shape):
         _configuration_warning = "Must define a shape or a radius."
     elif layer == 0:
         _configuration_warning = "Must configure at least one layer."
     elif !is_detecting_enter and !is_detecting_exit:
         _configuration_warning = "Must detect on enter, exit, or both."
+    elif !is_axially_aligned:
+        _configuration_warning = \
+                "Rotation must be axially-aligned (0, 90, 180, etc)."
     else:
         _configuration_warning = ""
     
