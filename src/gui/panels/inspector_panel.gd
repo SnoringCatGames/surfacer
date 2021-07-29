@@ -118,9 +118,8 @@ func _deferred_on_gui_scale_changed() -> void:
     x_button.rect_position = \
             x_button.get_meta("gs_rect_position") * Sc.gui.scale
     
-    for child in get_children():
-        if child is Control:
-            Sc.gui.scale_gui_recursively(child)
+    for child in Sc.utils.get_children_by_type(self, Control):
+        Sc.gui.scale_gui_recursively(child)
     
     rect_size.x = $ScaffolderPanelContainer.rect_size.x
     
