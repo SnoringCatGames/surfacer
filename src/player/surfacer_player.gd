@@ -4,11 +4,11 @@ class_name SurfacerPlayer, \
 extends KinematicBody2D
 
 
-export var player_name := ""
-export(int, LAYERS_2D_PHYSICS) var collision_detection_layers := 0
-
 const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
+
+export var player_name := ""
+export(int, LAYERS_2D_PHYSICS) var collision_detection_layers := 0
 
 var movement_params: MovementParams
 # Array<Surface>
@@ -48,7 +48,7 @@ var surface_parser: SurfaceParser
 var navigator: Navigator
 var level
 var collider: CollisionShape2D
-var animator: PlayerAnimator
+var animator: SurfacerPlayerAnimator
 var prediction: PlayerPrediction
 var pointer_listener: PlayerPointerListener
 
@@ -202,14 +202,14 @@ func _update_editor_configuration_debounced() -> void:
     # Get AnimationPlayer from scene configuration.
     var player_animators: Array = Sc.utils.get_children_by_type(
             self,
-            PlayerAnimator)
+            SurfacerPlayerAnimator)
     if player_animators.size() > 1:
         _set_configuration_warning(
-                "Must only define a single PlayerAnimator child node.")
+                "Must only define a single SurfacerPlayerAnimator child node.")
         return
     elif player_animators.size() < 1:
         _set_configuration_warning(
-                "Must define a PlayerAnimator-subclass child node.")
+                "Must define a SurfacerPlayerAnimator-subclass child node.")
         return
     animator = player_animators[0]
     animator.is_desaturatable = true

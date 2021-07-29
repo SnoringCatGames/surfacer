@@ -3,7 +3,7 @@ extends Node2D
 
 
 var animation_state := PlayerAnimationState.new()
-var animator: PlayerAnimator
+var animator: SurfacerPlayerAnimator
 
 var _tween: ScaffolderTween
 var _tween_animation_state := PlayerAnimationState.new()

@@ -1,6 +1,6 @@
 tool
-class_name PlayerAnimator, \
-"res://addons/surfacer/assets/images/editor_icons/player_animator.png"
+class_name SurfacerPlayerAnimator, \
+"res://addons/surfacer/assets/images/editor_icons/surfacer_player_animator.png"
 extends Node2D
 
 
@@ -281,7 +281,7 @@ func animation_name_to_sprite(animation_name: String) -> Sprite:
     else:
         Sc.logger.error(
                 "The default implementation of " +
-                "PlayerAnimator.animation_name_to_sprite only works when" +
+                "SurfacerPlayerAnimator.animation_name_to_sprite only works when" +
                 "uses_standard_sprite_frame_animations is true.")
         return null
 

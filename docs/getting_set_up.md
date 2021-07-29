@@ -43,17 +43,38 @@ Hopefully, you shouldn't need to define too much level logic to make Surfacer ha
 
 The main thing to know is that you will need to instance a `SurfacesTileMap` as a sub-scene in order to define the shape of your level.
 
+> FIXME: ----- Describe level-configuration export variables
+
 ## Creating a player
 
 In order to create a new player type, you'll need to override a few classes from Surfacer.
 
 _Probably the easiest way to get started with this is to copy/paste/edit a pre-existing player from the Squirrel Away example app._
 
--   `SurfacerPlayer`
+-   [`SurfacerPlayer`](./src/player/surfacer_player.gd)
     -   This defines how your player reacts to input and decides when and were to navigate within the level.
--   `PlayerAnimator`
+    -   Required children:
+        -   `MovementParams`
+        -   `SurfacerPlayerAnimator`
+        -   `CollisionShape2D`
+    -   `collision_detection_layers`
+        -   This helps your `SurfacerPlayer` detect when other areas or bodies collide with the player.
+        -   The default `PhysicsBody2D.collision_layer` property is limited, because the `move_and_slide` system will adjust our movement when we collide with matching objects.
+        -   So this separate `collision_detection_layers` property lets us detect collisions without adjusting our movement.
+    -   `ProximityDetector`
+        -   This helps your `SurfacerPlayer` detect when other areas or bodies enter or exit the proximity of your player.
+        -   You can declare these as children in your SurfacerPlayer scenes.
+        -   You can configure the shape used to define the proximity range.
+-   [`SurfacerPlayerAnimator`](./src/player/surfacer_player_animator.gd)
     -   This defines how your player is rendered and animated.
     -   Surfacer makes some opinionated assumptions about how this will be set-up, but you can probably adjust or ignore some of this to fit your needs.
+    -   `uses_standard_sprite_frame_animations`
+        -   Set this export property to `true` if you want to set up all of the animations for this player by changing the `frame` property on a corresponding `Sprite`.
+        -   If this is enabled, then the `SurfacerPlayerAnimator` will expect there to be a one-to-one mapping between immediate-child `Sprites` and animations in the `AnimationPlayer`, and these matching animations and Sprites will need to share the same names.
+    -   `animations`
+        -   This `Dictionary` is auto-populated with keys corresponding to each animation in the `AnimationPlayer`.
+        -   You can configure some additional state for each of the animation configs in this dictionary, such as the default playback speed for the animation, and the name of a `Sprite` to automatically show when starting the animation.
 -   [`MovementParams`](./src/platform_graph/edge/models/movement_params.gd)
     -   This defines how your player will move.
     -   There are a _lot_ of parameters you can adjust here.
+    -   You can adjust these parameters within the editor's inspector panel.
