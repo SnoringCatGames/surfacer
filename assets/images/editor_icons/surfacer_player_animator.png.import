@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/player_animator.png-4fa54d644cd91ea10ffca17f04e298be.stex"
+path="res://.import/surfacer_player_animator.png-aed74303ad249e4ac5c3fd73d6c26699.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/surfacer/assets/images/editor_icons/player_animator.png"
-dest_files=[ "res://.import/player_animator.png-4fa54d644cd91ea10ffca17f04e298be.stex" ]
+source_file="res://addons/surfacer/assets/images/editor_icons/surfacer_player_animator.png"
+dest_files=[ "res://.import/surfacer_player_animator.png-aed74303ad249e4ac5c3fd73d6c26699.stex" ]
 
 [params]
 
