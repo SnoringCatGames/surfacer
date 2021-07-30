@@ -156,7 +156,7 @@ var skip_choreography_framerate_multiplier := 10.0
 # Here are some example fields for these debug params:
 #{
 #    limit_parsing = {
-#        player_name = "momma",
+#        player_name = "cat",
 #
 #        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
 ##        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
@@ -355,8 +355,8 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
 func _set_up() -> void:
     assert(Sc.colors is SurfacerColors)
     assert(Sc.draw is SurfacerDrawUtils)
-    assert(Sc.level_config is MommaDuckLevelConfig)
-    assert(Sc.level_session is MommaDuckLevelSession)
+    assert(Sc.level_config is SurfacerLevelConfig)
+    assert(Sc.level_session is SurfacerLevelSession)
     
     Sc.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
     Sc.profiler.preregister_metric_keys(surface_parser_metric_keys)

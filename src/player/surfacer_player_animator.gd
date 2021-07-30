@@ -31,6 +31,13 @@ var animation_player: AnimationPlayer
 var _sprites := []
 
 var _animation_name := "Rest"
+# The AnimationPlayer implementation could use different animation names from
+# the "standard" set that are referenced in framework logic. We need to track
+# both versions, in these cases.
+# For example, the "standard" animations "ClimbUp" and "ClimbDown" could be
+# implemented as a single "Climb" animation with different playback rates on
+# the underlying AnimationPlayer.
+var _standard_name := "Rest"
 var _base_rate := 1.0
 
 var _is_ready := false
@@ -141,23 +148,24 @@ func _update_editor_configuration_debounced() -> void:
     
     # Ensure that each animation config sprite_name matches a corresponding
     # Sprite.
-    var animations_list := animations.values()
-    for i in animations_list.size():
-        var animation_name: String = animations_list[i].name
-        var sprite_name: String = \
-                animations[animation_name].sprite_name
-        if sprite_name != "":
-            if !has_node(sprite_name):
-                _set_configuration_warning(
-                        ("No immediate child matches sprite_name: " +
-                        "sprite_name=%s, name=%s, index=%s.") % 
-                        [sprite_name, animation_name, i])
-                return
-            elif !(get_node(sprite_name) is Sprite):
-                _set_configuration_warning(
-                        "Child matching sprite_name is not a Sprite: %s" %
-                        sprite_name)
-                return
+    if uses_standard_sprite_frame_animations:
+        var animations_list := animations.values()
+        for i in animations_list.size():
+            var animation_name: String = animations_list[i].name
+            var sprite_name: String = \
+                    animations[animation_name].sprite_name
+            if sprite_name != "":
+                if !has_node(sprite_name):
+                    _set_configuration_warning(
+                            ("No immediate child matches sprite_name: " +
+                            "sprite_name=%s, name=%s, index=%s.") % 
+                            [sprite_name, animation_name, i])
+                    return
+                elif !(get_node(sprite_name) is Sprite):
+                    _set_configuration_warning(
+                            "Child matching sprite_name is not a Sprite: %s" %
+                            sprite_name)
+                    return
     
     property_list_changed_notify()
     _set_configuration_warning("")
@@ -197,12 +205,17 @@ func play(animation_name: String) -> void:
 
 
 func set_static_frame(animation_state: PlayerAnimationState) -> void:
+    var standard_name := animation_state.animation_name
+    var specific_name := \
+            _standand_animation_name_to_specific_animation_name(standard_name)
+    
     if uses_standard_sprite_frame_animations:
-        _show_sprite_exclusively(animation_state.animation_name)
+        _show_sprite_exclusively(specific_name)
     
-    _animation_name = animation_state.animation_name
+    _standard_name = standard_name
+    _animation_name = specific_name
     
-    var playback_rate := animation_name_to_playback_rate(_animation_name)
+    var playback_rate := animation_name_to_playback_rate(standard_name)
     var position := animation_state.animation_position * playback_rate
     
     if animation_state.facing_left:
@@ -216,7 +229,7 @@ func set_static_frame(animation_state: PlayerAnimationState) -> void:
 
 
 func set_static_frame_position(animation_position: float) -> void:
-    var playback_rate := animation_name_to_playback_rate(_animation_name)
+    var playback_rate := animation_name_to_playback_rate(_standard_name)
     var position := animation_position * playback_rate
     animation_player.seek(position, true)
 
@@ -228,7 +241,7 @@ func match_rate_to_time_scale() -> void:
 
 
 func get_current_animation_name() -> String:
-    return _animation_name
+    return _standard_name
 
 
 func set_modulation(modulation: Color) -> void:
@@ -238,16 +251,19 @@ func set_modulation(modulation: Color) -> void:
 func _play_animation(
         animation_name: String,
         blend := 0.1) -> bool:
+    var specific_name := \
+            _standand_animation_name_to_specific_animation_name(animation_name)
+    
     if uses_standard_sprite_frame_animations:
-        _show_sprite_exclusively(animation_name)
+        _show_sprite_exclusively(specific_name)
     
     var playback_rate := animation_name_to_playback_rate(animation_name)
     
-    _animation_name = animation_name
+    _animation_name = specific_name
     _base_rate = playback_rate
     
     var is_current_animator := \
-            animation_player.current_animation == animation_name
+            animation_player.current_animation == _animation_name
     var is_playing := animation_player.is_playing()
     var is_changing_direction := \
             (animation_player.get_playing_speed() < 0) != (playback_rate < 0)
@@ -258,7 +274,7 @@ func _play_animation(
     
     if animation_was_not_playing or \
             animation_was_playing_in_wrong_direction:
-        animation_player.play(animation_name, blend)
+        animation_player.play(_animation_name, blend)
         match_rate_to_time_scale()
         return true
     else:
@@ -271,23 +287,29 @@ func _show_sprite_exclusively(animation_name: String) -> void:
         sprite.visible = false
     
     # Show the current sprite.
-    var sprite := animation_name_to_sprite(animation_name)
+    var sprite := _animation_name_to_sprite(animation_name)
     sprite.visible = true
 
 
-func animation_name_to_sprite(animation_name: String) -> Sprite:
+func _animation_name_to_sprite(animation_name: String) -> Sprite:
     if uses_standard_sprite_frame_animations:
         return get_node(animation_name) as Sprite
     else:
         Sc.logger.error(
                 "The default implementation of " +
-                "SurfacerPlayerAnimator.animation_name_to_sprite only works when" +
-                "uses_standard_sprite_frame_animations is true.")
+                "SurfacerPlayerAnimator._animation_name_to_sprite only " +
+                "works when uses_standard_sprite_frame_animations is true.")
         return null
 
 
 func animation_name_to_playback_rate(animation_name: String) -> float:
     return animations[animation_name].speed
+
+
+# By default, this does nothing.
+func _standand_animation_name_to_specific_animation_name(
+        standard_name: String) -> String:
+    return standard_name
 
 
 func _set_uses_standard_sprite_frame_animations(value: bool) -> void:
