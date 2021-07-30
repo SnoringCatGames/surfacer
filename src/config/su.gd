@@ -18,6 +18,9 @@ const PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY := \
 const NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
         "is_navigation_destination_shown"
 
+const PLACEHOLDER_SURFACES_TILE_SET_PATH := \
+        "res://addons/surfacer/src/level/placeholder_surfaces_tile_set.tres"
+
 var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
     groups = {
         main = {

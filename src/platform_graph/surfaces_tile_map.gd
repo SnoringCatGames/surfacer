@@ -14,8 +14,10 @@ export var draws_tile_indices := false setget _set_draws_tile_indices
 func _ready() -> void:
     add_to_group(GROUP_NAME_SURFACES)
     
-    if tile_set == null:
+    if !is_instance_valid(tile_set) or \
+            tile_set.resource_path == Su.PLACEHOLDER_SURFACES_TILE_SET_PATH:
         tile_set = Su.default_tile_set
+        property_list_changed_notify()
 
 
 func _draw() -> void:
