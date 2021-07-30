@@ -545,7 +545,7 @@ func _update_parameters_debounced() -> void:
 
 func _validate_parameters() -> void:
     if name != "MovementParams" and \
-            is_instance_valid(get_tree()):
+            is_inside_tree():
         _set_configuration_warning(
                 ("The MovementParams node must be named 'MovementParams'. " + 
                 "This is important for how it is parsed from the .tscn file. " +
