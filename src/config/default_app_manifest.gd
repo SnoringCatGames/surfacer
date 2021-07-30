@@ -342,50 +342,60 @@ var _default_styles_manifest_pixel := {
     screen_border_width = 0,
 }
 
-var _default_icons_manifest_normal := {
+var _default_images_manifest_normal := {
     checkbox_path_prefix = \
-            ScaffolderIcons.DEFAULT_CHECKBOX_NORMAL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_CHECKBOX_NORMAL_PATH_PREFIX,
     default_checkbox_size = \
-            ScaffolderIcons.DEFAULT_CHECKBOX_NORMAL_SIZE,
+            ScaffolderImages.DEFAULT_CHECKBOX_NORMAL_SIZE,
     checkbox_sizes = \
-            ScaffolderIcons.DEFAULT_CHECKBOX_NORMAL_SIZES,
+            ScaffolderImages.DEFAULT_CHECKBOX_NORMAL_SIZES,
     
     radio_button_path_prefix = \
-            ScaffolderIcons.DEFAULT_RADIO_BUTTON_NORMAL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_RADIO_BUTTON_NORMAL_PATH_PREFIX,
     default_radio_button_size = \
-            ScaffolderIcons.DEFAULT_RADIO_BUTTON_NORMAL_SIZE,
+            ScaffolderImages.DEFAULT_RADIO_BUTTON_NORMAL_SIZE,
     radio_button_sizes = \
-            ScaffolderIcons.DEFAULT_RADIO_BUTTON_NORMAL_SIZES,
+            ScaffolderImages.DEFAULT_RADIO_BUTTON_NORMAL_SIZES,
     
     tree_arrow_path_prefix = \
-            ScaffolderIcons.DEFAULT_TREE_ARROW_NORMAL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_TREE_ARROW_NORMAL_PATH_PREFIX,
     default_tree_arrow_size = \
-            ScaffolderIcons.DEFAULT_TREE_ARROW_NORMAL_SIZE,
+            ScaffolderImages.DEFAULT_TREE_ARROW_NORMAL_SIZE,
     tree_arrow_sizes = \
-            ScaffolderIcons.DEFAULT_TREE_ARROW_NORMAL_SIZES,
+            ScaffolderImages.DEFAULT_TREE_ARROW_NORMAL_SIZES,
     
     dropdown_arrow_path_prefix = \
-            ScaffolderIcons.DEFAULT_DROPDOWN_ARROW_NORMAL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_DROPDOWN_ARROW_NORMAL_PATH_PREFIX,
     default_dropdown_arrow_size = \
-            ScaffolderIcons.DEFAULT_DROPDOWN_ARROW_NORMAL_SIZE,
+            ScaffolderImages.DEFAULT_DROPDOWN_ARROW_NORMAL_SIZE,
     dropdown_arrow_sizes = \
-            ScaffolderIcons.DEFAULT_DROPDOWN_ARROW_NORMAL_SIZES,
+            ScaffolderImages.DEFAULT_DROPDOWN_ARROW_NORMAL_SIZES,
     
     slider_grabber_path_prefix = \
-            ScaffolderIcons.DEFAULT_SLIDER_GRABBER_NORMAL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_SLIDER_GRABBER_NORMAL_PATH_PREFIX,
     default_slider_grabber_size = \
-            ScaffolderIcons.DEFAULT_SLIDER_GRABBER_NORMAL_SIZE,
+            ScaffolderImages.DEFAULT_SLIDER_GRABBER_NORMAL_SIZE,
     slider_grabber_sizes = \
-            ScaffolderIcons.DEFAULT_SLIDER_GRABBER_NORMAL_SIZES,
+            ScaffolderImages.DEFAULT_SLIDER_GRABBER_NORMAL_SIZES,
     
     slider_tick_path_prefix = \
-            ScaffolderIcons.DEFAULT_SLIDER_TICK_NORMAL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_SLIDER_TICK_NORMAL_PATH_PREFIX,
     default_slider_tick_size = \
-            ScaffolderIcons.DEFAULT_SLIDER_TICK_NORMAL_SIZE,
+            ScaffolderImages.DEFAULT_SLIDER_TICK_NORMAL_SIZE,
     slider_tick_sizes = \
-            ScaffolderIcons.DEFAULT_SLIDER_TICK_NORMAL_SIZES,
+            ScaffolderImages.DEFAULT_SLIDER_TICK_NORMAL_SIZES,
     
-    go_normal = preload("res://assets/images/go_icon.png"),
+    app_logo = \
+            preload("res://addons/scaffolder/assets/images/logos/scaffolder_logo.png"),
+    app_logo_scale = 1.0,
+    
+    developer_logo = \
+            preload("res://addons/scaffolder/assets/images/logos/snoring_cat_logo_about.png"),
+    developer_splash = \
+            preload("res://addons/scaffolder/assets/images/logos/snoring_cat_logo_splash.png"),
+    
+    go_normal = \
+            preload("res://addons/scaffolder/assets/images/gui/icons/go_normal.png"),
     go_scale = 1.5,
     
     about_circle_active = \
@@ -439,48 +449,48 @@ var _default_icons_manifest_normal := {
             preload("res://addons/scaffolder/assets/images/gui/icons/stop_normal.png"),
 }
 
-var _default_icons_manifest_pixel := {
+var _default_images_manifest_pixel := {
     checkbox_path_prefix = \
-            ScaffolderIcons.DEFAULT_CHECKBOX_PIXEL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_CHECKBOX_PIXEL_PATH_PREFIX,
     default_checkbox_size = \
-            ScaffolderIcons.DEFAULT_CHECKBOX_PIXEL_SIZE,
+            ScaffolderImages.DEFAULT_CHECKBOX_PIXEL_SIZE,
     checkbox_sizes = \
-            ScaffolderIcons.DEFAULT_CHECKBOX_PIXEL_SIZES,
+            ScaffolderImages.DEFAULT_CHECKBOX_PIXEL_SIZES,
     
     radio_button_path_prefix = \
-            ScaffolderIcons.DEFAULT_RADIO_BUTTON_PIXEL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_RADIO_BUTTON_PIXEL_PATH_PREFIX,
     default_radio_button_size = \
-            ScaffolderIcons.DEFAULT_RADIO_BUTTON_PIXEL_SIZE,
+            ScaffolderImages.DEFAULT_RADIO_BUTTON_PIXEL_SIZE,
     radio_button_sizes = \
-            ScaffolderIcons.DEFAULT_RADIO_BUTTON_PIXEL_SIZES,
+            ScaffolderImages.DEFAULT_RADIO_BUTTON_PIXEL_SIZES,
     
     tree_arrow_path_prefix = \
-            ScaffolderIcons.DEFAULT_TREE_ARROW_PIXEL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_TREE_ARROW_PIXEL_PATH_PREFIX,
     default_tree_arrow_size = \
-            ScaffolderIcons.DEFAULT_TREE_ARROW_PIXEL_SIZE,
+            ScaffolderImages.DEFAULT_TREE_ARROW_PIXEL_SIZE,
     tree_arrow_sizes = \
-            ScaffolderIcons.DEFAULT_TREE_ARROW_PIXEL_SIZES,
+            ScaffolderImages.DEFAULT_TREE_ARROW_PIXEL_SIZES,
     
     dropdown_arrow_path_prefix = \
-            ScaffolderIcons.DEFAULT_DROPDOWN_ARROW_PIXEL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_DROPDOWN_ARROW_PIXEL_PATH_PREFIX,
     default_dropdown_arrow_size = \
-            ScaffolderIcons.DEFAULT_DROPDOWN_ARROW_PIXEL_SIZE,
+            ScaffolderImages.DEFAULT_DROPDOWN_ARROW_PIXEL_SIZE,
     dropdown_arrow_sizes = \
-            ScaffolderIcons.DEFAULT_DROPDOWN_ARROW_PIXEL_SIZES,
+            ScaffolderImages.DEFAULT_DROPDOWN_ARROW_PIXEL_SIZES,
     
     slider_grabber_path_prefix = \
-            ScaffolderIcons.DEFAULT_SLIDER_GRABBER_PIXEL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_SLIDER_GRABBER_PIXEL_PATH_PREFIX,
     default_slider_grabber_size = \
-            ScaffolderIcons.DEFAULT_SLIDER_GRABBER_PIXEL_SIZE,
+            ScaffolderImages.DEFAULT_SLIDER_GRABBER_PIXEL_SIZE,
     slider_grabber_sizes = \
-            ScaffolderIcons.DEFAULT_SLIDER_GRABBER_PIXEL_SIZES,
+            ScaffolderImages.DEFAULT_SLIDER_GRABBER_PIXEL_SIZES,
     
     slider_tick_path_prefix = \
-            ScaffolderIcons.DEFAULT_SLIDER_TICK_PIXEL_PATH_PREFIX,
+            ScaffolderImages.DEFAULT_SLIDER_TICK_PIXEL_PATH_PREFIX,
     default_slider_tick_size = \
-            ScaffolderIcons.DEFAULT_SLIDER_TICK_PIXEL_SIZE,
+            ScaffolderImages.DEFAULT_SLIDER_TICK_PIXEL_SIZE,
     slider_tick_sizes = \
-            ScaffolderIcons.DEFAULT_SLIDER_TICK_PIXEL_SIZES,
+            ScaffolderImages.DEFAULT_SLIDER_TICK_PIXEL_SIZES,
     
     go_normal = preload("res://assets/images/go_icon.png"),
     go_scale = 1.5,
@@ -673,13 +683,7 @@ var _default_slow_motion_manifest := {
 
 var _default_input_map = ScaffolderProjectSettings.DEFAULT_INPUT_MAP
 
-var _default_is_using_pixel_style := true
-
 # ---
-
-
-func _init(is_using_pixel_style: bool) -> void:
-    self._default_is_using_pixel_style = is_using_pixel_style
 
 
 func _ready() -> void:
@@ -693,16 +697,22 @@ func _ready() -> void:
 
 
 func _amend_app_manifest(manifest: Dictionary) -> void:
-    _override_configs_for_is_using_pixel_style(manifest)
+    _override_configs_for_app(manifest)
     _override_configs_for_current_run(manifest)
 
 
-func _override_configs_for_is_using_pixel_style(manifest: Dictionary) -> void:
-    if _default_is_using_pixel_style:
-        manifest.fonts_manifest = _default_fonts_manifest_pixel
-        manifest.styles_manifest = _default_styles_manifest_pixel
-        manifest.icons_manifest = _default_icons_manifest_pixel
-    else:
-        manifest.fonts_manifest = _default_fonts_manifest_normal
-        manifest.styles_manifest = _default_styles_manifest_normal
-        manifest.icons_manifest = _default_icons_manifest_normal
+func _override_configs_for_app(manifest: Dictionary) -> void:
+    pass
+
+
+func _override_manifest(
+        original: Dictionary,
+        overrides: Dictionary) -> void:
+    for key in overrides:
+        var override_value = overrides[key]
+        if override_value is Dictionary:
+            if !original.has(key):
+                original[key] = {}
+            _override_manifest(original[key], override_value)
+        else:
+            original[key] = override_value

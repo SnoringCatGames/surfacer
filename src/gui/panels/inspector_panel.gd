@@ -35,22 +35,22 @@ var _annotator_control_item_classes := [
 
 func _ready() -> void:
     $ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper/XButton \
-            .texture_pressed = Sc.icons.close_active
+            .texture_pressed = Sc.images.close_active
     $ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper/XButton \
-            .texture_hover = Sc.icons.close_hover
+            .texture_hover = Sc.images.close_hover
     $ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper/XButton \
-            .texture_normal = Sc.icons.close_normal
+            .texture_normal = Sc.images.close_normal
     $ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper/XButton \
             .texture_scale = Vector2(2.0, 2.0)
     
-    $Footer/GearButton.texture_pressed = Sc.icons.gear_circle_active
-    $Footer/GearButton.texture_hover = Sc.icons.gear_circle_hover
-    $Footer/GearButton.texture_normal = Sc.icons.gear_circle_normal
+    $Footer/GearButton.texture_pressed = Sc.images.gear_circle_active
+    $Footer/GearButton.texture_hover = Sc.images.gear_circle_hover
+    $Footer/GearButton.texture_normal = Sc.images.gear_circle_normal
     $Footer/GearButton.texture_scale = Vector2(4.0, 4.0)
     
-    $Footer/PauseButton.texture_pressed = Sc.icons.pause_circle_active
-    $Footer/PauseButton.texture_hover = Sc.icons.pause_circle_hover
-    $Footer/PauseButton.texture_normal = Sc.icons.pause_circle_normal
+    $Footer/PauseButton.texture_pressed = Sc.images.pause_circle_active
+    $Footer/PauseButton.texture_hover = Sc.images.pause_circle_hover
+    $Footer/PauseButton.texture_normal = Sc.images.pause_circle_normal
     $Footer/PauseButton.texture_scale = Vector2(4.0, 4.0)
     
     _set_tree_font_size(tree_font_size)
