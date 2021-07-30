@@ -251,13 +251,13 @@ var _default_styles_manifest_pixel := {
     focus_border_expand_margin_bottom = 3.0,
     
     button_pressed_nine_patch = \
-            preload("res://assets/images/nine_patch/button_pressed.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/button_pressed.png"),
     button_disabled_nine_patch = \
-            preload("res://assets/images/nine_patch/button_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/button_hover.png"),
     button_hover_nine_patch = \
-            preload("res://assets/images/nine_patch/button_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/button_hover.png"),
     button_normal_nine_patch = \
-            preload("res://assets/images/nine_patch/button_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/button_normal.png"),
     button_nine_patch_margin_left = 3.5,
     button_nine_patch_margin_top = 3.5,
     button_nine_patch_margin_right = 3.5,
@@ -265,13 +265,13 @@ var _default_styles_manifest_pixel := {
     button_nine_patch_scale = 3.0,
     
     dropdown_pressed_nine_patch = \
-            preload("res://assets/images/nine_patch/dropdown_pressed.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_pressed.png"),
     dropdown_disabled_nine_patch = \
-            preload("res://assets/images/nine_patch/dropdown_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_hover.png"),
     dropdown_hover_nine_patch = \
-            preload("res://assets/images/nine_patch/dropdown_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_hover.png"),
     dropdown_normal_nine_patch = \
-            preload("res://assets/images/nine_patch/dropdown_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_normal.png"),
     dropdown_nine_patch_margin_left = 3.5,
     dropdown_nine_patch_margin_top = 3.5,
     dropdown_nine_patch_margin_right = 3.5,
@@ -279,7 +279,7 @@ var _default_styles_manifest_pixel := {
     dropdown_nine_patch_scale = 3.0,
     
     scroll_track_nine_patch = \
-            preload("res://assets/images/nine_patch/scroll_track.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/scroll_track.png"),
     scroll_track_nine_patch_margin_left = 3.5,
     scroll_track_nine_patch_margin_top = 3.5,
     scroll_track_nine_patch_margin_right = 3.5,
@@ -287,11 +287,11 @@ var _default_styles_manifest_pixel := {
     scroll_track_nine_patch_scale = 3.0,
     
     scroll_grabber_pressed_nine_patch = \
-            preload("res://assets/images/nine_patch/scroll_grabber_pressed.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/scroll_grabber_pressed.png"),
     scroll_grabber_hover_nine_patch = \
-            preload("res://assets/images/nine_patch/scroll_grabber_hover.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/scroll_grabber_hover.png"),
     scroll_grabber_normal_nine_patch = \
-            preload("res://assets/images/nine_patch/scroll_grabber_normal.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/scroll_grabber_normal.png"),
     scroll_grabber_nine_patch_margin_left = 3.5,
     scroll_grabber_nine_patch_margin_top = 3.5,
     scroll_grabber_nine_patch_margin_right = 3.5,
