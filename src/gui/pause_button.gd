@@ -6,11 +6,11 @@ extends Node2D
 
 func _ready() -> void:
     $ScaffolderTextureButton \
-            .texture_pressed = Sc.icons.pause_circle_active
+            .texture_pressed = Sc.images.pause_circle_active
     $ScaffolderTextureButton \
-            .texture_hover = Sc.icons.pause_circle_hover
+            .texture_hover = Sc.images.pause_circle_hover
     $ScaffolderTextureButton \
-            .texture_normal = Sc.icons.pause_circle_normal
+            .texture_normal = Sc.images.pause_circle_normal
     $ScaffolderTextureButton.texture_scale = Vector2(4.0, 4.0)
     _on_gui_scale_changed()
 
