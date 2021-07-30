@@ -1,4 +1,4 @@
-[gd_scene load_steps=75 format=2]
+[gd_scene load_steps=66 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/inspector_panel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/spacer.tscn" type="PackedScene" id=2]
@@ -27,15 +27,6 @@
 [ext_resource path="res://assets/images/nine_patch/button_normal.png" type="Texture" id=25]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/slider_track.png" type="Texture" id=26]
 [ext_resource path="res://assets/images/nine_patch/button_hover.png" type="Texture" id=27]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/gear_circle_pressed.png" type="Texture" id=28]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/gear_circle_normal.png" type="Texture" id=29]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/pause_circle_hover.png" type="Texture" id=30]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/gear_circle_hover.png" type="Texture" id=31]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/close_normal.png" type="Texture" id=32]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/pause_circle_pressed.png" type="Texture" id=33]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/pause_circle_normal.png" type="Texture" id=34]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/close_hover.png" type="Texture" id=35]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/close_pressed.png" type="Texture" id=36]
 
 [sub_resource type="StyleBoxTexture" id=6]
 content_margin_left = 16.0
@@ -497,16 +488,16 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 custom_constants/separation = 0
 __meta__ = {
-"gs_rect_size": Vector2( 354, 26 ),
+"gs_rect_size": Vector2( 354, 36 ),
 "gs_separation": 0
 }
 
 [node name="Spacer" parent="ScaffolderPanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 13.0
+margin_top = 18.0
 margin_right = 8.0
-margin_bottom = 13.0
+margin_bottom = 18.0
 rect_min_size = Vector2( 8, 0 )
 size = Vector2( 8, 0 )
 
@@ -521,23 +512,23 @@ custom_fonts/font = ExtResource( 8 )
 text = "Pause"
 __meta__ = {
 "gs_rect_min_size": Vector2( 140, 0 ),
-"gs_rect_size": Vector2( 140, 26 )
+"gs_rect_size": Vector2( 140, 36 )
 }
 
 [node name="Spacer5" parent="ScaffolderPanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 148.0
-margin_top = 13.0
-margin_right = 148.0
-margin_bottom = 13.0
+margin_top = 18.0
+margin_right = 354.0
+margin_bottom = 18.0
 size_flags_horizontal = 3
 
 [node name="XButtonWrapper" type="Control" parent="ScaffolderPanelContainer/VBoxContainer/Header"]
 margin_left = 354.0
-margin_top = 13.0
+margin_top = 18.0
 margin_right = 354.0
-margin_bottom = 13.0
+margin_bottom = 18.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
@@ -547,9 +538,6 @@ margin_top = -12.0
 margin_right = -6.0
 margin_bottom = 12.0
 rect_min_size = Vector2( 24, 24 )
-texture_normal = ExtResource( 32 )
-texture_pressed = ExtResource( 36 )
-texture_hover = ExtResource( 35 )
 texture_key = "close"
 texture_scale = Vector2( 2, 2 )
 size_override = Vector2( 24, 24 )
@@ -558,12 +546,12 @@ size_override = Vector2( 24, 24 )
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 354.0
-margin_top = 13.0
+margin_top = 18.0
 margin_right = 354.0
-margin_bottom = 13.0
+margin_bottom = 18.0
 
 [node name="Sections" type="VBoxContainer" parent="ScaffolderPanelContainer/VBoxContainer"]
-margin_top = 34.0
+margin_top = 44.0
 margin_right = 354.0
 margin_bottom = 594.0
 size_flags_vertical = 3
@@ -598,18 +586,18 @@ custom_constants/margin_bottom = 8
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 177.0
-margin_top = 38.0
+margin_top = 44.0
 margin_right = 177.0
-margin_bottom = 42.0
+margin_bottom = 48.0
 rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
 
 [node name="ScaffolderPanelContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 42.0
+margin_top = 48.0
 margin_right = 354.0
-margin_bottom = 65.0
+margin_bottom = 71.0
 size_flags_vertical = 4
 custom_styles/panel = SubResource( 38 )
 style = 2
@@ -621,7 +609,7 @@ content_margin_right_override = 3
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 3.0
-margin_right = 65.0
+margin_right = 351.0
 margin_bottom = 23.0
 custom_fonts/font = ExtResource( 4 )
 text = "Legend"
@@ -632,32 +620,32 @@ font_size = "S"
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 177.0
-margin_top = 65.0
+margin_top = 71.0
 margin_right = 177.0
-margin_bottom = 69.0
+margin_bottom = 75.0
 rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
 
 [node name="Legend" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 11 )]
-margin_top = 69.0
+margin_top = 75.0
 margin_right = 354.0
-margin_bottom = 83.0
+margin_bottom = 95.0
 size_flags_vertical = 4
 
 [node name="Spacer10" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 177.0
-margin_top = 83.0
+margin_top = 95.0
 margin_right = 177.0
-margin_bottom = 87.0
+margin_bottom = 99.0
 rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
 
 [node name="InspectorContainer" type="VBoxContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections"]
-margin_top = 87.0
+margin_top = 99.0
 margin_right = 354.0
-margin_bottom = 548.0
+margin_bottom = 538.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
@@ -682,7 +670,7 @@ content_margin_right_override = 3
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 3.0
-margin_right = 231.0
+margin_right = 351.0
 margin_bottom = 23.0
 custom_fonts/font = ExtResource( 4 )
 text = "Platform graph inspector"
@@ -694,7 +682,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 23.0
 margin_right = 354.0
-margin_bottom = 461.0
+margin_bottom = 439.0
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 8 )
 hide_root = true
@@ -702,14 +690,14 @@ hide_root = true
 [node name="ScaffolderHSeparator" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 23 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 548.0
-margin_right = 3.0
-margin_bottom = 552.0
+margin_top = 538.0
+margin_right = 354.0
+margin_bottom = 542.0
 
 [node name="MarginContainer" type="MarginContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections"]
-margin_top = 552.0
+margin_top = 542.0
 margin_right = 354.0
-margin_bottom = 560.0
+margin_bottom = 550.0
 custom_constants/margin_right = 4
 custom_constants/margin_top = 4
 custom_constants/margin_left = 4
@@ -778,9 +766,6 @@ margin_left = 32.0
 margin_right = 96.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
-texture_normal = ExtResource( 29 )
-texture_pressed = ExtResource( 28 )
-texture_hover = ExtResource( 31 )
 texture_key = "gear_circle"
 texture_scale = Vector2( 4, 4 )
 size_override = Vector2( 64, 64 )
@@ -802,9 +787,6 @@ margin_left = 116.0
 margin_right = 180.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
-texture_normal = ExtResource( 34 )
-texture_pressed = ExtResource( 33 )
-texture_hover = ExtResource( 30 )
 texture_key = "pause_circle"
 texture_scale = Vector2( 4, 4 )
 size_override = Vector2( 64, 64 )

@@ -492,7 +492,7 @@ var _default_images_manifest_pixel := {
     slider_tick_sizes = \
             ScaffolderImages.DEFAULT_SLIDER_TICK_PIXEL_SIZES,
     
-    go_normal = preload("res://assets/images/go_icon.png"),
+    go_normal = preload("res://addons/scaffolder/assets/images/gui/icons/go_normal.png"),
     go_scale = 1.5,
     
     about_circle_pressed = \
