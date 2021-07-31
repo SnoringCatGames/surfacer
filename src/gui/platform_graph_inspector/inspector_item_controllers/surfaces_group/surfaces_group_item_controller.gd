@@ -46,7 +46,7 @@ func get_description() -> String:
             "within the level. There are %s total surfaces in this " +
             "platform graph for the %s player.") % [
         graph.counts.total_surfaces,
-        graph.movement_params.name,
+        graph.movement_params.player_name,
     ]
 
 

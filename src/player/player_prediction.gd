@@ -86,8 +86,11 @@ func _update(
 
 
 func _mod_animation_position_by_length() -> void:
-    var animation := animator.animation_player.get_animation(
-            animation_state.animation_name)
+    var specific_animation := \
+            animator._standand_animation_name_to_specific_animation_name(
+                    animation_state.animation_name)
+    var animation := \
+            animator.animation_player.get_animation(specific_animation)
     animation_state.animation_position = fmod(
             animation_state.animation_position,
             animation.length)
