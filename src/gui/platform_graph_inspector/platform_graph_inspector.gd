@@ -123,7 +123,7 @@ func _populate() -> void:
     var dummy := DummyItemController.new(root, self, null)
     
     for graph in graphs:
-        graph_item_controllers[graph.movement_params.name] = \
+        graph_item_controllers[graph.movement_params.player_name] = \
                 PlatformGraphItemController.new(
                         root,
                         self,
@@ -346,12 +346,12 @@ func select_edge_or_surface(
 func _select_canonical_origin_surface_item_controller(
         origin_surface: Surface,
         graph: PlatformGraph) -> void:
-    if graph_item_controllers.has(graph.movement_params.name):
+    if graph_item_controllers.has(graph.movement_params.player_name):
         var metadata := {
             origin_surface = origin_surface,
         }
         _trigger_find_and_expand_controller(
-                graph.movement_params.name,
+                graph.movement_params.player_name,
                 InspectorSearchType.ORIGIN_SURFACE,
                 metadata)
 
@@ -360,13 +360,13 @@ func _select_canonical_destination_surface_item_controller(
         origin_surface: Surface,
         destination_surface: Surface,
         graph: PlatformGraph) -> void:
-    if graph_item_controllers.has(graph.movement_params.name):
+    if graph_item_controllers.has(graph.movement_params.player_name):
         var metadata := {
             origin_surface = origin_surface,
             destination_surface = destination_surface,
         }
         _trigger_find_and_expand_controller(
-                graph.movement_params.name,
+                graph.movement_params.player_name,
                 InspectorSearchType.DESTINATION_SURFACE,
                 metadata)
 
@@ -413,11 +413,11 @@ func _select_canonical_edge_or_edge_attempt_item_controller(
             destination_surface = end_surface,
         }
         _trigger_find_and_expand_controller(
-                graph.movement_params.name,
+                graph.movement_params.player_name,
                 InspectorSearchType.DESTINATION_SURFACE,
                 metadata)
     else:
-        if !graph_item_controllers.has(graph.movement_params.name):
+        if !graph_item_controllers.has(graph.movement_params.player_name):
             _clear_selection()
             return
         
@@ -429,7 +429,7 @@ func _select_canonical_edge_or_edge_attempt_item_controller(
             edge_type = edge_type,
         }
         _trigger_find_and_expand_controller(
-                graph.movement_params.name,
+                graph.movement_params.player_name,
                 InspectorSearchType.EDGE,
                 metadata)
 

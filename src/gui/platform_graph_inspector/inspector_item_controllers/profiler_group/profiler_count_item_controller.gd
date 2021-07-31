@@ -39,7 +39,7 @@ func get_description() -> String:
     return ("The total number of times the %s event happened while " +
             "parsing the platform graph for the %s player.") % [
         metric,
-        graph.movement_params.name,
+        graph.movement_params.player_name,
     ]
 
 

@@ -662,7 +662,7 @@ func _update_counts() -> void:
 
 func to_string() -> String:
     return "PlatformGraph{ player: %s, surfaces: %s, edges: %s }" % [
-        movement_params.name,
+        movement_params.player_name,
         counts.total_surfaces,
         counts.total_edges,
     ]

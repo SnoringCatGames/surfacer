@@ -34,7 +34,7 @@ func _init(
 func get_text() -> String:
     return "%s [%s]" % [
         PREFIX,
-        graph.movement_params.name,
+        graph.movement_params.player_name,
     ]
 
 
@@ -48,7 +48,7 @@ func get_description() -> String:
 func to_string() -> String:
     return "%s { player_name=%s }" % [
         InspectorItemType.get_string(type),
-        graph.movement_params.name,
+        graph.movement_params.player_name,
     ]
 
 
