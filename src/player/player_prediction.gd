@@ -104,3 +104,4 @@ func _interpolate_player_position(player_position: Vector2) -> void:
 func _interpolate_animation_position(animation_position: float) -> void:
     _tween_animation_state.animation_position = animation_position
     animator.set_static_frame_position(animation_position)
+#     animator.set_static_frame(_tween_animation_state)

@@ -166,6 +166,11 @@ func _execute_next_step() -> void:
                                 target, player)
                 var is_navigation_valid := \
                         player.navigator.navigate_to_position(destination)
+                # FIXME: ---------------------------
+                # - Running with save-state of very-slow-multiplier breaks this?
+                if !is_navigation_valid:
+                    is_navigation_valid = \
+                            player.navigator.navigate_to_position(destination)
                 assert(is_navigation_valid)
             "zoom":
                 _current_zoom = \
