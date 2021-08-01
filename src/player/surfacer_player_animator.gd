@@ -30,7 +30,7 @@ var animation_player: AnimationPlayer
 # Array<Sprite>
 var _sprites := []
 
-var _animation_name := "Rest"
+var _specific_name := "Rest"
 # The AnimationPlayer implementation could use different animation names from
 # the "standard" set that are referenced in framework logic. We need to track
 # both versions, in these cases.
@@ -213,7 +213,7 @@ func set_static_frame(animation_state: PlayerAnimationState) -> void:
         _show_sprite_exclusively(specific_name)
     
     _standard_name = standard_name
-    _animation_name = specific_name
+    _specific_name = specific_name
     
     var playback_rate := animation_name_to_playback_rate(standard_name)
     var position := animation_state.animation_position * playback_rate
@@ -223,7 +223,7 @@ func set_static_frame(animation_state: PlayerAnimationState) -> void:
     else:
         face_right()
     
-    animation_player.play(_animation_name)
+    animation_player.play(_specific_name)
     animation_player.seek(position, true)
     animation_player.stop(false)
 
@@ -249,21 +249,22 @@ func set_modulation(modulation: Color) -> void:
 
 
 func _play_animation(
-        animation_name: String,
+        standard_name: String,
         blend := 0.1) -> bool:
     var specific_name := \
-            _standand_animation_name_to_specific_animation_name(animation_name)
+            _standand_animation_name_to_specific_animation_name(standard_name)
     
     if uses_standard_sprite_frame_animations:
         _show_sprite_exclusively(specific_name)
     
-    var playback_rate := animation_name_to_playback_rate(animation_name)
+    var playback_rate := animation_name_to_playback_rate(standard_name)
     
-    _animation_name = specific_name
+    _standard_name = standard_name
+    _specific_name = specific_name
     _base_rate = playback_rate
     
     var is_current_animator := \
-            animation_player.current_animation == _animation_name
+            animation_player.current_animation == _specific_name
     var is_playing := animation_player.is_playing()
     var is_changing_direction := \
             (animation_player.get_playing_speed() < 0) != (playback_rate < 0)
@@ -274,26 +275,26 @@ func _play_animation(
     
     if animation_was_not_playing or \
             animation_was_playing_in_wrong_direction:
-        animation_player.play(_animation_name, blend)
+        animation_player.play(_specific_name, blend)
         match_rate_to_time_scale()
         return true
     else:
         return false
 
 
-func _show_sprite_exclusively(animation_name: String) -> void:
+func _show_sprite_exclusively(specific_name: String) -> void:
     # Hide the other sprites.
     for sprite in _sprites:
         sprite.visible = false
     
     # Show the current sprite.
-    var sprite := _animation_name_to_sprite(animation_name)
+    var sprite := _animation_name_to_sprite(specific_name)
     sprite.visible = true
 
 
-func _animation_name_to_sprite(animation_name: String) -> Sprite:
+func _animation_name_to_sprite(specific_name: String) -> Sprite:
     if uses_standard_sprite_frame_animations:
-        return get_node(animation_name) as Sprite
+        return get_node(specific_name) as Sprite
     else:
         Sc.logger.error(
                 "The default implementation of " +
@@ -302,8 +303,8 @@ func _animation_name_to_sprite(animation_name: String) -> Sprite:
         return null
 
 
-func animation_name_to_playback_rate(animation_name: String) -> float:
-    return animations[animation_name].speed
+func animation_name_to_playback_rate(standard_name: String) -> float:
+    return animations[standard_name].speed
 
 
 # By default, this does nothing.
