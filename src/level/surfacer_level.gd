@@ -1,6 +1,11 @@
 tool
 class_name SurfacerLevel
 extends ScaffolderLevel
+## The main level class for Surfacer.
+## -   You should extend this with a sub-class for your specific game.
+## -   You should then attach your sub-class to each of your level scenes.
+## -   You should add a SurfacesTileMap child node to each of your level
+##     scenes, in order to define the collidable surfaces in your level.
 
 
 # Array<SurfacerPlayer>

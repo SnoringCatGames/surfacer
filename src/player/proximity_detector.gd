@@ -2,12 +2,25 @@ tool
 class_name ProximityDetector, \
 "res://addons/surfacer/assets/images/editor_icons/proximity_detector.png"
 extends Node2D
+## -   This helps your `SurfacerPlayer` detect when other areas or bodies enter
+##     or exit the proximity of your player.[br]
+## -   You can declare these as children in your SurfacerPlayer scenes.[br]
+## -   You can configure the shape used to define the proximity range.[br]
 
-
+## The shape to detect other bodies within.
 export var shape: Shape2D setget _set_shape
+
+## If a radius is given, then a corresponding CircleShape2D will be used for
+## the `shape` value.
 export var radius := -1.0 setget _set_radius
+
+## The layers to check for collisions ("collision_mask").
 export(int, LAYERS_2D_PHYSICS) var layer := 0 setget _set_layer
+
+## Whether to detect when a body enters the proximity region.
 export var is_detecting_enter := true setget _set_is_detecting_enter
+
+## Whether to detect when a body exits the proximity region.
 export var is_detecting_exit := false setget _set_is_detecting_exit
 
 const DASH_LENGTH := 3.0

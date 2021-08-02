@@ -2,26 +2,47 @@ tool
 class_name SurfacerPlayerAnimator, \
 "res://addons/surfacer/assets/images/editor_icons/surfacer_player_animator.png"
 extends Node2D
+## -   This defines how your player is rendered and animated.[br]
+## -   Surfacer makes some opinionated assumptions about how this will be
+##     set-up, but you can probably adjust or ignore some of this to fit your
+##     needs.[br]
 
 
 const UNFLIPPED_HORIZONTAL_SCALE := Vector2(1, 1)
 const FLIPPED_HORIZONTAL_SCALE := Vector2(-1, 1)
 
+## Toggle this according to how you've defined the player art.
 export var faces_right_by_default := true
+
+## -   Set this export property to `true` if you want to set up all of the
+##     animations for this player by changing the `frame` property on a
+##     corresponding `Sprite`.[br]
+## -   If this is enabled, then the `SurfacerPlayerAnimator` will expect there
+##     to be a one-to-one mapping between immediate-child `Sprites` and
+##     animations in the `AnimationPlayer`, and these matching animations and
+##     Sprites will need to share the same names.[br]
 export var uses_standard_sprite_frame_animations := true \
         setget _set_uses_standard_sprite_frame_animations
-# Array<{
-#   # This must match an animation in the AnimationPlayer.
-#   name: String,
-#   
-#   # -   Optional.
-#   # -   Use this if the animation is based on `Sprite.frame`.
-#   # -   This must match the name of a child Sprite.
-#   sprite_name: String,
-#   
-#   # The playback rate for the animation.
-#   speed: float,
-# }>
+
+## -   This `Dictionary` is auto-populated with keys corresponding to each
+##     animation in the `AnimationPlayer`.[br]
+## -   You can configure some additional state for each of the animation
+##     configs in this dictionary, such as the default playback speed for the
+##     animation, and the name of a `Sprite` to automatically show when
+##     starting the animation.[br]
+## [br]
+## Array<{[br]
+##   # This must match an animation in the AnimationPlayer.[br]
+##   name: String,[br]
+##   [br]
+##   # -   Optional.[br]
+##   # -   Use this if the animation is based on `Sprite.frame`.[br]
+##   # -   This must match the name of a child Sprite.[br]
+##   sprite_name: String,[br]
+##   [br]
+##   # The playback rate for the animation.[br]
+##   speed: float,[br]
+## }>[br]
 export var animations := {} setget _set_animations
 
 var is_desaturatable := false setget _set_is_desaturatable

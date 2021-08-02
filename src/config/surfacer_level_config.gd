@@ -1,6 +1,16 @@
 tool
 class_name SurfacerLevelConfig
 extends ScaffolderLevelConfig
+## -   You will need to sub-class `SurfacerLevelConfig` and reference this in
+##     your `app_manifest`.[br]
+## -   This defines some metadata for each of the levels in your game. For
+##     example:[br]
+##     -   `name`: The display name for the level.[br]
+##     -   `sort_priority`: The level's position relative to other levels.[br]
+##     -   `unlock_conditions`: How and when the level is unlocked.[br]
+##     -   `platform_graph_player_names`: The names of the players that might
+##         appear in the level. A platform graph will need to be calculated for
+##         each of these players.[br]
 
 
 const PLAYER_START_POSITION_GROUP_NAME := "player_start_position"
