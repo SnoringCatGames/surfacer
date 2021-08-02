@@ -13,14 +13,12 @@ signal parse_finished
 
 const PLATFORM_GRAPHS_DIRECTORY_NAME := "platform_graphs"
 
-const COLLISION_MASK_FOR_ONLY_SURFACES_TILE_MAP = 1
-
 var level_id: String
 # The TileMaps that define the collision boundaries of this level.
 # Array<SurfacesTileMap>
 var surface_tile_maps: Array
-# Dictionary<String, SurfacerPlayer>
-var fake_players := {}
+# Dictionary<String, CrashTestDummy>
+var crash_test_dummies := {}
 var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
@@ -42,7 +40,7 @@ func parse(
         force_calculation_from_tile_maps := false) -> void:
     self.level_id = level_id
     _record_tile_maps()
-    _create_fake_players_for_collision_calculations()
+    _create_crash_test_dummies_for_collision_calculations()
     force_calculation_from_tile_maps = \
             force_calculation_from_tile_maps or \
             Su.ignores_platform_graph_save_files
@@ -68,24 +66,11 @@ func _record_tile_maps() -> void:
             tile_map_ids[tile_map.id] = true
 
 
-func _create_fake_players_for_collision_calculations() -> void:
+func _create_crash_test_dummies_for_collision_calculations() -> void:
     for player_name in _get_player_names():
-        var player_scene: PackedScene = Su.player_scenes[player_name]
-        var movement_params: MovementParams = \
-                Su.movement.player_movement_params[player_name]
-        var fake_player: SurfacerPlayer = Sc.utils.add_scene(
-                self,
-                player_scene,
-                false,
-                false)
-        fake_player.is_fake = true
-        fake_player.name = "fake_" + fake_player.name
-        fake_player.set_safe_margin(
-                movement_params.collision_margin_for_edge_calculations)
-        fake_player.collision_mask = COLLISION_MASK_FOR_ONLY_SURFACES_TILE_MAP
-        fake_player.collision_layer = 0
-        add_child(fake_player)
-        fake_players[fake_player.player_name] = fake_player
+        var crash_test_dummy := CrashTestDummy.new(player_name)
+        add_child(crash_test_dummy)
+        crash_test_dummies[crash_test_dummy.player_name] = crash_test_dummy
 
 
 func _instantiate_platform_graphs(

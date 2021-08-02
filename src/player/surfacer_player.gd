@@ -11,11 +11,10 @@ export var player_name := ""
 export(int, LAYERS_2D_PHYSICS) var collision_detection_layers := 0
 
 var movement_params: MovementParams
-# Array<Surface>
+# Dictionary<Surface, Surface>
 var possible_surfaces_set: Dictionary
 
 var is_human_player := false
-var is_fake := false
 var _is_initialized := false
 var _is_destroyed := false
 var _is_navigator_initialized := false
@@ -81,11 +80,6 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-    if is_fake:
-        # Fake players are only used for testing potential collisions under the
-        # hood.
-        return
-    
     _update_editor_configuration_debounced()
     _initialize_child_movement_params()
     _initialize_children_proximity_detectors()
@@ -322,8 +316,7 @@ func _init_navigator() -> void:
 
 
 func _physics_process(delta: float) -> void:
-    if is_fake or \
-            !_is_initialized or \
+    if !_is_initialized or \
             _is_destroyed:
         # Fake players are only used for testing potential collisions under the
         # hood.
@@ -802,7 +795,6 @@ func _on_detection_area_enter_exit(
         detection_area: Area2D) -> void:
     # Ignore any events that are triggered at invalid times.
     if _is_destroyed or \
-            is_fake or \
             !Sc.level_session.has_started:
         return
     
