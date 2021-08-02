@@ -644,10 +644,26 @@ var _default_welcome_panel_manifest := {
 }
 
 var _default_screen_manifest := {
-    exclusions = [
-        preload("res://addons/scaffolder/src/gui/screens/rate_app_screen.tscn"),
-    ],
-    inclusions = [
+    screens = [
+        preload("res://addons/scaffolder/src/gui/screens/about_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/data_agreement_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/developer_splash_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/game_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/game_over_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/godot_splash_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/level_select_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/main_menu_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/notification_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/pause_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/scaffolder_loading_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/settings_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/third_party_licenses_screen.tscn"),
+        preload("res://addons/surfacer/src/gui/screens/precompute_platform_graphs_screen.tscn"),
+        preload("res://addons/surfacer/src/gui/screens/surfacer_loading_screen.tscn"),
+        preload("res://addons/scaffolder/src/gui/screens/confirm_data_deletion_screen_local.tscn"),
+#        preload("res://addons/scaffolder/src/gui/screens/scaffolder_loading_screen.tscn"),
+#        preload("res://addons/scaffolder/src/gui/screens/confirm_data_deletion_screen_with_analytics.tscn"),
+#        preload("res://addons/scaffolder/src/gui/screens/rate_app_screen.tscn"),
     ],
     overlay_mask_transition_fade_in_texture = \
             preload("res://addons/scaffolder/assets/images/transition_masks/radial_mask_transition_in.png"),
