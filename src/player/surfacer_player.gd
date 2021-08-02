@@ -62,7 +62,7 @@ var pre_selection: PointerSelectionPosition
 
 var graph: PlatformGraph
 var surface_parser: SurfaceParser
-var navigator: Navigator
+var navigator: SurfaceNavigator
 var level
 var collider: CollisionShape2D
 var animator: SurfacerPlayerAnimator
@@ -328,7 +328,7 @@ func _init_user_controller_action_source() -> void:
 
 
 func _init_navigator() -> void:
-    navigator = Navigator.new(self, graph)
+    navigator = SurfaceNavigator.new(self, graph)
     navigation_state = navigator.navigation_state
     _action_sources.push_back(navigator.instructions_action_source)
 

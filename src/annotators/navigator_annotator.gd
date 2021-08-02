@@ -2,7 +2,7 @@ class_name NavigatorAnnotator
 extends Node2D
 
 
-var navigator: Navigator
+var navigator: SurfaceNavigator
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
 var previous_path_beats: Array
@@ -21,7 +21,7 @@ var pulse_annotator: NavigationPulseAnnotator
 var fade_tween: ScaffolderTween
 
 
-func _init(navigator: Navigator) -> void:
+func _init(navigator: SurfaceNavigator) -> void:
     self.navigator = navigator
     self.previous_path_back_end_trim_radius = min(
             navigator.player.movement_params.collider_half_width_height.x,

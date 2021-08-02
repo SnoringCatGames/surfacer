@@ -251,7 +251,7 @@ Some known limitations and rough edges include:
 -   Inconsistency between the behavior of the [`KinematicBody2D`](https://docs.godotengine.org/en/stable/classes/class_kinematicbody2d.html) and [`Physics2DDirectSpaceState`](https://docs.godotengine.org/en/stable/classes/class_physics2ddirectspacestate.html) collision APIs.
     -   We were originally using the Physics2DDirectSpaceState for most of our graph calculations. However, this API seems to be more broken than the KinematicBody2D API. Also, we're using the KinematicBody2D API at run time, so we see more consistent results by using the KinematicBody2D API at build time as well.
 
-## Navigator: Using the platform graph to move from A to B
+## SurfaceNavigator: Using the platform graph to move from A to B
 
 Once the platform graph has been parsed, finding and moving along a path through the graph is relatively straight-forward. The sequence of events looks like the following:
 
@@ -261,7 +261,7 @@ Once the platform graph has been parsed, finding and moving along a path through
     -   We can use distance or duration as the edge weights.
 -   Execute playback of the instruction set for each edge of the path, in sequence.
 
-![Navigator finding a path to a destination](./navigator-preselection.png)
+![SurfaceNavigator finding a path to a destination](./navigator-preselection.png)
 
 ### Dynamic edge optimization according to runtime approach
 
