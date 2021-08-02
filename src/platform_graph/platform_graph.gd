@@ -54,12 +54,13 @@ func calculate(player_name: String) -> void:
     self.debug_params = Su.debug_params
     self.surface_parser = Su.graph_parser.surface_parser
     
-    var fake_player = Su.graph_parser.fake_players[player_name]
+    var crash_test_dummy: CrashTestDummy = \
+            Su.graph_parser.crash_test_dummies[player_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
             self.surface_parser,
-            fake_player)
+            crash_test_dummy)
     
     # Store the subset of surfaces that this player type can interact with.
     var surfaces_array := surface_parser.get_subset_of_surfaces(
@@ -460,7 +461,7 @@ func _on_inter_surface_edges_calculated() -> void:
     _derive_nodes_to_nodes_to_edges()
     _update_counts()
     _cleanup_edge_calc_results()
-    collision_params.player.set_platform_graph(self)
+    collision_params.crash_test_dummy.set_platform_graph(self)
     emit_signal("calculation_finished")
 
 
@@ -676,12 +677,12 @@ func load_from_json_object(
     self.debug_params = Su.debug_params
     self.surface_parser = Su.graph_parser.surface_parser
     
-    var fake_player = Su.graph_parser.fake_players[player_name]
+    var crash_test_dummy = Su.graph_parser.crash_test_dummies[player_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
             self.surface_parser,
-            fake_player)
+            crash_test_dummy)
     
     # Store the subset of surfaces that this player type can interact with.
     var surfaces_array := surface_parser.get_subset_of_surfaces(
@@ -700,8 +701,7 @@ func load_from_json_object(
     _derive_nodes_to_nodes_to_edges()
     _update_counts()
     _cleanup_edge_calc_results()
-    
-    fake_player.set_platform_graph(self)
+    crash_test_dummy.set_platform_graph(self)
 
 
 func _load_position_along_surfaces_from_json_object(

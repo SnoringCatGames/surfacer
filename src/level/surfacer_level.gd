@@ -141,7 +141,8 @@ func add_player(
             Su.group_name_computer_players
     player.add_to_group(group)
     
-    var graph = _get_platform_graph_for_player(player.player_name)
+    var graph: PlatformGraph = \
+            Su.graph_parser.platform_graphs[player.player_name]
     if graph != null:
         player.set_platform_graph(graph)
     
@@ -181,10 +182,6 @@ func set_tile_map_visibility(is_visible: bool) -> void:
             TileMap)
     for node in foregrounds:
         node.visible = is_visible
-
-
-func _get_platform_graph_for_player(player_name: String) -> PlatformGraph:
-    return Su.graph_parser.platform_graphs[player_name]
 
 
 func get_player_start_position() -> Vector2:

@@ -358,10 +358,10 @@ static func check_frame_for_collision(
         position_start: Vector2,
         displacement: Vector2,
         is_recursing := false) -> SurfaceCollision:
-    var player: KinematicBody2D = collision_params.player
+    var crash_test_dummy: KinematicBody2D = collision_params.crash_test_dummy
     
-    player.position = position_start
-    var kinematic_collision := player.move_and_collide(
+    crash_test_dummy.position = position_start
+    var kinematic_collision := crash_test_dummy.move_and_collide(
             displacement,
             true,
             true,
@@ -406,11 +406,11 @@ static func check_frame_for_collision(
             abs(collision_normal.x / collision_normal.y) if \
             collision_normal.y != 0.0 else \
             INF
-    var threshold: float = player.movement_params \
+    var threshold: float = crash_test_dummy.movement_params \
             .oblique_collison_normal_aspect_ratio_threshold_threshold
     var inverse_threshold := 1.0 / threshold
     var is_collision_normal_expected: bool = \
-            !player.movement_params \
+            !crash_test_dummy.movement_params \
             .checks_for_alt_intersection_points_for_oblique_collisions or \
             !(displacement_aspect_ratio > threshold and \
             collision_normal_aspect_ratio < inverse_threshold or \
@@ -422,22 +422,17 @@ static func check_frame_for_collision(
         # Consider an alternate intersection point that might correspond to an
         # adjacent surface around a corner, and a less oblique collision.
         
-        var space_rid := player.get_world_2d().space
+        var space_rid := crash_test_dummy.get_world_2d().space
         var space_state := Physics2DServer.space_get_direct_state(space_rid)
         var params := Physics2DShapeQueryParameters.new()
         
-        var shape_owner_id: int = player.get_shape_owners()[0]
-        var shape_count := player.shape_owner_get_shape_count(shape_owner_id)
-        assert(shape_count == 1)
-        var shape := player.shape_owner_get_shape(shape_owner_id, 0)
-        params.set_shape(shape)
-        
+        params.set_shape(crash_test_dummy.movement_params.collider_shape)
         params.transform = Transform2D(
-                player.movement_params.collider_rotation,
+                crash_test_dummy.movement_params.collider_rotation,
                 position_start)
         params.motion = displacement
-        params.margin = \
-                player.movement_params.collision_margin_for_edge_calculations
+        params.margin = crash_test_dummy.movement_params \
+                .collision_margin_for_edge_calculations
         
         var intersection_points := space_state.collide_shape(params)
         
@@ -603,14 +598,14 @@ static func check_frame_for_collision(
         
         # Try the collision check again with a reduced margin and a slight
         # offset.
-        var old_margin := collision_params.player.get_safe_margin()
-        collision_params.player.set_safe_margin(0.0)
+        var old_margin := crash_test_dummy.get_safe_margin()
+        crash_test_dummy.set_safe_margin(0.0)
         position_start += surface_normal * 0.001
         surface_collision = check_frame_for_collision(
                 collision_params,
                 position_start,
                 displacement,
                 true)
-        collision_params.player.set_safe_margin(old_margin)
+        crash_test_dummy.set_safe_margin(old_margin)
     
     return surface_collision
