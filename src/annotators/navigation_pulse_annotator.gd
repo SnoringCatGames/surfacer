@@ -2,7 +2,7 @@ class_name NavigationPulseAnnotator
 extends Node2D
 
 
-var navigator: Navigator
+var navigator: SurfaceNavigator
 var current_path: PlatformGraphPath
 var is_slow_motion_enabled := false
 var current_path_start_time := -INF
@@ -14,7 +14,7 @@ var is_pulse_active := false
 var does_pulse_grow := false
 
 
-func _init(navigator: Navigator) -> void:
+func _init(navigator: SurfaceNavigator) -> void:
     self.navigator = navigator
 
 

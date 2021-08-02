@@ -137,7 +137,7 @@ const _PLATFORM_GRAPH_CALCULATIONS_GROUP = {
 var minimizes_velocity_change_when_jumping := false \
         setget _set_minimizes_velocity_change_when_jumping
 ## -   If this is true, then at runtime, after finding a path through
-##     build-time-calculated edges, the Navigator will try to optimize the
+##     build-time-calculated edges, the SurfaceNavigator will try to optimize the
 ##     jump-off points of the edges to better account for the direction that the
 ##     player will be approaching the edge from.[br]
 ## -   This produces more efficient and natural movement.[br]

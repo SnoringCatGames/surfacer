@@ -1,4 +1,4 @@
-class_name Navigator
+class_name SurfaceNavigator
 extends Reference
 
 
@@ -404,7 +404,7 @@ func update(
 #        # FIXME: ------------
 #        # - This work-around shouldn't be needed. What's the underlying problem?
 #        Sc.logger.print(
-#                "Navigator.is_currently_navigating and " +
+#                "SurfaceNavigator.is_currently_navigating and " +
 #                "!SurfacerPlayer.did_move_last_frame")
 #        var destination := path.destination
 #        var graph_destination_for_in_air_destination := \
