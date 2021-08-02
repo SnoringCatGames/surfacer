@@ -1,13 +1,13 @@
 class_name PlatformGraph
 extends Reference
-# -   This graph is optimized for run-time path-finding.
-# -   Graph parsing is slow and can done either dynamically when starting the
-#     level or ahead of time and saved to separate file.
-# -   Graph parsing can be multi-threaded.
-# -   A PlatfromGraph is specific to a given player type. This is important
-#     since different players have different jump parameters and can reach
-#     different surfaces, so the edges in the graph will be different for each
-#     player.
+## -   This graph is optimized for run-time path-finding.
+## -   Graph parsing is slow and can done either dynamically when starting the
+##     level or ahead of time and saved to separate file.
+## -   Graph parsing can be multi-threaded.
+## -   A PlatfromGraph is specific to a given player type. This is important
+##     since different players have different jump parameters and can reach
+##     different surfaces, so the edges in the graph will be different for each
+##     player.
 
 
 signal calculation_progressed(
@@ -29,11 +29,11 @@ var surfaces_set := {}
 # Dictionary<Surface, Array<PositionAlongSurface>>
 var surfaces_to_outbound_nodes := {}
 
-# Intra-surface edges are not calculated and stored ahead of time; they're only
-# calculated at run time when navigating a specific path.
-# 
-# Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface,
-#         Array<Edge>>>
+## Intra-surface edges are not calculated and stored ahead of time; they're only
+## calculated at run time when navigating a specific path.
+## 
+## Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface,
+##         Array<Edge>>>
 var nodes_to_nodes_to_edges := {}
 
 # Dictionary<Surface, Array<InterSurfaceEdgesResult>>

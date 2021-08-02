@@ -2,12 +2,30 @@ tool
 class_name SurfacerPlayer, \
 "res://addons/surfacer/assets/images/editor_icons/surfacer_player.png"
 extends KinematicBody2D
+## The main player class for Surfacer.[br]
+## -   This defines how your player reacts to input and decides when and were
+##     to navigate within the level.[br]
+## -   You should extend this with a sub-class for your specific player.[br]
+## -   You should then attach your sub-class to a scene for your player.[br]
+## -   You should then add a few important child scenes:[br]
+##     -   MovementParams[br]
+##     -   SurfacerPlayerAnimator[br]
+##     -   CollisionShape2D[br]
+##     -   (Optional) ProximityDetector[br]
 
 
 const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 
 export var player_name := ""
+
+## -   This helps your `SurfacerPlayer` detect when other areas or bodies
+##     collide with the player.[br]
+## -   The default `PhysicsBody2D.collision_layer` property is limited, because
+##     the `move_and_slide` system will adjust our movement when we collide
+##     with matching objects.[br]
+## -   So this separate `collision_detection_layers` property lets us detect
+##     collisions without adjusting our movement.[br]
 export(int, LAYERS_2D_PHYSICS) var collision_detection_layers := 0
 
 var movement_params: MovementParams

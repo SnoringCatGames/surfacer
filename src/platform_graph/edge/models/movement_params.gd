@@ -2,6 +2,9 @@ tool
 class_name MovementParams, \
 "res://addons/surfacer/assets/images/editor_icons/movement_params.png"
 extends Node2D
+## -   This defines how your player will move.[br]
+## -   There are a _lot_ of parameters you can adjust here.[br]
+## -   You can adjust these parameters within the editor's inspector panel.[br]
 
 
 # --- Movement abilities ---
@@ -25,8 +28,11 @@ const _PHYSICS_MOVEMENT_GROUP = {
     first_property_name = "gravity_multiplier",
 }
 
+## Each player can use a different gravity value.
 var gravity_multiplier := 1.0 \
         setget _set_gravity_multiplier
+## Surfacer supports "fast-fall", which means that the ascent of a jump can use
+## a weaker gravity and take longer than the descent.
 var gravity_slow_rise_multiplier_multiplier := 1.0  \
         setget _set_gravity_slow_rise_multiplier_multiplier
 var gravity_double_jump_slow_rise_multiplier_multiplier := 1.0 \
@@ -94,14 +100,24 @@ const _EDGE_WEIGHTS_GROUP = {
     first_property_name = "uses_duration_instead_of_distance_for_edge_weight",
 }
 
+## The A* search could use movement distances or durations to represent edge
+## weights.
 var uses_duration_instead_of_distance_for_edge_weight := true \
         setget _set_uses_duration_instead_of_distance_for_edge_weight
+## If an extra weight is applied for each additional edge, then the player will
+## favor paths that cross fewer surfaces, even if the path may take longer.
 var additional_edge_weight_offset_override := -1.0 \
         setget _set_additional_edge_weight_offset_override
+## If extra weight is applied to walking edges, then the player will favor
+## paths that involve more jumps, even if the path may take longer.
 var walking_edge_weight_multiplier_override := -1.0 \
         setget _set_walking_edge_weight_multiplier_override
+## If extra weight is applied to climbing edges, then the player will favor
+## paths that involve more jumps, even if the path may take longer.
 var climbing_edge_weight_multiplier_override := -1.0 \
         setget _set_climbing_edge_weight_multiplier_override
+## If extra weight is applied to air edges, then the player will favor
+## paths that involve fewer jumps, even if the path may take longer.
 var air_edge_weight_multiplier_override := -1.0 \
         setget _set_air_edge_weight_multiplier_override
 
