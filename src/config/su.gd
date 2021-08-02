@@ -74,15 +74,6 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
 
 # --- Scaffolder manifest additions ---
 
-var _screen_inclusions := [
-    preload("res://addons/surfacer/src/gui/screens/precompute_platform_graphs_screen.tscn"),
-    preload("res://addons/surfacer/src/gui/screens/surfacer_loading_screen.tscn"),
-]
-
-var _screen_exclusions := [
-    preload("res://addons/scaffolder/src/gui/screens/scaffolder_loading_screen.tscn"),
-]
-
 var _surfacer_sounds := [
     {
         name = "nav_select_fail",
@@ -288,21 +279,6 @@ func _amend_app_manifest(app_manifest: Dictionary) -> void:
             app_manifest.audio_manifest.sounds_manifest,
             _surfacer_sounds,
             false)
-    
-    for inclusion in _screen_inclusions:
-        if !app_manifest.gui_manifest.screen_manifest.exclusions \
-                .has(inclusion) and \
-                !app_manifest.gui_manifest.screen_manifest.inclusions \
-                .has(inclusion):
-            app_manifest.gui_manifest.screen_manifest.inclusions \
-                    .push_back(inclusion)
-    for exclusion in _screen_exclusions:
-        if !app_manifest.gui_manifest.screen_manifest.exclusions \
-                .has(exclusion) and \
-                !app_manifest.gui_manifest.screen_manifest.inclusions \
-                .has(exclusion):
-            app_manifest.gui_manifest.screen_manifest.exclusions \
-                    .push_back(exclusion)
     
     if !app_manifest.gui_manifest.has("settings_item_manifest"):
         app_manifest.gui_manifest.settings_item_manifest = \
