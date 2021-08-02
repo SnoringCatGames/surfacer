@@ -915,8 +915,11 @@ func _ensure_edges_have_trajectory_state(
     for i in path.edges.size():
         var edge: Edge = path.edges[i]
         
-        if edge.trajectory != null or \
-                edge.calculator == null:
+        # FIXME: --------------------------------------------- Undo
+#        if edge.trajectory != null or \
+#                edge.calculator == null:
+#            continue
+        if edge.calculator == null:
             continue
         
         var edge_with_trajectory: Edge = edge.calculator.calculate_edge(
@@ -938,6 +941,29 @@ func _ensure_edges_have_trajectory_state(
                     .create_trajectory_placeholder_hack(edge)
             path.edges[i].trajectory = placeholder_trajectory_hack
         else:
+            # FIXME: ---------------------------------
+#            if !(edge_with_trajectory != null and \
+#                    Sc.geometry.are_floats_equal_with_epsilon(
+#                            edge_with_trajectory.duration,
+#                            edge.duration,
+#                            0.001) and \
+#                    Sc.geometry.are_floats_equal_with_epsilon(
+#                            edge_with_trajectory.distance,
+#                            edge.distance,
+#                            1.0)):
+#                print(">>>>>>>>>>>>>>>>>>>>>>>>>>>")
+#                print(edge_with_trajectory.to_string_with_newlines(0))
+#                for position in edge_with_trajectory.trajectory.frame_continuous_positions_from_steps:
+#                    print(str(position))
+#                print("<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+#                edge_with_trajectory = edge.calculator.calculate_edge(
+#                        null,
+#                        collision_params,
+#                        edge.start_position_along_surface,
+#                        edge.end_position_along_surface,
+#                        edge.velocity_start,
+#                        edge.includes_extra_jump_duration,
+#                        edge.includes_extra_wall_land_horizontal_speed)
             # **Did you change the tile map or movement params and forget to
             #   update the platform graph??**
             assert(edge_with_trajectory != null and \

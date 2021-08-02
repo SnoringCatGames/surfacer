@@ -277,6 +277,7 @@ var recurses_when_colliding_during_horizontal_step_calculations := true \
 ## negatives.
 var backtracks_for_higher_jumps_during_hor_step_calculations := true \
         setget _set_backtracks_for_higher_jumps_during_hor_step_calculations
+# FIXME: ---------------------------- Decrease this? After debugging run-time/build-time collision-margin inconsistency
 ## The amount of extra margin to include around the player collision boundary
 ## when performing collision detection for a given edge calculation.
 var collision_margin_for_edge_calculations := 4.0 \

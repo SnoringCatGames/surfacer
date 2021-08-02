@@ -160,7 +160,7 @@ var skip_choreography_framerate_multiplier := 10.0
 #    limit_parsing = {
 #        player_name = "cat",
 #
-#        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
+#        edge_type = EdgeType.JUMP_FROM_SURFACE_EDGE,
 ##        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
 ##        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
 ##        edge_type = EdgeType.FALL_FROM_FLOOR_EDGE,
