@@ -941,21 +941,25 @@ func _ensure_edges_have_trajectory_state(
                     .create_trajectory_placeholder_hack(edge)
             path.edges[i].trajectory = placeholder_trajectory_hack
         else:
-            # FIXME: ---------------------------------
-#            if !(edge_with_trajectory != null and \
-#                    Sc.geometry.are_floats_equal_with_epsilon(
-#                            edge_with_trajectory.duration,
-#                            edge.duration,
-#                            0.001) and \
-#                    Sc.geometry.are_floats_equal_with_epsilon(
-#                            edge_with_trajectory.distance,
-#                            edge.distance,
-#                            1.0)):
-#                print(">>>>>>>>>>>>>>>>>>>>>>>>>>>")
-#                print(edge_with_trajectory.to_string_with_newlines(0))
-#                for position in edge_with_trajectory.trajectory.frame_continuous_positions_from_steps:
-#                    print(str(position))
-#                print("<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+            var do_edges_match := edge_with_trajectory != null and \
+                    Sc.geometry.are_floats_equal_with_epsilon(
+                            edge_with_trajectory.duration,
+                            edge.duration,
+                            0.001) and \
+                    Sc.geometry.are_floats_equal_with_epsilon(
+                            edge_with_trajectory.distance,
+                            edge.distance,
+                            1.0)
+            # FIXME:
+            # - Remove.
+            # - Another reason this has happened, is that
+            #   CollisionCheckUtils.check_frame_for_collision >
+            #   crash_test_dummy.move_and_collide inconsistently detects a collision during the
+            #   last frame of an edge.
+            #   - It detects the collision at build time, but not at run time.
+            #   - So the run-time trajectory has one extra frame, and a bit more distance for that
+            #     frame.
+#            if !do_edges_match:
 #                edge_with_trajectory = edge.calculator.calculate_edge(
 #                        null,
 #                        collision_params,
@@ -966,15 +970,7 @@ func _ensure_edges_have_trajectory_state(
 #                        edge.includes_extra_wall_land_horizontal_speed)
             # **Did you change the tile map or movement params and forget to
             #   update the platform graph??**
-            assert(edge_with_trajectory != null and \
-                    Sc.geometry.are_floats_equal_with_epsilon(
-                            edge_with_trajectory.duration,
-                            edge.duration,
-                            0.001) and \
-                    Sc.geometry.are_floats_equal_with_epsilon(
-                            edge_with_trajectory.distance,
-                            edge.distance,
-                            1.0))
+            assert(do_edges_match)
             path.edges[i] = edge_with_trajectory
     
     Sc.profiler.stop("navigator_ensure_edges_have_trajectory_state")
