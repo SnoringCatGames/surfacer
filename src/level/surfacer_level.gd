@@ -39,7 +39,8 @@ func _start() -> void:
             Su.player_scenes[Su.default_player_name],
             get_player_start_position(),
             true)
-    _execute_intro_choreography()
+    # FIXME: ---------------- Add this back in
+#    _execute_intro_choreography()
     
     call_deferred("_initialize_annotators")
 
