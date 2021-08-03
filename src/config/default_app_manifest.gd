@@ -12,6 +12,33 @@ func _override_configs_for_current_run(manifest: Dictionary) -> void:
             "Abstract DefaultAppManifest._override_configs_for_current_run " +
             "is not implemented")
 
+
+func _derive_overrides(manifest: Dictionary) -> void:
+    var metadata: Dictionary = manifest.metadata
+    var is_debug: bool = metadata.debug
+    var is_playtest: bool = metadata.playtest
+    metadata.pauses_on_focus_out = \
+            metadata.pauses_on_focus_out or !is_debug
+    metadata.are_all_levels_unlocked = \
+            metadata.are_all_levels_unlocked and is_debug
+    metadata.are_test_levels_included = \
+            metadata.are_test_levels_included and \
+            (is_debug or is_playtest)
+    metadata.is_save_state_cleared_for_debugging = \
+            metadata.is_save_state_cleared_for_debugging and \
+            (is_debug or is_playtest)
+    metadata.opens_directly_to_level_id = \
+            metadata.opens_directly_to_level_id if is_debug else ""
+    metadata.is_splash_skipped = \
+            (metadata.is_splash_skipped or \
+            metadata.opens_directly_to_level_id != "") and is_debug
+    metadata.are_button_controls_enabled_by_default = \
+            metadata.are_button_controls_enabled_by_default or is_debug
+    
+    manifest.gui_manifest.hud_manifest.is_inspector_enabled_default = \
+            manifest.gui_manifest.hud_manifest.is_inspector_enabled_default or \
+            is_debug or is_playtest
+
 # ---
 
 var _default_fonts_manifest_normal := {
