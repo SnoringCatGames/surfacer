@@ -20,7 +20,7 @@ func process(player) -> bool:
     if !player.processed_action(FloorJumpAction.NAME):
         # Friction.
         var friction_offset: float = \
-                Sc.utils.get_floor_friction_multiplier(player) * \
+                Sc.geometry.get_floor_friction_multiplier(player) * \
                 player.movement_params.friction_coefficient * \
                 player.movement_params.gravity_fast_fall * \
                 player.actions.delta_scaled

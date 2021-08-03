@@ -269,7 +269,7 @@ var normal_jump_instruction_duration_increase := 0.08 \
 var exceptional_jump_instruction_duration_increase := 0.2 \
         setget _set_exceptional_jump_instruction_duration_increase
 ## If false, then edge calculations will not try to move around intermediate
-## surfaces, which will produce many false negatives.
+## surfaces, which will produce many false-negatives.
 var recurses_when_colliding_during_horizontal_step_calculations := true \
         setget _set_recurses_when_colliding_during_horizontal_step_calculations
 ## If false, then edge calculations will not try to consider higher jump height

@@ -21,8 +21,8 @@ func process(player) -> bool:
     player.is_rising_from_jump = false
 
     # The move_and_slide system depends on some vertical gravity always pushing
-    # the player into the floor. If we just zero this out, is_on_floor() will
-    # give false negatives.
+    # the player into the floor. If we just zero this out, move_and_slide will
+    # produce false-negatives.
     player.velocity.y = \
             PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION / \
             Sc.time.get_combined_scale()
