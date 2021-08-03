@@ -69,15 +69,6 @@ static func _concatenate_step_frame_positions(
         steps: Array) -> PoolVector2Array:
     var combined_positions := []
     
-    # FIXME: ----------------------
-#    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>")
-#    for step in steps:
-#        print(">>> step")
-#        for position in step.frame_positions:
-#            print(str(position))
-#        print("<<< step-end-point: %s" % str(step.position_step_end))
-#    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-    
     for step in steps:
         Sc.utils.concat(combined_positions, step.frame_positions)
         # Since the start-position of the next step is always the same as the

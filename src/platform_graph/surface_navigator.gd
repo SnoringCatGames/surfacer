@@ -915,11 +915,8 @@ func _ensure_edges_have_trajectory_state(
     for i in path.edges.size():
         var edge: Edge = path.edges[i]
         
-        # FIXME: --------------------------------------------- Undo
-#        if edge.trajectory != null or \
-#                edge.calculator == null:
-#            continue
-        if edge.calculator == null:
+        if edge.trajectory != null or \
+                edge.calculator == null:
             continue
         
         var edge_with_trajectory: Edge = edge.calculator.calculate_edge(

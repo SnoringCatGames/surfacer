@@ -1017,9 +1017,6 @@ static func calculate_jump_land_positions_for_surface_pair(
                             var goal_y := \
                                     jump_basis.y + \
                                     vertical_movement_displacement
-                            # FIXME: -------------------
-                            # - Remove this comment.
-                            # - This just might be relevant to debugging a thing...
                             land_position = _create_surface_interior_position(
                                     goal_y,
                                     land_surface,
