@@ -336,6 +336,14 @@ static func check_continuous_horizontal_step_for_collision(
                 frame_positions.push_back(current_position)
                 frame_velocities.push_back(current_velocity)
     
+    # Include a frame for the final position and velocity at the moment of
+    # collision.
+    # **NOTE**: This frame corresponds to a shorter duration than all the other
+    #           frames.
+    if collision != null:
+        frame_positions.push_back(collision.player_position)
+        frame_velocities.push_back(current_velocity)
+    
     if collision != null and \
             collision_result_metadata != null:
         # Record some extra state from before/after/during collision for
@@ -385,6 +393,19 @@ static func check_frame_for_collision(
     surface_collision.position = kinematic_collision.position
     surface_collision.player_position = \
             position_start + kinematic_collision.travel
+    surface_collision.time_from_start_of_frame = \
+            (kinematic_collision.travel.y / displacement.y if \
+            abs(displacement.y) > abs(displacement.x) else \
+            kinematic_collision.travel.x / displacement.x) * \
+            Time.PHYSICS_TIME_STEP
+    if surface_collision.time_from_start_of_frame < 0.0:
+        # -   This happens frequently.
+        # -   It's unclear why Godot's collision engine produces negative
+        #     results here.
+        # -   Presumably, this implies that there was a pre-existing collision.
+        # -   But if that were the case, the collision should have been
+        #     detected in the previous frame.
+        surface_collision.time_from_start_of_frame = 0.0
     
     var tile_map: SurfacesTileMap = kinematic_collision.collider
     var surface_side: int = \

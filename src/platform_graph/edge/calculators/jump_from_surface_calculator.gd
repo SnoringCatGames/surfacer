@@ -162,14 +162,6 @@ func calculate_edge(
             edge_result_metadata,
             edge_calc_params)
     
-    # FIXME: ------------------------
-#    if edge != null:
-#        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>")
-#        print(edge.to_string_with_newlines(0))
-##        for position in edge.trajectory.frame_continuous_positions_from_steps:
-##            print(str(position))
-#        print("<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-    
     Sc.profiler.stop_with_optional_metadata(
             "calculate_jump_from_surface_edge",
             collision_params.thread_id,

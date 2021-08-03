@@ -106,16 +106,15 @@ func _init(
     
     # -   Too few frames probably means that a collision was detected much
     #     earlier than expected.
-    # -   Too many frames probably means ...
+    # -   Too many frames probably means a bug in our calculations.
     var expected_frame_count_for_duration := \
             int(duration / Time.PHYSICS_TIME_STEP)
-    var allowed_variance_from_expected_frame_count := 8
     assert(trajectory == null or \
             trajectory.frame_continuous_positions_from_steps.empty() or \
             (trajectory.frame_continuous_positions_from_steps.size() >= \
-                    expected_frame_count_for_duration - 8 and \
+                    expected_frame_count_for_duration - 10 and \
             trajectory.frame_continuous_positions_from_steps.size() <= \
-                    expected_frame_count_for_duration + 8))
+                    expected_frame_count_for_duration + 3))
 
 
 func update_for_surface_state(
