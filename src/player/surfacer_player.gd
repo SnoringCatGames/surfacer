@@ -46,8 +46,6 @@ var just_triggered_jump := false
 var is_rising_from_jump := false
 var jump_count := 0
 
-var did_move_last_frame := false
-
 var current_max_horizontal_speed: float
 var _can_dash := true
 
@@ -399,7 +397,8 @@ func _physics_process(delta: float) -> void:
     if !movement_params.bypasses_runtime_physics:
         # Since move_and_slide automatically accounts for delta, we need to
         # compensate for that in order to support our modified framerate.
-        var modified_velocity: Vector2 = velocity * Sc.time.get_combined_scale()
+        var modified_velocity: Vector2 = \
+                velocity * Sc.time.get_combined_scale()
         
         # TODO: Use the remaining pre-collision movement that move_and_slide
         #       returns. This might be needed in order to move along slopes?
@@ -409,15 +408,10 @@ func _physics_process(delta: float) -> void:
                 false,
                 4,
                 Sc.geometry.FLOOR_MAX_ANGLE)
-        surface_state.collision_count = get_slide_count()
     
-    surface_state.previous_center_position = surface_state.center_position
-    surface_state.center_position = self.position
+    surface_state.update_for_movement(self)
     
-    did_move_last_frame = \
-            surface_state.previous_center_position != \
-            surface_state.center_position
-    if did_move_last_frame:
+    if surface_state.did_move_last_frame:
         pointer_listener.on_player_moved()
 
 
@@ -528,7 +522,7 @@ func processed_action(name: String) -> bool:
 
 
 func _update_surface_state(preserves_just_changed_state := false) -> void:
-    surface_state.update(self, preserves_just_changed_state)
+    surface_state.update_for_actions(self, preserves_just_changed_state)
 
 
 # Update whether or not we should currently consider collisions with

@@ -48,7 +48,7 @@ func _draw_grab_position() -> void:
     var from := player.surface_state.grab_position
     var to := \
             from + \
-            player.surface_state.grabbed_surface_normal * \
+            player.surface_state.grabbed_surface.normal * \
                     GRAB_POSITION_LINE_LENGTH
     draw_line(
             from,

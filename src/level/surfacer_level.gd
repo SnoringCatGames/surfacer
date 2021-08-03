@@ -1,5 +1,6 @@
 tool
-class_name SurfacerLevel
+class_name SurfacerLevel, \
+"res://addons/scaffolder/assets/images/editor_icons/scaffolder_level.png"
 extends ScaffolderLevel
 ## The main level class for Surfacer.
 ## -   You should extend this with a sub-class for your specific game.

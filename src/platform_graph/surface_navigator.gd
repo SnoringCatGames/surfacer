@@ -399,13 +399,13 @@ func update(
     
     # FIXME: ------ This can result in player's getting stuck in mid-air in a
     #        continuous, new-nav-every-frame loop.
-#    if !player.did_move_last_frame and \
+#    if !player.surface_state.did_move_last_frame and \
 #            !just_started_navigating:
 #        # FIXME: ------------
 #        # - This work-around shouldn't be needed. What's the underlying problem?
 #        Sc.logger.print(
 #                "SurfaceNavigator.is_currently_navigating and " +
-#                "!SurfacerPlayer.did_move_last_frame")
+#                "!PlayerSurfaceState.did_move_last_frame")
 #        var destination := path.destination
 #        var graph_destination_for_in_air_destination := \
 #                path.graph_destination_for_in_air_destination
@@ -949,7 +949,7 @@ func _ensure_edges_have_trajectory_state(
                             1.0)
             # FIXME:
             # - Remove.
-            # - Another reason this has happened, is that
+            # - Another reason this has happened in the past is that
             #   CollisionCheckUtils.check_frame_for_collision >
             #   crash_test_dummy.move_and_collide inconsistently detects a collision during the
             #   last frame of an edge.

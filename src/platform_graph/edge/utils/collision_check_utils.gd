@@ -368,7 +368,7 @@ static func check_continuous_horizontal_step_for_collision(
 # Determines whether the given motion of the given shape would collide with a
 # surface.
 # 
-# -   This often generates false negatives if the player is moving away from a
+# -   This often generates false-negatives if the player is moving away from a
 #     surface that they were already colliding with beforehand.
 # -   If a collision would occur, this returns information about the collision.
 static func check_frame_for_collision(

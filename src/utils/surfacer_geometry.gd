@@ -98,16 +98,6 @@ static func are_position_wrappers_equal_with_epsilon(
             -epsilon < y_diff and y_diff < epsilon
 
 
-static func get_which_wall_collided_for_body(body: KinematicBody2D) -> int:
-    if body.is_on_wall():
-        for i in body.get_slide_count():
-            var collision := body.get_slide_collision(i)
-            var side := get_which_surface_side_collided(collision)
-            if side == SurfaceSide.LEFT_WALL or side == SurfaceSide.RIGHT_WALL:
-                return side
-    return SurfaceSide.NONE
-
-
 static func get_which_surface_side_collided(
         collision: KinematicCollision2D) -> int:
     if abs(collision.normal.angle_to(Sc.geometry.UP)) <= \
@@ -120,6 +110,26 @@ static func get_which_surface_side_collided(
         return SurfaceSide.LEFT_WALL
     else:
         return SurfaceSide.RIGHT_WALL
+
+
+static func get_floor_friction_multiplier(player) -> float:
+    var collision := _get_collision_for_side(player, SurfaceSide.FLOOR)
+    # Collision friction is a property of the TileMap node.
+    if collision != null and \
+            collision.collider.collision_friction != null:
+        return collision.collider.collision_friction
+    return 0.0
+
+
+static func _get_collision_for_side(
+        player,
+        side: int) -> KinematicCollision2D:
+    if player.surface_state.is_touching_floor:
+        for i in player.get_slide_count():
+            var collision: KinematicCollision2D = player.get_slide_collision(i)
+            if get_which_surface_side_collided(collision) == side:
+                return collision
+    return null
 
 
 static func get_collision_tile_map_coord(
@@ -448,8 +458,7 @@ static func get_collision_tile_map_coord(
             first_statement = "WARNING: UNUSUAL COLLISION TILEMAP STATE"
             second_statement = (
                     "Godot's underlying collision engine presumably " +
-                    "calculated an incorrect (opposite direction) result " +
-                    "for is_on_floor/is_on_ceiling. This usually happens " +
+                    "calculated an incorrect result. This usually happens " +
                     "when the player is sliding along a corner.")
         var print_message := """%s: 
             %s; 
