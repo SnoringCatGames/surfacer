@@ -13,7 +13,7 @@ func _override_configs_for_current_run(manifest: Dictionary) -> void:
             "is not implemented")
 
 
-func _derive_overrides(manifest: Dictionary) -> void:
+func _derive_overrides_according_to_debug_or_playtest(manifest: Dictionary) -> void:
     var metadata: Dictionary = manifest.metadata
     var is_debug: bool = metadata.debug
     var is_playtest: bool = metadata.playtest
