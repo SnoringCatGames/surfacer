@@ -1,13 +1,9 @@
 class_name PositionAlongSurface
 extends Reference
-# Represents a position along a surface.
-# 
-# -   Rather than considering polyline length, this only specifies the position
-#     along the axis the surface is aligned to.
-# -   min x/y -> t = 0; max x/y -> t = 1. This ignores the ordering of the
-#     surface vertices.
-# 
-# The position always indicates the center of the player's bounding box.
+## -   Represents a position along a surface.[br]
+## -   Rather than considering polyline length, this only specifies the position
+##     along the axis the surface is aligned to.[br]
+## -   The position always indicates the center of the player's bounding box.[br]
 
 
 var surface: Surface

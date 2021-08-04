@@ -1,6 +1,8 @@
 class_name Edge
 extends EdgeAttempt
-# Information for how to move from a start position to an end position.
+## -   Information for how to move from a start position to an end position.[br]
+## -   This is an "edge" in the PlatformGraph.[br]
+## -   Each edge endpoint, or "node", is a PositionAlongSurface.[br]
 
 
 # Whether the instructions for moving along this edge are updated according to
@@ -135,6 +137,7 @@ func update_navigation_state(
     if is_starting_navigation_retry:
         navigation_state.just_left_air_unexpectedly = false
         navigation_state.just_entered_air_unexpectedly = false
+        navigation_state.just_interrupted_by_unexpected_collision = false
         navigation_state.just_interrupted_by_user_action = false
         navigation_state.just_interrupted_navigation = false
         navigation_state.just_reached_end_of_edge = false
@@ -163,12 +166,13 @@ func update_navigation_state(
     navigation_state.just_interrupted_navigation = \
             navigation_state.just_left_air_unexpectedly or \
             navigation_state.just_entered_air_unexpectedly or \
+            navigation_state.just_interrupted_by_unexpected_collision or \
             navigation_state.just_interrupted_by_user_action
     
     if surface_state.just_entered_air:
         navigation_state.is_expecting_to_enter_air = false
     
-    _update_navigation_state_expected_surface_air_helper(
+    _update_navigation_state_edge_specific_helper(
             navigation_state,
             surface_state,
             is_starting_navigation_retry)
@@ -176,6 +180,7 @@ func update_navigation_state(
     navigation_state.just_interrupted_navigation = \
             navigation_state.just_left_air_unexpectedly or \
             navigation_state.just_entered_air_unexpectedly or \
+            navigation_state.just_interrupted_by_unexpected_collision or \
             navigation_state.just_interrupted_by_user_action
     
     if movement_params.bypasses_runtime_physics:
@@ -200,7 +205,7 @@ func update_navigation_state(
 
 # This enables sub-classes to provide custom logic regarding how and when a
 # surface collision may or may not be expected.
-func _update_navigation_state_expected_surface_air_helper(
+func _update_navigation_state_edge_specific_helper(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         is_starting_navigation_retry: bool) -> void:

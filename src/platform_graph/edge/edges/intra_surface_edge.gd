@@ -1,10 +1,9 @@
 class_name IntraSurfaceEdge
 extends Edge
-# Information for how to move along a surface from a start position to an end
-# position.
-# 
-# The instructions for an intra-surface edge consist of a single
-# directional-key press step, with no corresponding release.
+## -   Information for how to move along a surface from a start position to an
+##     end position.[br]
+## -   The instructions for an intra-surface edge consist of a single
+##     directional-key press step, with no corresponding release.[br]
 
 
 const TYPE := EdgeType.INTRA_SURFACE_EDGE
@@ -16,6 +15,7 @@ const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
 
 var stopping_distance := INF
 var is_backtracking_to_not_protrude_past_surface_end := false
+var is_moving_clockwise := false
 
 
 func _init(
@@ -47,6 +47,8 @@ func _init(
     # Intra-surface edges are never calculated and stored ahead of time;
     # they're only calculated at run time when navigating a specific path.
     self.is_optimized_for_path = true
+    self.is_moving_clockwise = _calculate_is_moving_clockwise(
+            instructions, start.surface)
 
 
 func update_terminal(
@@ -244,52 +246,95 @@ func _check_did_just_reach_surface_destination(
         playback) -> bool:
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration
+    
+    if surface_state.collision_count > 1:
+        var surface := get_start_surface()
+        var concave_neighbor_approaching := \
+                surface.clockwise_concave_neighbor if \
+                is_moving_clockwise else \
+                surface.counter_clockwise_concave_neighbor
+        for touched_surface in surface_state.surfaces_to_touches:
+            if touched_surface == concave_neighbor_approaching:
+                # Colliding with the neighbor that we're approaching at the
+                # end of the edge.
+                return true
+            else:
+                continue
+    
+    # Check whether we were on the other side of the destination in the
+    # previous frame.
+    
+    var end := end_position_along_surface.target_point
+    
+    var was_less_than_end: bool
+    var is_less_than_end: bool
+    var diff: float
+    var is_moving_away_from_destination: bool
+    
+    if surface_state.is_grabbing_wall:
+        var is_moving_upward: bool = \
+                instructions.instructions[0].input_key == "mu"
+        var position_y_instruction_end := \
+                end.y + stopping_distance if \
+                is_moving_upward else \
+                end.y - stopping_distance
+        was_less_than_end = surface_state.previous_center_position.y < \
+                position_y_instruction_end
+        is_less_than_end = surface_state.center_position.y < \
+                position_y_instruction_end
+        diff = position_y_instruction_end - surface_state.center_position.y
+        is_moving_away_from_destination = (diff > 0) == is_moving_upward
+        
     else:
-        # Check whether we were on the other side of the destination in the
-        # previous frame.
-        
-        var end := end_position_along_surface.target_point
-        
-        var was_less_than_end: bool
-        var is_less_than_end: bool
-        var diff: float
-        var is_moving_away_from_destination: bool
-        
-        if surface_state.is_grabbing_wall:
-            var is_moving_upward: bool = \
-                    instructions.instructions[0].input_key == "mu"
-            var position_y_instruction_end := \
-                    end.y + stopping_distance if \
-                    is_moving_upward else \
-                    end.y - stopping_distance
-            was_less_than_end = surface_state.previous_center_position.y < \
-                    position_y_instruction_end
-            is_less_than_end = surface_state.center_position.y < \
-                    position_y_instruction_end
-            diff = position_y_instruction_end - surface_state.center_position.y
-            is_moving_away_from_destination = (diff > 0) == is_moving_upward
-            
+        var is_moving_leftward: bool = \
+                instructions.instructions[0].input_key == "ml"
+        var position_x_instruction_end := \
+                end.x + stopping_distance if \
+                is_moving_leftward else \
+                end.x - stopping_distance
+        was_less_than_end = surface_state.previous_center_position.x < \
+                position_x_instruction_end
+        is_less_than_end = surface_state.center_position.x < \
+                position_x_instruction_end
+        diff = position_x_instruction_end - surface_state.center_position.x
+        is_moving_away_from_destination = (diff > 0) == is_moving_leftward
+    
+    var moved_across_destination := was_less_than_end != is_less_than_end
+    var is_close_to_destination := \
+            abs(diff) < REACHED_DESTINATION_DISTANCE_THRESHOLD
+    
+    return moved_across_destination or \
+            is_close_to_destination or \
+            is_moving_away_from_destination
+
+
+func _update_navigation_state_edge_specific_helper(
+        navigation_state: PlayerNavigationState,
+        surface_state: PlayerSurfaceState,
+        is_starting_navigation_retry: bool) -> void:
+    # -   We only need special navigation-state updates when colliding with
+    #     multiple surfaces,
+    # -   and we don't need special updates if we already know the edge is
+    #     done.
+    if surface_state.collision_count < 2 or \
+            navigation_state.just_interrupted_navigation:
+        return
+    
+    var surface := get_start_surface()
+    
+    for touched_surface in surface_state.surfaces_to_touches:
+        if touched_surface == surface or \
+                touched_surface == surface.clockwise_concave_neighbor or \
+                touched_surface == \
+                        surface.counter_clockwise_concave_neighbor or \
+                touched_surface == surface.clockwise_convex_neighbor or \
+                touched_surface == surface.counter_clockwise_convex_neighbor:
+            continue
         else:
-            var is_moving_leftward: bool = \
-                    instructions.instructions[0].input_key == "ml"
-            var position_x_instruction_end := \
-                    end.x + stopping_distance if \
-                    is_moving_leftward else \
-                    end.x - stopping_distance
-            was_less_than_end = surface_state.previous_center_position.x < \
-                    position_x_instruction_end
-            is_less_than_end = surface_state.center_position.x < \
-                    position_x_instruction_end
-            diff = position_x_instruction_end - surface_state.center_position.x
-            is_moving_away_from_destination = (diff > 0) == is_moving_leftward
-        
-        var moved_across_destination := was_less_than_end != is_less_than_end
-        var is_close_to_destination := \
-                abs(diff) < REACHED_DESTINATION_DISTANCE_THRESHOLD
-        
-        return moved_across_destination or \
-                is_close_to_destination or \
-                is_moving_away_from_destination
+            # Colliding with an unconnected surface.
+            # Interrupted the edge.
+            navigation_state.just_interrupted_by_unexpected_collision = true
+            break
 
 
 static func _calculate_instructions(
@@ -320,6 +365,24 @@ static func _calculate_instructions(
     return EdgeInstructions.new(
             [instruction],
             duration)
+
+
+static func _calculate_is_moving_clockwise(
+        instructions: EdgeInstructions,
+        surface: Surface) -> bool:
+    var input_key: String = instructions.instructions[0].input_key
+    match surface.side:
+        SurfaceSide.FLOOR:
+            return input_key == "mr"
+        SurfaceSide.LEFT_WALL:
+            return input_key == "md"
+        SurfaceSide.RIGHT_WALL:
+            return input_key == "mu"
+        SurfaceSide.CEILING:
+            return input_key == "ml"
+        _:
+            Sc.logger.error()
+            return false
 
 
 static func _calculate_velocity_end(

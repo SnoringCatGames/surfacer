@@ -1,5 +1,12 @@
 class_name Surface
 extends Reference
+## -   A section of a collidable tile map formed from all continguous tiles
+##     along one axially-aligned side.
+## -   E.g., a single disconnected tile will have four surfaces:
+##     FLOOR, LEFT_WALL, RIGHT_WALL, and CEILING
+## -   **NOTE**: "left wall" is from the perspective of the openspace around
+##               the tile. So a "left-wall" surface, is actually along the
+##               "right-side" of the tile.
 
 
 # Vertices are always specified in clockwise order.

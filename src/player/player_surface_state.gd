@@ -70,6 +70,8 @@ var toward_wall_sign := 0
 
 # Dictionary<Surface, SurfaceTouch>
 var surfaces_to_touches := {}
+# Dictionary<int, SurfaceTouch>
+var surface_sides_to_touches := {}
 var surface_grab: SurfaceTouch = null
 
 var _collision_tile_map_coord_result := CollisionTileMapCoordResult.new()
@@ -205,14 +207,6 @@ func _update_which_sides_are_touched(player) -> void:
             (0 if !is_touching_wall else \
             (1 if which_wall == SurfaceSide.RIGHT_WALL else \
             -1))
-    
-    is_facing_wall = \
-            (which_wall == SurfaceSide.RIGHT_WALL and \
-                    horizontal_facing_sign > 0) or \
-            (which_wall == SurfaceSide.LEFT_WALL and \
-                    horizontal_facing_sign < 0)
-    
-    # FIXME: ----- Update other grab/action-related state that may have been nullified?
 
 
 func _update_touched_surfaces(player) -> void:
@@ -250,7 +244,10 @@ func _update_touched_surfaces(player) -> void:
         var just_started := !surfaces_to_touches.has(touched_surface)
         
         if just_started:
-            surfaces_to_touches[touched_surface] = SurfaceTouch.new()
+            var touch := SurfaceTouch.new()
+            surfaces_to_touches[touched_surface] = touch
+            assert(!surface_sides_to_touches.has(touched_side))
+            surface_sides_to_touches[touched_side] = touch
         
         var surface_touch: SurfaceTouch = surfaces_to_touches[touched_surface]
         surface_touch.surface = touched_surface
@@ -266,6 +263,7 @@ func _update_touched_surfaces(player) -> void:
     for surface_touch in surfaces_to_touches.values():
         if !surface_touch._is_still_touching:
             surfaces_to_touches.erase(surface_touch.surface)
+            surface_sides_to_touches.erase(surface_touch.surface.side)
 
 
 func _update_surface_actions(
@@ -530,8 +528,11 @@ func _update_surface_touch_from_expected_navigation(
     surface_touch.just_started = just_started
     surface_touch._is_still_touching = true
     
-    surfaces_to_touches.clear()
-    surfaces_to_touches[surface_touch.surface] = surface_touch
+    if just_started:
+        surfaces_to_touches.clear()
+        surfaces_to_touches[surface_touch.surface] = surface_touch
+        surface_sides_to_touches.clear()
+        surface_sides_to_touches[surface_touch.surface.side] = surface_touch
 
 
 func _get_expected_position_for_bypassing_runtime_physics(player) -> \
