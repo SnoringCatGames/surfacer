@@ -131,7 +131,7 @@ static func _calculate_instructions(
 # generates many false-positive departures and collisions when rounding the
 # corner between surfaces. So we need to be more permissible here for what we
 # consider to be expected when leaving and entering the air.
-func _update_navigation_state_expected_surface_air_helper(
+func _update_navigation_state_edge_specific_helper(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         is_starting_navigation_retry: bool) -> void:

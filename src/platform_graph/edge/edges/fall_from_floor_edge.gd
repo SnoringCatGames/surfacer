@@ -113,7 +113,7 @@ func _check_did_just_reach_surface_destination(
 # can trigger multiple extraneous launch/land events if the player's collision
 # boundary is not square. So this function override adds logic to ignore any of
 # these extra collisions with the starting surface.
-func _update_navigation_state_expected_surface_air_helper(
+func _update_navigation_state_edge_specific_helper(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         is_starting_navigation_retry: bool) -> void:

@@ -430,6 +430,9 @@ func update(
         elif navigation_state.just_entered_air_unexpectedly:
             interruption_type_label = \
                     "navigation_state.just_entered_air_unexpectedly"
+        elif navigation_state.just_interrupted_by_unexpected_collision:
+            interruption_type_label = \
+                    "navigation_state.just_interrupted_by_unexpected_collision"
         else: # navigation_state.just_interrupted_by_user_action
             interruption_type_label = \
                     "navigation_state.just_interrupted_by_user_action"
