@@ -6,6 +6,7 @@ extends Reference
 
 signal navigation_started
 signal destination_reached
+signal navigation_interrupted
 
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
@@ -450,6 +451,9 @@ func update(
                     true)
         else:
             _reset()
+        
+        emit_signal("navigation_interrupted")
+        
         return
         
     elif navigation_state.just_reached_end_of_edge:
