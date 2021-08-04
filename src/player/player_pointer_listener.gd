@@ -91,10 +91,13 @@ func _unhandled_input(event: InputEvent) -> void:
     
 #    if pointer_up_position != Vector2.INF or \
 #            pointer_drag_position != Vector2.INF:
-#        _player._print("%s:         %8.3fs", [
+#        _player._log_player_event(
+#            "%s:         %8.3fs",
+#            [
 #                event_type,
 #                Sc.time.get_play_time(),
-#            ])
+#            ],
+#            true)
     
     if pointer_up_position != Vector2.INF:
         _on_pointer_released(pointer_up_position)
