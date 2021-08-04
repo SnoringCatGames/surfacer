@@ -453,7 +453,7 @@ func _on_find_and_expand_complete(
         player_name: String,
         search_type: int,
         metadata: Dictionary) -> void:
-    print_msg("Inspector search complete: player_name=%s, search_type=%s", [
+    _print("Inspector search complete: player_name=%s, search_type=%s", [
         player_name,
         InspectorSearchType.get_string(search_type),
     ])
@@ -551,7 +551,7 @@ static func _find_closest_jump_land_positions(
 
 # Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
-func print_msg(
+func _print(
         message_template: String,
         message_args = null) -> void:
     if Su.is_surfacer_logging and \

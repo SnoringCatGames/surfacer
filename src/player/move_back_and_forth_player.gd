@@ -180,7 +180,7 @@ func _trigger_move(
             true)
     _was_last_move_minward = is_moving_minward
     
-    print_msg("%s._trigger_move: is_moving_minward=%s" % [
+    _print("%s._trigger_move: is_moving_minward=%s" % [
         player_name,
         str(is_moving_minward),
     ])

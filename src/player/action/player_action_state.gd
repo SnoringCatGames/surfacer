@@ -188,6 +188,6 @@ static func _log_new_press_or_release(
         player.velocity,
     ]
     if just_pressed:
-        player.print_msg("START %5s:%8s;%8.3fs;P%29s;V%29s", message_args)
+        player._print("START %5s:%8s;%8.3fs;P%29s;V%29s", message_args)
     if just_released:
-        player.print_msg("STOP  %5s:%8s;%8.3fs;P%29s;V%29s", message_args)
+        player._print("STOP  %5s:%8s;%8.3fs;P%29s;V%29s", message_args)
