@@ -1,5 +1,7 @@
 class_name PlayerSurfaceState
 extends Reference
+## -   State relating to a player's position relative to nearby surfaces.[br]
+## -   This is updated each physics frame.[br]
 
 
 var is_touching_floor := false

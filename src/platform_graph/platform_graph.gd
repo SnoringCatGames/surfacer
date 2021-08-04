@@ -1,13 +1,13 @@
 class_name PlatformGraph
 extends Reference
-## -   This graph is optimized for run-time path-finding.
+## -   This graph is optimized for run-time path-finding.[br]
 ## -   Graph parsing is slow and can done either dynamically when starting the
-##     level or ahead of time and saved to separate file.
-## -   Graph parsing can be multi-threaded.
+##     level or ahead of time and saved to separate file.[br]
+## -   Graph parsing can be multi-threaded.[br]
 ## -   A PlatfromGraph is specific to a given player type. This is important
 ##     since different players have different jump parameters and can reach
 ##     different surfaces, so the edges in the graph will be different for each
-##     player.
+##     player.[br]
 
 
 signal calculation_progressed(
