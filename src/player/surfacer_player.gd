@@ -335,21 +335,27 @@ func _physics_process(delta: float) -> void:
     _handle_pointer_selections()
     
     if surface_state.just_left_air:
-        _print("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s", [
-                player_name,
-                Sc.time.get_play_time(),
-                surface_state.center_position,
-                velocity,
-                surface_state.grabbed_surface.to_string(),
-            ])
+        _log_player_event(
+                "GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s",
+                [
+                    player_name,
+                    Sc.time.get_play_time(),
+                    surface_state.center_position,
+                    velocity,
+                    surface_state.grabbed_surface.to_string(),
+                ],
+                true)
     elif surface_state.just_entered_air:
-        _print("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s", [
-                player_name,
-                Sc.time.get_play_time(),
-                surface_state.center_position,
-                velocity,
-                surface_state.previous_grabbed_surface.to_string(),
-            ])
+        _log_player_event(
+                "LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s",
+                [
+                    player_name,
+                    Sc.time.get_play_time(),
+                    surface_state.center_position,
+                    velocity,
+                    surface_state.previous_grabbed_surface.to_string(),
+                ],
+                true)
     elif surface_state.just_touched_a_surface:
         var side_str: String
         if surface_state.is_touching_floor:
@@ -358,13 +364,16 @@ func _physics_process(delta: float) -> void:
             side_str = "CEILING"
         else:
             side_str = "WALL"
-        _print("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s", [
-                player_name,
-                Sc.time.get_play_time(),
-                surface_state.center_position,
-                velocity,
-                side_str,
-            ])
+        _log_player_event(
+                "TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s",
+                [
+                    player_name,
+                    Sc.time.get_play_time(),
+                    surface_state.center_position,
+                    velocity,
+                    side_str,
+                ],
+                true)
     
     _update_navigator(delta_scaled)
     
@@ -418,21 +427,23 @@ func _update_navigator(delta_scaled: float) -> void:
 
 func _handle_pointer_selections() -> void:
     if new_selection.get_has_selection():
-        _print("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
-                player_name,
-                Sc.time.get_play_time(),
-                str(new_selection.pointer_position),
-                new_selection.navigation_destination.to_string() if \
-                new_selection.get_is_selection_navigatable() else \
-                "[No matching surface]"
-            ])
+        _log_player_event(
+                "NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
+                    player_name,
+                    Sc.time.get_play_time(),
+                    str(new_selection.pointer_position),
+                    new_selection.navigation_destination.to_string() if \
+                    new_selection.get_is_selection_navigatable() else \
+                    "[No matching surface]"
+                ],
+                true)
         
         if new_selection.get_is_selection_navigatable():
             last_selection.copy(new_selection)
             navigator.navigate_path(last_selection.path)
             Sc.audio.play_sound("nav_select_success")
         else:
-            _print("TARGET IS TOO FAR FROM ANY SURFACE")
+            _log_player_event("TARGET IS TOO FAR FROM ANY SURFACE", [], true)
             Sc.audio.play_sound("nav_select_fail")
         
         new_selection.clear()
@@ -582,11 +593,13 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
 
 # Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
-func _print(
+func _log_player_event(
         message_template: String,
-        message_args = null) -> void:
-    if Su.is_surfacer_logging and \
-            movement_params.logs_player_actions and \
+        message_args = null,
+        is_low_level_surfacer_event = false) -> void:
+    if movement_params.logs_player_actions and \
+            (!is_low_level_surfacer_event or \
+                    Su.is_surfacer_logging) and \
             (is_human_player or \
                     movement_params.logs_computer_player_events):
         if message_args != null:
