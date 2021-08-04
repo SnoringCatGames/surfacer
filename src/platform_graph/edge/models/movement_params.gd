@@ -280,11 +280,11 @@ var backtracks_for_higher_jumps_during_hor_step_calculations := true \
 # FIXME: ---------------------------- Decrease this? After debugging run-time/build-time collision-margin inconsistency
 ## The amount of extra margin to include around the player collision boundary
 ## when performing collision detection for a given edge calculation.
-var collision_margin_for_edge_calculations := 4.0 \
+var collision_margin_for_edge_calculations := 1.0 \
         setget _set_collision_margin_for_edge_calculations
 ## The amount of extra margin to include for waypoint offsets, so that the
 ## player doesn't collide unexpectedly with the surface.
-var collision_margin_for_waypoint_positions := 5.0 \
+var collision_margin_for_waypoint_positions := 4.0 \
         setget _set_collision_margin_for_waypoint_positions
 ## -   Some jump/land posititions are less likely to produce valid movement,
 ##     simply because of how the surfaces are arranged.[br]

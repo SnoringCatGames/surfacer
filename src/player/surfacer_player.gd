@@ -409,6 +409,7 @@ func _physics_process(delta: float) -> void:
                 4,
                 Sc.geometry.FLOOR_MAX_ANGLE)
     
+    # TODO: Only update surface_state if the player actually moved?
     surface_state.update_for_movement(self)
     
     if surface_state.did_move_last_frame:
