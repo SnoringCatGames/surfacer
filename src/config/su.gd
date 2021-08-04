@@ -151,7 +151,7 @@ var max_zoom_multiplier_from_pointer := 1.5
 var max_pan_distance_from_pointer := 512.0
 var duration_to_max_pan_from_pointer_at_max_control := 0.67
 var duration_to_max_zoom_from_pointer_at_max_control := 3.0
-var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.3
+var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.16
 
 var skip_choreography_framerate_multiplier := 10.0
 
@@ -331,6 +331,27 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
     if manifest.has("path_beat_update_throttle_interval"):
         self.path_beat_update_throttle_interval = \
                 manifest.path_beat_update_throttle_interval
+    
+    if manifest.has("snaps_camera_back_to_player"):
+        self.snaps_camera_back_to_player = \
+                manifest.snaps_camera_back_to_player
+    if manifest.has("max_zoom_multiplier_from_pointer"):
+        self.max_zoom_multiplier_from_pointer = \
+                manifest.max_zoom_multiplier_from_pointer
+    if manifest.has("max_pan_distance_from_pointer"):
+        self.max_pan_distance_from_pointer = \
+                manifest.max_pan_distance_from_pointer
+    if manifest.has("duration_to_max_pan_from_pointer_at_max_control"):
+        self.duration_to_max_pan_from_pointer_at_max_control = \
+                manifest.duration_to_max_pan_from_pointer_at_max_control
+    if manifest.has("duration_to_max_zoom_from_pointer_at_max_control"):
+        self.duration_to_max_zoom_from_pointer_at_max_control = \
+                manifest.duration_to_max_zoom_from_pointer_at_max_control
+    if manifest.has(
+            "screen_size_ratio_distance_from_edge_to_start_pan_from_pointer"):
+        self.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer = \
+                manifest \
+                .screen_size_ratio_distance_from_edge_to_start_pan_from_pointer
     
     if manifest.has("skip_choreography_framerate_multiplier"):
         self.skip_choreography_framerate_multiplier = \
