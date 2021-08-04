@@ -1,5 +1,7 @@
 class_name SurfaceNavigator
 extends Reference
+## Logic for navigating a player along a path of edges through a platform graph
+## to a destination position.
 
 
 signal navigation_started
