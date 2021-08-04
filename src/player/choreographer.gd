@@ -61,7 +61,7 @@ var _initial_is_navigation_destination_shown: bool
 
 var _initial_zoom: float
 var _initial_time_scale: float
-var _current_zoom: float
+var _current_zoom_multiplier: float
 var _current_time_scale: float
 
 
@@ -101,7 +101,7 @@ func start() -> void:
     
     _initial_zoom = Sc.camera_controller.zoom_factor
     _initial_time_scale = Sc.time.time_scale
-    _current_zoom = _initial_zoom
+    _current_zoom_multiplier = 1.0
     _current_time_scale = _initial_time_scale
     
     _execute_next_step()
@@ -120,7 +120,8 @@ func _on_finished() -> void:
     is_finished = true
     Su.ann_manifest.is_previous_trajectory_shown = \
             _initial_is_previous_trajectory_shown
-    Su.ann_manifest.is_active_trajectory_shown = _initial_is_active_trajectory_shown
+    Su.ann_manifest.is_active_trajectory_shown = \
+            _initial_is_active_trajectory_shown
     Su.ann_manifest.is_navigation_destination_shown = \
             _initial_is_navigation_destination_shown
     Sc.camera_controller.zoom_factor = _initial_zoom
@@ -166,25 +167,21 @@ func _execute_next_step() -> void:
                                 target, player)
                 var is_navigation_valid := \
                         player.navigator.navigate_to_position(destination)
-                # FIXME: ---------------------------
-                # - Running with save-state of very-slow-multiplier breaks this?
-                if !is_navigation_valid:
-                    is_navigation_valid = \
-                            player.navigator.navigate_to_position(destination)
                 assert(is_navigation_valid)
-            "zoom":
-                _current_zoom = \
-                        step.zoom if \
-                        !is_inf(step.zoom) else \
-                        _initial_zoom
+            "zoom_multiplier":
+                _current_zoom_multiplier = \
+                        step.zoom_multiplier if \
+                        !is_inf(step.zoom_multiplier) else \
+                        1.0
+                var current_zoom := _initial_zoom * _current_zoom_multiplier
                 if is_step_immediate:
-                    Sc.camera_controller.zoom_factor = _current_zoom
+                    Sc.camera_controller.zoom_factor = current_zoom
                 else:
                     _tween.interpolate_property(
                             Sc.camera_controller,
                             "zoom_factor",
                             Sc.camera_controller.zoom_factor,
-                            _current_zoom,
+                            current_zoom,
                             duration,
                             ease_name)
                     is_tween_registered = true
@@ -265,5 +262,6 @@ func skip() -> void:
     #       immediately.
     if Sc.time.time_scale != _current_time_scale:
         Sc.time.time_scale = _current_time_scale
-    if Sc.camera_controller.zoom_factor != _current_zoom:
-        Sc.camera_controller.zoom_factor = _current_zoom
+    var current_zoom := _initial_zoom * _current_zoom_multiplier
+    if Sc.camera_controller.zoom_factor != current_zoom:
+        Sc.camera_controller.zoom_factor = current_zoom
