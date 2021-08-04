@@ -80,7 +80,7 @@ func navigate_path(
     if path == null:
         # Destination cannot be reached from origin.
         Sc.profiler.stop("navigator_navigate_path")
-        print_msg("CANNOT NAVIGATE NULL PATH")
+        _print("CANNOT NAVIGATE NULL PATH")
         return false
         
     else:
@@ -126,7 +126,7 @@ func navigate_path(
             path.to_string_with_newlines(1),
             duration_navigate_to_position,
         ]
-        print_msg(format_string_template, format_string_arguments)
+        _print(format_string_template, format_string_arguments)
         
         _start_edge(
                 0,
@@ -321,7 +321,7 @@ func _set_reached_destination() -> void:
     has_reached_destination = true
     just_reached_destination = true
     
-    print_msg("REACHED END OF PATH: %8.3fs", Sc.time.get_play_time())
+    _print("REACHED END OF PATH: %8.3fs", Sc.time.get_play_time())
     
     emit_signal("destination_reached")
 
@@ -381,7 +381,7 @@ func _start_edge(
             edge.to_string_with_newlines(0),
             str(duration_start_edge),
         ]
-    print_msg(format_string_template, format_string_arguments)
+    _print(format_string_template, format_string_arguments)
     
     # Some instructions could be immediately skipped, depending on runtime
     # state, so this gives us a change to move straight to the next edge.
@@ -439,7 +439,7 @@ func update(
         else: # navigation_state.just_interrupted_by_user_action
             interruption_type_label = \
                     "navigation_state.just_interrupted_by_user_action"
-        print_msg("EDGE MVT INTERRUPTED:%8.3fs; %s",
+        _print("EDGE MVT INTERRUPTED:%8.3fs; %s",
                 [Sc.time.get_play_time(), interruption_type_label])
         
         # TODO: Handle interruptions differently.
@@ -457,7 +457,7 @@ func update(
         return
         
     elif navigation_state.just_reached_end_of_edge:
-        print_msg("REACHED END OF EDGE: %8.3fs; %s", [
+        _print("REACHED END OF EDGE: %8.3fs; %s", [
             Sc.time.get_play_time(),
             edge.get_name(),
         ])
@@ -496,7 +496,7 @@ func update(
                         Sc.time.get_play_time(),
                         backtracking_edge.to_string_with_newlines(0),
                     ]
-                print_msg(format_string_template, format_string_arguments)
+                _print(format_string_template, format_string_arguments)
                 
                 path.edges.push_back(backtracking_edge)
                 
@@ -545,7 +545,7 @@ func get_previous_destination() -> PositionAlongSurface:
 
 # Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
-func print_msg(
+func _print(
         message_template: String,
         message_args = null) -> void:
     if Su.is_surfacer_logging and \

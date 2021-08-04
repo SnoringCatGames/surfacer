@@ -69,14 +69,14 @@ func _destroy() -> void:
 func on_item_selected() -> void:
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
-        print_msg("Inspector item selected: %s", to_string())
+        _print("Inspector item selected: %s", to_string())
 
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
-        print_msg("Inspector item expanded: %s", to_string())
+        _print("Inspector item expanded: %s", to_string())
 
 
 func on_item_collapsed() -> void:
@@ -84,7 +84,7 @@ func on_item_collapsed() -> void:
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress() and \
             get_has_children():
-        print_msg("Inspector item collapsed: %s", to_string())
+        _print("Inspector item collapsed: %s", to_string())
 
 
 func expand() -> void:
@@ -242,7 +242,7 @@ func get_annotation_elements() -> Array:
 
 # Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
-func print_msg(
+func _print(
         message_template: String,
         message_args = null) -> void:
     if Su.is_surfacer_logging and \

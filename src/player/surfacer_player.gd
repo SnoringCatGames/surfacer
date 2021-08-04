@@ -335,7 +335,7 @@ func _physics_process(delta: float) -> void:
     _handle_pointer_selections()
     
     if surface_state.just_left_air:
-        print_msg("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s", [
+        _print("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s", [
                 player_name,
                 Sc.time.get_play_time(),
                 surface_state.center_position,
@@ -343,7 +343,7 @@ func _physics_process(delta: float) -> void:
                 surface_state.grabbed_surface.to_string(),
             ])
     elif surface_state.just_entered_air:
-        print_msg("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s", [
+        _print("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s", [
                 player_name,
                 Sc.time.get_play_time(),
                 surface_state.center_position,
@@ -358,7 +358,7 @@ func _physics_process(delta: float) -> void:
             side_str = "CEILING"
         else:
             side_str = "WALL"
-        print_msg("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s", [
+        _print("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s", [
                 player_name,
                 Sc.time.get_play_time(),
                 surface_state.center_position,
@@ -418,7 +418,7 @@ func _update_navigator(delta_scaled: float) -> void:
 
 func _handle_pointer_selections() -> void:
     if new_selection.get_has_selection():
-        print_msg("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
+        _print("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
                 player_name,
                 Sc.time.get_play_time(),
                 str(new_selection.pointer_position),
@@ -432,7 +432,7 @@ func _handle_pointer_selections() -> void:
             navigator.navigate_path(last_selection.path)
             Sc.audio.play_sound("nav_select_success")
         else:
-            print_msg("TARGET IS TOO FAR FROM ANY SURFACE")
+            _print("TARGET IS TOO FAR FROM ANY SURFACE")
             Sc.audio.play_sound("nav_select_fail")
         
         new_selection.clear()
@@ -582,7 +582,7 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
 
 # Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
-func print_msg(
+func _print(
         message_template: String,
         message_args = null) -> void:
     if Su.is_surfacer_logging and \
