@@ -116,7 +116,7 @@ func _init(
             (trajectory.frame_continuous_positions_from_steps.size() >= \
                     expected_frame_count_for_duration - 10 and \
             trajectory.frame_continuous_positions_from_steps.size() <= \
-                    expected_frame_count_for_duration + 3))
+                    expected_frame_count_for_duration + 4))
 
 
 func update_for_surface_state(
