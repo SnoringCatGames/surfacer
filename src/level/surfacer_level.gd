@@ -133,13 +133,20 @@ func add_player(
         position: Vector2,
         is_human_player: bool) -> SurfacerPlayer:
     var player: SurfacerPlayer = Sc.utils.add_scene(
-            self,
+            null,
             path_or_packed_scene,
             false,
             true)
     player.set_position(position)
-    all_players.push_back(player)
-    add_child(player)
+    
+    player.set_is_human_player(is_human_player)
+    if is_human_player:
+        Su.human_player = player
+    
+    var graph: PlatformGraph = \
+            Su.graph_parser.platform_graphs[player.player_name]
+    if graph != null:
+        player.set_platform_graph(graph)
     
     var group: String = \
             Su.group_name_human_players if \
@@ -147,16 +154,9 @@ func add_player(
             Su.group_name_computer_players
     player.add_to_group(group)
     
-    var graph: PlatformGraph = \
-            Su.graph_parser.platform_graphs[player.player_name]
-    if graph != null:
-        player.set_platform_graph(graph)
+    all_players.push_back(player)
     
-    if is_human_player:
-        player.init_human_player_state()
-        Su.human_player = player
-    else:
-        player.init_computer_player_state()
+    add_child(player)
     
     # Set up some annotators to help with debugging.
     player.set_is_sprite_visible(false)

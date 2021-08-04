@@ -228,10 +228,10 @@ func _update_touched_surfaces(player) -> void:
                 _collision_tile_map_coord_result,
                 touch_position,
                 touched_tile_map,
-                is_touching_floor,
-                is_touching_ceiling,
-                is_touching_left_wall,
-                is_touching_right_wall)
+                touched_side == SurfaceSide.FLOOR,
+                touched_side == SurfaceSide.CEILING,
+                touched_side == SurfaceSide.LEFT_WALL,
+                touched_side == SurfaceSide.RIGHT_WALL)
         var touch_position_tile_map_coord := \
                 _collision_tile_map_coord_result.tile_map_coord
         var touched_tile_map_index: int = \

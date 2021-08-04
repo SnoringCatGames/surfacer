@@ -33,12 +33,13 @@ var movement_params: MovementParams
 var possible_surfaces_set: Dictionary
 
 var is_human_player := false
-var _is_initialized := false
-var _is_destroyed := false
-var _is_navigator_initialized := false
 var _is_ready := false
+var _is_destroyed := false
 
 var _configuration_warning := ""
+
+var start_position := Vector2.INF
+var start_surface: Surface
 
 var velocity := Vector2.ZERO
 
@@ -96,6 +97,8 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+    start_position = position
+    
     _update_editor_configuration_debounced()
     _initialize_child_movement_params()
     _initialize_children_proximity_detectors()
@@ -138,7 +141,6 @@ func _ready() -> void:
     animator.face_right()
     
     _is_ready = true
-    _check_for_initialization_complete()
     
     surface_state.previous_center_position = self.position
     surface_state.center_position = self.position
@@ -148,6 +150,8 @@ func _ready() -> void:
             self,
             "_on_resized")
     _on_resized()
+    
+    _init_navigator()
 
 
 func _on_annotators_ready() -> void:
@@ -268,7 +272,7 @@ func _initialize_children_proximity_detectors() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if _is_initialized and \
+    if _is_ready and \
             !_is_destroyed and \
             Sc.gui.is_user_interaction_enabled and \
             navigator.is_currently_navigating and \
@@ -280,36 +284,22 @@ func _on_resized() -> void:
     Sc.camera_controller._on_resized()
 
 
-func init_human_player_state() -> void:
-    is_human_player = true
-    # Only a single, user-controlled player should have a camera.
-    _set_camera()
-    _init_navigator()
-    _init_user_controller_action_source()
-    _is_navigator_initialized = true
-    _check_for_initialization_complete()
+func _on_attached_to_first_surface() -> void:
+    pass
 
 
-func init_computer_player_state() -> void:
-    is_human_player = false
-    _init_navigator()
-    _is_navigator_initialized = true
-    _check_for_initialization_complete()
+func set_is_human_player(value: bool) -> void:
+    is_human_player = value
+    if is_human_player:
+        # Only a single, user-controlled player should have a camera.
+        _set_camera()
+        _init_user_controller_action_source()
 
 
 func set_platform_graph(graph: PlatformGraph) -> void:
     self.graph = graph
     self.surface_parser = graph.surface_parser
     self.possible_surfaces_set = graph.surfaces_set
-    _check_for_initialization_complete()
-
-
-func _check_for_initialization_complete() -> void:
-    self._is_initialized = \
-            graph != null and \
-            _is_navigator_initialized and \
-            _is_ready and \
-            animator._is_ready
 
 
 func _set_camera() -> void:
@@ -332,7 +322,7 @@ func _init_navigator() -> void:
 
 
 func _physics_process(delta: float) -> void:
-    if !_is_initialized or \
+    if !_is_ready or \
             _is_destroyed:
         # Fake players are only used for testing potential collisions under the
         # hood.
@@ -524,6 +514,11 @@ func processed_action(name: String) -> bool:
 
 func _update_surface_state(preserves_just_changed_state := false) -> void:
     surface_state.update_for_actions(self, preserves_just_changed_state)
+    
+    if surface_state.just_grabbed_a_surface and \
+            start_surface == null:
+        start_surface = surface_state.grabbed_surface
+        _on_attached_to_first_surface()
 
 
 # Update whether or not we should currently consider collisions with

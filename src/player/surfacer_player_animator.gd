@@ -85,9 +85,6 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
     _is_ready = true
-    var parent := get_parent()
-    if parent.has_method("_check_for_initialization_complete"):
-        parent._check_for_initialization_complete()
     _update_editor_configuration()
 
 
