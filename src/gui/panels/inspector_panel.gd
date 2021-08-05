@@ -16,20 +16,20 @@ var tree_font_size := "Xs" setget _set_tree_font_size
 var _annotator_control_items := []
 
 var _annotator_control_item_classes := [
-    PlayerAnnotatorSettingsLabeledControlItem,
-    LevelAnnotatorSettingsLabeledControlItem,
-    PlayerPositionAnnotatorSettingsLabeledControlItem,
-    SurfacesAnnotatorSettingsLabeledControlItem,
-    RecentMovementAnnotatorSettingsLabeledControlItem,
-    RulerAnnotatorSettingsLabeledControlItem,
-    PreselectionTrajectoryAnnotatorSettingsLabeledControlItem,
-    PreviousTrajectoryAnnotatorSettingsLabeledControlItem,
-    ActiveTrajectoryAnnotatorSettingsLabeledControlItem,
-    NavigationDestinationAnnotatorSettingsLabeledControlItem,
-    TimeScaleSettingsLabeledControlItem,
-    CameraZoomSettingsLabeledControlItem,
-    MetronomeSettingsLabeledControlItem,
-    IsLoggingLowLevelPlayerFrameworkEventsSettingsLabeledControlItem,
+    PlayerAnnotatorControlRow,
+    LevelAnnotatorControlRow,
+    PlayerPositionAnnotatorControlRow,
+    SurfacesAnnotatorControlRow,
+    RecentMovementAnnotatorControlRow,
+    RulerAnnotatorControlRow,
+    PreselectionTrajectoryAnnotatorControlRow,
+    PreviousTrajectoryAnnotatorControlRow,
+    ActiveTrajectoryAnnotatorControlRow,
+    NavigationDestinationAnnotatorControlRow,
+    TimeScaleControlRow,
+    CameraZoomControlRow,
+    MetronomeControlRow,
+    IsLoggingLowLevelPlayerFrameworkEventsControlRow,
 ]
 
 
@@ -138,7 +138,7 @@ func _initialize_annotator_checkboxes() -> void:
                 annotators.get_constant("hseparation")) / \
             4.0
     for item_class in _annotator_control_item_classes:
-        var item: LabeledControlItem = item_class.new()
+        var item: ControlRow = item_class.new()
         item.font_size = tree_font_size
         item.is_control_on_right_side = false
         item.update_item()
@@ -155,10 +155,10 @@ func _initialize_annotator_checkboxes() -> void:
         for label in Sc.utils.get_children_by_type(row, Label, true):
             label.add_font_override("font", Sc.gui.fonts.main_xs)
         
-        if item.type == LabeledControlItem.CHECKBOX:
+        if item.type == ControlRow.CHECKBOX:
             item.set_check_box_scale(CHECK_BOX_SCALE)
         
-        if item.type == LabeledControlItem.SLIDER:
+        if item.type == ControlRow.SLIDER:
             item.set_original_size(
                     Vector2(SLIDER_WIDTH, item.control.rect_size.y))
         

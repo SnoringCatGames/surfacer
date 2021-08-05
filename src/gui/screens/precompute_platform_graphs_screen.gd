@@ -58,11 +58,11 @@ func _initialize_metrics() -> void:
     
     for stage in STAGES_TO_DISPLAY_METRICS_FOR:
         stage_to_metric_items[stage] = [
-            HeaderLabeledControlItem.new(stage),
-            StaticTextLabeledControlItem.new("Sum", "-"),
-            StaticTextLabeledControlItem.new("Mean", "-"),
-            StaticTextLabeledControlItem.new("Min", "-"),
-            StaticTextLabeledControlItem.new("Max", "-"),
+            HeaderControlRow.new(stage),
+            StaticTextControlRow.new("Sum", "-"),
+            StaticTextControlRow.new("Mean", "-"),
+            StaticTextControlRow.new("Min", "-"),
+            StaticTextControlRow.new("Max", "-"),
         ]
     
     var metrics_items := []
