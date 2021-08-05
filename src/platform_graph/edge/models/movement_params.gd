@@ -483,13 +483,10 @@ var _property_list_amendment := [
 ]
 
 var _configuration_warning := ""
-
-var _is_instanced_from_bootstrap := false
-
-var _debounced_update_parameters: FuncRef = Sc.time.debounce(
-        funcref(self, "_update_parameters_debounced"),
-        0.02,
-        true)
+var _is_ready := false
+var _is_instanced_from_bootstrap := false \
+        setget _set_is_instanced_from_bootstrap
+var _debounced_update_parameters: FuncRef
 
 # ---
 
@@ -503,6 +500,18 @@ func _init() -> void:
 
 func _enter_tree() -> void:
     call_deferred("_parse_shape_from_parent")
+
+
+func _ready() -> void:
+    _set_up()
+
+
+func _set_up() -> void:
+    _is_ready = true
+    _debounced_update_parameters = Sc.time.debounce(
+            funcref(self, "_update_parameters_debounced"),
+            0.02,
+            true)
 
 
 func _parse_shape_from_parent() -> void:
@@ -541,6 +550,8 @@ func _get_property_list() -> Array:
 
 
 func _update_parameters() -> void:
+    if !_is_ready:
+        return
     _debounced_update_parameters.call_func()
 
 
@@ -811,6 +822,11 @@ func get_max_horizontal_jump_distance(surface_side: int) -> float:
             surface_side == SurfaceSide.LEFT_WALL or \
             surface_side == SurfaceSide.RIGHT_WALL else \
             floor_jump_max_horizontal_jump_distance
+
+
+func _set_is_instanced_from_bootstrap(value: bool) -> void:
+    _is_instanced_from_bootstrap = value
+    _set_up()
 
 
 func _set_can_grab_walls(value: bool) -> void:

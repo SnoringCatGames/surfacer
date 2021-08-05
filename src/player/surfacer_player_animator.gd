@@ -64,13 +64,13 @@ var _base_rate := 1.0
 var _is_ready := false
 var _configuration_warning := ""
 
-var _debounced_update_editor_configuration: FuncRef = Sc.time.debounce(
-        funcref(self, "_update_editor_configuration_debounced"),
-        0.02,
-        false)
+var _debounced_update_editor_configuration: FuncRef
 
 
 func _enter_tree() -> void:
+    if Engine.editor_hint:
+        return
+    
     # Populate these references immediately, since _update_editor_configuration
     # is debounced.
     var animation_players: Array = Sc.utils.get_children_by_type(
@@ -85,6 +85,10 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
     _is_ready = true
+    _debounced_update_editor_configuration = Sc.time.debounce(
+            funcref(self, "_update_editor_configuration_debounced"),
+            0.02,
+            false)
     _update_editor_configuration()
 
 
@@ -109,6 +113,8 @@ func remove_child(child: Node) -> void:
 
 
 func _update_editor_configuration() -> void:
+    if !_is_ready:
+        return
     _debounced_update_editor_configuration.call_func()
 
 

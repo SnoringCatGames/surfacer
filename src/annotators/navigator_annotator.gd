@@ -43,9 +43,7 @@ func _process(_delta: float) -> void:
         current_path_beats = navigator.path_beats
         if current_path != null:
             if _get_is_exclamation_mark_shown():
-                Su.annotators.add_transient(
-                        ExclamationMarkAnnotator.new(
-                                navigator.player))
+                navigator.player.show_exclamation_mark()
             if is_enabled:
                 _trigger_fade_in(true)
         update()
