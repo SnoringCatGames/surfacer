@@ -53,6 +53,10 @@ var _dash_cooldown_timeout: int
 var _dash_fade_tween: ScaffolderTween
 
 
+func _init() -> void:
+    self.add_to_group(Sc.players.GROUP_NAME_SURFACER_PLAYERS)
+
+
 func _ready() -> void:
     surface_state.previous_center_position = self.position
     surface_state.center_position = self.position
@@ -91,10 +95,18 @@ func _ready() -> void:
         prediction.set_up(self)
         _attach_prediction()
     
+    _init_platform_graph()
     _init_navigator()
+    
+    # Set up some annotators to help with debugging.
+    set_is_sprite_visible(false)
+    Su.annotators.create_player_annotator(
+            self,
+            is_human_player)
 
 
 func _on_annotators_ready() -> void:
+    ._on_annotators_ready()
     _attach_prediction()
 
 
@@ -163,14 +175,16 @@ func set_is_human_player(value: bool) -> void:
         _init_user_controller_action_source()
 
 
-func set_platform_graph(graph: PlatformGraph) -> void:
+func _init_user_controller_action_source() -> void:
+    _action_sources.push_back(UserActionSource.new(self, true))
+
+
+func _init_platform_graph() -> void:
+    var graph: PlatformGraph = Su.graph_parser.platform_graphs[player_name]
+    assert(graph != null)
     self.graph = graph
     self.surface_parser = graph.surface_parser
     self.possible_surfaces_set = graph.surfaces_set
-
-
-func _init_user_controller_action_source() -> void:
-    _action_sources.push_back(UserActionSource.new(self, true))
 
 
 func _init_navigator() -> void:

@@ -11,7 +11,7 @@ func _start() -> void:
     # Add the player after removing the loading screen, since the camera
     # will track the player, which makes the loading screen look offset.
     add_player(
-            Su.player_scenes[Su.default_player_name],
+            Sc.players.player_scenes[Sc.players.default_player_name],
             Vector2.ZERO,
             true)
 

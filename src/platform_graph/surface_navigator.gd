@@ -949,7 +949,8 @@ func _ensure_edges_have_trajectory_state(
                     .create_trajectory_placeholder_hack(edge)
             path.edges[i].trajectory = placeholder_trajectory_hack
         else:
-            var do_edges_match := edge_with_trajectory != null and \
+            var do_edges_match: bool = \
+                    edge_with_trajectory != null and \
                     Sc.geometry.are_floats_equal_with_epsilon(
                             edge_with_trajectory.duration,
                             edge.duration,

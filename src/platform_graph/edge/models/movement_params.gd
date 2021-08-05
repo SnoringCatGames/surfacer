@@ -514,8 +514,7 @@ func _parse_shape_from_parent() -> void:
     if !is_instance_valid(parent):
         return
     
-    if !(parent is KinematicBody2D) or \
-            !parent.has_method("_update_navigator"):
+    if !parent.is_in_group(Sc.players.GROUP_NAME_SURFACER_PLAYERS):
         _set_configuration_warning("Must define a SurfacerPlayer parent.")
         return
     

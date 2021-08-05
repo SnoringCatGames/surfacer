@@ -111,7 +111,7 @@ func on_level_destroyed() -> void:
 
 
 func create_player_annotator(
-        player: SurfacerPlayer,
+        player: ScaffolderPlayer,
         is_human_player: bool) -> void:
     var player_annotator := PlayerAnnotator.new(
             player,
@@ -183,9 +183,9 @@ func _create_annotator(annotator_type: int) -> void:
                         Su.graph_parser.surface_parser)
                 annotation_layer.add_child(grid_indices_annotator)
         AnnotatorType.PATH_PRESELECTION:
-            if Su.human_player != null:
-                path_preselection_annotator = \
-                        PathPreselectionAnnotator.new(Su.human_player)
+            if is_instance_valid(Sc.players.get_human_player()):
+                path_preselection_annotator = PathPreselectionAnnotator.new(
+                        Sc.players.get_human_player())
                 annotation_layer.add_child(path_preselection_annotator)
         AnnotatorType.LEVEL:
             if Sc.level != null:

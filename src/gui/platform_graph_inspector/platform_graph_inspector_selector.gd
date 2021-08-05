@@ -48,7 +48,7 @@ func _unhandled_input(event: InputEvent) -> void:
         var surface_position := \
                 SurfaceParser.find_closest_position_on_a_surface(
                         click_position,
-                        Su.human_player)
+                        Sc.level.human_player)
         
         if first_target == null:
             # Selecting the jump position.
@@ -59,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
             
             possible_jump_land_positions = JumpLandPositionsUtils \
                     .calculate_jump_land_positions_for_surface_pair(
-                            Su.human_player.movement_params,
+                            Sc.level.human_player.movement_params,
                             first_target.surface,
                             surface_position.surface)
             
@@ -71,7 +71,7 @@ func _unhandled_input(event: InputEvent) -> void:
                     first_target,
                     surface_position,
                     EdgeType.JUMP_FROM_SURFACE_EDGE,
-                    Su.human_player.graph)
+                    Sc.level.human_player.graph)
             first_target = null
         
     elif event is InputEventKey and \

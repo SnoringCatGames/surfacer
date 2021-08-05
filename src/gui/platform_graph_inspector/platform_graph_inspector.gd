@@ -555,8 +555,8 @@ func _print(
         message_template: String,
         message_args = null) -> void:
     if Sc.metadata.is_logging_low_level_player_framework_events and \
-            Su.human_player != null and \
-            Su.human_player.movement_params \
+            is_instance_valid(Sc.players.get_human_player()) and \
+            Sc.players.get_human_player().movement_params \
                     .logs_inspector_events:
         if message_args != null:
             Sc.logger.print(message_template % message_args)

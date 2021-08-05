@@ -31,7 +31,7 @@ func _process(_delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
     if !Sc.gui.is_user_interaction_enabled or \
-            Su.human_player != _player:
+            Sc.players.get_human_player() != _player:
         return
     
     var pointer_up_position := Vector2.INF
