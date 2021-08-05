@@ -1,5 +1,5 @@
-class_name PreviousTrajectoryAnnotatorSettingsLabeledControlItem
-extends CheckboxLabeledControlItem
+class_name PreviousTrajectoryAnnotatorControlRow
+extends CheckboxControlRow
 
 
 const LABEL := "Prev. trajectory"

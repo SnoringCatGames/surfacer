@@ -1,5 +1,5 @@
-class_name PreselectionTrajectoryAnnotatorSettingsLabeledControlItem
-extends CheckboxLabeledControlItem
+class_name PreselectionTrajectoryAnnotatorControlRow
+extends CheckboxControlRow
 
 
 const LABEL := "Presel. trajectory"
