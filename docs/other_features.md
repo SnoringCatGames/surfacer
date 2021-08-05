@@ -6,9 +6,9 @@ We include a large collection of annotators that are useful for visually debuggi
 
 ## Movement parameters
 
-We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these player-level params, see [movement_params.gd](./src/platform_graph/edge/models/movement_params.gd).
+We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these player-level params, see [movement_params.gd](/src/platform_graph/edge/models/movement_params.gd).
 
-Also, [sc.gd](https://github.com/SnoringCatGames/scaffolder/blob/master/src/config/sc.gd) and [su.gd](./src/config/su.gd) contain lists of interesting app-level params.
+Also, [sc.gd](https://github.com/SnoringCatGames/scaffolder/blob/master/src/config/sc.gd) and [su.gd](/src/config/su.gd) contain lists of interesting app-level params.
 
 ## Extensible framework for custom movement mechanics
 
