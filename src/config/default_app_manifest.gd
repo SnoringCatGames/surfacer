@@ -620,7 +620,7 @@ var _default_settings_item_manifest := {
                 CameraZoomSettingsLabeledControlItem,
                 TimeScaleSettingsLabeledControlItem,
                 MetronomeSettingsLabeledControlItem,
-                LogSurfacerEventsSettingsLabeledControlItem,
+                IsLoggingLowLevelPlayerFrameworkEventsSettingsLabeledControlItem,
             ],
         },
     },

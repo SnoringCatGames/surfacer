@@ -332,17 +332,11 @@ var max_edges_to_remove_from_path_for_opt_to_in_air_dest := 2 \
 
 const _LOGS_GROUP = {
     group_name = "logs",
-    first_property_name = "logs_navigator_events",
+    first_property_name = "logs_inspector_events",
 }
 
-var logs_navigator_events := false \
-        setget _set_logs_navigator_events
-var logs_player_actions := false \
-        setget _set_logs_player_actions
 var logs_inspector_events := false \
         setget _set_logs_inspector_events
-var logs_computer_player_events := false \
-        setget _set_logs_computer_player_events
 
 # --- Movement ability overrides ---
 
@@ -1175,23 +1169,8 @@ func _set_max_edges_to_remove_from_path_for_opt_to_in_air_dest(
     _update_parameters()
 
 
-func _set_logs_navigator_events(value: bool) -> void:
-    logs_navigator_events = value
-    _update_parameters()
-
-
-func _set_logs_player_actions(value: bool) -> void:
-    logs_player_actions = value
-    _update_parameters()
-
-
 func _set_logs_inspector_events(value: bool) -> void:
     logs_inspector_events = value
-    _update_parameters()
-
-
-func _set_logs_computer_player_events(value: bool) -> void:
-    logs_computer_player_events = value
     _update_parameters()
 
 

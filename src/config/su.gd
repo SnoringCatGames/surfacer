@@ -17,7 +17,6 @@ const FALL_THROUGH_FLOORS_COLLISION_MASK_BIT := 1
 const WALK_THROUGH_WALLS_COLLISION_MASK_BIT := 2
 
 const IS_INSPECTOR_ENABLED_SETTINGS_KEY := "is_inspector_enabled"
-const IS_SURFACER_LOGGING_SETTINGS_KEY := "is_surfacer_logging"
 const IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY := "is_intro_choreography_shown"
 const ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_active_trajectory_shown"
 const PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_previous_trajectory_shown"
@@ -74,7 +73,7 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
                 CameraZoomSettingsLabeledControlItem,
                 TimeScaleSettingsLabeledControlItem,
                 MetronomeSettingsLabeledControlItem,
-                LogSurfacerEventsSettingsLabeledControlItem,
+                IsLoggingLowLevelPlayerFrameworkEventsSettingsLabeledControlItem,
             ],
         },
     },
@@ -130,7 +129,6 @@ var _surfacer_sounds := [
 var manifest: Dictionary
 var is_inspector_enabled: bool
 var are_loaded_surfaces_deeply_validated: bool
-var is_surfacer_logging: bool
 var uses_threads_for_platform_graph_calculation: bool
 var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
@@ -386,9 +384,6 @@ func _set_up() -> void:
     self.is_inspector_enabled = Sc.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
             Sc.gui.hud_manifest.is_inspector_enabled_default)
-    self.is_surfacer_logging = Sc.save_state.get_setting(
-            IS_SURFACER_LOGGING_SETTINGS_KEY,
-            false)
     self.is_intro_choreography_shown = Sc.save_state.get_setting(
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
             true)

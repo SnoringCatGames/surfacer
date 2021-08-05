@@ -29,7 +29,7 @@ var _annotator_control_item_classes := [
     TimeScaleSettingsLabeledControlItem,
     CameraZoomSettingsLabeledControlItem,
     MetronomeSettingsLabeledControlItem,
-    LogSurfacerEventsSettingsLabeledControlItem,
+    IsLoggingLowLevelPlayerFrameworkEventsSettingsLabeledControlItem,
 ]
 
 

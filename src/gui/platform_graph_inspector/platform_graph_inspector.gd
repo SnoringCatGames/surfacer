@@ -554,7 +554,7 @@ static func _find_closest_jump_land_positions(
 func _print(
         message_template: String,
         message_args = null) -> void:
-    if Su.is_surfacer_logging and \
+    if Sc.metadata.is_logging_low_level_player_framework_events and \
             Su.human_player != null and \
             Su.human_player.movement_params \
                     .logs_inspector_events:
