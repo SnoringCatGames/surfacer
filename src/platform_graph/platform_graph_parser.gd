@@ -52,8 +52,8 @@ func parse(
 # Get references to the TileMaps that define the collision boundaries of this
 # level.
 func _record_tile_maps() -> void:
-    surface_tile_maps = \
-            Sc.utils.get_all_nodes_in_group(Su.group_name_surfaces)
+    surface_tile_maps = Sc.utils.get_all_nodes_in_group(
+            SurfacesTileMap.GROUP_NAME_SURFACES)
     
     # Validate the TileMaps.
     if Sc.metadata.debug or Sc.metadata.playtest:

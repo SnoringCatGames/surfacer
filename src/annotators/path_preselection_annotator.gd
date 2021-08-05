@@ -131,16 +131,18 @@ func _process(_delta: float) -> void:
             
             if preselection_path != null:
                 # Update the human-player prediction.
-                player.prediction.match_navigator_or_path(
-                        preselection_path,
-                        preselection_path.duration)
+                if player is SurfacerPlayer:
+                    player.prediction.match_navigator_or_path(
+                            preselection_path,
+                            preselection_path.duration)
                 
                 # Update computer-player predictions.
-                for computer_player in Sc.utils.get_all_nodes_in_group(
-                        Su.group_name_computer_players):
-                    computer_player.prediction.match_navigator_or_path(
-                            computer_player.navigator,
-                            preselection_path.duration)
+                for surfacer_player in Sc.utils.get_all_nodes_in_group(
+                        Sc.players.GROUP_NAME_SURFACER_PLAYERS):
+                    if !surfacer_player.is_human_player:
+                        surfacer_player.prediction.match_navigator_or_path(
+                                surfacer_player.navigator,
+                                preselection_path.duration)
         else:
             preselection_path = null
             preselection_path_beats_time_start = INF

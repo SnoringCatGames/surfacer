@@ -13,7 +13,6 @@ extends ScaffolderLevelConfig
 ##         each of these players.[br]
 
 
-const PLAYER_START_POSITION_GROUP_NAME := "player_start_position"
 const INTRO_CHOREOGRAPHY_DESTINATION_GROUP_NAME := \
         "intro_choreography_destination"
 

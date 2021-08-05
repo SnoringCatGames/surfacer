@@ -137,7 +137,6 @@ var is_debug_only_platform_graph_state_included := false
 var is_precomputing_platform_graphs: bool
 var is_intro_choreography_shown: bool
 
-var default_player_name: String
 var default_tile_set: TileSet
 
 var path_drag_update_throttle_interval := 0.2
@@ -184,10 +183,6 @@ var skip_choreography_framerate_multiplier := 10.0
 #}
 var debug_params: Dictionary
 
-var group_name_human_players := SurfacerPlayer.GROUP_NAME_HUMAN_PLAYERS
-var group_name_computer_players := SurfacerPlayer.GROUP_NAME_COMPUTER_PLAYERS
-var group_name_surfaces := SurfacesTileMap.GROUP_NAME_SURFACES
-
 var non_surface_parser_metric_keys := [
     "find_surfaces_in_jump_fall_range_from_surface",
     "edge_calc_broad_phase_check",
@@ -233,7 +228,6 @@ var surface_parser_metric_keys := [
     "assert_surfaces_fully_calculated_duration",
 ]
 
-var human_player: SurfacerPlayer
 var graph_parser: PlatformGraphParser
 var graph_inspector: PlatformGraphInspector
 var legend: Legend
@@ -244,12 +238,6 @@ var ann_defaults: AnnotationElementDefaults
 var ann_manifest: SurfacerAnnotationsManifest
 var movement: SurfacerMovementManifest
 var edge_from_json_factory := EdgeFromJsonFactory.new()
-
-# Dictionary<String, PackedScene>
-var player_scenes := {}
-
-# Array<PackedScene>
-var _player_scenes_list: Array
 
 # ---
 
@@ -298,9 +286,7 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
             manifest.are_loaded_surfaces_deeply_validated
     self.uses_threads_for_platform_graph_calculation = \
             manifest.uses_threads_for_platform_graph_calculation
-    self._player_scenes_list = manifest.player_scenes
     self.debug_params = manifest.debug_params
-    self.default_player_name = manifest.default_player_name
     if manifest.has("default_tile_set"):
         self.default_tile_set = manifest.default_tile_set
     
@@ -358,7 +344,7 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
     assert(Sc._manifest.metadata.must_restart_level_to_change_settings)
 
 
-func _set_up() -> void:
+func _instantiate_sub_modules() -> void:
     assert(Sc.colors is SurfacerColors)
     assert(Sc.draw is SurfacerDrawUtils)
     assert(Sc.level_config is SurfacerLevelConfig)
@@ -380,7 +366,9 @@ func _set_up() -> void:
     else:
         self.movement = SurfacerMovementManifest.new()
     add_child(self.movement)
-    
+
+
+func _configure_sub_modules() -> void:
     self.is_inspector_enabled = Sc.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
             Sc.gui.hud_manifest.is_inspector_enabled_default)
