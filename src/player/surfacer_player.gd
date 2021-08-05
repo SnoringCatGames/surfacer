@@ -1,7 +1,7 @@
 tool
 class_name SurfacerPlayer, \
-"res://addons/surfacer/assets/images/editor_icons/surfacer_player.png"
-extends KinematicBody2D
+"res://addons/scaffolder/assets/images/editor_icons/scaffolder_player.png"
+extends ScaffolderPlayer
 ## The main player class for Surfacer.[br]
 ## -   This defines how your player reacts to input and decides when and were
 ##     to navigate within the level.[br]
@@ -9,7 +9,7 @@ extends KinematicBody2D
 ## -   You should then attach your sub-class to a scene for your player.[br]
 ## -   You should then add a few important child scenes:[br]
 ##     -   MovementParams[br]
-##     -   SurfacerPlayerAnimator[br]
+##     -   ScaffolderPlayerAnimator[br]
 ##     -   CollisionShape2D[br]
 ##     -   (Optional) ProximityDetector[br]
 
@@ -75,7 +75,7 @@ var surface_parser: SurfaceParser
 var navigator: SurfaceNavigator
 var level
 var collider: CollisionShape2D
-var animator: SurfacerPlayerAnimator
+var animator: ScaffolderPlayerAnimator
 var prediction: PlayerPrediction
 var pointer_listener: PlayerPointerListener
 
@@ -238,14 +238,14 @@ func _update_editor_configuration_debounced() -> void:
     # Get AnimationPlayer from scene configuration.
     var player_animators: Array = Sc.utils.get_children_by_type(
             self,
-            SurfacerPlayerAnimator)
+            ScaffolderPlayerAnimator)
     if player_animators.size() > 1:
         _set_configuration_warning(
-                "Must only define a single SurfacerPlayerAnimator child node.")
+                "Must only define a single ScaffolderPlayerAnimator child node.")
         return
     elif player_animators.size() < 1:
         _set_configuration_warning(
-                "Must define a SurfacerPlayerAnimator-subclass child node.")
+                "Must define a ScaffolderPlayerAnimator-subclass child node.")
         return
     animator = player_animators[0]
     animator.is_desaturatable = true
@@ -702,43 +702,6 @@ func get_intended_position(type: int) -> PositionAlongSurface:
         _:
             Sc.logger.error("Invalid IntendedPositionType: %d" % type)
             return null
-
-
-# FIXME: ---------------------------------
-# # Thoughts for high-level navigation behavior:
-# 
-# - New SurfacerPlayer sub-classes:
-#   - walk/climb back and forth
-#     - surface ends or with a given range
-#     - with a given pause time (or a min/max to randomly pick from)
-#     - optionally jump/climb across nearby surfaces?
-#   - jump back and forth
-#     - surface ends or with a given range
-#     - with a given pause time (or a min/max to randomly pick from)
-#     - optionally jump/climb across nearby surfaces?
-#   - walk/climb along connected surfaces
-#     - with a given max speed
-#   - randomly select destinations within range
-# 
-# 
-# - follow target player (or nearest player of group)
-#   - configure stopping and starting distance for close-enough
-#   - configure stopping and starting distance for too-far
-# - collide target player (or nearest player of group)
-#   - only collide jumping down onto?
-#   - only collide while at a higher center position?
-#   - only collide while facing?
-#   - configure stopping and starting distance for too-far
-# - avoid players of group
-#   - configure stopping and starting distance
-#   - configure stopping and starting distance for too-far
-# 
-# - custom
-# 
-# - Some general params:
-#   - throttle delay before re-calculating decisions
-#     - also, don't re-calculate until landing?
-#   - 
 
 
 # Uses physics layers and an auxiliary Area2D to detect collisions with areas

@@ -3,7 +3,7 @@
 I will not lie, **this is a complex framework**! Hopefully it's external API isn't _too_ convoluted, but still, probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel-away), and then adjust it to fit your needs.
 
 -   Set up Scaffolder
-    -   https://github.com/snoringcatgames/scaffolder/docs/getting_set_up.md
+    -   https://github.com/snoringcatgames/scaffolder/blob/master/docs/getting_set_up.md
 -   `addons/scaffolder`
     -   Add the [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library to your `addons/` folder.
     -   This is a framework that provides assorted general-purpose infrastructure that can be useful for adding a bunch of app boilerplate that you may or may not want for your game.
@@ -62,7 +62,7 @@ _Probably the easiest way to get started with this is to copy/paste/edit a pre-e
     -   This defines how your player reacts to input and decides when and were to navigate within the level.
     -   Required children:
         -   `MovementParams`
-        -   `SurfacerPlayerAnimator`
+        -   `ScaffolderPlayerAnimator`
         -   `CollisionShape2D`
     -   `collision_detection_layers`
         -   This helps your `SurfacerPlayer` detect when other areas or bodies collide with the player.
@@ -72,12 +72,12 @@ _Probably the easiest way to get started with this is to copy/paste/edit a pre-e
         -   This helps your `SurfacerPlayer` detect when other areas or bodies enter or exit the proximity of your player.
         -   You can declare these as children in your SurfacerPlayer scenes.
         -   You can configure the shape used to define the proximity range.
--   [`SurfacerPlayerAnimator`](./src/player/surfacer_player_animator.gd)
+-   [`ScaffolderPlayerAnimator`](https://github.com/snoringcatgames/scaffolder/blob/master/src/player/scaffolder_player_animator.gd)
     -   This defines how your player is rendered and animated.
     -   Surfacer makes some opinionated assumptions about how this will be set-up, but you can probably adjust or ignore some of this to fit your needs.
     -   `uses_standard_sprite_frame_animations`
         -   Set this export property to `true` if you want to set up all of the animations for this player by changing the `frame` property on a corresponding `Sprite`.
-        -   If this is enabled, then the `SurfacerPlayerAnimator` will expect there to be a one-to-one mapping between immediate-child `Sprites` and animations in the `AnimationPlayer`, and these matching animations and Sprites will need to share the same names.
+        -   If this is enabled, then the `ScaffolderPlayerAnimator` will expect there to be a one-to-one mapping between immediate-child `Sprites` and animations in the `AnimationPlayer`, and these matching animations and Sprites will need to share the same names.
     -   `animations`
         -   This `Dictionary` is auto-populated with keys corresponding to each animation in the `AnimationPlayer`.
         -   You can configure some additional state for each of the animation configs in this dictionary, such as the default playback speed for the animation, and the name of a `Sprite` to automatically show when starting the animation.
