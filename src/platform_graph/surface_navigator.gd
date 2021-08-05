@@ -548,10 +548,10 @@ func get_previous_destination() -> PositionAlongSurface:
 func _print(
         message_template: String,
         message_args = null) -> void:
-    if Su.is_surfacer_logging and \
-            movement_params.logs_navigator_events and \
+    if Sc.metadata.is_logging_low_level_player_framework_events and \
+            player.logs_navigator_events and \
             (player.is_human_player or \
-                    movement_params.logs_computer_player_events):
+                    player.logs_computer_player_events):
         if message_args != null:
             Sc.logger.print(message_template % message_args)
         else:
