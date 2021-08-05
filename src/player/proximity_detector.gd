@@ -28,7 +28,13 @@ const DASH_GAP := 6.0
 const STROKE_WIDTH := 1.2
 const COLOR := Color("00adad")
 
+var _is_ready := false
 var _configuration_warning := ""
+
+
+func _ready() -> void:
+    _is_ready = true
+    _update_configuration()
 
 
 func _draw() -> void:
@@ -58,6 +64,9 @@ func _draw() -> void:
 
 
 func _update_configuration() -> void:
+    if !_is_ready:
+        return
+    
     var is_axially_aligned: bool = \
             abs(fmod(rotation + PI * 2, PI) - PI / 2) < \
                     Sc.geometry.FLOAT_EPSILON or \

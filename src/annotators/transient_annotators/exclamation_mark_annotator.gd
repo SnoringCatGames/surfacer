@@ -13,6 +13,7 @@ var OPACITY_DELAY := 0.3
 var player
 var player_half_height: float
 var color: Color
+var border_color: Color
 var width_start: float
 var length_start: float
 var stroke_width_start: float
@@ -28,6 +29,7 @@ func _init(
         player,
         player_half_height := INF,
         color := Color.white,
+        border_color := Color.white,
         width_start := WIDTH_START,
         length_start := LENGTH_START,
         stroke_width_start := STROKE_WIDTH_START,
@@ -36,15 +38,18 @@ func _init(
         vertical_offset := VERTICAL_OFFSET,
         opacity_delay := OPACITY_DELAY).(duration) -> void:
     self.player = player
-    self.player_half_height = player_half_height
-    if is_inf(player_half_height):
-        player_half_height = \
-                player.movement_params.collider_half_width_height.y
-    self.color = color
-    if color == Color.white:
-        Su.ann_defaults.HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
-        player.is_human_player else \
-        Su.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
+    self.player_half_height = \
+            player_half_height if \
+            !is_inf(player_half_height) else \
+            player.movement_params.collider_half_width_height.y
+    self.color = \
+            color if \
+            color != Color.white else \
+            player.primary_annotation_color
+    self.border_color = \
+            border_color if \
+            border_color != Color.white else \
+            player.secondary_annotation_color
     self.width_start = width_start
     self.length_start = length_start
     self.stroke_width_start = stroke_width_start
@@ -100,18 +105,14 @@ func _draw() -> void:
             length_start * scale_end / 2.0 + \
             vertical_offset)
     
-    var fill_color: Color = color
-    fill_color.a = opacity
-    
-    var stroke_color: Color = Color.white
-    stroke_color.a = opacity
+    self.modulate.a = opacity
     
     Sc.draw.draw_exclamation_mark(
             self,
             center,
             width,
             length,
-            stroke_color,
+            border_color,
             false,
             stroke_width,
             arc_length)
@@ -120,7 +121,7 @@ func _draw() -> void:
             center,
             width,
             length,
-            fill_color,
+            color,
             true,
             0.0,
             arc_length)

@@ -41,6 +41,9 @@ var _next_move_timeout_id := -1
 
 
 func _ready() -> void:
+    if Engine.editor_hint:
+        return
+    
     # Randomize which direction the player moves first.
     _was_last_move_minward = randf() < 0.5
     
@@ -51,6 +54,17 @@ func _ready() -> void:
 
 
 func _on_attached_to_first_surface() -> void:
+    match start_surface.side:
+        SurfaceSide.FLOOR:
+            assert(movement_params.can_grab_floors)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            assert(movement_params.can_grab_walls)
+        SurfaceSide.CEILING:
+            assert(movement_params.can_grab_ceilings)
+        _:
+            Sc.logger.error()
+    
     _destination = PositionAlongSurface.new()
     _destination.surface = start_surface
     if _is_ready:

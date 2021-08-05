@@ -28,6 +28,17 @@ export var player_name := ""
 ##     collisions without adjusting our movement.[br]
 export(int, LAYERS_2D_PHYSICS) var collision_detection_layers := 0
 
+## Used for things like the fill-color of exclamation-mark annotations.
+export var primary_annotation_color := Color.black
+## Used for things like the border-color of exclamation-mark annotations.
+export var secondary_annotation_color := Color.white
+
+export var exclamation_mark_width_start := 4.0
+export var exclamation_mark_length_start := 24.0
+export var exclamation_mark_stroke_width_start := 1.2
+export var exclamation_mark_duration := 1.8
+export var exclamation_mark_throttle_interval := 1.0
+
 var movement_params: MovementParams
 # Dictionary<Surface, Surface>
 var possible_surfaces_set: Dictionary
@@ -82,10 +93,8 @@ var _layers_for_entered_proximity_detection := {}
 # Dictionary<String, Area2D>
 var _layers_for_exited_proximity_detection := {}
 
-var _debounced_update_editor_configuration: FuncRef = Sc.time.debounce(
-        funcref(self, "_update_editor_configuration_debounced"),
-        0.02,
-        true)
+var _debounced_update_editor_configuration: FuncRef
+var _throttled_show_exclamation_mark: FuncRef
 
 
 func _init() -> void:
@@ -97,15 +106,42 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+    _is_ready = true
+    
     start_position = position
+    surface_state.previous_center_position = self.position
+    surface_state.center_position = self.position
+    
+    _debounced_update_editor_configuration = Sc.time.debounce(
+            funcref(self, "_update_editor_configuration_debounced"),
+            0.02,
+            true)
+    _throttled_show_exclamation_mark = Sc.time.throttle(
+            funcref(self, "_show_exclamation_mark_throttled"),
+            exclamation_mark_throttle_interval,
+            false,
+            TimeType.PLAY_PHYSICS_SCALED)
     
     _update_editor_configuration_debounced()
-    _initialize_child_movement_params()
     _initialize_children_proximity_detectors()
+    
+    if Engine.editor_hint:
+        return
+    
+    # Start facing the right.
+    surface_state.horizontal_facing_sign = 1
+    animator.face_right()
     
     self.new_selection = PointerSelectionPosition.new(self)
     self.last_selection = PointerSelectionPosition.new(self)
     self.pre_selection = PointerSelectionPosition.new(self)
+    
+    self.pointer_listener = PlayerPointerListener.new(self)
+    add_child(pointer_listener)
+    
+    # Set up a Tween for the fade-out at the end of a dash.
+    _dash_fade_tween = ScaffolderTween.new()
+    add_child(_dash_fade_tween)
     
     var collision_detection_layer_names: Array = \
             Sc.utils.get_physics_layer_names_from_bitmask(
@@ -121,9 +157,6 @@ func _ready() -> void:
         set_collision_mask_bit(
                 Su.WALK_THROUGH_WALLS_COLLISION_MASK_BIT, false)
     
-    self.pointer_listener = PlayerPointerListener.new(self)
-    add_child(pointer_listener)
-    
     if Su.annotators.is_annotator_enabled(
             AnnotatorType.PATH_PRESELECTION) and \
             (is_human_player and Su.ann_manifest.is_human_prediction_shown or \
@@ -131,19 +164,6 @@ func _ready() -> void:
         prediction = PlayerPrediction.new()
         prediction.set_up(self)
         _attach_prediction()
-    
-    # Set up a Tween for the fade-out at the end of a dash.
-    _dash_fade_tween = ScaffolderTween.new()
-    add_child(_dash_fade_tween)
-    
-    # Start facing the right.
-    surface_state.horizontal_facing_sign = 1
-    animator.face_right()
-    
-    _is_ready = true
-    
-    surface_state.previous_center_position = self.position
-    surface_state.center_position = self.position
     
     Sc.device.connect(
             "display_resized",
@@ -188,6 +208,8 @@ func remove_child(child: Node) -> void:
 
 
 func _update_editor_configuration() -> void:
+    if !_is_ready:
+        return
     _debounced_update_editor_configuration.call_func()
 
 
@@ -323,9 +345,8 @@ func _init_navigator() -> void:
 
 func _physics_process(delta: float) -> void:
     if !_is_ready or \
-            _is_destroyed:
-        # Fake players are only used for testing potential collisions under the
-        # hood.
+            _is_destroyed or \
+            Engine.editor_hint:
         return
     
     var delta_scaled: float = Sc.time.scale_delta(delta)
@@ -606,6 +627,22 @@ func _log_player_event(
             Sc.logger.print(message_template % message_args)
         else:
             Sc.logger.print(message_template)
+
+
+func show_exclamation_mark() -> void:
+    _throttled_show_exclamation_mark.call_func()
+
+
+func _show_exclamation_mark_throttled() -> void:
+    Su.annotators.add_transient(ExclamationMarkAnnotator.new(
+            self,
+            movement_params.collider_half_width_height.y,
+            primary_annotation_color,
+            secondary_annotation_color,
+            exclamation_mark_width_start,
+            exclamation_mark_length_start,
+            exclamation_mark_stroke_width_start,
+            exclamation_mark_duration))
 
 
 func set_is_sprite_visible(is_visible: bool) -> void:
