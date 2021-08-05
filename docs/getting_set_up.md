@@ -8,7 +8,7 @@ I will not lie, **this is a complex framework**! Hopefully it's external API isn
     -   Add the [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library to your `addons/` folder.
     -   This is a framework that provides assorted general-purpose infrastructure that can be useful for adding a bunch of app boilerplate that you may or may not want for your game.
     -   Surfacer currently depends on this additional framework.
-    -   See the Scaffolder [README](https://github.com/snoringcatgames/scaffolder/README.md) for details on setting it up.
+    -   See the Scaffolder [README](https://github.com/snoringcatgames/scaffolder/blob/master/README.md) for details on setting it up.
 -   `addons/crypto_uuid_v4`
     -   Add the [Crypto UUID v4](https://godotengine.org/asset-library/asset/748) library to your `addons/` folder.
 -   `addons/surfacer`
@@ -41,10 +41,10 @@ In order to create levels, you'll need to override a few classes from Surfacer.
 
 _Probably the easiest way to get started with this is to copy/paste/edit the pre-existing level class from the Squirrel Away example app._
 
--   [`SurfacerLevel`](./src/level/surfacer_level.gd).
--   [`SurfacesTileMap`](./src/platform_graph/surfaces_tile_map.gd):
+-   [`SurfacerLevel`](/src/level/surfacer_level.gd).
+-   [`SurfacesTileMap`](/src/platform_graph/surfaces_tile_map.gd):
     -   You will need to instance `SurfacesTileMap` as a sub-scene in order to define the shape of the collidable surfaces your level.
--   [`SurfacerLevelConfig`](./src/config/surfacer_level_config.gd):
+-   [`SurfacerLevelConfig`](/src/config/surfacer_level_config.gd):
     -   You will need to sub-class `SurfacerLevelConfig` and reference this in your `app_manifest`.
     -   This defines some metadata for each of the levels in your game. For example:
         -   `name`: The display name for the level.
@@ -58,7 +58,7 @@ In order to create a new player type, you'll need to override a few classes from
 
 _Probably the easiest way to get started with this is to copy/paste/edit a pre-existing player from the Squirrel Away example app._
 
--   [`SurfacerPlayer`](./src/player/surfacer_player.gd)
+-   [`SurfacerPlayer`](/src/player/surfacer_player.gd)
     -   This defines how your player reacts to input and decides when and were to navigate within the level.
     -   Required children:
         -   `MovementParams`
@@ -81,7 +81,7 @@ _Probably the easiest way to get started with this is to copy/paste/edit a pre-e
     -   `animations`
         -   This `Dictionary` is auto-populated with keys corresponding to each animation in the `AnimationPlayer`.
         -   You can configure some additional state for each of the animation configs in this dictionary, such as the default playback speed for the animation, and the name of a `Sprite` to automatically show when starting the animation.
--   [`MovementParams`](./src/platform_graph/edge/models/movement_params.gd)
+-   [`MovementParams`](/src/platform_graph/edge/models/movement_params.gd)
     -   This defines how your player will move.
     -   There are a _lot_ of parameters you can adjust here.
     -   You can adjust these parameters within the editor's inspector panel.
