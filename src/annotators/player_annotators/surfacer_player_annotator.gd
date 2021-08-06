@@ -1,56 +1,22 @@
-class_name PlayerAnnotator
-extends Node2D
+class_name SurfacerPlayerAnnotator
+extends ScaffolderPlayerAnnotator
 
-
-var player: SurfacerPlayer
-var is_human_player: bool
-var previous_position: Vector2
 
 var navigator_annotator: NavigatorAnnotator
-
-var recent_movement_annotator: PlayerRecentMovementAnnotator
 var surface_annotator: PlayerSurfaceAnnotator
-var position_annotator: PlayerPositionAnnotator
 var tile_annotator: PlayerTileAnnotator
 
 
-func _init(
-        player: SurfacerPlayer,
-        is_human_player: bool) -> void:
-    self.player = player
-    self.is_human_player = is_human_player
-    self.z_index = 2
+func _init(player: SurfacerPlayer).(player) -> void:
+    pass
 
 
 func _physics_process(_delta: float) -> void:
-    if recent_movement_annotator != null:
-        recent_movement_annotator.check_for_update()
-    
-    if !Sc.geometry.are_points_equal_with_epsilon(
-            player.position,
-            previous_position,
-            0.01):
-        previous_position = player.position
-        
-        if surface_annotator != null:
+    if player.did_move_last_frame:
+        if is_instance_valid(surface_annotator):
             surface_annotator.check_for_update()
-        if position_annotator != null:
-            position_annotator.check_for_update()
-        if tile_annotator != null:
+        if is_instance_valid(tile_annotator):
             tile_annotator.check_for_update()
-
-
-func set_annotator_enabled(
-        annotator_type: int,
-        is_enabled: bool) -> void:
-    if is_annotator_enabled(annotator_type) == is_enabled:
-        # Do nothing. The annotator is already correct.
-        return
-    
-    if is_enabled:
-        _create_annotator(annotator_type)
-    else:
-        _destroy_annotator(annotator_type)
 
 
 func is_annotator_enabled(annotator_type: int) -> bool:
@@ -58,11 +24,11 @@ func is_annotator_enabled(annotator_type: int) -> bool:
         AnnotatorType.PLAYER:
             return player.get_is_sprite_visible()
         AnnotatorType.PLAYER_POSITION:
-            return position_annotator != null
+            return is_instance_valid(position_annotator)
         AnnotatorType.RECENT_MOVEMENT:
-            return recent_movement_annotator != null
+            return is_instance_valid(recent_movement_annotator)
         AnnotatorType.NAVIGATOR:
-            return navigator_annotator != null
+            return is_instance_valid(navigator_annotator)
         _:
             Sc.logger.error()
             return false
@@ -76,13 +42,13 @@ func _create_annotator(annotator_type: int) -> void:
         AnnotatorType.PLAYER_POSITION:
             surface_annotator = PlayerSurfaceAnnotator.new(player)
             add_child(surface_annotator)
-            position_annotator = PlayerPositionAnnotator.new(player)
+            position_annotator = SurfacerPlayerPositionAnnotator.new(player)
             add_child(position_annotator)
             tile_annotator = PlayerTileAnnotator.new(player)
             add_child(tile_annotator)
         AnnotatorType.RECENT_MOVEMENT:
             recent_movement_annotator = \
-                    PlayerRecentMovementAnnotator.new(player)
+                    SurfacerPlayerRecentMovementAnnotator.new(player)
             add_child(recent_movement_annotator)
         AnnotatorType.NAVIGATOR:
             navigator_annotator = NavigatorAnnotator.new(player.navigator)

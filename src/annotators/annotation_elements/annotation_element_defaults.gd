@@ -2,6 +2,9 @@ class_name AnnotationElementDefaults
 extends Node
 
 
+# TODO: Remove/refactor this class.
+
+
 ### Surface
 
 const SURFACE_HUE_MIN := 0.0

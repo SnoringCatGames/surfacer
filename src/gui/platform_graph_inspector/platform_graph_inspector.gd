@@ -296,11 +296,11 @@ func _on_tree_item_selected() -> void:
     var item := get_selected()
     var controller: InspectorItemController = item.get_metadata(0)
     
-    Su.annotators.element_annotator \
+    Sc.annotators.element_annotator \
             .erase_all(current_annotation_elements)
     
     current_annotation_elements = controller.get_annotation_elements()
-    Su.annotators.element_annotator \
+    Sc.annotators.element_annotator \
             .add_all(current_annotation_elements)
     
     if !get_is_find_and_expand_in_progress():
@@ -524,7 +524,7 @@ func _clear_selection() -> void:
         item.deselect(0)
     
     # Remove the current annotations.
-    Su.annotators.element_annotator \
+    Sc.annotators.element_annotator \
             .erase_all(current_annotation_elements)
     current_annotation_elements = []
 

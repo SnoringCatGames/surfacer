@@ -40,7 +40,7 @@ func _start() -> void:
 
 
 func _destroy() -> void:
-    Su.annotators.on_level_destroyed()
+    Sc.annotators.on_level_destroyed()
     
     if is_instance_valid(camera_pan_controller):
         camera_pan_controller._destroy()
@@ -92,7 +92,7 @@ func _on_intro_choreography_finished() -> void:
 
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
-    Su.annotators.on_level_ready()
+    Sc.annotators.on_level_ready()
     for group in [
             Sc.players.GROUP_NAME_HUMAN_PLAYERS,
             Sc.players.GROUP_NAME_COMPUTER_PLAYERS]:

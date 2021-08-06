@@ -1,13 +1,6 @@
-class_name PlayerRecentMovementAnnotator
-extends Node2D
+class_name SurfacerPlayerRecentMovementAnnotator
+extends ScaffolderPlayerRecentMovementAnnotator
 
-
-const RECENT_POSITIONS_BUFFER_SIZE := 150
-
-var MOVEMENT_HUE: float = Sc.colors.recent_movement.h
-const MOVEMENT_OPACITY_NEWEST := 0.7
-const MOVEMENT_OPACITY_OLDEST := 0.01
-const MOVEMENT_STROKE_WIDTH := 1
 
 const HORIZONTAL_INSTRUCTION_START_LENGTH := 9
 const HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH := 1
@@ -16,51 +9,13 @@ const HORIZONTAL_INSTRUCTION_END_STROKE_WIDTH := 1
 const VERTICAL_INSTRUCTION_START_END_LENGTH := 11
 const VERTICAL_INSTRUCTION_START_END_STROKE_WIDTH := 1
 
-const DOWNBEAT_HASH_LENGTH := 20.0
-const OFFBEAT_HASH_LENGTH := 8.0
-const DOWNBEAT_HASH_STROKE_WIDTH := 1.0
-const OFFBEAT_HASH_STROKE_WIDTH := 1.0
-
-var player: SurfacerPlayer
-
-# We use this as a circular buffer.
-var recent_positions: PoolVector2Array
-
 # We use this as a circular buffer.
 var recent_actions: PoolIntArray
 
-# We use this as a circular buffer.
-var recent_beats: PoolIntArray
 
-var current_position_index := -1
-
-var total_position_count := 0
-
-
-func _init(player: SurfacerPlayer) -> void:
-    self.player = player
-    self.recent_positions = PoolVector2Array()
-    self.recent_positions.resize(RECENT_POSITIONS_BUFFER_SIZE)
+func _init(player: SurfacerPlayer).(player) -> void:
     self.recent_actions = PoolIntArray()
     self.recent_actions.resize(RECENT_POSITIONS_BUFFER_SIZE)
-    self.recent_beats = PoolIntArray()
-    self.recent_beats.resize(RECENT_POSITIONS_BUFFER_SIZE)
-    
-    Sc.beats.connect("beat", self, "_on_beat")
-    Sc.slow_motion.music.connect("music_beat", self, "_on_beat")
-    
-    Sc.audio.connect("music_changed", self, "_on_music_changed")
-
-
-func _on_beat(
-        is_downbeat: bool,
-        beat_index: int,
-        meter: int) -> void:
-    recent_beats[current_position_index] = beat_index
-
-
-func _on_music_changed(music_name: String) -> void:
-    pass
 
 
 func check_for_update() -> void:
@@ -101,10 +56,7 @@ func check_for_update() -> void:
     elif player.actions.just_released_face_right:
         recent_actions[current_position_index] = \
                 PlayerActionType.RELEASED_FACE_RIGHT
-    elif !Sc.geometry.are_points_equal_with_epsilon(
-            player.position,
-            recent_positions[current_position_index],
-            0.01):
+    elif player.did_move_last_frame:
         recent_actions[current_position_index] = \
                 PlayerActionType.NONE
     else:
@@ -125,61 +77,33 @@ func check_for_update() -> void:
     update()
 
 
-func _draw() -> void:
-    if total_position_count < 2:
-        # Don't try to draw the starting position by itself.
-        return
+func _draw_frame(
+        index: int,
+        previous_position: Vector2,
+        color: Color,
+        opacity: float) -> void:
+    var next_position := recent_positions[index]
     
-    # Until we've actually been in enough positions, we won't actually render
-    # points for the whole buffer.
-    var position_count := \
-            min(RECENT_POSITIONS_BUFFER_SIZE, total_position_count) as int
+    draw_line(
+            previous_position,
+            next_position,
+            color,
+            MOVEMENT_STROKE_WIDTH)
     
-    # Calculate the oldest index that we'll render. We start drawing here.
-    var start_index := \
-            (current_position_index + 1 - position_count + \
-                    RECENT_POSITIONS_BUFFER_SIZE) % \
-            RECENT_POSITIONS_BUFFER_SIZE
-    
-    var previous_position := recent_positions[start_index]
-    
-    for i in range(1, position_count):
-        # Older positions fade out.
-        var opacity := i / (position_count as float) * \
-                (MOVEMENT_OPACITY_NEWEST - MOVEMENT_OPACITY_OLDEST) + \
-                MOVEMENT_OPACITY_OLDEST
-        var color := Color.from_hsv(
-                MOVEMENT_HUE,
-                0.6,
-                0.9,
+    var action: int = recent_actions[index]
+    if action != PlayerActionType.NONE:
+        _draw_action_indicator(
+                action,
+                next_position,
                 opacity)
-        
-        # Calculate our current index in the circular buffer.
-        i = (start_index + i) % RECENT_POSITIONS_BUFFER_SIZE
-        var next_position := recent_positions[i]
-        
-        draw_line(
+    
+    var beat_index: int = recent_beats[index]
+    if beat_index >= 0:
+        _draw_beat_hash(
+                beat_index,
                 previous_position,
                 next_position,
-                color,
-                MOVEMENT_STROKE_WIDTH)
-        
-        var action: int = recent_actions[i]
-        if action != PlayerActionType.NONE:
-            _draw_action_indicator(
-                    action,
-                    next_position,
-                    opacity)
-        
-        var beat_index: int = recent_beats[i]
-        if beat_index >= 0:
-            _draw_beat_hash(
-                    beat_index,
-                    previous_position,
-                    next_position,
-                    opacity)
-        
-        previous_position = next_position
+                opacity)
 
 
 # Draw an indicator for the action that happened at this point.
@@ -235,45 +159,3 @@ func _draw_action_indicator(
                 position,
                 SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH,
                 color)
-
-
-func _draw_beat_hash(
-        beat_index: int,
-        previous_position: Vector2,
-        next_position: Vector2,
-        opacity: float) -> void:
-    var is_downbeat := beat_index % Sc.beats.get_meter() == 0
-    var hash_length: float
-    var stroke_width: float
-    if is_downbeat:
-        hash_length = DOWNBEAT_HASH_LENGTH
-        stroke_width = DOWNBEAT_HASH_STROKE_WIDTH
-    else:
-        hash_length = OFFBEAT_HASH_LENGTH
-        stroke_width = OFFBEAT_HASH_STROKE_WIDTH
-    
-    var color := Color.from_hsv(
-            MOVEMENT_HUE,
-            0.6,
-            0.9,
-            opacity)
-    
-    # TODO: Revisit whether this still looks right.
-    var next_vs_previous_weight := 1.0
-    var hash_position: Vector2 = lerp(
-            previous_position,
-            next_position,
-            next_vs_previous_weight)
-    var hash_direction: Vector2 = \
-            (next_position - previous_position).tangent().normalized()
-    var hash_half_displacement := \
-            hash_length * hash_direction / 2.0
-    var hash_from := hash_position + hash_half_displacement
-    var hash_to := hash_position - hash_half_displacement
-    
-    self.draw_line(
-            hash_from,
-            hash_to,
-            color,
-            stroke_width,
-            false)
