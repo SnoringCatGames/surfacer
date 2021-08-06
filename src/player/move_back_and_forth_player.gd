@@ -50,7 +50,7 @@ func _ready() -> void:
     navigator.connect("destination_reached", self, "_on_destination_reached")
     
     if start_surface != null:
-        _trigger_turn_around_move()
+        _trigger_move_after_delay()
 
 
 func _on_attached_to_first_surface() -> void:
@@ -68,10 +68,15 @@ func _on_attached_to_first_surface() -> void:
     _destination = PositionAlongSurface.new()
     _destination.surface = start_surface
     if _is_ready:
-        _trigger_turn_around_move()
+        _trigger_move_after_delay()
 
 
 func _on_destination_reached() -> void:
+    _trigger_move_after_delay()
+
+
+func _trigger_move_after_delay() -> void:
+    behavior = PlayerBehaviorType.REST
     var delay := \
             randf() * (pause_delay_max - pause_delay_min) + pause_delay_min
     _next_move_timeout_id = Sc.time.set_timeout(
@@ -84,9 +89,12 @@ func _trigger_turn_around_move() -> void:
 
 func _trigger_move(
         is_moving_minward: bool,
-        min_distance := 0.0) -> void:
+        min_distance := 0.0,
+        behavior := PlayerBehaviorType.CUSTOM) -> void:
     Sc.time.clear_timeout(_next_move_timeout_id)
     _next_move_timeout_id = -1
+    
+    self.behavior = behavior
     
     var is_surface_horizontal := \
             start_surface.side == SurfaceSide.FLOOR or \
