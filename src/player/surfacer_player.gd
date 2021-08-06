@@ -191,7 +191,7 @@ func _init_navigator() -> void:
     navigator = SurfaceNavigator.new(self, graph)
     navigation_state = navigator.navigation_state
     navigator.connect(
-            "destination_ended", self, "_on_surfacer_player_navigation_ended")
+            "navigation_ended", self, "_on_surfacer_player_navigation_ended")
     _action_sources.push_back(navigator.instructions_action_source)
 
 
