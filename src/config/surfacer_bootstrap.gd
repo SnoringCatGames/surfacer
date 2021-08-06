@@ -9,9 +9,9 @@ func _init().("SurfacerBootstrap") -> void:
 
 func _on_app_initialized() -> void:
     ._on_app_initialized()
-    Su.annotators._on_app_initialized()
+    Sc.annotators._on_app_initialized()
     # Hide this annotator by default.
-    Su.annotators.set_annotator_enabled(
+    Sc.annotators.set_annotator_enabled(
             AnnotatorType.RECENT_MOVEMENT,
             false)
 

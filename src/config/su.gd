@@ -232,8 +232,6 @@ var graph_parser: PlatformGraphParser
 var graph_inspector: PlatformGraphInspector
 var legend: Legend
 var selection_description: SelectionDescription
-# TODO: Cleanup the annotator system.
-var annotators: Annotators
 var ann_defaults: AnnotationElementDefaults
 var ann_manifest: SurfacerAnnotationsManifest
 var movement: SurfacerMovementManifest
@@ -403,10 +401,3 @@ func _configure_sub_modules() -> void:
     else:
         self.ann_defaults = AnnotationElementDefaults.new()
     add_child(self.ann_defaults)
-    
-    if manifest.has("annotators_class"):
-        self.annotators = manifest.annotators_class.new()
-        assert(self.annotators is Annotators)
-    else:
-        self.annotators = Annotators.new()
-    add_child(self.annotators)

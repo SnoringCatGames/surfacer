@@ -87,7 +87,7 @@ func _ready() -> void:
         set_collision_mask_bit(
                 Su.WALK_THROUGH_WALLS_COLLISION_MASK_BIT, false)
     
-    if Su.annotators.is_annotator_enabled(
+    if Sc.annotators.is_annotator_enabled(
             AnnotatorType.PATH_PRESELECTION) and \
             (is_human_player and Su.ann_manifest.is_human_prediction_shown or \
             !is_human_player and Su.ann_manifest.is_computer_prediction_shown):
@@ -100,7 +100,7 @@ func _ready() -> void:
     
     # Set up some annotators to help with debugging.
     set_is_sprite_visible(false)
-    Su.annotators.create_player_annotator(
+    Sc.annotators.create_player_annotator(
             self,
             is_human_player)
 
@@ -115,7 +115,7 @@ func _attach_prediction() -> void:
         return
     
     if is_instance_valid(prediction):
-        Su.annotators.path_preselection_annotator \
+        Sc.annotators.path_preselection_annotator \
                 .add_prediction(prediction)
 
 

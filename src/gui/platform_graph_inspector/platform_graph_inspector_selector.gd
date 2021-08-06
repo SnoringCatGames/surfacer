@@ -82,7 +82,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _draw() -> void:
-    Su.annotators.element_annotator \
+    Sc.annotators.element_annotator \
             .erase_all(current_annotation_elements)
     current_annotation_elements.clear()
     
@@ -116,7 +116,7 @@ func _draw_possible_jump_land_positions() -> void:
         current_annotation_elements.push_back(
                 JumpLandPositionsAnnotationElement.new(jump_land_positions))
     
-    Su.annotators.element_annotator \
+    Sc.annotators.element_annotator \
             .add_all(current_annotation_elements)
 
 

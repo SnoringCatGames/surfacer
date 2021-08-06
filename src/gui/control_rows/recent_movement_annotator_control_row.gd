@@ -17,7 +17,7 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Su.annotators.set_annotator_enabled(
+    Sc.annotators.set_annotator_enabled(
             annotator_type,
             pressed)
     Sc.save_state.set_setting(
@@ -26,7 +26,7 @@ func on_pressed(pressed: bool) -> void:
 
 
 func get_is_pressed() -> bool:
-    return Su.annotators.is_annotator_enabled(annotator_type)
+    return Sc.annotators.is_annotator_enabled(annotator_type)
 
 
 func get_is_enabled() -> bool:

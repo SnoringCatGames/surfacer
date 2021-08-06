@@ -285,7 +285,7 @@ func _trigger_beat_hash_animation(beat: PathBeatPrediction) -> void:
             Su.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
     current_path_color.a *= fade_progress
     
-    Su.annotators.add_transient(OnBeatHashAnnotator.new(
+    Sc.annotators.add_transient(OnBeatHashAnnotator.new(
             beat,
             AnnotationElementDefaults \
                     .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,

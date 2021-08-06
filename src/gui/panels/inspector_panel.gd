@@ -73,7 +73,7 @@ func _ready() -> void:
     if !Engine.editor_hint:
         # Tell the element annotator to populate the legend, now that it's
         # available.
-        Su.annotators.element_annotator.update()
+        Sc.annotators.element_annotator.update()
         
         _initialize_annotator_checkboxes()
     
