@@ -3,6 +3,7 @@ extends Node2D
 
 
 var _player
+var _user_nav: UserNavigationBehaviorController
 var _nearby_surface_distance_squared_threshold: float
 var _is_preselection_path_update_pending := false
 var _throttled_update_preselection_path: FuncRef = Sc.time.throttle(
@@ -16,6 +17,8 @@ var _last_pointer_drag_position := Vector2.INF
 
 func _init(player) -> void:
     self._player = player
+    self._user_nav = player.get_behavior_controller(
+            "UserNavigationBehaviorController")
     var nearby_surface_distance_threshold: float = \
             _player.movement_params.max_upward_jump_distance * \
             PointerSelectionPosition.SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO
@@ -107,13 +110,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _update_preselection_path() -> void:
     _is_preselection_path_update_pending = false
-    _player.pre_selection.update_pointer_position(_last_pointer_drag_position)
+    _user_nav.pre_selection.update_pointer_position(_last_pointer_drag_position)
 
 
 func _update_preselection_beats() -> void:
     # Skip the beat update if we're already going to the the whole path update.
     if !_is_preselection_path_update_pending:
-        _player.pre_selection.update_beats()
+        _user_nav.pre_selection.update_beats()
 
 
 func _on_pointer_released(pointer_position: Vector2) -> void:
@@ -122,13 +125,13 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
     _is_preselection_path_update_pending = false
     Sc.time.clear_throttle(_throttled_update_preselection_path)
     Sc.time.clear_throttle(_throttled_update_preselection_beats)
-    _player.new_selection.update_pointer_position(pointer_position)
+    _user_nav.new_selection.update_pointer_position(pointer_position)
     
     var selected_surface: Surface = \
-            _player.new_selection.navigation_destination.surface if \
-            _player.new_selection.navigation_destination != null else \
+            _user_nav.new_selection.navigation_destination.surface if \
+            _user_nav.new_selection.navigation_destination != null else \
             null
-    var is_surface_navigatable: bool = _player.new_selection.path != null
+    var is_surface_navigatable: bool = _user_nav.new_selection.path != null
     Sc.annotators.add_transient(SurfacerClickAnnotator.new(
             pointer_position,
             selected_surface,
