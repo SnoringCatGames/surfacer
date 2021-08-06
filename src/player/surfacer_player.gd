@@ -190,6 +190,8 @@ func _init_platform_graph() -> void:
 func _init_navigator() -> void:
     navigator = SurfaceNavigator.new(self, graph)
     navigation_state = navigator.navigation_state
+    navigator.connect(
+            "destination_ended", self, "_on_surfacer_player_navigation_ended")
     _action_sources.push_back(navigator.instructions_action_source)
 
 
@@ -306,6 +308,7 @@ func _handle_pointer_selections() -> void:
         
         if new_selection.get_is_selection_navigatable():
             last_selection.copy(new_selection)
+            behavior = PlayerBehaviorType.USER_NAVIGATE
             navigator.navigate_path(last_selection.path)
             Sc.audio.play_sound("nav_select_success")
         else:
@@ -407,6 +410,10 @@ func _update_collision_mask() -> void:
     set_collision_mask_bit(
             Su.WALK_THROUGH_WALLS_COLLISION_MASK_BIT,
             surface_state.is_grabbing_walk_through_walls)
+
+
+func _on_surfacer_player_navigation_ended(did_navigation_finish: bool) -> void:
+    behavior = PlayerBehaviorType.REST
 
 
 func start_dash(horizontal_acceleration_sign: int) -> void:

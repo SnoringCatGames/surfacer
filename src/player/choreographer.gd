@@ -157,6 +157,7 @@ func _execute_next_step() -> void:
     for key in step.keys():
         match key:
             "destination":
+                player.behavior = PlayerBehaviorType.CHOREOGRAPHY
                 var target: Vector2 = \
                         Sc.utils.get_node_in_group(step.destination) \
                                 .position if \

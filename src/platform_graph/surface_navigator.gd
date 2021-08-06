@@ -4,9 +4,11 @@ extends Reference
 ## to a destination position.
 
 
-signal navigation_started
+signal navigation_started(is_retry)
 signal destination_reached
-signal navigation_interrupted
+signal navigation_interrupted(is_retrying)
+signal navigation_canceled
+signal navigation_ended(did_reach_destination)
 
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
@@ -134,7 +136,7 @@ func navigate_path(
         
         just_started_navigating = false
         
-        emit_signal("navigation_started")
+        emit_signal("navigation_started", is_retry)
         
         return true
 
@@ -301,6 +303,8 @@ func _calculate_surface_to_air_edge(
 
 
 func stop() -> void:
+    emit_signal("navigation_canceled")
+    emit_signal("navigation_ended", false)
     _reset()
 
 
@@ -324,6 +328,7 @@ func _set_reached_destination() -> void:
     _print("REACHED END OF PATH: %8.3fs", Sc.time.get_play_time())
     
     emit_signal("destination_reached")
+    emit_signal("navigation_ended", true)
 
 
 func _reset() -> void:
@@ -444,15 +449,18 @@ func update(
         
         # TODO: Handle interruptions differently.
         
-        if movement_params.retries_navigation_when_interrupted:
+        var is_retrying := movement_params.retries_navigation_when_interrupted
+        
+        if is_retrying:
             navigate_to_position(
                     path.destination,
                     path.graph_destination_for_in_air_destination,
                     true)
-        else:
-            _reset()
         
-        emit_signal("navigation_interrupted")
+        emit_signal("navigation_interrupted", is_retrying)
+        if !is_retrying:
+            emit_signal("navigation_ended", false)
+            _reset()
         
         return
         
