@@ -38,6 +38,9 @@ const DEFAULT_EDGE_CALCULATOR_CLASSES := [
 
 # ---
 
+var uses_point_and_click_navigation := true
+var cancels_point_and_click_nav_on_key_press := true
+
 var gravity_default := 5000.0
 var gravity_slow_rise_multiplier_default := 0.38
 var gravity_double_jump_slow_rise_multiplier_default := 0.68
@@ -91,6 +94,13 @@ func _init() -> void:
 func _register_manifest(manifest: Dictionary) -> void:
     self._action_handler_classes = manifest.action_handler_classes
     self._edge_calculator_classes = manifest.edge_calculator_classes
+    
+    if manifest.has("uses_point_and_click_navigation"):
+        self.uses_point_and_click_navigation = \
+                manifest.uses_point_and_click_navigation
+    if manifest.has("cancels_point_and_click_nav_on_key_press"):
+        self.cancels_point_and_click_nav_on_key_press = \
+                manifest.cancels_point_and_click_nav_on_key_press
     
     if manifest.has("gravity_default"):
         self.gravity_default = \

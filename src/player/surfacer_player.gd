@@ -34,16 +34,15 @@ var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var navigation_state: PlayerNavigationState
 
-var new_selection: PointerSelectionPosition
-var last_selection: PointerSelectionPosition
-var pre_selection: PointerSelectionPosition
-
 var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: SurfaceNavigator
 var prediction: PlayerPrediction
 var pointer_listener: PlayerPointerListener
+var behavior_controller: BehaviorController
 
+# Dictionary<String, BehaviorController>
+var _behavior_controllers := {}
 # Array<PlayerActionSource>
 var _action_sources := []
 # Dictionary<String, bool>
@@ -68,16 +67,10 @@ func _ready() -> void:
     surface_state.horizontal_facing_sign = 1
     animator.face_right()
     
-    self.new_selection = PointerSelectionPosition.new(self)
-    self.last_selection = PointerSelectionPosition.new(self)
-    self.pre_selection = PointerSelectionPosition.new(self)
-    
-    self.pointer_listener = PlayerPointerListener.new(self)
-    add_child(pointer_listener)
-    
-    # Set up a Tween for the fade-out at the end of a dash.
-    _dash_fade_tween = ScaffolderTween.new()
-    add_child(_dash_fade_tween)
+    if movement_params.can_dash:
+        # Set up a Tween for the fade-out at the end of a dash.
+        _dash_fade_tween = ScaffolderTween.new()
+        add_child(_dash_fade_tween)
     
     if movement_params.bypasses_runtime_physics:
         set_collision_mask_bit(
@@ -97,12 +90,19 @@ func _ready() -> void:
     
     _init_platform_graph()
     _init_navigator()
+    _parse_behavior_controller_children()
     
     # Set up some annotators to help with debugging.
     set_is_sprite_visible(false)
     Sc.annotators.create_player_annotator(
             self,
             is_human_player)
+
+
+func _destroy() -> void:
+    if is_instance_valid(prediction):
+        prediction.queue_free()
+    ._destroy()
 
 
 func _on_annotators_ready() -> void:
@@ -119,29 +119,44 @@ func _attach_prediction() -> void:
                 .add_prediction(prediction)
 
 
-func _destroy() -> void:
-    if is_instance_valid(prediction):
-        prediction.queue_free()
-    ._destroy()
-
-
 func _update_editor_configuration_debounced() -> void:
     ._update_editor_configuration_debounced()
-
+    
     if _configuration_warning != "":
         return
     
-    # Get MovementParams from scene configuration.
-    var movement_params_matches: Array = Sc.utils.get_children_by_type(
-            self,
-            MovementParams)
-    if movement_params_matches.size() > 1:
-        _set_configuration_warning(
-                "Must only define a single MovementParams child node.")
-        return
-    elif movement_params_matches.size() < 1:
-        _set_configuration_warning("Must define a MovementParams child node.")
-        return
+    if Engine.editor_hint:
+        # Validate MovementParams from scene configuration.
+        var movement_params_matches: Array = Sc.utils.get_children_by_type(
+                self,
+                MovementParams)
+        if movement_params_matches.size() > 1:
+            _set_configuration_warning(
+                    "Must only define a single MovementParams child node.")
+            return
+        elif movement_params_matches.size() < 1:
+            _set_configuration_warning(
+                    "Must define a MovementParams child node.")
+            return
+        
+        # Validate BehaviorControllers from scene configuration.
+        var controllers: Array = \
+                Sc.utils.get_children_by_type(self, BehaviorController)
+        var active_at_start_controller: BehaviorController
+        var controller_names := {}
+        for controller in controllers:
+            if controller_names.has(controller.controller_name):
+                _set_configuration_warning(
+                        ("Must not define more than one BehaviorController " +
+                        "of type %s.") % controller.controller_name)
+            controller_names[controller.controller_name] = true
+            
+            if controller.is_active_at_start:
+                if active_at_start_controller != null:
+                    _set_configuration_warning(
+                            "Only one BehaviorController should be marked " +
+                            "as `is_active_at_start`.")
+                active_at_start_controller = controller
     
     _initialize_child_movement_params()
     
@@ -149,6 +164,8 @@ func _update_editor_configuration_debounced() -> void:
 
 
 func _initialize_child_movement_params() -> void:
+    if is_instance_valid(movement_params):
+        return
     # Get MovementParams from scene configuration.
     movement_params = Su.movement.player_movement_params[player_name]
     self.current_max_horizontal_speed = \
@@ -156,23 +173,26 @@ func _initialize_child_movement_params() -> void:
     movement_params.call_deferred("_parse_shape_from_parent")
 
 
-func _unhandled_input(event: InputEvent) -> void:
-    if _is_ready and \
-            !_is_destroyed and \
-            Sc.gui.is_user_interaction_enabled and \
-            navigator.is_currently_navigating and \
-            event is InputEventKey:
-        navigator.stop()
-
-
 func _on_attached_to_first_surface() -> void:
-    pass
+    # FIXME: -------------- Use flat array
+    for behavior_controller in _behavior_controllers.values():
+        behavior_controller._on_attached_to_first_surface()
 
 
 func set_is_human_player(value: bool) -> void:
     .set_is_human_player(value)
     if is_human_player:
         _init_user_controller_action_source()
+        if Su.movement.uses_point_and_click_navigation:
+            var user_navigation_behavior_controller := \
+                    UserNavigationBehaviorController.new()
+            user_navigation_behavior_controller \
+                    .cancels_navigation_on_key_press = \
+                            Su.movement.cancels_point_and_click_nav_on_key_press
+            add_behavior_controller(user_navigation_behavior_controller)
+            
+            self.pointer_listener = PlayerPointerListener.new(self)
+            add_child(pointer_listener)
 
 
 func _init_user_controller_action_source() -> void:
@@ -195,12 +215,15 @@ func _init_navigator() -> void:
     _action_sources.push_back(navigator.instructions_action_source)
 
 
-func _process_physics_frame(delta: float) -> void:
+func _on_physics_process(delta: float) -> void:
     var delta_scaled: float = Sc.time.scale_delta(delta)
     
     _update_actions(delta_scaled)
     _update_surface_state()
-    _handle_pointer_selections()
+    
+    # FIXME: ---------- Also maintain a separate flat-array, and loop that here.
+    for behavior_controller in _behavior_controllers.values():
+        behavior_controller._on_physics_process(delta)
     
     if surface_state.just_left_air:
         _log_player_event(
@@ -279,7 +302,8 @@ func _process_physics_frame(delta: float) -> void:
     # TODO: Only update surface_state if the player actually moved?
     surface_state.update_for_movement(self)
     
-    if surface_state.did_move_last_frame:
+    if surface_state.did_move_last_frame and \
+            is_human_player:
         pointer_listener.on_player_moved()
 
 
@@ -291,32 +315,6 @@ func _update_navigator(delta_scaled: float) -> void:
         actions.copy(_actions_from_previous_frame)
         _update_actions(delta_scaled)
         _update_surface_state(true)
-
-
-func _handle_pointer_selections() -> void:
-    if new_selection.get_has_selection():
-        _log_player_event(
-                "NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
-                    player_name,
-                    Sc.time.get_play_time(),
-                    str(new_selection.pointer_position),
-                    new_selection.navigation_destination.to_string() if \
-                    new_selection.get_is_selection_navigatable() else \
-                    "[No matching surface]"
-                ],
-                true)
-        
-        if new_selection.get_is_selection_navigatable():
-            last_selection.copy(new_selection)
-            behavior = PlayerBehaviorType.USER_NAVIGATE
-            navigator.navigate_path(last_selection.path)
-            Sc.audio.play_sound("nav_select_success")
-        else:
-            _log_player_event("TARGET IS TOO FAR FROM ANY SURFACE", [], true)
-            Sc.audio.play_sound("nav_select_fail")
-        
-        new_selection.clear()
-        pre_selection.clear()
 
 
 func _update_actions(delta_scaled: float) -> void:
@@ -513,3 +511,44 @@ func get_current_animation_state(result: PlayerAnimationState) -> void:
     result.animation_position = \
             animator.animation_player.current_animation_position
     result.facing_left = surface_state.horizontal_facing_sign == -1
+
+
+func _parse_behavior_controller_children() -> void:
+    var controllers: Array = \
+            Sc.utils.get_children_by_type(self, BehaviorController)
+    
+    for controller in controllers:
+        assert(get_behavior_controller(controller.controller_name) == null)
+        _behavior_controllers[controller.controller_name] = controller
+    
+    # Automatically add a default RestBehaviorController to each player.
+    var rest_controller := RestBehaviorController.new()
+    add_behavior_controller(rest_controller)
+    if behavior_controller == null:
+        rest_controller.is_active = true
+    
+    for controller in controllers:
+        controller._on_player_ready()
+
+
+func add_behavior_controller(controller: BehaviorController) -> void:
+    assert(get_behavior_controller(controller.controller_name) == null)
+    _behavior_controllers[controller.controller_name] = controller
+    if Engine.editor_hint:
+        return
+    add_child(controller)
+    controller._on_player_ready()
+
+
+func remove_behavior_controller(controller_name: String) -> void:
+    var controller := get_behavior_controller(controller_name)
+    _behavior_controllers.erase(controller_name)
+    if is_instance_valid(controller):
+        controller.queue_free()
+
+
+func get_behavior_controller(controller_name: String) -> BehaviorController:
+    if _behavior_controllers.has(controller_name):
+        return _behavior_controllers[controller_name]
+    else:
+        return null
