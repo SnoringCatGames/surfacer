@@ -6,7 +6,8 @@ extends BehaviorController
 ## -   The spacing and timing of movement is configurable.
 
 
-const CONTROLLER_NAME := "MoveBackAndForthBehaviorController"
+const CONTROLLER_NAME := "move_back_and_forth"
+const IS_ADDED_MANUALLY := true
 
 ## If true, then the player's movement range will extend to the far ends of the
 ## surface they are on.
@@ -43,40 +44,18 @@ var _destination: PositionAlongSurface
 var _next_move_timeout_id := -1
 
 
-func _init().(CONTROLLER_NAME) -> void:
+func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
     pass
 
 
-func _on_player_ready() -> void:
-    if Engine.editor_hint:
-        return
-    
-    # Randomize which direction the player moves first.
-    _was_last_move_minward = randf() < 0.5
-    
-    player.navigator.connect(
-            "destination_reached", self, "_on_destination_reached")
-    
-    if is_active and \
-            player.start_surface != null:
-        trigger_move_after_delay()
-
-
-func _on_active() -> void:
-    if _is_ready and \
-            player.start_surface != null:
-        trigger_move_after_delay()
-
-
-func _on_inactive() -> void:
-    Sc.time.clear_timeout(_next_move_timeout_id)
-
-
-#func _on_physics_process(delta: float) -> void:
+#func _on_player_ready() -> void:
 #    pass
 
 
 func _on_attached_to_first_surface() -> void:
+    if Engine.editor_hint:
+        return
+    
     match player.start_surface.side:
         SurfaceSide.FLOOR:
             assert(player.movement_params.can_grab_floors)
@@ -88,11 +67,33 @@ func _on_attached_to_first_surface() -> void:
         _:
             Sc.logger.error()
     
+    # Randomize which direction the player moves first.
+    _was_last_move_minward = randf() < 0.5
+    
+    player.navigator.connect(
+            "destination_reached", self, "_on_destination_reached")
+    
     _destination = PositionAlongSurface.new()
     _destination.surface = player.start_surface
     if _is_ready and \
             is_active:
         trigger_move_after_delay()
+
+
+#func _on_active() -> void:
+#    pass
+
+
+func _on_ready_to_move() -> void:
+    trigger_move_after_delay()
+
+
+func _on_inactive() -> void:
+    Sc.time.clear_timeout(_next_move_timeout_id)
+
+
+#func _on_physics_process(delta: float) -> void:
+#    pass
 
 
 func _on_destination_reached() -> void:

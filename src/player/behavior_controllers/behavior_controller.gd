@@ -8,21 +8,31 @@ extends Node2D
 export var is_active_at_start := false setget _set_is_active_at_start
 
 var controller_name: String
+var is_added_manually: bool
 
 var player
 
 var is_active := false setget _set_is_active
 
 var _is_ready := false
+var _was_already_ready_to_move_this_frame := false
 var _configuration_warning := ""
 
 
-func _init(controller_name: String) -> void:
+func _init(
+        controller_name: String,
+        is_added_manually: bool) -> void:
     self.controller_name = controller_name
+    self.is_added_manually = is_added_manually
 
 
 func _enter_tree() -> void:
     _get_player_reference_from_parent()
+    if !is_added_manually and \
+            Engine.editor_hint:
+        Sc.logger.error(
+                ("BehaviorController %s should not be added to your scene " +
+                "manually.") % controller_name)
 
 
 func _ready() -> void:
@@ -31,13 +41,38 @@ func _ready() -> void:
         return
     if is_active_at_start:
         _set_is_active(true)
+    _check_ready_to_move()
 
 
 func _on_player_ready() -> void:
-    pass
+    _check_ready_to_move()
+
+
+func _on_attached_to_first_surface() -> void:
+    _check_ready_to_move()
+
+
+func _check_ready_to_move() -> void:
+    if _is_ready and \
+            player._is_ready and \
+            player.start_surface != null and \
+            is_active and \
+            !_was_already_ready_to_move_this_frame:
+        _was_already_ready_to_move_this_frame = true
+        _on_ready_to_move()
 
 
 func _on_active() -> void:
+    pass
+
+
+## This is called any frame any of the following is called, but only after all
+## of them have been called at least once:[br]
+## -   _ready[br]
+## -   _on_player_ready[br]
+## -   _on_attached_to_first_surface[br]
+## -   _on_active[br]
+func _on_ready_to_move() -> void:
     pass
 
 
@@ -46,11 +81,7 @@ func _on_inactive() -> void:
 
 
 func _on_physics_process(delta: float) -> void:
-    pass
-
-
-func _on_attached_to_first_surface() -> void:
-    pass
+    _was_already_ready_to_move_this_frame = false
 
 
 func _update_parameters() -> void:
@@ -106,11 +137,12 @@ func _set_is_active(value: bool) -> void:
                 player.behavior_controller.is_active = false
             player.behavior_controller = self
             _on_active()
+            _check_ready_to_move()
         else:
             _on_inactive()
             # FIXME: ---------------------- Transition to the next BehaviorController
 #            var rest_controller: BehaviorController = \
-#                    player.get_behavior_controller("RestBehaviorController")
+#                    player.get_behavior_controller("rest")
 #            rest_controller.is_active = true
 
 

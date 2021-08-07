@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/surfacer/src/player/behavior_controllers/follow_behavior_controller.gd" type="Script" id=1]
+
+[node name="FollowBehaviorController" type="Node2D"]
+script = ExtResource( 1 )
