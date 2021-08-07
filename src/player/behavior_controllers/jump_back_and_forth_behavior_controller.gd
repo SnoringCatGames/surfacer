@@ -1,5 +1,5 @@
 tool
-class_name WanderBehaviorController, \
+class_name JumpBackAndForthBehaviorController, \
 "res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
 extends BehaviorController
 
@@ -7,7 +7,7 @@ extends BehaviorController
 # FIXME: -------------------------
 
 
-const CONTROLLER_NAME := "wander"
+const CONTROLLER_NAME := "jump_back_and_forth"
 const IS_ADDED_MANUALLY := true
 
 

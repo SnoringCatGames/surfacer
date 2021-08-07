@@ -43,6 +43,8 @@ var behavior_controller: BehaviorController
 
 # Dictionary<String, BehaviorController>
 var _behavior_controllers := {}
+# Array<BehaviorController>
+var _behavior_controllers_list := []
 # Array<PlayerActionSource>
 var _action_sources := []
 # Dictionary<String, bool>
@@ -174,8 +176,7 @@ func _initialize_child_movement_params() -> void:
 
 
 func _on_attached_to_first_surface() -> void:
-    # FIXME: -------------- Use flat array
-    for behavior_controller in _behavior_controllers.values():
+    for behavior_controller in _behavior_controllers_list:
         behavior_controller._on_attached_to_first_surface()
 
 
@@ -221,8 +222,7 @@ func _on_physics_process(delta: float) -> void:
     _update_actions(delta_scaled)
     _update_surface_state()
     
-    # FIXME: ---------- Also maintain a separate flat-array, and loop that here.
-    for behavior_controller in _behavior_controllers.values():
+    for behavior_controller in _behavior_controllers_list:
         behavior_controller._on_physics_process(delta)
     
     if surface_state.just_left_air:
@@ -414,6 +414,10 @@ func _on_surfacer_player_navigation_ended(did_navigation_finish: bool) -> void:
     behavior = PlayerBehaviorType.REST
 
 
+func _on_behavior_finished() -> void:
+    pass
+
+
 func start_dash(horizontal_acceleration_sign: int) -> void:
     if !_can_dash or \
             !movement_params.can_dash:
@@ -520,6 +524,8 @@ func _parse_behavior_controller_children() -> void:
     for controller in controllers:
         assert(get_behavior_controller(controller.controller_name) == null)
         _behavior_controllers[controller.controller_name] = controller
+        _behavior_controllers_list.push_back(controller)
+        controller.connect("finished", self, "_on_behavior_finished")
     
     # Automatically add a default RestBehaviorController to each player.
     var rest_controller := RestBehaviorController.new()
@@ -534,8 +540,10 @@ func _parse_behavior_controller_children() -> void:
 func add_behavior_controller(controller: BehaviorController) -> void:
     assert(get_behavior_controller(controller.controller_name) == null)
     _behavior_controllers[controller.controller_name] = controller
+    _behavior_controllers_list.push_back(controller)
     if Engine.editor_hint:
         return
+    controller.connect("finished", self, "_on_behavior_finished")
     add_child(controller)
     controller._on_player_ready()
 
@@ -543,7 +551,9 @@ func add_behavior_controller(controller: BehaviorController) -> void:
 func remove_behavior_controller(controller_name: String) -> void:
     var controller := get_behavior_controller(controller_name)
     _behavior_controllers.erase(controller_name)
+    _behavior_controllers_list.erase(controller)
     if is_instance_valid(controller):
+        controller.disconnect("finished", self, "_on_behavior_finished")
         controller.queue_free()
 
 
