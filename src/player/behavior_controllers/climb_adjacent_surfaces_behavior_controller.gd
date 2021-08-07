@@ -1,5 +1,5 @@
 tool
-class_name WanderBehaviorController, \
+class_name ClimbAdjacentSurfacesBehaviorController, \
 "res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
 extends BehaviorController
 
@@ -7,7 +7,7 @@ extends BehaviorController
 # FIXME: -------------------------
 
 
-const CONTROLLER_NAME := "wander"
+const CONTROLLER_NAME := "climb_adjacent_surfaces"
 const IS_ADDED_MANUALLY := true
 
 

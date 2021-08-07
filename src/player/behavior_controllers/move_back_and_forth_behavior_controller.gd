@@ -49,10 +49,12 @@ func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
 
 
 #func _on_player_ready() -> void:
-#    pass
+#    ._on_player_ready()
 
 
 func _on_attached_to_first_surface() -> void:
+    ._on_attached_to_first_surface()
+    
     if Engine.editor_hint:
         return
     
@@ -81,19 +83,29 @@ func _on_attached_to_first_surface() -> void:
 
 
 #func _on_active() -> void:
-#    pass
+#    ._on_active()
 
 
 func _on_ready_to_move() -> void:
+    ._on_ready_to_move()
     trigger_move_after_delay()
 
 
 func _on_inactive() -> void:
+    ._on_inactive()
     Sc.time.clear_timeout(_next_move_timeout_id)
 
 
+#func _on_player_ready() -> void:
+#    ._on_player_ready()
+
+
+#func _on_attached_to_first_surface() -> void:
+#    ._on_attached_to_first_surface()
+
+
 #func _on_physics_process(delta: float) -> void:
-#    pass
+#    ._on_physics_process(delta)
 
 
 func _on_destination_reached() -> void:
@@ -277,6 +289,7 @@ func _update_parameters() -> void:
     
     if _configuration_warning != "":
         return
+    
     if min_distance_from_surface_ends < 0.0:
         _set_configuration_warning(
                 "min_distance_from_surface_ends must be non-negative.")

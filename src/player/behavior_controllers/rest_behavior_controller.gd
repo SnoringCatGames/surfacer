@@ -12,24 +12,32 @@ func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
 
 
 #func _on_player_ready() -> void:
-#    pass
+#    ._on_player_ready()
 
 
 #func _on_attached_to_first_surface() -> void:
-#    pass
+#    ._on_attached_to_first_surface()
 
 
 func _on_active() -> void:
+    ._on_active()
     player.behavior = PlayerBehaviorType.REST
 
 
 #func _on_ready_to_move() -> void:
-#    pass
+#    ._on_ready_to_move()
 
 
 #func _on_inactive() -> void:
-#    pass
+#    ._on_inactive()
 
 
 #func _on_physics_process(delta: float) -> void:
-#    pass
+#    ._on_physics_process(delta)
+
+
+#func _update_parameters() -> void:
+#    ._update_parameters()
+#    if _configuration_warning != "":
+#        return
+#    _set_configuration_warning("")

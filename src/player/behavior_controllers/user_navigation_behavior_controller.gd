@@ -24,18 +24,34 @@ func _ready() -> void:
 
 
 #func _on_player_ready() -> void:
-#    pass
+#    ._on_player_ready()
+
+
+#func _on_attached_to_first_surface() -> void:
+#    ._on_attached_to_first_surface()
 
 
 #func _on_active() -> void:
-#    pass
+#    ._on_active()
+
+
+#func _on_ready_to_move() -> void:
+#    ._on_ready_to_move()
 
 
 #func _on_inactive() -> void:
-#    pass
+#    ._on_inactive()
+
+
+#func _update_parameters() -> void:
+#    ._update_parameters()
+#    if _configuration_warning != "":
+#        return
+#    _set_configuration_warning("")
 
 
 func _on_physics_process(delta: float) -> void:
+    ._on_physics_process(delta)
     _handle_pointer_selections()
 
 

@@ -3,9 +3,54 @@ class_name BehaviorController
 extends Node2D
 
 
+signal finished
+
 ## -   Whether this should be the default initial behavior for the player.[br]
 ## -   At most one behavior should be marked `is_active_at_start = true`.[br]
-export var is_active_at_start := false setget _set_is_active_at_start
+export var is_active_at_start := false \
+        setget _set_is_active_at_start
+
+# FIXME: -----------------------
+## -   If true, the player may leave the starting surface in order to run-away
+##     far enough.
+## -   If false, the player will only run, at the furthest, to the end of the
+##     starting surface.
+export var can_leave_start_surface := true \
+        setget _set_can_leave_start_surface
+
+# FIXME: -----------------------
+## -   If true, the player will return to their starting position after the
+##     run-away period has finished.
+## -   If true, then `only_navigates_reversible_paths` must also be true.
+export var returns_to_start_position := true \
+        setget _set_returns_to_start_position
+
+# FIXME: -----------------------
+## -   If true, the player will not navigate to a destination if they cannot
+##     afterward navigate back to their starting position.
+export var only_navigates_reversible_paths := true \
+        setget _set_only_navigates_reversible_paths
+
+# FIXME: -----------------------
+## -   The maximum distance from the starting position, which the player will
+##     be limited to when running away.
+## -   If negative, then no limit will be applied.
+export var max_distance_from_start_position := -1.0 \
+        setget _set_max_distance_from_start_position
+
+# FIXME: -----------------------
+## -   If true, the run-away will start with the player jumping away from the
+##     target.
+## -   This initial jump will respect `can_leave_start_surface`, and will only
+##     send the player to a position from which they can return.
+export var starts_with_a_jump := false \
+        setget _set_starts_with_a_jump
+
+# FIXME: -----------------------
+## -   If `starts_with_a_jump = true`, then the initial jump will use this
+##     value as the starting vertical speed.
+export var start_jump_boost := 0.0 \
+        setget _set_start_jump_boost
 
 var controller_name: String
 var is_added_manually: bool
@@ -44,6 +89,7 @@ func _ready() -> void:
     _check_ready_to_move()
 
 
+# FIXME: -------- REMOVE?
 func _on_player_ready() -> void:
     _check_ready_to_move()
 
@@ -97,6 +143,17 @@ func _update_parameters() -> void:
     if _configuration_warning != "":
         return
     
+    if returns_to_start_position and \
+            !only_navigates_reversible_paths:
+        _set_configuration_warning(
+                "If returns_to_start_position is true, then " +
+                "only_navigates_reversible_paths must also be true.")
+        return
+    
+    if start_jump_boost < 0.0:
+        _set_configuration_warning("start_jump_boost must be non-negative.")
+        return
+    
     _set_configuration_warning("")
 
 
@@ -148,4 +205,34 @@ func _set_is_active(value: bool) -> void:
 
 func _set_is_active_at_start(value: bool) -> void:
     is_active_at_start = value
+    _update_parameters()
+
+
+func _set_can_leave_start_surface(value: bool) -> void:
+    can_leave_start_surface = value
+    _update_parameters()
+
+
+func _set_returns_to_start_position(value: bool) -> void:
+    returns_to_start_position = value
+    _update_parameters()
+
+
+func _set_only_navigates_reversible_paths(value: bool) -> void:
+    only_navigates_reversible_paths = value
+    _update_parameters()
+
+
+func _set_max_distance_from_start_position(value: float) -> void:
+    max_distance_from_start_position = value
+    _update_parameters()
+
+
+func _set_starts_with_a_jump(value: bool) -> void:
+    starts_with_a_jump = value
+    _update_parameters()
+
+
+func _set_start_jump_boost(value: float) -> void:
+    start_jump_boost = value
     _update_parameters()
