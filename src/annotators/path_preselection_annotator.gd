@@ -64,8 +64,7 @@ var preselection_path_beats: Array
 
 func _init(player: SurfacerPlayer) -> void:
     self.player = player
-    self.user_nav = player.get_behavior_controller(
-            "UserNavigationBehaviorController")
+    self.user_nav = player.get_behavior_controller("user_navigation")
     self.path_front_end_trim_radius = min(
             player.movement_params.collider_half_width_height.x,
             player.movement_params.collider_half_width_height.y)

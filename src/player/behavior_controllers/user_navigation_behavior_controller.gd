@@ -3,7 +3,8 @@ class_name UserNavigationBehaviorController
 extends BehaviorController
 
 
-const CONTROLLER_NAME := "UserNavigationBehaviorController"
+const CONTROLLER_NAME := "user_navigation"
+const IS_ADDED_MANUALLY := false
 
 var cancels_navigation_on_key_press := true
 
@@ -12,15 +13,8 @@ var last_selection: PointerSelectionPosition
 var pre_selection: PointerSelectionPosition
 
 
-func _init().(CONTROLLER_NAME) -> void:
+func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
     pass
-
-
-func _enter_tree() -> void:
-    if Engine.editor_hint:
-        Sc.logger.error(
-                "UserNavigationBehaviorController should not be added to " +
-                "your scene manually.")
 
 
 func _ready() -> void:
