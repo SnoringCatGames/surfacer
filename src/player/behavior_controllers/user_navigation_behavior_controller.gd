@@ -59,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
     if _is_ready and \
             !player._is_destroyed and \
             Sc.gui.is_user_interaction_enabled and \
-            player.navigator.is_currently_navigating and \
+            player.navigation_state.is_currently_navigating and \
             cancels_navigation_on_key_press and \
             event is InputEventKey:
         player.navigator.stop()
