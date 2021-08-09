@@ -4,6 +4,32 @@ extends Reference
 ## to a destination position.
 
 
+# FIXME: LEFT OFF HERE: ------------------------------
+# - New per-navigator reachable surface sets:
+#   - Maintain TWO separate, localized sets for each player/navigator.
+#     - All the surfaces, within a distance, that can be reached from the
+#       current surface.
+#     - All the surfaces, within a distance,  that can be reached-reversibly
+#       from the current surface.
+#   - Have navigator listen to changes in surface_exclusion_list, and update
+#     both sets accordingly (but only if some surface in either set could
+#     reach the changed surface?).
+#   - Update SurfaceParser APIs and usages to possibly use either of the
+#     new sets.
+#   - Add a MovementParams property for the sets' distance threshold.
+#   - Add a Surfacer flag which toggles whether these sets are created.
+#   - Depending on the flag:
+#     - Assert that only_navigates_reversible_paths is false.
+#     - Assert that SurfaceParser APIs aren't called, or use different
+#       logic.
+# - Maybe add new APIs to PlatformGraph for updating the exclusion list:
+#   - single update
+#   - bulk update
+#   - Emit changed event for each call to either.
+# - Will need to update Navigator in general to handle mid-flight changes
+#   to surface_exclusion_list.
+
+
 signal navigation_started(is_retry)
 signal destination_reached
 signal navigation_interrupted(is_retrying)

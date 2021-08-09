@@ -55,7 +55,7 @@ export var start_jump_boost := 0.0 \
 var controller_name: String
 var is_added_manually: bool
 
-var player
+var player: ScaffolderPlayer
 
 var is_active := false setget _set_is_active
 
