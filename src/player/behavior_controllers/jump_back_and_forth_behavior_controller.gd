@@ -1,6 +1,6 @@
 tool
 class_name JumpBackAndForthBehaviorController, \
-"res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
+"res://addons/surfacer/assets/images/editor_icons/jump_back_and_forth_behavior_controller.png"
 extends BehaviorController
 
 

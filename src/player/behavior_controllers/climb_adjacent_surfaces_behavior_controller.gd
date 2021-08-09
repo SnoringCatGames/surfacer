@@ -1,6 +1,6 @@
 tool
 class_name ClimbAdjacentSurfacesBehaviorController, \
-"res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
+"res://addons/surfacer/assets/images/editor_icons/climb_adjacent_surfaces_behavior_controller.png"
 extends BehaviorController
 
 
