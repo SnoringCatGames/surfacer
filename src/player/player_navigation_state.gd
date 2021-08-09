@@ -3,6 +3,11 @@ extends Reference
 
 
 var is_human_player := false
+
+var is_currently_navigating := false
+var reached_destination := false
+var canceled_navigating := false
+
 var is_expecting_to_enter_air := false
 var just_interrupted_navigation := false
 var just_left_air_unexpectedly := false
@@ -11,6 +16,7 @@ var just_interrupted_by_unexpected_collision := false
 var just_interrupted_by_user_action := false
 var just_reached_end_of_edge := false
 var is_stalling_one_frame_before_reaching_end := false
+
 var expected_position_along_surface := PositionAlongSurface.new()
 
 

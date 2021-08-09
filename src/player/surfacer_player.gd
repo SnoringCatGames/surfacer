@@ -490,19 +490,19 @@ func get_intended_position(type: int) -> PositionAlongSurface:
                     surface_state.center_position, self)
         IntendedPositionType.EDGE_ORIGIN:
             return navigator.edge.start_position_along_surface if \
-                    navigator.is_currently_navigating else \
+                    navigation_state.is_currently_navigating else \
                     null
         IntendedPositionType.EDGE_DESTINATION:
             return navigator.edge.end_position_along_surface if \
-                    navigator.is_currently_navigating else \
+                    navigation_state.is_currently_navigating else \
                     null
         IntendedPositionType.PATH_ORIGIN:
             return navigator.path.origin if \
-                    navigator.is_currently_navigating else \
+                    navigation_state.is_currently_navigating else \
                     null
         IntendedPositionType.PATH_DESTINATION:
             return navigator.path.destination if \
-                    navigator.is_currently_navigating else \
+                    navigation_state.is_currently_navigating else \
                     null
         _:
             Sc.logger.error("Invalid IntendedPositionType: %d" % type)

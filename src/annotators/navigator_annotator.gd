@@ -250,7 +250,7 @@ func _get_is_exclamation_mark_shown() -> bool:
 
 
 func _get_last_beat_from_navigator() -> PathBeatPrediction:
-    if !navigator.is_currently_navigating:
+    if !navigator.navigation_state.is_currently_navigating:
         return null
     
     var current_path_time := \

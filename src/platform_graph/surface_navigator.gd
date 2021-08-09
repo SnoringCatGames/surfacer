@@ -47,11 +47,6 @@ var instructions_action_source: InstructionsActionSource
 var from_air_calculator: FromAirCalculator
 var surface_to_air_calculator: JumpFromSurfaceCalculator
 
-var is_currently_navigating := false
-var has_reached_destination := false
-var just_reached_destination := false
-var just_started_navigating := false
-
 var path: PlatformGraphPath
 var previous_path: PlatformGraphPath
 
@@ -131,10 +126,8 @@ func navigate_path(
         self.path_start_time_scaled = Sc.time.get_scaled_play_time()
         self.path_beats = Sc.beats.calculate_path_beat_hashes_for_current_mode(
                 path, path_start_time_scaled)
-        is_currently_navigating = true
-        just_started_navigating = true
-        has_reached_destination = false
-        just_reached_destination = false
+        navigation_state.is_currently_navigating = true
+        navigation_state.reached_destination = false
         current_navigation_attempt_count += 1
         
         var duration_navigate_to_position: float = \
@@ -159,8 +152,6 @@ func navigate_path(
         _start_edge(
                 0,
                 is_retry)
-        
-        just_started_navigating = false
         
         emit_signal("navigation_started", is_retry)
         
@@ -229,7 +220,7 @@ func find_path(
                         null)
         
         if from_air_edge == null and \
-                is_currently_navigating and \
+                navigation_state.is_currently_navigating and \
                 edge.get_end_surface() != null:
             # We weren't able to dynamically calculate a valid air-to-surface
             # edge from the current in-air position, but the player was already
@@ -329,9 +320,10 @@ func _calculate_surface_to_air_edge(
 
 
 func stop() -> void:
+    _reset()
+    navigation_state.canceled_navigating = true
     emit_signal("navigation_canceled")
     emit_signal("navigation_ended", false)
-    _reset()
 
 
 func _set_reached_destination() -> void:
@@ -348,8 +340,7 @@ func _set_reached_destination() -> void:
                 Sc.logger.error("Invalid SurfaceSide")
     
     _reset()
-    has_reached_destination = true
-    just_reached_destination = true
+    navigation_state.reached_destination = true
     
     _print("REACHED END OF PATH: %8.3fs", Sc.time.get_play_time())
     
@@ -357,7 +348,7 @@ func _set_reached_destination() -> void:
     emit_signal("navigation_ended", true)
 
 
-func _reset() -> void:
+func _reset(also_resets_navigation_state := true) -> void:
     if path != null:
         previous_path = path
         previous_path_start_time_scaled = path_start_time_scaled
@@ -368,15 +359,14 @@ func _reset() -> void:
     path_beats = []
     edge = null
     edge_index = -1
-    is_currently_navigating = false
-    just_started_navigating = false
-    has_reached_destination = false
-    just_reached_destination = false
+    navigation_state.is_currently_navigating = false
+    navigation_state.reached_destination = false
     playback = null
     instructions_action_source.cancel_all_playback()
     actions_might_be_dirty = true
     current_navigation_attempt_count = 0
-    navigation_state.reset()
+    if also_resets_navigation_state:
+        navigation_state.reset()
 
 
 func _start_edge(
@@ -424,11 +414,9 @@ func _start_edge(
 func update(
         just_started_new_edge := false,
         is_starting_navigation_retry := false) -> void:
-    just_reached_destination = false
-    
     actions_might_be_dirty = just_started_new_edge
     
-    if !is_currently_navigating:
+    if !navigation_state.is_currently_navigating:
         return
     
     # FIXME: ------ This can result in player's getting stuck in mid-air in a
@@ -485,8 +473,8 @@ func update(
         
         emit_signal("navigation_interrupted", is_retrying)
         if !is_retrying:
+            _reset(false)
             emit_signal("navigation_ended", false)
-            _reset()
         
         return
         
@@ -542,7 +530,7 @@ func update(
 func predict_animation_state(
         result: PlayerAnimationState,
         elapsed_time_from_now: float) -> bool:
-    if !is_currently_navigating:
+    if !navigation_state.is_currently_navigating:
         player.get_current_animation_state(result)
         
         var confidence_progress := min(

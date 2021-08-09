@@ -539,7 +539,6 @@ func _update_surface_touch_from_expected_navigation(
 
 func _get_expected_position_for_bypassing_runtime_physics(player) -> \
         PositionAlongSurface:
-    return player.navigator.navigation_state \
-                    .expected_position_along_surface if \
-            player.navigator.is_currently_navigating else \
+    return player.navigation_state.expected_position_along_surface if \
+            player.navigation_state.is_currently_navigating else \
             player.navigator.get_previous_destination()
