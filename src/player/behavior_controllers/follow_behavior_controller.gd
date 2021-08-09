@@ -1,6 +1,6 @@
 tool
 class_name FollowBehaviorController, \
-"res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
+"res://addons/surfacer/assets/images/editor_icons/follow_behavior_controller.png"
 extends BehaviorController
 
 

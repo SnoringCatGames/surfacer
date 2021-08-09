@@ -1,6 +1,6 @@
 tool
 class_name RunAwayBehaviorController, \
-"res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
+"res://addons/surfacer/assets/images/editor_icons/run_away_behavior_controller.png"
 extends BehaviorController
 ## -   When running away, the player finds and navigates to a destination that
 ##     is a given distance away from a given target.
@@ -12,10 +12,18 @@ extends BehaviorController
 const CONTROLLER_NAME := "run_away"
 const IS_ADDED_MANUALLY := true
 
+const RETRY_THRESHOLD_RATIO_FROM_INTENDED_DISTANCE := 0.5
+
 # FIXME: -----------------------
-## -   The distance to run away from the target.
+## -   The ideal distance to run away from the target.
+## -   An attempt will be made to find a destination that is close to the
+##     appropriate distance, but the actual distance could be quite different.
 export var run_distance := 384.0 \
         setget _set_run_distance
+
+var target_to_run_from: Node2D
+
+var _destination := PositionAlongSurface.new()
 
 
 func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:

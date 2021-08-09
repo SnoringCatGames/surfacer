@@ -1,6 +1,6 @@
 tool
 class_name MoveBackAndForthBehaviorController, \
-"res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
+"res://addons/surfacer/assets/images/editor_icons/move_back_and_forth_behavior_controller.png"
 extends BehaviorController
 ## -   This moves a player back-and-forth along a surface.
 ## -   The spacing and timing of movement is configurable.
