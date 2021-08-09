@@ -58,10 +58,9 @@ func _create_children_inner() -> void:
     var text: String
     var description: String
     
-    text = "%s(%d,%d): Origin" % [
+    text = "%s%s: Origin" % [
         SurfaceSide.get_prefix(edge_attempt.get_start_surface().side),
-        edge_attempt.get_start().x,
-        edge_attempt.get_start().y,
+        Sc.utils.get_vector_string(edge_attempt.get_start(), 0),
     ]
     description = \
             "The start position for this edge attempt is %s, along a %s." % [
