@@ -139,7 +139,7 @@ func update_navigation_state(
         navigation_state.just_entered_air_unexpectedly = false
         navigation_state.just_interrupted_by_unexpected_collision = false
         navigation_state.just_interrupted_by_user_action = false
-        navigation_state.just_interrupted_navigation = false
+        navigation_state.just_interrupted = false
         navigation_state.just_reached_end_of_edge = false
         navigation_state.is_stalling_one_frame_before_reaching_end = false
         return
@@ -163,7 +163,7 @@ func update_navigation_state(
             navigation_state.is_human_player and \
             UserActionSource.get_is_some_user_action_pressed()
     
-    navigation_state.just_interrupted_navigation = \
+    navigation_state.just_interrupted = \
             navigation_state.just_left_air_unexpectedly or \
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_unexpected_collision or \
@@ -177,7 +177,7 @@ func update_navigation_state(
             surface_state,
             is_starting_navigation_retry)
     
-    navigation_state.just_interrupted_navigation = \
+    navigation_state.just_interrupted = \
             navigation_state.just_left_air_unexpectedly or \
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_unexpected_collision or \
