@@ -317,7 +317,7 @@ func _update_navigation_state_edge_specific_helper(
     # -   and we don't need special updates if we already know the edge is
     #     done.
     if surface_state.collision_count < 2 or \
-            navigation_state.just_interrupted_navigation:
+            navigation_state.just_interrupted:
         return
     
     var surface := get_start_surface()

@@ -127,7 +127,7 @@ func navigate_path(
         self.path_beats = Sc.beats.calculate_path_beat_hashes_for_current_mode(
                 path, path_start_time_scaled)
         navigation_state.is_currently_navigating = true
-        navigation_state.reached_destination = false
+        navigation_state.has_reached_destination = false
         current_navigation_attempt_count += 1
         
         var duration_navigate_to_position: float = \
@@ -321,7 +321,9 @@ func _calculate_surface_to_air_edge(
 
 func stop() -> void:
     _reset()
-    navigation_state.canceled_navigating = true
+    navigation_state.has_canceled = true
+    navigation_state.just_canceled = true
+    navigation_state.just_ended = true
     emit_signal("navigation_canceled")
     emit_signal("navigation_ended", false)
 
@@ -340,7 +342,9 @@ func _set_reached_destination() -> void:
                 Sc.logger.error("Invalid SurfaceSide")
     
     _reset()
-    navigation_state.reached_destination = true
+    navigation_state.has_reached_destination = true
+    navigation_state.just_reached_destination = true
+    navigation_state.just_ended = true
     
     _print("REACHED END OF PATH: %8.3fs", Sc.time.get_play_time())
     
@@ -348,7 +352,7 @@ func _set_reached_destination() -> void:
     emit_signal("navigation_ended", true)
 
 
-func _reset(also_resets_navigation_state := true) -> void:
+func _reset() -> void:
     if path != null:
         previous_path = path
         previous_path_start_time_scaled = path_start_time_scaled
@@ -359,14 +363,11 @@ func _reset(also_resets_navigation_state := true) -> void:
     path_beats = []
     edge = null
     edge_index = -1
-    navigation_state.is_currently_navigating = false
-    navigation_state.reached_destination = false
     playback = null
     instructions_action_source.cancel_all_playback()
     actions_might_be_dirty = true
     current_navigation_attempt_count = 0
-    if also_resets_navigation_state:
-        navigation_state.reset()
+    navigation_state.reset()
 
 
 func _start_edge(
@@ -414,10 +415,22 @@ func _start_edge(
 func update(
         just_started_new_edge := false,
         is_starting_navigation_retry := false) -> void:
-    actions_might_be_dirty = just_started_new_edge
-    
     if !navigation_state.is_currently_navigating:
+        # -   If we are still navigating, then most of this is updated by the
+        #     current Edge.
+        # -   If not, we do it here.
+        navigation_state.just_ended = false
+        navigation_state.just_reached_destination = false
+        navigation_state.just_canceled = false
+        navigation_state.just_interrupted = false
+        navigation_state.just_left_air_unexpectedly = false
+        navigation_state.just_entered_air_unexpectedly = false
+        navigation_state.just_interrupted_by_unexpected_collision = false
+        navigation_state.just_interrupted_by_user_action = false
+        navigation_state.just_reached_end_of_edge = false
         return
+    
+    actions_might_be_dirty = just_started_new_edge
     
     # FIXME: ------ This can result in player's getting stuck in mid-air in a
     #        continuous, new-nav-every-frame loop.
@@ -444,7 +457,9 @@ func update(
             just_started_new_edge,
             is_starting_navigation_retry)
     
-    if navigation_state.just_interrupted_navigation:
+    if navigation_state.just_interrupted:
+        navigation_state.has_interrupted = true
+        
         var interruption_type_label: String
         if navigation_state.just_left_air_unexpectedly:
             interruption_type_label = \
@@ -473,7 +488,10 @@ func update(
         
         emit_signal("navigation_interrupted", is_retrying)
         if !is_retrying:
-            _reset(false)
+            _reset()
+            navigation_state.has_interrupted = true
+            navigation_state.just_interrupted = true
+            navigation_state.just_ended = true
             emit_signal("navigation_ended", false)
         
         return
