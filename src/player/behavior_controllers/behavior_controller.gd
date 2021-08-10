@@ -52,6 +52,11 @@ export var starts_with_a_jump := false \
 export var start_jump_boost := 0.0 \
         setget _set_start_jump_boost
 
+## The minimum amount of time to pause between movements.
+export var min_pause_between_movements := 0.0
+## The maximum amount of time to pause between movements.
+export var max_pause_between_movements := 0.0
+
 var controller_name: String
 var is_added_manually: bool
 
@@ -246,3 +251,10 @@ func _set_starts_with_a_jump(value: bool) -> void:
 func _set_start_jump_boost(value: float) -> void:
     start_jump_boost = value
     _update_parameters()
+
+
+# FIXME: ------------------
+func _get_pause_time() -> float:
+    return randf() * \
+            (max_pause_between_movements - min_pause_between_movements) + \
+            min_pause_between_movements

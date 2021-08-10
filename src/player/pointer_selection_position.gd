@@ -128,7 +128,7 @@ func get_has_selection() -> bool:
     return pointer_position != Vector2.INF
 
 
-func get_is_selection_navigatable() -> bool:
+func get_is_selection_navigable() -> bool:
     return path != null
 
 

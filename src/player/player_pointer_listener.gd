@@ -130,11 +130,11 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
             _user_nav.new_selection.navigation_destination.surface if \
             _user_nav.new_selection.navigation_destination != null else \
             null
-    var is_surface_navigatable: bool = _user_nav.new_selection.path != null
+    var is_surface_navigable: bool = _user_nav.new_selection.path != null
     Sc.annotators.add_transient(SurfacerClickAnnotator.new(
             pointer_position,
             selected_surface,
-            is_surface_navigatable))
+            is_surface_navigable))
 
 
 func _on_pointer_moved(pointer_position: Vector2) -> void:

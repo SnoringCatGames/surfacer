@@ -9,7 +9,7 @@ var INVALID_SURFACE_COLOR: Color = Sc.colors.opacify(
 const SURFACE_DURATION := 0.4
 
 var selected_surface: Surface
-var is_surface_navigatable: bool
+var is_surface_navigable: bool
 
 var surface_progress: float
 
@@ -17,7 +17,7 @@ var surface_progress: float
 func _init(
         click_position: Vector2,
         selected_surface: Surface,
-        is_surface_navigatable: bool
+        is_surface_navigable: bool
         ).(
         click_position,
         max(max(
@@ -26,7 +26,7 @@ func _init(
                 SURFACE_DURATION)
         ) -> void:
     self.selected_surface = selected_surface
-    self.is_surface_navigatable = is_surface_navigatable
+    self.is_surface_navigable = is_surface_navigable
     _update()
 
 
@@ -44,7 +44,7 @@ func _draw() -> void:
             selected_surface != null:
         var color := \
                 VALID_SURFACE_COLOR if \
-                is_surface_navigatable else \
+                is_surface_navigable else \
                 VALID_SURFACE_COLOR
         var alpha := color.a * (1 - surface_progress)
         color.a = alpha

@@ -113,7 +113,7 @@ func _process(_delta: float) -> void:
                 null
         var next_preselection_surface := \
                 user_nav.pre_selection.navigation_destination.surface if \
-                user_nav.pre_selection.get_is_selection_navigatable() else \
+                user_nav.pre_selection.get_is_selection_navigable() else \
                 null
         var did_preselection_surface_change := \
                 previous_preselection_surface != next_preselection_surface
