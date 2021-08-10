@@ -12,17 +12,20 @@ extends BehaviorController
 const CONTROLLER_NAME := "run_away"
 const IS_ADDED_MANUALLY := true
 
-const RETRY_THRESHOLD_RATIO_FROM_INTENDED_DISTANCE := 0.5
-
 ## -   The ideal distance to run away from the target.
 ## -   An attempt will be made to find a destination that is close to the
 ##     appropriate distance, but the actual distance could be quite different.
 export var run_distance := 384.0 \
         setget _set_run_distance
 
-var target_to_run_from: Node2D
 
-var _destination: PositionAlongSurface
+## -   A ratio of run_distance.[br]
+## -   This defines the min and max acceptable distance for a run-away
+##     navigation destination.
+export(float, 0.0, 1.0) var retry_threshold_ratio_from_intended_distance := 0.5
+
+# FIXME: ---------------- Set this
+var target_to_run_from: ScaffolderPlayer
 
 
 func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
@@ -43,15 +46,30 @@ func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
 
 func _on_ready_to_move() -> void:
     ._on_ready_to_move()
-    
     assert(is_instance_valid(target_to_run_from))
+    move()
+
+
+#func _on_inactive() -> void:
+#    ._on_inactive()
+
+
+func _on_navigation_ended(did_navigation_finish: bool) -> void:
+    ._on_navigation_ended(did_navigation_finish)
     
-    _run_away()
+    # FIXME: LEFT OFF HERE: --------------
+    # - _get_pause_time()
+    pass
+
+
+#func _on_physics_process(delta: float) -> void:
+#    ._on_physics_process(delta)
     
     
-func _run_away() -> void:
+func move() -> void:
     var is_navigation_valid := _attempt_navigation()
     
+    # FIXME: ---- Move nav success/fail logs into a parent method.
     if !is_navigation_valid:
         Sc.logger.print(
             ("RunAwayBehaviorController: Unable to navigate: " +
@@ -64,39 +82,25 @@ func _run_away() -> void:
         pass
 
 
-func _on_inactive() -> void:
-    ._on_inactive()
-    
-    if is_instance_valid(_destination):
-        _destination.reset()
-
-
-func _on_navigation_ended(did_navigation_finish: bool) -> void:
-    ._on_navigation_ended(did_navigation_finish)
-    
-    # FIXME: LEFT OFF HERE: --------------
-    pass
-
-
-#func _on_physics_process(delta: float) -> void:
-#    ._on_physics_process(delta)
-
-
 func _attempt_navigation() -> bool:
     var min_distance_retry_threshold := \
             run_distance * \
-            RETRY_THRESHOLD_RATIO_FROM_INTENDED_DISTANCE
+            retry_threshold_ratio_from_intended_distance
     var max_distance_retry_threshold := \
             run_distance * \
-            (2.0 - RETRY_THRESHOLD_RATIO_FROM_INTENDED_DISTANCE)
+            (2.0 - retry_threshold_ratio_from_intended_distance)
     var min_distance_squared_retry_threshold := \
             min_distance_retry_threshold * min_distance_retry_threshold
     var max_distance_squared_retry_threshold := \
             max_distance_retry_threshold * max_distance_retry_threshold
     
+    var max_distance_squared_from_start_position := \
+            max_distance_from_start_position * max_distance_from_start_position
+    
     # -   First, try the direction away from the target.
     # -   Then, try the two perpendicular alternate directions.
-    # -   Try the upward alternate direction first.
+    #     -   Try the upward alternate direction first.
+    # -   Then, try the direction into the target.
     var away_direction := \
             target_to_run_from.position.direction_to(player.position)
     var directions := [away_direction]
@@ -106,16 +110,9 @@ func _attempt_navigation() -> bool:
     else:
         directions.push_back(Vector2(-away_direction.y, away_direction.x))
         directions.push_back(Vector2(away_direction.y, -away_direction.x))
+    directions.push_back(-away_direction)
     
     var possible_destinations := []
-    
-    # FIXME: ---------------------------
-    # - Consider max_distance_from_start_position.
-    # - 
-    
-    # FIXME: ---------------------------
-    # - Consider can_leave_start_surface.
-    # - 
     
     # FIXME: ---------------------------
     # - Consider starts_with_a_jump and start_jump_boost.
@@ -135,27 +132,65 @@ func _attempt_navigation() -> bool:
     for direction in directions:
         var naive_target: Vector2 = \
                 target_to_run_from.position + direction * run_distance
-        var possible_destination := \
-                SurfaceParser.find_closest_position_on_a_surface(
-                        naive_target, player)
-        var actual_distance_squared := \
-                target_to_run_from.position.distance_squared_to(
-                        possible_destination.target_point)
         
-        var is_destination_too_far_from_intended := \
-                actual_distance_squared < \
-                        min_distance_squared_retry_threshold or \
-                actual_distance_squared > \
-                        max_distance_squared_retry_threshold
+        # Prevent straying too far the start position.
+        if max_distance_from_start_position >= 0.0 and \
+                player.start_position.distance_squared_to(naive_target) > \
+                        max_distance_squared_from_start_position:
+            naive_target = \
+                    player.start_position + \
+                    player.start_position.direction_to(naive_target) * \
+                    max_distance_from_start_position
+            var target_distance_squared := \
+                    target_to_run_from.position.distance_squared_to(
+                            naive_target)
+            var is_target_too_far_from_intended := \
+                    target_distance_squared < \
+                            min_distance_squared_retry_threshold or \
+                    target_distance_squared > \
+                            max_distance_squared_retry_threshold
+            if is_target_too_far_from_intended:
+                continue
         
-        if !is_destination_too_far_from_intended:
-            var is_navigation_valid: bool = \
-                    player.navigator.navigate_to_position(possible_destination)
-            if is_navigation_valid:
-                _destination = possible_destination
-                return true
+        var possible_destination: PositionAlongSurface
+        if can_leave_start_surface:
+            possible_destination = \
+                    SurfaceParser.find_closest_position_on_a_surface(
+                            naive_target, player)
         else:
-            possible_destinations.push_back(possible_destination)
+            possible_destination = PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
+                            naive_target,
+                            player.start_surface,
+                            player.movement_params.collider_half_width_height,
+                            true)
+        
+        # Prevent straying too far the start position.
+        var is_destination_too_far_from_start_position := \
+                max_distance_from_start_position >= 0.0 and \
+                player.start_position.distance_squared_to(
+                        possible_destination.target_point) > \
+                max_distance_squared_from_start_position
+        
+        if !is_destination_too_far_from_start_position:
+            # Ensure run-away target is the right distance away.
+            var actual_distance_squared := \
+                    target_to_run_from.position.distance_squared_to(
+                            possible_destination.target_point)
+            var is_destination_too_far_from_intended := \
+                    actual_distance_squared < \
+                            min_distance_squared_retry_threshold or \
+                    actual_distance_squared > \
+                            max_distance_squared_retry_threshold
+            
+            if !is_destination_too_far_from_intended:
+                var is_navigation_valid: bool = \
+                        player.navigator.navigate_to_position(
+                                possible_destination)
+                if is_navigation_valid:
+                    return true
+            else:
+                possible_destinations.push_back(possible_destination)
     
     while !possible_destinations.empty():
         # None of the destination options we considered are at the right
@@ -175,7 +210,6 @@ func _attempt_navigation() -> bool:
         var is_navigation_valid: bool = \
                 player.navigator.navigate_to_position(closest_destination)
         if is_navigation_valid:
-            _destination = closest_destination
             return true
         else:
             possible_destinations.erase(closest_destination)

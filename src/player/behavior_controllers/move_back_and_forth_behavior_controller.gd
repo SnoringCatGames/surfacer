@@ -36,7 +36,7 @@ export var pause_delay_max := 0.0 setget _set_pause_delay_max
 ##     during sequential movements.[br]
 ## -   A value of 0.5 causes the player to always at least move to a point on
 ##     the other half of their range.[br]
-export var max_ratio_for_destination_offset_from_ends := 0.0 \
+export(float, 0.0, 1.0) var max_ratio_for_destination_offset_from_ends := 0.0 \
         setget _set_max_ratio_for_destination_offset_from_ends
 
 var _was_last_move_minward := true
@@ -124,10 +124,10 @@ func trigger_move_after_delay() -> void:
 
 
 func _trigger_turn_around_move() -> void:
-    trigger_move(!_was_last_move_minward)
+    move(!_was_last_move_minward)
 
 
-func trigger_move(
+func move(
         is_moving_minward: bool,
         min_distance := 0.0,
         behavior := PlayerBehaviorType.CUSTOM) -> void:
@@ -138,6 +138,33 @@ func trigger_move(
     
     player.behavior = behavior
     
+    _was_last_move_minward = is_moving_minward
+    
+    var is_navigation_valid := _attempt_navigation(
+            is_moving_minward, min_distance)
+    
+    # FIXME: ---- Move nav success/fail logs into a parent method.
+    if is_navigation_valid:
+        player._log_player_event(
+                ("MoveBackAndForthBehaviorController.move: " +
+                "%s, is_moving_minward=%s") % [
+                    player.player_name,
+                    str(is_moving_minward),
+                ])
+    else:
+        Sc.logger.print(
+                ("MoveBackAndForthBehaviorController.move: " +
+                "Unable to navigate: %s, is_moving_minward=%s") % [
+                    player.player_name,
+                    str(is_moving_minward),
+                ])
+        # FIXME: ----------------------------- Trigger next behavior
+        pass
+
+
+func _attempt_navigation(
+        is_moving_minward: bool,
+        min_distance := 0.0) -> bool:
     var is_surface_horizontal: bool = \
             player.start_surface.side == SurfaceSide.FLOOR or \
             player.start_surface.side == SurfaceSide.CEILING
@@ -242,14 +269,8 @@ func trigger_move(
             player.movement_params.collider_half_width_height,
             true,
             true)
-    _was_last_move_minward = is_moving_minward
     
-    player._log_player_event("%s.trigger_move: is_moving_minward=%s" % [
-        player.player_name,
-        str(is_moving_minward),
-    ])
-    
-    player.navigator.navigate_to_position(_destination)
+    return player.navigator.navigate_to_position(_destination)
 
 
 func _set_moves_to_surface_ends(value: bool) -> void:

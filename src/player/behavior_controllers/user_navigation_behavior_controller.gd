@@ -78,16 +78,18 @@ func _handle_pointer_selections() -> void:
                     Sc.time.get_play_time(),
                     str(new_selection.pointer_position),
                     new_selection.navigation_destination.to_string() if \
-                    new_selection.get_is_selection_navigatable() else \
+                    new_selection.get_is_selection_navigable() else \
                     "[No matching surface]"
                 ],
                 true)
         
-        if new_selection.get_is_selection_navigatable():
+        if new_selection.get_is_selection_navigable():
             last_selection.copy(new_selection)
             player.behavior = PlayerBehaviorType.USER_NAVIGATE
             _set_is_active(true)
-            player.navigator.navigate_path(last_selection.path)
+            var is_navigation_valid: bool = \
+                    player.navigator.navigate_path(last_selection.path)
+            # FIXME: ---- Move nav success/fail logs into a parent method.
             Sc.audio.play_sound("nav_select_success")
         else:
             player._log_player_event(
