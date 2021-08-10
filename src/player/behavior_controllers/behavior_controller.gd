@@ -126,6 +126,16 @@ func _on_inactive() -> void:
     pass
 
 
+# FIXME: ------ Call this? Remove this?
+func _on_finished() -> void:
+    emit_signal("finished")
+    player._on_behavior_finished()
+
+
+func _on_navigation_ended(did_navigation_finish: bool) -> void:
+    pass
+
+
 func _on_physics_process(delta: float) -> void:
     _was_already_ready_to_move_this_frame = false
 

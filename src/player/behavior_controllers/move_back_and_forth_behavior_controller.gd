@@ -72,9 +72,6 @@ func _on_attached_to_first_surface() -> void:
     # Randomize which direction the player moves first.
     _was_last_move_minward = randf() < 0.5
     
-    player.navigator.connect(
-            "destination_reached", self, "_on_destination_reached")
-    
     _destination = PositionAlongSurface.new()
     _destination.surface = player.start_surface
     if _is_ready and \
@@ -104,12 +101,17 @@ func _on_inactive() -> void:
 #    ._on_attached_to_first_surface()
 
 
+func _on_navigation_ended(did_navigation_finish: bool) -> void:
+    ._on_navigation_ended(did_navigation_finish)
+    if did_navigation_finish:
+        trigger_move_after_delay()
+    else:
+        # FIXME: ------------
+        pass
+
+
 #func _on_physics_process(delta: float) -> void:
 #    ._on_physics_process(delta)
-
-
-func _on_destination_reached() -> void:
-    trigger_move_after_delay()
 
 
 func trigger_move_after_delay() -> void:
