@@ -71,12 +71,15 @@ func _on_inactive() -> void:
         _destination.reset()
 
 
-func _on_physics_process(delta: float) -> void:
-    ._on_physics_process(delta)
+func _on_navigation_ended(did_navigation_finish: bool) -> void:
+    ._on_navigation_ended(did_navigation_finish)
     
-    # FIXME: LEFT OFF HERE: -----------------
-#     if player.navigation_state.:
-#         pass
+    # FIXME: LEFT OFF HERE: --------------
+    pass
+
+
+#func _on_physics_process(delta: float) -> void:
+#    ._on_physics_process(delta)
 
 
 func _attempt_navigation() -> bool:

@@ -50,6 +50,10 @@ func _ready() -> void:
 #    _set_configuration_warning("")
 
 
+#func _on_navigation_ended(did_navigation_finish: bool) -> void:
+#    ._on_navigation_ended(did_navigation_finish)
+
+
 func _on_physics_process(delta: float) -> void:
     ._on_physics_process(delta)
     _handle_pointer_selections()

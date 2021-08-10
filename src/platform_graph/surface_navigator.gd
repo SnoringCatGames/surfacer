@@ -476,7 +476,7 @@ func update(
         _print("EDGE MVT INTERRUPTED:%8.3fs; %s",
                 [Sc.time.get_play_time(), interruption_type_label])
         
-        # TODO: Handle interruptions differently.
+        # FIXME: ---- Think of how to handle interruptions differently...
         
         var is_retrying := movement_params.retries_navigation_when_interrupted
         
