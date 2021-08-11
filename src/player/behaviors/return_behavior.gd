@@ -1,9 +1,9 @@
 tool
-class_name ReturnBehaviorController
-extends BehaviorController
+class_name ReturnBehavior
+extends Behavior
 
 
-const CONTROLLER_NAME := "return"
+const NAME := "return"
 const IS_ADDED_MANUALLY := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
@@ -13,7 +13,7 @@ var return_position: PositionAlongSurface
 
 
 func _init().(
-        CONTROLLER_NAME,
+        NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,

@@ -1,12 +1,12 @@
 tool
-class_name MoveBackAndForthBehaviorController, \
-"res://addons/surfacer/assets/images/editor_icons/move_back_and_forth_behavior_controller.png"
-extends BehaviorController
+class_name MoveBackAndForthBehavior, \
+"res://addons/surfacer/assets/images/editor_icons/move_back_and_forth_behavior.png"
+extends Behavior
 ## -   This moves a player back-and-forth along a surface.
 ## -   The spacing and timing of movement is configurable.
 
 
-const CONTROLLER_NAME := "move_back_and_forth"
+const NAME := "move_back_and_forth"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
@@ -47,7 +47,7 @@ var _destination := PositionAlongSurface.new()
 
 
 func _init().(
-        CONTROLLER_NAME,
+        NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,

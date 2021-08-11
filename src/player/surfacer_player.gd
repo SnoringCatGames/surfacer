@@ -41,13 +41,13 @@ var navigator: SurfaceNavigator
 var prediction: PlayerPrediction
 var pointer_listener: PlayerPointerListener
 
-var behavior_controller: BehaviorController
-var active_at_start_controller: BehaviorController
+var behavior: Behavior
+var active_at_start_behavior: Behavior
 
-# Dictionary<Script, BehaviorController>
-var _behavior_controllers := {}
-# Array<BehaviorController>
-var _behavior_controllers_list := []
+# Dictionary<Script, Behavior>
+var _behaviors := {}
+# Array<Behavior>
+var _behaviors_list := []
 
 # Array<PlayerActionSource>
 var _action_sources := []
@@ -96,7 +96,7 @@ func _ready() -> void:
     
     _init_platform_graph()
     _init_navigator()
-    _parse_behavior_controller_children()
+    _parse_behavior_children()
     
     # Set up some annotators to help with debugging.
     set_is_sprite_visible(false)
@@ -145,27 +145,27 @@ func _update_editor_configuration_debounced() -> void:
                     "Must define a MovementParams child node.")
             return
         
-        # Validate BehaviorControllers from scene configuration.
-        var controllers: Array = \
-                Sc.utils.get_children_by_type(self, BehaviorController)
-        var controller_names := {}
-        for controller in controllers:
-            if controller_names.has(controller.controller_name):
+        # Validate Behaviors from scene configuration.
+        var behaviors: Array = \
+                Sc.utils.get_children_by_type(self, Behavior)
+        var behavior_names := {}
+        for behavior in behaviors:
+            if behavior_names.has(behavior.behavior_name):
                 _set_configuration_warning(
-                        ("Must not define more than one BehaviorController " +
-                        "of type %s.") % controller.controller_name)
-            controller_names[controller.controller_name] = true
+                        ("Must not define more than one Behavior " +
+                        "of type %s.") % behavior.behavior_name)
+            behavior_names[behavior.behavior_name] = true
             
-            active_at_start_controller = null
-            if controller.is_active_at_start:
-                if is_instance_valid(active_at_start_controller):
+            active_at_start_behavior = null
+            if behavior.is_active_at_start:
+                if is_instance_valid(active_at_start_behavior):
                     _set_configuration_warning(
-                            "Only one BehaviorController should be marked " +
+                            "Only one Behavior should be marked " +
                             "as `is_active_at_start`.")
-                active_at_start_controller = controller
-        if !is_instance_valid(active_at_start_controller):
+                active_at_start_behavior = behavior
+        if !is_instance_valid(active_at_start_behavior):
             _set_configuration_warning(
-                    "One BehaviorController should be marked as " +
+                    "One Behavior should be marked as " +
                     "`is_active_at_start`.")
     
     _initialize_child_movement_params()
@@ -199,8 +199,8 @@ func _on_attached_to_first_surface() -> void:
         _:
             Sc.logger.error()
     
-    for behavior_controller in _behavior_controllers_list:
-        behavior_controller._on_attached_to_first_surface()
+    for behavior in _behaviors_list:
+        behavior._on_attached_to_first_surface()
 
 
 func set_is_human_player(value: bool) -> void:
@@ -208,12 +208,12 @@ func set_is_human_player(value: bool) -> void:
     if is_human_player:
         _init_user_controller_action_source()
         if Su.movement.uses_point_and_click_navigation:
-            var user_navigation_behavior_controller := \
-                    UserNavigationBehaviorController.new()
-            user_navigation_behavior_controller \
+            var user_navigation_behavior := \
+                    UserNavigationBehavior.new()
+            user_navigation_behavior \
                     .cancels_navigation_on_key_press = \
                             Su.movement.cancels_point_and_click_nav_on_key_press
-            add_behavior_controller(user_navigation_behavior_controller)
+            add_behavior(user_navigation_behavior)
             
             self.pointer_listener = PlayerPointerListener.new(self)
             add_child(pointer_listener)
@@ -245,8 +245,8 @@ func _on_physics_process(delta: float) -> void:
     _update_actions(delta_scaled)
     _update_surface_state()
     
-    for behavior_controller in _behavior_controllers_list:
-        behavior_controller._on_physics_process(delta)
+    for behavior in _behaviors_list:
+        behavior._on_physics_process(delta)
     
     if surface_state.just_left_air:
         _log_player_event(
@@ -433,18 +433,18 @@ func _update_collision_mask() -> void:
 
 
 func _on_surfacer_player_navigation_ended(did_navigation_finish: bool) -> void:
-    for behavior_controller in _behavior_controllers_list:
-        behavior_controller._on_navigation_ended(did_navigation_finish)
+    for behavior in _behaviors_list:
+        behavior._on_navigation_ended(did_navigation_finish)
 
 
-# "Finished" means that the behavior-controller ended itself, so there
-# shouldn't be another behavior-controller being triggered somewhere.
-func _on_behavior_finished(behavior_controller: BehaviorController) -> void:
-    behavior_controller.next_behavior_controller.trigger(false)
+# "Finished" means that the behavior ended itself, so there shouldn't be
+# another behavior being triggered somewhere.
+func _on_behavior_finished(behavior: Behavior) -> void:
+    behavior.next_behavior.trigger(false)
 
 
-func _on_behavior_error(behavior_controller: BehaviorController) -> void:
-    behavior_controller.next_behavior_controller.trigger(false)
+func _on_behavior_error(behavior: Behavior) -> void:
+    behavior.next_behavior.trigger(false)
 
 
 func start_dash(horizontal_acceleration_sign: int) -> void:
@@ -496,13 +496,13 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
 
 
 func navigate_as_choreographed(destination: PositionAlongSurface) -> bool:
-    var choreography_controller: ChoreographyBehaviorController = \
-            get_behavior_controller(ChoreographyBehaviorController)
-    if !is_instance_valid(choreography_controller):
-        choreography_controller = ChoreographyBehaviorController.new()
-        add_behavior_controller(choreography_controller)
-    choreography_controller.destination = destination
-    choreography_controller.trigger(false)
+    var choreography_behavior: ChoreographyBehavior = \
+            get_behavior(ChoreographyBehavior)
+    if !is_instance_valid(choreography_behavior):
+        choreography_behavior = ChoreographyBehavior.new()
+        add_behavior(choreography_behavior)
+    choreography_behavior.destination = destination
+    choreography_behavior.trigger(false)
     return navigation_state.is_currently_navigating
 
 
@@ -559,53 +559,53 @@ func get_current_animation_state(result: PlayerAnimationState) -> void:
     result.facing_left = surface_state.horizontal_facing_sign == -1
 
 
-func _parse_behavior_controller_children() -> void:
-    var controllers: Array = \
-            Sc.utils.get_children_by_type(self, BehaviorController)
+func _parse_behavior_children() -> void:
+    var behaviors: Array = \
+            Sc.utils.get_children_by_type(self, Behavior)
     
-    active_at_start_controller = null
+    active_at_start_behavior = null
     
-    for controller in controllers:
-        var script: Script = controller.get_script()
-        assert(get_behavior_controller(script) == null)
-        _behavior_controllers[script] = controller
-        _behavior_controllers_list.push_back(controller)
-        if controller.is_active_at_start:
-            active_at_start_controller = controller
+    for behavior in behaviors:
+        var script: Script = behavior.get_script()
+        assert(get_behavior(script) == null)
+        _behaviors[script] = behavior
+        _behaviors_list.push_back(behavior)
+        if behavior.is_active_at_start:
+            active_at_start_behavior = behavior
     
-    # Automatically add a default RestBehaviorController if no other controller
+    # Automatically add a default RestBehavior if no other behavior
     # has been configured as active-at-start.
-    if active_at_start_controller == null:
-        var rest_controller := RestBehaviorController.new()
-        rest_controller.is_active_at_start = true
-        add_behavior_controller(rest_controller)
-        active_at_start_controller = rest_controller
+    if active_at_start_behavior == null:
+        var rest_behavior := RestBehavior.new()
+        rest_behavior.is_active_at_start = true
+        add_behavior(rest_behavior)
+        active_at_start_behavior = rest_behavior
 
 
-func add_behavior_controller(controller: BehaviorController) -> void:
-    var script: Script = controller.get_script()
-    assert(get_behavior_controller(script) == null)
-    _behavior_controllers[script] = controller
-    _behavior_controllers_list.push_back(controller)
+func add_behavior(behavior: Behavior) -> void:
+    var script: Script = behavior.get_script()
+    assert(get_behavior(script) == null)
+    _behaviors[script] = behavior
+    _behaviors_list.push_back(behavior)
     if Engine.editor_hint:
         return
-    add_child(controller)
+    add_child(behavior)
 
 
-func remove_behavior_controller(controller_type: Script) -> void:
-    var controller := get_behavior_controller(controller_type)
-    _behavior_controllers.erase(controller_type)
-    _behavior_controllers_list.erase(controller)
-    if is_instance_valid(controller):
-        controller.queue_free()
+func remove_behavior(behavior_class: Script) -> void:
+    var behavior := get_behavior(behavior_class)
+    _behaviors.erase(behavior_class)
+    _behaviors_list.erase(behavior)
+    if is_instance_valid(behavior):
+        behavior.queue_free()
 
 
-func get_behavior_controller(controller_type_or_name) -> BehaviorController:
-    var controller_type: Script = \
-            controller_type_or_name if \
-            controller_type_or_name is Script else \
-            Su.behaviors[controller_type_or_name]
-    if _behavior_controllers.has(controller_type):
-        return _behavior_controllers[controller_type]
+func get_behavior(behavior_class_or_name) -> Behavior:
+    var behavior_class: Script = \
+            behavior_class_or_name if \
+            behavior_class_or_name is Script else \
+            Su.behaviors[behavior_class_or_name]
+    if _behaviors.has(behavior_class):
+        return _behaviors[behavior_class]
     else:
         return null

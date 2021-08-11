@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/wander_behavior_controller.png-622ce6b1c81e549c668d2d75f8df0014.stex"
+path="res://.import/wander_behavior.png-6859a728d644e3c967b7fcbb5b4cf034.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/surfacer/assets/images/editor_icons/wander_behavior_controller.png"
-dest_files=[ "res://.import/wander_behavior_controller.png-622ce6b1c81e549c668d2d75f8df0014.stex" ]
+source_file="res://addons/surfacer/assets/images/editor_icons/wander_behavior.png"
+dest_files=[ "res://.import/wander_behavior.png-6859a728d644e3c967b7fcbb5b4cf034.stex" ]
 
 [params]
 

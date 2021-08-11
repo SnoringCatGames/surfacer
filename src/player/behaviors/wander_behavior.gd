@@ -1,13 +1,13 @@
 tool
-class_name WanderBehaviorController, \
-"res://addons/surfacer/assets/images/editor_icons/wander_behavior_controller.png"
-extends BehaviorController
+class_name WanderBehavior, \
+"res://addons/surfacer/assets/images/editor_icons/wander_behavior.png"
+extends Behavior
 
 
 # FIXME: -------------------------
 
 
-const CONTROLLER_NAME := "wander"
+const NAME := "wander"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
@@ -28,7 +28,7 @@ export(float, 0.0, 1.0) var probability_of_leaving_surface_if_available := 0.5
 
 
 func _init().(
-        CONTROLLER_NAME,
+        NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,

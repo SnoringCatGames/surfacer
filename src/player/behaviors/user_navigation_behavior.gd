@@ -1,9 +1,9 @@
 tool
-class_name UserNavigationBehaviorController
-extends BehaviorController
+class_name UserNavigationBehavior
+extends Behavior
 
 
-const CONTROLLER_NAME := "user_navigation"
+const NAME := "user_navigation"
 const IS_ADDED_MANUALLY := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
@@ -19,7 +19,7 @@ var _was_last_input_a_touch := false
 
 
 func _init().(
-        CONTROLLER_NAME,
+        NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
