@@ -5,6 +5,8 @@ extends BehaviorController
 
 const CONTROLLER_NAME := "user_navigation"
 const IS_ADDED_MANUALLY := false
+const INCLUDES_MID_MOVEMENT_PAUSE := false
+const INCLUDES_POST_MOVEMENT_PAUSE := false
 
 var cancels_navigation_on_key_press := true
 
@@ -12,8 +14,14 @@ var new_selection: PointerSelectionPosition
 var last_selection: PointerSelectionPosition
 var pre_selection: PointerSelectionPosition
 
+var _was_last_input_a_touch := false
 
-func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
+
+func _init().(
+        CONTROLLER_NAME,
+        IS_ADDED_MANUALLY,
+        INCLUDES_MID_MOVEMENT_PAUSE,
+        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
     pass
 
 
@@ -21,10 +29,6 @@ func _ready() -> void:
     self.new_selection = PointerSelectionPosition.new(player)
     self.last_selection = PointerSelectionPosition.new(player)
     self.pre_selection = PointerSelectionPosition.new(player)
-
-
-#func _on_player_ready() -> void:
-#    ._on_player_ready()
 
 
 #func _on_attached_to_first_surface() -> void:
@@ -59,38 +63,48 @@ func _unhandled_input(event: InputEvent) -> void:
             player.navigation_state.is_currently_navigating and \
             cancels_navigation_on_key_press and \
             event is InputEventKey:
+        _was_last_input_a_touch = false
         player.navigator.stop()
-        _set_is_active(false)
+        trigger(false)
 
 
 func _handle_pointer_selections() -> void:
-    if new_selection.get_has_selection():
+    if !new_selection.get_has_selection():
+        return
+    
+    player._log_player_event(
+            "NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
+                player.player_name,
+                Sc.time.get_play_time(),
+                str(new_selection.pointer_position),
+                new_selection.navigation_destination.to_string() if \
+                new_selection.get_is_selection_navigable() else \
+                "[No matching surface]",
+            ],
+            true)
+    
+    if new_selection.get_is_selection_navigable():
+        _was_last_input_a_touch = true
+        last_selection.copy(new_selection)
+        trigger(false)
+    else:
         player._log_player_event(
-                "NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
-                    player.player_name,
-                    Sc.time.get_play_time(),
-                    str(new_selection.pointer_position),
-                    new_selection.navigation_destination.to_string() if \
-                    new_selection.get_is_selection_navigable() else \
-                    "[No matching surface]"
-                ],
-                true)
-        
-        if new_selection.get_is_selection_navigable():
-            last_selection.copy(new_selection)
-            player.behavior = PlayerBehaviorType.USER_NAVIGATE
-            _set_is_active(true)
-            var is_navigation_valid: bool = \
-                    player.navigator.navigate_path(last_selection.path)
-            # FIXME: ---- Move nav success/fail logs into a parent method.
-            Sc.audio.play_sound("nav_select_success")
-        else:
-            player._log_player_event(
-                    "TARGET IS TOO FAR FROM ANY SURFACE", [], true)
-            Sc.audio.play_sound("nav_select_fail")
-        
-        new_selection.clear()
-        pre_selection.clear()
+                "TARGET IS TOO FAR FROM ANY SURFACE", [], true)
+        Sc.audio.play_sound("nav_select_fail")
+    
+    new_selection.clear()
+    pre_selection.clear()
+
+
+func _move() -> void:
+    if _was_last_input_a_touch:
+        return
+    
+    assert(last_selection.get_is_selection_navigable())
+    var is_navigation_valid: bool = \
+            player.navigator.navigate_path(last_selection.path)
+    Sc.audio.play_sound("nav_select_success")
+    # FIXME: ---- Move nav success/fail logs into a parent method.
 
 
 #func _update_parameters() -> void:

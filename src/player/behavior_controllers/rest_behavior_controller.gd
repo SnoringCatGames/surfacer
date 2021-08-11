@@ -5,14 +5,16 @@ extends BehaviorController
 
 const CONTROLLER_NAME := "rest"
 const IS_ADDED_MANUALLY := false
+const INCLUDES_MID_MOVEMENT_PAUSE := false
+const INCLUDES_POST_MOVEMENT_PAUSE := false
 
 
-func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
+func _init().(
+        CONTROLLER_NAME,
+        IS_ADDED_MANUALLY,
+        INCLUDES_MID_MOVEMENT_PAUSE,
+        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
     pass
-
-
-#func _on_player_ready() -> void:
-#    ._on_player_ready()
 
 
 #func _on_attached_to_first_surface() -> void:
