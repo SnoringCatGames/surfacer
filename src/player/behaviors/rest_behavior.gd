@@ -44,12 +44,5 @@ func _move() -> bool:
     return true
 
 
-#func _update_parameters() -> void:
-#    ._update_parameters()
-#    if _configuration_warning != "":
-#        return
-#    _set_configuration_warning("")
-
-
 func get_is_paused() -> bool:
     return true

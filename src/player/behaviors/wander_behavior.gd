@@ -4,9 +4,6 @@ class_name WanderBehavior, \
 extends Behavior
 
 
-# FIXME: -------------------------
-
-
 const NAME := "wander"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
@@ -58,6 +55,8 @@ func _on_ready_to_move() -> void:
 
 
 func _move() -> bool:
+    assert(player.surface_state.is_grabbing_a_surface)
+
     if can_leave_start_surface and \
             _get_should_leave_surface_if_available():
         var is_navigation_valid := _attempt_inter_surface_navigation()
@@ -78,7 +77,7 @@ func _attempt_inter_surface_navigation() -> bool:
     # the player's current surface.
     var possible_destinations := []
     for origin in \
-            player.graph.surfaces_to_outbound_nodes[player.start_surface]:
+            player.graph.surfaces_to_outbound_nodes[player.surface_state.grabbed_surface]:
         Sc.utils.concat(
                 possible_destinations,
                 player.graph.nodes_to_nodes_to_edges[origin].keys())
@@ -92,7 +91,7 @@ func _attempt_inter_surface_navigation() -> bool:
                         target_distance_squared
         var is_within_range_from_start_position := \
                 max_distance_from_start_position < 0.0 or \
-                player.start_position.distance_squared_to(
+                start_position.distance_squared_to(
                         destination.target_point) < \
                         max_distance_squared_from_start_position
         if is_within_range_of_current_movement and \
@@ -108,35 +107,37 @@ func _attempt_inter_surface_navigation() -> bool:
 func _attempt_intra_surface_navigation() -> bool:
     var target_distance_signed := _get_movement_distance_signed()
     
+    var surface: Surface = player.surface_state.grabbed_surface
+
     var is_surface_horizontal: bool = \
-            player.start_surface.side == SurfaceSide.FLOOR or \
-            player.start_surface.side == SurfaceSide.CEILING
+            surface.side == SurfaceSide.FLOOR or \
+            surface.side == SurfaceSide.CEILING
     
     var current_coord: float
     var min_coord: float
     var max_coord: float
     if is_surface_horizontal:
         current_coord = player.position.x
-        min_coord = player.start_surface.bounding_box.position.x
-        max_coord = player.start_surface.bounding_box.end.x
+        min_coord = surface.bounding_box.position.x
+        max_coord = surface.bounding_box.end.x
         if max_distance_from_start_position >= 0.0:
             min_coord = max(
                     min_coord,
-                    player.start_position.x - max_distance_from_start_position)
+                    start_position.x - max_distance_from_start_position)
             max_coord = min(
                     max_coord,
-                    player.start_position.x + max_distance_from_start_position)
+                    start_position.x + max_distance_from_start_position)
     else:
         current_coord = player.position.y
-        min_coord = player.start_surface.bounding_box.position.y
-        max_coord = player.start_surface.bounding_box.end.y
+        min_coord = surface.bounding_box.position.y
+        max_coord = surface.bounding_box.end.y
         if max_distance_from_start_position >= 0.0:
             min_coord = max(
                     min_coord,
-                    player.start_position.y - max_distance_from_start_position)
+                    start_position.y - max_distance_from_start_position)
             max_coord = min(
                     max_coord,
-                    player.start_position.y + max_distance_from_start_position)
+                    start_position.y + max_distance_from_start_position)
     
     var target_coord := current_coord + target_distance_signed
     target_coord = max(target_coord, min_coord)
@@ -150,29 +151,18 @@ func _attempt_intra_surface_navigation() -> bool:
         target_coord = min(target_coord, max_coord)
     
     var target := \
-            Vector2(target_coord, player.start_position.y) if \
+            Vector2(target_coord, start_position.y) if \
             is_surface_horizontal else \
-            Vector2(player.start_position.x, target_coord)
+            Vector2(start_position.x, target_coord)
     
     var destination := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     target,
-                    player.start_surface,
+                    surface,
                     player.movement_params.collider_half_width_height,
                     true)
     
     return player.navigator.navigate_to_position(destination)
-
-
-#func _update_parameters() -> void:
-#    ._update_parameters()
-#
-#    if _configuration_warning != "":
-#        return
-#
-#    # FIXME: ----------------------------
-#
-#    _set_configuration_warning("")
 
 
 func _get_movement_distance_unsigned() -> float:

@@ -458,7 +458,7 @@ const _PROPERTY_GROUPS := [
     _MOVEMENT_ABILITY_OVERRIDES_GROUP,
 ]
 
-var _property_list_amendment := [
+var _property_list_addendum := [
     {
         name = "collider_shape",
         type = TYPE_OBJECT,
@@ -486,10 +486,10 @@ var _debounced_update_parameters: FuncRef
 
 
 func _init() -> void:
-    var property_list_amendment: Array = \
+    var property_list_addendum: Array = \
             Sc.utils.get_property_list_for_inspector_groups(
                     self, _PROPERTY_GROUPS)
-    Sc.utils.concat(_property_list_amendment, property_list_amendment)
+    Sc.utils.concat(_property_list_addendum, property_list_addendum)
 
 
 func _enter_tree() -> void:
@@ -539,7 +539,7 @@ func _parse_shape_from_parent() -> void:
 # NOTE: _get_property_list **appends** to the default list of properties.
 #       It does not replace.
 func _get_property_list() -> Array:
-    return _property_list_amendment
+    return _property_list_addendum
 
 
 func _update_parameters() -> void:

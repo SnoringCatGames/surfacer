@@ -39,9 +39,10 @@ export var starts_with_a_jump := false \
 
 # FIXME: -----------------------
 ## -   If `starts_with_a_jump = true`, then the initial jump will use this
-##     value as the starting vertical speed.
-export var start_jump_boost := 0.0 \
-        setget _set_start_jump_boost
+##     value, multiplied by the player's normal jump boost, as the starting
+##     vertical speed.
+export var start_jump_boost_multiplier := 1.0 \
+        setget _set_start_jump_boost_multiplier
 
 ## -   If true, the player will return to their starting position after this
 ##     behavior has finished.
@@ -78,6 +79,9 @@ var includes_post_movement_pause: bool
 var could_return_to_start_position: bool
 
 var player: ScaffolderPlayer
+var start_position: Vector2
+var start_surface: Surface
+var start_position_along_surface: PositionAlongSurface
 var next_behavior: Behavior
 var is_active := false setget _set_is_active
 
@@ -87,7 +91,7 @@ var _post_movement_pause_timeout_id := -1
 var _is_ready := false
 var _was_already_ready_to_move_this_frame := false
 var _configuration_warning := ""
-var _property_list_amendment := []
+var _property_list_addendum := []
 
 
 func _init(
@@ -103,12 +107,12 @@ func _init(
     self.could_return_to_start_position = could_return_to_start_position
     
     if could_return_to_start_position:
-        self._property_list_amendment.push_back({
+        self._property_list_addendum.push_back({
                 name = "returns_to_start_position",
                 type = TYPE_BOOL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
             })
-        self._property_list_amendment.push_back({
+        self._property_list_addendum.push_back({
                 name = "returns_to_pre_behavior_position",
                 type = TYPE_BOOL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
@@ -118,24 +122,24 @@ func _init(
         returns_to_pre_behavior_position = false
     
     if includes_mid_movement_pause:
-        self._property_list_amendment.push_back({
+        self._property_list_addendum.push_back({
                 name = "min_pause_between_movements",
                 type = TYPE_REAL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
             })
-        self._property_list_amendment.push_back({
+        self._property_list_addendum.push_back({
                 name = "max_pause_between_movements",
                 type = TYPE_REAL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
             })
     
     if includes_post_movement_pause:
-        self._property_list_amendment.push_back({
+        self._property_list_addendum.push_back({
                 name = "min_pause_after_movements",
                 type = TYPE_REAL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
             })
-        self._property_list_amendment.push_back({
+        self._property_list_addendum.push_back({
                 name = "max_pause_after_movements",
                 type = TYPE_REAL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
@@ -161,6 +165,8 @@ func _ready() -> void:
 
 
 func _on_attached_to_first_surface() -> void:
+    start_position_along_surface = player.start_position_along_surface
+    start_surface = start_position_along_surface.surface
     _check_ready_to_move()
 
 
@@ -274,7 +280,7 @@ func _clear_timeouts() -> void:
 # NOTE: _get_property_list **appends** to the default list of properties.
 #       It does not replace.
 func _get_property_list() -> Array:
-    return _property_list_amendment
+    return _property_list_addendum
 
 
 func _update_parameters() -> void:
@@ -288,10 +294,6 @@ func _update_parameters() -> void:
     
     _get_player_reference_from_parent()
     if _configuration_warning != "":
-        return
-    
-    if start_jump_boost < 0.0:
-        _set_configuration_warning("start_jump_boost must be non-negative.")
         return
     
     if returns_to_start_position and \
@@ -360,7 +362,7 @@ func _get_default_next_behavior() -> Behavior:
     return player.get_behavior("return") if \
             returns_to_start_position or \
                     returns_to_pre_behavior_position else \
-            player.active_at_start_behavior
+            player.default_behavior
 
 
 func _get_player_reference_from_parent() -> void:
@@ -386,7 +388,16 @@ func _set_is_active(value: bool) -> void:
             if is_instance_valid(player.behavior) and \
                     player.behavior != self:
                 player.behavior.is_active = false
+            player.previous_behavior = player.behavior
             player.behavior = self
+            start_position = player.position
+            start_position_along_surface = \
+                    player.surface_state.last_position_along_surface if \
+                    player.surface_state.last_position_along_surface \
+                            .surface != null else \
+                    player.get_intended_position(
+                            IntendedPositionType.CLOSEST_SURFACE_POSITION)
+            start_surface = start_position_along_surface.surface
             _on_active()
             _check_ready_to_move()
         else:
@@ -419,8 +430,8 @@ func _set_starts_with_a_jump(value: bool) -> void:
     _update_parameters()
 
 
-func _set_start_jump_boost(value: float) -> void:
-    start_jump_boost = value
+func _set_start_jump_boost_multiplier(value: float) -> void:
+    start_jump_boost_multiplier = value
     _update_parameters()
 
 
