@@ -53,7 +53,7 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
     ._on_navigation_ended(did_navigation_finish)
     
     # FIXME: ---------------------------
-    # _get_pause_time()
+    # - _pause_mid_movement()
 
 
 #func _on_physics_process(delta: float) -> void:
@@ -183,6 +183,10 @@ func _attempt_intra_surface_navigation() -> bool:
 #    # FIXME: ----------------------------
 #
 #    _set_configuration_warning("")
+
+
+func _get_default_next_behavior_controller() -> BehaviorController:
+    return player.active_at_start_controller
 
 
 func _get_movement_distance_unsigned() -> float:

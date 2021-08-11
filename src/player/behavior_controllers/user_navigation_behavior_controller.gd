@@ -43,13 +43,6 @@ func _ready() -> void:
 #    ._on_inactive()
 
 
-#func _update_parameters() -> void:
-#    ._update_parameters()
-#    if _configuration_warning != "":
-#        return
-#    _set_configuration_warning("")
-
-
 #func _on_navigation_ended(did_navigation_finish: bool) -> void:
 #    ._on_navigation_ended(did_navigation_finish)
 
@@ -98,3 +91,18 @@ func _handle_pointer_selections() -> void:
         
         new_selection.clear()
         pre_selection.clear()
+
+
+#func _update_parameters() -> void:
+#    ._update_parameters()
+#
+#    if _configuration_warning != "":
+#        return
+#
+#    # FIXME: ----------------------------
+#
+#    _set_configuration_warning("")
+
+
+func _get_default_next_behavior_controller() -> BehaviorController:
+    return player.active_at_start_controller

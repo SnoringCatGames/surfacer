@@ -17,7 +17,8 @@ var _last_pointer_drag_position := Vector2.INF
 
 func _init(player) -> void:
     self._player = player
-    self._user_nav = player.get_behavior_controller("user_navigation")
+    self._user_nav = \
+            player.get_behavior_controller(UserNavigationBehaviorController)
     var nearby_surface_distance_threshold: float = \
             _player.movement_params.max_upward_jump_distance * \
             PointerSelectionPosition.SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO

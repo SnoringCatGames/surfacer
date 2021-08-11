@@ -45,3 +45,11 @@ func _on_active() -> void:
 #    if _configuration_warning != "":
 #        return
 #    _set_configuration_warning("")
+
+
+func _get_default_next_behavior_controller() -> BehaviorController:
+    return player.active_at_start_controller
+
+
+func get_is_paused() -> bool:
+    return true
