@@ -157,7 +157,6 @@ func _execute_next_step() -> void:
     for key in step.keys():
         match key:
             "destination":
-                player.behavior = PlayerBehaviorType.CHOREOGRAPHY
                 var target: Vector2 = \
                         Sc.utils.get_node_in_group(step.destination) \
                                 .position if \
@@ -167,7 +166,7 @@ func _execute_next_step() -> void:
                         SurfaceParser.find_closest_position_on_a_surface(
                                 target, player)
                 var is_navigation_valid := \
-                        player.navigator.navigate_to_position(destination)
+                        player.navigate_as_choreographed(destination)
                 assert(is_navigation_valid)
             "zoom_multiplier":
                 _current_zoom_multiplier = \

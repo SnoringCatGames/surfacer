@@ -21,6 +21,7 @@ var movement_params: MovementParams
 var possible_surfaces_set: Dictionary
 
 var start_surface: Surface
+var start_position_along_surface: PositionAlongSurface
 
 var just_triggered_jump := false
 var is_rising_from_jump := false
@@ -183,6 +184,21 @@ func _initialize_child_movement_params() -> void:
 
 
 func _on_attached_to_first_surface() -> void:
+    start_surface = surface_state.grabbed_surface
+    start_position_along_surface = \
+            surface_state.center_position_along_surface
+    
+    match start_surface.side:
+        SurfaceSide.FLOOR:
+            assert(movement_params.can_grab_floors)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            assert(movement_params.can_grab_walls)
+        SurfaceSide.CEILING:
+            assert(movement_params.can_grab_ceilings)
+        _:
+            Sc.logger.error()
+    
     for behavior_controller in _behavior_controllers_list:
         behavior_controller._on_attached_to_first_surface()
 
@@ -402,7 +418,6 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     
     if surface_state.just_grabbed_a_surface and \
             start_surface == null:
-        start_surface = surface_state.grabbed_surface
         _on_attached_to_first_surface()
 
 
@@ -418,9 +433,6 @@ func _update_collision_mask() -> void:
 
 
 func _on_surfacer_player_navigation_ended(did_navigation_finish: bool) -> void:
-    # FIXME: ------------ Remove?
-    behavior = PlayerBehaviorType.REST
-    
     for behavior_controller in _behavior_controllers_list:
         behavior_controller._on_navigation_ended(did_navigation_finish)
 
@@ -478,6 +490,17 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
         animator.face_left()
     
     _can_dash = false
+
+
+func navigate_as_choreographed(destination: PositionAlongSurface) -> bool:
+    var choreography_controller: ChoreographyBehaviorController = \
+            get_behavior_controller(ChoreographyBehaviorController)
+    if !is_instance_valid(choreography_controller):
+        choreography_controller = ChoreographyBehaviorController.new()
+        add_behavior_controller(choreography_controller)
+    choreography_controller.destination = destination
+    choreography_controller.trigger(false)
+    return navigation_state.is_currently_navigating
 
 
 func set_position(position: Vector2) -> void:

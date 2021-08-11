@@ -11,6 +11,7 @@ const CONTROLLER_NAME := "wander"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
+const COULD_RETURN_TO_START_POSITION := false
 
 
 ## The minimum distance to travel during each navigation.
@@ -30,12 +31,9 @@ func _init().(
         CONTROLLER_NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
-        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
+        INCLUDES_POST_MOVEMENT_PAUSE,
+        COULD_RETURN_TO_START_POSITION) -> void:
     pass
-
-
-#func _on_attached_to_first_surface() -> void:
-#    ._on_attached_to_first_surface()
 
 
 #func _on_active() -> void:
@@ -182,10 +180,6 @@ func _attempt_intra_surface_navigation() -> bool:
 #    # FIXME: ----------------------------
 #
 #    _set_configuration_warning("")
-
-
-func _get_default_next_behavior_controller() -> BehaviorController:
-    return player.active_at_start_controller
 
 
 func _get_movement_distance_unsigned() -> float:

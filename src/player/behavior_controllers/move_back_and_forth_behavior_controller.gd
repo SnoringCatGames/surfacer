@@ -10,6 +10,7 @@ const CONTROLLER_NAME := "move_back_and_forth"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
+const COULD_RETURN_TO_START_POSITION := false
 
 ## If true, then the player's movement range will extend to the far ends of the
 ## surface they are on.
@@ -42,39 +43,17 @@ export(float, 0.0, 1.0) var max_ratio_for_destination_offset_from_ends := 0.0 \
         setget _set_max_ratio_for_destination_offset_from_ends
 
 var _is_next_move_minward := true
-var _destination: PositionAlongSurface
+var _destination := PositionAlongSurface.new()
 
 
 func _init().(
         CONTROLLER_NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
-        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
-    pass
-
-
-func _on_attached_to_first_surface() -> void:
-    ._on_attached_to_first_surface()
-    
-    if Engine.editor_hint:
-        return
-    
-    match player.start_surface.side:
-        SurfaceSide.FLOOR:
-            assert(player.movement_params.can_grab_floors)
-        SurfaceSide.LEFT_WALL, \
-        SurfaceSide.RIGHT_WALL:
-            assert(player.movement_params.can_grab_walls)
-        SurfaceSide.CEILING:
-            assert(player.movement_params.can_grab_ceilings)
-        _:
-            Sc.logger.error()
-    
+        INCLUDES_POST_MOVEMENT_PAUSE,
+        COULD_RETURN_TO_START_POSITION) -> void:
     # Randomize which direction the player moves first.
     _is_next_move_minward = randf() < 0.5
-    
-    _destination = PositionAlongSurface.new()
-    _destination.surface = player.start_surface
 
 
 #func _on_active() -> void:
@@ -83,6 +62,7 @@ func _on_attached_to_first_surface() -> void:
 
 func _on_ready_to_move() -> void:
     ._on_ready_to_move()
+    _destination.surface = player.start_surface
     _move()
 
 
@@ -279,7 +259,3 @@ func _update_parameters() -> void:
                 "must be non-negative.")
     else:
         _set_configuration_warning("")
-
-
-func _get_default_next_behavior_controller() -> BehaviorController:
-    return player.active_at_start_controller

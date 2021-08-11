@@ -7,6 +7,7 @@ const CONTROLLER_NAME := "user_navigation"
 const IS_ADDED_MANUALLY := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
+const COULD_RETURN_TO_START_POSITION := false
 
 var cancels_navigation_on_key_press := true
 
@@ -21,7 +22,8 @@ func _init().(
         CONTROLLER_NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
-        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
+        INCLUDES_POST_MOVEMENT_PAUSE,
+        COULD_RETURN_TO_START_POSITION) -> void:
     pass
 
 
@@ -29,10 +31,6 @@ func _ready() -> void:
     self.new_selection = PointerSelectionPosition.new(player)
     self.last_selection = PointerSelectionPosition.new(player)
     self.pre_selection = PointerSelectionPosition.new(player)
-
-
-#func _on_attached_to_first_surface() -> void:
-#    ._on_attached_to_first_surface()
 
 
 #func _on_active() -> void:
@@ -116,7 +114,3 @@ func _move() -> void:
 #    # FIXME: ----------------------------
 #
 #    _set_configuration_warning("")
-
-
-func _get_default_next_behavior_controller() -> BehaviorController:
-    return player.active_at_start_controller

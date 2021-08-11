@@ -11,13 +11,7 @@ const CONTROLLER_NAME := "follow"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := true
-
-# FIXME: -----------------------
-## -   If true, the player will return to their starting position after this
-##     behavior controller has finished.
-## -   If true, then `only_navigates_reversible_paths` must also be true.
-export var returns_to_start_position := true \
-        setget _set_returns_to_start_position
+const COULD_RETURN_TO_START_POSITION := true
 
 # FIXME: ---------------- Set this
 var follow_target: ScaffolderPlayer
@@ -27,12 +21,9 @@ func _init().(
         CONTROLLER_NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
-        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
+        INCLUDES_POST_MOVEMENT_PAUSE,
+        COULD_RETURN_TO_START_POSITION) -> void:
     pass
-
-
-#func _on_attached_to_first_surface() -> void:
-#    ._on_attached_to_first_surface()
 
 
 #func _on_active() -> void:
@@ -88,30 +79,12 @@ func _attempt_navigation() -> bool:
     return false
 
 
-func _update_parameters() -> void:
-    ._update_parameters()
-    
-    if _configuration_warning != "":
-        return
-    
-    if returns_to_start_position and \
-            !only_navigates_reversible_paths:
-        _set_configuration_warning(
-                "If returns_to_start_position is true, then " +
-                "only_navigates_reversible_paths must also be true.")
-        return
-    
-    # FIXME: ----------------------------
-    
-    _set_configuration_warning("")
-
-
-func _get_default_next_behavior_controller() -> BehaviorController:
-    return player.get_behavior_controller(ReturnBehaviorController) if \
-            returns_to_start_position else \
-            player.active_at_start_controller
-
-
-func _set_returns_to_start_position(value: bool) -> void:
-    returns_to_start_position = value
-    _update_parameters()
+#func _update_parameters() -> void:
+#    ._update_parameters()
+#
+#    if _configuration_warning != "":
+#        return
+#
+#    # FIXME: ----------------------------
+#
+#    _set_configuration_warning("")
