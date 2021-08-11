@@ -1,21 +1,17 @@
 tool
-class_name ClimbAdjacentSurfacesBehaviorController, \
-"res://addons/surfacer/assets/images/editor_icons/climb_adjacent_surfaces_behavior_controller.png"
-extends BehaviorController
+class_name RestBehavior
+extends Behavior
 
 
-# FIXME: -------------------------
-
-
-const CONTROLLER_NAME := "climb_adjacent_surfaces"
-const IS_ADDED_MANUALLY := true
-const INCLUDES_MID_MOVEMENT_PAUSE := true
+const NAME := "rest"
+const IS_ADDED_MANUALLY := false
+const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
 
 
 func _init().(
-        CONTROLLER_NAME,
+        NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
@@ -23,8 +19,8 @@ func _init().(
     pass
 
 
-#func _on_active() -> void:
-#    ._on_active()
+# func _on_active() -> void:
+#     ._on_active()
 
 
 #func _on_ready_to_move() -> void:
@@ -44,16 +40,16 @@ func _init().(
 
 
 func _move() -> bool:
-    # FIXME: -----------------------------
-    return false
+    # Do nothing.
+    return true
 
 
 #func _update_parameters() -> void:
 #    ._update_parameters()
-#
 #    if _configuration_warning != "":
 #        return
-#
-#    # FIXME: ----------------------------
-#
 #    _set_configuration_warning("")
+
+
+func get_is_paused() -> bool:
+    return true

@@ -1,13 +1,13 @@
 tool
-class_name FollowBehaviorController, \
-"res://addons/surfacer/assets/images/editor_icons/follow_behavior_controller.png"
-extends BehaviorController
+class_name FollowBehavior, \
+"res://addons/surfacer/assets/images/editor_icons/follow_behavior.png"
+extends Behavior
 
 
 # FIXME: -------------------------
 
 
-const CONTROLLER_NAME := "follow"
+const NAME := "follow"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := true
@@ -18,7 +18,7 @@ var follow_target: ScaffolderPlayer
 
 
 func _init().(
-        CONTROLLER_NAME,
+        NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,

@@ -1,13 +1,13 @@
 tool
-class_name JumpBackAndForthBehaviorController, \
-"res://addons/surfacer/assets/images/editor_icons/jump_back_and_forth_behavior_controller.png"
-extends BehaviorController
+class_name JumpBackAndForthBehavior, \
+"res://addons/surfacer/assets/images/editor_icons/jump_back_and_forth_behavior.png"
+extends Behavior
 
 
 # FIXME: -------------------------
 
 
-const CONTROLLER_NAME := "jump_back_and_forth"
+const NAME := "jump_back_and_forth"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
@@ -15,7 +15,7 @@ const COULD_RETURN_TO_START_POSITION := false
 
 
 func _init().(
-        CONTROLLER_NAME,
+        NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,

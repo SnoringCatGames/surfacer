@@ -1,5 +1,5 @@
 tool
-class_name BehaviorController
+class_name Behavior
 extends Node2D
 
 
@@ -44,7 +44,7 @@ export var start_jump_boost := 0.0 \
         setget _set_start_jump_boost
 
 ## -   If true, the player will return to their starting position after this
-##     behavior controller has finished.
+##     behavior has finished.
 ## -   If true, then `only_navigates_reversible_paths` must also be true.
 var returns_to_start_position := true \
         setget _set_returns_to_start_position
@@ -63,22 +63,22 @@ var max_pause_between_movements := 0.0 \
         setget _set_max_pause_between_movements
 
 ## The minimum amount of time to pause after the last movement, before starting
-## the next behavior controller.
+## the next behavior.
 var min_pause_after_movements := 0.0 \
         setget _set_min_pause_after_movements
 ## The maximum amount of time to pause after the last movement, before starting
-## the next behavior controller.
+## the next behavior.
 var max_pause_after_movements := 0.0 \
         setget _set_max_pause_after_movements
 
-var controller_name: String
+var behavior_name: String
 var is_added_manually: bool
 var includes_mid_movement_pause: bool
 var includes_post_movement_pause: bool
 var could_return_to_start_position: bool
 
 var player: ScaffolderPlayer
-var next_behavior_controller: BehaviorController
+var next_behavior: Behavior
 var is_active := false setget _set_is_active
 
 var _mid_movement_pause_timeout_id := -1
@@ -91,12 +91,12 @@ var _property_list_amendment := []
 
 
 func _init(
-        controller_name: String,
+        behavior_name: String,
         is_added_manually: bool,
         includes_mid_movement_pause: bool,
         includes_post_movement_pause: bool,
         could_return_to_start_position: bool) -> void:
-    self.controller_name = controller_name
+    self.behavior_name = behavior_name
     self.is_added_manually = is_added_manually
     self.includes_mid_movement_pause = includes_mid_movement_pause
     self.includes_post_movement_pause = includes_post_movement_pause
@@ -142,8 +142,8 @@ func _enter_tree() -> void:
     if !is_added_manually and \
             Engine.editor_hint:
         Sc.logger.error(
-                ("BehaviorController %s should not be added to your scene " +
-                "manually.") % controller_name)
+                ("Behavior %s should not be added to your scene " +
+                "manually.") % behavior_name)
 
 
 func _ready() -> void:
@@ -167,9 +167,9 @@ func _check_ready_to_move() -> void:
             !_was_already_ready_to_move_this_frame:
         _was_already_ready_to_move_this_frame = true
         
-        if !is_instance_valid(next_behavior_controller):
-            next_behavior_controller = _get_default_next_behavior_controller()
-            assert(is_instance_valid(next_behavior_controller))
+        if !is_instance_valid(next_behavior):
+            next_behavior = _get_default_next_behavior()
+            assert(is_instance_valid(next_behavior))
         
         _on_ready_to_move()
 
@@ -220,9 +220,9 @@ func _attempt_move() -> void:
     var is_move_successful := _move()
     if !is_move_successful:
         Sc.logger.error(
-            ("BehaviorController._move() failed: " +
+            ("Behavior._move() failed: " +
             "behavior=%s, player=%s, position=%s") % [
-                controller_name,
+                behavior_name,
                 player.player_name,
                 Sc.utils.get_vector_string(player.position),
             ],
@@ -231,7 +231,7 @@ func _attempt_move() -> void:
 
 
 func _move() -> bool:
-    Sc.logger.error("Abstract BehaviorController._move is not implemented.")
+    Sc.logger.error("Abstract Behavior._move is not implemented.")
     return false
 
 
@@ -278,7 +278,7 @@ func _update_parameters() -> void:
     
     if !Sc.utils.check_whether_sub_classes_are_tools(self):
         _set_configuration_warning(
-                "Subclasses of BehaviorController must be marked as tool.")
+                "Subclasses of Behavior must be marked as tool.")
         return
     
     _get_player_reference_from_parent()
@@ -349,16 +349,16 @@ func get_is_paused() -> bool:
 # FIXME: LEFT OFF HERE: ------------------------- Define overrides.
 func get_behavior() -> int:
     Sc.logger.error(
-            "Abstract BehaviorController.get_behavior is not implemented.")
+            "Abstract Behavior.get_behavior is not implemented.")
     return -1
 
 
-func _get_default_next_behavior_controller() -> BehaviorController:
-    return player.get_behavior_controller("return") if \
+func _get_default_next_behavior() -> Behavior:
+    return player.get_behavior("return") if \
             could_return_to_start_position and \
                     (returns_to_start_position or \
                     returns_to_pre_behavior_position) else \
-            player.active_at_start_controller
+            player.active_at_start_behavior
 
 
 func _get_player_reference_from_parent() -> void:
@@ -381,10 +381,10 @@ func _set_is_active(value: bool) -> void:
     is_active = value
     if is_active != was_active:
         if is_active:
-            if is_instance_valid(player.behavior_controller) and \
-                    player.behavior_controller != self:
-                player.behavior_controller.is_active = false
-            player.behavior_controller = self
+            if is_instance_valid(player.behavior) and \
+                    player.behavior != self:
+                player.behavior.is_active = false
+            player.behavior = self
             _on_active()
             _check_ready_to_move()
         else:

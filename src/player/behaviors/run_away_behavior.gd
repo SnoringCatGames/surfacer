@@ -1,7 +1,7 @@
 tool
-class_name RunAwayBehaviorController, \
-"res://addons/surfacer/assets/images/editor_icons/run_away_behavior_controller.png"
-extends BehaviorController
+class_name RunAwayBehavior, \
+"res://addons/surfacer/assets/images/editor_icons/run_away_behavior.png"
+extends Behavior
 ## -   When running away, the player finds and navigates to a destination that
 ##     is a given distance away from a given target.
 
@@ -9,7 +9,7 @@ extends BehaviorController
 # FIXME: -------------------------
 
 
-const CONTROLLER_NAME := "run_away"
+const NAME := "run_away"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := true
@@ -32,7 +32,7 @@ var target_to_run_from: ScaffolderPlayer
 
 
 func _init().(
-        CONTROLLER_NAME,
+        NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,

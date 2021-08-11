@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/jump_back_and_forth_behavior_controller.png-998fe003afdee0ed4e80ee7dd6411564.stex"
+path="res://.import/collide_behavior.png-0aaceac65f7bbf8898bd48a933c3f010.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/surfacer/assets/images/editor_icons/jump_back_and_forth_behavior_controller.png"
-dest_files=[ "res://.import/jump_back_and_forth_behavior_controller.png-998fe003afdee0ed4e80ee7dd6411564.stex" ]
+source_file="res://addons/surfacer/assets/images/editor_icons/collide_behavior.png"
+dest_files=[ "res://.import/collide_behavior.png-0aaceac65f7bbf8898bd48a933c3f010.stex" ]
 
 [params]
 

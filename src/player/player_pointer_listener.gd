@@ -3,7 +3,7 @@ extends Node2D
 
 
 var _player
-var _user_nav: UserNavigationBehaviorController
+var _user_nav: UserNavigationBehavior
 var _nearby_surface_distance_squared_threshold: float
 var _is_preselection_path_update_pending := false
 var _throttled_update_preselection_path: FuncRef = Sc.time.throttle(
@@ -18,7 +18,7 @@ var _last_pointer_drag_position := Vector2.INF
 func _init(player) -> void:
     self._player = player
     self._user_nav = \
-            player.get_behavior_controller(UserNavigationBehaviorController)
+            player.get_behavior(UserNavigationBehavior)
     var nearby_surface_distance_threshold: float = \
             _player.movement_params.max_upward_jump_distance * \
             PointerSelectionPosition.SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO

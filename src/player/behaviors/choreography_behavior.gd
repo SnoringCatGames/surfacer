@@ -1,17 +1,19 @@
 tool
-class_name RestBehaviorController
-extends BehaviorController
+class_name ChoreographyBehavior
+extends Behavior
 
 
-const CONTROLLER_NAME := "rest"
+const NAME := "choreography"
 const IS_ADDED_MANUALLY := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
 
+var destination: PositionAlongSurface
+
 
 func _init().(
-        CONTROLLER_NAME,
+        NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
@@ -31,8 +33,13 @@ func _init().(
 #    ._on_inactive()
 
 
-#func _on_navigation_ended(did_navigation_finish: bool) -> void:
-#    ._on_navigation_ended(did_navigation_finish)
+func _on_navigation_ended(did_navigation_finish: bool) -> void:
+    ._on_navigation_ended(did_navigation_finish)
+    if is_active:
+        # Don't call _pause_post_movement when returning, since it probably
+        # isn't normally desirable, and it would be more complex to configure
+        # the pause timing.
+        _on_finished()
 
 
 #func _on_physics_process(delta: float) -> void:
@@ -40,8 +47,7 @@ func _init().(
 
 
 func _move() -> bool:
-    # Do nothing.
-    return true
+    return player.navigator.navigate_to_position(destination)
 
 
 #func _update_parameters() -> void:
@@ -49,7 +55,3 @@ func _move() -> bool:
 #    if _configuration_warning != "":
 #        return
 #    _set_configuration_warning("")
-
-
-func get_is_paused() -> bool:
-    return true

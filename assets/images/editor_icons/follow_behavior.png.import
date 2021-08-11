@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/follow_behavior_controller.png-7993ea1592b1eec42bb87a10f1b9afc9.stex"
+path="res://.import/follow_behavior.png-5eb7d4f5f3d44c334a137011208d8cfb.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/surfacer/assets/images/editor_icons/follow_behavior_controller.png"
-dest_files=[ "res://.import/follow_behavior_controller.png-7993ea1592b1eec42bb87a10f1b9afc9.stex" ]
+source_file="res://addons/surfacer/assets/images/editor_icons/follow_behavior.png"
+dest_files=[ "res://.import/follow_behavior.png-5eb7d4f5f3d44c334a137011208d8cfb.stex" ]
 
 [params]
 

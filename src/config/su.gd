@@ -80,17 +80,17 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
 }
 
 var DEFAULT_BEHAVIOR_CLASSES := [
-    ChoreographyBehaviorController,
-    ClimbAdjacentSurfacesBehaviorController,
-    CollideBehaviorController,
-    FollowBehaviorController,
-    JumpBackAndForthBehaviorController,
-    MoveBackAndForthBehaviorController,
-    RestBehaviorController,
-    ReturnBehaviorController,
-    RunAwayBehaviorController,
-    UserNavigationBehaviorController,
-    WanderBehaviorController,
+    ChoreographyBehavior,
+    ClimbAdjacentSurfacesBehavior,
+    CollideBehavior,
+    FollowBehavior,
+    JumpBackAndForthBehavior,
+    MoveBackAndForthBehavior,
+    RestBehavior,
+    ReturnBehavior,
+    RunAwayBehavior,
+    UserNavigationBehavior,
+    WanderBehavior,
 ]
 
 # --- Scaffolder manifest additions ---

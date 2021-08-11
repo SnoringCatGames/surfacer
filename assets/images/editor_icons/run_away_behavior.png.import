@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/run_away_behavior_controller.png-48a2b9deca542a3b859a41bb9d14048d.stex"
+path="res://.import/run_away_behavior.png-ac65a59b9fa63965f74cc383d0ad2143.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/surfacer/assets/images/editor_icons/run_away_behavior_controller.png"
-dest_files=[ "res://.import/run_away_behavior_controller.png-48a2b9deca542a3b859a41bb9d14048d.stex" ]
+source_file="res://addons/surfacer/assets/images/editor_icons/run_away_behavior.png"
+dest_files=[ "res://.import/run_away_behavior.png-ac65a59b9fa63965f74cc383d0ad2143.stex" ]
 
 [params]
 
