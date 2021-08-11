@@ -8,6 +8,8 @@ extends BehaviorController
 
 const CONTROLLER_NAME := "move_back_and_forth"
 const IS_ADDED_MANUALLY := true
+const INCLUDES_MID_MOVEMENT_PAUSE := true
+const INCLUDES_POST_MOVEMENT_PAUSE := false
 
 ## If true, then the player's movement range will extend to the far ends of the
 ## surface they are on.
@@ -39,17 +41,16 @@ export var pause_delay_max := 0.0 setget _set_pause_delay_max
 export(float, 0.0, 1.0) var max_ratio_for_destination_offset_from_ends := 0.0 \
         setget _set_max_ratio_for_destination_offset_from_ends
 
-var _was_last_move_minward := true
+var _is_next_move_minward := true
 var _destination: PositionAlongSurface
-var _next_move_timeout_id := -1
 
 
-func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
+func _init().(
+        CONTROLLER_NAME,
+        IS_ADDED_MANUALLY,
+        INCLUDES_MID_MOVEMENT_PAUSE,
+        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
     pass
-
-
-#func _on_player_ready() -> void:
-#    ._on_player_ready()
 
 
 func _on_attached_to_first_surface() -> void:
@@ -70,13 +71,10 @@ func _on_attached_to_first_surface() -> void:
             Sc.logger.error()
     
     # Randomize which direction the player moves first.
-    _was_last_move_minward = randf() < 0.5
+    _is_next_move_minward = randf() < 0.5
     
     _destination = PositionAlongSurface.new()
     _destination.surface = player.start_surface
-    if _is_ready and \
-            is_active:
-        trigger_move_after_delay()
 
 
 #func _on_active() -> void:
@@ -85,63 +83,26 @@ func _on_attached_to_first_surface() -> void:
 
 func _on_ready_to_move() -> void:
     ._on_ready_to_move()
-    trigger_move_after_delay()
+    _move()
 
 
-func _on_inactive() -> void:
-    ._on_inactive()
-    Sc.time.clear_timeout(_next_move_timeout_id)
+#func _on_inactive() -> void:
+#    ._on_inactive()
 
 
-#func _on_player_ready() -> void:
-#    ._on_player_ready()
-
-
-#func _on_attached_to_first_surface() -> void:
-#    ._on_attached_to_first_surface()
-
-
-func _on_navigation_ended(did_navigation_finish: bool) -> void:
-    ._on_navigation_ended(did_navigation_finish)
-    if did_navigation_finish:
-        trigger_move_after_delay()
-    else:
-        # FIXME: ------------
-        pass
+#func _on_navigation_ended(did_navigation_finish: bool) -> void:
+#    ._on_navigation_ended(did_navigation_finish)
 
 
 #func _on_physics_process(delta: float) -> void:
 #    ._on_physics_process(delta)
 
 
-func trigger_move_after_delay() -> void:
-    assert(is_active)
-    player.behavior = PlayerBehaviorType.REST
-    var delay := \
-            randf() * (pause_delay_max - pause_delay_min) + pause_delay_min
-    _next_move_timeout_id = Sc.time.set_timeout(
-            funcref(self, "_trigger_turn_around_move"), delay)
-
-
-func _trigger_turn_around_move() -> void:
-    move(!_was_last_move_minward)
-
-
-func move(
-        is_moving_minward: bool,
-        min_distance := 0.0,
-        behavior := PlayerBehaviorType.CUSTOM) -> void:
+func _move() -> void:
     assert(is_active)
     
-    Sc.time.clear_timeout(_next_move_timeout_id)
-    _next_move_timeout_id = -1
-    
-    player.behavior = behavior
-    
-    _was_last_move_minward = is_moving_minward
-    
-    var is_navigation_valid := _attempt_navigation(
-            is_moving_minward, min_distance)
+    var is_navigation_valid := _attempt_navigation()
+    _is_next_move_minward = !_is_next_move_minward
     
     # FIXME: ---- Move nav success/fail logs into a parent method.
     if is_navigation_valid:
@@ -149,22 +110,20 @@ func move(
                 ("MoveBackAndForthBehaviorController.move: " +
                 "%s, is_moving_minward=%s") % [
                     player.player_name,
-                    str(is_moving_minward),
+                    str(_is_next_move_minward),
                 ])
     else:
         Sc.logger.print(
                 ("MoveBackAndForthBehaviorController.move: " +
                 "Unable to navigate: %s, is_moving_minward=%s") % [
                     player.player_name,
-                    str(is_moving_minward),
+                    str(_is_next_move_minward),
                 ])
         # FIXME: ----------------------------- Trigger next behavior
         pass
 
 
-func _attempt_navigation(
-        is_moving_minward: bool,
-        min_distance := 0.0) -> bool:
+func _attempt_navigation() -> bool:
     var is_surface_horizontal: bool = \
             player.start_surface.side == SurfaceSide.FLOOR or \
             player.start_surface.side == SurfaceSide.CEILING
@@ -216,47 +175,31 @@ func _attempt_navigation(
     var sample_min: float
     var sample_max: float
     if is_surface_horizontal:
-        if is_moving_minward:
+        if _is_next_move_minward:
             sample_min = min_x
             sample_max = \
                     min_x + \
                     range_x * max_ratio_for_destination_offset_from_ends
-            sample_max = max(
-                    min(
-                        position.x - min_distance,
-                        sample_max), 
-                    sample_min)
+            sample_max = max(sample_max, sample_min)
         else:
             sample_min = \
                     max_x - \
                     range_x * max_ratio_for_destination_offset_from_ends
             sample_max = max_x
-            sample_min = min(
-                    max(
-                        position.x + min_distance,
-                        sample_min), 
-                    sample_max)
+            sample_min = min(sample_min, sample_max)
     else:
-        if is_moving_minward:
+        if _is_next_move_minward:
             sample_min = min_y
             sample_max = \
                     min_y + \
                     range_y * max_ratio_for_destination_offset_from_ends
-            sample_max = max(
-                    min(
-                        position.y - min_distance,
-                        sample_max), 
-                    sample_min)
+            sample_max = max(sample_max, sample_min)
         else:
             sample_min = \
                     max_y - \
                     range_y * max_ratio_for_destination_offset_from_ends
             sample_max = max_y
-            sample_min = min(
-                    max(
-                        position.y + min_distance,
-                        sample_min), 
-                    sample_max)
+            sample_min = min(sample_min, sample_max)
     
     var sample := randf() * (sample_max - sample_min) + sample_min
     var target_point := \

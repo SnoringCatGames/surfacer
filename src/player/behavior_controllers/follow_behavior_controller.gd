@@ -9,6 +9,8 @@ extends BehaviorController
 
 const CONTROLLER_NAME := "follow"
 const IS_ADDED_MANUALLY := true
+const INCLUDES_MID_MOVEMENT_PAUSE := true
+const INCLUDES_POST_MOVEMENT_PAUSE := true
 
 # FIXME: -----------------------
 ## -   If true, the player will return to their starting position after this
@@ -17,25 +19,16 @@ const IS_ADDED_MANUALLY := true
 export var returns_to_start_position := true \
         setget _set_returns_to_start_position
 
-## The minimum amount of time to pause after the last movement, before starting
-## the next behavior controller.
-export var min_pause_after_movements := 0.0
-## The maximum amount of time to pause after the last movement, before starting
-## the next behavior controller.
-export var max_pause_after_movements := 0.0
-
 # FIXME: ---------------- Set this
 var follow_target: ScaffolderPlayer
 
-var _post_movement_pause_timeout_id := -1
 
-
-func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
+func _init().(
+        CONTROLLER_NAME,
+        IS_ADDED_MANUALLY,
+        INCLUDES_MID_MOVEMENT_PAUSE,
+        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
     pass
-
-
-#func _on_player_ready() -> void:
-#    ._on_player_ready()
 
 
 #func _on_attached_to_first_surface() -> void:
@@ -49,7 +42,7 @@ func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
 func _on_ready_to_move() -> void:
     ._on_ready_to_move()
     assert(is_instance_valid(follow_target))
-    move()
+    _move()
 
 
 #func _on_inactive() -> void:
@@ -57,7 +50,8 @@ func _on_ready_to_move() -> void:
 
 
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
-    ._on_navigation_ended(did_navigation_finish)
+    # NOTE: This replaces the default behavior, rather than extending it.
+    #._on_navigation_ended(did_navigation_finish)
     
     if is_active:
         # FIXME: LEFT OFF HERE: --------------
@@ -65,14 +59,14 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
         # - _pause_post_movement()
         # - Continue following, or stop, depending on whether we're too far.
         # - How to stop/pause when we're too close?
-        pass
+        _pause_mid_movement()
 
 
 #func _on_physics_process(delta: float) -> void:
 #    ._on_physics_process(delta)
 
 
-func move() -> void:
+func _move() -> void:
     var is_navigation_valid := _attempt_navigation()
     
     # FIXME: ---- Move nav success/fail logs into a parent method.
@@ -92,23 +86,6 @@ func on_detached() -> void:
 func _attempt_navigation() -> bool:
     # FIXME: -------------------
     return false
-
-
-func _pause_post_movement() -> void:
-    _clear_timeouts()
-    _post_movement_pause_timeout_id = Sc.time.set_timeout(
-            funcref(self, "_on_post_movement_pause_finished"),
-            _get_post_movement_pause_time())
-
-
-func _on_post_movement_pause_finished() -> void:
-    assert(is_active)
-    _on_finished()
-
-
-func _clear_timeouts() -> void:
-    ._clear_timeouts()
-    Sc.time.clear_timeout(_post_movement_pause_timeout_id)
 
 
 func _update_parameters() -> void:
@@ -133,18 +110,6 @@ func _get_default_next_behavior_controller() -> BehaviorController:
     return player.get_behavior_controller(ReturnBehaviorController) if \
             returns_to_start_position else \
             player.active_at_start_controller
-
-
-func get_is_paused() -> bool:
-    return .get_is_paused() or \
-            _post_movement_pause_timeout_id > 0
-
-
-# FIXME: --------------------------
-func _get_post_movement_pause_time() -> float:
-    return randf() * \
-            (max_pause_after_movements - min_pause_after_movements) + \
-            min_pause_after_movements
 
 
 func _set_returns_to_start_position(value: bool) -> void:

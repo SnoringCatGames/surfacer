@@ -552,9 +552,6 @@ func _parse_behavior_controller_children() -> void:
         rest_controller.is_active_at_start = true
         add_behavior_controller(rest_controller)
         active_at_start_controller = rest_controller
-    
-    for controller in controllers:
-        controller._on_player_ready()
 
 
 func add_behavior_controller(controller: BehaviorController) -> void:
@@ -565,7 +562,6 @@ func add_behavior_controller(controller: BehaviorController) -> void:
     if Engine.editor_hint:
         return
     add_child(controller)
-    controller._on_player_ready()
 
 
 func remove_behavior_controller(controller_type: Script) -> void:

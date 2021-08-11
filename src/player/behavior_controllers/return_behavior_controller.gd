@@ -8,17 +8,19 @@ extends BehaviorController
 
 const CONTROLLER_NAME := "return"
 const IS_ADDED_MANUALLY := false
+const INCLUDES_MID_MOVEMENT_PAUSE := false
+const INCLUDES_POST_MOVEMENT_PAUSE := false
 
 # FIXME: --------- Conditionally re-assign this, depending on flags, from things like run-away, follow, collide, wander?
 var return_position: PositionAlongSurface
 
 
-func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
+func _init().(
+        CONTROLLER_NAME,
+        IS_ADDED_MANUALLY,
+        INCLUDES_MID_MOVEMENT_PAUSE,
+        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
     pass
-
-
-#func _on_player_ready() -> void:
-#    ._on_player_ready()
 
 
 func _on_attached_to_first_surface() -> void:
@@ -42,10 +44,10 @@ func _on_ready_to_move() -> void:
 
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
     ._on_navigation_ended(did_navigation_finish)
-    
     if is_active:
-        # FIXME: LEFT OFF HERE: --------------
-        pass
+        # Don't call _pause_post_movement when returning, since it probably
+        # isn't normally desirable, and it would be more complex to configure
+        # the pause timing.
         _on_finished()
 
 
@@ -53,7 +55,7 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 #    ._on_physics_process(delta)
 
 
-func move() -> void:
+func _move() -> void:
     assert(is_instance_valid(return_position))
     
     var is_navigation_valid := _attempt_navigation()

@@ -44,31 +44,67 @@ export var start_jump_boost := 0.0 \
         setget _set_start_jump_boost
 
 ## The minimum amount of time to pause between movements.
-export var min_pause_between_movements := 0.0
+var min_pause_between_movements := 0.0
 ## The maximum amount of time to pause between movements.
-export var max_pause_between_movements := 0.0
+var max_pause_between_movements := 0.0
+
+## The minimum amount of time to pause after the last movement, before starting
+## the next behavior controller.
+var min_pause_after_movements := 0.0
+## The maximum amount of time to pause after the last movement, before starting
+## the next behavior controller.
+var max_pause_after_movements := 0.0
 
 var controller_name: String
 var is_added_manually: bool
+var includes_mid_movement_pause: bool
+var includes_post_movement_pause: bool
 
 var player: ScaffolderPlayer
-
+var next_behavior_controller: BehaviorController
 var is_active := false setget _set_is_active
 
-var next_behavior_controller: BehaviorController
-
 var _mid_movement_pause_timeout_id := -1
+var _post_movement_pause_timeout_id := -1
 
 var _is_ready := false
 var _was_already_ready_to_move_this_frame := false
 var _configuration_warning := ""
+var _property_list_amendment := []
 
 
 func _init(
         controller_name: String,
-        is_added_manually: bool) -> void:
+        is_added_manually: bool,
+        includes_mid_movement_pause: bool,
+        includes_post_movement_pause: bool) -> void:
     self.controller_name = controller_name
     self.is_added_manually = is_added_manually
+    self.includes_mid_movement_pause = includes_mid_movement_pause
+    self.includes_post_movement_pause = includes_post_movement_pause
+    
+    if includes_mid_movement_pause:
+        self._property_list_amendment.push_back({
+                name = "min_pause_between_movements",
+                type = TYPE_REAL,
+                usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
+            })
+        self._property_list_amendment.push_back({
+                name = "max_pause_between_movements",
+                type = TYPE_REAL,
+                usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
+            })
+    if includes_post_movement_pause:
+        self._property_list_amendment.push_back({
+                name = "min_pause_after_movements",
+                type = TYPE_REAL,
+                usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
+            })
+        self._property_list_amendment.push_back({
+                name = "max_pause_after_movements",
+                type = TYPE_REAL,
+                usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
+            })
 
 
 func _enter_tree() -> void:
@@ -86,11 +122,6 @@ func _ready() -> void:
         return
     if is_active_at_start:
         _set_is_active(true)
-    _check_ready_to_move()
-
-
-# FIXME: -------- REMOVE?
-func _on_player_ready() -> void:
     _check_ready_to_move()
 
 
@@ -120,7 +151,7 @@ func _on_active() -> void:
 ## This is called any frame any of the following is called, but only after all
 ## of them have been called at least once:[br]
 ## -   _ready[br]
-## -   _on_player_ready[br]
+## -   player._ready[br]
 ## -   _on_attached_to_first_surface[br]
 ## -   _on_active[br]
 func _on_ready_to_move() -> void:
@@ -128,7 +159,6 @@ func _on_ready_to_move() -> void:
 
 
 func _on_inactive() -> void:
-    _clear_timeouts()
     pass
 
 
@@ -139,7 +169,9 @@ func _on_finished() -> void:
 
 
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
-    pass
+    if is_active and \
+            includes_mid_movement_pause:
+        _pause_mid_movement()
 
 
 func _on_physics_process(delta: float) -> void:
@@ -147,6 +179,7 @@ func _on_physics_process(delta: float) -> void:
 
 
 func trigger(shows_exclamation_mark: bool) -> void:
+    _clear_timeouts()
     _set_is_active(true)
     _move()
     if shows_exclamation_mark:
@@ -157,7 +190,6 @@ func _move() -> void:
     Sc.logger.error("Abstract BehaviorController._move is not implemented.")
 
 
-# FIXME: ---------- Call this
 func _pause_mid_movement() -> void:
     _clear_timeouts()
     _mid_movement_pause_timeout_id = Sc.time.set_timeout(
@@ -165,13 +197,34 @@ func _pause_mid_movement() -> void:
             _get_mid_movement_pause_time())
 
 
+func _pause_post_movement() -> void:
+    _clear_timeouts()
+    _post_movement_pause_timeout_id = Sc.time.set_timeout(
+            funcref(self, "_on_post_movement_pause_finished"),
+            _get_post_movement_pause_time())
+
+
 func _on_mid_movement_pause_finished() -> void:
     assert(is_active)
     _move()
 
 
+func _on_post_movement_pause_finished() -> void:
+    assert(is_active)
+    _on_finished()
+
+
 func _clear_timeouts() -> void:
     Sc.time.clear_timeout(_mid_movement_pause_timeout_id)
+    _mid_movement_pause_timeout_id = -1
+    Sc.time.clear_timeout(_post_movement_pause_timeout_id)
+    _post_movement_pause_timeout_id = -1
+
+
+# NOTE: _get_property_list **appends** to the default list of properties.
+#       It does not replace.
+func _get_property_list() -> Array:
+    return _property_list_amendment
 
 
 func _update_parameters() -> void:
@@ -208,7 +261,8 @@ func _get_configuration_warning() -> String:
 
 
 func get_is_paused() -> bool:
-    return _mid_movement_pause_timeout_id > 0
+    return _mid_movement_pause_timeout_id > 0 or \
+            _post_movement_pause_timeout_id > 0
 
 
 # FIXME: LEFT OFF HERE: ------------------------- Define overrides.
@@ -251,6 +305,7 @@ func _set_is_active(value: bool) -> void:
             _on_active()
             _check_ready_to_move()
         else:
+            _clear_timeouts()
             _on_inactive()
 
 
@@ -288,3 +343,9 @@ func _get_mid_movement_pause_time() -> float:
     return randf() * \
             (max_pause_between_movements - min_pause_between_movements) + \
             min_pause_between_movements
+
+
+func _get_post_movement_pause_time() -> float:
+    return randf() * \
+            (max_pause_after_movements - min_pause_after_movements) + \
+            min_pause_after_movements

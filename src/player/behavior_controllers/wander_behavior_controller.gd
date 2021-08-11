@@ -9,6 +9,8 @@ extends BehaviorController
 
 const CONTROLLER_NAME := "wander"
 const IS_ADDED_MANUALLY := true
+const INCLUDES_MID_MOVEMENT_PAUSE := true
+const INCLUDES_POST_MOVEMENT_PAUSE := false
 
 
 ## The minimum distance to travel during each navigation.
@@ -24,12 +26,12 @@ export var max_distance_per_movement := 512.0
 export(float, 0.0, 1.0) var probability_of_leaving_surface_if_available := 0.5
 
 
-func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
+func _init().(
+        CONTROLLER_NAME,
+        IS_ADDED_MANUALLY,
+        INCLUDES_MID_MOVEMENT_PAUSE,
+        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
     pass
-
-
-#func _on_player_ready() -> void:
-#    ._on_player_ready()
 
 
 #func _on_attached_to_first_surface() -> void:
@@ -42,25 +44,22 @@ func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
 
 func _on_ready_to_move() -> void:
     ._on_ready_to_move()
-    move()
+    _move()
 
 
 #func _on_inactive() -> void:
 #    ._on_inactive()
 
 
-func _on_navigation_ended(did_navigation_finish: bool) -> void:
-    ._on_navigation_ended(did_navigation_finish)
-    
-    # FIXME: ---------------------------
-    # - _pause_mid_movement()
+#func _on_navigation_ended(did_navigation_finish: bool) -> void:
+#    ._on_navigation_ended(did_navigation_finish)
 
 
 #func _on_physics_process(delta: float) -> void:
 #    ._on_physics_process(delta)
 
 
-func move() -> void:
+func _move() -> void:
     var is_navigation_valid := _attempt_navigation()
     
     # FIXME: ---- Move nav success/fail logs into a parent method.
