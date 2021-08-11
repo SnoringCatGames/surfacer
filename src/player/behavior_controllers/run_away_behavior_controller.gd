@@ -24,8 +24,24 @@ export var run_distance := 384.0 \
 ##     navigation destination.
 export(float, 0.0, 1.0) var retry_threshold_ratio_from_intended_distance := 0.5
 
+# FIXME: -----------------------
+## -   If true, the player will return to their starting position after this
+##     behavior controller has finished.
+## -   If true, then `only_navigates_reversible_paths` must also be true.
+export var returns_to_start_position := true \
+        setget _set_returns_to_start_position
+
+## The minimum amount of time to pause after the last movement, before starting
+## the next behavior controller.
+export var min_pause_after_movements := 0.0
+## The maximum amount of time to pause after the last movement, before starting
+## the next behavior controller.
+export var max_pause_after_movements := 0.0
+
 # FIXME: ---------------- Set this
 var target_to_run_from: ScaffolderPlayer
+
+var _post_movement_pause_timeout_id := -1
 
 
 func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
@@ -57,9 +73,11 @@ func _on_ready_to_move() -> void:
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
     ._on_navigation_ended(did_navigation_finish)
     
-    # FIXME: LEFT OFF HERE: --------------
-    # - _get_pause_time()
-    pass
+    if is_active:
+        # FIXME: LEFT OFF HERE: --------------
+        # - _pause_mid_movement()
+        # - _pause_post_movement()
+        pass
 
 
 #func _on_physics_process(delta: float) -> void:
@@ -217,6 +235,23 @@ func _attempt_navigation() -> bool:
     return false
 
 
+func _pause_post_movement() -> void:
+    _clear_timeouts()
+    _post_movement_pause_timeout_id = Sc.time.set_timeout(
+            funcref(self, "_on_post_movement_pause_finished"),
+            _get_post_movement_pause_time())
+
+
+func _on_post_movement_pause_finished() -> void:
+    assert(is_active)
+    _on_finished()
+
+
+func _clear_timeouts() -> void:
+    ._clear_timeouts()
+    Sc.time.clear_timeout(_post_movement_pause_timeout_id)
+
+
 func _update_parameters() -> void:
     ._update_parameters()
     
@@ -230,9 +265,39 @@ func _update_parameters() -> void:
                 "max_distance_from_start_position.")
         return
     
+    if returns_to_start_position and \
+            !only_navigates_reversible_paths:
+        _set_configuration_warning(
+                "If returns_to_start_position is true, then " +
+                "only_navigates_reversible_paths must also be true.")
+        return
+    
     _set_configuration_warning("")
+
+
+func _get_default_next_behavior_controller() -> BehaviorController:
+    return player.get_behavior_controller(ReturnBehaviorController) if \
+            returns_to_start_position else \
+            player.active_at_start_controller
+
+
+func get_is_paused() -> bool:
+    return .get_is_paused() or \
+            _post_movement_pause_timeout_id > 0
+
+
+# FIXME: --------------------------
+func _get_post_movement_pause_time() -> float:
+    return randf() * \
+            (max_pause_after_movements - min_pause_after_movements) + \
+            min_pause_after_movements
 
 
 func _set_run_distance(value: float) -> void:
     run_distance = value
+    _update_parameters()
+
+
+func _set_returns_to_start_position(value: bool) -> void:
+    returns_to_start_position = value
     _update_parameters()

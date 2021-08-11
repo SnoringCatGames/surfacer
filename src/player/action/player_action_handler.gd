@@ -28,5 +28,5 @@ func _init(
 
 
 func process(player) -> bool:
-    Sc.logger.error("abstract PlayerActionHandler.process is not implemented")
+    Sc.logger.error("Abstract PlayerActionHandler.process is not implemented")
     return false

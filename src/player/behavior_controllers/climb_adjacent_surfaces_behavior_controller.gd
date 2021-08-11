@@ -52,3 +52,7 @@ func _init().(CONTROLLER_NAME, IS_ADDED_MANUALLY) -> void:
 #    # FIXME: ----------------------------
 #
 #    _set_configuration_warning("")
+
+
+func _get_default_next_behavior_controller() -> BehaviorController:
+    return player.active_at_start_controller

@@ -39,12 +39,15 @@ var surface_parser: SurfaceParser
 var navigator: SurfaceNavigator
 var prediction: PlayerPrediction
 var pointer_listener: PlayerPointerListener
-var behavior_controller: BehaviorController
 
-# Dictionary<String, BehaviorController>
+var behavior_controller: BehaviorController
+var active_at_start_controller: BehaviorController
+
+# Dictionary<Script, BehaviorController>
 var _behavior_controllers := {}
 # Array<BehaviorController>
 var _behavior_controllers_list := []
+
 # Array<PlayerActionSource>
 var _action_sources := []
 # Dictionary<String, bool>
@@ -144,7 +147,6 @@ func _update_editor_configuration_debounced() -> void:
         # Validate BehaviorControllers from scene configuration.
         var controllers: Array = \
                 Sc.utils.get_children_by_type(self, BehaviorController)
-        var active_at_start_controller: BehaviorController
         var controller_names := {}
         for controller in controllers:
             if controller_names.has(controller.controller_name):
@@ -153,12 +155,17 @@ func _update_editor_configuration_debounced() -> void:
                         "of type %s.") % controller.controller_name)
             controller_names[controller.controller_name] = true
             
+            active_at_start_controller = null
             if controller.is_active_at_start:
-                if active_at_start_controller != null:
+                if is_instance_valid(active_at_start_controller):
                     _set_configuration_warning(
                             "Only one BehaviorController should be marked " +
                             "as `is_active_at_start`.")
                 active_at_start_controller = controller
+        if !is_instance_valid(active_at_start_controller):
+            _set_configuration_warning(
+                    "One BehaviorController should be marked as " +
+                    "`is_active_at_start`.")
     
     _initialize_child_movement_params()
     
@@ -418,9 +425,11 @@ func _on_surfacer_player_navigation_ended(did_navigation_finish: bool) -> void:
         behavior_controller._on_navigation_ended(did_navigation_finish)
 
 
-# FIXME: -------- Use this? Remove?
-func _on_behavior_finished() -> void:
-    pass
+# "Finished" means that the behavior-controller ended itself, so there
+# shouldn't be another behavior-controller being triggered somewhere.
+func _on_behavior_finished(behavior_controller: BehaviorController) -> void:
+    if is_instance_valid(behavior_controller.next_behavior_controller):
+        behavior_controller.next_behavior_controller.trigger(false)
 
 
 func start_dash(horizontal_acceleration_sign: int) -> void:
@@ -526,24 +535,32 @@ func _parse_behavior_controller_children() -> void:
     var controllers: Array = \
             Sc.utils.get_children_by_type(self, BehaviorController)
     
-    for controller in controllers:
-        assert(get_behavior_controller(controller.controller_name) == null)
-        _behavior_controllers[controller.controller_name] = controller
-        _behavior_controllers_list.push_back(controller)
+    active_at_start_controller = null
     
-    # Automatically add a default RestBehaviorController to each player.
-    var rest_controller := RestBehaviorController.new()
-    add_behavior_controller(rest_controller)
-    if behavior_controller == null:
-        rest_controller.is_active = true
+    for controller in controllers:
+        var script: Script = controller.get_script()
+        assert(get_behavior_controller(script) == null)
+        _behavior_controllers[script] = controller
+        _behavior_controllers_list.push_back(controller)
+        if controller.is_active_at_start:
+            active_at_start_controller = controller
+    
+    # Automatically add a default RestBehaviorController if no other controller
+    # has been configured as active-at-start.
+    if active_at_start_controller == null:
+        var rest_controller := RestBehaviorController.new()
+        rest_controller.is_active_at_start = true
+        add_behavior_controller(rest_controller)
+        active_at_start_controller = rest_controller
     
     for controller in controllers:
         controller._on_player_ready()
 
 
 func add_behavior_controller(controller: BehaviorController) -> void:
-    assert(get_behavior_controller(controller.controller_name) == null)
-    _behavior_controllers[controller.controller_name] = controller
+    var script: Script = controller.get_script()
+    assert(get_behavior_controller(script) == null)
+    _behavior_controllers[script] = controller
     _behavior_controllers_list.push_back(controller)
     if Engine.editor_hint:
         return
@@ -551,16 +568,16 @@ func add_behavior_controller(controller: BehaviorController) -> void:
     controller._on_player_ready()
 
 
-func remove_behavior_controller(controller_name: String) -> void:
-    var controller := get_behavior_controller(controller_name)
-    _behavior_controllers.erase(controller_name)
+func remove_behavior_controller(controller_type: Script) -> void:
+    var controller := get_behavior_controller(controller_type)
+    _behavior_controllers.erase(controller_type)
     _behavior_controllers_list.erase(controller)
     if is_instance_valid(controller):
         controller.queue_free()
 
 
-func get_behavior_controller(controller_name: String) -> BehaviorController:
-    if _behavior_controllers.has(controller_name):
-        return _behavior_controllers[controller_name]
+func get_behavior_controller(controller_type: Script) -> BehaviorController:
+    if _behavior_controllers.has(controller_type):
+        return _behavior_controllers[controller_type]
     else:
         return null

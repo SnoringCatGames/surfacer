@@ -31,8 +31,9 @@ func _on_active() -> void:
     player.behavior = PlayerBehaviorType.RETURN
 
 
-#func _on_ready_to_move() -> void:
-#    ._on_ready_to_move()
+func _on_ready_to_move() -> void:
+    ._on_ready_to_move()
+    assert(is_instance_valid(player.active_at_start_controller))
 
 
 #func _on_inactive() -> void:
@@ -42,7 +43,10 @@ func _on_active() -> void:
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
     ._on_navigation_ended(did_navigation_finish)
     
-    # FIXME: ---------------------------
+    if is_active:
+        # FIXME: LEFT OFF HERE: --------------
+        pass
+        _on_finished()
 
 
 #func _on_physics_process(delta: float) -> void:
@@ -67,3 +71,7 @@ func _attempt_navigation() -> bool:
 #    if _configuration_warning != "":
 #        return
 #    _set_configuration_warning("")
+
+
+func _get_default_next_behavior_controller() -> BehaviorController:
+    return player.active_at_start_controller

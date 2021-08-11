@@ -3,8 +3,6 @@ class_name BehaviorController
 extends Node2D
 
 
-signal finished
-
 ## -   Whether this should be the default initial behavior for the player.[br]
 ## -   At most one behavior should be marked `is_active_at_start = true`.[br]
 export var is_active_at_start := false \
@@ -17,13 +15,6 @@ export var is_active_at_start := false \
 ##     starting surface.
 export var can_leave_start_surface := true \
         setget _set_can_leave_start_surface
-
-# FIXME: -----------------------
-## -   If true, the player will return to their starting position after the
-##     run-away period has finished.
-## -   If true, then `only_navigates_reversible_paths` must also be true.
-export var returns_to_start_position := true \
-        setget _set_returns_to_start_position
 
 # FIXME: -----------------------
 ## -   If true, the player will not navigate to a destination if they cannot
@@ -63,6 +54,10 @@ var is_added_manually: bool
 var player: ScaffolderPlayer
 
 var is_active := false setget _set_is_active
+
+var next_behavior_controller: BehaviorController
+
+var _mid_movement_pause_timeout_id := -1
 
 var _is_ready := false
 var _was_already_ready_to_move_this_frame := false
@@ -110,6 +105,11 @@ func _check_ready_to_move() -> void:
             is_active and \
             !_was_already_ready_to_move_this_frame:
         _was_already_ready_to_move_this_frame = true
+        
+        if !is_instance_valid(next_behavior_controller):
+            next_behavior_controller = _get_default_next_behavior_controller()
+            assert(is_instance_valid(next_behavior_controller))
+        
         _on_ready_to_move()
 
 
@@ -128,13 +128,14 @@ func _on_ready_to_move() -> void:
 
 
 func _on_inactive() -> void:
+    _clear_timeouts()
     pass
 
 
-# FIXME: ------ Call this? Remove this?
+# FIXME: ------ Call this.
 func _on_finished() -> void:
-    emit_signal("finished")
-    player._on_behavior_finished()
+    _clear_timeouts()
+    player._on_behavior_finished(self)
 
 
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
@@ -143,6 +144,34 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 
 func _on_physics_process(delta: float) -> void:
     _was_already_ready_to_move_this_frame = false
+
+
+func trigger(shows_exclamation_mark: bool) -> void:
+    _set_is_active(true)
+    _move()
+    if shows_exclamation_mark:
+        player.show_exclamation_mark()
+
+
+func _move() -> void:
+    Sc.logger.error("Abstract BehaviorController._move is not implemented.")
+
+
+# FIXME: ---------- Call this
+func _pause_mid_movement() -> void:
+    _clear_timeouts()
+    _mid_movement_pause_timeout_id = Sc.time.set_timeout(
+            funcref(self, "_on_mid_movement_pause_finished"),
+            _get_mid_movement_pause_time())
+
+
+func _on_mid_movement_pause_finished() -> void:
+    assert(is_active)
+    _move()
+
+
+func _clear_timeouts() -> void:
+    Sc.time.clear_timeout(_mid_movement_pause_timeout_id)
 
 
 func _update_parameters() -> void:
@@ -156,13 +185,6 @@ func _update_parameters() -> void:
     
     _get_player_reference_from_parent()
     if _configuration_warning != "":
-        return
-    
-    if returns_to_start_position and \
-            !only_navigates_reversible_paths:
-        _set_configuration_warning(
-                "If returns_to_start_position is true, then " +
-                "only_navigates_reversible_paths must also be true.")
         return
     
     if start_jump_boost < 0.0:
@@ -183,6 +205,24 @@ func _set_configuration_warning(value: String) -> void:
 
 func _get_configuration_warning() -> String:
     return _configuration_warning
+
+
+func get_is_paused() -> bool:
+    return _mid_movement_pause_timeout_id > 0
+
+
+# FIXME: LEFT OFF HERE: ------------------------- Define overrides.
+func get_behavior() -> int:
+    Sc.logger.error(
+            "Abstract BehaviorController.get_behavior is not implemented.")
+    return -1
+
+
+func _get_default_next_behavior_controller() -> BehaviorController:
+    Sc.logger.error(
+            "Abstract BehaviorController." +
+            "_get_default_next_behavior_controller is not implemented.")
+    return null
 
 
 func _get_player_reference_from_parent() -> void:
@@ -212,10 +252,6 @@ func _set_is_active(value: bool) -> void:
             _check_ready_to_move()
         else:
             _on_inactive()
-            # FIXME: ---------------------- Transition to the next BehaviorController
-#            var rest_controller: BehaviorController = \
-#                    player.get_behavior_controller("rest")
-#            rest_controller.is_active = true
 
 
 func _set_is_active_at_start(value: bool) -> void:
@@ -225,11 +261,6 @@ func _set_is_active_at_start(value: bool) -> void:
 
 func _set_can_leave_start_surface(value: bool) -> void:
     can_leave_start_surface = value
-    _update_parameters()
-
-
-func _set_returns_to_start_position(value: bool) -> void:
-    returns_to_start_position = value
     _update_parameters()
 
 
@@ -253,8 +284,7 @@ func _set_start_jump_boost(value: float) -> void:
     _update_parameters()
 
 
-# FIXME: ------------------
-func _get_pause_time() -> float:
+func _get_mid_movement_pause_time() -> float:
     return randf() * \
             (max_pause_between_movements - min_pause_between_movements) + \
             min_pause_between_movements
