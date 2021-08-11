@@ -52,7 +52,7 @@ var returns_to_start_position := true \
 ## -   If true, after this behavior has finished, the player will return to the 
 ##     position they were at before triggering this behavior.
 ## -   If true, then `only_navigates_reversible_paths` must also be true.
-var returns_to_pre_behavior_position := true \
+var returns_to_pre_behavior_position := false \
         setget _set_returns_to_pre_behavior_position
 
 ## The minimum amount of time to pause between movements.
@@ -113,6 +113,10 @@ func _init(
                 type = TYPE_BOOL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
             })
+    else:
+        returns_to_start_position = false
+        returns_to_pre_behavior_position = false
+    
     if includes_mid_movement_pause:
         self._property_list_amendment.push_back({
                 name = "min_pause_between_movements",
@@ -124,6 +128,7 @@ func _init(
                 type = TYPE_REAL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
             })
+    
     if includes_post_movement_pause:
         self._property_list_amendment.push_back({
                 name = "min_pause_after_movements",
@@ -289,16 +294,14 @@ func _update_parameters() -> void:
         _set_configuration_warning("start_jump_boost must be non-negative.")
         return
     
-    if could_return_to_start_position and \
-            returns_to_start_position and \
+    if returns_to_start_position and \
             !only_navigates_reversible_paths:
         _set_configuration_warning(
                 "If returns_to_start_position is true, then " +
                 "only_navigates_reversible_paths must also be true.")
         return
     
-    if could_return_to_start_position and \
-            returns_to_pre_behavior_position and \
+    if returns_to_pre_behavior_position and \
             !only_navigates_reversible_paths:
         _set_configuration_warning(
                 "If returns_to_pre_behavior_position is true, then " +
@@ -355,9 +358,8 @@ func get_behavior() -> int:
 
 func _get_default_next_behavior() -> Behavior:
     return player.get_behavior("return") if \
-            could_return_to_start_position and \
-                    (returns_to_start_position or \
-                    returns_to_pre_behavior_position) else \
+            returns_to_start_position or \
+                    returns_to_pre_behavior_position else \
             player.active_at_start_behavior
 
 
