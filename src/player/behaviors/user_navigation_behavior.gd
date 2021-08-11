@@ -95,7 +95,7 @@ func _handle_pointer_selections() -> void:
 
 
 func _move() -> bool:
-    if _was_last_input_a_touch:
+    if !_was_last_input_a_touch:
         return true
     
     assert(last_selection.get_is_selection_navigable())

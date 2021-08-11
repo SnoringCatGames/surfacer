@@ -572,6 +572,7 @@ func _parse_behavior_children() -> void:
         _behaviors_list.push_back(behavior)
         if behavior.is_active_at_start:
             active_at_start_behavior = behavior
+        _add_return_behavior_if_needed(behavior)
     
     # Automatically add a default RestBehavior if no other behavior
     # has been configured as active-at-start.
@@ -590,6 +591,15 @@ func add_behavior(behavior: Behavior) -> void:
     if Engine.editor_hint:
         return
     add_child(behavior)
+    _add_return_behavior_if_needed(behavior)
+
+
+func _add_return_behavior_if_needed(other_behavior: Behavior) -> void:
+    if (other_behavior.returns_to_start_position or \
+            other_behavior.returns_to_pre_behavior_position) and \
+            !has_behavior(ReturnBehavior):
+        var return_behavior := ReturnBehavior.new()
+        add_behavior(return_behavior)
 
 
 func remove_behavior(behavior_class: Script) -> void:
@@ -609,3 +619,11 @@ func get_behavior(behavior_class_or_name) -> Behavior:
         return _behaviors[behavior_class]
     else:
         return null
+
+
+func has_behavior(behavior_class_or_name) -> bool:
+    var behavior_class: Script = \
+            behavior_class_or_name if \
+            behavior_class_or_name is Script else \
+            Su.behaviors[behavior_class_or_name]
+    return _behaviors.has(behavior_class)
