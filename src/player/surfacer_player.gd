@@ -440,8 +440,11 @@ func _on_surfacer_player_navigation_ended(did_navigation_finish: bool) -> void:
 # "Finished" means that the behavior-controller ended itself, so there
 # shouldn't be another behavior-controller being triggered somewhere.
 func _on_behavior_finished(behavior_controller: BehaviorController) -> void:
-    if is_instance_valid(behavior_controller.next_behavior_controller):
-        behavior_controller.next_behavior_controller.trigger(false)
+    behavior_controller.next_behavior_controller.trigger(false)
+
+
+func _on_behavior_error(behavior_controller: BehaviorController) -> void:
+    behavior_controller.next_behavior_controller.trigger(false)
 
 
 func start_dash(horizontal_acceleration_sign: int) -> void:
@@ -523,8 +526,10 @@ func get_intended_position(type: int) -> PositionAlongSurface:
         IntendedPositionType.LAST_POSITION_ALONG_SURFACE:
             return surface_state.last_position_along_surface
         IntendedPositionType.CLOSEST_SURFACE_POSITION:
-            return SurfaceParser.find_closest_position_on_a_surface(
-                    surface_state.center_position, self)
+            return surface_state.center_position_along_surface if \
+                    surface_state.is_grabbing_a_surface else \
+                    SurfaceParser.find_closest_position_on_a_surface(
+                            surface_state.center_position, self)
         IntendedPositionType.EDGE_ORIGIN:
             return navigator.edge.start_position_along_surface if \
                     navigation_state.is_currently_navigating else \
@@ -595,7 +600,11 @@ func remove_behavior_controller(controller_type: Script) -> void:
         controller.queue_free()
 
 
-func get_behavior_controller(controller_type: Script) -> BehaviorController:
+func get_behavior_controller(controller_type_or_name) -> BehaviorController:
+    var controller_type: Script = \
+            controller_type_or_name if \
+            controller_type_or_name is Script else \
+            Su.behaviors[controller_type_or_name]
     if _behavior_controllers.has(controller_type):
         return _behavior_controllers[controller_type]
     else:

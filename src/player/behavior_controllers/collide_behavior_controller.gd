@@ -53,13 +53,6 @@ func _on_ready_to_move() -> void:
 #    ._on_physics_process(delta)
 
 
-func _move() -> void:
-    var is_navigation_valid := _attempt_navigation()
-    
-    # FIXME: ---- Move nav success/fail logs into a parent method.
-    pass
-
-
 func on_collided() -> void:
     _pause_post_movement()
     
@@ -68,7 +61,7 @@ func on_collided() -> void:
         player.navigator.stop()
 
 
-func _attempt_navigation() -> bool:
+func _move() -> bool:
     var max_distance_squared_from_start_position := \
             max_distance_from_start_position * max_distance_from_start_position
     

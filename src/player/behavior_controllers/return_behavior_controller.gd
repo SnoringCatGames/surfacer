@@ -3,16 +3,12 @@ class_name ReturnBehaviorController
 extends BehaviorController
 
 
-# FIXME: -------------------------
-
-
 const CONTROLLER_NAME := "return"
 const IS_ADDED_MANUALLY := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
 
-# FIXME: --------- Conditionally re-assign this, depending on flags, from things like run-away, follow, collide, wander?
 var return_position: PositionAlongSurface
 
 
@@ -31,8 +27,13 @@ func _init().(
 
 func _on_ready_to_move() -> void:
     ._on_ready_to_move()
-    if !is_instance_valid(return_position):
+    
+    if returns_to_start_position:
         return_position = player.start_position_along_surface
+    if returns_to_pre_behavior_position:
+        return_position = player.get_intended_position(
+                IntendedPositionType.CLOSEST_SURFACE_POSITION)
+    assert(is_instance_valid(return_position))
 
 
 #func _on_inactive() -> void:
@@ -52,16 +53,7 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 #    ._on_physics_process(delta)
 
 
-func _move() -> void:
-    assert(is_instance_valid(return_position))
-    
-    var is_navigation_valid := _attempt_navigation()
-    
-    # FIXME: ---- Move nav success/fail logs into a parent method.
-    pass
-
-
-func _attempt_navigation() -> bool:
+func _move() -> bool:
     return player.navigator.navigate_to_position(return_position)
 
 

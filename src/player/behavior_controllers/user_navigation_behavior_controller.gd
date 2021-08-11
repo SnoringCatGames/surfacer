@@ -94,15 +94,16 @@ func _handle_pointer_selections() -> void:
     pre_selection.clear()
 
 
-func _move() -> void:
+func _move() -> bool:
     if _was_last_input_a_touch:
-        return
+        return true
     
     assert(last_selection.get_is_selection_navigable())
     var is_navigation_valid: bool = \
             player.navigator.navigate_path(last_selection.path)
     Sc.audio.play_sound("nav_select_success")
-    # FIXME: ---- Move nav success/fail logs into a parent method.
+    
+    return is_navigation_valid
 
 
 #func _update_parameters() -> void:

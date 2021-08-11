@@ -39,6 +39,11 @@ func _init().(
 #    ._on_physics_process(delta)
 
 
+func _move() -> bool:
+    # Do nothing.
+    return true
+
+
 #func _update_parameters() -> void:
 #    ._update_parameters()
 #    if _configuration_warning != "":

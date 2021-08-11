@@ -57,14 +57,7 @@ func _on_ready_to_move() -> void:
 #    ._on_physics_process(delta)
 
 
-func _move() -> void:
-    var is_navigation_valid := _attempt_navigation()
-    
-    # FIXME: ---- Move nav success/fail logs into a parent method.
-    pass
-
-
-func _attempt_navigation() -> bool:
+func _move() -> bool:
     if can_leave_start_surface and \
             _get_should_leave_surface_if_available():
         var is_navigation_valid := _attempt_inter_surface_navigation()

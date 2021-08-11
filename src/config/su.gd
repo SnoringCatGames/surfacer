@@ -79,6 +79,20 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
     },
 }
 
+var DEFAULT_BEHAVIOR_CLASSES := [
+    ChoreographyBehaviorController,
+    ClimbAdjacentSurfacesBehaviorController,
+    CollideBehaviorController,
+    FollowBehaviorController,
+    JumpBackAndForthBehaviorController,
+    MoveBackAndForthBehaviorController,
+    RestBehaviorController,
+    ReturnBehaviorController,
+    RunAwayBehaviorController,
+    UserNavigationBehaviorController,
+    WanderBehaviorController,
+]
+
 # --- Scaffolder manifest additions ---
 
 var _surfacer_sounds := [
@@ -136,6 +150,9 @@ var ignores_platform_graph_save_file_trajectory_state := false
 var is_debug_only_platform_graph_state_included := false
 var is_precomputing_platform_graphs: bool
 var is_intro_choreography_shown: bool
+
+# Dictionary<String, Script>
+var behaviors: Dictionary
 
 var default_tile_set: TileSet
 
@@ -285,6 +302,7 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
     self.uses_threads_for_platform_graph_calculation = \
             manifest.uses_threads_for_platform_graph_calculation
     self.debug_params = manifest.debug_params
+    
     if manifest.has("default_tile_set"):
         self.default_tile_set = manifest.default_tile_set
     
@@ -338,6 +356,8 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
     if manifest.has("skip_choreography_framerate_multiplier"):
         self.skip_choreography_framerate_multiplier = \
                 manifest.skip_choreography_framerate_multiplier
+    
+    self.behaviors = _parse_behaviors(manifest)
     
     assert(Sc._manifest.metadata.must_restart_level_to_change_settings)
 
@@ -401,3 +421,14 @@ func _configure_sub_modules() -> void:
     else:
         self.ann_defaults = AnnotationElementDefaults.new()
     add_child(self.ann_defaults)
+
+
+func _parse_behaviors(manifest: Dictionary) -> Dictionary:
+    var behavior_classes: Array = \
+            manifest.behaviors if \
+            manifest.has("behavior_classes") else \
+            DEFAULT_BEHAVIOR_CLASSES
+    var behavior_name_to_script := {}
+    for behavior_class in behavior_classes:
+        behavior_name_to_script[behavior_class.NAME] = behavior_class
+    return behavior_name_to_script

@@ -49,6 +49,12 @@ export var start_jump_boost := 0.0 \
 var returns_to_start_position := true \
         setget _set_returns_to_start_position
 
+## -   If true, after this behavior has finished, the player will return to the 
+##     position they were at before triggering this behavior.
+## -   If true, then `only_navigates_reversible_paths` must also be true.
+var returns_to_pre_behavior_position := true \
+        setget _set_returns_to_pre_behavior_position
+
 ## The minimum amount of time to pause between movements.
 var min_pause_between_movements := 0.0 \
         setget _set_min_pause_between_movements
@@ -99,6 +105,11 @@ func _init(
     if could_return_to_start_position:
         self._property_list_amendment.push_back({
                 name = "returns_to_start_position",
+                type = TYPE_BOOL,
+                usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
+            })
+        self._property_list_amendment.push_back({
+                name = "returns_to_pre_behavior_position",
                 type = TYPE_BOOL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
             })
@@ -200,13 +211,28 @@ func _on_physics_process(delta: float) -> void:
 func trigger(shows_exclamation_mark: bool) -> void:
     _clear_timeouts()
     _set_is_active(true)
-    _move()
+    _attempt_move()
     if shows_exclamation_mark:
         player.show_exclamation_mark()
 
 
-func _move() -> void:
+func _attempt_move() -> void:
+    var is_move_successful := _move()
+    if !is_move_successful:
+        Sc.logger.error(
+            ("BehaviorController._move() failed: " +
+            "behavior=%s, player=%s, position=%s") % [
+                controller_name,
+                player.player_name,
+                Sc.utils.get_vector_string(player.position),
+            ],
+            false)
+        player._on_behavior_error(self)
+
+
+func _move() -> bool:
     Sc.logger.error("Abstract BehaviorController._move is not implemented.")
+    return false
 
 
 func _pause_mid_movement() -> void:
@@ -225,7 +251,7 @@ func _pause_post_movement() -> void:
 
 func _on_mid_movement_pause_finished() -> void:
     assert(is_active)
-    _move()
+    _attempt_move()
 
 
 func _on_post_movement_pause_finished() -> void:
@@ -268,6 +294,14 @@ func _update_parameters() -> void:
             !only_navigates_reversible_paths:
         _set_configuration_warning(
                 "If returns_to_start_position is true, then " +
+                "only_navigates_reversible_paths must also be true.")
+        return
+    
+    if could_return_to_start_position and \
+            returns_to_pre_behavior_position and \
+            !only_navigates_reversible_paths:
+        _set_configuration_warning(
+                "If returns_to_pre_behavior_position is true, then " +
                 "only_navigates_reversible_paths must also be true.")
         return
     
@@ -320,9 +354,10 @@ func get_behavior() -> int:
 
 
 func _get_default_next_behavior_controller() -> BehaviorController:
-    return player.get_behavior_controller(ReturnBehaviorController) if \
+    return player.get_behavior_controller("return") if \
             could_return_to_start_position and \
-                    returns_to_start_position else \
+                    (returns_to_start_position or \
+                    returns_to_pre_behavior_position) else \
             player.active_at_start_controller
 
 
@@ -346,7 +381,8 @@ func _set_is_active(value: bool) -> void:
     is_active = value
     if is_active != was_active:
         if is_active:
-            if is_instance_valid(player.behavior_controller):
+            if is_instance_valid(player.behavior_controller) and \
+                    player.behavior_controller != self:
                 player.behavior_controller.is_active = false
             player.behavior_controller = self
             _on_active()
@@ -388,6 +424,15 @@ func _set_start_jump_boost(value: float) -> void:
 
 func _set_returns_to_start_position(value: bool) -> void:
     returns_to_start_position = value
+    if returns_to_start_position:
+        returns_to_pre_behavior_position = false
+    _update_parameters()
+
+
+func _set_returns_to_pre_behavior_position(value: bool) -> void:
+    returns_to_pre_behavior_position = value
+    if returns_to_pre_behavior_position:
+        returns_to_start_position = false
     _update_parameters()
 
 
