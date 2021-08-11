@@ -43,18 +43,20 @@ func _on_ready_to_move() -> void:
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
     # NOTE: This replaces the default behavior, rather than extending it.
     #._on_navigation_ended(did_navigation_finish)
+    if !is_active:
+        return
     
-    if is_active:
-        # FIXME: LEFT OFF HERE: --------------
-        # - _pause_mid_movement()
-        # - _pause_post_movement()
-        # - Continue following, or stop, depending on whether we're too far.
-        # - How to stop/pause when we're too close?
-        _pause_mid_movement()
+    # FIXME: LEFT OFF HERE: --------------
+    # - _pause_mid_movement()
+    # - _pause_post_movement()
+    # - Continue following, or stop, depending on whether we're too far.
+    # - How to stop/pause when we're too close?
+    _pause_mid_movement()
 
 
-#func _on_physics_process(delta: float) -> void:
-#    ._on_physics_process(delta)
+func _on_physics_process(delta: float) -> void:
+    ._on_physics_process(delta)
+    
 
 
 # FIXME: ------- Call this

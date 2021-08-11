@@ -60,10 +60,8 @@ func _init().(
 #    ._on_active()
 
 
-func _on_ready_to_move() -> void:
-    ._on_ready_to_move()
-    _destination.surface = player.start_surface
-    _move()
+# func _on_ready_to_move() -> void:
+#     ._on_ready_to_move()
 
 
 #func _on_inactive() -> void:
@@ -79,30 +77,34 @@ func _on_ready_to_move() -> void:
 
 
 func _move() -> bool:
+    assert(player.surface_state.is_grabbing_a_surface)
+
     var is_moving_minward := _is_next_move_minward
     _is_next_move_minward = !_is_next_move_minward
+
+    var surface: Surface = player.surface_state.grabbed_surface
     
     var is_surface_horizontal: bool = \
-            player.start_surface.side == SurfaceSide.FLOOR or \
-            player.start_surface.side == SurfaceSide.CEILING
+            surface.side == SurfaceSide.FLOOR or \
+            surface.side == SurfaceSide.CEILING
     
     var min_x_from_surface_bounds: float = \
-            player.start_surface.bounding_box.position.x + \
+            surface.bounding_box.position.x + \
             min_distance_from_surface_ends
     var max_x_from_surface_bounds: float = \
-            player.start_surface.bounding_box.end.x - \
+            surface.bounding_box.end.x - \
             min_distance_from_surface_ends
     var min_y_from_surface_bounds: float = \
-            player.start_surface.bounding_box.position.y + \
+            surface.bounding_box.position.y + \
             min_distance_from_surface_ends
     var max_y_from_surface_bounds: float = \
-            player.start_surface.bounding_box.end.y - \
+            surface.bounding_box.end.y - \
             min_distance_from_surface_ends
     
-    var min_x: float = player.start_position.x
-    var max_x: float = player.start_position.x
-    var min_y: float = player.start_position.y
-    var max_y: float = player.start_position.y
+    var min_x: float = start_position.x
+    var max_x: float = start_position.x
+    var min_y: float = start_position.y
+    var max_y: float = start_position.y
     
     if moves_to_surface_ends:
         if is_surface_horizontal:
@@ -114,17 +116,17 @@ func _move() -> bool:
     else:
         if is_surface_horizontal:
             min_x = max( \
-                    player.start_position.x - movement_radius, \
+                    start_position.x - movement_radius, \
                     min_x_from_surface_bounds)
             max_x = min( \
-                    player.start_position.x + movement_radius, \
+                    start_position.x + movement_radius, \
                     max_x_from_surface_bounds)
         else:
             min_y = max( \
-                    player.start_position.y - movement_radius, \
+                    start_position.y - movement_radius, \
                     min_y_from_surface_bounds)
             max_y = min( \
-                    player.start_position.y + movement_radius, \
+                    start_position.y + movement_radius, \
                     max_y_from_surface_bounds)
     
     var range_x := max_x - min_x
@@ -161,17 +163,48 @@ func _move() -> bool:
     
     var sample := randf() * (sample_max - sample_min) + sample_min
     var target_point := \
-            Vector2(sample, player.start_position.y) if \
+            Vector2(sample, start_position.y) if \
             is_surface_horizontal else \
-            Vector2(player.start_position.x, sample)
+            Vector2(start_position.x, sample)
     _destination.match_surface_target_and_collider(
-            player.start_surface,
+            surface,
             target_point,
             player.movement_params.collider_half_width_height,
             true,
             true)
     
     return player.navigator.navigate_to_position(_destination)
+
+
+func _update_parameters() -> void:
+    ._update_parameters()
+    
+    if _configuration_warning != "":
+        return
+    
+    if min_distance_from_surface_ends < 0.0:
+        _set_configuration_warning(
+                "min_distance_from_surface_ends must be non-negative.")
+    elif moves_to_surface_ends and movement_radius >= 0.0:
+        _set_configuration_warning(
+                "If moves_to_surface_ends is true, " +
+                "then movement_radius must be negative.")
+    elif !moves_to_surface_ends and movement_radius < 0.0:
+        _set_configuration_warning(
+                "If moves_to_surface_ends is false, " +
+                "then movement_radius must be non-negative.")
+    elif pause_delay_min < 0.0:
+        _set_configuration_warning(
+                "pause_delay_min must be non-negative.")
+    elif pause_delay_max < 0.0:
+        _set_configuration_warning(
+                "pause_delay_max must be non-negative.")
+    elif max_ratio_for_destination_offset_from_ends < 0.0:
+        _set_configuration_warning(
+                "max_ratio_for_destination_offset_from_ends " +
+                "must be non-negative.")
+    else:
+        _set_configuration_warning("")
 
 
 func _set_moves_to_surface_ends(value: bool) -> void:
@@ -206,34 +239,3 @@ func _set_pause_delay_max(value: float) -> void:
 func _set_max_ratio_for_destination_offset_from_ends(value: float) -> void:
     max_ratio_for_destination_offset_from_ends = value
     _update_parameters()
-
-
-func _update_parameters() -> void:
-    ._update_parameters()
-    
-    if _configuration_warning != "":
-        return
-    
-    if min_distance_from_surface_ends < 0.0:
-        _set_configuration_warning(
-                "min_distance_from_surface_ends must be non-negative.")
-    elif moves_to_surface_ends and movement_radius >= 0.0:
-        _set_configuration_warning(
-                "If moves_to_surface_ends is true, " +
-                "then movement_radius must be negative.")
-    elif !moves_to_surface_ends and movement_radius < 0.0:
-        _set_configuration_warning(
-                "If moves_to_surface_ends is false, " +
-                "then movement_radius must be non-negative.")
-    elif pause_delay_min < 0.0:
-        _set_configuration_warning(
-                "pause_delay_min must be non-negative.")
-    elif pause_delay_max < 0.0:
-        _set_configuration_warning(
-                "pause_delay_max must be non-negative.")
-    elif max_ratio_for_destination_offset_from_ends < 0.0:
-        _set_configuration_warning(
-                "max_ratio_for_destination_offset_from_ends " +
-                "must be non-negative.")
-    else:
-        _set_configuration_warning("")

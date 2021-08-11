@@ -104,14 +104,3 @@ func _move() -> bool:
     Sc.audio.play_sound("nav_select_success")
     
     return is_navigation_valid
-
-
-#func _update_parameters() -> void:
-#    ._update_parameters()
-#
-#    if _configuration_warning != "":
-#        return
-#
-#    # FIXME: ----------------------------
-#
-#    _set_configuration_warning("")

@@ -4,9 +4,6 @@ class_name CollideBehavior, \
 extends Behavior
 
 
-# FIXME: -------------------------
-
-
 const NAME := "collide"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
@@ -18,7 +15,19 @@ const COULD_RETURN_TO_START_POSITION := true
 ##     the destination.
 export var ends_with_a_jump := false
 
-# FIXME: ---------------- Set this
+# FIXME: ---------------------------
+## -   FIXME: --
+export var anticipates_target_edge := false
+
+# FIXME: ---------------------------
+## -   FIXME: --
+export var anticipates_target_path := false
+
+# FIXME: ---------------------------
+# - But also check whether the target destination has changed.
+## -   FIXME: --
+export var recomputes_nav_on_target_edge_change := true
+
 var collision_target: ScaffolderPlayer
 
 
@@ -72,7 +81,7 @@ func _move() -> bool:
                     collision_target.position, self)
     
     # Prevent straying too far the start position.
-    if player.start_position.distance_squared_to(destination.target_point) <= \
+    if start_position.distance_squared_to(destination.target_point) <= \
             max_distance_squared_from_start_position:
         var is_navigation_valid: bool = \
                 player.navigator.navigate_to_position(destination)
@@ -96,7 +105,7 @@ func _move() -> bool:
                 target, self)
         
         # Prevent straying too far the start position.
-        if player.start_position.distance_squared_to(
+        if start_position.distance_squared_to(
                 destination.target_point) <= \
                 max_distance_squared_from_start_position:
             var is_navigation_valid: bool = \
@@ -105,14 +114,3 @@ func _move() -> bool:
                 return true
     
     return false
-
-
-#func _update_parameters() -> void:
-#    ._update_parameters()
-#
-#    if _configuration_warning != "":
-#        return
-#
-#    # FIXME: ----------------------------
-#
-#    _set_configuration_warning("")

@@ -34,12 +34,15 @@ func _init().(
 
 
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
-    ._on_navigation_ended(did_navigation_finish)
-    if is_active:
-        # Don't call _pause_post_movement when returning, since it probably
-        # isn't normally desirable, and it would be more complex to configure
-        # the pause timing.
-        _on_finished()
+    # NOTE: This replaces the default behavior, rather than extending it.
+    #._on_navigation_ended(did_navigation_finish)
+    if !is_active:
+        return
+    
+    # Don't call _pause_post_movement when returning, since it probably
+    # isn't normally desirable, and it would be more complex to configure
+    # the pause timing.
+    _on_finished()
 
 
 #func _on_physics_process(delta: float) -> void:
@@ -48,10 +51,3 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 
 func _move() -> bool:
     return player.navigator.navigate_to_position(destination)
-
-
-#func _update_parameters() -> void:
-#    ._update_parameters()
-#    if _configuration_warning != "":
-#        return
-#    _set_configuration_warning("")

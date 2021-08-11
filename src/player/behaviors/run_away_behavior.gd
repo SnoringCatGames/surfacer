@@ -6,9 +6,6 @@ extends Behavior
 ##     is a given distance away from a given target.
 
 
-# FIXME: -------------------------
-
-
 const NAME := "run_away"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
@@ -21,13 +18,28 @@ const COULD_RETURN_TO_START_POSITION := true
 export var run_distance := 384.0 \
         setget _set_run_distance
 
-
 ## -   A ratio of run_distance.[br]
 ## -   This defines the min and max acceptable distance for a run-away
 ##     navigation destination.
 export(float, 0.0, 1.0) var retry_threshold_ratio_from_intended_distance := 0.5
 
-# FIXME: ---------------- Set this
+## -   If this is true, the palyer wil keep re-navigating to run away from the
+##     target as long as they still aren't far enough away.
+## -   If this is false, the player will stop running away as soon as the
+##     first run-away navigation completes.
+export var keeps_running_until_far_enough_away := true \
+        setget _set_keeps_running_until_far_enough_away
+
+## -   This is the distance threshold used for
+##     keeps_running_until_far_enough_away.
+export var min_distance_from_target_to_stop_running := -1.0 \
+        setget _set_min_distance_from_target_to_stop_running
+
+# FIXME: ---------------------------
+# - But also check whether the target destination has changed.
+## -   FIXME: --
+export var recomputes_nav_on_target_edge_change := true
+
 var target_to_run_from: ScaffolderPlayer
 
 
@@ -57,13 +69,19 @@ func _on_ready_to_move() -> void:
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
     # NOTE: This replaces the default behavior, rather than extending it.
     #._on_navigation_ended(did_navigation_finish)
+    if !is_active:
+        return
     
-    if is_active:
-        # FIXME: LEFT OFF HERE: --------------
-        # - _pause_mid_movement()
-        # - _pause_post_movement()
-        # - How far away are we from the target?
-        pass
+    var min_distance_squared_from_target_to_stop_running := \
+            min_distance_from_target_to_stop_running * \
+            min_distance_from_target_to_stop_running
+    if !keeps_running_until_far_enough_away or \
+            player.position.distance_squared_to(
+                    target_to_run_from.position) >= \
+            min_distance_squared_from_target_to_stop_running:
+        _pause_post_movement()
+    else:
+        _pause_mid_movement()
 
 
 #func _on_physics_process(delta: float) -> void:
@@ -103,7 +121,7 @@ func _move() -> bool:
     var possible_destinations := []
     
     # FIXME: ---------------------------
-    # - Consider starts_with_a_jump and start_jump_boost.
+    # - Consider starts_with_a_jump and start_jump_boost_multiplier.
     # - Calculate the one-off jump onto the same surface.
     # - Then base the following navigation calculation off of the end-position
     #   of the initial jump.
@@ -123,11 +141,11 @@ func _move() -> bool:
         
         # Prevent straying too far the start position.
         if max_distance_from_start_position >= 0.0 and \
-                player.start_position.distance_squared_to(naive_target) > \
+                start_position.distance_squared_to(naive_target) > \
                         max_distance_squared_from_start_position:
             naive_target = \
-                    player.start_position + \
-                    player.start_position.direction_to(naive_target) * \
+                    start_position + \
+                    start_position.direction_to(naive_target) * \
                     max_distance_from_start_position
             var target_distance_squared := \
                     target_to_run_from.position.distance_squared_to(
@@ -149,14 +167,14 @@ func _move() -> bool:
             possible_destination = PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
                             naive_target,
-                            player.start_surface,
+                            start_surface,
                             player.movement_params.collider_half_width_height,
                             true)
         
         # Prevent straying too far the start position.
         var is_destination_too_far_from_start_position := \
                 max_distance_from_start_position >= 0.0 and \
-                player.start_position.distance_squared_to(
+                start_position.distance_squared_to(
                         possible_destination.target_point) > \
                 max_distance_squared_from_start_position
         
@@ -218,9 +236,36 @@ func _update_parameters() -> void:
                 "max_distance_from_start_position.")
         return
     
+    if keeps_running_until_far_enough_away and \
+            min_distance_from_target_to_stop_running <= 0.0:
+        _set_configuration_warning(
+                "If keeps_running_until_far_enough_away is true, then " +
+                "min_distance_from_target_to_stop_running must be greater " +
+                "than zero.")
+        return
+    
+    if min_distance_from_target_to_stop_running > \
+            run_distance:
+        _set_configuration_warning(
+                "min_distance_from_target_to_stop_running must be less " +
+                "than run_distance.")
+        return
+    
     _set_configuration_warning("")
 
 
 func _set_run_distance(value: float) -> void:
     run_distance = value
+    _update_parameters()
+
+
+func _set_keeps_running_until_far_enough_away(value: bool) -> void:
+    keeps_running_until_far_enough_away = value
+    _update_parameters()
+
+
+func _set_min_distance_from_target_to_stop_running(value: float) -> void:
+    min_distance_from_target_to_stop_running = value
+    if min_distance_from_target_to_stop_running >= 0.0:
+        keeps_running_until_far_enough_away = true
     _update_parameters()

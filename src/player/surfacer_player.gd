@@ -42,10 +42,11 @@ var prediction: PlayerPrediction
 var pointer_listener: PlayerPointerListener
 
 var behavior: Behavior
-var active_at_start_behavior: Behavior
+var default_behavior: Behavior
+var previous_behavior: Behavior
 
 # Dictionary<Script, Behavior>
-var _behaviors := {}
+var _behaviors_by_class := {}
 # Array<Behavior>
 var _behaviors_list := []
 
@@ -156,14 +157,14 @@ func _update_editor_configuration_debounced() -> void:
                         "of type %s.") % behavior.behavior_name)
             behavior_names[behavior.behavior_name] = true
             
-            active_at_start_behavior = null
+            default_behavior = null
             if behavior.is_active_at_start:
-                if is_instance_valid(active_at_start_behavior):
+                if is_instance_valid(default_behavior):
                     _set_configuration_warning(
                             "Only one Behavior should be marked " +
                             "as `is_active_at_start`.")
-                active_at_start_behavior = behavior
-        if !is_instance_valid(active_at_start_behavior):
+                default_behavior = behavior
+        if !is_instance_valid(default_behavior):
             _set_configuration_warning(
                     "One Behavior should be marked as " +
                     "`is_active_at_start`.")
@@ -563,30 +564,30 @@ func _parse_behavior_children() -> void:
     var behaviors: Array = \
             Sc.utils.get_children_by_type(self, Behavior)
     
-    active_at_start_behavior = null
+    default_behavior = null
     
     for behavior in behaviors:
         var script: Script = behavior.get_script()
         assert(get_behavior(script) == null)
-        _behaviors[script] = behavior
+        _behaviors_by_class[script] = behavior
         _behaviors_list.push_back(behavior)
         if behavior.is_active_at_start:
-            active_at_start_behavior = behavior
+            default_behavior = behavior
         _add_return_behavior_if_needed(behavior)
     
     # Automatically add a default RestBehavior if no other behavior
     # has been configured as active-at-start.
-    if active_at_start_behavior == null:
+    if default_behavior == null:
         var rest_behavior := RestBehavior.new()
         rest_behavior.is_active_at_start = true
         add_behavior(rest_behavior)
-        active_at_start_behavior = rest_behavior
+        default_behavior = rest_behavior
 
 
 func add_behavior(behavior: Behavior) -> void:
     var script: Script = behavior.get_script()
     assert(get_behavior(script) == null)
-    _behaviors[script] = behavior
+    _behaviors_by_class[script] = behavior
     _behaviors_list.push_back(behavior)
     if Engine.editor_hint:
         return
@@ -604,7 +605,7 @@ func _add_return_behavior_if_needed(other_behavior: Behavior) -> void:
 
 func remove_behavior(behavior_class: Script) -> void:
     var behavior := get_behavior(behavior_class)
-    _behaviors.erase(behavior_class)
+    _behaviors_by_class.erase(behavior_class)
     _behaviors_list.erase(behavior)
     if is_instance_valid(behavior):
         behavior.queue_free()
@@ -615,8 +616,8 @@ func get_behavior(behavior_class_or_name) -> Behavior:
             behavior_class_or_name if \
             behavior_class_or_name is Script else \
             Su.behaviors[behavior_class_or_name]
-    if _behaviors.has(behavior_class):
-        return _behaviors[behavior_class]
+    if _behaviors_by_class.has(behavior_class):
+        return _behaviors_by_class[behavior_class]
     else:
         return null
 
@@ -626,4 +627,4 @@ func has_behavior(behavior_class_or_name) -> bool:
             behavior_class_or_name if \
             behavior_class_or_name is Script else \
             Su.behaviors[behavior_class_or_name]
-    return _behaviors.has(behavior_class)
+    return _behaviors_by_class.has(behavior_class)
