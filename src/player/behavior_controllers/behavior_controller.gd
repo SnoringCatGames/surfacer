@@ -43,22 +43,33 @@ export var starts_with_a_jump := false \
 export var start_jump_boost := 0.0 \
         setget _set_start_jump_boost
 
+## -   If true, the player will return to their starting position after this
+##     behavior controller has finished.
+## -   If true, then `only_navigates_reversible_paths` must also be true.
+var returns_to_start_position := true \
+        setget _set_returns_to_start_position
+
 ## The minimum amount of time to pause between movements.
-var min_pause_between_movements := 0.0
+var min_pause_between_movements := 0.0 \
+        setget _set_min_pause_between_movements
 ## The maximum amount of time to pause between movements.
-var max_pause_between_movements := 0.0
+var max_pause_between_movements := 0.0 \
+        setget _set_max_pause_between_movements
 
 ## The minimum amount of time to pause after the last movement, before starting
 ## the next behavior controller.
-var min_pause_after_movements := 0.0
+var min_pause_after_movements := 0.0 \
+        setget _set_min_pause_after_movements
 ## The maximum amount of time to pause after the last movement, before starting
 ## the next behavior controller.
-var max_pause_after_movements := 0.0
+var max_pause_after_movements := 0.0 \
+        setget _set_max_pause_after_movements
 
 var controller_name: String
 var is_added_manually: bool
 var includes_mid_movement_pause: bool
 var includes_post_movement_pause: bool
+var could_return_to_start_position: bool
 
 var player: ScaffolderPlayer
 var next_behavior_controller: BehaviorController
@@ -77,12 +88,20 @@ func _init(
         controller_name: String,
         is_added_manually: bool,
         includes_mid_movement_pause: bool,
-        includes_post_movement_pause: bool) -> void:
+        includes_post_movement_pause: bool,
+        could_return_to_start_position: bool) -> void:
     self.controller_name = controller_name
     self.is_added_manually = is_added_manually
     self.includes_mid_movement_pause = includes_mid_movement_pause
     self.includes_post_movement_pause = includes_post_movement_pause
+    self.could_return_to_start_position = could_return_to_start_position
     
+    if could_return_to_start_position:
+        self._property_list_amendment.push_back({
+                name = "returns_to_start_position",
+                type = TYPE_BOOL,
+                usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
+            })
     if includes_mid_movement_pause:
         self._property_list_amendment.push_back({
                 name = "min_pause_between_movements",
@@ -244,6 +263,34 @@ func _update_parameters() -> void:
         _set_configuration_warning("start_jump_boost must be non-negative.")
         return
     
+    if could_return_to_start_position and \
+            returns_to_start_position and \
+            !only_navigates_reversible_paths:
+        _set_configuration_warning(
+                "If returns_to_start_position is true, then " +
+                "only_navigates_reversible_paths must also be true.")
+        return
+    
+    if min_pause_between_movements < 0.0:
+        _set_configuration_warning(
+                "min_pause_between_movements must be non-negative.")
+        return
+    
+    if max_pause_between_movements < 0.0:
+        _set_configuration_warning(
+                "max_pause_between_movements must be non-negative.")
+        return
+    
+    if min_pause_after_movements < 0.0:
+        _set_configuration_warning(
+                "min_pause_after_movements must be non-negative.")
+        return
+    
+    if max_pause_after_movements < 0.0:
+        _set_configuration_warning(
+                "max_pause_after_movements must be non-negative.")
+        return
+    
     _set_configuration_warning("")
 
 
@@ -273,10 +320,10 @@ func get_behavior() -> int:
 
 
 func _get_default_next_behavior_controller() -> BehaviorController:
-    Sc.logger.error(
-            "Abstract BehaviorController." +
-            "_get_default_next_behavior_controller is not implemented.")
-    return null
+    return player.get_behavior_controller(ReturnBehaviorController) if \
+            could_return_to_start_position and \
+                    returns_to_start_position else \
+            player.active_at_start_controller
 
 
 func _get_player_reference_from_parent() -> void:
@@ -336,6 +383,31 @@ func _set_starts_with_a_jump(value: bool) -> void:
 
 func _set_start_jump_boost(value: float) -> void:
     start_jump_boost = value
+    _update_parameters()
+
+
+func _set_returns_to_start_position(value: bool) -> void:
+    returns_to_start_position = value
+    _update_parameters()
+
+
+func _set_min_pause_between_movements(value: float) -> void:
+    min_pause_between_movements = value
+    _update_parameters()
+
+
+func _set_max_pause_between_movements(value: float) -> void:
+    max_pause_between_movements = value
+    _update_parameters()
+
+
+func _set_min_pause_after_movements(value: float) -> void:
+    min_pause_after_movements = value
+    _update_parameters()
+
+
+func _set_max_pause_after_movements(value: float) -> void:
+    max_pause_after_movements = value
     _update_parameters()
 
 

@@ -13,6 +13,7 @@ const CONTROLLER_NAME := "run_away"
 const IS_ADDED_MANUALLY := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := true
+const COULD_RETURN_TO_START_POSITION := true
 
 ## -   The ideal distance to run away from the target.
 ## -   An attempt will be made to find a destination that is close to the
@@ -26,13 +27,6 @@ export var run_distance := 384.0 \
 ##     navigation destination.
 export(float, 0.0, 1.0) var retry_threshold_ratio_from_intended_distance := 0.5
 
-# FIXME: -----------------------
-## -   If true, the player will return to their starting position after this
-##     behavior controller has finished.
-## -   If true, then `only_navigates_reversible_paths` must also be true.
-export var returns_to_start_position := true \
-        setget _set_returns_to_start_position
-
 # FIXME: ---------------- Set this
 var target_to_run_from: ScaffolderPlayer
 
@@ -41,12 +35,9 @@ func _init().(
         CONTROLLER_NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
-        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
+        INCLUDES_POST_MOVEMENT_PAUSE,
+        COULD_RETURN_TO_START_POSITION) -> void:
     pass
-
-
-#func _on_attached_to_first_surface() -> void:
-#    ._on_attached_to_first_surface()
 
 
 #func _on_active() -> void:
@@ -243,27 +234,9 @@ func _update_parameters() -> void:
                 "max_distance_from_start_position.")
         return
     
-    if returns_to_start_position and \
-            !only_navigates_reversible_paths:
-        _set_configuration_warning(
-                "If returns_to_start_position is true, then " +
-                "only_navigates_reversible_paths must also be true.")
-        return
-    
     _set_configuration_warning("")
-
-
-func _get_default_next_behavior_controller() -> BehaviorController:
-    return player.get_behavior_controller(ReturnBehaviorController) if \
-            returns_to_start_position else \
-            player.active_at_start_controller
 
 
 func _set_run_distance(value: float) -> void:
     run_distance = value
-    _update_parameters()
-
-
-func _set_returns_to_start_position(value: bool) -> void:
-    returns_to_start_position = value
     _update_parameters()

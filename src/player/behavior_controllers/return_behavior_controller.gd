@@ -10,6 +10,7 @@ const CONTROLLER_NAME := "return"
 const IS_ADDED_MANUALLY := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
+const COULD_RETURN_TO_START_POSITION := false
 
 # FIXME: --------- Conditionally re-assign this, depending on flags, from things like run-away, follow, collide, wander?
 var return_position: PositionAlongSurface
@@ -19,23 +20,19 @@ func _init().(
         CONTROLLER_NAME,
         IS_ADDED_MANUALLY,
         INCLUDES_MID_MOVEMENT_PAUSE,
-        INCLUDES_POST_MOVEMENT_PAUSE) -> void:
+        INCLUDES_POST_MOVEMENT_PAUSE,
+        COULD_RETURN_TO_START_POSITION) -> void:
     pass
 
 
-func _on_attached_to_first_surface() -> void:
-    ._on_attached_to_first_surface()
-    return_position = player.surface_state.center_position_along_surface
-
-
-func _on_active() -> void:
-    ._on_active()
-    player.behavior = PlayerBehaviorType.RETURN
+# func _on_active() -> void:
+#     ._on_active()
 
 
 func _on_ready_to_move() -> void:
     ._on_ready_to_move()
-    assert(is_instance_valid(player.active_at_start_controller))
+    if !is_instance_valid(return_position):
+        return_position = player.start_position_along_surface
 
 
 #func _on_inactive() -> void:
@@ -73,7 +70,3 @@ func _attempt_navigation() -> bool:
 #    if _configuration_warning != "":
 #        return
 #    _set_configuration_warning("")
-
-
-func _get_default_next_behavior_controller() -> BehaviorController:
-    return player.active_at_start_controller
