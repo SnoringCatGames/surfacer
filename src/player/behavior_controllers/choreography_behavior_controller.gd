@@ -46,14 +46,7 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 #    ._on_physics_process(delta)
 
 
-func _move() -> void:
-    var is_navigation_valid := _attempt_navigation()
-    
-    # FIXME: ---- Move nav success/fail logs into a parent method.
-    pass
-
-
-func _attempt_navigation() -> bool:
+func _move() -> bool:
     return player.navigator.navigate_to_position(destination)
 
 

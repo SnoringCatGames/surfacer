@@ -43,6 +43,11 @@ func _init().(
 #    ._on_physics_process(delta)
 
 
+func _move() -> bool:
+    # FIXME: -----------------------------
+    return false
+
+
 #func _update_parameters() -> void:
 #    ._update_parameters()
 #

@@ -78,32 +78,10 @@ func _on_ready_to_move() -> void:
 #    ._on_physics_process(delta)
 
 
-func _move() -> void:
-    assert(is_active)
-    
-    var is_navigation_valid := _attempt_navigation()
+func _move() -> bool:
+    var is_moving_minward := _is_next_move_minward
     _is_next_move_minward = !_is_next_move_minward
     
-    # FIXME: ---- Move nav success/fail logs into a parent method.
-    if is_navigation_valid:
-        player._log_player_event(
-                ("MoveBackAndForthBehaviorController.move: " +
-                "%s, is_moving_minward=%s") % [
-                    player.player_name,
-                    str(_is_next_move_minward),
-                ])
-    else:
-        Sc.logger.print(
-                ("MoveBackAndForthBehaviorController.move: " +
-                "Unable to navigate: %s, is_moving_minward=%s") % [
-                    player.player_name,
-                    str(_is_next_move_minward),
-                ])
-        # FIXME: ----------------------------- Trigger next behavior
-        pass
-
-
-func _attempt_navigation() -> bool:
     var is_surface_horizontal: bool = \
             player.start_surface.side == SurfaceSide.FLOOR or \
             player.start_surface.side == SurfaceSide.CEILING
@@ -155,7 +133,7 @@ func _attempt_navigation() -> bool:
     var sample_min: float
     var sample_max: float
     if is_surface_horizontal:
-        if _is_next_move_minward:
+        if is_moving_minward:
             sample_min = min_x
             sample_max = \
                     min_x + \
@@ -168,7 +146,7 @@ func _attempt_navigation() -> bool:
             sample_max = max_x
             sample_min = min(sample_min, sample_max)
     else:
-        if _is_next_move_minward:
+        if is_moving_minward:
             sample_min = min_y
             sample_max = \
                     min_y + \

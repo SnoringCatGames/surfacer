@@ -70,23 +70,7 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 #    ._on_physics_process(delta)
     
     
-func _move() -> void:
-    var is_navigation_valid := _attempt_navigation()
-    
-    # FIXME: ---- Move nav success/fail logs into a parent method.
-    if !is_navigation_valid:
-        Sc.logger.print(
-            ("RunAwayBehaviorController: Unable to navigate: " +
-            "player=%s, position=%s, run_from=%s") % [
-                player.player_name,
-                Sc.utils.get_vector_string(player.position),
-                Sc.utils.get_vector_string(target_to_run_from.position),
-            ])
-        # FIXME: ----------------------------- Trigger next behavior
-        pass
-
-
-func _attempt_navigation() -> bool:
+func _move() -> bool:
     var min_distance_retry_threshold := \
             run_distance * \
             retry_threshold_ratio_from_intended_distance
