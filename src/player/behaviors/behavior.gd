@@ -47,8 +47,8 @@ export var start_jump_boost_multiplier := 1.0 \
 ## -   If true, the player will return to their starting position after this
 ##     behavior has finished.
 ## -   If true, then `only_navigates_reversible_paths` must also be true.
-var returns_to_start_position := true \
-        setget _set_returns_to_start_position
+var returns_to_player_start_position := true \
+        setget _set_returns_to_player_start_position
 
 ## -   If true, after this behavior has finished, the player will return to the 
 ##     position they were at before triggering this behavior.
@@ -108,7 +108,7 @@ func _init(
     
     if could_return_to_start_position:
         self._property_list_addendum.push_back({
-                name = "returns_to_start_position",
+                name = "returns_to_player_start_position",
                 type = TYPE_BOOL,
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
             })
@@ -118,7 +118,7 @@ func _init(
                 usage = Utils.PROPERTY_USAGE_EXPORTED_ITEM,
             })
     else:
-        returns_to_start_position = false
+        returns_to_player_start_position = false
         returns_to_pre_behavior_position = false
     
     if includes_mid_movement_pause:
@@ -296,10 +296,10 @@ func _update_parameters() -> void:
     if _configuration_warning != "":
         return
     
-    if returns_to_start_position and \
+    if returns_to_player_start_position and \
             !only_navigates_reversible_paths:
         _set_configuration_warning(
-                "If returns_to_start_position is true, then " +
+                "If returns_to_player_start_position is true, then " +
                 "only_navigates_reversible_paths must also be true.")
         return
     
@@ -360,7 +360,7 @@ func get_behavior() -> int:
 
 func _get_default_next_behavior() -> Behavior:
     return player.get_behavior("return") if \
-            returns_to_start_position or \
+            returns_to_player_start_position or \
                     returns_to_pre_behavior_position else \
             player.default_behavior
 
@@ -435,9 +435,9 @@ func _set_start_jump_boost_multiplier(value: float) -> void:
     _update_parameters()
 
 
-func _set_returns_to_start_position(value: bool) -> void:
-    returns_to_start_position = value
-    if returns_to_start_position:
+func _set_returns_to_player_start_position(value: bool) -> void:
+    returns_to_player_start_position = value
+    if returns_to_player_start_position:
         returns_to_pre_behavior_position = false
     _update_parameters()
 
@@ -445,7 +445,7 @@ func _set_returns_to_start_position(value: bool) -> void:
 func _set_returns_to_pre_behavior_position(value: bool) -> void:
     returns_to_pre_behavior_position = value
     if returns_to_pre_behavior_position:
-        returns_to_start_position = false
+        returns_to_player_start_position = false
     _update_parameters()
 
 

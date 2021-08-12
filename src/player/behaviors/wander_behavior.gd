@@ -76,8 +76,8 @@ func _attempt_inter_surface_navigation() -> bool:
     # Get a shuffled list of all inter-surface nodes that are reachable from
     # the player's current surface.
     var possible_destinations := []
-    for origin in \
-            player.graph.surfaces_to_outbound_nodes[player.surface_state.grabbed_surface]:
+    for origin in player.graph.surfaces_to_outbound_nodes[ \
+            player.surface_state.grabbed_surface]:
         Sc.utils.concat(
                 possible_destinations,
                 player.graph.nodes_to_nodes_to_edges[origin].keys())

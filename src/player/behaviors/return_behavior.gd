@@ -28,7 +28,7 @@ func _init().(
 func _on_ready_to_move() -> void:
     ._on_ready_to_move()
     
-    if player.previous_behavior.returns_to_start_position:
+    if player.previous_behavior.returns_to_player_start_position:
         return_position = player.start_position_along_surface
     if player.previous_behavior.returns_to_pre_behavior_position:
         return_position = player.previous_behavior.start_position_along_surface
