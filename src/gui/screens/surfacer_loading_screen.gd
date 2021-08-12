@@ -56,6 +56,7 @@ func _load_level() -> void:
             Sc.level_config.get_level_config(level_id).scene_path,
             false,
             true)
+    Sc.level = level
     if Su.debug_params.has("limit_parsing"):
         level.script = DebugLevel
     Sc.nav.screens["game"].add_level(level)

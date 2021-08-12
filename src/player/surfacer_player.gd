@@ -22,6 +22,7 @@ var possible_surfaces_set: Dictionary
 
 var start_surface: Surface
 var start_position_along_surface: PositionAlongSurface
+var _start_surface_attachment := SurfaceSide.NONE
 
 var just_triggered_jump := false
 var is_rising_from_jump := false
@@ -96,6 +97,9 @@ func _ready() -> void:
         _attach_prediction()
     
     _init_platform_graph()
+    
+    # FIXME: LEFT OFF HERE: ------------------------- _start_surface_attachment
+    
     _init_navigator()
     _parse_behavior_children()
     
@@ -505,6 +509,10 @@ func navigate_as_choreographed(destination: PositionAlongSurface) -> bool:
     choreography_behavior.destination = destination
     choreography_behavior.trigger(false)
     return navigation_state.is_currently_navigating
+
+
+func set_surface_attachment(surface_side: int) -> void:
+    _start_surface_attachment = surface_side
 
 
 func set_position(position: Vector2) -> void:
