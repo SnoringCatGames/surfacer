@@ -258,7 +258,7 @@ var edge_from_json_factory := EdgeFromJsonFactory.new()
 
 
 func _ready() -> void:
-    assert(is_instance_valid(Sc),
+    assert(is_instance_valid(get_node("/root/Sc")),
             "The Sc (Scaffolder) AutoLoad must be declared first.")
     
     Sc.logger.on_global_init(self, "Su")

@@ -794,6 +794,8 @@ func _derive_parameters() -> void:
 
 
 func _set_configuration_warning(value: String) -> void:
+    if !_is_ready:
+        return
     _configuration_warning = value
     update_configuration_warning()
     if value != "" and \

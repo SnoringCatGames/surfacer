@@ -39,6 +39,18 @@ func _start() -> void:
     call_deferred("_initialize_annotators")
 
 
+#func _on_started() -> void:
+#    ._on_started()
+
+
+#func _add_human_player() -> void:
+#    ._add_human_player()
+
+
+#func _add_computer_players() -> void:
+#    ._add_computer_players()
+
+
 func _destroy() -> void:
     Sc.annotators.on_level_destroyed()
     

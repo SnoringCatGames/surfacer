@@ -732,8 +732,8 @@ var _default_input_map = ScaffolderProjectSettings.DEFAULT_INPUT_MAP
 
 
 func _ready() -> void:
-    assert(is_instance_valid(Sc) and \
-            is_instance_valid(Su),
+    assert(is_instance_valid(get_node("/root/Sc")) and \
+            is_instance_valid(get_node("/root/Su")),
             ("The Sc (Scaffolder) and Su (Surfacer) AutoLoads must be " +
             "declared first."))
     

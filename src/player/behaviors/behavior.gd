@@ -157,6 +157,7 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
     _is_ready = true
+    _update_parameters()
     if Engine.editor_hint:
         return
     _check_ready_to_move()
@@ -332,6 +333,8 @@ func _update_parameters() -> void:
 
 
 func _set_configuration_warning(value: String) -> void:
+    if !_is_ready:
+        return
     _configuration_warning = value
     update_configuration_warning()
     property_list_changed_notify()
