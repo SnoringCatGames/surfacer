@@ -45,6 +45,7 @@ func _init().(
 
 func _move() -> bool:
     # FIXME: -----------------------------
+    # - max_distance_from_start_position
     return false
 
 

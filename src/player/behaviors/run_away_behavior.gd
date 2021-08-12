@@ -167,7 +167,7 @@ func _move() -> bool:
             possible_destination = PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
                             naive_target,
-                            start_surface,
+                            player.surface_state.grabbed_surface,
                             player.movement_params.collider_half_width_height,
                             true)
         

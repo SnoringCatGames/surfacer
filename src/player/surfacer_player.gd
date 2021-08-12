@@ -596,7 +596,7 @@ func add_behavior(behavior: Behavior) -> void:
 
 
 func _add_return_behavior_if_needed(other_behavior: Behavior) -> void:
-    if (other_behavior.returns_to_start_position or \
+    if (other_behavior.returns_to_player_start_position or \
             other_behavior.returns_to_pre_behavior_position) and \
             !has_behavior(ReturnBehavior):
         var return_behavior := ReturnBehavior.new()

@@ -185,14 +185,22 @@ func _update_parameters() -> void:
     if min_distance_from_surface_ends < 0.0:
         _set_configuration_warning(
                 "min_distance_from_surface_ends must be non-negative.")
-    elif moves_to_surface_ends and movement_radius >= 0.0:
+    elif moves_to_surface_ends and \
+            movement_radius >= 0.0:
         _set_configuration_warning(
                 "If moves_to_surface_ends is true, " +
                 "then movement_radius must be negative.")
-    elif !moves_to_surface_ends and movement_radius < 0.0:
+    elif !moves_to_surface_ends and \
+            movement_radius < 0.0:
         _set_configuration_warning(
                 "If moves_to_surface_ends is false, " +
                 "then movement_radius must be non-negative.")
+    elif movement_radius > max_distance_from_start_position and \
+            max_distance_from_start_position > 0.0:
+        _set_configuration_warning(
+                "movement_radius must not be greater than " +
+                "max_distance_from_start_position, if " +
+                "max_distance_from_start_position is greater than 0.")
     elif pause_delay_min < 0.0:
         _set_configuration_warning(
                 "pause_delay_min must be non-negative.")

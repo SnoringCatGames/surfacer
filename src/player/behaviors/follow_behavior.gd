@@ -71,6 +71,7 @@ func on_detached() -> void:
 
 func _move() -> bool:
     # FIXME: -------------------
+    # - max_distance_from_start_position
     return false
 
 
