@@ -1,6 +1,6 @@
 # Getting set up
 
-I will not lie, **this is a complex framework**! Hopefully it's external API isn't _too_ convoluted, but still, probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel-away), and then adjust it to fit your needs.
+I will not lie, **this is a complex framework**! Hopefully it's external API isn't _too_ convoluted, but still, probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel_away), and then adjust it to fit your needs.
 
 -   Set up Scaffolder
     -   https://github.com/snoringcatgames/scaffolder/blob/master/docs/getting_set_up.md
