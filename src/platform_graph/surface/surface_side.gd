@@ -27,6 +27,23 @@ static func get_string(side: int) -> String:
             return "???"
 
 
+static func get_type(string: String) -> int:
+    match string:
+        "NONE":
+            return NONE
+        "FLOOR":
+            return FLOOR
+        "CEILING":
+            return CEILING
+        "LEFT_WALL":
+            return LEFT_WALL
+        "RIGHT_WALL":
+            return RIGHT_WALL
+        _:
+            Sc.logger.error("Invalid SurfaceSide: %s" % string)
+            return NONE
+
+
 static func get_prefix(side: int) -> String:
     match side:
         NONE:
@@ -45,11 +62,21 @@ static func get_prefix(side: int) -> String:
 
 
 static func get_normal(side: int) -> Vector2:
-    return \
-            Sc.geometry.UP if side == FLOOR else (
-            Sc.geometry.DOWN if side == CEILING else (
-            Sc.geometry.RIGHT if side == LEFT_WALL else (
-            Sc.geometry.LEFT)))
+    match side:
+        NONE:
+            return Vector2.INF
+        FLOOR:
+            return Sc.geometry.UP
+        CEILING:
+            return Sc.geometry.DOWN
+        LEFT_WALL:
+            return Sc.geometry.RIGHT
+        RIGHT_WALL:
+            return Sc.geometry.LEFT
+        _:
+            Sc.logger.error("Invalid SurfaceSide: %s" % side)
+            return Vector2.INF
+
 
 const KEYS = [
     "NONE",
