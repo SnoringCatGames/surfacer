@@ -7,7 +7,7 @@
 
 > _**[Live demo](https://snoringcat.games/play/squirrel-away)**_
 > 
-> _**[Demo source](https://github.com/snoringcatgames/squirrel-away)**_
+> _**[Demo source](https://github.com/snoringcatgames/squirrel_away)**_
 > 
 > _**[Godot Asset Library](https://godotengine.org/asset-library/asset/968)**_
 
