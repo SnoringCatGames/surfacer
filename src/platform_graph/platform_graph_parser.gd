@@ -381,7 +381,8 @@ func _get_path(includes_debug_only_state: bool) -> String:
         level_id,
         ".debug" if includes_debug_only_state else "",
     ]
-    return "res://%s/%s" % [
+    return "res://%s%s/%s" % [
+        Sc.metadata.base_path,
         PLATFORM_GRAPHS_DIRECTORY_NAME,
         file_name,
     ]
