@@ -582,6 +582,8 @@ func _parse_behavior_children() -> void:
         rest_behavior.is_active_at_start = true
         add_behavior(rest_behavior)
         default_behavior = rest_behavior
+    
+    default_behavior.is_active = true
 
 
 func add_behavior(behavior: Behavior) -> void:
