@@ -159,8 +159,6 @@ func _ready() -> void:
     _is_ready = true
     if Engine.editor_hint:
         return
-    if is_active_at_start:
-        _set_is_active(true)
     _check_ready_to_move()
 
 
