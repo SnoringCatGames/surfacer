@@ -81,7 +81,8 @@ func _move() -> bool:
                     collision_target.position, self)
     
     # Prevent straying too far the start position.
-    if start_position.distance_squared_to(destination.target_point) <= \
+    if start_position_for_max_distance_checks.distance_squared_to(
+            destination.target_point) <= \
             max_distance_squared_from_start_position:
         var is_navigation_valid: bool = \
                 player.navigator.navigate_to_position(destination)
@@ -105,7 +106,7 @@ func _move() -> bool:
                 target, self)
         
         # Prevent straying too far the start position.
-        if start_position.distance_squared_to(
+        if start_position_for_max_distance_checks.distance_squared_to(
                 destination.target_point) <= \
                 max_distance_squared_from_start_position:
             var is_navigation_valid: bool = \
@@ -113,4 +114,5 @@ func _move() -> bool:
             if is_navigation_valid:
                 return true
     
+    _reached_max_distance = true
     return false

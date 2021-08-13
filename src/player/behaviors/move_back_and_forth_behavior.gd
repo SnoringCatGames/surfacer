@@ -191,8 +191,7 @@ func _update_parameters() -> void:
         _set_configuration_warning(
                 "If moves_to_surface_ends is false, " +
                 "then movement_radius must be non-negative.")
-    elif movement_radius > max_distance_from_start_position and \
-            max_distance_from_start_position > 0.0:
+    elif movement_radius > max_distance_from_start_position:
         _set_configuration_warning(
                 "movement_radius must not be greater than " +
                 "max_distance_from_start_position, if " +

@@ -321,13 +321,24 @@ func _calculate_surface_to_air_edge(
 
 func stop() -> void:
     var was_navigating := navigation_state.is_currently_navigating
+    var had_canceled := navigation_state.has_canceled
+    var had_just_canceled := navigation_state.just_canceled
+    var had_just_ended := navigation_state.just_ended
+    
     _reset()
+    
     if was_navigating:
         navigation_state.has_canceled = true
         navigation_state.just_canceled = true
         navigation_state.just_ended = true
+        
         emit_signal("navigation_canceled")
         emit_signal("navigation_ended", false)
+    else:
+        # Preserve pre-existing state.
+        navigation_state.has_canceled = had_canceled
+        navigation_state.just_canceled = had_just_canceled
+        navigation_state.just_ended = had_just_ended
 
 
 func _set_reached_destination() -> void:

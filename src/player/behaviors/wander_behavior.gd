@@ -86,8 +86,7 @@ func _attempt_inter_surface_navigation() -> bool:
                         destination.target_point) < \
                         target_distance_squared
         var is_within_range_from_start_position := \
-                max_distance_from_start_position < 0.0 or \
-                start_position.distance_squared_to(
+                start_position_for_max_distance_checks.distance_squared_to(
                         destination.target_point) < \
                         max_distance_squared_from_start_position
         if is_within_range_of_current_movement and \
@@ -114,24 +113,26 @@ func _attempt_intra_surface_navigation() -> bool:
         current_coord = start_position.x
         min_coord = start_surface.bounding_box.position.x
         max_coord = start_surface.bounding_box.end.x
-        if max_distance_from_start_position >= 0.0:
-            min_coord = max(
-                    min_coord,
-                    start_position.x - max_distance_from_start_position)
-            max_coord = min(
-                    max_coord,
-                    start_position.x + max_distance_from_start_position)
+        min_coord = max(
+                min_coord,
+                start_position_for_max_distance_checks.x - \
+                max_distance_from_start_position)
+        max_coord = min(
+                max_coord,
+                start_position_for_max_distance_checks.x + \
+                max_distance_from_start_position)
     else:
         current_coord = start_position.y
         min_coord = start_surface.bounding_box.position.y
         max_coord = start_surface.bounding_box.end.y
-        if max_distance_from_start_position >= 0.0:
-            min_coord = max(
-                    min_coord,
-                    start_position.y - max_distance_from_start_position)
-            max_coord = min(
-                    max_coord,
-                    start_position.y + max_distance_from_start_position)
+        min_coord = max(
+                min_coord,
+                start_position_for_max_distance_checks.y - \
+                max_distance_from_start_position)
+        max_coord = min(
+                max_coord,
+                start_position_for_max_distance_checks.y + \
+                max_distance_from_start_position)
     
     var target_coord := current_coord + target_distance_signed
     target_coord = max(target_coord, min_coord)
