@@ -72,7 +72,7 @@ var walking_edge_weight_multiplier_default := 1.2
 var climbing_edge_weight_multiplier_default := 1.8
 var air_edge_weight_multiplier_default := 1.0
 
-# Dictionary<String, MovementParams>
+# Dictionary<String, MovementParameters>
 var player_movement_params := {}
 
 # Dictionary<String, PlayerActionHandler>
@@ -242,10 +242,10 @@ func _parse_movement_params_from_player_scenes(
                         "player_name",
                         !Engine.editor_hint)
         
-        var movement_params: MovementParams
+        var movement_params: MovementParameters
         for node_index in state.get_node_count():
-            if state.get_node_name(node_index) == "MovementParams":
-                # Instantiate the MovementParams.
+            if state.get_node_name(node_index) == "MovementParameters":
+                # Instantiate the MovementParameters.
                 var movement_params_scene := \
                         state.get_node_instance(node_index)
                 assert(is_instance_valid(movement_params_scene))
@@ -266,7 +266,7 @@ func _parse_movement_params_from_player_scenes(
 
 
 func get_default_action_handler_names(
-        movement_params: MovementParams) -> Array:
+        movement_params: MovementParameters) -> Array:
     var names := [
         "AirDefaultAction",
         "AllDefaultAction",
@@ -298,7 +298,7 @@ func get_default_action_handler_names(
 
 
 func get_default_edge_calculator_names(
-        movement_params: MovementParams) -> Array:
+        movement_params: MovementParameters) -> Array:
     var edge_calculators := []
     if movement_params.can_grab_walls:
         edge_calculators.push_back("ClimbDownWallToFloorCalculator")
@@ -337,10 +337,10 @@ func get_edge_calculators_from_names(names: Array) -> Array:
 
 
 # These calculations reference other scripts, which in-turn reference
-# MovementParams, so we keep this logic here instead of in MovementParams,
+# MovementParameters, so we keep this logic here instead of in MovementParameters,
 # where they would cause circular dependencies.
 func _calculate_dependent_movement_params(
-        movement_params: MovementParams) -> void:
+        movement_params: MovementParameters) -> void:
     movement_params.min_upward_jump_distance = VerticalMovementUtils \
             .calculate_min_upward_distance(movement_params)
     movement_params.max_upward_jump_distance = VerticalMovementUtils \

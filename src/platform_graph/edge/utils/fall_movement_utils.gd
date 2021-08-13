@@ -265,7 +265,7 @@ static func find_landing_trajectory_between_positions(
 
 
 static func find_surfaces_in_fall_range_from_point(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         all_possible_surfaces_set: Dictionary,
         result_set: Dictionary,
         origin: Vector2,
@@ -312,7 +312,7 @@ static func find_surfaces_in_fall_range_from_point(
 
 
 static func find_surfaces_in_fall_range_from_surface(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         all_possible_surfaces_set: Dictionary,
         surfaces_in_fall_range_without_jump_distance_result_set: Dictionary,
         surfaces_in_fall_range_with_jump_distance_result_set: Dictionary,
@@ -355,7 +355,7 @@ static func find_surfaces_in_fall_range_from_surface(
 
 
 static func calculate_jump_or_fall_range_polygon_from_surface(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         origin_surface: Surface,
         is_considering_jump_distance: bool) -> Array:
     # FIXME: Offset the start_position_offset to account for velocity_start.

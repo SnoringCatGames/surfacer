@@ -322,7 +322,7 @@ static func _prepend_walk_to_fall_off_portion(
         time_fall_off: float,
         instructions: EdgeInstructions,
         trajectory: EdgeTrajectory,
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         falls_on_left_side: bool) -> void:
     var frame_count_before_fall_off := \
             floor(time_fall_off / Time.PHYSICS_TIME_STEP)

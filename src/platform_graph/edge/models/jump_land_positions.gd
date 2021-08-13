@@ -52,7 +52,7 @@ func _init(
 
 
 func is_far_enough_from_others(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         other_jump_land_positions: Array,
         checking_distance_for_jump_positions: bool,
         checking_distance_for_land_positions: bool) -> bool:

@@ -6,7 +6,7 @@ extends KinematicBody2D
 const COLLISION_MASK_FOR_ONLY_SURFACES_TILE_MAP = 1
 
 var player_name: String
-var movement_params: MovementParams
+var movement_params: MovementParameters
 var graph
 var surface_parser: SurfaceParser
 # Dictionary<Surface, Surface>

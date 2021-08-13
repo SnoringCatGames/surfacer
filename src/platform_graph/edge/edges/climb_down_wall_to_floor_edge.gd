@@ -18,7 +18,7 @@ func _init(
         calculator = null,
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
-        movement_params: MovementParams = null) \
+        movement_params: MovementParameters = null) \
         .(TYPE,
         IS_TIME_BASED,
         SURFACE_TYPE,

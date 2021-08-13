@@ -20,7 +20,7 @@ const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 
 var player_name: String
 var collision_params: CollisionCalcParams
-var movement_params: MovementParams
+var movement_params: MovementParameters
 var surface_parser: SurfaceParser
 
 # Dictionary<Surface, Surface>
@@ -235,7 +235,7 @@ func find_path(
 
 
 static func _calculate_intra_surface_edge_weight(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         node_a: PositionAlongSurface,
         node_b: PositionAlongSurface) -> float:
     var distance := node_a.target_point.distance_to(node_b.target_point)

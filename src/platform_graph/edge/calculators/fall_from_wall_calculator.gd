@@ -176,7 +176,7 @@ func _create_edge_from_calc_results(
 
 
 static func _get_start_velocity(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         origin_surface: Surface) -> Vector2:
     return Vector2(
             movement_params.wall_fall_horizontal_boost * \
@@ -185,7 +185,7 @@ static func _get_start_velocity(
 
 
 static func _get_jump_positions(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         origin_surface: Surface) -> Array:
     # TODO: Update this to allow other mid-point jump-positions, which may be
     #       closer and more efficient than just the surface-end points.
