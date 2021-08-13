@@ -4,6 +4,8 @@ extends Reference
 
 # TODO: Map the TileMap into an RTree or QuadTree.
 
+const SURFACES_TILE_MAPS_COLLISION_LAYER := 1
+
 const CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET := 0.02
 const CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01
 
@@ -27,12 +29,17 @@ var combined_tile_map_rect: Rect2
 # Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
+var _space_state: Physics2DDirectSpaceState
+var _collision_tile_map_coord_result := CollisionTileMapCoordResult.new()
+
 
 func calculate(tile_maps: Array) -> void:
     assert(!tile_maps.empty())
     
     # TODO: Add support for more than one collidable TileMap.
     assert(tile_maps.size() == 1)
+    
+    self._space_state = tile_maps[0].get_world_2d().direct_space_state
     
     # Record the maximum cell size and combined region from all tile maps.
     _calculate_max_tile_map_cell_size(tile_maps)
@@ -950,6 +957,52 @@ class _TmpSurface extends Object:
     var surface: Surface
 
 
+func find_closest_surface_in_direction(
+        target: Vector2,
+        direction: Vector2,
+        collision_tile_map_coord_result: CollisionTileMapCoordResult = null,
+        max_distance := 10000.0) -> Surface:
+    collision_tile_map_coord_result = \
+            collision_tile_map_coord_result if \
+            collision_tile_map_coord_result != null else \
+            _collision_tile_map_coord_result
+    
+    var collision: Dictionary = _space_state.intersect_ray(
+            target,
+            direction * max_distance,
+            [],
+            SURFACES_TILE_MAPS_COLLISION_LAYER,
+            true,
+            false)
+    
+    var touch_position: Vector2 = collision.position
+    var touched_side: int = \
+            Sc.geometry.get_surface_side_for_normal(collision.normal)
+    assert(collision.collider is SurfacesTileMap)
+    var touched_tile_map: SurfacesTileMap = collision.collider
+    
+    Sc.geometry.get_collision_tile_map_coord(
+            collision_tile_map_coord_result,
+            touch_position,
+            touched_tile_map,
+            touched_side == SurfaceSide.FLOOR,
+            touched_side == SurfaceSide.CEILING,
+            touched_side == SurfaceSide.LEFT_WALL,
+            touched_side == SurfaceSide.RIGHT_WALL)
+    var touch_position_tile_map_coord := \
+            collision_tile_map_coord_result.tile_map_coord
+    
+    var touched_tile_map_index: int = \
+            Sc.geometry.get_tile_map_index_from_grid_coord(
+                    touch_position_tile_map_coord,
+                    touched_tile_map)
+    
+    return get_surface_for_tile(
+            touched_tile_map,
+            touched_tile_map_index,
+            touched_side)
+
+
 static func find_closest_position_on_a_surface(
         target: Vector2,
         player,
@@ -1133,6 +1186,7 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     var tile_maps: Array = context.id_to_tile_map.values()
+    _space_state = tile_maps[0].get_world_2d().direct_space_state
     _calculate_max_tile_map_cell_size(tile_maps)
     _calculate_combined_tile_map_rect(tile_maps)
     

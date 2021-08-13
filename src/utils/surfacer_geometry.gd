@@ -98,15 +98,14 @@ static func are_position_wrappers_equal_with_epsilon(
             -epsilon < y_diff and y_diff < epsilon
 
 
-static func get_which_surface_side_collided(
-        collision: KinematicCollision2D) -> int:
-    if abs(collision.normal.angle_to(Sc.geometry.UP)) <= \
+static func get_surface_side_for_normal(normal: Vector2) -> int:
+    if abs(normal.angle_to(Sc.geometry.UP)) <= \
             Sc.geometry.FLOOR_MAX_ANGLE:
         return SurfaceSide.FLOOR
-    elif abs(collision.normal.angle_to(Sc.geometry.DOWN)) <= \
+    elif abs(normal.angle_to(Sc.geometry.DOWN)) <= \
             Sc.geometry.FLOOR_MAX_ANGLE:
         return SurfaceSide.CEILING
-    elif collision.normal.x > 0:
+    elif normal.x > 0:
         return SurfaceSide.LEFT_WALL
     else:
         return SurfaceSide.RIGHT_WALL
@@ -127,7 +126,7 @@ static func _get_collision_for_side(
     if player.surface_state.is_touching_floor:
         for i in player.get_slide_count():
             var collision: KinematicCollision2D = player.get_slide_collision(i)
-            if get_which_surface_side_collided(collision) == side:
+            if get_surface_side_for_normal(collision.normal) == side:
                 return collision
     return null
 

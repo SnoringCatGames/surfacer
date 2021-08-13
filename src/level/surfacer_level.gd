@@ -89,16 +89,20 @@ func _on_initial_input() -> void:
 func _execute_intro_choreography() -> void:
     intro_choreographer = \
             Sc.level_config.get_intro_choreographer(Sc.level.human_player)
-    intro_choreographer.connect(
-            "finished", self, "_on_intro_choreography_finished")
-    add_child(intro_choreographer)
-    intro_choreographer.start()
+    if is_instance_valid(intro_choreographer):
+        intro_choreographer.connect(
+                "finished", self, "_on_intro_choreography_finished")
+        add_child(intro_choreographer)
+        intro_choreographer.start()
+    else:
+        _on_intro_choreography_finished()
 
 
 func _on_intro_choreography_finished() -> void:
     Sc.logger.print("Intro choreography finished")
-    intro_choreographer.queue_free()
-    intro_choreographer = null
+    if is_instance_valid(intro_choreographer):
+        intro_choreographer.queue_free()
+        intro_choreographer = null
     _show_welcome_panel()
 
 

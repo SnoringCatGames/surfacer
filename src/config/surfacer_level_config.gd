@@ -33,24 +33,9 @@ func _sanitize_level_config(config: Dictionary) -> void:
 
 func get_intro_choreographer(player: SurfacerPlayer) -> Choreographer:
     var config := get_level_config(Sc.level_session.id)
-    
-    var sequence: Array
-    if config.has("intro_choreography"):
-        # Use the pre-configured intro choreography.
-        sequence = config.intro_choreography
-    else:
-        # Just navigate to the closest surface position to the player-start
-        # position.
-        sequence = [
-            {
-                is_user_interaction_enabled = false,
-                destination = player.position,
-            },
-            {
-                is_user_interaction_enabled = true,
-            },
-        ]
-    
+    if !config.has("intro_choreography"):
+        return null
+    var sequence: Array = config.intro_choreography
     var choreographer := Choreographer.new()
     choreographer.configure(sequence, player, Sc.level)
     return choreographer

@@ -158,7 +158,7 @@ func _update_which_sides_are_touched(player) -> void:
         for i in collision_count:
             var collision: KinematicCollision2D = player.get_slide_collision(i)
             var side: int = \
-                    Sc.geometry.get_which_surface_side_collided(collision)
+                    Sc.geometry.get_surface_side_for_normal(collision.normal)
             match side:
                 SurfaceSide.FLOOR:
                     next_is_touching_floor = true
@@ -222,7 +222,7 @@ func _update_touched_surfaces(player) -> void:
         var collision: KinematicCollision2D = player.get_slide_collision(i)
         var touch_position := collision.position
         var touched_side: int = \
-                Sc.geometry.get_which_surface_side_collided(collision)
+                Sc.geometry.get_surface_side_for_normal(collision.normal)
         var touched_tile_map: SurfacesTileMap = collision.collider
         Sc.geometry.get_collision_tile_map_coord(
                 _collision_tile_map_coord_result,
@@ -542,3 +542,110 @@ func _get_expected_position_for_bypassing_runtime_physics(player) -> \
     return player.navigation_state.expected_position_along_surface if \
             player.navigation_state.is_currently_navigating else \
             player.navigator.get_previous_destination()
+
+
+func update_for_initial_surface_attachment(
+        player,
+        start_surface_attachment: int) -> void:
+    if start_surface_attachment == SurfaceSide.NONE:
+        return
+    
+    var start_position: Vector2 = player.position
+    var normal := SurfaceSide.get_normal(start_surface_attachment)
+    var surface: Surface = \
+            player.surface_parser.find_closest_surface_in_direction(
+                    start_position,
+                    -normal,
+                    _collision_tile_map_coord_result)
+    
+    grab_position_tile_map_coord = \
+            _collision_tile_map_coord_result.tile_map_coord
+    grabbed_tile_map = surface.tile_map
+    
+    grabbed_surface = surface
+    previous_grabbed_surface = surface
+    center_position_along_surface \
+            .match_surface_target_and_collider(
+                    surface,
+                    start_position,
+                    player.movement_params.collider_half_width_height,
+                    true,
+                    true)
+    PositionAlongSurface.copy(
+            last_position_along_surface,
+            center_position_along_surface)
+    player.position = center_position_along_surface.target_point
+    previous_center_position = player.position
+    center_position = player.position
+    grab_position = \
+            center_position_along_surface \
+            .target_projection_onto_surface
+    
+    match start_surface_attachment:
+        SurfaceSide.FLOOR:
+            is_touching_floor = true
+        SurfaceSide.LEFT_WALL:
+            is_touching_left_wall = true
+        SurfaceSide.RIGHT_WALL:
+            is_touching_right_wall = true
+        SurfaceSide.CEILING:
+            is_touching_ceiling = true
+        _:
+            Sc.logger.error()
+    
+    is_touching_a_surface = \
+            is_touching_floor or \
+            is_touching_left_wall or \
+            is_touching_right_wall or \
+            is_touching_ceiling
+    is_touching_wall = \
+            is_touching_left_wall or \
+            is_touching_right_wall
+    which_wall = \
+            start_surface_attachment if \
+            is_touching_wall else \
+            SurfaceSide.NONE
+    toward_wall_sign = \
+            -normal if \
+            is_touching_wall else \
+            0
+    horizontal_facing_sign = toward_wall_sign
+    is_facing_wall = is_touching_wall
+    
+    is_grabbing_floor = is_touching_floor
+    is_grabbing_ceiling = is_touching_ceiling
+    is_grabbing_left_wall = is_touching_left_wall
+    is_grabbing_right_wall = is_touching_right_wall
+    is_grabbing_wall = is_touching_wall
+    is_grabbing_a_surface = is_touching_a_surface
+    
+    surface_type = \
+            SurfaceType.FLOOR if \
+            is_grabbing_floor else \
+            SurfaceType.WALL if \
+            is_grabbing_wall else \
+            SurfaceType.OTHER
+    
+    surface_grab = SurfaceTouch.new()
+    surface_grab.surface = surface
+    surface_grab.touch_position = grab_position
+    surface_grab.tile_map_coord = grab_position_tile_map_coord
+    surface_grab.tile_map_index = \
+            Sc.geometry.get_tile_map_index_from_grid_coord(
+                    grab_position_tile_map_coord,
+                    grabbed_tile_map)
+    PositionAlongSurface.copy(
+            surface_grab.position_along_surface,
+            center_position_along_surface)
+    surface_grab.just_started = true
+    surface_grab._is_still_touching = true
+    
+    surfaces_to_touches.clear()
+    surfaces_to_touches[surface_grab.surface] = surface_grab
+    surface_sides_to_touches.clear()
+    surface_sides_to_touches[surface_grab.surface.side] = surface_grab
+    
+    player.start_position = player.position
+    player.start_surface = surface
+    player.start_position_along_surface = PositionAlongSurface.new(
+            center_position_along_surface)
