@@ -68,12 +68,12 @@ func _ready() -> void:
     surface_state.previous_center_position = self.position
     surface_state.center_position = self.position
     
-    if Engine.editor_hint:
-        return
-    
     # Start facing right.
     surface_state.horizontal_facing_sign = 1
     animator.face_right()
+    
+    if Engine.editor_hint:
+        return
     
     if movement_params.can_dash:
         # Set up a Tween for the fade-out at the end of a dash.
@@ -97,11 +97,12 @@ func _ready() -> void:
         _attach_prediction()
     
     _init_platform_graph()
-    
-    # FIXME: LEFT OFF HERE: ------------------------- _start_surface_attachment
-    
+    surface_state.update_for_initial_surface_attachment(
+            self, _start_surface_attachment)
     _init_navigator()
     _parse_behavior_children()
+    if is_instance_valid(start_surface):
+        _on_attached_to_first_surface()
     
     # Set up some annotators to help with debugging.
     set_is_sprite_visible(false)
@@ -190,8 +191,8 @@ func _initialize_child_movement_params() -> void:
 
 func _on_attached_to_first_surface() -> void:
     start_surface = surface_state.grabbed_surface
-    start_position_along_surface = \
-            surface_state.center_position_along_surface
+    start_position_along_surface = PositionAlongSurface.new(
+            surface_state.center_position_along_surface)
     
     match start_surface.side:
         SurfaceSide.FLOOR:

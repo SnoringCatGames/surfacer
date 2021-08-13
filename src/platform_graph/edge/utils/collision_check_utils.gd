@@ -409,7 +409,7 @@ static func check_frame_for_collision(
     
     var tile_map: SurfacesTileMap = kinematic_collision.collider
     var surface_side: int = \
-            Sc.geometry.get_which_surface_side_collided(kinematic_collision)
+            Sc.geometry.get_surface_side_for_normal(kinematic_collision.normal)
     var tile_map_result := CollisionTileMapCoordResult.new()
     
     # Is this collision with a surface that we're actually moving away from?
