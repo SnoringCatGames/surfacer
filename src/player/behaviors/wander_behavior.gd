@@ -37,9 +37,8 @@ func _init().(
 #    ._on_active()
 
 
-func _on_ready_to_move() -> void:
-    ._on_ready_to_move()
-    _move()
+#func _on_ready_to_move() -> void:
+#    ._on_ready_to_move()
 
 
 #func _on_inactive() -> void:
@@ -55,8 +54,6 @@ func _on_ready_to_move() -> void:
 
 
 func _move() -> bool:
-    assert(player.surface_state.is_grabbing_a_surface)
-
     if can_leave_start_surface and \
             _get_should_leave_surface_if_available():
         var is_navigation_valid := _attempt_inter_surface_navigation()
@@ -76,8 +73,7 @@ func _attempt_inter_surface_navigation() -> bool:
     # Get a shuffled list of all inter-surface nodes that are reachable from
     # the player's current surface.
     var possible_destinations := []
-    for origin in player.graph.surfaces_to_outbound_nodes[ \
-            player.surface_state.grabbed_surface]:
+    for origin in player.graph.surfaces_to_outbound_nodes[start_surface]:
         Sc.utils.concat(
                 possible_destinations,
                 player.graph.nodes_to_nodes_to_edges[origin].keys())
@@ -86,7 +82,7 @@ func _attempt_inter_surface_navigation() -> bool:
     # Try to find an inter-surface node that is within range and navigable.
     for destination in possible_destinations:
         var is_within_range_of_current_movement := \
-                player.position.distance_squared_to(
+                start_position.distance_squared_to(
                         destination.target_point) < \
                         target_distance_squared
         var is_within_range_from_start_position := \
@@ -106,20 +102,18 @@ func _attempt_inter_surface_navigation() -> bool:
 
 func _attempt_intra_surface_navigation() -> bool:
     var target_distance_signed := _get_movement_distance_signed()
-    
-    var surface: Surface = player.surface_state.grabbed_surface
 
     var is_surface_horizontal: bool = \
-            surface.side == SurfaceSide.FLOOR or \
-            surface.side == SurfaceSide.CEILING
+            start_surface.side == SurfaceSide.FLOOR or \
+            start_surface.side == SurfaceSide.CEILING
     
     var current_coord: float
     var min_coord: float
     var max_coord: float
     if is_surface_horizontal:
-        current_coord = player.position.x
-        min_coord = surface.bounding_box.position.x
-        max_coord = surface.bounding_box.end.x
+        current_coord = start_position.x
+        min_coord = start_surface.bounding_box.position.x
+        max_coord = start_surface.bounding_box.end.x
         if max_distance_from_start_position >= 0.0:
             min_coord = max(
                     min_coord,
@@ -128,9 +122,9 @@ func _attempt_intra_surface_navigation() -> bool:
                     max_coord,
                     start_position.x + max_distance_from_start_position)
     else:
-        current_coord = player.position.y
-        min_coord = surface.bounding_box.position.y
-        max_coord = surface.bounding_box.end.y
+        current_coord = start_position.y
+        min_coord = start_surface.bounding_box.position.y
+        max_coord = start_surface.bounding_box.end.y
         if max_distance_from_start_position >= 0.0:
             min_coord = max(
                     min_coord,
@@ -158,7 +152,7 @@ func _attempt_intra_surface_navigation() -> bool:
     var destination := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     target,
-                    surface,
+                    start_surface,
                     player.movement_params.collider_half_width_height,
                     true)
     

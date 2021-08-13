@@ -56,10 +56,8 @@ func _init().(
 #    ._on_active()
 
 
-func _on_ready_to_move() -> void:
-    ._on_ready_to_move()
-    assert(is_instance_valid(target_to_run_from))
-    _move()
+#func _on_ready_to_move() -> void:
+#    ._on_ready_to_move()
 
 
 #func _on_inactive() -> void:
@@ -89,6 +87,8 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
     
     
 func _move() -> bool:
+    assert(is_instance_valid(target_to_run_from))
+
     var min_distance_retry_threshold := \
             run_distance * \
             retry_threshold_ratio_from_intended_distance
@@ -108,7 +108,7 @@ func _move() -> bool:
     #     -   Try the upward alternate direction first.
     # -   Then, try the direction into the target.
     var away_direction := \
-            target_to_run_from.position.direction_to(player.position)
+            target_to_run_from.position.direction_to(start_position)
     var directions := [away_direction]
     if away_direction.x > 0.0:
         directions.push_back(Vector2(away_direction.y, -away_direction.x))
@@ -167,7 +167,7 @@ func _move() -> bool:
             possible_destination = PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
                             naive_target,
-                            player.surface_state.grabbed_surface,
+                            start_surface,
                             player.movement_params.collider_half_width_height,
                             true)
         
