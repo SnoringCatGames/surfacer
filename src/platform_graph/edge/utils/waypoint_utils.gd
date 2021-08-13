@@ -18,7 +18,7 @@ static func create_terminal_waypoints(
         edge_result_metadata: EdgeCalcResultMetadata,
         origin_position: PositionAlongSurface,
         destination_position: PositionAlongSurface,
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         can_hold_jump_button: bool,
         velocity_start: Vector2,
         velocity_end_min_x: float,
@@ -94,7 +94,7 @@ static func create_terminal_waypoints(
 static func calculate_waypoints_around_surface(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         vertical_step: VerticalEdgeStep,
         previous_waypoint: Waypoint,
         next_waypoint: Waypoint,
@@ -360,7 +360,7 @@ static func _compare_waypoints_by_more_likely_to_be_valid(
 static func update_waypoint(
         waypoint: Waypoint,
         origin_waypoint: Waypoint,
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         velocity_start_origin: Vector2,
         can_hold_jump_button_at_origin: bool,
         vertical_step: VerticalEdgeStep,
@@ -431,7 +431,7 @@ static func update_waypoint(
 static func _update_waypoint_velocity_and_time(
         waypoint: Waypoint,
         origin_waypoint: Waypoint,
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         velocity_start_origin: Vector2,
         can_hold_jump_button_at_origin: bool,
         vertical_step: VerticalEdgeStep,
@@ -796,7 +796,7 @@ static func _update_waypoint_velocity_and_time(
 #     _not_ be zero through this new waypoint, then that case should be covered
 #     by the horizontal time calculation.
 static func _calculate_time_to_reach_destination_from_new_waypoint(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         new_waypoint_position: Vector2,
         destination: Waypoint) -> float:
     var displacement := destination.position - new_waypoint_position

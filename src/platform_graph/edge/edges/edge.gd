@@ -17,7 +17,7 @@ var enters_air: bool
 
 var includes_air_trajectory: bool
 
-var movement_params: MovementParams
+var movement_params: MovementParameters
 
 # Whether this edge was created by the navigator for a specific path at
 # run-time, rather than ahead of time when initially parsing the platform
@@ -54,7 +54,7 @@ func _init(
         velocity_end: Vector2,
         includes_extra_jump_duration: bool,
         includes_extra_wall_land_horizontal_speed: bool,
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         instructions: EdgeInstructions,
         trajectory: EdgeTrajectory,
         edge_calc_result_type: int,

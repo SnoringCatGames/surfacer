@@ -61,7 +61,7 @@ _Probably the easiest way to get started with this is to copy/paste/edit a pre-e
 -   [`SurfacerPlayer`](/src/player/surfacer_player.gd)
     -   This defines how your player reacts to input and decides when and were to navigate within the level.
     -   Required children:
-        -   `MovementParams`
+        -   `MovementParameters`
         -   `ScaffolderPlayerAnimator`
         -   `CollisionShape2D`
     -   `collision_detection_layers`
@@ -81,7 +81,7 @@ _Probably the easiest way to get started with this is to copy/paste/edit a pre-e
     -   `animations`
         -   This `Dictionary` is auto-populated with keys corresponding to each animation in the `AnimationPlayer`.
         -   You can configure some additional state for each of the animation configs in this dictionary, such as the default playback speed for the animation, and the name of a `Sprite` to automatically show when starting the animation.
--   [`MovementParams`](/src/platform_graph/edge/models/movement_params.gd)
+-   [`MovementParameters`](/src/platform_graph/edge/models/movement_params.gd)
     -   This defines how your player will move.
     -   There are a _lot_ of parameters you can adjust here.
     -   You can adjust these parameters within the editor's inspector panel.

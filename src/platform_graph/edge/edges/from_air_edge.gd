@@ -17,7 +17,7 @@ func _init(
         velocity_start := Vector2.INF,
         velocity_end := Vector2.INF,
         includes_extra_wall_land_horizontal_speed := false,
-        movement_params: MovementParams = null,
+        movement_params: MovementParameters = null,
         instructions: EdgeInstructions = null,
         trajectory: EdgeTrajectory = null,
         edge_calc_result_type := EdgeCalcResultType.UNKNOWN,

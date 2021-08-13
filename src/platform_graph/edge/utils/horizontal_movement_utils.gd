@@ -254,7 +254,7 @@ static func _calculate_acceleration_start_and_end_time(
 # given horizontal movement state and the given time. These are then returned
 # in an Array: [0] is position and [1] is velocity.
 static func calculate_horizontal_state_for_time(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         horizontal_step: EdgeStep,
         time: float) -> Array:
     assert(time >= horizontal_step.time_step_start - Sc.geometry.FLOAT_EPSILON)

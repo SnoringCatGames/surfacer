@@ -19,7 +19,7 @@ func _init(
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
-        movement_params: MovementParams = null) \
+        movement_params: MovementParameters = null) \
         .(TYPE,
         IS_TIME_BASED,
         SURFACE_TYPE,

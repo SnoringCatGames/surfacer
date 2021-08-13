@@ -19,7 +19,7 @@ func _init(
         end: PositionAlongSurface = null,
         velocity_end := Vector2.INF,
         includes_extra_wall_land_horizontal_speed := false,
-        movement_params: MovementParams = null,
+        movement_params: MovementParameters = null,
         instructions: EdgeInstructions = null,
         trajectory: EdgeTrajectory = null,
         edge_calc_result_type := EdgeCalcResultType.UNKNOWN) \
@@ -80,7 +80,7 @@ func _check_did_just_reach_surface_destination(
 
 
 static func _get_velocity_start(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         start: PositionAlongSurface) -> Vector2:
     return Vector2(movement_params.wall_fall_horizontal_boost * \
                         start.surface.normal.x,

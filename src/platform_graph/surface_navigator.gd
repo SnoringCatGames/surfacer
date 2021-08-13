@@ -16,7 +16,7 @@ extends Reference
 #     reach the changed surface?).
 #   - Update SurfaceParser APIs and usages to possibly use either of the
 #     new sets.
-#   - Add a MovementParams property for the sets' distance threshold.
+#   - Add a MovementParameters property for the sets' distance threshold.
 #   - Add a Surfacer flag which toggles whether these sets are created.
 #   - Depending on the flag:
 #     - Assert that only_navigates_reversible_paths is false.
@@ -42,7 +42,7 @@ const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
 var player
 var graph: PlatformGraph
 var surface_state: PlayerSurfaceState
-var movement_params: MovementParams
+var movement_params: MovementParameters
 var instructions_action_source: InstructionsActionSource
 var from_air_calculator: FromAirCalculator
 var surface_to_air_calculator: JumpFromSurfaceCalculator
@@ -601,7 +601,7 @@ func _print(
 
 
 static func _possibly_backtrack_to_not_protrude_past_surface_end(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         edge: Edge,
         position: Vector2,
         velocity: Vector2) -> IntraSurfaceEdge:

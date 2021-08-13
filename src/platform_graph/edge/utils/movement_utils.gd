@@ -365,7 +365,7 @@ static func update_velocity_in_air(
         is_pressing_jump: bool,
         is_first_jump: bool,
         horizontal_acceleration_sign: int,
-        movement_params: MovementParams) -> Vector2:
+        movement_params: MovementParameters) -> Vector2:
     var is_rising_from_jump := velocity.y < 0 and is_pressing_jump
     
     # Make gravity stronger when falling. This creates a more satisfying jump.
@@ -394,7 +394,7 @@ static func update_velocity_in_air(
 
 static func cap_velocity(
         velocity: Vector2,
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         current_max_horizontal_speed: float) -> Vector2:
     # Cap horizontal speed at a max value.
     velocity.x = clamp(
@@ -424,7 +424,7 @@ static func cap_velocity(
 static func calculate_time_to_climb(
         distance: float,
         is_climbing_upward: bool,
-        movement_params: MovementParams) -> float:
+        movement_params: MovementParameters) -> float:
     var speed := \
             movement_params.climb_up_speed if \
             is_climbing_upward else \
@@ -439,7 +439,7 @@ static func calculate_time_to_climb(
 static func calculate_time_to_walk(
         distance: float,
         v_0: float,
-        movement_params: MovementParams) -> float:
+        movement_params: MovementParameters) -> float:
     return calculate_duration_for_displacement(
             distance,
             v_0,
@@ -448,7 +448,7 @@ static func calculate_time_to_walk(
 
 
 static func calculate_distance_to_stop_from_friction(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         velocity_x_start: float,
         gravity: float,
         friction_coefficient: float) -> float:
@@ -471,7 +471,7 @@ static func calculate_distance_to_stop_from_friction(
 
 
 static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         velocity_x_start: float,
         displacement_x_from_end: float,
         gravity: float,

@@ -22,7 +22,7 @@ func _init(
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
-        movement_params: MovementParams = null) \
+        movement_params: MovementParameters = null) \
         .(TYPE,
         IS_TIME_BASED,
         SurfaceType.get_type_from_side(start.side),
@@ -389,7 +389,7 @@ static func _calculate_velocity_end(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
-        movement_params: MovementParams) -> Vector2:
+        movement_params: MovementParameters) -> Vector2:
     var displacement := end.target_point - start.target_point
     
     if start.side == SurfaceSide.FLOOR or \
@@ -421,7 +421,7 @@ static func _calculate_velocity_end(
 # after decelerating due to friction (and with accelerating, or coasting at
 # max-speed, until starting deceleration).
 static func _calculate_stopping_distance(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         edge: IntraSurfaceEdge,
         velocity_start: Vector2,
         displacement_to_end: Vector2) -> float:
@@ -461,7 +461,7 @@ static func _calculate_stopping_distance(
 
 
 static func calculate_duration_to_move_along_surface(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         distance: float) -> float:

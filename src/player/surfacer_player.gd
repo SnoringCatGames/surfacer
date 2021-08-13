@@ -8,7 +8,7 @@ extends ScaffolderPlayer
 ## -   You should extend this with a sub-class for your specific player.[br]
 ## -   You should then attach your sub-class to a scene for your player.[br]
 ## -   You should then add a few important child scenes:[br]
-##     -   MovementParams[br]
+##     -   MovementParameters[br]
 ##     -   ScaffolderPlayerAnimator[br]
 ##     -   CollisionShape2D[br]
 ##     -   (Optional) ProximityDetector[br]
@@ -16,7 +16,7 @@ extends ScaffolderPlayer
 
 export var logs_navigator_events := false
 
-var movement_params: MovementParams
+var movement_params: MovementParameters
 # Dictionary<Surface, Surface>
 var possible_surfaces_set: Dictionary
 
@@ -138,17 +138,17 @@ func _update_editor_configuration_debounced() -> void:
         return
     
     if Engine.editor_hint:
-        # Validate MovementParams from scene configuration.
+        # Validate MovementParameters from scene configuration.
         var movement_params_matches: Array = Sc.utils.get_children_by_type(
                 self,
-                MovementParams)
+                MovementParameters)
         if movement_params_matches.size() > 1:
             _set_configuration_warning(
-                    "Must only define a single MovementParams child node.")
+                    "Must only define a single MovementParameters child node.")
             return
         elif movement_params_matches.size() < 1:
             _set_configuration_warning(
-                    "Must define a MovementParams child node.")
+                    "Must define a MovementParameters child node.")
             return
         
         # Validate Behaviors from scene configuration.
@@ -182,7 +182,7 @@ func _update_editor_configuration_debounced() -> void:
 func _initialize_child_movement_params() -> void:
     if is_instance_valid(movement_params):
         return
-    # Get MovementParams from scene configuration.
+    # Get MovementParameters from scene configuration.
     movement_params = Su.movement.player_movement_params[player_name]
     self.current_max_horizontal_speed = \
             movement_params.max_horizontal_speed_default

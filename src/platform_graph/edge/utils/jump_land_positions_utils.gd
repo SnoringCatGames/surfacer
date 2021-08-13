@@ -47,7 +47,7 @@ const MIN_LAND_DISTANCE_FROM_WALL_BOTTOM := 12.0
 # surface arrangement, see:
 # https://github.com/snoringcatgames/surfacer/tree/master/docs
 static func calculate_jump_land_positions_for_surface_pair(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         jump_surface: Surface,
         land_surface: Surface) -> Array:
     var jump_surface_left_bound := jump_surface.bounding_box.position.x
@@ -2278,7 +2278,7 @@ static func calculate_jump_land_positions_for_surface_pair(
 
 
 static func calculate_land_positions_on_surface(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         land_surface: Surface,
         origin_position: PositionAlongSurface,
         velocity_start: Vector2) -> Array:
@@ -2539,7 +2539,7 @@ static func calculate_land_positions_on_surface(
 
 
 static func get_velocity_start(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         origin_surface: Surface,
         is_jumping: bool,
         is_moving_leftward := false,
@@ -2573,7 +2573,7 @@ static func get_velocity_start(
 
 
 static func get_horizontal_velocity_start(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         origin_surface: Surface,
         is_moving_leftward := false,
         prefer_zero_horizontal_speed := false) -> float:
@@ -2671,7 +2671,7 @@ static func _create_surface_interior_position(
 # other previous jump/land positions, and records it in the given results
 # collection if they are.
 static func _record_if_distinct(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         current_jump_position: PositionAlongSurface,
         current_land_position: PositionAlongSurface,
         velocity_start: Vector2,
@@ -2757,7 +2757,7 @@ static func _record_if_distinct(
 #   calculating.
 # - Returns INF if we cannot reach the land position from the start position.
 static func _calculate_horizontal_movement_distance(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         jump_basis: Vector2,
         land_basis: Vector2,
         velocity_start: Vector2,
@@ -2818,7 +2818,7 @@ static func _calculate_horizontal_movement_distance(
 #     applied (elsewhere) whenever we detect movement is moving around an end
 #     of a wall.
 static func _calculate_vertical_movement_displacement(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         jump_basis: Vector2,
         land_basis: Vector2,
         velocity_start: Vector2,
@@ -2885,7 +2885,7 @@ static func _calculate_vertical_movement_displacement(
 # -   Returns null if there is not enough length along either surface to
 #     account for the needed vertical offset for the movement.
 static func _calculate_jump_land_points_for_walls_facing_each_other(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         all_jump_land_positions: Array,
         inserts_at_front: bool,
         jump_basis_point: Vector2,
@@ -2961,7 +2961,7 @@ static func _calculate_jump_land_points_for_walls_facing_each_other(
 
 
 static func _create_jump_land_positions(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         jump_position: PositionAlongSurface,
         land_position: PositionAlongSurface,
         velocity_start: Vector2,
@@ -3004,7 +3004,7 @@ static func _create_jump_land_positions(
 
 # Returns false if there is not enough room for the player on the surface.
 static func ensure_position_is_not_too_close_to_concave_neighbor(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         position: PositionAlongSurface) -> bool:
     var surface := position.surface
     
@@ -3121,7 +3121,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
 # Ensure a min distance up from wall bottom ends to prevent the player from
 # falling slightly short and missing the bottom corner of the land surface.
 static func _possibly_offset_wall_bottom_land_position(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         land_position: PositionAlongSurface) -> bool:
     if is_land_position_close_to_wall_bottom(land_position):
         var bottom_bound := \

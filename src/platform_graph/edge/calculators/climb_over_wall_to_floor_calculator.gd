@@ -117,7 +117,7 @@ func calculate_edge(
 
 
 static func _calculate_trajectory(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface) -> EdgeTrajectory:
     var is_left_wall := start.surface.side == SurfaceSide.LEFT_WALL

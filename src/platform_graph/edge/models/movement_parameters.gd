@@ -1,5 +1,5 @@
 tool
-class_name MovementParams, \
+class_name MovementParameters, \
 "res://addons/surfacer/assets/images/editor_icons/movement_params.png"
 extends Node2D
 ## -   This defines how your player will move.[br]
@@ -201,7 +201,7 @@ var includes_continuous_trajectory_velocities := true \
 var includes_discrete_trajectory_state := true \
         setget _set_includes_discrete_trajectory_state
 ## -   If false, then any trajectory state that would have otherwise been stored
-##     (according to other MovementParams flags), will not be stored in either
+##     (according to other MovementParameters flags), will not be stored in either
 ##     the runtime PlatformGraph or in the build-time platform-graph save
 ##     files.[br]
 ## -   Omitting this trajectory state from a save file can significantly reduce
@@ -564,10 +564,10 @@ func _update_parameters_debounced() -> void:
 
 
 func _validate_parameters() -> void:
-    if name != "MovementParams" and \
+    if name != "MovementParameters" and \
             is_inside_tree():
         _set_configuration_warning(
-                ("The MovementParams node must be named 'MovementParams'. " + 
+                ("The MovementParameters node must be named 'MovementParameters'. " + 
                 "This is important for how it is parsed from the .tscn file. " +
                 "name=%s") % name)
     elif (action_handlers_override.find(

@@ -141,7 +141,7 @@ static func calculate_vertical_step(
 # on the upward side of the trajectory. In that case, we need to consider the
 # minimum time for the upward and downward motion of the jump.
 static func calculate_time_to_jump_to_waypoint(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         displacement: Vector2,
         velocity_start: Vector2,
         can_hold_jump_button_at_start: bool,
@@ -373,7 +373,7 @@ static func calculate_time_to_jump_to_waypoint(
 
 # Given the total duration, calculate the time to release the jump button.
 static func calculate_time_to_release_jump_button(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         duration: float,
         displacement_y: float,
         velocity_start_y: float) -> float:
@@ -426,7 +426,7 @@ static func calculate_time_to_release_jump_button(
 # Calculates the time at which the movement would travel through the given
 # position with the given vertical_step.
 static func calculate_time_for_passing_through_waypoint(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         waypoint: Waypoint,
         min_end_time: float,
         position_start_y: float,
@@ -536,7 +536,7 @@ static func calculate_time_for_passing_through_waypoint(
 
 
 static func calculate_vertical_state_for_time_from_step(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         step: VerticalEdgeStep,
         time: float) -> Array:
     return calculate_vertical_state_for_time(
@@ -551,7 +551,7 @@ static func calculate_vertical_state_for_time_from_step(
 # given vertical movement state and the given time. These are then returned in
 # an Array: [0] is position and [1] is velocity.
 static func calculate_vertical_state_for_time(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         time: float,
         position_step_start_y: float,
         velocity_step_start_y: float,
@@ -594,7 +594,7 @@ static func calculate_vertical_state_for_time(
 # Calculates the vertical displacement with the given duration if using
 # slow-rise gravity as long as possible.
 static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gravity(
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         duration: float,
         velocity_y_start: float) -> float:
     # From a basic equation of motion:
@@ -647,7 +647,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
 # 
 # Returns a positive value.
 static func calculate_max_upward_distance(
-        movement_params: MovementParams) -> float:
+        movement_params: MovementParameters) -> float:
     # TODO: Add support for double jumps, dash, etc.
     
     # From a basic equation of motion:
@@ -665,7 +665,7 @@ static func calculate_max_upward_distance(
 # 
 # Returns a positive value.
 static func calculate_min_upward_distance(
-        movement_params: MovementParams) -> float:
+        movement_params: MovementParameters) -> float:
     # From a basic equation of motion:
     #     v^2 = v_0^2 + 2*a*(s - s_0)
     #     s_0 = 0

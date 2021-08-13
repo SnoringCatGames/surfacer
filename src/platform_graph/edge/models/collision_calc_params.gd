@@ -4,7 +4,7 @@ extends Reference
 
 
 var debug_params: Dictionary
-var movement_params: MovementParams
+var movement_params: MovementParameters
 var surface_parser: SurfaceParser
 var crash_test_dummy: KinematicBody2D
 var thread_id: String = Sc.profiler.DEFAULT_THREAD_ID
@@ -12,7 +12,7 @@ var thread_id: String = Sc.profiler.DEFAULT_THREAD_ID
 
 func _init(
         debug_params: Dictionary,
-        movement_params: MovementParams,
+        movement_params: MovementParameters,
         surface_parser: SurfaceParser,
         crash_test_dummy: KinematicBody2D) -> void:
     self.debug_params = debug_params

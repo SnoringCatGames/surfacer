@@ -5,7 +5,7 @@ extends Reference
 
 var collision_params: CollisionCalcParams
 
-var movement_params: MovementParams
+var movement_params: MovementParameters
 
 # A margin to extend around the SurfacerPlayer's Collider. This helps to compensate for
 # the imprecision of these calculations.
