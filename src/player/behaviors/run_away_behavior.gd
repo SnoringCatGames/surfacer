@@ -140,12 +140,13 @@ func _move() -> bool:
                 target_to_run_from.position + direction * run_distance
         
         # Prevent straying too far the start position.
-        if max_distance_from_start_position >= 0.0 and \
-                start_position.distance_squared_to(naive_target) > \
-                        max_distance_squared_from_start_position:
+        if start_position_for_max_distance_checks.distance_squared_to(
+                naive_target) > \
+                max_distance_squared_from_start_position:
             naive_target = \
-                    start_position + \
-                    start_position.direction_to(naive_target) * \
+                    start_position_for_max_distance_checks + \
+                    start_position_for_max_distance_checks.direction_to(
+                            naive_target) * \
                     max_distance_from_start_position
             var target_distance_squared := \
                     target_to_run_from.position.distance_squared_to(
@@ -173,8 +174,7 @@ func _move() -> bool:
         
         # Prevent straying too far the start position.
         var is_destination_too_far_from_start_position := \
-                max_distance_from_start_position >= 0.0 and \
-                start_position.distance_squared_to(
+                start_position_for_max_distance_checks.distance_squared_to(
                         possible_destination.target_point) > \
                 max_distance_squared_from_start_position
         
@@ -229,8 +229,7 @@ func _update_parameters() -> void:
     if _configuration_warning != "":
         return
     
-    if run_distance > max_distance_from_start_position and \
-            max_distance_from_start_position >= 0.0:
+    if run_distance > max_distance_from_start_position:
         _set_configuration_warning(
                 "run_distance must be less than " +
                 "max_distance_from_start_position.")

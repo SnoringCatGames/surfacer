@@ -3,6 +3,10 @@ class_name Behavior
 extends Node2D
 
 
+signal activated
+signal deactivated
+
+
 ## -   Whether this should be the default initial behavior for the player.[br]
 ## -   At most one behavior should be marked `is_active_at_start = true`.[br]
 export var is_active_at_start := false \
@@ -22,12 +26,22 @@ export var can_leave_start_surface := true \
 export var only_navigates_reversible_paths := true \
         setget _set_only_navigates_reversible_paths
 
-# FIXME: -----------------------
-## -   The maximum distance from the starting position, which the player will
-##     be limited to when running away.
+## -   The maximum distance from the position when this behavior started, which
+##     the player will be limited to when running away.
 ## -   If negative, then no limit will be applied.
-export var max_distance_from_start_position := -1.0 \
-        setget _set_max_distance_from_start_position
+export var max_distance_from_behavior_start_position := -1.0 \
+        setget _set_max_distance_from_behavior_start_position
+
+## -   The maximum distance from the original player starting position, which
+##     the player will be limited to when running away.
+## -   If negative, then no limit will be applied.
+export var max_distance_from_player_start_position := -1.0 \
+        setget _set_max_distance_from_player_start_position
+
+# This will be automatically set to match either
+# max_distance_from_behavior_start_position or
+# max_distance_from_player_start_position.
+var max_distance_from_start_position := INF
 
 # FIXME: -----------------------
 ## -   If true, the run-away will start with the player jumping away from the
@@ -82,8 +96,10 @@ var player: ScaffolderPlayer
 var start_position: Vector2
 var start_surface: Surface
 var start_position_along_surface: PositionAlongSurface
+var start_position_for_max_distance_checks: Vector2
 var next_behavior: Behavior
 var is_active := false setget _set_is_active
+var _reached_max_distance := false
 
 var _mid_movement_pause_timeout_id := -1
 var _post_movement_pause_timeout_id := -1
@@ -212,6 +228,15 @@ func _on_finished() -> void:
     player._on_behavior_finished(self)
 
 
+func _on_error(message: String) -> void:
+    Sc.logger.error(message, false)
+    player._on_behavior_error(self)
+
+
+func _on_reached_max_distance() -> void:
+    pass
+
+
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
     if is_active and \
             includes_mid_movement_pause:
@@ -244,18 +269,26 @@ func _attempt_move() -> void:
                     IntendedPositionType.CLOSEST_SURFACE_POSITION)
     start_position = start_position_along_surface.target_point
     start_surface = start_position_along_surface.surface
+    start_position_for_max_distance_checks = \
+            player.start_position if \
+            max_distance_from_player_start_position >= 0.0 else \
+            start_position
+    
+    _reached_max_distance = false
     
     var is_move_successful := _move()
     if !is_move_successful:
-        Sc.logger.error(
-            ("Behavior._move() failed: " +
-            "behavior=%s, player=%s, position=%s") % [
-                behavior_name,
-                player.player_name,
-                Sc.utils.get_vector_string(player.position),
-            ],
-            false)
-        player._on_behavior_error(self)
+        if _reached_max_distance:
+            player.navigator.stop()
+            _on_reached_max_distance()
+        else:
+            _on_error(
+                    ("Behavior._move() failed: " +
+                    "behavior=%s, player=%s, position=%s") % [
+                        behavior_name,
+                        player.player_name,
+                        Sc.utils.get_vector_string(player.position),
+                    ])
 
 
 func _move() -> bool:
@@ -409,10 +442,12 @@ func _set_is_active(value: bool) -> void:
             player.behavior = self
             _on_active()
             _check_ready_to_move()
+            emit_signal("activated")
         else:
             _is_ready_to_move = false
             _clear_timeouts()
             _on_inactive()
+            emit_signal("deactivated")
 
 
 func _set_is_active_at_start(value: bool) -> void:
@@ -430,8 +465,31 @@ func _set_only_navigates_reversible_paths(value: bool) -> void:
     _update_parameters()
 
 
-func _set_max_distance_from_start_position(value: float) -> void:
-    max_distance_from_start_position = value
+func _set_max_distance_from_behavior_start_position(value: float) -> void:
+    max_distance_from_behavior_start_position = value
+    if max_distance_from_behavior_start_position > 0.0:
+        max_distance_from_player_start_position = -1.0
+        max_distance_from_start_position = \
+                max_distance_from_behavior_start_position
+    else:
+        max_distance_from_start_position = \
+                max_distance_from_player_start_position if \
+                max_distance_from_player_start_position > 0.0 else \
+                INF
+    _update_parameters()
+
+
+func _set_max_distance_from_player_start_position(value: float) -> void:
+    max_distance_from_player_start_position = value
+    if max_distance_from_player_start_position > 0.0:
+        max_distance_from_behavior_start_position = -1.0
+        max_distance_from_start_position = \
+                max_distance_from_player_start_position
+    else:
+        max_distance_from_start_position = \
+                max_distance_from_behavior_start_position if \
+                max_distance_from_behavior_start_position > 0.0 else \
+                INF
     _update_parameters()
 
 
