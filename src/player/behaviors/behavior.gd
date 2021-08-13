@@ -325,6 +325,21 @@ func _clear_timeouts() -> void:
     _post_movement_pause_timeout_id = -1
 
 
+func _log_transition() -> void:
+    if !player.logs_behavior_events:
+        return
+    
+    Sc.logger.print(
+            "Behavior change: %s, to=%s, from=%s, position=%s" % [
+                player.player_name,
+                behavior_name,
+                player.previous_behavior.behavior_name if \
+                    is_instance_valid(player.previous_behavior) else \
+                    "_",
+                player.position,
+            ])
+
+
 func _update_parameters() -> void:
     if !_is_ready:
         return
@@ -440,6 +455,7 @@ func _set_is_active(value: bool) -> void:
                 player.behavior.is_active = false
             player.previous_behavior = player.behavior
             player.behavior = self
+            _log_transition()
             _on_active()
             _check_ready_to_move()
             emit_signal("activated")
