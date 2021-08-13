@@ -77,28 +77,24 @@ func _init().(
 
 
 func _move() -> bool:
-    assert(player.surface_state.is_grabbing_a_surface)
-
     var is_moving_minward := _is_next_move_minward
     _is_next_move_minward = !_is_next_move_minward
 
-    var surface: Surface = player.surface_state.grabbed_surface
-    
     var is_surface_horizontal: bool = \
-            surface.side == SurfaceSide.FLOOR or \
-            surface.side == SurfaceSide.CEILING
+            start_surface.side == SurfaceSide.FLOOR or \
+            start_surface.side == SurfaceSide.CEILING
     
     var min_x_from_surface_bounds: float = \
-            surface.bounding_box.position.x + \
+            start_surface.bounding_box.position.x + \
             min_distance_from_surface_ends
     var max_x_from_surface_bounds: float = \
-            surface.bounding_box.end.x - \
+            start_surface.bounding_box.end.x - \
             min_distance_from_surface_ends
     var min_y_from_surface_bounds: float = \
-            surface.bounding_box.position.y + \
+            start_surface.bounding_box.position.y + \
             min_distance_from_surface_ends
     var max_y_from_surface_bounds: float = \
-            surface.bounding_box.end.y - \
+            start_surface.bounding_box.end.y - \
             min_distance_from_surface_ends
     
     var min_x: float = start_position.x
@@ -167,7 +163,7 @@ func _move() -> bool:
             is_surface_horizontal else \
             Vector2(start_position.x, sample)
     _destination.match_surface_target_and_collider(
-            surface,
+            start_surface,
             target_point,
             player.movement_params.collider_half_width_height,
             true,

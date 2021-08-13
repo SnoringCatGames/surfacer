@@ -30,10 +30,8 @@ func _init().(
 #    ._on_active()
 
 
-func _on_ready_to_move() -> void:
-    ._on_ready_to_move()
-    assert(is_instance_valid(follow_target))
-    _move()
+#func _on_ready_to_move() -> void:
+#    ._on_ready_to_move()
 
 
 #func _on_inactive() -> void:
@@ -70,6 +68,8 @@ func on_detached() -> void:
 
 
 func _move() -> bool:
+    assert(is_instance_valid(follow_target))
+    
     # FIXME: -------------------
     # - max_distance_from_start_position
     return false

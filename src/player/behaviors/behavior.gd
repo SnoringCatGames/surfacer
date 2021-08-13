@@ -89,6 +89,7 @@ var _mid_movement_pause_timeout_id := -1
 var _post_movement_pause_timeout_id := -1
 
 var _is_ready := false
+var _is_ready_to_move := false
 var _was_already_ready_to_move_this_frame := false
 var _configuration_warning := ""
 var _property_list_addendum := []
@@ -170,10 +171,13 @@ func _on_attached_to_first_surface() -> void:
 
 
 func _check_ready_to_move() -> void:
-    if _is_ready and \
+    _is_ready_to_move = \
+            _is_ready and \
             player._is_ready and \
             player.start_surface != null and \
-            is_active and \
+            is_active
+    
+    if _is_ready_to_move and \
             !_was_already_ready_to_move_this_frame:
         _was_already_ready_to_move_this_frame = true
         
@@ -227,6 +231,20 @@ func trigger(shows_exclamation_mark: bool) -> void:
 
 
 func _attempt_move() -> void:
+    assert(_is_ready_to_move,
+            "Behavior._attempt_move must not be called before the player " +
+            "and behavior are both ready.")
+    
+    # Update the start position and surface for this latest move.
+    start_position_along_surface = \
+            player.surface_state.last_position_along_surface if \
+            player.surface_state.last_position_along_surface \
+                    .surface != null else \
+            player.get_intended_position(
+                    IntendedPositionType.CLOSEST_SURFACE_POSITION)
+    start_position = start_position_along_surface.target_point
+    start_surface = start_position_along_surface.surface
+    
     var is_move_successful := _move()
     if !is_move_successful:
         Sc.logger.error(
@@ -260,12 +278,10 @@ func _pause_post_movement() -> void:
 
 
 func _on_mid_movement_pause_finished() -> void:
-    assert(is_active)
     _attempt_move()
 
 
 func _on_post_movement_pause_finished() -> void:
-    assert(is_active)
     _on_finished()
 
 
@@ -274,12 +290,6 @@ func _clear_timeouts() -> void:
     _mid_movement_pause_timeout_id = -1
     Sc.time.clear_timeout(_post_movement_pause_timeout_id)
     _post_movement_pause_timeout_id = -1
-
-
-# NOTE: _get_property_list **appends** to the default list of properties.
-#       It does not replace.
-func _get_property_list() -> Array:
-    return _property_list_addendum
 
 
 func _update_parameters() -> void:
@@ -347,6 +357,12 @@ func _get_configuration_warning() -> String:
     return _configuration_warning
 
 
+# NOTE: _get_property_list **appends** to the default list of properties.
+#       It does not replace.
+func _get_property_list() -> Array:
+    return _property_list_addendum
+
+
 func get_is_paused() -> bool:
     return _mid_movement_pause_timeout_id > 0 or \
             _post_movement_pause_timeout_id > 0
@@ -391,17 +407,10 @@ func _set_is_active(value: bool) -> void:
                 player.behavior.is_active = false
             player.previous_behavior = player.behavior
             player.behavior = self
-            start_position = player.position
-            start_position_along_surface = \
-                    player.surface_state.last_position_along_surface if \
-                    player.surface_state.last_position_along_surface \
-                            .surface != null else \
-                    player.get_intended_position(
-                            IntendedPositionType.CLOSEST_SURFACE_POSITION)
-            start_surface = start_position_along_surface.surface
             _on_active()
             _check_ready_to_move()
         else:
+            _is_ready_to_move = false
             _clear_timeouts()
             _on_inactive()
 

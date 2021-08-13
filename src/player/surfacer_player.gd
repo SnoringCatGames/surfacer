@@ -446,11 +446,31 @@ func _on_surfacer_player_navigation_ended(did_navigation_finish: bool) -> void:
 # "Finished" means that the behavior ended itself, so there shouldn't be
 # another behavior being triggered somewhere.
 func _on_behavior_finished(behavior: Behavior) -> void:
-    behavior.next_behavior.trigger(false)
+    if behavior != behavior.next_behavior:
+        behavior.next_behavior.trigger(false)
+    else:
+        Sc.logger.error(
+            ("Behavior finished, but next behavior is the same: " +
+            "behavior=%s, player=%s, position=%s") % [
+                behavior.behavior_name,
+                player_name,
+                Sc.utils.get_vector_string(position),
+            ],
+            false)
 
 
 func _on_behavior_error(behavior: Behavior) -> void:
-    behavior.next_behavior.trigger(false)
+    if behavior != behavior.next_behavior:
+        behavior.next_behavior.trigger(false)
+    else:
+        Sc.logger.error(
+            ("Behavior errored, but next behavior is the same: " +
+            "behavior=%s, player=%s, position=%s") % [
+                behavior.behavior_name,
+                player_name,
+                Sc.utils.get_vector_string(position),
+            ],
+            false)
 
 
 func start_dash(horizontal_acceleration_sign: int) -> void:

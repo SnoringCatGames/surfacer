@@ -44,10 +44,8 @@ func _init().(
 #    ._on_active()
 
 
-func _on_ready_to_move() -> void:
-    ._on_ready_to_move()
-    assert(is_instance_valid(collision_target))
-    _move()
+#func _on_ready_to_move() -> void:
+#    ._on_ready_to_move()
 
 
 #func _on_inactive() -> void:
@@ -71,6 +69,8 @@ func on_collided() -> void:
 
 
 func _move() -> bool:
+    assert(is_instance_valid(collision_target))
+    
     var max_distance_squared_from_start_position := \
             max_distance_from_start_position * max_distance_from_start_position
     
@@ -90,16 +90,16 @@ func _move() -> bool:
     
     var original_destination := destination
     var original_distance := \
-            player.position.distance_to(original_destination.target_point)
+            start_position.distance_to(original_destination.target_point)
     var direction := \
-            (player.position - original_destination.target_point) / \
+            (start_position - original_destination.target_point) / \
             original_distance
     
     # If the original destination is too far from the start position, then try
     # moving the player slightly less far from their current position.
     for ratio in [0.5, 0.25]:
         var target: Vector2 = \
-                player.position + \
+                start_position + \
                 direction * ratio * original_distance
         destination = SurfaceParser.find_closest_position_on_a_surface(
                 target, self)
