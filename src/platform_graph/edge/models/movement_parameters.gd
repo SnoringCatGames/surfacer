@@ -335,6 +335,9 @@ const _LOGS_GROUP = {
     first_property_name = "logs_inspector_events",
 }
 
+# TODO: It'd be nice to remove this from here, and move it to SurfacerPlayer,
+#       but it's used within the PlatformGraphInspector, which deals with a
+#       class of player rather than a player instance.
 var logs_inspector_events := false \
         setget _set_logs_inspector_events
 

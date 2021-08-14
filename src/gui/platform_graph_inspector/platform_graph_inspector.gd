@@ -453,7 +453,7 @@ func _on_find_and_expand_complete(
         player_name: String,
         search_type: int,
         metadata: Dictionary) -> void:
-    _print("Inspector search complete: player_name=%s, search_type=%s", [
+    _log("Inspector search complete: player_name=%s, search_type=%s" % [
         player_name,
         InspectorSearchType.get_string(search_type),
     ])
@@ -551,14 +551,6 @@ static func _find_closest_jump_land_positions(
 
 # Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
-func _print(
-        message_template: String,
-        message_args = null) -> void:
-    if Sc.metadata.is_logging_low_level_player_framework_events and \
-            is_instance_valid(Sc.players.get_human_player()) and \
-            Sc.players.get_human_player().movement_params \
-                    .logs_inspector_events:
-        if message_args != null:
-            Sc.logger.print(message_template % message_args)
-        else:
-            Sc.logger.print(message_template)
+func _log(message: String) -> void:
+    if Sc.players.get_human_player().movement_params.logs_inspector_events:
+        Sc.logger.print(message)

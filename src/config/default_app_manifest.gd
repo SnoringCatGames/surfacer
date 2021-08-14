@@ -35,6 +35,8 @@ func _derive_overrides_according_to_debug_or_playtest(
             metadata.opens_directly_to_level_id != "") and is_debug
     metadata.are_button_controls_enabled_by_default = \
             metadata.are_button_controls_enabled_by_default or is_debug
+    metadata.logs_player_events = \
+            metadata.logs_player_events and is_debug
     
     manifest.gui_manifest.hud_manifest.is_inspector_enabled_default = \
             manifest.gui_manifest.hud_manifest.is_inspector_enabled_default or \
@@ -620,7 +622,6 @@ var _default_settings_item_manifest := {
                 CameraZoomControlRow,
                 TimeScaleControlRow,
                 MetronomeControlRow,
-                IsLoggingLowLevelPlayerFrameworkEventsControlRow,
             ],
         },
     },
