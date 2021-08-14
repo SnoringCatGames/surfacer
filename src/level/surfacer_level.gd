@@ -100,7 +100,7 @@ func _execute_intro_choreography() -> void:
 
 func _on_intro_choreography_finished() -> void:
     human_player._log(
-            "Intro choreography finished",
+            "Intro choreography finished: %8.3fs" % Sc.time.get_play_time(),
             PlayerLogType.CUSTOM)
     if is_instance_valid(intro_choreographer):
         intro_choreographer.queue_free()

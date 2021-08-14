@@ -330,7 +330,8 @@ func _log_transition() -> void:
         return
     
     player._log(
-            "Behavior change: %s, to=%s, from=%s, position=%s" % [
+            "Behavior change:     %8.3fs; %s; to=%s; from=%s; pos=%s" % [
+                Sc.time.get_play_time(),
                 player.player_name,
                 behavior_name,
                 player.previous_behavior.behavior_name if \
