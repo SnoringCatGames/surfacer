@@ -7,7 +7,7 @@ extends FrameworkConfig
 
 # This method is useful for defining parameters that are likely to change
 # between builds or between development and production environments.
-func _override_configs_for_current_run(manifest: Dictionary) -> void:
+func _override_configs_for_current_run() -> void:
     Sc.logger.error(
             "Abstract DefaultAppManifest._override_configs_for_current_run " +
             "is not implemented")
@@ -37,6 +37,12 @@ func _derive_overrides_according_to_debug_or_playtest(
             metadata.are_button_controls_enabled_by_default or is_debug
     metadata.logs_player_events = \
             metadata.logs_player_events and is_debug
+    metadata.logs_analytics_events = \
+            metadata.logs_analytics_events or !is_debug
+    metadata.logs_bootstrap_events = \
+            metadata.logs_bootstrap_events or !is_debug
+    metadata.logs_device_settings = \
+            metadata.logs_device_settings or !is_debug
     
     manifest.gui_manifest.hud_manifest.is_inspector_enabled_default = \
             manifest.gui_manifest.hud_manifest.is_inspector_enabled_default or \
@@ -738,16 +744,14 @@ func _ready() -> void:
             ("The Sc (Scaffolder) and Su (Surfacer) AutoLoads must be " +
             "declared first."))
     
+    _override_configs_for_app()
+    _override_configs_for_current_run()
+    
     Sc.logger.on_global_init(self, "App")
     Sc.register_framework_config(self)
 
 
-func _amend_app_manifest(manifest: Dictionary) -> void:
-    _override_configs_for_app(manifest)
-    _override_configs_for_current_run(manifest)
-
-
-func _override_configs_for_app(manifest: Dictionary) -> void:
+func _override_configs_for_app() -> void:
     pass
 
 

@@ -255,7 +255,7 @@ func skip() -> void:
     if _is_skipped:
         return
     player._log(
-            "Skipping choreography",
+            "Skipping choreography: %8.3fs" % Sc.time.get_play_time(),
             PlayerLogType.CUSTOM)
     _is_skipped = true
     _current_time_scale *= Su.skip_choreography_framerate_multiplier

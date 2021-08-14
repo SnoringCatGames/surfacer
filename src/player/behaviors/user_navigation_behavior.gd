@@ -71,7 +71,7 @@ func _handle_pointer_selections() -> void:
         return
     
     player._log(
-            "NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s" % [
+            "New pointer selection:%8s;%8.3fs;P%29s; %s" % [
                 player.player_name,
                 Sc.time.get_play_time(),
                 str(new_selection.pointer_position),
@@ -88,7 +88,7 @@ func _handle_pointer_selections() -> void:
         trigger(false)
     else:
         player._log(
-                "TARGET IS TOO FAR FROM ANY SURFACE",
+                "Target is too far from any surface",
                 PlayerLogType.ACTION,
                 true)
         Sc.audio.play_sound("nav_select_fail")
