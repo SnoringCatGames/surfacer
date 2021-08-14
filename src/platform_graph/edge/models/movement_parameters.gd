@@ -9,7 +9,7 @@ extends Node2D
 
 # --- Movement abilities ---
 
-const _MOVEMENT_ABILITIES_GROUP = {
+const _MOVEMENT_ABILITIES_GROUP := {
     group_name = "Movement abilities",
     first_property_name = "can_grab_walls",
 }
@@ -23,7 +23,7 @@ var can_double_jump := false setget _set_can_double_jump
 
 # --- Physics movement ---
 
-const _PHYSICS_MOVEMENT_GROUP = {
+const _PHYSICS_MOVEMENT_GROUP := {
     group_name = "physics_movement",
     first_property_name = "gravity_multiplier",
 }
@@ -67,7 +67,7 @@ var fall_through_floor_velocity_boost := 100.0 \
 
 # --- Dash ---
 
-const _DASH_GROUP = {
+const _DASH_GROUP := {
     group_name = "dash",
     first_property_name = "dash_speed_multiplier_multiplier",
 }
@@ -85,7 +85,7 @@ var dash_cooldown_multiplier := 1.0 \
 
 # --- Double jump ---
 
-const _DOUBLE_JUMP_GROUP = {
+const _DOUBLE_JUMP_GROUP := {
     group_name = "double_jump",
     first_property_name = "max_jump_chain",
 }
@@ -95,7 +95,7 @@ var max_jump_chain := 1 \
 
 # --- Edge weights ---
 
-const _EDGE_WEIGHTS_GROUP = {
+const _EDGE_WEIGHTS_GROUP := {
     group_name = "edge_weights",
     first_property_name = "uses_duration_instead_of_distance_for_edge_weight",
 }
@@ -123,7 +123,7 @@ var air_edge_weight_multiplier_override := -1.0 \
 
 # --- Platform graph calculations ---
 
-const _PLATFORM_GRAPH_CALCULATIONS_GROUP = {
+const _PLATFORM_GRAPH_CALCULATIONS_GROUP := {
     group_name = "platform_graph_calculations",
     first_property_name = "minimizes_velocity_change_when_jumping",
 }
@@ -330,7 +330,7 @@ var max_edges_to_remove_from_path_for_opt_to_in_air_dest := 2 \
 
 # --- Logs ---
 
-const _LOGS_GROUP = {
+const _LOGS_GROUP := {
     group_name = "logs",
     first_property_name = "logs_inspector_events",
 }
@@ -343,7 +343,7 @@ var logs_inspector_events := false \
 
 # --- Movement ability overrides ---
 
-const _MOVEMENT_ABILITY_OVERRIDES_GROUP = {
+const _MOVEMENT_ABILITY_OVERRIDES_GROUP := {
     group_name = "movement_ability_overrides",
     first_property_name = "edge_calculators_override",
     last_property_name = "action_handlers_override",
