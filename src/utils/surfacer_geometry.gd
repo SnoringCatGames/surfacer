@@ -507,4 +507,4 @@ static func get_collision_tile_map_coord(
                 !allows_errors:
             Sc.logger.error(print_message)
         else:
-            Sc.logger.print(print_message)
+            Sc.logger.warning(print_message)

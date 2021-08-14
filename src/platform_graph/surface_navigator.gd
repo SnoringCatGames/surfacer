@@ -103,7 +103,11 @@ func navigate_path(
     if path == null:
         # Destination cannot be reached from origin.
         Sc.profiler.stop("navigator_navigate_path")
-        _log("CANNOT NAVIGATE NULL PATH")
+        _log("Cannot navigate null path: %s; from=%s" % [
+                    player.player_name,
+                    Sc.utils.get_vector_string(player.position),
+                ],
+                false)
         return false
         
     else:
@@ -133,21 +137,29 @@ func navigate_path(
         var duration_navigate_to_position: float = \
                 Sc.profiler.stop("navigator_navigate_path")
         
-        var format_string_template := (
-                "STARTING PATH NAV:   %8.3fs; {" +
-                "\n\tdestination: %s," +
-                "\n\tpath: %s," +
-                "\n\ttimings: {" +
-                "\n\t\tduration_navigate_to_position: %sms" +
-                "\n\t}" +
-                "\n}")
-        var format_string_arguments := [
-            Sc.time.get_play_time(),
-            path.destination.to_string(),
-            path.to_string_with_newlines(1),
-            duration_navigate_to_position,
-        ]
-        _log(format_string_template, format_string_arguments)
+        _log("Starting path nav:   %8.3fs; %s; to=%s; from=%s; edges=%d" % [
+                    Sc.time.get_play_time(),
+                    player.player_name,
+                    Sc.utils.get_vector_string(path.destination.target_point, 0),
+                    Sc.utils.get_vector_string(path.origin.target_point, 0),
+                    path.edges.size(),
+                ],
+                false)
+        if player.logs_low_level_framework_events:
+            var format_string_template := (
+                    "{" +
+                    "\n\tdestination: %s," +
+                    "\n\tpath: %s," +
+                    "\n\ttimings: {" +
+                    "\n\t\tduration_navigate_to_position: %sms" +
+                    "\n\t}" +
+                    "\n}")
+            var format_string_arguments := [
+                path.destination.to_string(),
+                path.to_string_with_newlines(1),
+                duration_navigate_to_position,
+            ]
+            _log(format_string_template % format_string_arguments, true)
         
         _start_edge(
                 0,
@@ -229,7 +241,7 @@ func find_path(
             
             # TODO: This case shouldn't be needed; in theory, we should have
             #       been able to find a valid land trajectory above.
-            Sc.logger.print("Unable to calculate air-to-surface edge")
+            Sc.logger.warning("Unable to calculate air-to-surface edge")
             
             var elapsed_edge_time := playback.get_elapsed_time_scaled()
             if elapsed_edge_time < edge.duration:
@@ -239,7 +251,7 @@ func find_path(
                                 elapsed_edge_time,
                                 player)
             else:
-                Sc.logger.print(
+                Sc.logger.warning(
                         "Unable to re-use current edge as air-to-surface " +
                         "edge: edge playback time exceeds edge duration")
         
@@ -269,7 +281,7 @@ func find_path(
             # We were able to calculate a valid surface-to-air edge.
             suffix_edge = surface_to_air_edge
         else:
-            Sc.logger.print("Unable to calculate surface-to-air edge")
+            Sc.logger.warning("Unable to calculate surface-to-air edge")
             Sc.profiler.stop("navigator_find_path")
             return null
     
@@ -354,12 +366,19 @@ func _set_reached_destination() -> void:
             _:
                 Sc.logger.error("Invalid SurfaceSide")
     
+    _log("Reached end of path: %8.3fs; %s; to=%s; from=%s; edges=%d" % [
+                Sc.time.get_play_time(),
+                player.player_name,
+                Sc.utils.get_vector_string(path.destination.target_point, 0),
+                Sc.utils.get_vector_string(path.origin.target_point, 0),
+                path.edges.size(),
+            ],
+            false)
+    
     _reset()
     navigation_state.has_reached_destination = true
     navigation_state.just_reached_destination = true
     navigation_state.just_ended = true
-    
-    _log("REACHED END OF PATH: %8.3fs", Sc.time.get_play_time())
     
     emit_signal("destination_reached")
     emit_signal("navigation_ended", true)
@@ -409,14 +428,16 @@ func _start_edge(
     var duration_start_edge: float = \
             Sc.profiler.stop("navigator_start_edge")
     
-    var format_string_template := \
-            "STARTING EDGE NAV:   %8.3fs; %s; calc duration=%sms"
-    var format_string_arguments := [
-            Sc.time.get_play_time(),
-            edge.to_string_with_newlines(0),
-            str(duration_start_edge),
-        ]
-    _log(format_string_template, format_string_arguments)
+    if player.logs_low_level_framework_events:
+        var format_string_template := \
+                "Starting edge nav:   %8.3fs; %s; %s; calc duration=%sms"
+        var format_string_arguments := [
+                Sc.time.get_play_time(),
+                player.player_name,
+                edge.to_string_with_newlines(0),
+                str(duration_start_edge),
+            ]
+        _log(format_string_template % format_string_arguments, true)
     
     # Some instructions could be immediately skipped, depending on runtime
     # state, so this gives us a change to move straight to the next edge.
@@ -451,7 +472,7 @@ func update(
 #            !just_started_navigating:
 #        # FIXME: ------------
 #        # - This work-around shouldn't be needed. What's the underlying problem?
-#        Sc.logger.print(
+#        Sc.logger.warning(
 #                "SurfaceNavigator.is_currently_navigating and " +
 #                "!PlayerSurfaceState.did_move_last_frame")
 #        var destination := path.destination
@@ -475,19 +496,23 @@ func update(
         
         var interruption_type_label: String
         if navigation_state.just_left_air_unexpectedly:
-            interruption_type_label = \
-                    "navigation_state.just_left_air_unexpectedly"
+            interruption_type_label = "just_left_air_unexpectedly"
         elif navigation_state.just_entered_air_unexpectedly:
-            interruption_type_label = \
-                    "navigation_state.just_entered_air_unexpectedly"
+            interruption_type_label = "just_entered_air_unexpectedly"
         elif navigation_state.just_interrupted_by_unexpected_collision:
             interruption_type_label = \
-                    "navigation_state.just_interrupted_by_unexpected_collision"
+                    "just_interrupted_by_unexpected_collision"
         else: # navigation_state.just_interrupted_by_user_action
-            interruption_type_label = \
-                    "navigation_state.just_interrupted_by_user_action"
-        _log("EDGE MVT INTERRUPTED:%8.3fs; %s",
-                [Sc.time.get_play_time(), interruption_type_label])
+            interruption_type_label = "just_interrupted_by_user_action"
+        
+        _log("Edge mvt interrupted:%8.3fs; %s; %s; to=%s; from=%s" % [
+                    Sc.time.get_play_time(),
+                    player.player_name,
+                    interruption_type_label,
+                    Sc.utils.get_vector_string(path.destination.target_point),
+                    Sc.utils.get_vector_string(path.origin.target_point),
+                ],
+                false)
         
         # FIXME: ---- Think of how to handle interruptions differently...
         
@@ -510,10 +535,12 @@ func update(
         return
         
     elif navigation_state.just_reached_end_of_edge:
-        _log("REACHED END OF EDGE: %8.3fs; %s", [
-            Sc.time.get_play_time(),
-            edge.get_name(),
-        ])
+        if player.logs_low_level_framework_events:
+            _log("Reached end of edge: %8.3fs; %s; %s" % [
+                Sc.time.get_play_time(),
+                player.player_name,
+                edge.get_name(),
+            ], true)
     else:
         # Continuing along an edge.
         if surface_state.is_grabbing_a_surface:
@@ -544,12 +571,16 @@ func update(
             if backtracking_edge == null:
                 _set_reached_destination()
             else:
-                var format_string_template := "INSRT CTR-PROTR EDGE:%8.3fs; %s"
-                var format_string_arguments := [
-                        Sc.time.get_play_time(),
-                        backtracking_edge.to_string_with_newlines(0),
-                    ]
-                _log(format_string_template, format_string_arguments)
+                if player.logs_low_level_framework_events:
+                    var format_string_template := \
+                            "Insrt ctr-potr edge:%8.3fs; %s; %s"
+                    var format_string_arguments := [
+                            Sc.time.get_play_time(),
+                            player.player_name,
+                            backtracking_edge.to_string_with_newlines(0),
+                        ]
+                    _log(format_string_template % format_string_arguments,
+                            true)
                 
                 path.edges.push_back(backtracking_edge)
                 
@@ -991,7 +1022,7 @@ func _ensure_edges_have_trajectory_state(
             # TODO: I may be able to remove this, and may have only hit this
             #       bug because I was using stale platform graph files after
             #       updating movement_params?
-            Sc.logger.print(
+            Sc.logger.warning(
                     "Unable to calculate trajectory for edge: %s" % 
                     edge.to_string())
             var placeholder_trajectory_hack := EdgeTrajectoryUtils \

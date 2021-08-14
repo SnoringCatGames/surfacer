@@ -257,7 +257,8 @@ func _set_progress(
     $VBoxContainer/Labels/Label3.text = label_3
     $VBoxContainer/Labels/Label4.text = label_4
     
-    Sc.logger.print("Precompute progress: %s | %s | %s | %s" % \
+    Sc.logger.print(
+            "Precompute progress: %s | %s | %s | %s" % \
             [label_1, label_2, label_3, label_4])
     
     _update_metrics()

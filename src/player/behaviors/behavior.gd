@@ -329,7 +329,7 @@ func _log_transition() -> void:
     if !player.logs_behavior_events:
         return
     
-    Sc.logger.print(
+    player._log(
             "Behavior change: %s, to=%s, from=%s, position=%s" % [
                 player.player_name,
                 behavior_name,
@@ -337,7 +337,8 @@ func _log_transition() -> void:
                     is_instance_valid(player.previous_behavior) else \
                     "_",
                 player.position,
-            ])
+            ],
+            PlayerLogType.BEHAVIOR)
 
 
 func _update_parameters() -> void:

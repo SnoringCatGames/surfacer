@@ -254,7 +254,9 @@ func on_interaction() -> void:
 func skip() -> void:
     if _is_skipped:
         return
-    Sc.logger.print("Skipping choreography")
+    player._log(
+            "Skipping choreography",
+            PlayerLogType.CUSTOM)
     _is_skipped = true
     _current_time_scale *= Su.skip_choreography_framerate_multiplier
     _tween.stop_all()
