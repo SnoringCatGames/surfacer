@@ -39,7 +39,7 @@ signal navigation_ended(did_reach_destination)
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
 
-var player
+var player: ScaffolderPlayer
 var graph: PlatformGraph
 var surface_state: PlayerSurfaceState
 var movement_params: MovementParameters

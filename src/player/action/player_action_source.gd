@@ -14,7 +14,7 @@ const input_key_to_action_name := {
 }
 
 var source_type_prefix: String
-var player
+var player: ScaffolderPlayer
 var is_additive: bool
 
 
