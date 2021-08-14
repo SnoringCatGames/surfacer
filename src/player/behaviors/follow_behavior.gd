@@ -58,8 +58,11 @@ func _on_inactive() -> void:
     is_far_enough_to_detach = false
 
 
-#func _on_navigation_ended(did_navigation_finish: bool) -> void:
-#    ._on_navigation_ended(did_navigation_finish)
+func _on_navigation_ended(did_navigation_finish: bool) -> void:
+    # NOTE: Overrides the parent version, so we don't have mid-movement pauses
+    #       with re-navigation.
+    #._on_navigation_ended(did_navigation_finish)
+    pass
 
 
 func _on_physics_process(delta: float) -> void:
@@ -75,7 +78,7 @@ func _on_physics_process(delta: float) -> void:
             close_enough_to_stop_moving_distance * \
             close_enough_to_stop_moving_distance
     is_close_enough_to_stop_moving = \
-            distance_squared_to_target > \
+            distance_squared_to_target < \
             close_enough_to_stop_moving_distance_squared
     
     var far_enough_to_start_moving_distance_squared := \
@@ -130,6 +133,14 @@ func _on_physics_process(delta: float) -> void:
 
 
 func on_detached() -> void:
+    player._log("Detached:            %8.3fs; %s; from=%s; pos=%s" % [
+                Sc.time.get_play_time(),
+                player.player_name,
+                follow_target.player_name,
+                player.position,
+            ],
+            PlayerLogType.BEHAVIOR)
+    
     if shows_exclamation_mark_on_detached:
         player.show_exclamation_mark()
     
@@ -167,8 +178,14 @@ func _attempt_navigation() -> bool:
     else:
         return false
     
-    var destination: PositionAlongSurface = \
+    var target_position: PositionAlongSurface = \
             follow_target.get_intended_position(position_type)
+    var destination := PositionAlongSurfaceFactory \
+            .create_position_offset_from_target_point(
+                    target_position.target_point,
+                    target_position.surface,
+                    player.movement_params.collider_half_width_height,
+                    true)
     
     if destination.target_point.distance_squared_to(
             start_position_for_max_distance_checks) > \

@@ -188,12 +188,10 @@ static func _log_new_press_or_release(
         player.velocity,
     ]
     if just_pressed:
-        player._log(
-                "START %5s:%8s;%8.3fs;P%29s;V%29s" % message_args,
+        player._log("START %5s:%8s;%8.3fs;P%29s;V%29s" % message_args,
                 PlayerLogType.ACTION,
                 true)
     if just_released:
-        player._log(
-                "STOP  %5s:%8s;%8.3fs;P%29s;V%29s" % message_args,
+        player._log("STOP  %5s:%8s;%8.3fs;P%29s;V%29s" % message_args,
                 PlayerLogType.ACTION,
                 true)

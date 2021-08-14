@@ -102,7 +102,7 @@ func _on_intro_choreography_finished() -> void:
     if is_instance_valid(human_player):
         human_player._log(
                 "Intro choreography finished: %8.3fs" % Sc.time.get_play_time(),
-                PlayerLogType.CUSTOM)
+                PlayerLogType.DEFAULT)
     if is_instance_valid(intro_choreographer):
         intro_choreographer.queue_free()
         intro_choreographer = null
