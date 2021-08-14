@@ -61,6 +61,14 @@ func _init().(
 
 
 func on_collided() -> void:
+    player._log("Collided:            %8.3fs; %s; with=%s; pos=%s" % [
+                Sc.time.get_play_time(),
+                player.player_name,
+                collision_target.player_name,
+                player.position,
+            ],
+            PlayerLogType.BEHAVIOR)
+    
     _pause_post_movement()
     
     if player.navigation_state.is_currently_navigating and \

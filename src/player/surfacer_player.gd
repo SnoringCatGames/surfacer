@@ -253,8 +253,7 @@ func _on_physics_process(delta: float) -> void:
         behavior._on_physics_process(delta)
     
     if surface_state.just_left_air:
-        _log(
-                "GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s" % [
+        _log("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s" % [
                     player_name,
                     Sc.time.get_play_time(),
                     surface_state.center_position,
@@ -264,8 +263,7 @@ func _on_physics_process(delta: float) -> void:
                 PlayerLogType.SURFACE,
                 true)
     elif surface_state.just_entered_air:
-        _log(
-                "LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s" % [
+        _log("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s" % [
                     player_name,
                     Sc.time.get_play_time(),
                     surface_state.center_position,
@@ -282,8 +280,7 @@ func _on_physics_process(delta: float) -> void:
             side_str = "CEILING"
         else:
             side_str = "WALL"
-        _log(
-                "TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s" % [
+        _log("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s" % [
                     player_name,
                     Sc.time.get_play_time(),
                     surface_state.center_position,
@@ -610,7 +607,7 @@ func _parse_behavior_children() -> void:
         add_behavior(rest_behavior)
         default_behavior = rest_behavior
     
-    default_behavior.is_active = true
+    default_behavior.trigger(false)
 
 
 func add_behavior(behavior: Behavior) -> void:

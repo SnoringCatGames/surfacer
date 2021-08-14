@@ -137,7 +137,7 @@ func navigate_path(
         var duration_navigate_to_position: float = \
                 Sc.profiler.stop("navigator_navigate_path")
         
-        _log("Starting path nav:   %8.3fs; %s; to=%s; from=%s; edges=%d" % [
+        _log("Path start:          %8.3fs; %s; to=%s; from=%s; edges=%d" % [
                     Sc.time.get_play_time(),
                     player.player_name,
                     Sc.utils.get_vector_string(path.destination.target_point, 0),
@@ -366,7 +366,7 @@ func _set_reached_destination() -> void:
             _:
                 Sc.logger.error("Invalid SurfaceSide")
     
-    _log("Reached end of path: %8.3fs; %s; to=%s; from=%s; edges=%d" % [
+    _log("Path end:            %8.3fs; %s; to=%s; from=%s; edges=%d" % [
                 Sc.time.get_play_time(),
                 player.player_name,
                 Sc.utils.get_vector_string(path.destination.target_point, 0),
@@ -505,7 +505,7 @@ func update(
         else: # navigation_state.just_interrupted_by_user_action
             interruption_type_label = "just_interrupted_by_user_action"
         
-        _log("Edge mvt interrupted:%8.3fs; %s; %s; to=%s; from=%s" % [
+        _log("Edge interrupted:    %8.3fs; %s; %s; to=%s; from=%s" % [
                     Sc.time.get_play_time(),
                     player.player_name,
                     interruption_type_label,
@@ -536,7 +536,7 @@ func update(
         
     elif navigation_state.just_reached_end_of_edge:
         if player.logs_low_level_framework_events:
-            _log("Reached end of edge: %8.3fs; %s; %s" % [
+            _log("Edge end:            %8.3fs; %s; %s" % [
                 Sc.time.get_play_time(),
                 player.player_name,
                 edge.get_name(),
