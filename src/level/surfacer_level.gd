@@ -99,7 +99,9 @@ func _execute_intro_choreography() -> void:
 
 
 func _on_intro_choreography_finished() -> void:
-    Sc.logger.print("Intro choreography finished")
+    human_player._log(
+            "Intro choreography finished",
+            PlayerLogType.CUSTOM)
     if is_instance_valid(intro_choreographer):
         intro_choreographer.queue_free()
         intro_choreographer = null
