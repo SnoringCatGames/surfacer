@@ -69,14 +69,14 @@ func _destroy() -> void:
 func on_item_selected() -> void:
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
-        _print("Inspector item selected: %s", to_string())
+        _log("Inspector item selected: %s" % to_string())
 
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
-        _print("Inspector item expanded: %s", to_string())
+        _log("Inspector item expanded: %s" % to_string())
 
 
 func on_item_collapsed() -> void:
@@ -84,7 +84,7 @@ func on_item_collapsed() -> void:
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress() and \
             get_has_children():
-        _print("Inspector item collapsed: %s", to_string())
+        _log("Inspector item collapsed: %s" % to_string())
 
 
 func expand() -> void:
@@ -242,12 +242,6 @@ func get_annotation_elements() -> Array:
 
 # Conditionally prints the given message, depending on the SurfacerPlayer's
 # configuration.
-func _print(
-        message_template: String,
-        message_args = null) -> void:
-    if Sc.metadata.is_logging_low_level_player_framework_events and \
-            graph.movement_params.logs_inspector_events:
-        if message_args != null:
-            Sc.logger.print(message_template % message_args)
-        else:
-            Sc.logger.print(message_template)
+func _log(message: String) -> void:
+    if graph.movement_params.logs_inspector_events:
+        Sc.logger.print(message)

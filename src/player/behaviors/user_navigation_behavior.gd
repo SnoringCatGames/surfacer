@@ -70,8 +70,8 @@ func _handle_pointer_selections() -> void:
     if !new_selection.get_has_selection():
         return
     
-    player._log_player_event(
-            "NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
+    player._log(
+            "NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s" % [
                 player.player_name,
                 Sc.time.get_play_time(),
                 str(new_selection.pointer_position),
@@ -79,6 +79,7 @@ func _handle_pointer_selections() -> void:
                 new_selection.get_is_selection_navigable() else \
                 "[No matching surface]",
             ],
+            PlayerLogType.ACTION,
             true)
     
     if new_selection.get_is_selection_navigable():
@@ -86,8 +87,10 @@ func _handle_pointer_selections() -> void:
         last_selection.copy(new_selection)
         trigger(false)
     else:
-        player._log_player_event(
-                "TARGET IS TOO FAR FROM ANY SURFACE", [], true)
+        player._log(
+                "TARGET IS TOO FAR FROM ANY SURFACE",
+                PlayerLogType.ACTION,
+                true)
         Sc.audio.play_sound("nav_select_fail")
     
     new_selection.clear()

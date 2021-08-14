@@ -29,7 +29,6 @@ var _annotator_control_item_classes := [
     TimeScaleControlRow,
     CameraZoomControlRow,
     MetronomeControlRow,
-    IsLoggingLowLevelPlayerFrameworkEventsControlRow,
 ]
 
 

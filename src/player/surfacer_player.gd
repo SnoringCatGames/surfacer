@@ -14,8 +14,6 @@ extends ScaffolderPlayer
 ##     -   (Optional) ProximityDetector[br]
 
 
-export var logs_navigator_events := false
-
 var movement_params: MovementParameters
 # Dictionary<Surface, Surface>
 var possible_surfaces_set: Dictionary
@@ -255,26 +253,26 @@ func _on_physics_process(delta: float) -> void:
         behavior._on_physics_process(delta)
     
     if surface_state.just_left_air:
-        _log_player_event(
-                "GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s",
-                [
+        _log(
+                "GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s" % [
                     player_name,
                     Sc.time.get_play_time(),
                     surface_state.center_position,
                     velocity,
                     surface_state.grabbed_surface.to_string(),
                 ],
+                PlayerLogType.SURFACE,
                 true)
     elif surface_state.just_entered_air:
-        _log_player_event(
-                "LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s",
-                [
+        _log(
+                "LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s" % [
                     player_name,
                     Sc.time.get_play_time(),
                     surface_state.center_position,
                     velocity,
                     surface_state.previous_grabbed_surface.to_string(),
                 ],
+                PlayerLogType.SURFACE,
                 true)
     elif surface_state.just_touched_a_surface:
         var side_str: String
@@ -284,15 +282,15 @@ func _on_physics_process(delta: float) -> void:
             side_str = "CEILING"
         else:
             side_str = "WALL"
-        _log_player_event(
-                "TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s",
-                [
+        _log(
+                "TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s" % [
                     player_name,
                     Sc.time.get_play_time(),
                     surface_state.center_position,
                     velocity,
                     side_str,
                 ],
+                PlayerLogType.SURFACE,
                 true)
     
     _update_navigator(delta_scaled)

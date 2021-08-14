@@ -73,7 +73,6 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
                 CameraZoomControlRow,
                 TimeScaleControlRow,
                 MetronomeControlRow,
-                IsLoggingLowLevelPlayerFrameworkEventsControlRow,
             ],
         },
     },
