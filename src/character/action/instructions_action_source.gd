@@ -10,7 +10,7 @@ func _init(
         character,
         is_additive: bool) \
         .(
-        "CP",
+        "NPC",
         character,
         is_additive) -> void:
     pass
