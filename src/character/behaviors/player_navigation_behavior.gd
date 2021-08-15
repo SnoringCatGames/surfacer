@@ -1,9 +1,9 @@
 tool
-class_name UserNavigationBehavior
+class_name PlayerNavigationBehavior
 extends Behavior
 
 
-const NAME := "user_navigation"
+const NAME := "player_navigation"
 const IS_ADDED_MANUALLY := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
@@ -57,7 +57,7 @@ func _on_physics_process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
     if _is_ready and \
             !character._is_destroyed and \
-            Sc.gui.is_user_interaction_enabled and \
+            Sc.gui.is_player_interaction_enabled and \
             character.navigation_state.is_currently_navigating and \
             cancels_navigation_on_key_press and \
             event is InputEventKey:

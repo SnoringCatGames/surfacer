@@ -460,7 +460,7 @@ func update(
         navigation_state.just_left_air_unexpectedly = false
         navigation_state.just_entered_air_unexpectedly = false
         navigation_state.just_interrupted_by_unexpected_collision = false
-        navigation_state.just_interrupted_by_user_action = false
+        navigation_state.just_interrupted_by_player_action = false
         navigation_state.just_reached_end_of_edge = false
         return
     
@@ -502,8 +502,8 @@ func update(
         elif navigation_state.just_interrupted_by_unexpected_collision:
             interruption_type_label = \
                     "just_interrupted_by_unexpected_collision"
-        else: # navigation_state.just_interrupted_by_user_action
-            interruption_type_label = "just_interrupted_by_user_action"
+        else: # navigation_state.just_interrupted_by_player_action
+            interruption_type_label = "just_interrupted_by_player_action"
         
         _log("Edge interrupted:    %8.3fs; %s; %s; to=%s; from=%s" % [
                     Sc.time.get_play_time(),

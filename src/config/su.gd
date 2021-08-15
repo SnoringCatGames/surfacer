@@ -90,7 +90,7 @@ var DEFAULT_BEHAVIOR_CLASSES := [
     RestBehavior,
     ReturnBehavior,
     RunAwayBehavior,
-    UserNavigationBehavior,
+    PlayerNavigationBehavior,
     WanderBehavior,
 ]
 

@@ -38,7 +38,7 @@ var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: SurfaceNavigator
 var prediction: CharacterPrediction
-var pointer_listener: CharacterPointerListener
+var pointer_listener: PlayerPointerListener
 
 var behavior: Behavior
 var default_behavior: Behavior
@@ -210,21 +210,21 @@ func _on_attached_to_first_surface() -> void:
 func set_is_player_character(value: bool) -> void:
     .set_is_player_character(value)
     if is_player_character:
-        _init_user_controller_action_source()
+        _init_player_controller_action_source()
         if Su.movement.uses_point_and_click_navigation:
-            var user_navigation_behavior := \
-                    UserNavigationBehavior.new()
-            user_navigation_behavior \
+            var player_navigation_behavior := \
+                    PlayerNavigationBehavior.new()
+            player_navigation_behavior \
                     .cancels_navigation_on_key_press = \
                             Su.movement.cancels_point_and_click_nav_on_key_press
-            add_behavior(user_navigation_behavior)
+            add_behavior(player_navigation_behavior)
             
-            self.pointer_listener = CharacterPointerListener.new(self)
+            self.pointer_listener = PlayerPointerListener.new(self)
             add_child(pointer_listener)
 
 
-func _init_user_controller_action_source() -> void:
-    _action_sources.push_back(UserActionSource.new(self, true))
+func _init_player_controller_action_source() -> void:
+    _action_sources.push_back(PlayerActionSource.new(self, true))
 
 
 func _init_platform_graph() -> void:

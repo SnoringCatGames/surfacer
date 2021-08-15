@@ -37,11 +37,11 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if Sc.gui.is_user_interaction_enabled and \
+    if Sc.gui.is_player_interaction_enabled and \
             event is InputEventMouseButton and \
             event.button_index == BUTTON_LEFT and \
             !event.pressed and event.control:
-        # The user is ctrl+clicking.
+        # The player is ctrl+clicking.
         
         var click_position: Vector2 = \
                 Sc.utils.get_level_touch_position(event)
@@ -77,7 +77,7 @@ func _unhandled_input(event: InputEvent) -> void:
     elif event is InputEventKey and \
             event.scancode == KEY_CONTROL and \
             !event.pressed:
-        # The user is releasing the ctrl key.
+        # The player is releasing the ctrl key.
         first_target = null
 
 
@@ -87,7 +87,7 @@ func _draw() -> void:
     current_annotation_elements.clear()
     
     if first_target != null:
-        # So far, the user has only selected the first surface in the edge
+        # So far, the player has only selected the first surface in the edge
         # pair.
         _draw_selected_origin()
     else:
