@@ -2,6 +2,6 @@ class_name CharacterType
 
 
 enum {
-    COMPUTER,
+    NPC,
     HUMAN,
 }

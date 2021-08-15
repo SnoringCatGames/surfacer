@@ -47,8 +47,8 @@ func _start() -> void:
 #    ._add_human_character()
 
 
-#func _add_computer_characters() -> void:
-#    ._add_computer_characters()
+#func _add_npcs() -> void:
+#    ._add_npcs()
 
 
 func _destroy() -> void:
@@ -114,7 +114,7 @@ func _initialize_annotators() -> void:
     Sc.annotators.on_level_ready()
     for group in [
             Sc.characters.GROUP_NAME_HUMAN_CHARACTERS,
-            Sc.characters.GROUP_NAME_COMPUTER_CHARACTERS]:
+            Sc.characters.GROUP_NAME_NPCS]:
         for character in Sc.utils.get_all_nodes_in_group(group):
             character._on_annotators_ready()
 

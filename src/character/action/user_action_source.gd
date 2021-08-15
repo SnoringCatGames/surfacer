@@ -18,7 +18,7 @@ func _init(
         character,
         is_additive: bool) \
         .(
-        "HP",
+        "PLAYER",
         character,
         is_additive) -> void:
     pass

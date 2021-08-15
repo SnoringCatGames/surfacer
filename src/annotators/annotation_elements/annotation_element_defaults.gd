@@ -341,24 +341,24 @@ var HUMAN_NAVIGATOR_PULSE_PATH_COLOR := Color.from_hsv(
         0.99,
         0.4)
 
-var COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.computer_navigation,
+var NPC_NAVIGATOR_CURRENT_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.npc_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var COMPUTER_NAVIGATOR_PREVIOUS_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.computer_navigation,
+var NPC_NAVIGATOR_PREVIOUS_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.npc_navigation,
         ScaffolderColors.ALPHA_XXFAINT)
-var COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Sc.colors.opacify(
-        Sc.colors.computer_navigation,
+var NPC_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Sc.colors.opacify(
+        Sc.colors.npc_navigation,
         ScaffolderColors.ALPHA_XXFAINT)
-var COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Sc.colors.opacify(
-        Sc.colors.computer_navigation,
+var NPC_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Sc.colors.opacify(
+        Sc.colors.npc_navigation,
         ScaffolderColors.ALPHA_SLIGHTLY_FAINT)
-var COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
-        COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
-var COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR := \
-        COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
-var COMPUTER_NAVIGATOR_PULSE_PATH_COLOR := Color.from_hsv(
-        COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR.h,
+var NPC_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
+        NPC_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
+var NPC_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR := \
+        NPC_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
+var NPC_NAVIGATOR_PULSE_PATH_COLOR := Color.from_hsv(
+        NPC_NAVIGATOR_CURRENT_PATH_COLOR.h,
         0.3,
         0.99,
         0.4)

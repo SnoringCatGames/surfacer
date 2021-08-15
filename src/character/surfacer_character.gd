@@ -89,7 +89,7 @@ func _ready() -> void:
     if Sc.annotators.is_annotator_enabled(
             AnnotatorType.PATH_PRESELECTION) and \
             (is_human_character and Su.ann_manifest.is_human_prediction_shown or \
-            !is_human_character and Su.ann_manifest.is_computer_prediction_shown):
+            !is_human_character and Su.ann_manifest.is_npc_prediction_shown):
         prediction = CharacterPrediction.new()
         prediction.set_up(self)
         _attach_prediction()

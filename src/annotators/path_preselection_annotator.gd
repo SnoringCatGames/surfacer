@@ -12,14 +12,14 @@ var HUMAN_PRESELECTION_PATH_COLOR := Sc.colors.opacify(
         Sc.colors.human_navigation,
         ScaffolderColors.ALPHA_FAINT)
 
-var COMPUTER_PRESELECTION_SURFACE_COLOR := Sc.colors.opacify(
-        Sc.colors.computer_navigation,
+var NPC_PRESELECTION_SURFACE_COLOR := Sc.colors.opacify(
+        Sc.colors.npc_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var COMPUTER_PRESELECTION_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
-        Sc.colors.computer_navigation,
+var NPC_PRESELECTION_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
+        Sc.colors.npc_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var COMPUTER_PRESELECTION_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.computer_navigation,
+var NPC_PRESELECTION_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.npc_navigation,
         ScaffolderColors.ALPHA_FAINT)
 
 var INVALID_SURFACE_COLOR := Sc.colors.opacify(
@@ -139,7 +139,7 @@ func _process(_delta: float) -> void:
                             preselection_path,
                             preselection_path.duration)
                 
-                # Update computer-character predictions.
+                # Update npc predictions.
                 for surfacer_character in Sc.utils.get_all_nodes_in_group(
                         Sc.characters.GROUP_NAME_SURFACER_CHARACTERS):
                     if !surfacer_character.is_human_character:
@@ -188,10 +188,10 @@ func _draw() -> void:
                     HUMAN_PRESELECTION_POSITION_INDICATOR_COLOR
             path_base_color = HUMAN_PRESELECTION_PATH_COLOR
         else:
-            surface_base_color = COMPUTER_PRESELECTION_SURFACE_COLOR
+            surface_base_color = NPC_PRESELECTION_SURFACE_COLOR
             position_indicator_base_color = \
-                    COMPUTER_PRESELECTION_POSITION_INDICATOR_COLOR
-            path_base_color = COMPUTER_PRESELECTION_PATH_COLOR
+                    NPC_PRESELECTION_POSITION_INDICATOR_COLOR
+            path_base_color = NPC_PRESELECTION_PATH_COLOR
     else:
         surface_base_color = INVALID_SURFACE_COLOR
         position_indicator_base_color = INVALID_POSITION_INDICATOR_COLOR
