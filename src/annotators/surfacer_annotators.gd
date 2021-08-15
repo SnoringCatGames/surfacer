@@ -26,7 +26,7 @@ const _SURFACER_DEFAULT_ENABLEMENT := {
     AnnotatorType.LEVEL: true,
     AnnotatorType.PLAYER: true,
     AnnotatorType.PLAYER_POSITION: false,
-    AnnotatorType.RECENT_MOVEMENT: true,
+    AnnotatorType.RECENT_MOVEMENT: false,
     AnnotatorType.NAVIGATOR: true,
     AnnotatorType.PATH_PRESELECTION: true,
 }
