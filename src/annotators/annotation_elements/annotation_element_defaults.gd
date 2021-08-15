@@ -319,24 +319,24 @@ var DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS := \
                 JUMP_LAND_POSITIONS_VALUE,
                 JUMP_LAND_POSITIONS_ALPHA)
 
-var HUMAN_NAVIGATOR_CURRENT_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.human_navigation,
+var PLAYER_NAVIGATOR_CURRENT_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.player_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.human_navigation,
+var PLAYER_NAVIGATOR_PREVIOUS_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.player_navigation,
         ScaffolderColors.ALPHA_XXFAINT)
-var HUMAN_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Sc.colors.opacify(
-        Sc.colors.human_navigation,
+var PLAYER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Sc.colors.opacify(
+        Sc.colors.player_navigation,
         ScaffolderColors.ALPHA_XXFAINT)
-var HUMAN_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Sc.colors.opacify(
-        Sc.colors.human_navigation,
+var PLAYER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Sc.colors.opacify(
+        Sc.colors.player_navigation,
         ScaffolderColors.ALPHA_SLIGHTLY_FAINT)
-var HUMAN_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
-        HUMAN_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
-var HUMAN_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR := \
-        HUMAN_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
-var HUMAN_NAVIGATOR_PULSE_PATH_COLOR := Color.from_hsv(
-        HUMAN_NAVIGATOR_CURRENT_PATH_COLOR.h,
+var PLAYER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
+        PLAYER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
+var PLAYER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR := \
+        PLAYER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
+var PLAYER_NAVIGATOR_PULSE_PATH_COLOR := Color.from_hsv(
+        PLAYER_NAVIGATOR_CURRENT_PATH_COLOR.h,
         0.3,
         0.99,
         0.4)

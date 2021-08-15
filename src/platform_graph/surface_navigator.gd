@@ -72,7 +72,7 @@ func _init(
     self.graph = graph
     self.surface_state = character.surface_state
     self.movement_params = character.movement_params
-    self.navigation_state.is_human_character = character.is_human_character
+    self.navigation_state.is_player_character = character.is_player_character
     self.instructions_action_source = \
             InstructionsActionSource.new(character, true)
     self.from_air_calculator = FromAirCalculator.new()

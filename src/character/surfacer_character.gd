@@ -88,8 +88,8 @@ func _ready() -> void:
     
     if Sc.annotators.is_annotator_enabled(
             AnnotatorType.PATH_PRESELECTION) and \
-            (is_human_character and Su.ann_manifest.is_human_prediction_shown or \
-            !is_human_character and Su.ann_manifest.is_npc_prediction_shown):
+            (is_player_character and Su.ann_manifest.is_player_prediction_shown or \
+            !is_player_character and Su.ann_manifest.is_npc_prediction_shown):
         prediction = CharacterPrediction.new()
         prediction.set_up(self)
         _attach_prediction()
@@ -106,7 +106,7 @@ func _ready() -> void:
     set_is_sprite_visible(false)
     Sc.annotators.create_character_annotator(
             self,
-            is_human_character)
+            is_player_character)
 
 
 func _destroy() -> void:
@@ -207,9 +207,9 @@ func _on_attached_to_first_surface() -> void:
         behavior._on_attached_to_first_surface()
 
 
-func set_is_human_character(value: bool) -> void:
-    .set_is_human_character(value)
-    if is_human_character:
+func set_is_player_character(value: bool) -> void:
+    .set_is_player_character(value)
+    if is_player_character:
         _init_user_controller_action_source()
         if Su.movement.uses_point_and_click_navigation:
             var user_navigation_behavior := \
@@ -327,7 +327,7 @@ func _on_physics_process(delta: float) -> void:
     surface_state.update_for_movement(self)
     
     if surface_state.did_move_last_frame and \
-            is_human_character:
+            is_player_character:
         pointer_listener.on_character_moved()
 
 

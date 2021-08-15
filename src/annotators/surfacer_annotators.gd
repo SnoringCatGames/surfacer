@@ -64,9 +64,9 @@ func _create_annotator(annotator_type: int) -> void:
                         Su.graph_parser.surface_parser)
                 annotation_layer.add_child(grid_indices_annotator)
         AnnotatorType.PATH_PRESELECTION:
-            if is_instance_valid(Sc.characters.get_human_character()):
+            if is_instance_valid(Sc.characters.get_player_character()):
                 path_preselection_annotator = PathPreselectionAnnotator.new(
-                        Sc.characters.get_human_character())
+                        Sc.characters.get_player_character())
                 annotation_layer.add_child(path_preselection_annotator)
         AnnotatorType.LEVEL:
             if Sc.level != null:

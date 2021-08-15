@@ -14,4 +14,4 @@ Also, [sc.gd](https://github.com/SnoringCatGames/scaffolder/blob/master/src/conf
 
 > TODO: Describe this system. For now, look at the code under `src/character/action/action_handlers/` for examples.
 
-> **NOTE:** The procedural pathfinding logic is implemented independently of this framework. So, you can use this to add cool new movement for human-controlled movement, but the automatic pathfinding will only know about the specific default mechanics that it was designed around.
+> **NOTE:** The procedural pathfinding logic is implemented independently of this framework. So, you can use this to add cool new movement for player-controlled movement, but the automatic pathfinding will only know about the specific default mechanics that it was designed around.

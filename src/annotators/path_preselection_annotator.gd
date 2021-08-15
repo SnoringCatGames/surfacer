@@ -2,14 +2,14 @@ class_name PathPreselectionAnnotator
 extends Node2D
 
 
-var HUMAN_PRESELECTION_SURFACE_COLOR := Sc.colors.opacify(
-        Sc.colors.human_navigation,
+var PLAYER_PRESELECTION_SURFACE_COLOR := Sc.colors.opacify(
+        Sc.colors.player_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var HUMAN_PRESELECTION_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
-        Sc.colors.human_navigation,
+var PLAYER_PRESELECTION_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
+        Sc.colors.player_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var HUMAN_PRESELECTION_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.human_navigation,
+var PLAYER_PRESELECTION_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.player_navigation,
         ScaffolderColors.ALPHA_FAINT)
 
 var NPC_PRESELECTION_SURFACE_COLOR := Sc.colors.opacify(
@@ -133,7 +133,7 @@ func _process(_delta: float) -> void:
             _update_phantom_position_along_surface()
             
             if preselection_path != null:
-                # Update the human-character prediction.
+                # Update the player-character prediction.
                 if character is SurfacerCharacter:
                     character.prediction.match_navigator_or_path(
                             preselection_path,
@@ -142,7 +142,7 @@ func _process(_delta: float) -> void:
                 # Update npc predictions.
                 for surfacer_character in Sc.utils.get_all_nodes_in_group(
                         Sc.characters.GROUP_NAME_SURFACER_CHARACTERS):
-                    if !surfacer_character.is_human_character:
+                    if !surfacer_character.is_player_character:
                         surfacer_character.prediction.match_navigator_or_path(
                                 surfacer_character.navigator,
                                 preselection_path.duration)
@@ -182,11 +182,11 @@ func _draw() -> void:
     var position_indicator_base_color: Color
     var path_base_color: Color
     if preselection_path != null:
-        if character.is_human_character:
-            surface_base_color = HUMAN_PRESELECTION_SURFACE_COLOR
+        if character.is_player_character:
+            surface_base_color = PLAYER_PRESELECTION_SURFACE_COLOR
             position_indicator_base_color = \
-                    HUMAN_PRESELECTION_POSITION_INDICATOR_COLOR
-            path_base_color = HUMAN_PRESELECTION_PATH_COLOR
+                    PLAYER_PRESELECTION_POSITION_INDICATOR_COLOR
+            path_base_color = PLAYER_PRESELECTION_PATH_COLOR
         else:
             surface_base_color = NPC_PRESELECTION_SURFACE_COLOR
             position_indicator_base_color = \
