@@ -138,7 +138,7 @@ func update_navigation_state(
         navigation_state.just_left_air_unexpectedly = false
         navigation_state.just_entered_air_unexpectedly = false
         navigation_state.just_interrupted_by_unexpected_collision = false
-        navigation_state.just_interrupted_by_user_action = false
+        navigation_state.just_interrupted_by_player_action = false
         navigation_state.just_interrupted = false
         navigation_state.just_reached_end_of_edge = false
         navigation_state.is_stalling_one_frame_before_reaching_end = false
@@ -159,15 +159,15 @@ func update_navigation_state(
             surface_state.just_entered_air and \
             !navigation_state.is_expecting_to_enter_air
     
-    navigation_state.just_interrupted_by_user_action = \
+    navigation_state.just_interrupted_by_player_action = \
             navigation_state.is_player_character and \
-            UserActionSource.get_is_some_user_action_pressed()
+            PlayerActionSource.get_is_some_player_action_pressed()
     
     navigation_state.just_interrupted = \
             navigation_state.just_left_air_unexpectedly or \
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_unexpected_collision or \
-            navigation_state.just_interrupted_by_user_action
+            navigation_state.just_interrupted_by_player_action
     
     if surface_state.just_entered_air:
         navigation_state.is_expecting_to_enter_air = false
@@ -181,7 +181,7 @@ func update_navigation_state(
             navigation_state.just_left_air_unexpectedly or \
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_unexpected_collision or \
-            navigation_state.just_interrupted_by_user_action
+            navigation_state.just_interrupted_by_player_action
     
     if movement_params.bypasses_runtime_physics:
         navigation_state.just_reached_end_of_edge = \

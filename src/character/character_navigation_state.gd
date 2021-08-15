@@ -20,7 +20,7 @@ var is_expecting_to_enter_air := false
 var just_left_air_unexpectedly := false
 var just_entered_air_unexpectedly := false
 var just_interrupted_by_unexpected_collision := false
-var just_interrupted_by_user_action := false
+var just_interrupted_by_player_action := false
 var just_reached_end_of_edge := false
 var is_stalling_one_frame_before_reaching_end := false
 
@@ -41,7 +41,7 @@ func reset() -> void:
     self.just_left_air_unexpectedly = false
     self.just_entered_air_unexpectedly = false
     self.just_interrupted_by_unexpected_collision = false
-    self.just_interrupted_by_user_action = false
+    self.just_interrupted_by_player_action = false
     self.just_reached_end_of_edge = false
     self.is_stalling_one_frame_before_reaching_end = false
     

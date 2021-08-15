@@ -29,8 +29,8 @@ signal finished
 #         -   Updates the framerate (Time.time_scale).
 #     -   ease_name
 #         -   A String. See Utils.ease_by_name.
-#     -   is_user_interaction_enabled
-#         -   Toggles whether the user can interact with the game.
+#     -   is_player_interaction_enabled
+#         -   Toggles whether the player can interact with the game.
 #     -   sound
 #         -   A sound effect to play.
 #     -   music
@@ -204,9 +204,9 @@ func _execute_next_step() -> void:
                             duration,
                             ease_name)
                     is_tween_registered = true
-            "is_user_interaction_enabled":
-                Sc.gui.is_user_interaction_enabled = \
-                        step.is_user_interaction_enabled
+            "is_player_interaction_enabled":
+                Sc.gui.is_player_interaction_enabled = \
+                        step.is_player_interaction_enabled
             "sound":
                 Sc.audio.play_sound(step.sound)
             "music":

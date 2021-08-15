@@ -46,7 +46,7 @@ const PATH_BACK_END_TRIM_RADIUS := 0.0
 
 var _predictions_container: Node2D
 var character: SurfacerCharacter
-var user_nav: UserNavigationBehavior
+var player_nav: PlayerNavigationBehavior
 var path_front_end_trim_radius: float
 var preselection_destination: PositionAlongSurface = null
 var animation_start_time := -PRESELECTION_DEFAULT_DURATION
@@ -64,8 +64,8 @@ var preselection_path_beats: Array
 
 func _init(character: SurfacerCharacter) -> void:
     self.character = character
-    self.user_nav = \
-            character.get_behavior(UserNavigationBehavior)
+    self.player_nav = \
+            character.get_behavior(PlayerNavigationBehavior)
     self.path_front_end_trim_radius = min(
             character.movement_params.collider_half_width_height.x,
             character.movement_params.collider_half_width_height.y)
@@ -102,29 +102,29 @@ func _process(_delta: float) -> void:
     
     var did_preselection_change := \
             preselection_destination != \
-                    user_nav.pre_selection.navigation_destination or \
+                    player_nav.pre_selection.navigation_destination or \
             preselection_path_beats_time_start != \
-                    user_nav.pre_selection.path_beats_time_start
+                    player_nav.pre_selection.path_beats_time_start
     
     if did_preselection_change and \
-            !user_nav.new_selection.get_has_selection():
+            !player_nav.new_selection.get_has_selection():
         var previous_preselection_surface := \
                 preselection_destination.surface if \
                 preselection_destination != null else \
                 null
         var next_preselection_surface := \
-                user_nav.pre_selection.navigation_destination.surface if \
-                user_nav.pre_selection.get_is_selection_navigable() else \
+                player_nav.pre_selection.navigation_destination.surface if \
+                player_nav.pre_selection.get_is_selection_navigable() else \
                 null
         var did_preselection_surface_change := \
                 previous_preselection_surface != next_preselection_surface
         
         preselection_destination = \
-                user_nav.pre_selection.navigation_destination
-        preselection_path = user_nav.pre_selection.path
+                player_nav.pre_selection.navigation_destination
+        preselection_path = player_nav.pre_selection.path
         preselection_path_beats_time_start = \
-                user_nav.pre_selection.path_beats_time_start
-        preselection_path_beats = user_nav.pre_selection.path_beats
+                player_nav.pre_selection.path_beats_time_start
+        preselection_path_beats = player_nav.pre_selection.path_beats
         
         if did_preselection_surface_change:
             _update_phantom_surface()

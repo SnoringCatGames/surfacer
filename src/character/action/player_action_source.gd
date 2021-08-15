@@ -1,4 +1,4 @@
-class_name UserActionSource
+class_name PlayerActionSource
 extends CharacterActionSource
 
 
@@ -44,7 +44,7 @@ func update(
                     is_additive)
 
 
-static func get_is_some_user_action_pressed() -> bool:
+static func get_is_some_player_action_pressed() -> bool:
     for action in ACTIONS_TO_INPUT_KEYS:
         if Sc.level_button_input.is_action_pressed(action):
             return true

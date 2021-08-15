@@ -155,7 +155,7 @@ var optimizes_edge_land_positions_at_run_time := true \
 ## -   Optimizing edges can be expensive.[br]
 ## -   Preselections can be updated very frequently (nearly every frame).[br]
 ## -   So setting this to true could have a significant performance impact.[br]
-## -   However, setting this to false means that the user will see inaccurate
+## -   However, setting this to false means that the player will see inaccurate
 ##     trajectories, which could be especially significant if beat-tracking is
 ##     enabled or path timings are important.[br]
 var also_optimizes_preselection_path := true \
@@ -213,7 +213,7 @@ var is_trajectory_state_stored_at_build_time := false \
 ## -   If true, then the character position will be updated according to
 ##     pre-calculated edge trajectories, and Godot's physics and collision
 ##     engine will not be used to update character state.[br]
-## -   This also means that the user will not be able to control movement with
+## -   This also means that the player will not be able to control movement with
 ##     standard move and jump key-press actions.[br]
 var bypasses_runtime_physics := false \
         setget _set_bypasses_runtime_physics
