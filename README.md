@@ -50,7 +50,7 @@ The vast majority of platformers use pretty simple npc AI for movement--for exam
 -   Walk to edge, turn around, repeat.
 -   Jump continuously, moving forward.
 -   Move with a regular bounce or surface-following pattern.
--   Move horizontally toward the human character, "floating" vertically as needed in order to move around obstacles and platforms.
+-   Move horizontally toward the player character, "floating" vertically as needed in order to move around obstacles and platforms.
 
 Most examples of more sophisticated AI pathfinding behavior are still pretty limited. One common technique uses machine-learning and is trained by hundreds to thousands of human-generated jumps on an explicit pre-fabricated level. This makes level-generation difficult and is not flexible to dynamic platform creation/movement.
 
@@ -58,7 +58,7 @@ There are two key reasons why good path-finding AI isn't really used in platform
 1.  It's hard to implement right; there is a lot of math involved, and there are a lot of different edge cases to account for.
 2.  Dumb AI is usually plenty effective on its own to create compelling gameplay. The user often doesn't really notice or care how simple the behavior is.
 
-But there are use-cases for which we really benefit from an AI that can accurately immitate the same movement mechanics of the character. One example is if we want to be able to control the character by tapping on locations that they should move toward through the level. Another example is if we want to have a flexible game mode in which an npc can swap in for a human character depending on how many humans are present.
+But there are use-cases for which we really benefit from an AI that can accurately immitate the same movement mechanics of the character. One example is if we want to be able to control the character by tapping on locations that they should move toward through the level. Another example is if we want to have a flexible game mode in which an npc can swap in for a player character depending on how many players are present.
 
 ## Learn more!
 

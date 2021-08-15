@@ -30,8 +30,8 @@ func _physics_process(_delta: float) -> void:
                     Su.ann_manifest.new_path_pulse_duration,
                     current_path.duration * 0.5)
             does_pulse_grow = \
-                    Su.ann_manifest.does_human_nav_pulse_grow if \
-                    navigator.character.is_human_character else \
+                    Su.ann_manifest.does_player_nav_pulse_grow if \
+                    navigator.character.is_player_character else \
                     Su.ann_manifest.does_npc_nav_pulse_grow
         update()
     
@@ -92,8 +92,8 @@ func _draw() -> void:
     
     var path_color: Color = \
             Su.ann_defaults \
-                    .HUMAN_NAVIGATOR_PULSE_PATH_COLOR if \
-            navigator.character.is_human_character else \
+                    .PLAYER_NAVIGATOR_PULSE_PATH_COLOR if \
+            navigator.character.is_player_character else \
             Su.ann_defaults.NPC_NAVIGATOR_PULSE_PATH_COLOR
     path_color.a *= opacity_multiplier
     var trim_front_end_radius := 0.0
@@ -111,11 +111,11 @@ func _draw() -> void:
 
 
 func _get_is_pulse_enabled() -> bool:
-    if navigator.character.is_human_character:
+    if navigator.character.is_player_character:
         if is_slow_motion_enabled:
-            return Su.ann_manifest.is_human_nav_pulse_shown_with_slow_mo
+            return Su.ann_manifest.is_player_nav_pulse_shown_with_slow_mo
         else:
-            return Su.ann_manifest.is_human_nav_pulse_shown_without_slow_mo
+            return Su.ann_manifest.is_player_nav_pulse_shown_without_slow_mo
     else:
         if is_slow_motion_enabled:
             return Su.ann_manifest.is_npc_nav_pulse_shown_with_slow_mo

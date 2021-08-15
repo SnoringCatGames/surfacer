@@ -70,7 +70,7 @@ The edges of this graph correspond to a type of movement that the character coul
 
 ## Edges: Calculating jump movement trajectories
 
-**tl;dr**: The Surfacer framework uses a procedural approach to calculate trajectories for movement between surfaces. The algorithms used rely heavily on the classic [one-dimensional equations of motion for constant acceleration](https://physics.info/motion-equations/). These trajectories are calculated to match to the same abilities and limitations that are exhibited by corresponding human-controlled movement. After the trajectory for an edge is calculated, it is translated into a simple instruction/input-key start/end sequence that should reproduce the calculated trajectory.
+**tl;dr**: The Surfacer framework uses a procedural approach to calculate trajectories for movement between surfaces. The algorithms used rely heavily on the classic [one-dimensional equations of motion for constant acceleration](https://physics.info/motion-equations/). These trajectories are calculated to match to the same abilities and limitations that are exhibited by corresponding player-controlled movement. After the trajectory for an edge is calculated, it is translated into a simple instruction/input-key start/end sequence that should reproduce the calculated trajectory.
 
 > **NOTE:** A machine-learning-based approach would probably be a good alternate way to solve this general problem. However, one perk of a procedural approach is that it's relatively easy to understand how it works and to modify it to perform better for any given edge-case (and there are a _ton_ of edge-cases).
 
@@ -269,7 +269,7 @@ At runtime, after finding a path through build-time-calculated edges, we try to 
 
 ### Edge instructions playback
 
-When we create the edges, we represent the movement trajectories according to the sequence of instructions that would produce the trajectory. Each instruction is simply represented by an ID for the relevant input key, whether the key is being pressed or released, and the time. The character movement system can then handle these input key events in the same way as actual human-triggered input key events.
+When we create the edges, we represent the movement trajectories according to the sequence of instructions that would produce the trajectory. Each instruction is simply represented by an ID for the relevant input key, whether the key is being pressed or released, and the time. The character movement system can then handle these input key events in the same way as actual player-triggered input key events.
 
 ### Correcting for runtime vs buildtime trajectory discrepancies
 
