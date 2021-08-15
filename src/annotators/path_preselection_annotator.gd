@@ -45,7 +45,7 @@ const PRESELECTION_PATH_OFFBEAT_STROKE_WIDTH := PRESELECTION_PATH_STROKE_WIDTH
 const PATH_BACK_END_TRIM_RADIUS := 0.0
 
 var _predictions_container: Node2D
-var player: SurfacerPlayer
+var character: SurfacerCharacter
 var user_nav: UserNavigationBehavior
 var path_front_end_trim_radius: float
 var preselection_destination: PositionAlongSurface = null
@@ -62,13 +62,13 @@ var preselection_path_beats_time_start: float
 var preselection_path_beats: Array
 
 
-func _init(player: SurfacerPlayer) -> void:
-    self.player = player
+func _init(character: SurfacerCharacter) -> void:
+    self.character = character
     self.user_nav = \
-            player.get_behavior(UserNavigationBehavior)
+            character.get_behavior(UserNavigationBehavior)
     self.path_front_end_trim_radius = min(
-            player.movement_params.collider_half_width_height.x,
-            player.movement_params.collider_half_width_height.y)
+            character.movement_params.collider_half_width_height.x,
+            character.movement_params.collider_half_width_height.y)
     self._predictions_container = Node2D.new()
     _predictions_container.visible = false
     _predictions_container.modulate.a = \
@@ -93,7 +93,7 @@ func _on_slow_motion_tick_tock_beat(
         animation_start_time = Sc.time.get_play_time()
 
 
-func add_prediction(prediction: PlayerPrediction) -> void:
+func add_prediction(prediction: CharacterPrediction) -> void:
     _predictions_container.add_child(prediction)
 
 
@@ -133,18 +133,18 @@ func _process(_delta: float) -> void:
             _update_phantom_position_along_surface()
             
             if preselection_path != null:
-                # Update the human-player prediction.
-                if player is SurfacerPlayer:
-                    player.prediction.match_navigator_or_path(
+                # Update the human-character prediction.
+                if character is SurfacerCharacter:
+                    character.prediction.match_navigator_or_path(
                             preselection_path,
                             preselection_path.duration)
                 
-                # Update computer-player predictions.
-                for surfacer_player in Sc.utils.get_all_nodes_in_group(
-                        Sc.players.GROUP_NAME_SURFACER_PLAYERS):
-                    if !surfacer_player.is_human_player:
-                        surfacer_player.prediction.match_navigator_or_path(
-                                surfacer_player.navigator,
+                # Update computer-character predictions.
+                for surfacer_character in Sc.utils.get_all_nodes_in_group(
+                        Sc.characters.GROUP_NAME_SURFACER_CHARACTERS):
+                    if !surfacer_character.is_human_character:
+                        surfacer_character.prediction.match_navigator_or_path(
+                                surfacer_character.navigator,
                                 preselection_path.duration)
         else:
             preselection_path = null
@@ -182,7 +182,7 @@ func _draw() -> void:
     var position_indicator_base_color: Color
     var path_base_color: Color
     if preselection_path != null:
-        if player.is_human_player:
+        if character.is_human_character:
             surface_base_color = HUMAN_PRESELECTION_SURFACE_COLOR
             position_indicator_base_color = \
                     HUMAN_PRESELECTION_POSITION_INDICATOR_COLOR

@@ -1,12 +1,12 @@
 class_name SurfaceNavigator
 extends Reference
-## Logic for navigating a player along a path of edges through a platform graph
+## Logic for navigating a character along a path of edges through a platform graph
 ## to a destination position.
 
 
 # FIXME: LEFT OFF HERE: ------------------------------
 # - New per-navigator reachable surface sets:
-#   - Maintain TWO separate, localized sets for each player/navigator.
+#   - Maintain TWO separate, localized sets for each character/navigator.
 #     - All the surfaces, within a distance, that can be reached from the
 #       current surface.
 #     - All the surfaces, within a distance,  that can be reached-reversibly
@@ -39,9 +39,9 @@ signal navigation_ended(did_reach_destination)
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
 
-var player: ScaffolderPlayer
+var character: ScaffolderCharacter
 var graph: PlatformGraph
-var surface_state: PlayerSurfaceState
+var surface_state: CharacterSurfaceState
 var movement_params: MovementParameters
 var instructions_action_source: InstructionsActionSource
 var from_air_calculator: FromAirCalculator
@@ -62,19 +62,19 @@ var playback: InstructionsPlayback
 var actions_might_be_dirty := false
 var current_navigation_attempt_count := 0
 
-var navigation_state := PlayerNavigationState.new()
+var navigation_state := CharacterNavigationState.new()
 
 
 func _init(
-        player,
+        character,
         graph: PlatformGraph) -> void:
-    self.player = player
+    self.character = character
     self.graph = graph
-    self.surface_state = player.surface_state
-    self.movement_params = player.movement_params
-    self.navigation_state.is_human_player = player.is_human_player
+    self.surface_state = character.surface_state
+    self.movement_params = character.movement_params
+    self.navigation_state.is_human_character = character.is_human_character
     self.instructions_action_source = \
-            InstructionsActionSource.new(player, true)
+            InstructionsActionSource.new(character, true)
     self.from_air_calculator = FromAirCalculator.new()
     self.surface_to_air_calculator = JumpFromSurfaceCalculator.new()
 
@@ -91,11 +91,11 @@ func navigate_path(
     
     if path != null and \
             !Sc.geometry.are_points_equal_with_epsilon(
-                    player.position,
+                    character.position,
                     path.origin.target_point,
                     4.0):
         # The selection and its path are stale, so update the path to match
-        # the player's current position.
+        # the character's current position.
         path = find_path(
                 path.destination,
                 path.graph_destination_for_in_air_destination)
@@ -104,8 +104,8 @@ func navigate_path(
         # Destination cannot be reached from origin.
         Sc.profiler.stop("navigator_navigate_path")
         _log("Cannot navigate null path: %s; from=%s" % [
-                    player.player_name,
-                    Sc.utils.get_vector_string(player.position),
+                    character.character_name,
+                    Sc.utils.get_vector_string(character.position),
                 ],
                 false)
         return false
@@ -120,7 +120,7 @@ func navigate_path(
         _optimize_edges_for_approach(
                 graph.collision_params,
                 path,
-                player.velocity)
+                character.velocity)
         
         _ensure_edges_have_trajectory_state(
                 graph.collision_params,
@@ -139,13 +139,13 @@ func navigate_path(
         
         _log("Path start:          %8.3fs; %s; to=%s; from=%s; edges=%d" % [
                     Sc.time.get_play_time(),
-                    player.player_name,
+                    character.character_name,
                     Sc.utils.get_vector_string(path.destination.target_point, 0),
                     Sc.utils.get_vector_string(path.origin.target_point, 0),
                     path.edges.size(),
                 ],
                 false)
-        if player.logs_low_level_framework_events:
+        if character.logs_low_level_framework_events:
             var format_string_template := (
                     "{" +
                     "\n\tdestination: %s," +
@@ -211,11 +211,11 @@ func find_path(
     
     # Handle the start of the path.
     if surface_state.is_grabbing_a_surface:
-        # Find a path from a starting player-position along a surface.
+        # Find a path from a starting character-position along a surface.
         graph_origin = PositionAlongSurface.new(
                 surface_state.center_position_along_surface)
     else:
-        # Find a path from a starting player-position in the air.
+        # Find a path from a starting character-position in the air.
         
         # Try to dynamically calculate a valid air-to-surface edge from the
         # current in-air position.
@@ -227,7 +227,7 @@ func find_path(
                         graph.collision_params,
                         graph.surfaces_set,
                         origin,
-                        player.velocity,
+                        character.velocity,
                         destination,
                         null)
         
@@ -235,7 +235,7 @@ func find_path(
                 navigation_state.is_currently_navigating and \
                 edge.get_end_surface() != null:
             # We weren't able to dynamically calculate a valid air-to-surface
-            # edge from the current in-air position, but the player was already
+            # edge from the current in-air position, but the character was already
             # navigating along a valid edge to a surface, so let's just re-use
             # the remainder of that edge.
             
@@ -249,7 +249,7 @@ func find_path(
                         .create_edge_from_part_of_other_edge(
                                 edge,
                                 elapsed_edge_time,
-                                player)
+                                character)
             else:
                 Sc.logger.warning(
                         "Unable to re-use current edge as air-to-surface " +
@@ -265,10 +265,10 @@ func find_path(
     
     # Handle the end of the path.
     if destination.surface != null:
-        # Find a path to an ending player-position along a surface.
+        # Find a path to an ending character-position along a surface.
         graph_destination_for_in_air_destination = destination
     else:
-        # Find a path to an ending player-position in the air.
+        # Find a path to an ending character-position in the air.
         
         assert(graph_destination_for_in_air_destination != null)
         
@@ -303,7 +303,7 @@ func find_path(
             _optimize_edges_for_approach(
                     graph.collision_params,
                     path,
-                    player.velocity)
+                    character.velocity)
         
         _ensure_edges_have_trajectory_state(
                 graph.collision_params,
@@ -354,21 +354,21 @@ func stop() -> void:
 
 
 func _set_reached_destination() -> void:
-    if movement_params.forces_player_position_to_match_path_at_end:
-        player.set_position(edge.get_end())
-    if movement_params.forces_player_velocity_to_zero_at_path_end and \
+    if movement_params.forces_character_position_to_match_path_at_end:
+        character.set_position(edge.get_end())
+    if movement_params.forces_character_velocity_to_zero_at_path_end and \
             edge.get_end_surface() != null:
         match edge.get_end_surface().side:
             SurfaceSide.FLOOR, SurfaceSide.CEILING:
-                player.velocity.x = 0.0
+                character.velocity.x = 0.0
             SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
-                player.velocity.y = 0.0
+                character.velocity.y = 0.0
             _:
                 Sc.logger.error("Invalid SurfaceSide")
     
     _log("Path end:            %8.3fs; %s; to=%s; from=%s; edges=%d" % [
                 Sc.time.get_play_time(),
-                player.player_name,
+                character.character_name,
                 Sc.utils.get_vector_string(path.destination.target_point, 0),
                 Sc.utils.get_vector_string(path.origin.target_point, 0),
                 path.edges.size(),
@@ -410,10 +410,10 @@ func _start_edge(
     edge_index = index
     edge = path.edges[index]
     
-    if movement_params.forces_player_position_to_match_edge_at_start:
-        player.set_position(edge.get_start())
-    if movement_params.forces_player_velocity_to_match_edge_at_start:
-        player.velocity = edge.velocity_start
+    if movement_params.forces_character_position_to_match_edge_at_start:
+        character.set_position(edge.get_start())
+    if movement_params.forces_character_velocity_to_match_edge_at_start:
+        character.velocity = edge.velocity_start
         surface_state.horizontal_acceleration_sign = 0
     
     edge.update_for_surface_state(
@@ -428,12 +428,12 @@ func _start_edge(
     var duration_start_edge: float = \
             Sc.profiler.stop("navigator_start_edge")
     
-    if player.logs_low_level_framework_events:
+    if character.logs_low_level_framework_events:
         var format_string_template := \
                 "Starting edge nav:   %8.3fs; %s; %s; calc duration=%sms"
         var format_string_arguments := [
                 Sc.time.get_play_time(),
-                player.player_name,
+                character.character_name,
                 edge.to_string_with_newlines(0),
                 str(duration_start_edge),
             ]
@@ -466,15 +466,15 @@ func update(
     
     actions_might_be_dirty = just_started_new_edge
     
-    # FIXME: ------ This can result in player's getting stuck in mid-air in a
+    # FIXME: ------ This can result in character's getting stuck in mid-air in a
     #        continuous, new-nav-every-frame loop.
-#    if !player.surface_state.did_move_last_frame and \
+#    if !character.surface_state.did_move_last_frame and \
 #            !just_started_navigating:
 #        # FIXME: ------------
 #        # - This work-around shouldn't be needed. What's the underlying problem?
 #        Sc.logger.warning(
 #                "SurfaceNavigator.is_currently_navigating and " +
-#                "!PlayerSurfaceState.did_move_last_frame")
+#                "!CharacterSurfaceState.did_move_last_frame")
 #        var destination := path.destination
 #        var graph_destination_for_in_air_destination := \
 #                path.graph_destination_for_in_air_destination
@@ -507,7 +507,7 @@ func update(
         
         _log("Edge interrupted:    %8.3fs; %s; %s; to=%s; from=%s" % [
                     Sc.time.get_play_time(),
-                    player.player_name,
+                    character.character_name,
                     interruption_type_label,
                     Sc.utils.get_vector_string(path.destination.target_point),
                     Sc.utils.get_vector_string(path.origin.target_point),
@@ -535,10 +535,10 @@ func update(
         return
         
     elif navigation_state.just_reached_end_of_edge:
-        if player.logs_low_level_framework_events:
+        if character.logs_low_level_framework_events:
             _log("Edge end:            %8.3fs; %s; %s" % [
                 Sc.time.get_play_time(),
-                player.player_name,
+                character.character_name,
                 edge.get_name(),
             ], true)
     else:
@@ -566,17 +566,17 @@ func update(
                     _possibly_backtrack_to_not_protrude_past_surface_end(
                             movement_params,
                             edge,
-                            player.position,
-                            player.velocity)
+                            character.position,
+                            character.velocity)
             if backtracking_edge == null:
                 _set_reached_destination()
             else:
-                if player.logs_low_level_framework_events:
+                if character.logs_low_level_framework_events:
                     var format_string_template := \
                             "Insrt ctr-potr edge:%8.3fs; %s; %s"
                     var format_string_arguments := [
                             Sc.time.get_play_time(),
-                            player.player_name,
+                            character.character_name,
                             backtracking_edge.to_string_with_newlines(0),
                         ]
                     _log(format_string_template % format_string_arguments,
@@ -590,14 +590,14 @@ func update(
 
 
 func predict_animation_state(
-        result: PlayerAnimationState,
+        result: CharacterAnimationState,
         elapsed_time_from_now: float) -> bool:
     if !navigation_state.is_currently_navigating:
-        player.get_current_animation_state(result)
+        character.get_current_animation_state(result)
         
         var confidence_progress := min(
                 elapsed_time_from_now / \
-                PlayerAnimationState.POST_PATH_DURATION_TO_MIN_CONFIDENCE,
+                CharacterAnimationState.POST_PATH_DURATION_TO_MIN_CONFIDENCE,
                 1.0)
         result.confidence_multiplier = lerp(
                 1.0,
@@ -627,14 +627,14 @@ func get_previous_destination() -> PositionAlongSurface:
             null
 
 
-# Conditionally prints the given message, depending on the SurfacerPlayer's
+# Conditionally prints the given message, depending on the SurfacerCharacter's
 # configuration.
 func _log(
         message: String,
         is_low_level_framework_event = false) -> void:
-    player._log(
+    character._log(
             message,
-            PlayerLogType.NAVIGATOR,
+            CharacterLogType.NAVIGATOR,
             is_low_level_framework_event)
 
 
@@ -796,7 +796,7 @@ func _optimize_edges_for_approach(
     
     # At runtime, after finding a path through build-time-calculated edges, try
     # to optimize the jump-off or land points of the edges to better account
-    # for the direction that the player will be approaching the edge from. This
+    # for the direction that the character will be approaching the edge from. This
     # produces more efficient and natural movement. The build-time-calculated
     # edge state would only use surface end-points or closest points. We also
     # take this opportunity to update start velocities to exactly match what is

@@ -166,7 +166,7 @@ static func calculate_steps_between_waypoints(
     
     if !edge_calc_params.movement_params \
             .recurses_when_colliding_during_horizontal_step_calculations:
-        # This player is configured to abandon any step recursion for
+        # This character is configured to abandon any step recursion for
         # intermediate collisions.
         if step_result_metadata != null:
             step_result_metadata.edge_step_calc_result_type = \
@@ -232,7 +232,7 @@ static func calculate_steps_between_waypoints(
     
     if !edge_calc_params.movement_params \
             .backtracks_for_higher_jumps_during_hor_step_calculations:
-        # This player is configured to abandon any backtracking for higher
+        # This character is configured to abandon any backtracking for higher
         # jumps.
         if step_result_metadata != null:
             step_result_metadata.edge_step_calc_result_type = \

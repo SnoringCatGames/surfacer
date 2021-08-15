@@ -240,7 +240,7 @@ func get_annotation_elements() -> Array:
     return []
 
 
-# Conditionally prints the given message, depending on the SurfacerPlayer's
+# Conditionally prints the given message, depending on the SurfacerCharacter's
 # configuration.
 func _log(message: String) -> void:
     if graph.movement_params.logs_inspector_events:

@@ -44,9 +44,9 @@ func get_text() -> String:
 func get_description() -> String:
     return ("A surface is a distinct floor, wall, or ceiling segment " +
             "within the level. There are %s total surfaces in this " +
-            "platform graph for the %s player.") % [
+            "platform graph for the %s character.") % [
         graph.counts.total_surfaces,
-        graph.movement_params.player_name,
+        graph.movement_params.character_name,
     ]
 
 

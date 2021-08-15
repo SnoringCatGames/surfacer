@@ -6,24 +6,24 @@ extends Node
 # ---
 
 const DEFAULT_ACTION_HANDLER_CLASSES := [
-    preload("res://addons/surfacer/src/player/action/action_handlers/air_dash_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/air_default_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/air_jump_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/all_default_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/cap_velocity_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_dash_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_default_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/fall_through_floor_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_friction_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_jump_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/floor_walk_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/match_expected_edge_trajectory_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_climb_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_dash_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_default_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_fall_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_jump_action.gd"),
-    preload("res://addons/surfacer/src/player/action/action_handlers/wall_walk_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/air_dash_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/air_default_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/air_jump_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/all_default_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/cap_velocity_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/floor_dash_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/floor_default_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/fall_through_floor_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/floor_friction_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/floor_jump_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/floor_walk_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/match_expected_edge_trajectory_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/wall_climb_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/wall_dash_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/wall_default_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/wall_fall_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/wall_jump_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/wall_walk_action.gd"),
 ]
 
 const DEFAULT_EDGE_CALCULATOR_CLASSES := [
@@ -73,9 +73,9 @@ var climbing_edge_weight_multiplier_default := 1.8
 var air_edge_weight_multiplier_default := 1.0
 
 # Dictionary<String, MovementParameters>
-var player_movement_params := {}
+var character_movement_params := {}
 
-# Dictionary<String, PlayerActionHandler>
+# Dictionary<String, CharacterActionHandler>
 var action_handlers := {}
 
 # Dictionary<String, EdgeCalculator>
@@ -180,7 +180,7 @@ func _register_manifest(manifest: Dictionary) -> void:
     
     _register_action_handlers(self._action_handler_classes)
     _register_edge_calculators(self._edge_calculator_classes)
-    _parse_movement_params_from_player_scenes(Sc.players._player_scenes_list)
+    _parse_movement_params_from_character_scenes(Sc.characters._character_scenes_list)
 
 
 func _validate_configuration() -> void:
@@ -215,7 +215,7 @@ func _validate_configuration() -> void:
 
 
 func _register_action_handlers(action_handler_classes: Array) -> void:
-    # Instantiate the various PlayerActions.
+    # Instantiate the various CharacterActions.
     for action_handler_class in action_handler_classes:
         Su.movement.action_handlers[action_handler_class.NAME] = \
                 action_handler_class.new()
@@ -228,18 +228,18 @@ func _register_edge_calculators(edge_calculator_classes: Array) -> void:
                 edge_calculator_class.new()
 
 
-func _parse_movement_params_from_player_scenes(
+func _parse_movement_params_from_character_scenes(
         scenes_array: Array) -> void:
     for scene in scenes_array:
         assert(scene is PackedScene)
         var state: SceneState = scene.get_state()
         assert(state.get_node_type(0) == "KinematicBody2D")
         
-        var player_name: String = \
+        var character_name: String = \
                 Sc.utils.get_property_value_from_scene_state_node(
                         state,
                         0,
-                        "player_name",
+                        "character_name",
                         !Engine.editor_hint)
         
         var movement_params: MovementParameters
@@ -262,7 +262,7 @@ func _parse_movement_params_from_player_scenes(
                 break
         
         if is_instance_valid(movement_params):
-            Su.movement.player_movement_params[player_name] = movement_params
+            Su.movement.character_movement_params[character_name] = movement_params
 
 
 func get_default_action_handler_names(
@@ -325,7 +325,7 @@ func get_action_handlers_from_names(
     elif !includes_edge_match and names.has(name):
         names.erase(Su.movement.action_handlers[name])
     
-    action_handlers.sort_custom(_PlayerActionHandlerComparator, "sort")
+    action_handlers.sort_custom(_CharacterActionHandlerComparator, "sort")
     return action_handlers
 
 
@@ -389,8 +389,8 @@ func _calculate_dependent_movement_params(
                     movement_params.friction_coefficient)
 
 
-class _PlayerActionHandlerComparator:
+class _CharacterActionHandlerComparator:
     static func sort(
-            a: PlayerActionHandler,
-            b: PlayerActionHandler) -> bool:
+            a: CharacterActionHandler,
+            b: CharacterActionHandler) -> bool:
         return a.priority < b.priority

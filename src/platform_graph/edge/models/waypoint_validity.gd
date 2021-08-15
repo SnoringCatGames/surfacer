@@ -76,15 +76,15 @@ static func get_description(validity: int) -> String:
                     "previous waypoint")
         TRYING_TO_PASS_OVER_WALL_WHILE_DESCENDING:
             return ("This waypoint is invalid. It represents passing over " +
-                    "the top of a wall, but the player must already be " +
+                    "the top of a wall, but the character must already be " +
                     "descending by the time they reach this waypoint. In " +
-                    "order to pass over the wall, the player would have " +
+                    "order to pass over the wall, the character would have " +
                     "to still be ascending.")
         TRYING_TO_PASS_UNDER_WALL_WHILE_ASCENDING:
             return ("This waypoint is invalid. It represents passing under " +
-                    "a wall, but the player must still be ascending by " +
+                    "a wall, but the character must still be ascending by " +
                     "the time they reach this waypoint. In order to pass " +
-                    "under the wall, the player would have to already be " +
+                    "under the wall, the character would have to already be " +
                     "descending.")
         NEXT_WAYPOINT_OUT_OF_REACH_FROM_THIS_WAYPOINT:
             return ("This waypoint is invalid. The next waypoint is out of " +

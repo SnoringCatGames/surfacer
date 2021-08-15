@@ -43,12 +43,12 @@ func _start() -> void:
 #    ._on_started()
 
 
-#func _add_human_player() -> void:
-#    ._add_human_player()
+#func _add_human_character() -> void:
+#    ._add_human_character()
 
 
-#func _add_computer_players() -> void:
-#    ._add_computer_players()
+#func _add_computer_characters() -> void:
+#    ._add_computer_characters()
 
 
 func _destroy() -> void:
@@ -88,7 +88,7 @@ func _on_initial_input() -> void:
 # Execute any intro cut-scene or initial navigation.
 func _execute_intro_choreography() -> void:
     intro_choreographer = \
-            Sc.level_config.get_intro_choreographer(Sc.level.human_player)
+            Sc.level_config.get_intro_choreographer(Sc.level.human_character)
     if is_instance_valid(intro_choreographer):
         intro_choreographer.connect(
                 "finished", self, "_on_intro_choreography_finished")
@@ -99,10 +99,10 @@ func _execute_intro_choreography() -> void:
 
 
 func _on_intro_choreography_finished() -> void:
-    if is_instance_valid(human_player):
-        human_player._log(
+    if is_instance_valid(human_character):
+        human_character._log(
                 "Intro choreography finished: %8.3fs" % Sc.time.get_play_time(),
-                PlayerLogType.DEFAULT)
+                CharacterLogType.DEFAULT)
     if is_instance_valid(intro_choreographer):
         intro_choreographer.queue_free()
         intro_choreographer = null
@@ -113,10 +113,10 @@ func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
     Sc.annotators.on_level_ready()
     for group in [
-            Sc.players.GROUP_NAME_HUMAN_PLAYERS,
-            Sc.players.GROUP_NAME_COMPUTER_PLAYERS]:
-        for player in Sc.utils.get_all_nodes_in_group(group):
-            player._on_annotators_ready()
+            Sc.characters.GROUP_NAME_HUMAN_CHARACTERS,
+            Sc.characters.GROUP_NAME_COMPUTER_CHARACTERS]:
+        for character in Sc.utils.get_all_nodes_in_group(group):
+            character._on_annotators_ready()
 
 
 func set_tile_map_visibility(is_visible: bool) -> void:

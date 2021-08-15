@@ -7,7 +7,7 @@ As you might imagine, the calculations for these edges can get quite complicated
 The inspector is a tree-view widget with the following structure:
 
 ```
- - Platform graph [player_name]
+ - Platform graph [character_name]
    - Edges [#]
      - [#] Edges calculated with increasing jump height
        - JUMP_FROM_SURFACE_EDGEs [#]

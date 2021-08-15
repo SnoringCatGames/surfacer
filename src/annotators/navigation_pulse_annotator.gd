@@ -31,7 +31,7 @@ func _physics_process(_delta: float) -> void:
                     current_path.duration * 0.5)
             does_pulse_grow = \
                     Su.ann_manifest.does_human_nav_pulse_grow if \
-                    navigator.player.is_human_player else \
+                    navigator.character.is_human_character else \
                     Su.ann_manifest.does_computer_nav_pulse_grow
         update()
     
@@ -93,7 +93,7 @@ func _draw() -> void:
     var path_color: Color = \
             Su.ann_defaults \
                     .HUMAN_NAVIGATOR_PULSE_PATH_COLOR if \
-            navigator.player.is_human_player else \
+            navigator.character.is_human_character else \
             Su.ann_defaults.COMPUTER_NAVIGATOR_PULSE_PATH_COLOR
     path_color.a *= opacity_multiplier
     var trim_front_end_radius := 0.0
@@ -111,7 +111,7 @@ func _draw() -> void:
 
 
 func _get_is_pulse_enabled() -> bool:
-    if navigator.player.is_human_player:
+    if navigator.character.is_human_character:
         if is_slow_motion_enabled:
             return Su.ann_manifest.is_human_nav_pulse_shown_with_slow_mo
         else:

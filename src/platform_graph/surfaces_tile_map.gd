@@ -2,7 +2,7 @@ tool
 class_name SurfacesTileMap, \
 "res://addons/surfacer/assets/images/editor_icons/surfaces_tile_map.png"
 extends TileMap
-## The surfaces that a player can collide with.
+## The surfaces that a character can collide with.
 
 
 const GROUP_NAME_SURFACES := "surfaces"

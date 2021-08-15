@@ -6,12 +6,12 @@ We include a large collection of annotators that are useful for visually debuggi
 
 ## Movement parameters
 
-We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these player-level params, see [movement_params.gd](/src/platform_graph/edge/models/movement_params.gd).
+We support a large number of flags and parameters for adjusting various aspects of character/movement/platform-graph behavior. For a complete list of these character-level params, see [movement_params.gd](/src/platform_graph/edge/models/movement_params.gd).
 
 Also, [sc.gd](https://github.com/SnoringCatGames/scaffolder/blob/master/src/config/sc.gd) and [su.gd](/src/config/su.gd) contain lists of interesting app-level params.
 
 ## Extensible framework for custom movement mechanics
 
-> TODO: Describe this system. For now, look at the code under `src/player/action/action_handlers/` for examples.
+> TODO: Describe this system. For now, look at the code under `src/character/action/action_handlers/` for examples.
 
 > **NOTE:** The procedural pathfinding logic is implemented independently of this framework. So, you can use this to add cool new movement for human-controlled movement, but the automatic pathfinding will only know about the specific default mechanics that it was designed around.

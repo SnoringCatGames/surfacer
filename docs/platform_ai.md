@@ -6,13 +6,13 @@ Surfacer depends on the level being represented as a [`TileMap`](https://docs.go
 
 In order for our AI to traverse our world, we first need to parse the world into a platform graph. We do this up-front, when the level is loaded, so that we can efficiently search the graph at run time. Dynamic updates to the graph can be performed at runtime, but these could be expensive if not done with care.
 
-The nodes of this graph correspond to positions along distinct surfaces. Since our players can walk on floors, climb on walls, and climb on ceilings, we store floor, wall, and ceiling surfaces.
+The nodes of this graph correspond to positions along distinct surfaces. Since our characters can walk on floors, climb on walls, and climb on ceilings, we store floor, wall, and ceiling surfaces.
 
-The edges of this graph correspond to a type of movement that the player could perform in order to move from one position on a surface node to another.
--   These edges are directional, since the player may be able to move from A to B but not from B to A.
+The edges of this graph correspond to a type of movement that the character could perform in order to move from one position on a surface node to another.
+-   These edges are directional, since the character may be able to move from A to B but not from B to A.
 -   The ends of an edge could be along the same surface or on different surfaces (e.g., for climbing up a wall vs jumping from a floor).
--   There could be multiple edges between a single pair of nodes, since there could be multiple types of movement that could get the player from the one to the other.
--   These edges are specific to a given player type. If we need to consider a different player that has different movement parameters, then we need to calculate a separate platform graph for that player.
+-   There could be multiple edges between a single pair of nodes, since there could be multiple types of movement that could get the character from the one to the other.
+-   These edges are specific to a given character type. If we need to consider a different character that has different movement parameters, then we need to calculate a separate platform graph for that character.
 
 ![Surfaces in a plattform graph](./surfaces.png)
 
@@ -82,7 +82,7 @@ The edges of this graph correspond to a type of movement that the player could p
 -   We will define the movement trajectory as a combination of two independent components: a "vertical step" and a "horizontal step". The vertical step is based primarily on on the jump duration calculated above.
 -   Calculate the horizontal step that would reach the destination displacement over the given duration.
 -   Check for any unexpected collisions along the trajectory represented by the vertical and horizontal steps.
-    -   If there is an intermediate surface that the player would collide with, we need to try adjusting the jump trajectory to go around either side of the colliding surface.
+    -   If there is an intermediate surface that the character would collide with, we need to try adjusting the jump trajectory to go around either side of the colliding surface.
         -   We call these points that movement must go through in order to avoid collisions, "waypoints".
         -   Recursively check whether the jump is valid to and from either side of the colliding surface.
         -   If we can't reach the destination when moving around the colliding surface, then try backtracking and consider whether a higher jump height from the start would get us there.
@@ -104,7 +104,7 @@ Additionally, when jumping from a floor, we need to determine what initial horiz
 -   Some interesting jump/land positions for a surface include the following:
     -   Either end of the surface.
     -   The closest position along the surface to either end of the other surface.
-        -   This closest position, but with a slight offset to account for the width of the player.
+        -   This closest position, but with a slight offset to account for the width of the character.
         -   This closest position, but with an additional offset to account for horizontal or vertical displacement with minimum jump time and maximum horizontal velocity.
             -   This offset becomes important when considering jumps that start with max-speed horizontal velocity, which could otherwise overshoot the land position if we didn't account for the offset.
     -   The closest interior position along the surface to the closest interior position along the other surface.
@@ -136,7 +136,7 @@ Unfortunately, most jump/land position calculations are highly dependent on the 
 
 ### Calculating the start velocity for a jump
 
--   In the general case, we can't know at build-time what direction along a surface the player will
+-   In the general case, we can't know at build-time what direction along a surface the character will
     be moving from when they need to start a jump.
 -   Unfortunately, using start velocity x values of zero for all jump edges tends to produce very
     unnatural composite trajectories (similar to using perpendicular Manhatten distance routes
@@ -160,8 +160,8 @@ Unfortunately, most jump/land position calculations are highly dependent on the 
     -   The greatest of these three possibilities is the minimum required total duration of the jump.
 -   The minimum peak jump height can be determined from this total duration.
 -   All of this takes into account our variable-height jump mechanic and the difference in slow-ascent and fast-fall gravities.
-    -   With our variable-height jump mechanic, there is a greater acceleration of gravity when the player either is moving downward or has released the jump button.
-    -   If the player releases the jump button before reaching the maximum peak of the jump, then their current velocity will continue pushing them upward, but with the new stronger gravity.
+    -   With our variable-height jump mechanic, there is a greater acceleration of gravity when the character either is moving downward or has released the jump button.
+    -   If the character releases the jump button before reaching the maximum peak of the jump, then their current velocity will continue pushing them upward, but with the new stronger gravity.
     -   To determine the duration to the jump peak height in this scenario, we first construct two instances of one of the basic equations of motion--one for the former part of the ascent, with the slow-ascent gravity, and one for the latter part of the ascent, with the fast-fall gravity. We then use algebra to substitute the equations and solve for the duration.
 
 ### Calculating the horizontal steps in an edge
@@ -169,9 +169,9 @@ Unfortunately, most jump/land position calculations are highly dependent on the 
 -   If we decide whether a surface could be within reach, we then check for possible collisions between the origin and destination.
     -   To do this, we simulate frame-by-frame motion using the same physics timestep and the same movement-update function calls that would be used when running the game normally. We then check for any collisions between each frame.
 -   If we detect a collision, then we define two possible "waypoints"--one for each end of the collided surface.
-    -   In order to make it around this intermediate surface, we know the player must pass around one of the ends of this surface.
-    -   These waypoints we calculate represent the minimum required deviation from the player's original path.
--   We then recursively check whether the player could move to and from each of the waypoints.
+    -   In order to make it around this intermediate surface, we know the character must pass around one of the ends of this surface.
+    -   These waypoints we calculate represent the minimum required deviation from the character's original path.
+-   We then recursively check whether the character could move to and from each of the waypoints.
     -   We keep the original vertical step and overall duration the same.
     -   We can use that to calculate the time and vertical state that must be used for the waypoint.
     -   Then we only really consider whether the horizontal movement could be valid within the the given time limit.
@@ -255,7 +255,7 @@ Some known limitations and rough edges include:
 
 Once the platform graph has been parsed, finding and moving along a path through the graph is relatively straight-forward. The sequence of events looks like the following:
 
--   Given a target point to navigate towards and the player's current position.
+-   Given a target point to navigate towards and the character's current position.
 -   Find the closest point along the closest surface to the target point.
 -   Use A* search to find a path through the graph from the origin to the destination.
     -   We can use distance or duration as the edge weights.
@@ -265,14 +265,14 @@ Once the platform graph has been parsed, finding and moving along a path through
 
 ### Dynamic edge optimization according to runtime approach
 
-At runtime, after finding a path through build-time-calculated edges, we try to optimize the jump-off points of the edges to better account for the direction that the player will be approaching the edge from. This produces more efficient and natural movement. The build-time-calculated edge state would only use surface end-points or closest points. We also take this opportunity to update start velocities to exactly match what is allowed from the ramp-up distance along the edge, rather than either the fixed zero or max-speed value used for the build-time-calculated edge state.
+At runtime, after finding a path through build-time-calculated edges, we try to optimize the jump-off points of the edges to better account for the direction that the character will be approaching the edge from. This produces more efficient and natural movement. The build-time-calculated edge state would only use surface end-points or closest points. We also take this opportunity to update start velocities to exactly match what is allowed from the ramp-up distance along the edge, rather than either the fixed zero or max-speed value used for the build-time-calculated edge state.
 
 ### Edge instructions playback
 
-When we create the edges, we represent the movement trajectories according to the sequence of instructions that would produce the trajectory. Each instruction is simply represented by an ID for the relevant input key, whether the key is being pressed or released, and the time. The player movement system can then handle these input key events in the same way as actual human-triggered input key events.
+When we create the edges, we represent the movement trajectories according to the sequence of instructions that would produce the trajectory. Each instruction is simply represented by an ID for the relevant input key, whether the key is being pressed or released, and the time. The character movement system can then handle these input key events in the same way as actual human-triggered input key events.
 
 ### Correcting for runtime vs buildtime trajectory discrepancies
 
-When executing edge instructions, the resulting run-time trajectory is usually slightly off from the expected trajectory that was pre-calculated when creating the edge. This variance is usually pretty minor, but, just in case, a given player can be configured to use the exact pre-calculated edge trajectory rather than the run-time version.
+When executing edge instructions, the resulting run-time trajectory is usually slightly off from the expected trajectory that was pre-calculated when creating the edge. This variance is usually pretty minor, but, just in case, a given character can be configured to use the exact pre-calculated edge trajectory rather than the run-time version.
 
 Theoretically, this discrepancy shouldn't exist, and we should be able to eliminate it at some point.

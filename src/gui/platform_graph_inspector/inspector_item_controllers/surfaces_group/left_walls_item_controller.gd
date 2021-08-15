@@ -24,6 +24,6 @@ func _init(
 
 
 func get_description() -> String:
-    return ("A left wall is on the left side of the player when the player " +
+    return ("A left wall is on the left side of the character when the character " +
             "stands along the outside of the surface. The wall is " +
             "actually the right side of the level shape that it's a part of.")

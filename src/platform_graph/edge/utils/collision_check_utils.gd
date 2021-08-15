@@ -6,7 +6,7 @@ extends Reference
 # instructions.
 # 
 # -   This is calculated by stepping through each discrete physics frame, which
-#     should exactly emulate the actual SurfacerPlayer trajectory that would be used.
+#     should exactly emulate the actual SurfacerCharacter trajectory that would be used.
 # -   This also records some trajectory state.
 static func check_instructions_discrete_trajectory_state(
         edge_calc_params: EdgeCalcParams,
@@ -90,7 +90,7 @@ static func check_instructions_discrete_trajectory_state(
             # these.
             collision = null
         
-        # This point corresponds to when SurfacerPlayer._physics_process would be
+        # This point corresponds to when SurfacerCharacter._physics_process would be
         # called:
         # - The position for the current frame has been calculated from the
         #   previous frame's velocity.
@@ -211,7 +211,7 @@ static func check_instructions_discrete_trajectory_state(
 # Checks whether a collision would occur with any surface during the given
 # horizontal step. This is calculated by considering the continuous physics
 # state according to the parabolic equations of motion. This does not
-# necessarily accurately reflect the actual SurfacerPlayer trajectory that would be
+# necessarily accurately reflect the actual SurfacerCharacter trajectory that would be
 # used.
 static func check_continuous_horizontal_step_for_collision(
         step_result_metadata: EdgeStepCalcResultMetadata,
@@ -341,7 +341,7 @@ static func check_continuous_horizontal_step_for_collision(
     # **NOTE**: This frame corresponds to a shorter duration than all the other
     #           frames.
     if collision != null:
-        frame_positions.push_back(collision.player_position)
+        frame_positions.push_back(collision.character_position)
         frame_velocities.push_back(current_velocity)
     
     if collision != null and \
@@ -368,7 +368,7 @@ static func check_continuous_horizontal_step_for_collision(
 # Determines whether the given motion of the given shape would collide with a
 # surface.
 # 
-# -   This often generates false-negatives if the player is moving away from a
+# -   This often generates false-negatives if the character is moving away from a
 #     surface that they were already colliding with beforehand.
 # -   If a collision would occur, this returns information about the collision.
 static func check_frame_for_collision(
@@ -391,7 +391,7 @@ static func check_frame_for_collision(
     
     var surface_collision := SurfaceCollision.new()
     surface_collision.position = kinematic_collision.position
-    surface_collision.player_position = \
+    surface_collision.character_position = \
             position_start + kinematic_collision.travel
     surface_collision.time_from_start_of_frame = \
             (kinematic_collision.travel.y / displacement.y if \
@@ -599,11 +599,11 @@ static func check_frame_for_collision(
                 Sc.logger.error()
     
     if is_moving_away_from_surface:
-        # The player is moving away from the collision point.
+        # The character is moving away from the collision point.
         # This means one of two things:
         # -   There was a pre-existing collision (happens infrequently).
         # -   The extra "safe_margin" used in calculating the collision extends
-        #     into a surface the player is departing, even though the player
+        #     into a surface the character is departing, even though the character
         #     wasn't directly colliding with the surface (happens frequently).
         
         if is_recursing:

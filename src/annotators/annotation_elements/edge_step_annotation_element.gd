@@ -13,7 +13,7 @@ var trajectory_stroke_width: float
 var waypoint_stroke_width: float
 var collision_color: Color
 var collision_x_stroke_width: float
-var collision_player_boundary_stroke_width: float
+var collision_character_boundary_stroke_width: float
 var color: Color
 
 var step_label: ScaffolderLabel
@@ -38,9 +38,9 @@ func _init(
                 Su.ann_defaults.COLLISION_COLOR_FAINT
         self.collision_x_stroke_width = \
                 AnnotationElementDefaults.COLLISION_X_STROKE_WIDTH_FAINT
-        self.collision_player_boundary_stroke_width = \
+        self.collision_character_boundary_stroke_width = \
                 AnnotationElementDefaults \
-                        .COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_FAINT
+                        .COLLISION_CHARACTER_BOUNDARY_STROKE_WIDTH_FAINT
     else:
         self.opacity = \
                 AnnotationElementDefaults.STEP_OPACITY_STRONG
@@ -52,9 +52,9 @@ func _init(
                 Su.ann_defaults.COLLISION_COLOR_STRONG
         self.collision_x_stroke_width = \
                 AnnotationElementDefaults.COLLISION_X_STROKE_WIDTH_STRONG
-        self.collision_player_boundary_stroke_width = \
+        self.collision_character_boundary_stroke_width = \
                 AnnotationElementDefaults \
-                        .COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_STRONG
+                        .COLLISION_CHARACTER_BOUNDARY_STROKE_WIDTH_STRONG
     
     self.color = _calculate_color(renders_faintly)
     
@@ -170,20 +170,20 @@ func _draw_collision(canvas: CanvasItem) -> void:
                     collision.surface,
                     collision_color)
         
-        # Draw an outline of the player's collision boundary at the point of
+        # Draw an outline of the character's collision boundary at the point of
         # collision.
         Sc.draw.draw_shape_outline(
                 canvas,
-                collision.player_position,
+                collision.character_position,
                 collision_result_metadata.collider_shape,
                 collision_result_metadata.collider_rotation,
                 collision_color,
-                collision_player_boundary_stroke_width)
-        # Draw a dot at the center of the player's collision boundary.
+                collision_character_boundary_stroke_width)
+        # Draw a dot at the center of the character's collision boundary.
         canvas.draw_circle(
-                collision.player_position,
+                collision.character_position,
                 AnnotationElementDefaults \
-                        .COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS,
+                        .COLLISION_CHARACTER_BOUNDARY_CENTER_RADIUS,
                 collision_color)
         
         if !renders_faintly:

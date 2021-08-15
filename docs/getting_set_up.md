@@ -50,38 +50,38 @@ _Probably the easiest way to get started with this is to copy/paste/edit the pre
         -   `name`: The display name for the level.
         -   `sort_priority`: The level's position relative to other levels.
         -   `unlock_conditions`: How and when the level is unlocked.
-        -   `platform_graph_player_names`: The names of the players that might appear in the level. A platform graph will need to be calculated for each of these players.
+        -   `platform_graph_character_names`: The names of the characters that might appear in the level. A platform graph will need to be calculated for each of these characters.
 
-## Creating a player
+## Creating a character
 
-In order to create a new player type, you'll need to override a few classes from Surfacer.
+In order to create a new character type, you'll need to override a few classes from Surfacer.
 
-_Probably the easiest way to get started with this is to copy/paste/edit a pre-existing player from the Squirrel Away example app._
+_Probably the easiest way to get started with this is to copy/paste/edit a pre-existing character from the Squirrel Away example app._
 
--   [`SurfacerPlayer`](/src/player/surfacer_player.gd)
-    -   This defines how your player reacts to input and decides when and were to navigate within the level.
+-   [`SurfacerCharacter`](/src/character/surfacer_character.gd)
+    -   This defines how your character reacts to input and decides when and were to navigate within the level.
     -   Required children:
         -   `MovementParameters`
-        -   `ScaffolderPlayerAnimator`
+        -   `ScaffolderCharacterAnimator`
         -   `CollisionShape2D`
     -   `collision_detection_layers`
-        -   This helps your `SurfacerPlayer` detect when other areas or bodies collide with the player.
+        -   This helps your `SurfacerCharacter` detect when other areas or bodies collide with the character.
         -   The default `PhysicsBody2D.collision_layer` property is limited, because the `move_and_slide` system will adjust our movement when we collide with matching objects.
         -   So this separate `collision_detection_layers` property lets us detect collisions without adjusting our movement.
     -   `ProximityDetector`
-        -   This helps your `SurfacerPlayer` detect when other areas or bodies enter or exit the proximity of your player.
-        -   You can declare these as children in your SurfacerPlayer scenes.
+        -   This helps your `SurfacerCharacter` detect when other areas or bodies enter or exit the proximity of your character.
+        -   You can declare these as children in your SurfacerCharacter scenes.
         -   You can configure the shape used to define the proximity range.
--   [`ScaffolderPlayerAnimator`](https://github.com/snoringcatgames/scaffolder/blob/master/src/player/scaffolder_player_animator.gd)
-    -   This defines how your player is rendered and animated.
+-   [`ScaffolderCharacterAnimator`](https://github.com/snoringcatgames/scaffolder/blob/master/src/character/scaffolder_character_animator.gd)
+    -   This defines how your character is rendered and animated.
     -   Surfacer makes some opinionated assumptions about how this will be set-up, but you can probably adjust or ignore some of this to fit your needs.
     -   `uses_standard_sprite_frame_animations`
-        -   Set this export property to `true` if you want to set up all of the animations for this player by changing the `frame` property on a corresponding `Sprite`.
-        -   If this is enabled, then the `ScaffolderPlayerAnimator` will expect there to be a one-to-one mapping between immediate-child `Sprites` and animations in the `AnimationPlayer`, and these matching animations and Sprites will need to share the same names.
+        -   Set this export property to `true` if you want to set up all of the animations for this character by changing the `frame` property on a corresponding `Sprite`.
+        -   If this is enabled, then the `ScaffolderCharacterAnimator` will expect there to be a one-to-one mapping between immediate-child `Sprites` and animations in the `AnimationPlayer`, and these matching animations and Sprites will need to share the same names.
     -   `animations`
         -   This `Dictionary` is auto-populated with keys corresponding to each animation in the `AnimationPlayer`.
         -   You can configure some additional state for each of the animation configs in this dictionary, such as the default playback speed for the animation, and the name of a `Sprite` to automatically show when starting the animation.
 -   [`MovementParameters`](/src/platform_graph/edge/models/movement_params.gd)
-    -   This defines how your player will move.
+    -   This defines how your character will move.
     -   There are a _lot_ of parameters you can adjust here.
     -   You can adjust these parameters within the editor's inspector panel.

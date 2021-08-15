@@ -101,7 +101,7 @@ func get_is_facing_left_at_time(
             "mu", \
             "md", \
             "gw":
-                # This input does not affect the direction the player faces.
+                # This input does not affect the direction the character faces.
                 pass
             _:
                 Sc.logger.error()

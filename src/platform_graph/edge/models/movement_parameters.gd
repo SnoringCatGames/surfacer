@@ -2,7 +2,7 @@ tool
 class_name MovementParameters, \
 "res://addons/surfacer/assets/images/editor_icons/movement_params.png"
 extends Node2D
-## -   This defines how your player will move.[br]
+## -   This defines how your character will move.[br]
 ## -   There are a _lot_ of parameters you can adjust here.[br]
 ## -   You can adjust these parameters within the editor's inspector panel.[br]
 
@@ -28,7 +28,7 @@ const _PHYSICS_MOVEMENT_GROUP := {
     first_property_name = "gravity_multiplier",
 }
 
-## Each player can use a different gravity value.
+## Each character can use a different gravity value.
 var gravity_multiplier := 1.0 \
         setget _set_gravity_multiplier
 ## Surfacer supports "fast-fall", which means that the ascent of a jump can use
@@ -104,19 +104,19 @@ const _EDGE_WEIGHTS_GROUP := {
 ## weights.
 var uses_duration_instead_of_distance_for_edge_weight := true \
         setget _set_uses_duration_instead_of_distance_for_edge_weight
-## If an extra weight is applied for each additional edge, then the player will
+## If an extra weight is applied for each additional edge, then the character will
 ## favor paths that cross fewer surfaces, even if the path may take longer.
 var additional_edge_weight_offset_override := -1.0 \
         setget _set_additional_edge_weight_offset_override
-## If extra weight is applied to walking edges, then the player will favor
+## If extra weight is applied to walking edges, then the character will favor
 ## paths that involve more jumps, even if the path may take longer.
 var walking_edge_weight_multiplier_override := -1.0 \
         setget _set_walking_edge_weight_multiplier_override
-## If extra weight is applied to climbing edges, then the player will favor
+## If extra weight is applied to climbing edges, then the character will favor
 ## paths that involve more jumps, even if the path may take longer.
 var climbing_edge_weight_multiplier_override := -1.0 \
         setget _set_climbing_edge_weight_multiplier_override
-## If extra weight is applied to air edges, then the player will favor
+## If extra weight is applied to air edges, then the character will favor
 ## paths that involve fewer jumps, even if the path may take longer.
 var air_edge_weight_multiplier_override := -1.0 \
         setget _set_air_edge_weight_multiplier_override
@@ -139,7 +139,7 @@ var minimizes_velocity_change_when_jumping := false \
 ## -   If this is true, then at runtime, after finding a path through
 ##     build-time-calculated edges, the SurfaceNavigator will try to optimize the
 ##     jump-off points of the edges to better account for the direction that the
-##     player will be approaching the edge from.[br]
+##     character will be approaching the edge from.[br]
 ## -   This produces more efficient and natural movement.[br]
 ## -   The build-time-calculated edge state would only use surface end-points or
 ##     closest points.[br]
@@ -160,42 +160,42 @@ var optimizes_edge_land_positions_at_run_time := true \
 ##     enabled or path timings are important.[br]
 var also_optimizes_preselection_path := true \
         setget _set_also_optimizes_preselection_path
-var forces_player_position_to_match_edge_at_start := true \
-        setget _set_forces_player_position_to_match_edge_at_start
-var forces_player_velocity_to_match_edge_at_start := true \
-        setget _set_forces_player_velocity_to_match_edge_at_start
-var forces_player_position_to_match_path_at_end := false \
-        setget _set_forces_player_position_to_match_path_at_end
-var forces_player_velocity_to_zero_at_path_end := false \
-        setget _set_forces_player_velocity_to_zero_at_path_end
-## -   If true, then player position will be forced to match the expected
+var forces_character_position_to_match_edge_at_start := true \
+        setget _set_forces_character_position_to_match_edge_at_start
+var forces_character_velocity_to_match_edge_at_start := true \
+        setget _set_forces_character_velocity_to_match_edge_at_start
+var forces_character_position_to_match_path_at_end := false \
+        setget _set_forces_character_position_to_match_path_at_end
+var forces_character_velocity_to_zero_at_path_end := false \
+        setget _set_forces_character_velocity_to_zero_at_path_end
+## -   If true, then character position will be forced to match the expected
 ##     calculated edge-movement position during each frame.[br]
 ## -   Without this, there is typically some deviation at run-time from the
 ##     expected calculated edge trajectories.[br]
-var syncs_player_position_to_edge_trajectory := true \
-        setget _set_syncs_player_position_to_edge_trajectory
-## -   If true, then player velocity will be forced to match the expected
+var syncs_character_position_to_edge_trajectory := true \
+        setget _set_syncs_character_position_to_edge_trajectory
+## -   If true, then character velocity will be forced to match the expected
 ##     calculated edge-movement velocity during each frame.[br]
 ## -   Without this, there is typically some deviation at run-time from the
 ##     expected calculated edge trajectories.[br]
-var syncs_player_velocity_to_edge_trajectory := true \
-        setget _set_syncs_player_velocity_to_edge_trajectory
+var syncs_character_velocity_to_edge_trajectory := true \
+        setget _set_syncs_character_velocity_to_edge_trajectory
 ## -   If true, then trajectory positions will be stored after performing edge
 ##     calculations.[br]
-## -   This state could be used for drawing path trajectories or updating player
+## -   This state could be used for drawing path trajectories or updating character
 ##     positions at runtime.[br]
 var includes_continuous_trajectory_positions := true \
         setget _set_includes_continuous_trajectory_positions
 ## -   If true, then trajectory velocities will be stored after performing edge
 ##     calculations.[br]
-## -   This state could be used for drawing path trajectories or updating player
+## -   This state could be used for drawing path trajectories or updating character
 ##     velocities at runtime.[br]
 var includes_continuous_trajectory_velocities := true \
         setget _set_includes_continuous_trajectory_velocities
 ## -   If true, then discrete trajectory state will be calculated and saved for
 ##     each edge.[br]
 ## -   This "discrete" state should more closely reflect what would be generated
-##     by normal player movement at runtime, rather than the "continuous" state,
+##     by normal character movement at runtime, rather than the "continuous" state,
 ##     which doesn't take into account the error due to the calculation sampling
 ##     interval.[br]
 var includes_discrete_trajectory_state := true \
@@ -210,9 +210,9 @@ var includes_discrete_trajectory_state := true \
 ##     runtime, then it will be calculated on-the-fly as needed.[br]
 var is_trajectory_state_stored_at_build_time := false \
         setget _set_is_trajectory_state_stored_at_build_time
-## -   If true, then the player position will be updated according to
+## -   If true, then the character position will be updated according to
 ##     pre-calculated edge trajectories, and Godot's physics and collision
-##     engine will not be used to update player state.[br]
+##     engine will not be used to update character state.[br]
 ## -   This also means that the user will not be able to control movement with
 ##     standard move and jump key-press actions.[br]
 var bypasses_runtime_physics := false \
@@ -257,7 +257,7 @@ var includes_redundant_j_l_positions_with_zero_start_velocity := true \
         setget _set_includes_redundant_j_l_positions_with_zero_start_velocity
 ## -   This is a constant increase to all jump durations.[br]
 ## -   This could make it more likely for edge calculations to succeed earlier,
-##     or it could just make the player seem more floaty.[br]
+##     or it could just make the character seem more floaty.[br]
 var normal_jump_instruction_duration_increase := 0.08 \
         setget _set_normal_jump_instruction_duration_increase
 ## -   This is a constant increase to all jump durations.[br]
@@ -277,12 +277,12 @@ var recurses_when_colliding_during_horizontal_step_calculations := true \
 ## negatives.
 var backtracks_for_higher_jumps_during_hor_step_calculations := true \
         setget _set_backtracks_for_higher_jumps_during_hor_step_calculations
-## The amount of extra margin to include around the player collision boundary
+## The amount of extra margin to include around the character collision boundary
 ## when performing collision detection for a given edge calculation.
 var collision_margin_for_edge_calculations := 1.0 \
         setget _set_collision_margin_for_edge_calculations
 ## The amount of extra margin to include for waypoint offsets, so that the
-## player doesn't collide unexpectedly with the surface.
+## character doesn't collide unexpectedly with the surface.
 var collision_margin_for_waypoint_positions := 4.0 \
         setget _set_collision_margin_for_waypoint_positions
 ## -   Some jump/land posititions are less likely to produce valid movement,
@@ -294,9 +294,9 @@ var skips_less_likely_jump_land_positions := false \
         setget _set_skips_less_likely_jump_land_positions
 ## -   If true, then the navigator will include extra offsets so that paths
 ##     don't end too close to surface ends, and will dynamically insert extra
-##     backtracking edges if the player ends up past a surface end at the end of
+##     backtracking edges if the character ends up past a surface end at the end of
 ##     a path.[br]
-## -   This should be unnecessary if forces_player_position_to_match_path_at_end
+## -   This should be unnecessary if forces_character_position_to_match_path_at_end
 ##     is true.[br]
 var prevents_path_ends_from_exceeding_surface_ends_with_offsets := true \
         setget _set_prevents_path_ends_from_exceeding_surface_ends_with_offsets
@@ -335,9 +335,9 @@ const _LOGS_GROUP := {
     first_property_name = "logs_inspector_events",
 }
 
-# TODO: It'd be nice to remove this from here, and move it to SurfacerPlayer,
+# TODO: It'd be nice to remove this from here, and move it to SurfacerCharacter,
 #       but it's used within the PlatformGraphInspector, which deals with a
-#       class of player rather than a player instance.
+#       class of character rather than a character instance.
 var logs_inspector_events := false \
         setget _set_logs_inspector_events
 
@@ -371,10 +371,10 @@ const _MOVEMENT_ABILITY_OVERRIDES_GROUP := {
 ## -   A default set of ActionHandlers is usually assigned based on other
 ##     movement properties, such as `can_jump`.
 var edge_calculators_override := []
-## -   An ActionHandler updates a player's state each frame, in response to
-##     current events and the player's current state.
-## -   For example, FloorJumpAction listens for jump events while the player is
-##     on the ground, and triggers player jump state accordingly.
+## -   An ActionHandler updates a character's state each frame, in response to
+##     current events and the character's current state.
+## -   For example, FloorJumpAction listens for jump events while the character is
+##     on the ground, and triggers character jump state accordingly.
 ## -   A default set of ActionHandlers is usually assigned based on other
 ##     movement properties, such as `can_jump`.
 var action_handlers_override := []
@@ -436,17 +436,17 @@ var collider_half_width_height := Vector2.INF
 ## -   This shape is used for calculating trajectories that approximate what
 ##     might normally happen at runtime.[br]
 ## -   These trajectories could be used both for rendering navigation paths, as
-##     well as for updating player positions at runtime.[br]
+##     well as for updating character positions at runtime.[br]
 var fall_from_floor_corner_calc_shape: Shape2D
 var fall_from_floor_corner_calc_shape_rotation: float
 ## -   This shape is used for calculating trajectories that approximate what
 ##     might normally happen at runtime.[br]
 ## -   These trajectories could be used both for rendering navigation paths, as
-##     well as for updating player positions at runtime.[br]
+##     well as for updating character positions at runtime.[br]
 var climb_over_wall_corner_calc_shape: Shape2D
 var climb_over_wall_corner_calc_shape_rotation: float
 
-var player_name := ""
+var character_name := ""
 
 # ---
 
@@ -473,7 +473,7 @@ var _property_list_addendum := [
         usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
     },
     {
-        name = "player_name",
+        name = "character_name",
         type = TYPE_STRING,
         usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
     },
@@ -517,11 +517,11 @@ func _parse_shape_from_parent() -> void:
     if !is_instance_valid(parent):
         return
     
-    if !parent.is_in_group(Sc.players.GROUP_NAME_SURFACER_PLAYERS):
-        _set_configuration_warning("Must define a SurfacerPlayer parent.")
+    if !parent.is_in_group(Sc.characters.GROUP_NAME_SURFACER_CHARACTERS):
+        _set_configuration_warning("Must define a SurfacerCharacter parent.")
         return
     
-    player_name = parent.player_name
+    character_name = parent.character_name
     
     var collision_shapes: Array = Sc.utils.get_children_by_type(
             parent,
@@ -575,12 +575,12 @@ func _validate_parameters() -> void:
                 "name=%s") % name)
     elif (action_handlers_override.find(
             "MatchExpectedEdgeTrajectoryAction") >= 0) == \
-            (syncs_player_position_to_edge_trajectory or \
-                    syncs_player_velocity_to_edge_trajectory):
+            (syncs_character_position_to_edge_trajectory or \
+                    syncs_character_velocity_to_edge_trajectory):
         _set_configuration_warning(
                 "MatchExpectedEdgeTrajectoryAction should be included iff " +
-                "syncs_player_position_to_edge_trajectory or " +
-                "syncs_player_velocity_to_edge_trajectory.")
+                "syncs_character_position_to_edge_trajectory or " +
+                "syncs_character_velocity_to_edge_trajectory.")
     elif gravity_fast_fall < 0:
         _set_configuration_warning(
                 "gravity_fast_fall must be non-negative.")
@@ -663,27 +663,27 @@ func _validate_parameters() -> void:
                 "stops_after_finding_first_valid_edge_for_a_surface_pair " +
                 "and calculates_all_valid_edges_for_a_surface_pair " +
                 "cannot both be true.")
-    elif forces_player_position_to_match_path_at_end and \
+    elif forces_character_position_to_match_path_at_end and \
             prevents_path_ends_from_exceeding_surface_ends_with_offsets:
         _set_configuration_warning(
                 "prevents_path_ends_from_exceeding_surface_ends_with_offsets " +
-                "and forces_player_position_to_match_path_at_end " +
+                "and forces_character_position_to_match_path_at_end " +
                 "cannot both be true.")
-    elif syncs_player_position_to_edge_trajectory and \
+    elif syncs_character_position_to_edge_trajectory and \
             !includes_continuous_trajectory_positions:
         _set_configuration_warning(
-                "If syncs_player_position_to_edge_trajectory is true, " +
+                "If syncs_character_position_to_edge_trajectory is true, " +
                 "then includes_continuous_trajectory_positions must be true.")
-    elif syncs_player_velocity_to_edge_trajectory and \
+    elif syncs_character_velocity_to_edge_trajectory and \
             !includes_continuous_trajectory_velocities:
         _set_configuration_warning(
-                "If syncs_player_velocity_to_edge_trajectory is true, " +
+                "If syncs_character_velocity_to_edge_trajectory is true, " +
                 "then includes_continuous_trajectory_velocities must be true.")
     elif bypasses_runtime_physics and \
-            !syncs_player_position_to_edge_trajectory:
+            !syncs_character_position_to_edge_trajectory:
         _set_configuration_warning(
                 "If bypasses_runtime_physics is true, " +
-                "then syncs_player_position_to_edge_trajectory must be true.")
+                "then syncs_character_position_to_edge_trajectory must be true.")
 
 
 func _derive_parameters() -> void:
@@ -766,8 +766,8 @@ func _derive_parameters() -> void:
             !action_handlers_override.empty() else \
             Su.movement.get_default_action_handler_names(self)
     var includes_edge_match := \
-            syncs_player_position_to_edge_trajectory or \
-            syncs_player_velocity_to_edge_trajectory
+            syncs_character_position_to_edge_trajectory or \
+            syncs_character_velocity_to_edge_trajectory
     action_handlers = Su.movement.get_action_handlers_from_names(
             action_handler_names,
             includes_edge_match)
@@ -994,33 +994,33 @@ func _set_also_optimizes_preselection_path(value: bool) -> void:
     _update_parameters()
 
 
-func _set_forces_player_position_to_match_edge_at_start(value: bool) -> void:
-    forces_player_position_to_match_edge_at_start = value
+func _set_forces_character_position_to_match_edge_at_start(value: bool) -> void:
+    forces_character_position_to_match_edge_at_start = value
     _update_parameters()
 
 
-func _set_forces_player_velocity_to_match_edge_at_start(value: bool) -> void:
-    forces_player_velocity_to_match_edge_at_start = value
+func _set_forces_character_velocity_to_match_edge_at_start(value: bool) -> void:
+    forces_character_velocity_to_match_edge_at_start = value
     _update_parameters()
 
 
-func _set_forces_player_position_to_match_path_at_end(value: bool) -> void:
-    forces_player_position_to_match_path_at_end = value
+func _set_forces_character_position_to_match_path_at_end(value: bool) -> void:
+    forces_character_position_to_match_path_at_end = value
     _update_parameters()
 
 
-func _set_forces_player_velocity_to_zero_at_path_end(value: bool) -> void:
-    forces_player_velocity_to_zero_at_path_end = value
+func _set_forces_character_velocity_to_zero_at_path_end(value: bool) -> void:
+    forces_character_velocity_to_zero_at_path_end = value
     _update_parameters()
 
 
-func _set_syncs_player_position_to_edge_trajectory(value: bool) -> void:
-    syncs_player_position_to_edge_trajectory = value
+func _set_syncs_character_position_to_edge_trajectory(value: bool) -> void:
+    syncs_character_position_to_edge_trajectory = value
     _update_parameters()
 
 
-func _set_syncs_player_velocity_to_edge_trajectory(value: bool) -> void:
-    syncs_player_velocity_to_edge_trajectory = value
+func _set_syncs_character_velocity_to_edge_trajectory(value: bool) -> void:
+    syncs_character_velocity_to_edge_trajectory = value
     _update_parameters()
 
 

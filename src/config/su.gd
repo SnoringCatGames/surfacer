@@ -46,14 +46,14 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
             item_classes = [
                 RulerAnnotatorControlRow,
                 PreselectionTrajectoryAnnotatorControlRow,
-                NpcPlayerTrajectoryAnnotatorControlRow,
+                NpcCharacterTrajectoryAnnotatorControlRow,
                 ActiveTrajectoryAnnotatorControlRow,
                 PreviousTrajectoryAnnotatorControlRow,
                 NavigationDestinationAnnotatorControlRow,
                 RecentMovementAnnotatorControlRow,
                 SurfacesAnnotatorControlRow,
-                PlayerPositionAnnotatorControlRow,
-                PlayerAnnotatorControlRow,
+                CharacterPositionAnnotatorControlRow,
+                CharacterAnnotatorControlRow,
                 LevelAnnotatorControlRow,
             ],
         },
@@ -161,7 +161,7 @@ var path_drag_update_throttle_interval := 0.2
 var path_beat_update_throttle_interval := 0.2
 
 # Params for CameraPanController.
-var snaps_camera_back_to_player := true
+var snaps_camera_back_to_character := true
 var max_zoom_multiplier_from_pointer := 1.5
 var max_pan_distance_from_pointer := 512.0
 var duration_to_max_pan_from_pointer_at_max_control := 0.67
@@ -173,7 +173,7 @@ var skip_choreography_framerate_multiplier := 10.0
 # Here are some example fields for these debug params:
 #{
 #    limit_parsing = {
-#        player_name = "cat",
+#        character_name = "cat",
 #
 #        edge_type = EdgeType.JUMP_FROM_SURFACE_EDGE,
 ##        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
@@ -333,9 +333,9 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
         self.path_beat_update_throttle_interval = \
                 manifest.path_beat_update_throttle_interval
     
-    if manifest.has("snaps_camera_back_to_player"):
-        self.snaps_camera_back_to_player = \
-                manifest.snaps_camera_back_to_player
+    if manifest.has("snaps_camera_back_to_character"):
+        self.snaps_camera_back_to_character = \
+                manifest.snaps_camera_back_to_character
     if manifest.has("max_zoom_multiplier_from_pointer"):
         self.max_zoom_multiplier_from_pointer = \
                 manifest.max_zoom_multiplier_from_pointer

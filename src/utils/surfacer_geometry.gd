@@ -111,8 +111,8 @@ static func get_surface_side_for_normal(normal: Vector2) -> int:
         return SurfaceSide.RIGHT_WALL
 
 
-static func get_floor_friction_multiplier(player) -> float:
-    var collision := _get_collision_for_side(player, SurfaceSide.FLOOR)
+static func get_floor_friction_multiplier(character) -> float:
+    var collision := _get_collision_for_side(character, SurfaceSide.FLOOR)
     # Collision friction is a property of the TileMap node.
     if collision != null and \
             collision.collider.collision_friction != null:
@@ -121,11 +121,11 @@ static func get_floor_friction_multiplier(player) -> float:
 
 
 static func _get_collision_for_side(
-        player,
+        character,
         side: int) -> KinematicCollision2D:
-    if player.surface_state.is_touching_floor:
-        for i in player.get_slide_count():
-            var collision: KinematicCollision2D = player.get_slide_collision(i)
+    if character.surface_state.is_touching_floor:
+        for i in character.get_slide_count():
+            var collision: KinematicCollision2D = character.get_slide_collision(i)
             if get_surface_side_for_normal(collision.normal) == side:
                 return collision
     return null
@@ -458,7 +458,7 @@ static func get_collision_tile_map_coord(
             second_statement = (
                     "Godot's underlying collision engine presumably " +
                     "calculated an incorrect result. This usually happens " +
-                    "when the player is sliding along a corner.")
+                    "when the character is sliding along a corner.")
         var print_message := """%s: 
             %s; 
             collision_position=%s 

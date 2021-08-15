@@ -30810,7 +30810,7 @@
          id="tspan9222"
          x="91.291832"
          y="-27.679531"
-         style="stroke-width:0.03718612">Collision boundary of player.</tspan></text>
+         style="stroke-width:0.03718612">Collision boundary of character.</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:1.48744512px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.03718612"
@@ -36115,7 +36115,7 @@
              id="tspan9222-4"
              x="273.08737"
              y="21.029482"
-             style="stroke-width:0.03718612">Collision boundary of player.</tspan></text>
+             style="stroke-width:0.03718612">Collision boundary of character.</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-weight:normal;font-size:1.48744512px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.03718612"
@@ -58095,7 +58095,7 @@
          x="-479.99289"
          y="361.98166"
          style="stroke-width:0.08785292"
-         id="tspan14428">  - When using v-zero, horizontal offset should only be half the width of the player.</tspan><tspan
+         id="tspan14428">  - When using v-zero, horizontal offset should only be half the width of the character.</tspan><tspan
          sodipodi:role="line"
          x="-479.99289"
          y="366.3743"
@@ -75881,12 +75881,12 @@
          x="-438.99017"
          y="751.74603"
          style="stroke-width:0.11665335"
-         id="tspan16982">    - If floor right bound &gt; wall.x + player-half-width:</tspan><tspan
+         id="tspan16982">    - If floor right bound &gt; wall.x + character-half-width:</tspan><tspan
          sodipodi:role="line"
          x="-438.99017"
          y="757.57874"
          style="stroke-width:0.11665335"
-         id="tspan17014">      - Jump basis = wall.x + player-half-width</tspan><tspan
+         id="tspan17014">      - Jump basis = wall.x + character-half-width</tspan><tspan
          sodipodi:role="line"
          x="-438.99017"
          y="763.41138"
@@ -75941,7 +75941,7 @@
          x="-438.99017"
          y="821.73804"
          style="stroke-width:0.11665335"
-         id="tspan17052">        region left bound - player-half-width</tspan><tspan
+         id="tspan17052">        region left bound - character-half-width</tspan><tspan
          sodipodi:role="line"
          x="-438.99017"
          y="827.57074"
@@ -96786,12 +96786,12 @@
          x="-484.64673"
          y="166.43741"
          style="stroke-width:0.08785292"
-         id="tspan13915-7">var is_jump_surface_much_lower := jump.center.y &gt; land.center.y + player_height + margin</tspan><tspan
+         id="tspan13915-7">var is_jump_surface_much_lower := jump.center.y &gt; land.center.y + character_height + margin</tspan><tspan
          sodipodi:role="line"
          x="-484.64673"
          y="170.83005"
          style="stroke-width:0.08785292"
-         id="tspan36251">var is_land_surface_much_lower := land.center.y &gt; jump.center.y + player_height + margin</tspan><tspan
+         id="tspan36251">var is_land_surface_much_lower := land.center.y &gt; jump.center.y + character_height + margin</tspan><tspan
          sodipodi:role="line"
          x="-484.64673"
          y="175.2227"
@@ -96811,7 +96811,7 @@
          x="-484.64673"
          y="188.40063"
          style="stroke-width:0.08785292"
-         id="tspan36296">        jump_surface_left_bound &lt;= land_surface_left_bound - player_half_width - margin if \</tspan><tspan
+         id="tspan36296">        jump_surface_left_bound &lt;= land_surface_left_bound - character_half_width - margin if \</tspan><tspan
          sodipodi:role="line"
          x="-484.64673"
          y="192.79329"
@@ -96821,7 +96821,7 @@
          x="-484.64673"
          y="197.18593"
          style="stroke-width:0.08785292"
-         id="tspan36265">        land_surface_left_bound &lt;= jump_surface_left_bound - player_half_width - margin</tspan><tspan
+         id="tspan36265">        land_surface_left_bound &lt;= jump_surface_left_bound - character_half_width - margin</tspan><tspan
          sodipodi:role="line"
          x="-484.64673"
          y="201.57858"
@@ -96831,7 +96831,7 @@
          x="-484.64673"
          y="205.97122"
          style="stroke-width:0.08785292"
-         id="tspan36283">        jump_surface_right_bound &gt;= land_surface_right_bound + player_half_width + margin if \</tspan><tspan
+         id="tspan36283">        jump_surface_right_bound &gt;= land_surface_right_bound + character_half_width + margin if \</tspan><tspan
          sodipodi:role="line"
          x="-484.64673"
          y="210.36388"
@@ -96841,7 +96841,7 @@
          x="-484.64673"
          y="214.75652"
          style="stroke-width:0.08785292"
-         id="tspan36287">        land_surface_right_bound &gt;= jump_surface_right_bound + player_half_width + margin</tspan><tspan
+         id="tspan36287">        land_surface_right_bound &gt;= jump_surface_right_bound + character_half_width + margin</tspan><tspan
          sodipodi:role="line"
          x="-484.64673"
          y="219.14917"

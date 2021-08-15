@@ -60,16 +60,16 @@ func _calculate_duration(
 
 
 func get_animation_state_at_time(
-        result: PlayerAnimationState,
+        result: CharacterAnimationState,
         edge_time: float) -> void:
-    result.player_position = get_position_at_time(edge_time)
+    result.character_position = get_position_at_time(edge_time)
     result.animation_name = "ClimbUp"
     result.animation_position = edge_time
     result.facing_left = get_start_surface().side == SurfaceSide.LEFT_WALL
 
 
 func _update_expected_position_along_surface(
-        navigation_state: PlayerNavigationState,
+        navigation_state: CharacterNavigationState,
         edge_time: float) -> void:
     var position := navigation_state.expected_position_along_surface
     position.surface = \
@@ -84,8 +84,8 @@ func _update_expected_position_along_surface(
 
 
 func _check_did_just_reach_surface_destination(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback) -> bool:
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration
@@ -132,8 +132,8 @@ static func _calculate_instructions(
 # corner between surfaces. So we need to be more permissible here for what we
 # consider to be expected when leaving and entering the air.
 func _update_navigation_state_edge_specific_helper(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         is_starting_navigation_retry: bool) -> void:
     if is_starting_navigation_retry:
         # This should never happen.

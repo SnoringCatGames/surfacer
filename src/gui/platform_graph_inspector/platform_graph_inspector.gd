@@ -4,7 +4,7 @@ extends Tree
 
 
 # INSPECTOR STRUCTURE:
-# - Platform graph [player_name]
+# - Platform graph [character_name]
 #   - Edges [#]
 #     - [#] Edges calculated with increasing jump height
 #       - JUMP_FROM_SURFACE_EDGEs [#]
@@ -123,7 +123,7 @@ func _populate() -> void:
     var dummy := DummyItemController.new(root, self, null)
     
     for graph in graphs:
-        graph_item_controllers[graph.movement_params.player_name] = \
+        graph_item_controllers[graph.movement_params.character_name] = \
                 PlatformGraphItemController.new(
                         root,
                         self,
@@ -168,16 +168,16 @@ func _select_initial_item() -> void:
         return
     
     if !Su.debug_params.has("limit_parsing") or \
-            !Su.debug_params.limit_parsing.has("player_name"):
+            !Su.debug_params.limit_parsing.has("character_name"):
         select_first_item()
     else:
         var limit_parsing: Dictionary = Su.debug_params.limit_parsing
-        var player_name: String = limit_parsing.player_name
+        var character_name: String = limit_parsing.character_name
         
         if limit_parsing.has("edge") and \
                 limit_parsing.edge.has("origin"):
             var graph: PlatformGraph = \
-                    graph_item_controllers[player_name].graph
+                    graph_item_controllers[character_name].graph
             var debug_edge: Dictionary = limit_parsing.edge
             var debug_origin: Dictionary = debug_edge.origin
             
@@ -262,7 +262,7 @@ func _select_initial_item() -> void:
         
         # By default, just select the top-level edges group.
         _trigger_find_and_expand_controller(
-                player_name,
+                character_name,
                 InspectorSearchType.EDGES_GROUP,
                 {})
 
@@ -346,12 +346,12 @@ func select_edge_or_surface(
 func _select_canonical_origin_surface_item_controller(
         origin_surface: Surface,
         graph: PlatformGraph) -> void:
-    if graph_item_controllers.has(graph.movement_params.player_name):
+    if graph_item_controllers.has(graph.movement_params.character_name):
         var metadata := {
             origin_surface = origin_surface,
         }
         _trigger_find_and_expand_controller(
-                graph.movement_params.player_name,
+                graph.movement_params.character_name,
                 InspectorSearchType.ORIGIN_SURFACE,
                 metadata)
 
@@ -360,13 +360,13 @@ func _select_canonical_destination_surface_item_controller(
         origin_surface: Surface,
         destination_surface: Surface,
         graph: PlatformGraph) -> void:
-    if graph_item_controllers.has(graph.movement_params.player_name):
+    if graph_item_controllers.has(graph.movement_params.character_name):
         var metadata := {
             origin_surface = origin_surface,
             destination_surface = destination_surface,
         }
         _trigger_find_and_expand_controller(
-                graph.movement_params.player_name,
+                graph.movement_params.character_name,
                 InspectorSearchType.DESTINATION_SURFACE,
                 metadata)
 
@@ -413,11 +413,11 @@ func _select_canonical_edge_or_edge_attempt_item_controller(
             destination_surface = end_surface,
         }
         _trigger_find_and_expand_controller(
-                graph.movement_params.player_name,
+                graph.movement_params.character_name,
                 InspectorSearchType.DESTINATION_SURFACE,
                 metadata)
     else:
-        if !graph_item_controllers.has(graph.movement_params.player_name):
+        if !graph_item_controllers.has(graph.movement_params.character_name):
             _clear_selection()
             return
         
@@ -429,32 +429,32 @@ func _select_canonical_edge_or_edge_attempt_item_controller(
             edge_type = edge_type,
         }
         _trigger_find_and_expand_controller(
-                graph.movement_params.player_name,
+                graph.movement_params.character_name,
                 InspectorSearchType.EDGE,
                 metadata)
 
 
 func _trigger_find_and_expand_controller(
-        player_name: String,
+        character_name: String,
         search_type: int,
         metadata: Dictionary) -> void:
     _increment_find_and_expand_controller_recursive_count()
-    graph_item_controllers[player_name].find_and_expand_controller(
+    graph_item_controllers[character_name].find_and_expand_controller(
             search_type,
             metadata)
     _decrement_find_and_expand_controller_recursive_count()
     _poll_is_find_and_expand_in_progress(
-            player_name,
+            character_name,
             search_type,
             metadata)
 
 
 func _on_find_and_expand_complete(
-        player_name: String,
+        character_name: String,
         search_type: int,
         metadata: Dictionary) -> void:
-    _log("Inspector search complete: player_name=%s, search_type=%s" % [
-        player_name,
+    _log("Inspector search complete: character_name=%s, search_type=%s" % [
+        character_name,
         InspectorSearchType.get_string(search_type),
     ])
     
@@ -501,18 +501,18 @@ func _decrement_find_and_expand_controller_recursive_count() -> void:
 
 
 func _poll_is_find_and_expand_in_progress(
-        player_name: String,
+        character_name: String,
         search_type: int,
         metadata: Dictionary) -> void:
     if get_is_find_and_expand_in_progress():
         call_deferred(
                 "_poll_is_find_and_expand_in_progress",
-                player_name,
+                character_name,
                 search_type,
                 metadata)
     else:
         _on_find_and_expand_complete(
-                player_name,
+                character_name,
                 search_type,
                 metadata)
 
@@ -549,8 +549,8 @@ static func _find_closest_jump_land_positions(
     return closest_jump_land_positions
 
 
-# Conditionally prints the given message, depending on the SurfacerPlayer's
+# Conditionally prints the given message, depending on the SurfacerCharacter's
 # configuration.
 func _log(message: String) -> void:
-    if Sc.players.get_human_player().movement_params.logs_inspector_events:
+    if Sc.characters.get_human_character().movement_params.logs_inspector_events:
         Sc.logger.print(message)

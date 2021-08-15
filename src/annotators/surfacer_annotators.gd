@@ -3,9 +3,9 @@ class_name SurfacerAnnotators
 extends ScaffolderAnnotators
 
 
-var _SURFACER_PLAYER_SUB_ANNOTATORS := [
-    AnnotatorType.PLAYER,
-    AnnotatorType.PLAYER_POSITION,
+var _SURFACER_CHARACTER_SUB_ANNOTATORS := [
+    AnnotatorType.CHARACTER,
+    AnnotatorType.CHARACTER_POSITION,
     AnnotatorType.RECENT_MOVEMENT,
     AnnotatorType.NAVIGATOR,
 ]
@@ -24,8 +24,8 @@ const _SURFACER_DEFAULT_ENABLEMENT := {
     AnnotatorType.SURFACES: false,
     AnnotatorType.GRID_INDICES: false,
     AnnotatorType.LEVEL: true,
-    AnnotatorType.PLAYER: true,
-    AnnotatorType.PLAYER_POSITION: false,
+    AnnotatorType.CHARACTER: true,
+    AnnotatorType.CHARACTER_POSITION: false,
     AnnotatorType.RECENT_MOVEMENT: false,
     AnnotatorType.NAVIGATOR: true,
     AnnotatorType.PATH_PRESELECTION: true,
@@ -37,10 +37,10 @@ var grid_indices_annotator: GridIndicesAnnotator
 
 
 func _init().(
-        _SURFACER_PLAYER_SUB_ANNOTATORS,
+        _SURFACER_CHARACTER_SUB_ANNOTATORS,
         _SURFACER_LEVEL_SPECIFIC_ANNOTATORS,
         _SURFACER_DEFAULT_ENABLEMENT,
-        SurfacerPlayerAnnotator) -> void:
+        SurfacerCharacterAnnotator) -> void:
     pass
 
 
@@ -64,9 +64,9 @@ func _create_annotator(annotator_type: int) -> void:
                         Su.graph_parser.surface_parser)
                 annotation_layer.add_child(grid_indices_annotator)
         AnnotatorType.PATH_PRESELECTION:
-            if is_instance_valid(Sc.players.get_human_player()):
+            if is_instance_valid(Sc.characters.get_human_character()):
                 path_preselection_annotator = PathPreselectionAnnotator.new(
-                        Sc.players.get_human_player())
+                        Sc.characters.get_human_character())
                 annotation_layer.add_child(path_preselection_annotator)
         AnnotatorType.LEVEL:
             if Sc.level != null:

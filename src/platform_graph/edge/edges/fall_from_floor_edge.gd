@@ -73,9 +73,9 @@ func _calculate_duration(
 
 
 func get_animation_state_at_time(
-        result: PlayerAnimationState,
+        result: CharacterAnimationState,
         edge_time: float) -> void:
-    result.player_position = get_position_at_time(edge_time)
+    result.character_position = get_position_at_time(edge_time)
     result.animation_name = "JumpFall"
     result.animation_position = edge_time
     result.facing_left = \
@@ -86,7 +86,7 @@ func get_animation_state_at_time(
 
 
 func _update_expected_position_along_surface(
-        navigation_state: PlayerNavigationState,
+        navigation_state: CharacterNavigationState,
         edge_time: float) -> void:
     var position := navigation_state.expected_position_along_surface
     if edge_time < time_fall_off:
@@ -100,8 +100,8 @@ func _update_expected_position_along_surface(
 
 
 func _check_did_just_reach_surface_destination(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback) -> bool:
     return check_just_landed_on_expected_surface(
             surface_state,
@@ -110,12 +110,12 @@ func _check_did_just_reach_surface_destination(
 
 
 # When walking off the end of a surface, Godot's underlying collision engine
-# can trigger multiple extraneous launch/land events if the player's collision
+# can trigger multiple extraneous launch/land events if the character's collision
 # boundary is not square. So this function override adds logic to ignore any of
 # these extra collisions with the starting surface.
 func _update_navigation_state_edge_specific_helper(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         is_starting_navigation_retry: bool) -> void:
     if is_starting_navigation_retry:
         # This should never happen.

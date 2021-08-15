@@ -160,7 +160,7 @@ func _get_all_edges_from_one_side(
         return
     ###########################################################################
     
-    var position_fall_off := _calculate_player_center_at_fall_off_point(
+    var position_fall_off := _calculate_character_center_at_fall_off_point(
             edge_point,
             falls_on_left_side,
             movement_params.fall_from_floor_corner_calc_shape,
@@ -403,7 +403,7 @@ static func _prepend_walk_to_fall_off_portion(
     var current_frame_position := start.target_point
     var current_frame_velocity := Vector2(
             velocity_x_start,
-            PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
+            CharacterActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
     
     for frame_index in frame_count_before_fall_off:
         if movement_params.includes_discrete_trajectory_state:
@@ -439,7 +439,7 @@ static func _prepend_walk_to_fall_off_portion(
                 movement_params.max_horizontal_speed_default)
 
 
-static func _calculate_player_center_at_fall_off_point(
+static func _calculate_character_center_at_fall_off_point(
         edge_point: Vector2,
         falls_on_left_side: bool,
         collider_shape: Shape2D,
@@ -478,7 +478,7 @@ static func _calculate_player_center_at_fall_off_point(
     else:
         Sc.logger.error((
                 "Invalid Shape2D provided for " +
-                "_calculate_player_center_at_fall_off_point: %s. " +
+                "_calculate_character_center_at_fall_off_point: %s. " +
                 "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
                 "RectangleShape2D.") % \
                 collider_shape)

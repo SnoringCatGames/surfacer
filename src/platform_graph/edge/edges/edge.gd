@@ -120,15 +120,15 @@ func _init(
 
 
 func update_for_surface_state(
-        surface_state: PlayerSurfaceState,
+        surface_state: CharacterSurfaceState,
         is_final_edge: bool) -> void:
     # Do nothing unless the sub-class implements this.
     pass
 
 
 func update_navigation_state(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback,
         just_started_new_edge: bool,
         is_starting_navigation_retry: bool) -> void:
@@ -160,7 +160,7 @@ func update_navigation_state(
             !navigation_state.is_expecting_to_enter_air
     
     navigation_state.just_interrupted_by_user_action = \
-            navigation_state.is_human_player and \
+            navigation_state.is_human_character and \
             UserActionSource.get_is_some_user_action_pressed()
     
     navigation_state.just_interrupted = \
@@ -206,8 +206,8 @@ func update_navigation_state(
 # This enables sub-classes to provide custom logic regarding how and when a
 # surface collision may or may not be expected.
 func _update_navigation_state_edge_specific_helper(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         is_starting_navigation_retry: bool) -> void:
     pass
 
@@ -270,14 +270,14 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
 
 
 func get_animation_state_at_time(
-        result: PlayerAnimationState,
+        result: CharacterAnimationState,
         edge_time: float) -> void:
     Sc.logger.error(
             "Abstract Edge.get_animation_state_at_time is not implemented")
 
 
 func _update_expected_position_along_surface(
-        navigation_state: PlayerNavigationState,
+        navigation_state: CharacterNavigationState,
         edge_time: float) -> void:
     var position := navigation_state.expected_position_along_surface
     position.surface = \
@@ -293,8 +293,8 @@ func _update_expected_position_along_surface(
 
 
 func _check_did_just_reach_destination(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback) -> bool:
     if end_position_along_surface.surface == null:
         return _check_did_just_reach_in_air_destination(
@@ -309,8 +309,8 @@ func _check_did_just_reach_destination(
 
 
 func _check_did_just_reach_surface_destination(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback) -> bool:
     Sc.logger.error(
             "Abstract Edge._check_did_just_reach_surface_destination is not " +
@@ -319,8 +319,8 @@ func _check_did_just_reach_surface_destination(
 
 
 func _check_did_just_reach_in_air_destination(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback) -> bool:
     return surface_state.center_position.distance_squared_to(
             end_position_along_surface.target_point) < \
@@ -448,7 +448,7 @@ static func vector2_to_position_along_surface(target_point: Vector2) -> \
 
 
 func check_just_landed_on_expected_surface(
-        surface_state: PlayerSurfaceState,
+        surface_state: CharacterSurfaceState,
         end_surface: Surface,
         playback) -> bool:
     if movement_params.bypasses_runtime_physics:
@@ -474,7 +474,7 @@ func _load_edge_state_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_attempt_state_from_json_object(json_object, context)
-    movement_params = Su.movement.player_movement_params[json_object.pn]
+    movement_params = Su.movement.character_movement_params[json_object.pn]
     is_optimized_for_path = json_object.io
     instructions = EdgeInstructions.new()
     instructions.load_from_json_object(json_object.in, context)
@@ -489,7 +489,7 @@ func _load_edge_state_from_json_object(
 
 func _edge_state_to_json_object(json_object: Dictionary) -> void:
     _edge_attempt_state_to_json_object(json_object)
-    json_object.pn = movement_params.player_name
+    json_object.pn = movement_params.character_name
     json_object.io = is_optimized_for_path
     json_object.in = instructions.to_json_object()
     if trajectory != null and \

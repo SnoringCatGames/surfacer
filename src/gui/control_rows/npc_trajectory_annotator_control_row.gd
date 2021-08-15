@@ -1,4 +1,4 @@
-class_name NpcPlayerTrajectoryAnnotatorControlRow
+class_name NpcCharacterTrajectoryAnnotatorControlRow
 extends CheckboxControlRow
 
 

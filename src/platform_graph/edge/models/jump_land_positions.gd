@@ -16,7 +16,7 @@ var needs_extra_jump_duration: bool
 
 # When this is true, the corresponding edge calculation will be given a greater
 # horizontal end speed. This is assigned when the land position is too close to
-# the bottom of a wall, and the player is more likely to fall short of the
+# the bottom of a wall, and the character is more likely to fall short of the
 # bottom corner of the wall.
 var needs_extra_wall_land_horizontal_speed: bool
 

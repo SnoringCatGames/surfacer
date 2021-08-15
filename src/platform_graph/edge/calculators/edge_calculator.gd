@@ -12,9 +12,9 @@ extends Reference
 const MIN_LAND_ON_WALL_SPEED := 50.0
 
 # The minimum land-on-wall horizontal speed is multiplied by this value when
-# the player is likely to need more speed in order to land on the wall. In
+# the character is likely to need more speed in order to land on the wall. In
 # particular, this is used for positions at the bottom of walls, where the
-# player might otherwise fall short.
+# character might otherwise fall short.
 const MIN_LAND_ON_WALL_EXTRA_SPEED_RATIO := 2.0
 
 var name: String
