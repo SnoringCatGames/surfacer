@@ -23,11 +23,12 @@ var _annotator_control_item_classes := [
     RecentMovementAnnotatorControlRow,
     RulerAnnotatorControlRow,
     PreselectionTrajectoryAnnotatorControlRow,
-    PreviousTrajectoryAnnotatorControlRow,
-    ActiveTrajectoryAnnotatorControlRow,
     NavigationDestinationAnnotatorControlRow,
+    NpcPlayerTrajectoryAnnotatorControlRow,
     TimeScaleControlRow,
+    PreviousTrajectoryAnnotatorControlRow,
     CameraZoomControlRow,
+    ActiveTrajectoryAnnotatorControlRow,
     MetronomeControlRow,
 ]
 

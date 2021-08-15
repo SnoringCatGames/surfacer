@@ -5,6 +5,9 @@ extends Node
 
 # ---
 
+# FIXME: ------------------ Consolidate some redundant properties.
+
+var is_npc_trajectory_shown: bool
 var is_active_trajectory_shown: bool
 var is_previous_trajectory_shown: bool
 var is_preselection_trajectory_shown: bool

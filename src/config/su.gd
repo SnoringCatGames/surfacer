@@ -18,6 +18,7 @@ const WALK_THROUGH_WALLS_COLLISION_MASK_BIT := 2
 
 const IS_INSPECTOR_ENABLED_SETTINGS_KEY := "is_inspector_enabled"
 const IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY := "is_intro_choreography_shown"
+const NPC_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_npc_trajectory_shown"
 const ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_active_trajectory_shown"
 const PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_previous_trajectory_shown"
 const PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY := \
@@ -45,6 +46,7 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
             item_classes = [
                 RulerAnnotatorControlRow,
                 PreselectionTrajectoryAnnotatorControlRow,
+                NpcPlayerTrajectoryAnnotatorControlRow,
                 ActiveTrajectoryAnnotatorControlRow,
                 PreviousTrajectoryAnnotatorControlRow,
                 NavigationDestinationAnnotatorControlRow,
@@ -392,6 +394,10 @@ func _configure_sub_modules() -> void:
     self.is_intro_choreography_shown = Sc.save_state.get_setting(
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
             true)
+    self.ann_manifest.is_npc_trajectory_shown = \
+            Sc.save_state.get_setting(
+                    NPC_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    false)
     self.ann_manifest.is_active_trajectory_shown = \
             Sc.save_state.get_setting(
                     ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY,

@@ -233,14 +233,20 @@ func _draw_beat_hashes(
 func _get_is_enabled() -> bool:
     if navigator.player.is_human_player:
         if is_slow_motion_enabled:
-            return Su.ann_manifest.is_human_current_nav_trajectory_shown_with_slow_mo
+            return Su.ann_manifest \
+                    .is_human_current_nav_trajectory_shown_with_slow_mo
         else:
-            return Su.ann_manifest.is_human_current_nav_trajectory_shown_without_slow_mo
-    else:
+            return Su.ann_manifest \
+                    .is_human_current_nav_trajectory_shown_without_slow_mo
+    elif Su.ann_manifest.is_npc_trajectory_shown:
         if is_slow_motion_enabled:
-            return Su.ann_manifest.is_computer_current_nav_trajectory_shown_with_slow_mo
+            return Su.ann_manifest \
+                    .is_computer_current_nav_trajectory_shown_with_slow_mo
         else:
-            return Su.ann_manifest.is_computer_current_nav_trajectory_shown_without_slow_mo
+            return Su.ann_manifest \
+                    .is_computer_current_nav_trajectory_shown_without_slow_mo
+    else:
+        return false
 
 
 func _get_is_exclamation_mark_shown() -> bool:
