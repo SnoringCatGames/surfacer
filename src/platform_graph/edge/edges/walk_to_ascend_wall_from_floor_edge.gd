@@ -98,27 +98,27 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
             -movement_params.max_horizontal_speed_default,
             movement_params.max_horizontal_speed_default)
     var velocity_y := \
-            PlayerActionHandler \
+            CharacterActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION if \
             get_start_surface().side == SurfaceSide.FLOOR else \
-            -PlayerActionHandler \
+            -CharacterActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
     velocity_y /= Sc.time.get_combined_scale()
     return Vector2(velocity_x, velocity_y)
 
 
 func get_animation_state_at_time(
-        result: PlayerAnimationState,
+        result: CharacterAnimationState,
         edge_time: float) -> void:
-    result.player_position = get_position_at_time(edge_time)
+    result.character_position = get_position_at_time(edge_time)
     result.animation_name = "Walk"
     result.animation_position = edge_time
     result.facing_left = get_end_surface().side == SurfaceSide.LEFT_WALL
 
 
 func _check_did_just_reach_surface_destination(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback) -> bool:
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration

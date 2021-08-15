@@ -119,7 +119,7 @@ func _calculate_combined_tile_map_rect(tile_maps: Array) -> void:
 #   surface node in the graph.
 # - Each node in this graph corresponds to a continuous surface that could be
 #   walked on or climbed on (i.e., floors and walls).
-# - Each edge in this graph corresponds to a possible movement that the player
+# - Each edge in this graph corresponds to a possible movement that the character
 #   could take to get from one surface to another.
 # 
 # Assumptions:
@@ -1005,12 +1005,12 @@ func find_closest_surface_in_direction(
 
 static func find_closest_position_on_a_surface(
         target: Vector2,
-        player,
+        character,
         max_distance_squared_threshold := INF,
         surfaces = []) -> PositionAlongSurface:
     var positions := find_closest_positions_on_a_surface(
             target,
-            player,
+            character,
             1,
             max_distance_squared_threshold,
             surfaces)
@@ -1022,11 +1022,11 @@ static func find_closest_position_on_a_surface(
 
 static func find_closest_positions_on_a_surface(
         target: Vector2,
-        player,
+        character,
         position_count: int,
         max_distance_squared_threshold := INF,
         surfaces = []) -> Array:
-    surfaces = surfaces if !surfaces.empty() else player.possible_surfaces_set
+    surfaces = surfaces if !surfaces.empty() else character.possible_surfaces_set
     var closest_surfaces := get_closest_surfaces(
             target,
             surfaces,
@@ -1041,7 +1041,7 @@ static func find_closest_positions_on_a_surface(
         position.match_surface_target_and_collider(
                 closest_surfaces[i],
                 target,
-                player.movement_params.collider_half_width_height,
+                character.movement_params.collider_half_width_height,
                 true,
                 true)
         closest_positions[i] = position

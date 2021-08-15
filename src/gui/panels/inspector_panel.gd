@@ -16,15 +16,15 @@ var tree_font_size := "Xs" setget _set_tree_font_size
 var _annotator_control_items := []
 
 var _annotator_control_item_classes := [
-    PlayerAnnotatorControlRow,
+    CharacterAnnotatorControlRow,
     LevelAnnotatorControlRow,
-    PlayerPositionAnnotatorControlRow,
+    CharacterPositionAnnotatorControlRow,
     SurfacesAnnotatorControlRow,
     RecentMovementAnnotatorControlRow,
     RulerAnnotatorControlRow,
     PreselectionTrajectoryAnnotatorControlRow,
     NavigationDestinationAnnotatorControlRow,
-    NpcPlayerTrajectoryAnnotatorControlRow,
+    NpcCharacterTrajectoryAnnotatorControlRow,
     TimeScaleControlRow,
     PreviousTrajectoryAnnotatorControlRow,
     CameraZoomControlRow,

@@ -34,21 +34,21 @@ func _init(
 func get_text() -> String:
     return "%s [%s]" % [
         PREFIX,
-        graph.movement_params.player_name,
+        graph.movement_params.character_name,
     ]
 
 
 func get_description() -> String:
     return ("A platform graph consists of nodes, which are positions " +
             "along surfaces, and edges, which are movements between these " +
-            "surface positions. Since different players have different " +
-            "movement parameters, a graph is specific to a given player.")
+            "surface positions. Since different characters have different " +
+            "movement parameters, a graph is specific to a given character.")
 
 
 func to_string() -> String:
-    return "%s { player_name=%s }" % [
+    return "%s { character_name=%s }" % [
         InspectorItemType.get_string(type),
-        graph.movement_params.player_name,
+        graph.movement_params.character_name,
     ]
 
 

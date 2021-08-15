@@ -3,7 +3,7 @@ extends Edge
 # Information for how to climb down a wall to stand on the adjacent floor.
 # 
 # The instructions for this edge consist of a single downward key press, with
-# no corresponding release. This will cause the player to climb down the wall,
+# no corresponding release. This will cause the character to climb down the wall,
 # then grab the floor once they reach it.
 
 
@@ -75,27 +75,27 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
     if edge_time > duration:
         return Vector2.INF
     var velocity_x := \
-            -PlayerActionHandler \
+            -CharacterActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
             get_start_surface().side == SurfaceSide.LEFT_WALL else \
-            PlayerActionHandler \
+            CharacterActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
     velocity_x /= Sc.time.get_combined_scale()
     return Vector2(velocity_x, movement_params.climb_down_speed)
 
 
 func get_animation_state_at_time(
-        result: PlayerAnimationState,
+        result: CharacterAnimationState,
         edge_time: float) -> void:
-    result.player_position = get_position_at_time(edge_time)
+    result.character_position = get_position_at_time(edge_time)
     result.animation_name = "ClimbDown"
     result.animation_position = edge_time
     result.facing_left = get_start_surface().side == SurfaceSide.LEFT_WALL
 
 
 func _check_did_just_reach_surface_destination(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback) -> bool:
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration

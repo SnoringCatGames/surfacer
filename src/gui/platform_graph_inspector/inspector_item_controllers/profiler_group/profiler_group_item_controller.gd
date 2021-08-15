@@ -31,8 +31,8 @@ func get_text() -> String:
 
 func get_description() -> String:
     return ("Some stats on the time to parse the platform graph for the " +
-            "%s player.") % [
-        graph.movement_params.player_name,
+            "%s character.") % [
+        graph.movement_params.character_name,
     ]
 
 

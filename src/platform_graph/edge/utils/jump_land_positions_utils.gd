@@ -5,13 +5,13 @@ extends Reference
 
 
 const EXTRA_JUMP_LAND_POSITION_MARGIN := 2.0
-const PLAYER_HEIGHT_VERTICAL_CLEARANCE_RATIO := 2.0
-const JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_PLAYER_WIDTH_HEIGHT_RATIO := 0.3
-const EDGE_MOVEMENT_HORIZONTAL_DISTANCE_SUBTRACT_PLAYER_WIDTH_RATIO := 0.1
-const VERTICAL_OFFSET_TO_SUPPORT_EXTRA_MOVEMENT_AROUND_WALL_PLAYER_HEIGHT_RATIO := 0.6
+const CHARACTER_HEIGHT_VERTICAL_CLEARANCE_RATIO := 2.0
+const JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_CHARACTER_WIDTH_HEIGHT_RATIO := 0.3
+const EDGE_MOVEMENT_HORIZONTAL_DISTANCE_SUBTRACT_CHARACTER_WIDTH_RATIO := 0.1
+const VERTICAL_OFFSET_TO_SUPPORT_EXTRA_MOVEMENT_AROUND_WALL_CHARACTER_HEIGHT_RATIO := 0.6
 const MARGIN_FROM_CONCAVE_NEIGHBOR := 1.0
 
-# This required min distance helps prevent the player from falling slightly
+# This required min distance helps prevent the character from falling slightly
 # short and missing the bottom corner of the land surface.
 const MIN_LAND_DISTANCE_FROM_WALL_BOTTOM := 12.0
 
@@ -25,7 +25,7 @@ const MIN_LAND_DISTANCE_FROM_WALL_BOTTOM := 12.0
 #     -   The closest position along the surface to either end of the other
 #         surface.
 #         -   This closest position, but with a slight offset to account for
-#             the width of the player.
+#             the width of the character.
 #         -   This closest position, but with an additional offset to account
 #             for horizontal movement with minimum jump time and maximum
 #             horizontal velocity.
@@ -283,23 +283,23 @@ static func calculate_jump_land_positions_for_surface_pair(
     
     var is_a_jump_calculator := true
     
-    var player_half_width_horizontal_offset := \
+    var character_half_width_horizontal_offset := \
             movement_params.collider_half_width_height.x + \
             movement_params.collision_margin_for_waypoint_positions + \
             EXTRA_JUMP_LAND_POSITION_MARGIN
-    var player_height_vertical_clearance := \
+    var character_height_vertical_clearance := \
             movement_params.collider_half_width_height.y * 2.0 * \
-            PLAYER_HEIGHT_VERTICAL_CLEARANCE_RATIO + \
+            CHARACTER_HEIGHT_VERTICAL_CLEARANCE_RATIO + \
             movement_params.collision_margin_for_waypoint_positions * 2.0
     var interior_point_min_horizontal_distance_from_end := \
             movement_params.collider_half_width_height.x * \
-            JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_PLAYER_WIDTH_HEIGHT_RATIO
+            JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_CHARACTER_WIDTH_HEIGHT_RATIO
     var interior_point_min_vertical_distance_from_end := \
             movement_params.collider_half_width_height.y * \
-            JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_PLAYER_WIDTH_HEIGHT_RATIO
+            JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_CHARACTER_WIDTH_HEIGHT_RATIO
     var vertical_offset_to_support_extra_movement_around_wall := \
             movement_params.collider_half_width_height.y * \
-            VERTICAL_OFFSET_TO_SUPPORT_EXTRA_MOVEMENT_AROUND_WALL_PLAYER_HEIGHT_RATIO
+            VERTICAL_OFFSET_TO_SUPPORT_EXTRA_MOVEMENT_AROUND_WALL_CHARACTER_HEIGHT_RATIO
             
     var all_jump_land_positions := []
     
@@ -317,11 +317,11 @@ static func calculate_jump_land_positions_for_surface_pair(
                     var is_jump_surface_much_lower := \
                             jump_surface_center.y > \
                             land_surface_center.y + \
-                            player_height_vertical_clearance
+                            character_height_vertical_clearance
                     var is_land_surface_much_lower := \
                             land_surface_center.y > \
                             jump_surface_center.y + \
-                            player_height_vertical_clearance
+                            character_height_vertical_clearance
                     var are_surfaces_far_enough_to_move_between_vertically := \
                             is_jump_surface_much_lower or \
                             is_land_surface_much_lower
@@ -329,19 +329,19 @@ static func calculate_jump_land_positions_for_surface_pair(
                     var is_enough_left_side_distance_to_not_backtrack_horizontally := \
                             jump_surface_left_bound <= \
                             land_surface_left_bound - \
-                                    player_half_width_horizontal_offset if \
+                                    character_half_width_horizontal_offset if \
                             is_jump_surface_lower else \
                             land_surface_left_bound <= \
                             jump_surface_left_bound - \
-                                    player_half_width_horizontal_offset
+                                    character_half_width_horizontal_offset
                     var is_enough_right_side_distance_to_not_backtrack_horizontally := \
                             jump_surface_right_bound >= \
                             land_surface_right_bound + \
-                                    player_half_width_horizontal_offset if \
+                                    character_half_width_horizontal_offset if \
                             is_jump_surface_lower else \
                             land_surface_right_bound >= \
                             jump_surface_right_bound + \
-                                    player_half_width_horizontal_offset
+                                    character_half_width_horizontal_offset
                     
                     var needs_extra_jump_duration := \
                             land_surface_center.y - jump_surface_center.y < \
@@ -449,10 +449,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     needs_extra_jump_duration)
                                     
                                     # Consider zero horizontal start velocity, with only
-                                    # player-half-width horizontal displacement.
+                                    # character-half-width horizontal displacement.
                                     var jump_x := \
                                             land_surface_left_bound - \
-                                            player_half_width_horizontal_offset
+                                            character_half_width_horizontal_offset
                                     jump_position = _create_surface_interior_position(
                                             jump_x,
                                             jump_surface,
@@ -540,11 +540,11 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     needs_extra_jump_duration)
                                     
                                     # Consider zero horizontal start velocity, with only
-                                    # player-half-width horizontal displacement.
+                                    # character-half-width horizontal displacement.
                                     jump_position = jump_surface_left_end_wrapper
                                     var land_x := \
                                             jump_surface_left_bound - \
-                                            player_half_width_horizontal_offset
+                                            character_half_width_horizontal_offset
                                     land_position = _create_surface_interior_position(
                                             land_x,
                                             land_surface,
@@ -675,10 +675,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     needs_extra_jump_duration)
                                     
                                     # Consider zero horizontal start velocity, with only
-                                    # player-half-width horizontal displacement.
+                                    # character-half-width horizontal displacement.
                                     var jump_x := \
                                             land_surface_right_bound + \
-                                            player_half_width_horizontal_offset
+                                            character_half_width_horizontal_offset
                                     jump_position = _create_surface_interior_position(
                                             jump_x,
                                             jump_surface,
@@ -766,11 +766,11 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     needs_extra_jump_duration)
                                     
                                     # Consider zero horizontal start velocity, with only
-                                    # player-half-width horizontal displacement.
+                                    # character-half-width horizontal displacement.
                                     jump_position = jump_surface_right_end_wrapper
                                     var land_x := \
                                             jump_surface_right_bound + \
-                                            player_half_width_horizontal_offset
+                                            character_half_width_horizontal_offset
                                     land_position = _create_surface_interior_position(
                                             land_x,
                                             land_surface,
@@ -822,10 +822,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                     var can_jump_in_front_of_wall := \
                             is_landing_on_left_wall and \
                             jump_surface_right_bound > \
-                                    land_surface_center.x + player_half_width_horizontal_offset or \
+                                    land_surface_center.x + character_half_width_horizontal_offset or \
                             !is_landing_on_left_wall and \
                             jump_surface_left_bound < \
-                                    land_surface_center.x - player_half_width_horizontal_offset
+                                    land_surface_center.x - character_half_width_horizontal_offset
                     
                     var does_velocity_start_moving_leftward: bool
                     var prefer_velocity_start_zero_horizontal_speed: bool
@@ -978,10 +978,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     prefer_velocity_start_zero_horizontal_speed)
                             var goal_x := \
                                     land_surface_bottom_end.x + \
-                                    player_half_width_horizontal_offset if \
+                                    character_half_width_horizontal_offset if \
                                     is_landing_on_left_wall else \
                                     land_surface_bottom_end.x - \
-                                    player_half_width_horizontal_offset
+                                    character_half_width_horizontal_offset
                             jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     Vector2(goal_x, INF),
                                     jump_surface,
@@ -1043,10 +1043,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_position = land_surface_bottom_end_wrapper
                             goal_x = \
                                     land_surface_bottom_end.x + \
-                                    player_half_width_horizontal_offset if \
+                                    character_half_width_horizontal_offset if \
                                     is_landing_on_left_wall else \
                                     land_surface_bottom_end.x - \
-                                    player_half_width_horizontal_offset
+                                    character_half_width_horizontal_offset
                             jump_position = _create_surface_interior_position(
                                     goal_x,
                                     jump_surface,
@@ -1072,10 +1072,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     prefer_velocity_start_zero_horizontal_speed)
                             goal_x = \
                                     land_connected_region_left_bound - \
-                                    player_half_width_horizontal_offset if \
+                                    character_half_width_horizontal_offset if \
                                     is_landing_on_left_wall else \
                                     land_connected_region_right_bound + \
-                                    player_half_width_horizontal_offset
+                                    character_half_width_horizontal_offset
                             jump_position = _create_surface_interior_position(
                                     goal_x,
                                     jump_surface,
@@ -1223,10 +1223,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                             # the wall (and around the entire connected region, as well).
                             var goal_x := \
                                     land_connected_region_left_bound - \
-                                    player_half_width_horizontal_offset if \
+                                    character_half_width_horizontal_offset if \
                                     is_landing_on_left_wall else \
                                     land_connected_region_right_bound + \
-                                    player_half_width_horizontal_offset
+                                    character_half_width_horizontal_offset
                             land_basis = Vector2(
                                     goal_x,
                                     land_connected_region_top_bound)
@@ -1274,10 +1274,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     prefer_velocity_start_zero_horizontal_speed)
                             goal_x = \
                                     land_connected_region_left_bound - \
-                                    player_half_width_horizontal_offset if \
+                                    character_half_width_horizontal_offset if \
                                     is_landing_on_left_wall else \
                                     land_connected_region_right_bound + \
-                                    player_half_width_horizontal_offset
+                                    character_half_width_horizontal_offset
                             jump_position = _create_surface_interior_position(
                                     goal_x,
                                     jump_surface,
@@ -1297,7 +1297,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         if land_surface_top_bound > \
                                 jump_surface_center.y + \
                                 movement_params.collider_half_width_height.y * 2.5:
-                            # The wall is far enough below the floor that the player might be able
+                            # The wall is far enough below the floor that the character might be able
                             # to jump around overtop it, so let's consider a secondary jump/land
                             # pair for that movement.
                             # 
@@ -1332,7 +1332,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         elif land_surface_bottom_bound < \
                                 jump_surface_center.y - \
                                 movement_params.collider_half_width_height.y * 2.5:
-                            # The wall is far enough above the floor that the player might be able
+                            # The wall is far enough above the floor that the character might be able
                             # to jump around underneath it, so let's consider a secondary jump/land
                             # pair for that movement.
                             does_velocity_start_moving_leftward = !is_landing_on_left_wall
@@ -1411,7 +1411,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             # - Since we only consider start velocity of zero, we don't care about
                             #   whether velocity would need to start moving leftward or rightward.
                             # - We don't need to include any horizontal offsets (to account for
-                            #   player width or for edge movement) for any of the jump/land
+                            #   character width or for edge movement) for any of the jump/land
                             #   positions.
                             # 
                             # TODO: We could also consider the same jump/land basis points, but
@@ -1594,19 +1594,19 @@ static func calculate_jump_land_positions_for_surface_pair(
                         # Primary jump/land pair: From the bottom of the wall to the floor.
                         var is_there_room_to_land_in_front_of_wall := \
                                 land_surface_right_bound > \
-                                jump_surface_center.x + player_half_width_horizontal_offset if \
+                                jump_surface_center.x + character_half_width_horizontal_offset if \
                                 is_jumping_from_left_wall else \
                                 land_surface_left_bound < \
-                                jump_surface_center.x - player_half_width_horizontal_offset
+                                jump_surface_center.x - character_half_width_horizontal_offset
                         if is_there_room_to_land_in_front_of_wall:
                             # There is room to land on the floor in front of the wall.
                             var jump_basis := jump_surface_bottom_end_wrapper.target_point
                             var goal_x := \
                                     jump_surface_bottom_end.x + \
-                                    player_half_width_horizontal_offset if \
+                                    character_half_width_horizontal_offset if \
                                     is_jumping_from_left_wall else \
                                     jump_surface_bottom_end.x - \
-                                    player_half_width_horizontal_offset
+                                    character_half_width_horizontal_offset
                             var land_basis: Vector2 = \
                                     Sc.geometry.project_point_onto_surface_with_offset(
                                             Vector2(goal_x, INF),
@@ -1686,10 +1686,10 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = jump_surface_top_end_wrapper
                             var goal_x := \
                                     jump_connected_region_left_bound - \
-                                    player_half_width_horizontal_offset if \
+                                    character_half_width_horizontal_offset if \
                                     is_jumping_from_left_wall else \
                                     jump_connected_region_right_bound + \
-                                    player_half_width_horizontal_offset
+                                    character_half_width_horizontal_offset
                             land_position = _create_surface_interior_position(
                                     goal_x,
                                     land_surface,
@@ -2433,7 +2433,7 @@ static func calculate_land_positions_on_surface(
                             .target_projection_onto_surface.y
             var vertical_offset_to_support_extra_movement_around_wall := \
                     movement_params.collider_half_width_height.y * \
-                    VERTICAL_OFFSET_TO_SUPPORT_EXTRA_MOVEMENT_AROUND_WALL_PLAYER_HEIGHT_RATIO
+                    VERTICAL_OFFSET_TO_SUPPORT_EXTRA_MOVEMENT_AROUND_WALL_CHARACTER_HEIGHT_RATIO
             
             if (is_below_bottom_of_wall or \
                     (is_behind_wall and \
@@ -2623,7 +2623,7 @@ static func _create_surface_interior_position(
     var is_considering_x_axis := surface.normal.x == 0.0
     var interior_point_min_horizontal_distance_from_end := \
             collider_half_width_height.x * \
-            JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_PLAYER_WIDTH_HEIGHT_RATIO
+            JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_CHARACTER_WIDTH_HEIGHT_RATIO
     
     var lower_bound: float
     var upper_bound: float
@@ -2783,17 +2783,17 @@ static func _calculate_horizontal_movement_distance(
                     movement_params.in_air_horizontal_acceleration,
                     movement_params.max_horizontal_speed_default)
     
-    var player_half_width_horizontal_offset := \
+    var character_half_width_horizontal_offset := \
             movement_params.collider_half_width_height.x + \
             movement_params.collision_margin_for_waypoint_positions + \
             EXTRA_JUMP_LAND_POSITION_MARGIN
     
     # This max movement range could slightly overshoot what's actually
-    # reachable, so we subtract a portion of the player's width to more
+    # reachable, so we subtract a portion of the character's width to more
     # likely end up with a usable position.
     var horizontal_movement_distance_partial_decrease := \
-            player_half_width_horizontal_offset * \
-            EDGE_MOVEMENT_HORIZONTAL_DISTANCE_SUBTRACT_PLAYER_WIDTH_RATIO
+            character_half_width_horizontal_offset * \
+            EDGE_MOVEMENT_HORIZONTAL_DISTANCE_SUBTRACT_CHARACTER_WIDTH_RATIO
     if horizontal_movement_distance > \
             horizontal_movement_distance_partial_decrease:
         horizontal_movement_distance -= \
@@ -2945,7 +2945,7 @@ static func _calculate_jump_land_points_for_walls_facing_each_other(
     
     var interior_point_min_vertical_distance_from_end := \
             movement_params.collider_half_width_height.y * \
-            JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_PLAYER_WIDTH_HEIGHT_RATIO
+            JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_CHARACTER_WIDTH_HEIGHT_RATIO
     
     return _record_if_distinct(
             movement_params,
@@ -3002,7 +3002,7 @@ static func _create_jump_land_positions(
     return result
 
 
-# Returns false if there is not enough room for the player on the surface.
+# Returns false if there is not enough room for the character on the surface.
 static func ensure_position_is_not_too_close_to_concave_neighbor(
         movement_params: MovementParameters,
         position: PositionAlongSurface) -> bool:
@@ -3022,14 +3022,14 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
             movement_params.collider_half_width_height.y + \
             MARGIN_FROM_CONCAVE_NEIGHBOR
     
-    # Ensure there is enough room for the player to fit on the surface.
+    # Ensure there is enough room for the character to fit on the surface.
     match position.side:
         SurfaceSide.FLOOR, \
         SurfaceSide.CEILING:
             if surface.clockwise_concave_neighbor != null and \
                     surface.counter_clockwise_concave_neighbor != null and \
                     surface.bounding_box.size.x < x_offset * 2:
-                # There is not enough room for the player to fit on this
+                # There is not enough room for the character to fit on this
                 # surface.
                 return false
         SurfaceSide.LEFT_WALL, \
@@ -3037,7 +3037,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
             if surface.clockwise_concave_neighbor != null and \
                     surface.counter_clockwise_concave_neighbor != null and \
                     surface.bounding_box.size.y < y_offset * 2:
-                # There is not enough room for the player to fit on this
+                # There is not enough room for the character to fit on this
                 # surface.
                 return false
         SurfaceSide.NONE:
@@ -3118,7 +3118,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
     return true
 
 
-# Ensure a min distance up from wall bottom ends to prevent the player from
+# Ensure a min distance up from wall bottom ends to prevent the character from
 # falling slightly short and missing the bottom corner of the land surface.
 static func _possibly_offset_wall_bottom_land_position(
         movement_params: MovementParameters,

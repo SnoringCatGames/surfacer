@@ -3,12 +3,12 @@ extends Reference
 ## -   Represents a position along a surface.[br]
 ## -   Rather than considering polyline length, this only specifies the position
 ##     along the axis the surface is aligned to.[br]
-## -   The position always indicates the center of the player's bounding box.[br]
+## -   The position always indicates the center of the character's bounding box.[br]
 
 
 var surface: Surface
 
-# An approximation for the center of the player's collision boundary
+# An approximation for the center of the character's collision boundary
 # corresponding to this position on the surface.
 var target_point := Vector2.INF
 
@@ -31,9 +31,9 @@ func reset() -> void:
 
 func match_current_grab(
         surface: Surface,
-        player_center: Vector2) -> void:
+        character_center: Vector2) -> void:
     self.surface = surface
-    self.target_point = player_center
+    self.target_point = character_center
     self.target_projection_onto_surface = Vector2.INF
     if surface != null and \
             target_point != Vector2.INF:
@@ -45,14 +45,14 @@ func match_surface_target_and_collider(
         target_point: Vector2,
         collider_half_width_height: Vector2,
         clips_to_surface_bounds := false,
-        matches_target_to_player_dimensions := true) -> void:
+        matches_target_to_character_dimensions := true) -> void:
     self.surface = surface
     self.target_point = _clip_and_project_target_point_for_center_of_collider(
             surface,
             target_point,
             collider_half_width_height,
             clips_to_surface_bounds,
-            matches_target_to_player_dimensions)
+            matches_target_to_character_dimensions)
 
 
 func update_target_projection_onto_surface() -> void:
@@ -65,7 +65,7 @@ func _clip_and_project_target_point_for_center_of_collider(
         target_point: Vector2,
         collider_half_width_height: Vector2,
         clips_to_surface_bounds: bool,
-        matches_target_to_player_dimensions: bool) -> Vector2:
+        matches_target_to_character_dimensions: bool) -> Vector2:
     self.target_projection_onto_surface = \
             Sc.geometry.project_point_onto_surface(target_point, surface)
     
@@ -74,7 +74,7 @@ func _clip_and_project_target_point_for_center_of_collider(
             surface.side == SurfaceSide.CEILING
     
     var target_offset_from_surface_distance: float
-    if matches_target_to_player_dimensions:
+    if matches_target_to_character_dimensions:
         target_offset_from_surface_distance = \
                 collider_half_width_height.y if \
                 is_surface_horizontal else \

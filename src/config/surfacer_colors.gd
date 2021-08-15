@@ -18,7 +18,7 @@ var ruler: Color
 var invalid: Color
 var human_navigation: Color
 var computer_navigation: Color
-var player_position: Color
+var character_position: Color
 var recent_movement: Color
 var inspector_origin: Color
 
@@ -33,7 +33,7 @@ var _surfacer_defaults := {
     invalid = RED,
     human_navigation = PURPLE,
     computer_navigation = PURPLE,
-    player_position = TEAL,
+    character_position = TEAL,
     recent_movement = TEAL,
     inspector_origin = ScaffolderColors.static_opacify(
             ORANGE, ScaffolderColors.ALPHA_FAINT),

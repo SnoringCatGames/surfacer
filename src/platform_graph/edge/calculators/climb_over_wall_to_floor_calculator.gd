@@ -163,7 +163,7 @@ static func _calculate_trajectory(
         frame_continuous_velocities_from_steps.resize(frame_count)
     
     var velocity := Vector2(
-            PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION,
+            CharacterActionHandler.MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION,
             movement_params.climb_up_speed)
     
     var current_frame_position := start.target_point

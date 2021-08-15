@@ -24,8 +24,8 @@ var fade_tween: ScaffolderTween
 func _init(navigator: SurfaceNavigator) -> void:
     self.navigator = navigator
     self.previous_path_back_end_trim_radius = min(
-            navigator.player.movement_params.collider_half_width_height.x,
-            navigator.player.movement_params.collider_half_width_height.y)
+            navigator.character.movement_params.collider_half_width_height.x,
+            navigator.character.movement_params.collider_half_width_height.y)
     
     self.pulse_annotator = NavigationPulseAnnotator.new(navigator)
     add_child(pulse_annotator)
@@ -43,7 +43,7 @@ func _process(_delta: float) -> void:
         current_path_beats = navigator.path_beats
         if current_path != null:
             if _get_is_exclamation_mark_shown():
-                navigator.player.show_exclamation_mark()
+                navigator.character.show_exclamation_mark()
             if is_enabled:
                 _trigger_fade_in(true)
         update()
@@ -83,7 +83,7 @@ func _draw() -> void:
     
     elif previous_path != null and \
             Su.ann_manifest.is_previous_trajectory_shown and \
-            navigator.player.is_human_player:
+            navigator.character.is_human_character:
         _draw_previous_path()
 
 
@@ -92,7 +92,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
         var current_path_color: Color = \
                 Su.ann_defaults \
                         .HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
-                navigator.player.is_human_player else \
+                navigator.character.is_human_character else \
                 Su.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
         current_path_color.a *= fade_progress
         Sc.draw.draw_path(
@@ -122,7 +122,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
         var origin_indicator_fill_color: Color = \
                 Su.ann_defaults \
                         .HUMAN_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR if \
-                navigator.player.is_human_player else \
+                navigator.character.is_human_character else \
                 Su.ann_defaults \
                         .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR
         origin_indicator_fill_color.a *= fade_progress
@@ -133,7 +133,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
         var origin_indicator_stroke_color: Color = \
                 Su.ann_defaults \
                         .HUMAN_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR if \
-                navigator.player.is_human_player else \
+                navigator.character.is_human_character else \
                 Su.ann_defaults \
                         .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR
         origin_indicator_stroke_color.a *= fade_progress
@@ -155,7 +155,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
         var destination_indicator_fill_color: Color = \
                 Su.ann_defaults \
                         .HUMAN_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR if \
-                navigator.player.is_human_player else \
+                navigator.character.is_human_character else \
                 Su.ann_defaults \
                         .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
         destination_indicator_fill_color.a *= fade_progress
@@ -173,7 +173,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
         var destination_indicator_stroke_color: Color = \
                 Su.ann_defaults \
                         .HUMAN_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR if \
-                navigator.player.is_human_player else \
+                navigator.character.is_human_character else \
                 Su.ann_defaults \
                         .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
         destination_indicator_stroke_color *= fade_progress
@@ -193,7 +193,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
 func _draw_previous_path() -> void:
     var previous_path_color: Color = \
             Su.ann_defaults.HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR if \
-            navigator.player.is_human_player else \
+            navigator.character.is_human_character else \
             Su.ann_defaults.COMPUTER_NAVIGATOR_PREVIOUS_PATH_COLOR
     Sc.draw.draw_path(
             self,
@@ -231,7 +231,7 @@ func _draw_beat_hashes(
 
 
 func _get_is_enabled() -> bool:
-    if navigator.player.is_human_player:
+    if navigator.character.is_human_character:
         if is_slow_motion_enabled:
             return Su.ann_manifest \
                     .is_human_current_nav_trajectory_shown_with_slow_mo
@@ -251,7 +251,7 @@ func _get_is_enabled() -> bool:
 
 func _get_is_exclamation_mark_shown() -> bool:
     return Su.ann_manifest.is_human_new_nav_exclamation_mark_shown if \
-            navigator.player.is_human_player else \
+            navigator.character.is_human_character else \
             Su.ann_manifest.is_computer_new_nav_exclamation_mark_shown
 
 
@@ -287,7 +287,7 @@ func _trigger_beat_hash_animation(beat: PathBeatPrediction) -> void:
     var current_path_color: Color = \
             Su.ann_defaults \
                     .HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
-            navigator.player.is_human_player else \
+            navigator.character.is_human_character else \
             Su.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
     current_path_color.a *= fade_progress
     

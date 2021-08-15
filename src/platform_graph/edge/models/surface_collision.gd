@@ -8,8 +8,8 @@ var surface: Surface
 ## The position of the point of collision.
 var position := Vector2.INF
 
-## The position of the center of the player.
-var player_position := Vector2.INF
+## The position of the center of the character.
+var character_position := Vector2.INF
 
 ## The time at which the collision occured, relative to the start of the frame.
 var time_from_start_of_frame := INF

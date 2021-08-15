@@ -8,9 +8,9 @@ extends ScaffolderLevelConfig
 ##     -   `name`: The display name for the level.[br]
 ##     -   `sort_priority`: The level's position relative to other levels.[br]
 ##     -   `unlock_conditions`: How and when the level is unlocked.[br]
-##     -   `platform_graph_player_names`: The names of the players that might
+##     -   `platform_graph_character_names`: The names of the characters that might
 ##         appear in the level. A platform graph will need to be calculated for
-##         each of these players.[br]
+##         each of these characters.[br]
 
 
 const INTRO_CHOREOGRAPHY_DESTINATION_GROUP_NAME := \
@@ -27,15 +27,15 @@ func _init(
 
 func _sanitize_level_config(config: Dictionary) -> void:
     ._sanitize_level_config(config)
-    assert(config.has("platform_graph_player_names") and \
-            config.platform_graph_player_names is Array)
+    assert(config.has("platform_graph_character_names") and \
+            config.platform_graph_character_names is Array)
 
 
-func get_intro_choreographer(player: SurfacerPlayer) -> Choreographer:
+func get_intro_choreographer(character: SurfacerCharacter) -> Choreographer:
     var config := get_level_config(Sc.level_session.id)
     if !config.has("intro_choreography"):
         return null
     var sequence: Array = config.intro_choreography
     var choreographer := Choreographer.new()
-    choreographer.configure(sequence, player, Sc.level)
+    choreographer.configure(sequence, character, Sc.level)
     return choreographer

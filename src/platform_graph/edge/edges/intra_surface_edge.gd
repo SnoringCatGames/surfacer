@@ -85,7 +85,7 @@ func update_terminal(
 
 
 func update_for_surface_state(
-        surface_state: PlayerSurfaceState,
+        surface_state: CharacterSurfaceState,
         is_final_edge: bool) -> void:
     instructions = _calculate_instructions(
             surface_state.center_position_along_surface,
@@ -189,20 +189,20 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
                     -movement_params.max_horizontal_speed_default,
                     movement_params.max_horizontal_speed_default)
             var velocity_y := \
-                    PlayerActionHandler \
+                    CharacterActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION if \
                     surface.side == SurfaceSide.FLOOR else \
-                    -PlayerActionHandler \
+                    -CharacterActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
             velocity_y /= Sc.time.get_combined_scale()
             return Vector2(velocity_x, velocity_y)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var velocity_x := \
-                    -PlayerActionHandler \
+                    -CharacterActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
                     surface.side == SurfaceSide.LEFT_WALL else \
-                    PlayerActionHandler \
+                    CharacterActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
             velocity_x /= Sc.time.get_combined_scale()
             var velocity_y := \
@@ -216,11 +216,11 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
 
 
 func get_animation_state_at_time(
-        result: PlayerAnimationState,
+        result: CharacterAnimationState,
         edge_time: float) -> void:
     var displacement := get_end() - get_start()
     
-    result.player_position = get_position_at_time(edge_time)
+    result.character_position = get_position_at_time(edge_time)
     result.animation_position = edge_time
     
     var side := get_start_surface().side
@@ -241,8 +241,8 @@ func get_animation_state_at_time(
 
 
 func _check_did_just_reach_surface_destination(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback) -> bool:
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration
@@ -309,8 +309,8 @@ func _check_did_just_reach_surface_destination(
 
 
 func _update_navigation_state_edge_specific_helper(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         is_starting_navigation_retry: bool) -> void:
     # -   We only need special navigation-state updates when colliding with
     #     multiple surfaces,
@@ -417,7 +417,7 @@ static func _calculate_velocity_end(
 
 
 # Calculate the distance from the end position at which the move button should
-# be released, so that the player comes to rest at the desired end position
+# be released, so that the character comes to rest at the desired end position
 # after decelerating due to friction (and with accelerating, or coasting at
 # max-speed, until starting deceleration).
 static func _calculate_stopping_distance(
@@ -425,7 +425,7 @@ static func _calculate_stopping_distance(
         edge: IntraSurfaceEdge,
         velocity_start: Vector2,
         displacement_to_end: Vector2) -> float:
-    if movement_params.forces_player_position_to_match_path_at_end:
+    if movement_params.forces_character_position_to_match_path_at_end:
         return 0.0
     
     if edge.get_end_surface().side == SurfaceSide.FLOOR:

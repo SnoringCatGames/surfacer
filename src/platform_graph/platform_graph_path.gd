@@ -60,7 +60,7 @@ func push_back(edge: Edge) -> void:
 
 
 func predict_animation_state(
-        result: PlayerAnimationState,
+        result: CharacterAnimationState,
         path_time: float) -> bool:
     var is_before_path_end_time := path_time < duration
     if !is_before_path_end_time:
@@ -69,7 +69,7 @@ func predict_animation_state(
         
         var confidence_progress := min(
                 (path_time - duration) / \
-                PlayerAnimationState.POST_PATH_DURATION_TO_MIN_CONFIDENCE,
+                CharacterAnimationState.POST_PATH_DURATION_TO_MIN_CONFIDENCE,
                 1.0)
         result.confidence_multiplier = lerp(
                 1.0,

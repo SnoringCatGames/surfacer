@@ -39,9 +39,9 @@ func get_text() -> String:
 func get_description() -> String:
     return ("An edge represents movement between two surface positions. " +
             "There are %s total edges in this platform graph for the %s " +
-            "player.") % [
+            "character.") % [
                 graph.counts.total_edges,
-                graph.movement_params.player_name,
+                graph.movement_params.character_name,
             ]
 
 

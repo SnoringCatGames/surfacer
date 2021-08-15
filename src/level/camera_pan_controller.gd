@@ -75,7 +75,7 @@ func _stop_drag() -> void:
     _delta_offset = Vector2.INF
     _delta_zoom_multiplier = INF
     
-    if Su.snaps_camera_back_to_player:
+    if Su.snaps_camera_back_to_character:
         _update_camera(Vector2.ZERO, 1.0)
 
 
@@ -183,7 +183,7 @@ func _update_camera_from_deltas() -> void:
     # Calculate the next values.
     var next_offset: Vector2
     var next_zoom_multiplier: float
-    if Su.snaps_camera_back_to_player:
+    if Su.snaps_camera_back_to_character:
         next_offset = _target_offset + _delta_offset
         next_zoom_multiplier = _target_zoom_multiplier + _delta_zoom_multiplier
     else:

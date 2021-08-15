@@ -58,9 +58,9 @@ func _calculate_duration(
 
 
 func get_animation_state_at_time(
-        result: PlayerAnimationState,
+        result: CharacterAnimationState,
         edge_time: float) -> void:
-    result.player_position = get_position_at_time(edge_time)
+    result.character_position = get_position_at_time(edge_time)
     if edge_time < time_peak_height:
         result.animation_name = "JumpRise"
         result.animation_position = edge_time
@@ -72,8 +72,8 @@ func get_animation_state_at_time(
 
 
 func _check_did_just_reach_surface_destination(
-        navigation_state: PlayerNavigationState,
-        surface_state: PlayerSurfaceState,
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
         playback) -> bool:
     return check_just_landed_on_expected_surface(
             surface_state,

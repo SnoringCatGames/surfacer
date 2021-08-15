@@ -143,15 +143,15 @@ func defer(method: String) -> void:
 
 
 func _on_graph_parse_progress(
-        player_index: int,
-        player_count: int,
+        character_index: int,
+        character_count: int,
         origin_surface_index: int,
         surface_count: int) -> void:
     var current_graph_calculation_progress_ratio := \
             origin_surface_index / float(surface_count)
     var current_level_calculation_progress_ratio := \
-            (player_index + current_graph_calculation_progress_ratio) / \
-            float(player_count)
+            (character_index + current_graph_calculation_progress_ratio) / \
+            float(character_count)
     var sub_step_progress: float = \
             (INITIALIZE_SUB_STEP_PROGRESS_RATIO + \
             current_level_calculation_progress_ratio * \
@@ -163,8 +163,8 @@ func _on_graph_parse_progress(
             Su.precompute_platform_graph_for_levels.size() * \
             100.0
     
-    var player_name: String = Sc.level_config.get_level_config(level_id) \
-            .platform_graph_player_names[player_index]
+    var character_name: String = Sc.level_config.get_level_config(level_id) \
+            .platform_graph_character_names[character_index]
     var label_1 := "Level %s (%s of %s)" % [
         Su.precompute_platform_graph_for_levels[ \
                 precompute_level_index],
@@ -172,10 +172,10 @@ func _on_graph_parse_progress(
         Su.precompute_platform_graph_for_levels.size(),
     ]
     var label_2 := "--- Parsing ---"
-    var label_3 := "Player %s (%s of %s)" % [
-        player_name,
-        player_index + 1,
-        player_count,
+    var label_3 := "Character %s (%s of %s)" % [
+        character_name,
+        character_index + 1,
+        character_count,
     ]
     var label_4 := "Out-bound surface %s of %s" % [
         origin_surface_index + 1,

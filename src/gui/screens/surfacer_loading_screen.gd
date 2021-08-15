@@ -96,24 +96,24 @@ func _on_load_started() -> void:
 
 
 func _on_graph_parse_progress(
-        player_index: int,
-        player_count: int,
+        character_index: int,
+        character_count: int,
         origin_surface_index: int,
         surface_count: int) -> void:
     var current_graph_calculation_progress_ratio := \
             origin_surface_index / float(surface_count)
     var progress := \
-            (player_index + current_graph_calculation_progress_ratio) / \
-            float(player_count) * \
+            (character_index + current_graph_calculation_progress_ratio) / \
+            float(character_count) * \
             100.0
     
-    var player_name: String = \
+    var character_name: String = \
             Sc.level_config.get_level_config(Sc.level_session.id) \
-            .platform_graph_player_names[player_index]
-    var label_1 := "Player %s (%s of %s)" % [
-        player_name,
-        player_index + 1,
-        player_count,
+            .platform_graph_character_names[character_index]
+    var label_1 := "Character %s (%s of %s)" % [
+        character_name,
+        character_index + 1,
+        character_count,
     ]
     var label_2 := "Out-bound surface %s of %s" % [
         origin_surface_index + 1,

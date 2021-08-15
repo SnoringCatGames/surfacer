@@ -4,10 +4,10 @@ extends Reference
 ## -   Graph parsing is slow and can done either dynamically when starting the
 ##     level or ahead of time and saved to separate file.[br]
 ## -   Graph parsing can be multi-threaded.[br]
-## -   A PlatfromGraph is specific to a given player type. This is important
-##     since different players have different jump parameters and can reach
+## -   A PlatfromGraph is specific to a given character type. This is important
+##     since different characters have different jump parameters and can reach
 ##     different surfaces, so the edges in the graph will be different for each
-##     player.[br]
+##     character.[br]
 
 
 signal calculation_progressed(
@@ -18,7 +18,7 @@ signal calculation_finished
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 
-var player_name: String
+var character_name: String
 var collision_params: CollisionCalcParams
 var movement_params: MovementParameters
 var surface_parser: SurfaceParser
@@ -48,21 +48,21 @@ var debug_params := {}
 var surface_exclusion_list := {}
 
 
-func calculate(player_name: String) -> void:
-    self.player_name = player_name
-    self.movement_params = Su.movement.player_movement_params[player_name]
+func calculate(character_name: String) -> void:
+    self.character_name = character_name
+    self.movement_params = Su.movement.character_movement_params[character_name]
     self.debug_params = Su.debug_params
     self.surface_parser = Su.graph_parser.surface_parser
     
     var crash_test_dummy: CrashTestDummy = \
-            Su.graph_parser.crash_test_dummies[player_name]
+            Su.graph_parser.crash_test_dummies[character_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
             self.surface_parser,
             crash_test_dummy)
     
-    # Store the subset of surfaces that this player type can interact with.
+    # Store the subset of surfaces that this character type can interact with.
     var surfaces_array := surface_parser.get_subset_of_surfaces(
             movement_params.can_grab_walls,
             movement_params.can_grab_ceilings,
@@ -309,7 +309,7 @@ func _get_cheapest_edge_between_nodes(
     return cheapest_edge
 
 
-# Calculates and stores the edges between surface nodes that this player type
+# Calculates and stores the edges between surface nodes that this character type
 # can traverse.
 # 
 # Intra-surface edges are not calculated and stored ahead of time; they're only
@@ -320,8 +320,8 @@ func _calculate_nodes_and_edges() -> void:
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     if debug_params.has("limit_parsing") and \
-            debug_params.limit_parsing.has("player_name") and \
-            player_name != debug_params.limit_parsing.player_name:
+            debug_params.limit_parsing.has("character_name") and \
+            character_name != debug_params.limit_parsing.character_name:
         return
     ###########################################################################
     
@@ -662,8 +662,8 @@ func _update_counts() -> void:
 
 
 func to_string() -> String:
-    return "PlatformGraph{ player: %s, surfaces: %s, edges: %s }" % [
-        movement_params.player_name,
+    return "PlatformGraph{ character: %s, surfaces: %s, edges: %s }" % [
+        movement_params.character_name,
         counts.total_surfaces,
         counts.total_edges,
     ]
@@ -672,19 +672,19 @@ func to_string() -> String:
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
-    self.player_name = json_object.player_name
-    self.movement_params = Su.movement.player_movement_params[player_name]
+    self.character_name = json_object.character_name
+    self.movement_params = Su.movement.character_movement_params[character_name]
     self.debug_params = Su.debug_params
     self.surface_parser = Su.graph_parser.surface_parser
     
-    var crash_test_dummy = Su.graph_parser.crash_test_dummies[player_name]
+    var crash_test_dummy = Su.graph_parser.crash_test_dummies[character_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
             self.surface_parser,
             crash_test_dummy)
     
-    # Store the subset of surfaces that this player type can interact with.
+    # Store the subset of surfaces that this character type can interact with.
     var surfaces_array := surface_parser.get_subset_of_surfaces(
             movement_params.can_grab_walls,
             movement_params.can_grab_ceilings,
@@ -756,7 +756,7 @@ func _load_surfaces_to_inter_surface_edges_results_from_json_object(
 
 func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     var json_object := {
-        player_name = player_name,
+        character_name = character_name,
         position_along_surface_id_to_json_object = \
                 _get_position_along_surface_id_to_json_object(
                         includes_debug_only_state),

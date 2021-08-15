@@ -35,8 +35,8 @@ func _derive_overrides_according_to_debug_or_playtest(
             metadata.opens_directly_to_level_id != "") and is_debug
     metadata.are_button_controls_enabled_by_default = \
             metadata.are_button_controls_enabled_by_default or is_debug
-    metadata.logs_player_events = \
-            metadata.logs_player_events and is_debug
+    metadata.logs_character_events = \
+            metadata.logs_character_events and is_debug
     metadata.logs_analytics_events = \
             metadata.logs_analytics_events or !is_debug
     metadata.logs_bootstrap_events = \
@@ -600,14 +600,14 @@ var _default_settings_item_manifest := {
             item_classes = [
                 RulerAnnotatorControlRow,
                 PreselectionTrajectoryAnnotatorControlRow,
-                NpcPlayerTrajectoryAnnotatorControlRow,
+                NpcCharacterTrajectoryAnnotatorControlRow,
                 ActiveTrajectoryAnnotatorControlRow,
                 PreviousTrajectoryAnnotatorControlRow,
                 NavigationDestinationAnnotatorControlRow,
                 RecentMovementAnnotatorControlRow,
                 SurfacesAnnotatorControlRow,
-                PlayerPositionAnnotatorControlRow,
-                PlayerAnnotatorControlRow,
+                CharacterPositionAnnotatorControlRow,
+                CharacterAnnotatorControlRow,
                 LevelAnnotatorControlRow,
             ],
         },

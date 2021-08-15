@@ -4,7 +4,7 @@ extends CheckboxControlRow
 
 const LABEL := "Intro cutscene"
 const DESCRIPTION := (
-        "This toggles whether some brief automatic player movement is " +
+        "This toggles whether some brief automatic character movement is " +
         "shown when starting a level.")
 
 

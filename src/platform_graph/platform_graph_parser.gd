@@ -5,8 +5,8 @@ extends Node
 signal calculation_started
 signal load_started
 signal calculation_progressed(
-        player_index,
-        player_count,
+        character_index,
+        character_count,
         origin_surface_index,
         surface_count)
 signal parse_finished
@@ -67,10 +67,10 @@ func _record_tile_maps() -> void:
 
 
 func _create_crash_test_dummies_for_collision_calculations() -> void:
-    for player_name in _get_player_names():
-        var crash_test_dummy := CrashTestDummy.new(player_name)
+    for character_name in _get_character_names():
+        var crash_test_dummy := CrashTestDummy.new(character_name)
         add_child(crash_test_dummy)
-        crash_test_dummies[crash_test_dummy.player_name] = crash_test_dummy
+        crash_test_dummies[crash_test_dummy.character_name] = crash_test_dummy
 
 
 func _instantiate_platform_graphs(
@@ -124,41 +124,41 @@ func _calculate_platform_graphs() -> void:
     surface_parser = SurfaceParser.new()
     surface_parser.calculate(surface_tile_maps)
     platform_graphs = {}
-    assert(!Su.movement.player_movement_params.empty())
+    assert(!Su.movement.character_movement_params.empty())
     _defer_calculate_next_platform_graph(-1)
 
 
-func _calculate_next_platform_graph(player_index: int) -> void:
-    var platform_graph_player_names: Array = _get_player_names()
-    var player_name: String = platform_graph_player_names[player_index]
-    var is_last_player := \
-            player_index == platform_graph_player_names.size() - 1
+func _calculate_next_platform_graph(character_index: int) -> void:
+    var platform_graph_character_names: Array = _get_character_names()
+    var character_name: String = platform_graph_character_names[character_index]
+    var is_last_character := \
+            character_index == platform_graph_character_names.size() - 1
     
     #######################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    var should_skip_player: bool = \
+    var should_skip_character: bool = \
             Su.debug_params.has("limit_parsing") and \
-            Su.debug_params.limit_parsing.has("player_name") and \
-            player_name != Su.debug_params.limit_parsing.player_name
+            Su.debug_params.limit_parsing.has("character_name") and \
+            character_name != Su.debug_params.limit_parsing.character_name
     #######################################################################
     
-    if !should_skip_player:
+    if !should_skip_character:
         var graph := PlatformGraph.new()
         graph.connect(
                 "calculation_progressed",
                 self,
                 "_on_graph_calculation_progress",
-                [graph, player_index, player_name])
+                [graph, character_index, character_name])
         graph.connect(
                 "calculation_finished",
                 self,
                 "_on_graph_calculation_finished",
-                [player_index, is_last_player])
-        graph.calculate(player_name)
-        platform_graphs[player_name] = graph
+                [character_index, is_last_character])
+        graph.calculate(character_name)
+        platform_graphs[character_name] = graph
     else:
-        if !is_last_player:
-            _calculate_next_platform_graph(player_index + 1)
+        if !is_last_character:
+            _calculate_next_platform_graph(character_index + 1)
         else:
             _on_graphs_parsed()
 
@@ -167,30 +167,30 @@ func _on_graph_calculation_progress(
         origin_surface_index,
         surface_count,
         graph: PlatformGraph,
-        player_index: int,
-        player_name: String) -> void:
+        character_index: int,
+        character_name: String) -> void:
     emit_signal(
             "calculation_progressed",
-            player_index,
-            _get_player_names().size(),
+            character_index,
+            _get_character_names().size(),
             origin_surface_index,
             surface_count)
 
 
 func _on_graph_calculation_finished(
-        player_index: int,
-        was_last_player: bool) -> void:
-    if !was_last_player:
-        _defer_calculate_next_platform_graph(player_index)
+        character_index: int,
+        was_last_character: bool) -> void:
+    if !was_last_character:
+        _defer_calculate_next_platform_graph(character_index)
     else:
         _on_graphs_parsed()
 
 
-func _defer_calculate_next_platform_graph(last_player_index: int) -> void:
+func _defer_calculate_next_platform_graph(last_character_index: int) -> void:
     Sc.time.set_timeout(
             funcref(self, "_calculate_next_platform_graph"),
             0.01,
-            [last_player_index + 1])
+            [last_character_index + 1])
 
 
 func _load_platform_graphs(includes_debug_only_state: bool) -> void:
@@ -231,7 +231,7 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
     
     if Sc.metadata.debug or Sc.metadata.playtest:
         _validate_tile_maps(json_object)
-        _validate_players(json_object)
+        _validate_characters(json_object)
         _validate_surfaces(surface_parser)
         _validate_platform_graphs(json_object)
     
@@ -240,7 +240,7 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
         graph.load_from_json_object(
                 graph_json_object,
                 context)
-        platform_graphs[graph.player_name] = graph
+        platform_graphs[graph.character_name] = graph
     
     _on_graphs_parsed()
 
@@ -256,12 +256,12 @@ func _validate_tile_maps(json_object: Dictionary) -> void:
     assert(expected_id_set.empty())
 
 
-func _validate_players(json_object: Dictionary) -> void:
+func _validate_characters(json_object: Dictionary) -> void:
     var expected_name_set := {}
-    for player_name in _get_player_names():
-        expected_name_set[player_name] = true
+    for character_name in _get_character_names():
+        expected_name_set[character_name] = true
     
-    for name in json_object.platform_graph_player_names:
+    for name in json_object.platform_graph_character_names:
         assert(expected_name_set.has(name))
         expected_name_set.erase(name)
     assert(expected_name_set.empty())
@@ -314,12 +314,12 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
 
 func _validate_platform_graphs(json_object: Dictionary) -> void:
     var expected_name_set := {}
-    for player_name in _get_player_names():
-        expected_name_set[player_name] = true
+    for character_name in _get_character_names():
+        expected_name_set[character_name] = true
     
     for graph_json_object in json_object.platform_graphs:
-        assert(expected_name_set.has(graph_json_object.player_name))
-        expected_name_set.erase(graph_json_object.player_name)
+        assert(expected_name_set.has(graph_json_object.character_name))
+        expected_name_set.erase(graph_json_object.character_name)
     
     assert(expected_name_set.empty())
 
@@ -348,7 +348,7 @@ func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     return {
         level_id = level_id,
         surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
-        platform_graph_player_names = _get_player_names(),
+        platform_graph_character_names = _get_character_names(),
         surface_parser = surface_parser.to_json_object(),
         platform_graphs = \
                 _serialize_platform_graphs(includes_debug_only_state),
@@ -363,15 +363,15 @@ func _get_surfaces_tile_map_ids() -> Array:
     return result
 
 
-func _get_player_names() -> Array:
+func _get_character_names() -> Array:
     return Sc.level_config.get_level_config(level_id) \
-            .platform_graph_player_names
+            .platform_graph_character_names
 
 
 func _serialize_platform_graphs(includes_debug_only_state: bool) -> Array:
     var result := []
-    for player_name in platform_graphs:
-        result.push_back(platform_graphs[player_name] \
+    for character_name in platform_graphs:
+        result.push_back(platform_graphs[character_name] \
                 .to_json_object(includes_debug_only_state))
     return result
 

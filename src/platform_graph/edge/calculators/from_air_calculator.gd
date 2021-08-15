@@ -70,7 +70,7 @@ func optimize_edge_land_position_for_path(
 
 
 # Finds a movement step that will result in landing on a surface, with an
-# attempt to minimize the path the player would then have to travel between
+# attempt to minimize the path the character would then have to travel between
 # surfaces to reach the given target.
 #
 # Returns null if no possible landing exists.
@@ -170,14 +170,14 @@ func find_a_landing_trajectory(
 func create_edge_from_part_of_other_edge(
         other_edge: Edge,
         start_time: float,
-        player) -> FromAirEdge:
+        character) -> FromAirEdge:
     if other_edge.trajectory == null:
         # Some edges can enter the air but also don't have explicit
         # trajectories.
         return null
     
     var origin := PositionAlongSurfaceFactory.create_position_without_surface(
-            player.surface_state.center_position)
+            character.surface_state.center_position)
     var instructions := EdgeInstructionsUtils.sub_instructions(
             other_edge.instructions,
             start_time)
@@ -191,7 +191,7 @@ func create_edge_from_part_of_other_edge(
             self,
             origin,
             other_edge.end_position_along_surface,
-            player.velocity,
+            character.velocity,
             other_edge.velocity_end,
             other_edge.includes_extra_wall_land_horizontal_speed,
             other_edge.movement_params,
