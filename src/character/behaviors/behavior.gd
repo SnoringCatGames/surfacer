@@ -181,12 +181,6 @@ func _ready() -> void:
     _check_ready_to_move()
 
 
-func _on_attached_to_first_surface() -> void:
-    start_position_along_surface = character.start_position_along_surface
-    start_surface = start_position_along_surface.surface
-    _check_ready_to_move()
-
-
 func _check_ready_to_move() -> void:
     _is_ready_to_move = \
             _is_ready and \
@@ -213,7 +207,6 @@ func _on_active() -> void:
 ## of them have been called at least once:[br]
 ## -   _ready[br]
 ## -   character._ready[br]
-## -   _on_attached_to_first_surface[br]
 ## -   _on_active[br]
 func _on_ready_to_move() -> void:
     pass

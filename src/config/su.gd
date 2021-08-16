@@ -87,7 +87,7 @@ var DEFAULT_BEHAVIOR_CLASSES := [
     FollowBehavior,
     JumpBackAndForthBehavior,
     MoveBackAndForthBehavior,
-    RestBehavior,
+    DefaultBehavior,
     ReturnBehavior,
     RunAwayBehavior,
     PlayerNavigationBehavior,
