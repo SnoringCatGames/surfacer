@@ -60,19 +60,19 @@ func _load_level() -> void:
     if Su.debug_params.has("limit_parsing"):
         level.script = DebugLevel
     Sc.nav.screens["game"].add_level(level)
-    Su.graph_parser.connect(
+    Sc.level.graph_parser.connect(
             "calculation_started",
             self,
             "_on_calculation_started")
-    Su.graph_parser.connect(
+    Sc.level.graph_parser.connect(
             "load_started",
             self,
             "_on_load_started")
-    Su.graph_parser.connect(
+    Sc.level.graph_parser.connect(
             "calculation_progressed",
             self,
             "_on_graph_parse_progress")
-    Su.graph_parser.connect(
+    Sc.level.graph_parser.connect(
             "parse_finished",
             self,
             "_on_graph_parse_finished")
@@ -133,24 +133,24 @@ func _on_graph_parse_progress(
 # This is called when the graphs are ready, regardless of whether they were
 # calculated-on-demand or loaded from a file.
 func _on_graph_parse_finished() -> void:
-    Su.graph_parser.disconnect(
+    Sc.level.graph_parser.disconnect(
             "calculation_started",
             self,
             "_on_calculation_started")
-    Su.graph_parser.disconnect(
+    Sc.level.graph_parser.disconnect(
             "load_started",
             self,
             "_on_load_started")
-    Su.graph_parser.disconnect(
+    Sc.level.graph_parser.disconnect(
             "calculation_progressed",
             self,
             "_on_graph_parse_progress")
-    Su.graph_parser.disconnect(
+    Sc.level.graph_parser.disconnect(
             "parse_finished",
             self,
             "_on_graph_parse_finished")
     
-    if !Su.graph_parser.is_loaded_from_file:
+    if !Sc.level.graph_parser.is_loaded_from_file:
         Sc.utils.give_button_press_feedback()
     
     $VBoxContainer/ProgressBar.value = 100

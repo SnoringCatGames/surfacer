@@ -4,3 +4,9 @@
 
 [node name="RunAwayBehavior" type="Node2D"]
 script = ExtResource( 1 )
+returns_to_character_start_position = true
+returns_to_pre_behavior_position = false
+min_pause_between_movements = 0.0
+max_pause_between_movements = 0.0
+min_pause_after_movements = 0.0
+max_pause_after_movements = 0.0

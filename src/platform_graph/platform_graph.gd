@@ -50,12 +50,13 @@ var surface_exclusion_list := {}
 
 func calculate(character_name: String) -> void:
     self.character_name = character_name
-    self.movement_params = Su.movement.character_movement_params[character_name]
+    self.movement_params = \
+            Su.movement.character_movement_params[character_name]
     self.debug_params = Su.debug_params
-    self.surface_parser = Su.graph_parser.surface_parser
+    self.surface_parser = Sc.level.surface_parser
     
     var crash_test_dummy: CrashTestDummy = \
-            Su.graph_parser.crash_test_dummies[character_name]
+            Sc.level.graph_parser.crash_test_dummies[character_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
@@ -673,11 +674,13 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     self.character_name = json_object.character_name
-    self.movement_params = Su.movement.character_movement_params[character_name]
+    self.movement_params = \
+            Su.movement.character_movement_params[character_name]
     self.debug_params = Su.debug_params
-    self.surface_parser = Su.graph_parser.surface_parser
+    self.surface_parser = Sc.level.surface_parser
     
-    var crash_test_dummy = Su.graph_parser.crash_test_dummies[character_name]
+    var crash_test_dummy: CrashTestDummy = \
+            Sc.level.graph_parser.crash_test_dummies[character_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,

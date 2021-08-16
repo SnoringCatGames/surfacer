@@ -19,19 +19,11 @@ var level_id: String
 var surface_tile_maps: Array
 # Dictionary<String, CrashTestDummy>
 var crash_test_dummies := {}
-var surface_parser: SurfaceParser
+var surface_parser := SurfaceParser.new()
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
 var is_loaded_from_file := false
 var is_parse_finished := false
-
-
-func _enter_tree() -> void:
-    Su.graph_parser = self
-
-
-func _exit_tree() -> void:
-    Su.graph_parser = null
 
 
 func parse(
@@ -121,7 +113,6 @@ func _on_graphs_parsed() -> void:
 
 
 func _calculate_platform_graphs() -> void:
-    surface_parser = SurfaceParser.new()
     surface_parser.calculate(surface_tile_maps)
     platform_graphs = {}
     assert(!Su.movement.character_movement_params.empty())
@@ -224,7 +215,6 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
     for tile_map in surface_tile_maps:
         context.id_to_tile_map[tile_map.id] = tile_map
     
-    surface_parser = SurfaceParser.new()
     surface_parser.load_from_json_object(
             json_object.surface_parser,
             context)
