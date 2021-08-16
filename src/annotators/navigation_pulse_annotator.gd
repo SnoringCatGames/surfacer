@@ -3,6 +3,7 @@ extends Node2D
 
 
 var navigator: SurfaceNavigator
+var color: Color
 var current_path: PlatformGraphPath
 var is_slow_motion_enabled := false
 var current_path_start_time := -INF
@@ -14,8 +15,11 @@ var is_pulse_active := false
 var does_pulse_grow := false
 
 
-func _init(navigator: SurfaceNavigator) -> void:
+func _init(
+        navigator: SurfaceNavigator,
+        color: Color) -> void:
     self.navigator = navigator
+    self.color = color
 
 
 func _physics_process(_delta: float) -> void:
@@ -91,11 +95,7 @@ func _draw() -> void:
                 path_segment_time_center + half_pulse_time_length,
                 current_path.duration)
     
-    var path_color: Color = \
-            Su.ann_defaults \
-                    .PLAYER_NAVIGATOR_PULSE_PATH_COLOR if \
-            navigator.character.is_player_character else \
-            Su.ann_defaults.NPC_NAVIGATOR_PULSE_PATH_COLOR
+    var path_color := color
     path_color.a *= opacity_multiplier
     var trim_front_end_radius := 0.0
     var trim_back_end_radius := 0.0

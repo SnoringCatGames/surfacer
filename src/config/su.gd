@@ -388,6 +388,11 @@ func _instantiate_sub_modules() -> void:
 
 
 func _configure_sub_modules() -> void:
+    Su.ann_manifest._register_manifest(Su.manifest.annotations_manifest)
+    Su.movement._register_manifest(Su.manifest.movement_manifest)
+    
+    Su.movement._validate_configuration()
+    
     self.is_inspector_enabled = Sc.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
             Sc.gui.hud_manifest.is_inspector_enabled_default)
@@ -415,11 +420,6 @@ func _configure_sub_modules() -> void:
             Sc.save_state.get_setting(
                     NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
                     true)
-    
-    Su.ann_manifest._register_manifest(Su.manifest.annotations_manifest)
-    Su.movement._register_manifest(Su.manifest.movement_manifest)
-    
-    Su.movement._validate_configuration()
     
     if manifest.has("annotation_element_defaults_class"):
         self.ann_defaults = manifest.annotation_element_defaults_class.new()

@@ -319,50 +319,6 @@ var DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS := \
                 JUMP_LAND_POSITIONS_VALUE,
                 JUMP_LAND_POSITIONS_ALPHA)
 
-var PLAYER_NAVIGATOR_CURRENT_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.player_navigation,
-        ScaffolderColors.ALPHA_XFAINT)
-var PLAYER_NAVIGATOR_PREVIOUS_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.player_navigation,
-        ScaffolderColors.ALPHA_XXFAINT)
-var PLAYER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Sc.colors.opacify(
-        Sc.colors.player_navigation,
-        ScaffolderColors.ALPHA_XXFAINT)
-var PLAYER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Sc.colors.opacify(
-        Sc.colors.player_navigation,
-        ScaffolderColors.ALPHA_SLIGHTLY_FAINT)
-var PLAYER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
-        PLAYER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
-var PLAYER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR := \
-        PLAYER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
-var PLAYER_NAVIGATOR_PULSE_PATH_COLOR := Color.from_hsv(
-        PLAYER_NAVIGATOR_CURRENT_PATH_COLOR.h,
-        0.3,
-        0.99,
-        0.4)
-
-var NPC_NAVIGATOR_CURRENT_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.npc_navigation,
-        ScaffolderColors.ALPHA_XFAINT)
-var NPC_NAVIGATOR_PREVIOUS_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.npc_navigation,
-        ScaffolderColors.ALPHA_XXFAINT)
-var NPC_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Sc.colors.opacify(
-        Sc.colors.npc_navigation,
-        ScaffolderColors.ALPHA_XXFAINT)
-var NPC_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Sc.colors.opacify(
-        Sc.colors.npc_navigation,
-        ScaffolderColors.ALPHA_SLIGHTLY_FAINT)
-var NPC_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
-        NPC_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
-var NPC_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR := \
-        NPC_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
-var NPC_NAVIGATOR_PULSE_PATH_COLOR := Color.from_hsv(
-        NPC_NAVIGATOR_CURRENT_PATH_COLOR.h,
-        0.3,
-        0.99,
-        0.4)
-
 var DEFAULT_POLYLINE_COLOR_PARAMS := HsvColorParams.new(
         DEFAULT_POLYLINE_HUE,
         DEFAULT_POLYLINE_SATURATION,
