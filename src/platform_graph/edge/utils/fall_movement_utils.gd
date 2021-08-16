@@ -274,9 +274,9 @@ static func find_surfaces_in_fall_range_from_point(
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
-    # NOTE: This makes the simplifying assumption that the character cannot still
-    #       be pressing the jump button, and we only need to consider fast-fall
-    #       gravity.
+    # NOTE: This makes the simplifying assumption that the character cannot
+    #       still be pressing the jump button, and we only need to consider
+    #       fast-fall gravity.
     var time_to_terminal_velocity_y := \
             (movement_params.max_vertical_speed - velocity_start.y) / \
             movement_params.gravity_fast_fall
@@ -366,9 +366,9 @@ static func calculate_jump_or_fall_range_polygon_from_surface(
     # From a basic equation of motion:
     #     v = v_0 + a*t
     #     v_0 = 0.0
-    # NOTE: This makes the simplifying assumption that the character cannot still
-    #       be pressing the jump button, and we only need to consider fast-fall
-    #       gravity.
+    # NOTE: This makes the simplifying assumption that the character cannot
+    #       still be pressing the jump button, and we only need to consider
+    #       fast-fall gravity.
     var time_to_terminal_velocity_y := \
             movement_params.max_vertical_speed / \
             movement_params.gravity_fast_fall

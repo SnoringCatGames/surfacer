@@ -1,9 +1,9 @@
 class_name CharacterActionHandler
 extends Reference
-## An ActionHandler updates a character's state each frame, in response to current
-## events and the character's current state.
-## For example, FloorJumpAction listens for jump events while the character is on
-## the ground, and triggers character jump state accordingly.
+## An ActionHandler updates a character's state each frame, in response to
+## current events and the character's current state.
+## For example, FloorJumpAction listens for jump events while the character is
+## on the ground, and triggers character jump state accordingly.
 
 
 const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15.0
@@ -28,5 +28,6 @@ func _init(
 
 
 func process(character) -> bool:
-    Sc.logger.error("Abstract CharacterActionHandler.process is not implemented")
+    Sc.logger.error(
+            "Abstract CharacterActionHandler.process is not implemented")
     return false

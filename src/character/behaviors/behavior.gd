@@ -7,14 +7,15 @@ signal activated
 signal deactivated
 
 
-## -   Whether this should be the default initial behavior for the character.[br]
+## -   Whether this should be the default initial behavior for the
+##     character.[br]
 ## -   At most one behavior should be marked `is_active_at_start = true`.[br]
 export var is_active_at_start := false \
         setget _set_is_active_at_start
 
 # FIXME: -----------------------
-## -   If true, the character may leave the starting surface in order to run-away
-##     far enough.
+## -   If true, the character may leave the starting surface in order to
+##     run-away far enough.
 ## -   If false, the character will only run, at the furthest, to the end of the
 ##     starting surface.
 export var can_leave_start_surface := true \
@@ -64,8 +65,8 @@ export var start_jump_boost_multiplier := 1.0 \
 var returns_to_character_start_position := true \
         setget _set_returns_to_character_start_position
 
-## -   If true, after this behavior has finished, the character will return to the 
-##     position they were at before triggering this behavior.
+## -   If true, after this behavior has finished, the character will return to
+##     the position they were at before triggering this behavior.
 ## -   If true, then `only_navigates_reversible_paths` must also be true.
 var returns_to_pre_behavior_position := false \
         setget _set_returns_to_pre_behavior_position

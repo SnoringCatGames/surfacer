@@ -17,8 +17,8 @@ func _init().(
 
 
 func process(character) -> bool:
-    # If the character falls off a wall or ledge, then that's considered the first
-    # jump.
+    # If the character falls off a wall or ledge, then that's considered the
+    # first jump.
     character.jump_count = max(character.jump_count, 1)
     
     var is_first_jump: bool = character.jump_count == 1

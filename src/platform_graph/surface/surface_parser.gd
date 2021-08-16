@@ -119,8 +119,8 @@ func _calculate_combined_tile_map_rect(tile_maps: Array) -> void:
 #   surface node in the graph.
 # - Each node in this graph corresponds to a continuous surface that could be
 #   walked on or climbed on (i.e., floors and walls).
-# - Each edge in this graph corresponds to a possible movement that the character
-#   could take to get from one surface to another.
+# - Each edge in this graph corresponds to a possible movement that the
+#   character could take to get from one surface to another.
 # 
 # Assumptions:
 # - The given TileMap only uses collidable tiles. Use a separate TileMap to
@@ -1026,7 +1026,10 @@ static func find_closest_positions_on_a_surface(
         position_count: int,
         max_distance_squared_threshold := INF,
         surfaces = []) -> Array:
-    surfaces = surfaces if !surfaces.empty() else character.possible_surfaces_set
+    surfaces = \
+                surfaces if \
+                !surfaces.empty() else \
+                character.possible_surfaces_set
     var closest_surfaces := get_closest_surfaces(
             target,
             surfaces,

@@ -88,8 +88,10 @@ func _ready() -> void:
     
     if Sc.annotators.is_annotator_enabled(
             AnnotatorType.PATH_PRESELECTION) and \
-            (is_player_character and Su.ann_manifest.is_player_prediction_shown or \
-            !is_player_character and Su.ann_manifest.is_npc_prediction_shown):
+            (is_player_character and \
+                    Su.ann_manifest.is_player_prediction_shown or \
+            !is_player_character and \
+                    Su.ann_manifest.is_npc_prediction_shown):
         prediction = CharacterPrediction.new()
         prediction.set_up(self)
         _attach_prediction()
@@ -433,7 +435,8 @@ func _update_collision_mask() -> void:
             surface_state.is_grabbing_walk_through_walls)
 
 
-func _on_surfacer_character_navigation_ended(did_navigation_finish: bool) -> void:
+func _on_surfacer_character_navigation_ended(
+        did_navigation_finish: bool) -> void:
     for behavior in _behaviors_list:
         behavior._on_navigation_ended(did_navigation_finish)
 

@@ -27,8 +27,8 @@ extends Reference
 # The surface that was collided with.
 var surface: Surface
 
-# This point represents the SurfacerCharacter's position (i.e., the SurfacerCharacter's center), NOT
-# the corner of the Surface.
+# This point represents the SurfacerCharacter's position (i.e., the
+# SurfacerCharacter's center), NOT the corner of the Surface.
 var position := Vector2.INF
 
 var passing_vertically: bool

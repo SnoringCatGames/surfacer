@@ -21,8 +21,8 @@ signal finished
 #             -   The position of this node is used as the navigation target.
 #         -   Triggers navigation to the closest position-along-a-surface to
 #             the given target.
-#         -   If defined, then the next item will be executed after the character
-#             finishes navigating to the given destination.
+#         -   If defined, then the next item will be executed after the
+#             character finishes navigating to the given destination.
 #     -   zoom
 #         -   Updates the camera zoom.
 #     -   time_scale
@@ -93,7 +93,8 @@ func start() -> void:
     _initial_is_previous_trajectory_shown = \
             Su.ann_manifest.is_previous_trajectory_shown
     Su.ann_manifest.is_previous_trajectory_shown = false
-    _initial_is_active_trajectory_shown = Su.ann_manifest.is_active_trajectory_shown
+    _initial_is_active_trajectory_shown = \
+            Su.ann_manifest.is_active_trajectory_shown
     Su.ann_manifest.is_active_trajectory_shown = false
     _initial_is_navigation_destination_shown = \
             Su.ann_manifest.is_navigation_destination_shown

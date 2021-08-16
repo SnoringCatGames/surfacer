@@ -125,7 +125,8 @@ static func _get_collision_for_side(
         side: int) -> KinematicCollision2D:
     if character.surface_state.is_touching_floor:
         for i in character.get_slide_count():
-            var collision: KinematicCollision2D = character.get_slide_collision(i)
+            var collision: KinematicCollision2D = \
+                    character.get_slide_collision(i)
             if get_surface_side_for_normal(collision.normal) == side:
                 return collision
     return null

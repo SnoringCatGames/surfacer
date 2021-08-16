@@ -3,7 +3,8 @@ extends Reference
 ## -   Represents a position along a surface.[br]
 ## -   Rather than considering polyline length, this only specifies the position
 ##     along the axis the surface is aligned to.[br]
-## -   The position always indicates the center of the character's bounding box.[br]
+## -   The position always indicates the center of the character's bounding
+##     box.[br]
 
 
 var surface: Surface

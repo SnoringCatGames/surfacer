@@ -2,8 +2,8 @@ class_name CollisionTileMapCoordResult
 extends Reference
 
 
-# In case the SurfacerCharacter is colliding with multiple sides, this should indicate
-# which side tile_map_coord corresponds to.
+# In case the SurfacerCharacter is colliding with multiple sides, this should
+# indicate which side tile_map_coord corresponds to.
 var surface_side := SurfaceSide.NONE
 
 var tile_map_coord := Vector2.INF

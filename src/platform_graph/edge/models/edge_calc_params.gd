@@ -7,8 +7,8 @@ var collision_params: CollisionCalcParams
 
 var movement_params: MovementParameters
 
-# A margin to extend around the SurfacerCharacter's Collider. This helps to compensate for
-# the imprecision of these calculations.
+# A margin to extend around the SurfacerCharacter's Collider. This helps to
+# compensate for the imprecision of these calculations.
 var waypoint_offset := Vector2.INF
 
 # The initial velocity for the current edge instructions.
