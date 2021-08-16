@@ -80,6 +80,7 @@ func _draw() -> void:
         if Su.ann_manifest.is_active_trajectory_shown:
             _draw_current_path(current_path)
         if Su.ann_manifest.is_navigation_destination_shown:
+            _draw_current_path_origin(current_path)
             _draw_current_path_destination(current_path)
     
     elif previous_path != null and \
@@ -116,8 +117,9 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
     _draw_beat_hashes(
             current_path_beats,
             current_path_color)
-    
-    # Draw the origin indicator.
+
+
+func _draw_current_path_origin(current_path: PlatformGraphPath) -> void:
     var origin_indicator_fill_color: Color = \
             Su.ann_defaults \
                     .PLAYER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR if \
