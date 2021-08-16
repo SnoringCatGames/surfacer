@@ -180,7 +180,8 @@ func _register_manifest(manifest: Dictionary) -> void:
     
     _register_action_handlers(self._action_handler_classes)
     _register_edge_calculators(self._edge_calculator_classes)
-    _parse_movement_params_from_character_scenes(Sc.characters._character_scenes_list)
+    _parse_movement_params_from_character_scenes(
+            Sc.characters._character_scenes_list)
 
 
 func _validate_configuration() -> void:
@@ -204,12 +205,14 @@ func _validate_configuration() -> void:
     assert(Su.movement.max_horizontal_speed_default_default >= 0)
     assert(Su.movement.max_vertical_speed_default >= 0)
     assert(Su.movement.min_horizontal_speed >= 0)
-    assert(Su.movement.max_vertical_speed_default >= abs(Su.movement.jump_boost_default))
+    assert(Su.movement.max_vertical_speed_default >= \
+            abs(Su.movement.jump_boost_default))
     assert(Su.movement.min_vertical_speed >= 0)
     
     assert(Su.movement.dash_speed_multiplier_default >= 0)
     assert(Su.movement.dash_vertical_boost_default <= 0)
-    assert(Su.movement.dash_duration_default >= Su.movement.dash_fade_duration_default)
+    assert(Su.movement.dash_duration_default >= \
+            Su.movement.dash_fade_duration_default)
     assert(Su.movement.dash_fade_duration_default >= 0)
     assert(Su.movement.dash_cooldown_default >= 0)
 
@@ -244,7 +247,7 @@ func _parse_movement_params_from_character_scenes(
         
         var movement_params: MovementParameters
         for node_index in state.get_node_count():
-            if state.get_node_name(node_index) == "MovementParameters":
+            if _get_is_node_movement_parameters(state, node_index):
                 # Instantiate the MovementParameters.
                 var movement_params_scene := \
                         state.get_node_instance(node_index)
@@ -262,7 +265,18 @@ func _parse_movement_params_from_character_scenes(
                 break
         
         if is_instance_valid(movement_params):
-            Su.movement.character_movement_params[character_name] = movement_params
+            Su.movement.character_movement_params[character_name] = \
+                    movement_params
+
+
+func _get_is_node_movement_parameters(
+        state: SceneState,
+        node_index: int) -> bool:
+    for property_index in state.get_node_property_count(node_index):
+        if state.get_node_property_name(node_index, property_index) == \
+                MovementParameters.MOVEMENT_PARAMS_NODE_IDENTIFIER:
+            return true
+    return false
 
 
 func get_default_action_handler_names(

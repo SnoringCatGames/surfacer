@@ -461,6 +461,12 @@ const _PROPERTY_GROUPS := [
     _MOVEMENT_ABILITY_OVERRIDES_GROUP,
 ]
 
+const MOVEMENT_PARAMS_NODE_IDENTIFIER := "__movement_params_identifier__"
+
+# This property is saved to the scene file and is used to identify that the
+# node is a MovementParameter instance.
+var __movement_params_identifier__ := "_"
+
 var _property_list_addendum := [
     {
         name = "collider_shape",
@@ -474,6 +480,11 @@ var _property_list_addendum := [
     },
     {
         name = "character_name",
+        type = TYPE_STRING,
+        usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
+    },
+    {
+        name = MOVEMENT_PARAMS_NODE_IDENTIFIER,
         type = TYPE_STRING,
         usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
     },
@@ -567,14 +578,7 @@ func _update_parameters_debounced() -> void:
 
 
 func _validate_parameters() -> void:
-    if name != "MovementParameters" and \
-            is_inside_tree():
-        _set_configuration_warning(
-                ("The MovementParameters node must be named " +
-                "'MovementParameters'. " + 
-                "This is important for how it is parsed from the .tscn file. " +
-                "name=%s") % name)
-    elif (action_handlers_override.find(
+    if (action_handlers_override.find(
             "MatchExpectedEdgeTrajectoryAction") >= 0) == \
             (syncs_character_position_to_edge_trajectory or \
                     syncs_character_velocity_to_edge_trajectory):
