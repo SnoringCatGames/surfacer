@@ -5,9 +5,7 @@ extends Node
 
 # ---
 
-# FIXME: ------------------ Consolidate some redundant properties.
 
-var is_npc_trajectory_shown: bool
 var is_active_trajectory_shown: bool
 var is_previous_trajectory_shown: bool
 var is_preselection_trajectory_shown: bool
@@ -21,8 +19,6 @@ var is_player_nav_pulse_shown_with_slow_mo := false
 var is_npc_nav_pulse_shown_with_slow_mo := true
 var is_player_nav_pulse_shown_without_slow_mo := true
 var is_npc_nav_pulse_shown_without_slow_mo := false
-var is_player_new_nav_exclamation_mark_shown := false
-var is_npc_new_nav_exclamation_mark_shown := true
 
 var does_player_nav_pulse_grow := false
 var does_npc_nav_pulse_grow := true
@@ -71,12 +67,6 @@ func _register_manifest(manifest: Dictionary) -> void:
     if manifest.has("is_npc_nav_pulse_shown_without_slow_mo"):
         self.is_npc_nav_pulse_shown_without_slow_mo = \
                 manifest.is_npc_nav_pulse_shown_without_slow_mo
-    if manifest.has("is_player_new_nav_exclamation_mark_shown"):
-        self.is_player_new_nav_exclamation_mark_shown = \
-                manifest.is_player_new_nav_exclamation_mark_shown
-    if manifest.has("is_npc_new_nav_exclamation_mark_shown"):
-        self.is_npc_new_nav_exclamation_mark_shown = \
-                manifest.is_npc_new_nav_exclamation_mark_shown
     if manifest.has("does_player_nav_pulse_grow"):
         self.does_player_nav_pulse_grow = \
                 manifest.does_player_nav_pulse_grow
