@@ -490,7 +490,7 @@ var _debounced_update_parameters: FuncRef
 
 func _init() -> void:
     var property_list_addendum: Array = \
-            Sc.utils.get_property_list_for_inspector_groups(
+            Sc.utils.get_property_list_for_contiguous_inspector_groups(
                     self, _PROPERTY_GROUPS)
     Sc.utils.concat(_property_list_addendum, property_list_addendum)
 

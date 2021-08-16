@@ -17,6 +17,12 @@ var fade_progress := 0.0
 
 var previous_path_back_end_trim_radius: float
 
+var current_path_color: Color
+var previous_path_color: Color
+var indicator_fill_color: Color
+var indicator_stroke_color: Color
+var pulse_color: Color
+
 var pulse_annotator: NavigationPulseAnnotator
 var fade_tween: ScaffolderTween
 
@@ -27,7 +33,30 @@ func _init(navigator: SurfaceNavigator) -> void:
             navigator.character.movement_params.collider_half_width_height.x,
             navigator.character.movement_params.collider_half_width_height.y)
     
-    self.pulse_annotator = NavigationPulseAnnotator.new(navigator)
+    var base_color: Color = \
+            navigator.character.navigation_annotation_color_override if \
+            navigator.character.navigation_annotation_color_override != \
+                    Color.black else \
+            navigator.character.primary_annotation_color
+    current_path_color = Sc.colors.opacify(
+            base_color,
+            ScaffolderColors.ALPHA_XFAINT)
+    previous_path_color = Sc.colors.opacify(
+            base_color,
+            ScaffolderColors.ALPHA_XXFAINT)
+    indicator_fill_color = Sc.colors.opacify(
+            base_color,
+            ScaffolderColors.ALPHA_XXFAINT)
+    indicator_stroke_color = Sc.colors.opacify(
+            base_color,
+            ScaffolderColors.ALPHA_SLIGHTLY_FAINT)
+    pulse_color = Color.from_hsv(
+            base_color.h,
+            0.3,
+            0.99,
+            0.4)
+    
+    self.pulse_annotator = NavigationPulseAnnotator.new(navigator, pulse_color)
     add_child(pulse_annotator)
     
     self.fade_tween = ScaffolderTween.new()
@@ -89,12 +118,8 @@ func _draw() -> void:
 
 
 func _draw_current_path(current_path: PlatformGraphPath) -> void:
-    var current_path_color: Color = \
-            Su.ann_defaults \
-                    .PLAYER_NAVIGATOR_CURRENT_PATH_COLOR if \
-            navigator.character.is_player_character else \
-            Su.ann_defaults.NPC_NAVIGATOR_CURRENT_PATH_COLOR
-    current_path_color.a *= fade_progress
+    var path_color := current_path_color
+    path_color.a *= fade_progress
     Sc.draw.draw_path(
             self,
             current_path,
@@ -116,27 +141,17 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
     
     _draw_beat_hashes(
             current_path_beats,
-            current_path_color)
+            path_color)
 
 
 func _draw_current_path_origin(current_path: PlatformGraphPath) -> void:
-    var origin_indicator_fill_color: Color = \
-            Su.ann_defaults \
-                    .PLAYER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR if \
-            navigator.character.is_player_character else \
-            Su.ann_defaults \
-                    .NPC_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR
+    var origin_indicator_fill_color := indicator_fill_color
     origin_indicator_fill_color.a *= fade_progress
     self.draw_circle(
             current_path.origin.target_point,
             AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
             origin_indicator_fill_color)
-    var origin_indicator_stroke_color: Color = \
-            Su.ann_defaults \
-                    .PLAYER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR if \
-            navigator.character.is_player_character else \
-            Su.ann_defaults \
-                    .NPC_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR
+    var origin_indicator_stroke_color := indicator_stroke_color
     origin_indicator_stroke_color.a *= fade_progress
     Sc.draw.draw_circle_outline(
             self,
@@ -153,12 +168,7 @@ func _draw_current_path_destination(current_path: PlatformGraphPath) -> void:
                     .NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH - \
             AnnotationElementDefaults \
                     .NAVIGATOR_DESTINATION_INDICATOR_RADIUS
-    var destination_indicator_fill_color: Color = \
-            Su.ann_defaults \
-                    .PLAYER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR if \
-            navigator.character.is_player_character else \
-            Su.ann_defaults \
-                    .NPC_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
+    var destination_indicator_fill_color := indicator_fill_color
     destination_indicator_fill_color.a *= fade_progress
     Sc.draw.draw_destination_marker(
             self,
@@ -171,12 +181,7 @@ func _draw_current_path_destination(current_path: PlatformGraphPath) -> void:
             true,
             INF,
             4.0)
-    var destination_indicator_stroke_color: Color = \
-            Su.ann_defaults \
-                    .PLAYER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR if \
-            navigator.character.is_player_character else \
-            Su.ann_defaults \
-                    .NPC_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
+    var destination_indicator_stroke_color := indicator_stroke_color
     destination_indicator_stroke_color *= fade_progress
     Sc.draw.draw_destination_marker(
             self,
@@ -192,10 +197,6 @@ func _draw_current_path_destination(current_path: PlatformGraphPath) -> void:
 
 
 func _draw_previous_path() -> void:
-    var previous_path_color: Color = \
-            Su.ann_defaults.PLAYER_NAVIGATOR_PREVIOUS_PATH_COLOR if \
-            navigator.character.is_player_character else \
-            Su.ann_defaults.NPC_NAVIGATOR_PREVIOUS_PATH_COLOR
     Sc.draw.draw_path(
             self,
             previous_path,
@@ -276,12 +277,8 @@ func _trigger_fade_in(is_fade_in := true) -> void:
 
 
 func _trigger_beat_hash_animation(beat: PathBeatPrediction) -> void:
-    var current_path_color: Color = \
-            Su.ann_defaults \
-                    .PLAYER_NAVIGATOR_CURRENT_PATH_COLOR if \
-            navigator.character.is_player_character else \
-            Su.ann_defaults.NPC_NAVIGATOR_CURRENT_PATH_COLOR
-    current_path_color.a *= fade_progress
+    var beat_color := current_path_color
+    beat_color.a *= fade_progress
     
     Sc.annotators.add_transient(OnBeatHashAnnotator.new(
             beat,
@@ -293,5 +290,5 @@ func _trigger_beat_hash_animation(beat: PathBeatPrediction) -> void:
                     .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
             AnnotationElementDefaults \
                     .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-            current_path_color,
-            current_path_color))
+            beat_color,
+            beat_color))

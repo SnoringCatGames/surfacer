@@ -2,26 +2,6 @@ class_name PathPreselectionAnnotator
 extends Node2D
 
 
-var PLAYER_PRESELECTION_SURFACE_COLOR := Sc.colors.opacify(
-        Sc.colors.player_navigation,
-        ScaffolderColors.ALPHA_XFAINT)
-var PLAYER_PRESELECTION_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
-        Sc.colors.player_navigation,
-        ScaffolderColors.ALPHA_XFAINT)
-var PLAYER_PRESELECTION_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.player_navigation,
-        ScaffolderColors.ALPHA_FAINT)
-
-var NPC_PRESELECTION_SURFACE_COLOR := Sc.colors.opacify(
-        Sc.colors.npc_navigation,
-        ScaffolderColors.ALPHA_XFAINT)
-var NPC_PRESELECTION_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
-        Sc.colors.npc_navigation,
-        ScaffolderColors.ALPHA_XFAINT)
-var NPC_PRESELECTION_PATH_COLOR := Sc.colors.opacify(
-        Sc.colors.npc_navigation,
-        ScaffolderColors.ALPHA_FAINT)
-
 var INVALID_SURFACE_COLOR := Sc.colors.opacify(
         Sc.colors.invalid, ScaffolderColors.ALPHA_XFAINT)
 var INVALID_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
@@ -47,6 +27,10 @@ const PATH_BACK_END_TRIM_RADIUS := 0.0
 var _predictions_container: Node2D
 var character: SurfacerCharacter
 var player_nav: PlayerNavigationBehavior
+var surface_color: Color
+var indicator_color: Color
+var path_color: Color
+
 var path_front_end_trim_radius: float
 var preselection_destination: PositionAlongSurface = null
 var animation_start_time := -PRESELECTION_DEFAULT_DURATION
@@ -66,14 +50,32 @@ func _init(character: SurfacerCharacter) -> void:
     self.character = character
     self.player_nav = \
             character.get_behavior(PlayerNavigationBehavior)
+    
+    var base_color: Color = \
+            character.navigation_annotation_color_override if \
+            character.navigation_annotation_color_override != \
+                    Color.black else \
+            character.primary_annotation_color
+    surface_color = Sc.colors.opacify(
+            base_color,
+            ScaffolderColors.ALPHA_XFAINT)
+    indicator_color = Sc.colors.opacify(
+            base_color,
+            ScaffolderColors.ALPHA_XFAINT)
+    path_color = Sc.colors.opacify(
+            base_color,
+            ScaffolderColors.ALPHA_XFAINT)
+    
     self.path_front_end_trim_radius = min(
             character.movement_params.collider_half_width_height.x,
             character.movement_params.collider_half_width_height.y)
+    
     self._predictions_container = Node2D.new()
     _predictions_container.visible = false
     _predictions_container.modulate.a = \
             Su.ann_manifest.nav_selection_prediction_opacity
     add_child(_predictions_container)
+    
     Sc.slow_motion.connect(
             "slow_motion_toggled", self, "_on_slow_motion_toggled")
     Sc.slow_motion.music.connect(
@@ -183,15 +185,13 @@ func _draw() -> void:
     var path_base_color: Color
     if preselection_path != null:
         if character.is_player_character:
-            surface_base_color = PLAYER_PRESELECTION_SURFACE_COLOR
-            position_indicator_base_color = \
-                    PLAYER_PRESELECTION_POSITION_INDICATOR_COLOR
-            path_base_color = PLAYER_PRESELECTION_PATH_COLOR
+            surface_base_color = surface_color
+            position_indicator_base_color = indicator_color
+            path_base_color = path_color
         else:
-            surface_base_color = NPC_PRESELECTION_SURFACE_COLOR
-            position_indicator_base_color = \
-                    NPC_PRESELECTION_POSITION_INDICATOR_COLOR
-            path_base_color = NPC_PRESELECTION_PATH_COLOR
+            surface_base_color = surface_color
+            position_indicator_base_color = indicator_color
+            path_base_color = path_color
     else:
         surface_base_color = INVALID_SURFACE_COLOR
         position_indicator_base_color = INVALID_POSITION_INDICATOR_COLOR
