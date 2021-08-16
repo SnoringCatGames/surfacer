@@ -110,9 +110,9 @@ func _check_did_just_reach_surface_destination(
 
 
 # When walking off the end of a surface, Godot's underlying collision engine
-# can trigger multiple extraneous launch/land events if the character's collision
-# boundary is not square. So this function override adds logic to ignore any of
-# these extra collisions with the starting surface.
+# can trigger multiple extraneous launch/land events if the character's
+# collision boundary is not square. So this function override adds logic to
+# ignore any of these extra collisions with the starting surface.
 func _update_navigation_state_edge_specific_helper(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,

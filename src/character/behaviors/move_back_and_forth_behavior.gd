@@ -12,13 +12,13 @@ const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
 
-## If true, then the character's movement range will extend to the far ends of the
-## surface they are on.
+## If true, then the character's movement range will extend to the far ends of
+## the surface they are on.
 export var moves_to_surface_ends := true setget _set_moves_to_surface_ends
 
-## -   The movement range that the character will move within is centered on their
-##     starting position, and extends out to either side a distance of this
-##     radius.[br]
+## -   The movement range that the character will move within is centered on
+##     their starting position, and extends out to either side a distance of
+##     this radius.[br]
 ## -   This is only used if `moves_to_surface_ends` is `false`.[br]
 export var movement_radius := -1.0 setget _set_movement_radius
 
@@ -32,11 +32,11 @@ export var pause_delay_min := 0.0 setget _set_pause_delay_min
 export var pause_delay_max := 0.0 setget _set_pause_delay_max
 
 ## -   This can be used to give the character's movement some randomness.[br]
-## -   A value of 0.0 causes the character to always move to the far ends of their
-##     range.[br]
+## -   A value of 0.0 causes the character to always move to the far ends of
+##     their range.[br]
 ## -   A value of 1.0 causes the character to move to any random position within
-##     their range. This might mean that the character moves in the same direction
-##     during sequential movements.[br]
+##     their range. This might mean that the character moves in the same
+##     direction during sequential movements.[br]
 ## -   A value of 0.5 causes the character to always at least move to a point on
 ##     the other half of their range.[br]
 export(float, 0.0, 1.0) var max_ratio_for_destination_offset_from_ends := 0.0 \

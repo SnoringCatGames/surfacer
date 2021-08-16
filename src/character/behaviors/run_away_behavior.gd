@@ -2,8 +2,8 @@ tool
 class_name RunAwayBehavior, \
 "res://addons/surfacer/assets/images/editor_icons/run_away_behavior.png"
 extends Behavior
-## -   When running away, the character finds and navigates to a destination that
-##     is a given distance away from a given target.
+## -   When running away, the character finds and navigates to a destination
+##     that is a given distance away from a given target.
 
 
 const NAME := "run_away"
@@ -169,7 +169,8 @@ func _move() -> bool:
                     .create_position_offset_from_target_point(
                             naive_target,
                             start_surface,
-                            character.movement_params.collider_half_width_height,
+                            character.movement_params \
+                                    .collider_half_width_height,
                             true)
         
         # Prevent straying too far the start position.

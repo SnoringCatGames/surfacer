@@ -42,7 +42,8 @@ func _create_annotator(annotator_type: int) -> void:
         AnnotatorType.CHARACTER_POSITION:
             surface_annotator = CharacterSurfaceAnnotator.new(character)
             add_child(surface_annotator)
-            position_annotator = SurfacerCharacterPositionAnnotator.new(character)
+            position_annotator = \
+                    SurfacerCharacterPositionAnnotator.new(character)
             add_child(position_annotator)
             tile_annotator = CharacterTileAnnotator.new(character)
             add_child(tile_annotator)

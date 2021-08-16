@@ -129,7 +129,8 @@ func _update_which_sides_are_touched(character) -> void:
     var next_is_touching_wall: bool
     if character.movement_params.bypasses_runtime_physics:
         var expected_surface := \
-                _get_expected_position_for_bypassing_runtime_physics(character) \
+                _get_expected_position_for_bypassing_runtime_physics(
+                        character) \
                 .surface
         next_is_touching_floor = \
                 expected_surface != null and \
@@ -156,7 +157,8 @@ func _update_which_sides_are_touched(character) -> void:
         next_is_touching_ceiling = false
         which_wall = SurfaceSide.NONE
         for i in collision_count:
-            var collision: KinematicCollision2D = character.get_slide_collision(i)
+            var collision: KinematicCollision2D = \
+                        character.get_slide_collision(i)
             var side: int = \
                     Sc.geometry.get_surface_side_for_normal(collision.normal)
             match side:
@@ -320,7 +322,8 @@ func _update_surface_actions(
             !touching_floor_and_pressing_down
     
     is_triggering_fall_through = \
-            character.actions.pressed_down and character.actions.just_pressed_jump
+            character.actions.pressed_down and \
+            character.actions.just_pressed_jump
     
     # Whether we are grabbing a wall.
     is_grabbing_wall = \

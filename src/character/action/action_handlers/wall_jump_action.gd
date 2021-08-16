@@ -25,8 +25,9 @@ func process(character) -> bool:
         
         character.velocity.y = character.movement_params.jump_boost
         
-        # Give a little boost to get the character away from the wall, so they can
-        # still be pushing themselves into the wall when they start the jump.
+        # Give a little boost to get the character away from the wall, so they
+        # can still be pushing themselves into the wall when they start the
+        # jump.
         character.velocity.x = \
                 -character.surface_state.toward_wall_sign * \
                 character.movement_params.wall_jump_horizontal_boost

@@ -104,8 +104,8 @@ const _EDGE_WEIGHTS_GROUP := {
 ## weights.
 var uses_duration_instead_of_distance_for_edge_weight := true \
         setget _set_uses_duration_instead_of_distance_for_edge_weight
-## If an extra weight is applied for each additional edge, then the character will
-## favor paths that cross fewer surfaces, even if the path may take longer.
+## If an extra weight is applied for each additional edge, then the character
+## will favor paths that cross fewer surfaces, even if the path may take longer.
 var additional_edge_weight_offset_override := -1.0 \
         setget _set_additional_edge_weight_offset_override
 ## If extra weight is applied to walking edges, then the character will favor
@@ -137,9 +137,9 @@ const _PLATFORM_GRAPH_CALCULATIONS_GROUP := {
 var minimizes_velocity_change_when_jumping := false \
         setget _set_minimizes_velocity_change_when_jumping
 ## -   If this is true, then at runtime, after finding a path through
-##     build-time-calculated edges, the SurfaceNavigator will try to optimize the
-##     jump-off points of the edges to better account for the direction that the
-##     character will be approaching the edge from.[br]
+##     build-time-calculated edges, the SurfaceNavigator will try to optimize
+##     the jump-off points of the edges to better account for the direction
+##     that the character will be approaching the edge from.[br]
 ## -   This produces more efficient and natural movement.[br]
 ## -   The build-time-calculated edge state would only use surface end-points or
 ##     closest points.[br]
@@ -182,27 +182,27 @@ var syncs_character_velocity_to_edge_trajectory := true \
         setget _set_syncs_character_velocity_to_edge_trajectory
 ## -   If true, then trajectory positions will be stored after performing edge
 ##     calculations.[br]
-## -   This state could be used for drawing path trajectories or updating character
-##     positions at runtime.[br]
+## -   This state could be used for drawing path trajectories or updating
+##     character positions at runtime.[br]
 var includes_continuous_trajectory_positions := true \
         setget _set_includes_continuous_trajectory_positions
 ## -   If true, then trajectory velocities will be stored after performing edge
 ##     calculations.[br]
-## -   This state could be used for drawing path trajectories or updating character
-##     velocities at runtime.[br]
+## -   This state could be used for drawing path trajectories or updating
+##     character velocities at runtime.[br]
 var includes_continuous_trajectory_velocities := true \
         setget _set_includes_continuous_trajectory_velocities
 ## -   If true, then discrete trajectory state will be calculated and saved for
 ##     each edge.[br]
 ## -   This "discrete" state should more closely reflect what would be generated
-##     by normal character movement at runtime, rather than the "continuous" state,
-##     which doesn't take into account the error due to the calculation sampling
-##     interval.[br]
+##     by normal character movement at runtime, rather than the "continuous"
+##     state, which doesn't take into account the error due to the calculation
+##     sampling interval.[br]
 var includes_discrete_trajectory_state := true \
         setget _set_includes_discrete_trajectory_state
 ## -   If false, then any trajectory state that would have otherwise been stored
-##     (according to other MovementParameters flags), will not be stored in either
-##     the runtime PlatformGraph or in the build-time platform-graph save
+##     (according to other MovementParameters flags), will not be stored in
+##     either the runtime PlatformGraph or in the build-time platform-graph save
 ##     files.[br]
 ## -   Omitting this trajectory state from a save file can significantly reduce
 ##     its size.[br]
@@ -294,10 +294,10 @@ var skips_less_likely_jump_land_positions := false \
         setget _set_skips_less_likely_jump_land_positions
 ## -   If true, then the navigator will include extra offsets so that paths
 ##     don't end too close to surface ends, and will dynamically insert extra
-##     backtracking edges if the character ends up past a surface end at the end of
-##     a path.[br]
-## -   This should be unnecessary if forces_character_position_to_match_path_at_end
-##     is true.[br]
+##     backtracking edges if the character ends up past a surface end at the
+##     end of a path.[br]
+## -   This should be unnecessary if
+##     forces_character_position_to_match_path_at_end is true.[br]
 var prevents_path_ends_from_exceeding_surface_ends_with_offsets := true \
         setget _set_prevents_path_ends_from_exceeding_surface_ends_with_offsets
 ## -   If true, then edge calculations will re-use previously calculated
@@ -364,19 +364,19 @@ const _MOVEMENT_ABILITY_OVERRIDES_GROUP := {
 }
 
 ## -   An EdgeCalculator calculates possible edges between certain types of
-##     edge pairs.
+##     edge pairs.[br]
 ## -   For example, JumpFromSurfaceCalculator calculates edges that start from
 ##     a position along a surfacer, but JumpFromSurfaceCalculator edges may end
-##     either along a surface or in the air.
+##     either along a surface or in the air.[br]
 ## -   A default set of ActionHandlers is usually assigned based on other
-##     movement properties, such as `can_jump`.
+##     movement properties, such as `can_jump`.[br]
 var edge_calculators_override := []
 ## -   An ActionHandler updates a character's state each frame, in response to
-##     current events and the character's current state.
-## -   For example, FloorJumpAction listens for jump events while the character is
-##     on the ground, and triggers character jump state accordingly.
+##     current events and the character's current state.[br]
+## -   For example, FloorJumpAction listens for jump events while the character
+##     is on the ground, and triggers character jump state accordingly.[br]
 ## -   A default set of ActionHandlers is usually assigned based on other
-##     movement properties, such as `can_jump`.
+##     movement properties, such as `can_jump`.[br]
 var action_handlers_override := []
 
 # --- Derived parameters ---
@@ -570,7 +570,8 @@ func _validate_parameters() -> void:
     if name != "MovementParameters" and \
             is_inside_tree():
         _set_configuration_warning(
-                ("The MovementParameters node must be named 'MovementParameters'. " + 
+                ("The MovementParameters node must be named " +
+                "'MovementParameters'. " + 
                 "This is important for how it is parsed from the .tscn file. " +
                 "name=%s") % name)
     elif (action_handlers_override.find(
@@ -683,7 +684,8 @@ func _validate_parameters() -> void:
             !syncs_character_position_to_edge_trajectory:
         _set_configuration_warning(
                 "If bypasses_runtime_physics is true, " +
-                "then syncs_character_position_to_edge_trajectory must be true.")
+                "then syncs_character_position_to_edge_trajectory must be " +
+                "true.")
 
 
 func _derive_parameters() -> void:

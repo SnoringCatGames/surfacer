@@ -1,7 +1,7 @@
 class_name SurfaceNavigator
 extends Reference
-## Logic for navigating a character along a path of edges through a platform graph
-## to a destination position.
+## Logic for navigating a character along a path of edges through a platform
+## graph to a destination position.
 
 
 # FIXME: LEFT OFF HERE: ------------------------------
@@ -140,7 +140,8 @@ func navigate_path(
         _log("Path start:          %8.3fs; %s; to=%s; from=%s; edges=%d" % [
                     Sc.time.get_play_time(),
                     character.character_name,
-                    Sc.utils.get_vector_string(path.destination.target_point, 0),
+                    Sc.utils.get_vector_string(
+                            path.destination.target_point, 0),
                     Sc.utils.get_vector_string(path.origin.target_point, 0),
                     path.edges.size(),
                 ],
@@ -235,9 +236,9 @@ func find_path(
                 navigation_state.is_currently_navigating and \
                 edge.get_end_surface() != null:
             # We weren't able to dynamically calculate a valid air-to-surface
-            # edge from the current in-air position, but the character was already
-            # navigating along a valid edge to a surface, so let's just re-use
-            # the remainder of that edge.
+            # edge from the current in-air position, but the character was
+            # already navigating along a valid edge to a surface, so let's just
+            # re-use the remainder of that edge.
             
             # TODO: This case shouldn't be needed; in theory, we should have
             #       been able to find a valid land trajectory above.
@@ -471,7 +472,8 @@ func update(
 #    if !character.surface_state.did_move_last_frame and \
 #            !just_started_navigating:
 #        # FIXME: ------------
-#        # - This work-around shouldn't be needed. What's the underlying problem?
+#        # - This work-around shouldn't be needed. What's the underlying
+#        #   problem?
 #        Sc.logger.warning(
 #                "SurfaceNavigator.is_currently_navigating and " +
 #                "!CharacterSurfaceState.did_move_last_frame")
@@ -794,15 +796,17 @@ func _optimize_edges_for_approach(
     
     var movement_params := collision_params.movement_params
     
-    # At runtime, after finding a path through build-time-calculated edges, try
-    # to optimize the jump-off or land points of the edges to better account
-    # for the direction that the character will be approaching the edge from. This
-    # produces more efficient and natural movement. The build-time-calculated
-    # edge state would only use surface end-points or closest points. We also
-    # take this opportunity to update start velocities to exactly match what is
-    # allowed from the ramp-up distance along the edge, rather than either the
-    # fixed zero or max-speed value used for the build-time-calculated edge
-    # state.
+    # -   At runtime, after finding a path through build-time-calculated edges,
+    #     try to optimize the jump-off or land points of the edges to better
+    #     account for the direction that the character will be approaching the
+    #     edge from.
+    # -   This produces more efficient and natural movement.
+    # -   The build-time-calculated edge state would only use surface
+    #     end-points or closest points.
+    # -   We also take this opportunity to update start velocities to exactly
+    #     match what is allowed from the ramp-up distance along the edge,
+    #     rather than either the fixed zero or max-speed value used for the
+    #     build-time-calculated edge state.
     
     if movement_params.optimizes_edge_jump_positions_at_run_time and \
             path.destination.surface == null:
@@ -1043,11 +1047,11 @@ func _ensure_edges_have_trajectory_state(
             # - Remove.
             # - Another reason this has happened in the past is that
             #   CollisionCheckUtils.check_frame_for_collision >
-            #   crash_test_dummy.move_and_collide inconsistently detects a collision during the
-            #   last frame of an edge.
+            #   crash_test_dummy.move_and_collide inconsistently detects a
+            #   collision during the last frame of an edge.
             #   - It detects the collision at build time, but not at run time.
-            #   - So the run-time trajectory has one extra frame, and a bit more distance for that
-            #     frame.
+            #   - So the run-time trajectory has one extra frame, and a bit
+            #     more distance for that frame.
 #            if !do_edges_match:
 #                edge_with_trajectory = edge.calculator.calculate_edge(
 #                        null,

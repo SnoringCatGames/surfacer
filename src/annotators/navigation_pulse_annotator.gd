@@ -80,7 +80,8 @@ func _draw() -> void:
         var half_pulse_time_length: float = \
                 Su.ann_manifest.new_path_pulse_time_length / 2.0
         var path_duration_with_margin: float = \
-                current_path.duration + Su.ann_manifest.new_path_pulse_time_length
+                current_path.duration + \
+                Su.ann_manifest.new_path_pulse_time_length
         var path_segment_time_center := \
                 path_duration_with_margin * progress - half_pulse_time_length
         path_segment_time_start = max(

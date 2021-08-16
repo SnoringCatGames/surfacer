@@ -21,8 +21,8 @@ func process(character) -> bool:
     character.is_rising_from_jump = false
 
     # The move_and_slide system depends on some vertical gravity always pushing
-    # the character into the floor. If we just zero this out, move_and_slide will
-    # produce false-negatives.
+    # the character into the floor. If we just zero this out, move_and_slide
+    # will produce false-negatives.
     character.velocity.y = \
             CharacterActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION / \
             Sc.time.get_combined_scale()

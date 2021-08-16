@@ -8,9 +8,9 @@ extends ScaffolderLevelConfig
 ##     -   `name`: The display name for the level.[br]
 ##     -   `sort_priority`: The level's position relative to other levels.[br]
 ##     -   `unlock_conditions`: How and when the level is unlocked.[br]
-##     -   `platform_graph_character_names`: The names of the characters that might
-##         appear in the level. A platform graph will need to be calculated for
-##         each of these characters.[br]
+##     -   `platform_graph_character_names`: The names of the characters that
+##         might appear in the level. A platform graph will need to be
+##         calculated for each of these characters.[br]
 
 
 const INTRO_CHOREOGRAPHY_DESTINATION_GROUP_NAME := \

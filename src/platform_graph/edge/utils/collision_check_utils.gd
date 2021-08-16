@@ -6,7 +6,8 @@ extends Reference
 # instructions.
 # 
 # -   This is calculated by stepping through each discrete physics frame, which
-#     should exactly emulate the actual SurfacerCharacter trajectory that would be used.
+#     should exactly emulate the actual SurfacerCharacter trajectory that would
+#     be used.
 # -   This also records some trajectory state.
 static func check_instructions_discrete_trajectory_state(
         edge_calc_params: EdgeCalcParams,
@@ -90,8 +91,8 @@ static func check_instructions_discrete_trajectory_state(
             # these.
             collision = null
         
-        # This point corresponds to when SurfacerCharacter._physics_process would be
-        # called:
+        # This point corresponds to when SurfacerCharacter._physics_process
+        # would be called:
         # - The position for the current frame has been calculated from the
         #   previous frame's velocity.
         # - Any collision state has been calculated.
@@ -211,8 +212,8 @@ static func check_instructions_discrete_trajectory_state(
 # Checks whether a collision would occur with any surface during the given
 # horizontal step. This is calculated by considering the continuous physics
 # state according to the parabolic equations of motion. This does not
-# necessarily accurately reflect the actual SurfacerCharacter trajectory that would be
-# used.
+# necessarily accurately reflect the actual SurfacerCharacter trajectory that
+# would be used.
 static func check_continuous_horizontal_step_for_collision(
         step_result_metadata: EdgeStepCalcResultMetadata,
         edge_calc_params: EdgeCalcParams,
@@ -317,7 +318,8 @@ static func check_continuous_horizontal_step_for_collision(
         if displacement != Vector2.ZERO:
             
             # FIXME: LEFT OFF HERE: ----------------------
-            # - set a breakpoint here; set debug params; toggle whether level_6 json is deleted;
+            # - set a breakpoint here; set debug params; toggle whether level_6
+            #   json is deleted;
 #            displacement.x = 8.6
 #            var dummy := collision_params.crash_test_dummy
 #            print("><><><><><><><><")
@@ -368,8 +370,8 @@ static func check_continuous_horizontal_step_for_collision(
 # Determines whether the given motion of the given shape would collide with a
 # surface.
 # 
-# -   This often generates false-negatives if the character is moving away from a
-#     surface that they were already colliding with beforehand.
+# -   This often generates false-negatives if the character is moving away from
+#     a surface that they were already colliding with beforehand.
 # -   If a collision would occur, this returns information about the collision.
 static func check_frame_for_collision(
         collision_params: CollisionCalcParams,
@@ -603,8 +605,9 @@ static func check_frame_for_collision(
         # This means one of two things:
         # -   There was a pre-existing collision (happens infrequently).
         # -   The extra "safe_margin" used in calculating the collision extends
-        #     into a surface the character is departing, even though the character
-        #     wasn't directly colliding with the surface (happens frequently).
+        #     into a surface the character is departing, even though the
+        #     character wasn't directly colliding with the surface (happens
+        #     frequently).
         
         if is_recursing:
             # Invalid collision state: Happens infrequently.
