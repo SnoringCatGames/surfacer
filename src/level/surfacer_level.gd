@@ -9,12 +9,15 @@ extends ScaffolderLevel
 ##     scenes, in order to define the collidable surfaces in your level.[br]
 
 
+var graph_parser: PlatformGraphParser
+var surface_parser: SurfaceParser
 var camera_pan_controller: CameraPanController
 var intro_choreographer: Choreographer
 
 
 func _init() -> void:
-    var graph_parser := PlatformGraphParser.new()
+    graph_parser = PlatformGraphParser.new()
+    surface_parser = graph_parser.surface_parser
     add_child(graph_parser)
 
 
@@ -23,7 +26,7 @@ func _load() -> void:
     
     Sc.gui.hud.create_inspector()
     
-    Su.graph_parser.parse(
+    graph_parser.parse(
             Sc.level_session.id,
             Su.is_debug_only_platform_graph_state_included)
 
@@ -56,6 +59,8 @@ func _destroy() -> void:
     
     if is_instance_valid(camera_pan_controller):
         camera_pan_controller._destroy()
+    
+    graph_parser.queue_free()
     
     ._destroy()
 

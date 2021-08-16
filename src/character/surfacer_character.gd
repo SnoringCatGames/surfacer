@@ -230,10 +230,11 @@ func _init_player_controller_action_source() -> void:
 
 
 func _init_platform_graph() -> void:
-    var graph: PlatformGraph = Su.graph_parser.platform_graphs[character_name]
+    var graph: PlatformGraph = \
+            Sc.level.graph_parser.platform_graphs[character_name]
     assert(graph != null)
     self.graph = graph
-    self.surface_parser = graph.surface_parser
+    self.surface_parser = Sc.level.surface_parser
     self.possible_surfaces_set = graph.surfaces_set
 
 

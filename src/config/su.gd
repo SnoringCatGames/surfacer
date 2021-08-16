@@ -246,7 +246,6 @@ var surface_parser_metric_keys := [
     "assert_surfaces_fully_calculated_duration",
 ]
 
-var graph_parser: PlatformGraphParser
 var graph_inspector: PlatformGraphInspector
 var legend: Legend
 var selection_description: SelectionDescription

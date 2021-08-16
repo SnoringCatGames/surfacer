@@ -93,15 +93,15 @@ func _initialize_next() -> void:
 
 func _parse_next() -> void:
     Sc.profiler.start("parse")
-    Su.graph_parser.connect(
+    level.graph_parser.connect(
             "calculation_progressed",
             self,
             "_on_graph_parse_progress")
-    Su.graph_parser.connect(
+    level.graph_parser.connect(
             "parse_finished",
             self,
             "_on_calculation_finished")
-    Su.graph_parser.parse(
+    level.graph_parser.parse(
             level_id,
             Su.is_debug_only_platform_graph_state_included,
             true)
@@ -115,7 +115,7 @@ func _on_calculation_finished() -> void:
 
 func _save_next() -> void:
     Sc.profiler.start("save")
-    Su.graph_parser.save_platform_graphs()
+    level.graph_parser.save_platform_graphs()
     Sc.profiler.stop("save")
     _on_stage_progress("save")
     defer("_clean_up_next")
@@ -123,7 +123,6 @@ func _save_next() -> void:
 
 func _clean_up_next() -> void:
     Sc.profiler.start("clean_up")
-    Su.graph_parser.queue_free()
     level._destroy()
     Sc.profiler.stop("clean_up")
     
