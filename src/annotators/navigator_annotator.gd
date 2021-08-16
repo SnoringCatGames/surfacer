@@ -42,8 +42,6 @@ func _process(_delta: float) -> void:
         current_path = navigator.path
         current_path_beats = navigator.path_beats
         if current_path != null:
-            if _get_is_exclamation_mark_shown():
-                navigator.character.show_exclamation_mark()
             if is_enabled:
                 _trigger_fade_in(true)
         update()
@@ -79,115 +77,116 @@ func _draw() -> void:
         return
     
     if current_path != null:
-        _draw_current_path(current_path)
+        if Su.ann_manifest.is_active_trajectory_shown:
+            _draw_current_path(current_path)
+        if Su.ann_manifest.is_navigation_destination_shown:
+            _draw_current_path_destination(current_path)
     
     elif previous_path != null and \
-            Su.ann_manifest.is_previous_trajectory_shown and \
-            navigator.character.is_player_character:
+            Su.ann_manifest.is_previous_trajectory_shown:
         _draw_previous_path()
 
 
 func _draw_current_path(current_path: PlatformGraphPath) -> void:
-    if Su.ann_manifest.is_active_trajectory_shown:
-        var current_path_color: Color = \
-                Su.ann_defaults \
-                        .PLAYER_NAVIGATOR_CURRENT_PATH_COLOR if \
-                navigator.character.is_player_character else \
-                Su.ann_defaults.NPC_NAVIGATOR_CURRENT_PATH_COLOR
-        current_path_color.a *= fade_progress
-        Sc.draw.draw_path(
-                self,
-                current_path,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-                current_path_color,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_ORIGIN_INDICATOR_RADIUS + 
-                        AnnotationElementDefaults \
-                            .NAVIGATOR_TRAJECTORY_STROKE_WIDTH / 2.0,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_DESTINATION_INDICATOR_RADIUS + 
-                        AnnotationElementDefaults \
-                            .NAVIGATOR_TRAJECTORY_STROKE_WIDTH / 2.0,
-                true,
-                false,
-                true,
-                false)
-        
-        _draw_beat_hashes(
-                current_path_beats,
-                current_path_color)
-        
-        # Draw the origin indicator.
-        var origin_indicator_fill_color: Color = \
-                Su.ann_defaults \
-                        .PLAYER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR if \
-                navigator.character.is_player_character else \
-                Su.ann_defaults \
-                        .NPC_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR
-        origin_indicator_fill_color.a *= fade_progress
-        self.draw_circle(
-                current_path.origin.target_point,
-                AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
-                origin_indicator_fill_color)
-        var origin_indicator_stroke_color: Color = \
-                Su.ann_defaults \
-                        .PLAYER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR if \
-                navigator.character.is_player_character else \
-                Su.ann_defaults \
-                        .NPC_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR
-        origin_indicator_stroke_color.a *= fade_progress
-        Sc.draw.draw_circle_outline(
-                self,
-                current_path.origin.target_point,
-                AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
-                origin_indicator_stroke_color,
-                AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
-                4.0)
+    var current_path_color: Color = \
+            Su.ann_defaults \
+                    .PLAYER_NAVIGATOR_CURRENT_PATH_COLOR if \
+            navigator.character.is_player_character else \
+            Su.ann_defaults.NPC_NAVIGATOR_CURRENT_PATH_COLOR
+    current_path_color.a *= fade_progress
+    Sc.draw.draw_path(
+            self,
+            current_path,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+            current_path_color,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_ORIGIN_INDICATOR_RADIUS + 
+                    AnnotationElementDefaults \
+                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH / 2.0,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_DESTINATION_INDICATOR_RADIUS + 
+                    AnnotationElementDefaults \
+                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH / 2.0,
+            true,
+            false,
+            true,
+            false)
     
-    if Su.ann_manifest.is_navigation_destination_shown:
-        # Draw the destination indicator.
-        var cone_length: float = \
-                AnnotationElementDefaults \
-                        .NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH - \
-                AnnotationElementDefaults \
-                        .NAVIGATOR_DESTINATION_INDICATOR_RADIUS
-        var destination_indicator_fill_color: Color = \
-                Su.ann_defaults \
-                        .PLAYER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR if \
-                navigator.character.is_player_character else \
-                Su.ann_defaults \
-                        .NPC_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
-        destination_indicator_fill_color.a *= fade_progress
-        Sc.draw.draw_destination_marker(
-                self,
-                current_path.destination,
-                false,
-                destination_indicator_fill_color,
-                cone_length,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
-                true,
-                INF,
-                4.0)
-        var destination_indicator_stroke_color: Color = \
-                Su.ann_defaults \
-                        .PLAYER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR if \
-                navigator.character.is_player_character else \
-                Su.ann_defaults \
-                        .NPC_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
-        destination_indicator_stroke_color *= fade_progress
-        Sc.draw.draw_destination_marker(
-                self,
-                current_path.destination,
-                false,
-                destination_indicator_stroke_color,
-                cone_length,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
-                false,
-                AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
-                4.0)
+    _draw_beat_hashes(
+            current_path_beats,
+            current_path_color)
+    
+    # Draw the origin indicator.
+    var origin_indicator_fill_color: Color = \
+            Su.ann_defaults \
+                    .PLAYER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR if \
+            navigator.character.is_player_character else \
+            Su.ann_defaults \
+                    .NPC_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR
+    origin_indicator_fill_color.a *= fade_progress
+    self.draw_circle(
+            current_path.origin.target_point,
+            AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
+            origin_indicator_fill_color)
+    var origin_indicator_stroke_color: Color = \
+            Su.ann_defaults \
+                    .PLAYER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR if \
+            navigator.character.is_player_character else \
+            Su.ann_defaults \
+                    .NPC_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR
+    origin_indicator_stroke_color.a *= fade_progress
+    Sc.draw.draw_circle_outline(
+            self,
+            current_path.origin.target_point,
+            AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
+            origin_indicator_stroke_color,
+            AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
+            4.0)
+
+
+func _draw_current_path_destination(current_path: PlatformGraphPath) -> void:
+    var cone_length: float = \
+            AnnotationElementDefaults \
+                    .NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH - \
+            AnnotationElementDefaults \
+                    .NAVIGATOR_DESTINATION_INDICATOR_RADIUS
+    var destination_indicator_fill_color: Color = \
+            Su.ann_defaults \
+                    .PLAYER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR if \
+            navigator.character.is_player_character else \
+            Su.ann_defaults \
+                    .NPC_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
+    destination_indicator_fill_color.a *= fade_progress
+    Sc.draw.draw_destination_marker(
+            self,
+            current_path.destination,
+            false,
+            destination_indicator_fill_color,
+            cone_length,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
+            true,
+            INF,
+            4.0)
+    var destination_indicator_stroke_color: Color = \
+            Su.ann_defaults \
+                    .PLAYER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR if \
+            navigator.character.is_player_character else \
+            Su.ann_defaults \
+                    .NPC_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
+    destination_indicator_stroke_color *= fade_progress
+    Sc.draw.draw_destination_marker(
+            self,
+            current_path.destination,
+            false,
+            destination_indicator_stroke_color,
+            cone_length,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
+            false,
+            AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
+            4.0)
 
 
 func _draw_previous_path() -> void:
@@ -238,21 +237,12 @@ func _get_is_enabled() -> bool:
         else:
             return Su.ann_manifest \
                     .is_player_current_nav_trajectory_shown_without_slow_mo
-    elif Su.ann_manifest.is_npc_trajectory_shown:
-        if is_slow_motion_enabled:
-            return Su.ann_manifest \
-                    .is_npc_current_nav_trajectory_shown_with_slow_mo
-        else:
-            return Su.ann_manifest \
-                    .is_npc_current_nav_trajectory_shown_without_slow_mo
+    elif is_slow_motion_enabled:
+        return Su.ann_manifest \
+                .is_npc_current_nav_trajectory_shown_with_slow_mo
     else:
-        return false
-
-
-func _get_is_exclamation_mark_shown() -> bool:
-    return Su.ann_manifest.is_player_new_nav_exclamation_mark_shown if \
-            navigator.character.is_player_character else \
-            Su.ann_manifest.is_npc_new_nav_exclamation_mark_shown
+        return Su.ann_manifest \
+                        .is_npc_current_nav_trajectory_shown_without_slow_mo
 
 
 func _get_last_beat_from_navigator() -> PathBeatPrediction:

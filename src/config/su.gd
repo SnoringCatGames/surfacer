@@ -394,10 +394,11 @@ func _configure_sub_modules() -> void:
     self.is_intro_choreography_shown = Sc.save_state.get_setting(
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
             true)
-    self.ann_manifest.is_npc_trajectory_shown = \
+    self.ann_manifest.is_npc_current_nav_trajectory_shown_without_slow_mo = \
             Sc.save_state.get_setting(
                     NPC_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    false)
+                    self.ann_manifest \
+                        .is_npc_current_nav_trajectory_shown_without_slow_mo)
     self.ann_manifest.is_active_trajectory_shown = \
             Sc.save_state.get_setting(
                     ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY,
