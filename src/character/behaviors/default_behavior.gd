@@ -1,9 +1,11 @@
 tool
-class_name RestBehavior
+class_name DefaultBehavior
 extends Behavior
+## This behavior is automatically added no other behavior is configured with
+## `is_active_at_start` on the player.
 
 
-const NAME := "rest"
+const NAME := "default"
 const IS_ADDED_MANUALLY := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false

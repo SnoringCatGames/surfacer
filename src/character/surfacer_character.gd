@@ -20,7 +20,7 @@ var possible_surfaces_set: Dictionary
 
 var start_surface: Surface
 var start_position_along_surface: PositionAlongSurface
-var _start_surface_attachment := SurfaceSide.NONE
+var _start_attachment_surface_side_or_position = null
 
 var just_triggered_jump := false
 var is_rising_from_jump := false
@@ -98,11 +98,9 @@ func _ready() -> void:
     
     _init_platform_graph()
     surface_state.update_for_initial_surface_attachment(
-            self, _start_surface_attachment)
+            self, _start_attachment_surface_side_or_position)
     _init_navigator()
     _parse_behavior_children()
-    if is_instance_valid(start_surface):
-        _on_attached_to_first_surface()
     
     # Set up some annotators to help with debugging.
     set_is_sprite_visible(false)
@@ -187,26 +185,6 @@ func _initialize_child_movement_params() -> void:
     self.current_max_horizontal_speed = \
             movement_params.max_horizontal_speed_default
     movement_params.call_deferred("_parse_shape_from_parent")
-
-
-func _on_attached_to_first_surface() -> void:
-    start_surface = surface_state.grabbed_surface
-    start_position_along_surface = PositionAlongSurface.new(
-            surface_state.center_position_along_surface)
-    
-    match start_surface.side:
-        SurfaceSide.FLOOR:
-            assert(movement_params.can_grab_floors)
-        SurfaceSide.LEFT_WALL, \
-        SurfaceSide.RIGHT_WALL:
-            assert(movement_params.can_grab_walls)
-        SurfaceSide.CEILING:
-            assert(movement_params.can_grab_ceilings)
-        _:
-            Sc.logger.error()
-    
-    for behavior in _behaviors_list:
-        behavior._on_attached_to_first_surface()
 
 
 func set_is_player_character(value: bool) -> void:
@@ -419,10 +397,6 @@ func processed_action(name: String) -> bool:
 
 func _update_surface_state(preserves_just_changed_state := false) -> void:
     surface_state.update_for_actions(self, preserves_just_changed_state)
-    
-    if surface_state.just_grabbed_a_surface and \
-            start_surface == null:
-        _on_attached_to_first_surface()
 
 
 # Update whether or not we should currently consider collisions with
@@ -531,8 +505,9 @@ func navigate_as_choreographed(destination: PositionAlongSurface) -> bool:
     return navigation_state.is_currently_navigating
 
 
-func set_surface_attachment(surface_side: int) -> void:
-    _start_surface_attachment = surface_side
+func set_start_attachment_surface_side_or_position(
+        surface_side_or_position) -> void:
+    _start_attachment_surface_side_or_position = surface_side_or_position
 
 
 func set_position(position: Vector2) -> void:
@@ -603,13 +578,12 @@ func _parse_behavior_children() -> void:
             default_behavior = behavior
         _add_return_behavior_if_needed(behavior)
     
-    # Automatically add a default RestBehavior if no other behavior
-    # has been configured as active-at-start.
+    # Automatically add a DefaultBehavior if no other behavior has been
+    # configured as active-at-start.
     if default_behavior == null:
-        var rest_behavior := RestBehavior.new()
-        rest_behavior.is_active_at_start = true
-        add_behavior(rest_behavior)
-        default_behavior = rest_behavior
+        default_behavior = DefaultBehavior.new()
+        default_behavior.is_active_at_start = true
+        add_behavior(default_behavior)
     
     default_behavior.trigger(false)
 

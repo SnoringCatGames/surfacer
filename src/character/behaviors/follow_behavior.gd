@@ -68,7 +68,8 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 func _on_physics_process(delta: float) -> void:
     ._on_physics_process(delta)
     
-    if !is_active:
+    if !is_active or \
+            get_is_paused():
         return
     
     var distance_squared_to_target := \

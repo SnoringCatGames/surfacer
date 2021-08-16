@@ -549,31 +549,68 @@ func _get_expected_position_for_bypassing_runtime_physics(character) -> \
 
 func update_for_initial_surface_attachment(
         character,
-        start_surface_attachment: int) -> void:
-    if start_surface_attachment == SurfaceSide.NONE:
-        return
+        start_attachment_surface_side_or_position) -> void:
+    assert(start_attachment_surface_side_or_position is Surface or \
+            start_attachment_surface_side_or_position is \
+                    PositionAlongSurface and \
+            start_attachment_surface_side_or_position.surface != null or \
+            start_attachment_surface_side_or_position is int and \
+            start_attachment_surface_side_or_position != SurfaceSide.NONE,
+            "SurfacerCharacter._start_attachment_surface_side_or_position " +
+            "must be defined before adding the character to the scene tree.")
+    
+    var side: int = \
+            start_attachment_surface_side_or_position if \
+            start_attachment_surface_side_or_position is int else \
+            start_attachment_surface_side_or_position.side if \
+            start_attachment_surface_side_or_position is Surface else \
+            start_attachment_surface_side_or_position.surface.side
+    
+    match side:
+        SurfaceSide.FLOOR:
+            assert(character.movement_params.can_grab_floors)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            assert(character.movement_params.can_grab_walls)
+        SurfaceSide.CEILING:
+            assert(character.movement_params.can_grab_ceilings)
+        _:
+            Sc.logger.error()
     
     var start_position: Vector2 = character.position
-    var normal := SurfaceSide.get_normal(start_surface_attachment)
+    var normal := SurfaceSide.get_normal(side)
+    
     var surface: Surface = \
+            start_attachment_surface_side_or_position if \
+            start_attachment_surface_side_or_position is Surface else \
+            start_attachment_surface_side_or_position.surface if \
+            start_attachment_surface_side_or_position is \
+                    PositionAlongSurface else \
             character.surface_parser.find_closest_surface_in_direction(
                     start_position,
                     -normal,
                     _collision_tile_map_coord_result)
     
-    grab_position_tile_map_coord = \
-            _collision_tile_map_coord_result.tile_map_coord
-    grabbed_tile_map = surface.tile_map
+    if start_attachment_surface_side_or_position is PositionAlongSurface:
+        PositionAlongSurface.copy(
+                center_position_along_surface,
+                start_attachment_surface_side_or_position)
+    else:
+        center_position_along_surface \
+                .match_surface_target_and_collider(
+                        surface,
+                        start_position,
+                        character.movement_params.collider_half_width_height,
+                        true,
+                        true)
     
+    grab_position_tile_map_coord = \
+            _collision_tile_map_coord_result.tile_map_coord if \
+            start_attachment_surface_side_or_position is int else \
+            Vector2.INF
+    grabbed_tile_map = surface.tile_map
     grabbed_surface = surface
     previous_grabbed_surface = surface
-    center_position_along_surface \
-            .match_surface_target_and_collider(
-                    surface,
-                    start_position,
-                    character.movement_params.collider_half_width_height,
-                    true,
-                    true)
     PositionAlongSurface.copy(
             last_position_along_surface,
             center_position_along_surface)
@@ -584,7 +621,7 @@ func update_for_initial_surface_attachment(
             center_position_along_surface \
             .target_projection_onto_surface
     
-    match start_surface_attachment:
+    match side:
         SurfaceSide.FLOOR:
             is_touching_floor = true
         SurfaceSide.LEFT_WALL:
@@ -605,7 +642,7 @@ func update_for_initial_surface_attachment(
             is_touching_left_wall or \
             is_touching_right_wall
     which_wall = \
-            start_surface_attachment if \
+            side if \
             is_touching_wall else \
             SurfaceSide.NONE
     toward_wall_sign = \

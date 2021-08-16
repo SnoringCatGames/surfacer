@@ -15,7 +15,8 @@ var possible_surfaces_set: Dictionary
 
 func _init(character_name: String) -> void:
     self.character_name = character_name
-    self.movement_params = Su.movement.character_movement_params[character_name]
+    self.movement_params = \
+            Su.movement.character_movement_params[character_name]
     self.set_safe_margin(
             movement_params.collision_margin_for_edge_calculations)
     self.collision_mask = COLLISION_MASK_FOR_ONLY_SURFACES_TILE_MAP
