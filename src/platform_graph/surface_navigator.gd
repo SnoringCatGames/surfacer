@@ -146,7 +146,7 @@ func navigate_path(
                     path.edges.size(),
                 ],
                 false)
-        if character.logs_low_level_framework_events:
+        if character.logs_low_level_navigator_events:
             var format_string_template := (
                     "{" +
                     "\n\tdestination: %s," +
@@ -429,7 +429,7 @@ func _start_edge(
     var duration_start_edge: float = \
             Sc.profiler.stop("navigator_start_edge")
     
-    if character.logs_low_level_framework_events:
+    if character.logs_low_level_navigator_events:
         var format_string_template := \
                 "Starting edge nav:   %8.3fs; %s; %s; calc duration=%sms"
         var format_string_arguments := [
@@ -537,7 +537,7 @@ func update(
         return
         
     elif navigation_state.just_reached_end_of_edge:
-        if character.logs_low_level_framework_events:
+        if character.logs_low_level_navigator_events:
             _log("Edge end:            %8.3fs; %s; %s" % [
                 Sc.time.get_play_time(),
                 character.character_name,
@@ -573,7 +573,7 @@ func update(
             if backtracking_edge == null:
                 _set_reached_destination()
             else:
-                if character.logs_low_level_framework_events:
+                if character.logs_low_level_navigator_events:
                     var format_string_template := \
                             "Insrt ctr-potr edge:%8.3fs; %s; %s"
                     var format_string_arguments := [
