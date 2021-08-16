@@ -112,6 +112,9 @@ func _draw() -> void:
 
 
 func _get_is_pulse_enabled() -> bool:
+    if !Su.ann_manifest.is_active_trajectory_shown:
+        return false
+    
     if navigator.character.is_player_character:
         if is_slow_motion_enabled:
             return Su.ann_manifest.is_player_nav_pulse_shown_with_slow_mo
