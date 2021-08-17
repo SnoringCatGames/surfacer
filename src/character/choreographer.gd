@@ -165,7 +165,9 @@ func _execute_next_step() -> void:
                         step.destination
                 var destination := \
                         SurfaceParser.find_closest_position_on_a_surface(
-                                target, character)
+                                target,
+                                character,
+                                SurfaceReachability.REACHABLE)
                 var is_navigation_valid := \
                         character.navigate_as_choreographed(destination)
                 assert(is_navigation_valid)

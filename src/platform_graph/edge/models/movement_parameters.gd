@@ -328,6 +328,9 @@ var reached_in_air_destination_distance_squared_threshold := \
 var max_edges_to_remove_from_path_for_opt_to_in_air_dest := 2 \
         setget _set_max_edges_to_remove_from_path_for_opt_to_in_air_dest
 
+var max_distance_for_reachable_surface_tracking := 1024.0 \
+        setget _set_max_distance_for_reachable_surface_tracking
+
 # --- Logs ---
 
 const _LOGS_GROUP := {
@@ -1176,6 +1179,11 @@ func _set_reached_in_air_destination_distance_squared_threshold(
 func _set_max_edges_to_remove_from_path_for_opt_to_in_air_dest(
         value: int) -> void:
     max_edges_to_remove_from_path_for_opt_to_in_air_dest = value
+    _update_parameters()
+
+
+func _set_max_distance_for_reachable_surface_tracking(value: float) -> void:
+    max_distance_for_reachable_surface_tracking = value
     _update_parameters()
 
 

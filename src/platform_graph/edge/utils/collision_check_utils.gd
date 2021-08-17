@@ -316,17 +316,6 @@ static func check_continuous_horizontal_step_for_collision(
         # In very rare cases, displacement can be zero when previous_time is
         # very close to current_time.
         if displacement != Vector2.ZERO:
-            
-            # FIXME: LEFT OFF HERE: ----------------------
-            # - set a breakpoint here; set debug params; toggle whether level_6
-            #   json is deleted;
-#            displacement.x = 8.6
-#            var dummy := collision_params.crash_test_dummy
-#            print("><><><><><><><><")
-#            print(str(dummy.get_safe_margin()))
-#            print(str(dummy.is_sync_to_physics_enabled()))
-#            print("><><><><><><><><")
-            
             collision = check_frame_for_collision(
                     collision_params,
                     previous_position,

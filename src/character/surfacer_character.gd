@@ -18,6 +18,12 @@ var movement_params: MovementParameters
 # Dictionary<Surface, Surface>
 var possible_surfaces_set: Dictionary
 
+var reachable_basis_surface: Surface
+# Array<Surface>
+var reachable_surfaces := []
+# Array<Surface>
+var reversibly_reachable_surfaces := []
+
 var start_surface: Surface
 var start_position_along_surface: PositionAlongSurface
 var _start_attachment_surface_side_or_position = null
@@ -211,6 +217,10 @@ func _init_platform_graph() -> void:
     var graph: PlatformGraph = \
             Sc.level.graph_parser.platform_graphs[character_name]
     assert(graph != null)
+    graph.connect(
+            "surface_exclusion_changed",
+            self,
+            "_on_surface_exclusion_changed")
     self.graph = graph
     self.surface_parser = Sc.level.surface_parser
     self.possible_surfaces_set = graph.surfaces_set
@@ -397,6 +407,8 @@ func processed_action(name: String) -> bool:
 
 func _update_surface_state(preserves_just_changed_state := false) -> void:
     surface_state.update_for_actions(self, preserves_just_changed_state)
+    if surface_state.just_changed_surface:
+        _update_reachable_surfaces(surface_state.grabbed_surface)
 
 
 # Update whether or not we should currently consider collisions with
@@ -533,7 +545,9 @@ func get_intended_position(type: int) -> PositionAlongSurface:
             return surface_state.center_position_along_surface if \
                     surface_state.is_grabbing_a_surface else \
                     SurfaceParser.find_closest_position_on_a_surface(
-                            surface_state.center_position, self)
+                            surface_state.center_position,
+                            self,
+                            SurfaceReachability.ANY)
         IntendedPositionType.EDGE_ORIGIN:
             return navigator.edge.start_position_along_surface if \
                     navigation_state.is_currently_navigating else \
@@ -632,3 +646,19 @@ func has_behavior(behavior_class_or_name) -> bool:
             behavior_class_or_name is Script else \
             Su.behaviors[behavior_class_or_name]
     return _behaviors_by_class.has(behavior_class)
+
+
+func _on_surface_exclusion_changed() -> void:
+    _update_reachable_surfaces(reachable_basis_surface)
+
+
+func _update_reachable_surfaces(basis_surface: Surface) -> void:
+    if !Su.are_reachable_surfaces_per_player_tracked:
+        return
+    reachable_basis_surface = basis_surface
+    reachable_surfaces = graph.get_all_reachable_surfaces(
+            reachable_basis_surface,
+            movement_params.max_distance_for_reachable_surface_tracking)
+    reversibly_reachable_surfaces = graph.get_all_reversibly_reachable_surfaces(
+            reachable_basis_surface,
+            movement_params.max_distance_for_reachable_surface_tracking)

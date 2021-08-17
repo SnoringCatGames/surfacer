@@ -149,6 +149,8 @@ var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
 var ignores_platform_graph_save_file_trajectory_state := false
 var is_debug_only_platform_graph_state_included := false
+var are_reachable_surfaces_per_player_tracked := true
+
 var is_precomputing_platform_graphs: bool
 var is_intro_choreography_shown: bool
 
@@ -324,6 +326,9 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
     if manifest.has("is_debug_only_platform_graph_state_included"):
         self.is_debug_only_platform_graph_state_included = \
                 manifest.is_debug_only_platform_graph_state_included
+    if manifest.has("are_reachable_surfaces_per_player_tracked"):
+        self.are_reachable_surfaces_per_player_tracked = \
+                manifest.are_reachable_surfaces_per_player_tracked
     
     if manifest.has("path_drag_update_throttle_interval"):
         self.path_drag_update_throttle_interval = \
