@@ -82,11 +82,18 @@ func _move() -> bool:
     var max_distance_squared_from_start_position := \
             max_distance_from_start_position * max_distance_from_start_position
     
+    var surface_reachability := \
+            SurfaceReachability.REVERSIBLY_REACHABLE if \
+            only_navigates_reversible_paths else \
+            SurfaceReachability.REACHABLE
+    
     var destination: PositionAlongSurface = \
             collision_target.surface_state.center_position_along_surface if \
             collision_target.surface_state.is_grabbing_a_surface else \
             SurfaceParser.find_closest_position_on_a_surface(
-                    collision_target.position, self)
+                    collision_target.position,
+                    self,
+                    surface_reachability)
     
     # Prevent straying too far the start position.
     if start_position_for_max_distance_checks.distance_squared_to(
@@ -111,7 +118,9 @@ func _move() -> bool:
                 start_position + \
                 direction * ratio * original_distance
         destination = SurfaceParser.find_closest_position_on_a_surface(
-                target, self)
+                target,
+                self,
+                surface_reachability)
         
         # Prevent straying too far the start position.
         if start_position_for_max_distance_checks.distance_squared_to(

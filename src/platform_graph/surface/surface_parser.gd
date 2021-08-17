@@ -1006,9 +1006,22 @@ func find_closest_surface_in_direction(
 static func find_closest_position_on_a_surface(
         target: Vector2,
         character,
-        max_distance_squared_threshold := INF,
-        surfaces = []) -> PositionAlongSurface:
-    var positions := find_closest_positions_on_a_surface(
+        surface_reachability: int,
+        max_distance_squared_threshold := INF) -> PositionAlongSurface:
+    var surfaces: Array
+    match surface_reachability:
+        SurfaceReachability.ANY:
+            surfaces = character.possible_surfaces_set
+        SurfaceReachability.REACHABLE:
+            assert(Su.are_reachable_surfaces_per_player_tracked)
+            surfaces = character.reachable_surfaces
+        SurfaceReachability.REVERSIBLY_REACHABLE:
+            assert(Su.are_reachable_surfaces_per_player_tracked)
+            surfaces = character.reversibly_reachable_surfaces
+        _:
+            Sc.logger.error()
+    
+    var positions := find_closest_positions_on_surfaces(
             target,
             character,
             1,
@@ -1020,7 +1033,7 @@ static func find_closest_position_on_a_surface(
         return positions[0]
 
 
-static func find_closest_positions_on_a_surface(
+static func find_closest_positions_on_surfaces(
         target: Vector2,
         character,
         position_count: int,

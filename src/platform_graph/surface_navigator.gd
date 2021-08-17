@@ -4,32 +4,6 @@ extends Reference
 ## graph to a destination position.
 
 
-# FIXME: LEFT OFF HERE: ------------------------------
-# - New per-navigator reachable surface sets:
-#   - Maintain TWO separate, localized sets for each character/navigator.
-#     - All the surfaces, within a distance, that can be reached from the
-#       current surface.
-#     - All the surfaces, within a distance,  that can be reached-reversibly
-#       from the current surface.
-#   - Have navigator listen to changes in surface_exclusion_list, and update
-#     both sets accordingly (but only if some surface in either set could
-#     reach the changed surface?).
-#   - Update SurfaceParser APIs and usages to possibly use either of the
-#     new sets.
-#   - Add a MovementParameters property for the sets' distance threshold.
-#   - Add a Surfacer flag which toggles whether these sets are created.
-#   - Depending on the flag:
-#     - Assert that only_navigates_reversible_paths is false.
-#     - Assert that SurfaceParser APIs aren't called, or use different
-#       logic.
-# - Maybe add new APIs to PlatformGraph for updating the exclusion list:
-#   - single update
-#   - bulk update
-#   - Emit changed event for each call to either.
-# - Will need to update Navigator in general to handle mid-flight changes
-#   to surface_exclusion_list.
-
-
 signal navigation_started(is_retry)
 signal destination_reached
 signal navigation_interrupted(is_retrying)
@@ -109,66 +83,65 @@ func navigate_path(
                 ],
                 false)
         return false
-        
-    else:
-        # Destination can be reached from origin.
-        
-        _interleave_intra_surface_edges(
-                graph.collision_params,
-                path)
-        
-        _optimize_edges_for_approach(
-                graph.collision_params,
-                path,
-                character.velocity)
-        
-        _ensure_edges_have_trajectory_state(
-                graph.collision_params,
-                path)
-        
-        self.path = path
-        self.path_start_time_scaled = Sc.time.get_scaled_play_time()
-        self.path_beats = Sc.beats.calculate_path_beat_hashes_for_current_mode(
-                path, path_start_time_scaled)
-        navigation_state.is_currently_navigating = true
-        navigation_state.has_reached_destination = false
-        current_navigation_attempt_count += 1
-        
-        var duration_navigate_to_position: float = \
-                Sc.profiler.stop("navigator_navigate_path")
-        
-        _log("Path start:          %8.3fs; %s; to=%s; from=%s; edges=%d" % [
-                    Sc.time.get_play_time(),
-                    character.character_name,
-                    Sc.utils.get_vector_string(
-                            path.destination.target_point, 0),
-                    Sc.utils.get_vector_string(path.origin.target_point, 0),
-                    path.edges.size(),
-                ],
-                false)
-        if character.logs_low_level_navigator_events:
-            var format_string_template := (
-                    "{" +
-                    "\n\tdestination: %s," +
-                    "\n\tpath: %s," +
-                    "\n\ttimings: {" +
-                    "\n\t\tduration_navigate_to_position: %sms" +
-                    "\n\t}" +
-                    "\n}")
-            var format_string_arguments := [
-                path.destination.to_string(),
-                path.to_string_with_newlines(1),
-                duration_navigate_to_position,
-            ]
-            _log(format_string_template % format_string_arguments, true)
-        
-        _start_edge(
-                0,
-                is_retry)
-        
-        emit_signal("navigation_started", is_retry)
-        
-        return true
+    
+    # Destination can be reached from origin.
+    
+    _interleave_intra_surface_edges(
+            graph.collision_params,
+            path)
+    
+    _optimize_edges_for_approach(
+            graph.collision_params,
+            path,
+            character.velocity)
+    
+    _ensure_edges_have_trajectory_state(
+            graph.collision_params,
+            path)
+    
+    self.path = path
+    self.path_start_time_scaled = Sc.time.get_scaled_play_time()
+    self.path_beats = Sc.beats.calculate_path_beat_hashes_for_current_mode(
+            path, path_start_time_scaled)
+    navigation_state.is_currently_navigating = true
+    navigation_state.has_reached_destination = false
+    current_navigation_attempt_count += 1
+    
+    var duration_navigate_to_position: float = \
+            Sc.profiler.stop("navigator_navigate_path")
+    
+    _log("Path start:          %8.3fs; %s; to=%s; from=%s; edges=%d" % [
+                Sc.time.get_play_time(),
+                character.character_name,
+                Sc.utils.get_vector_string(
+                        path.destination.target_point, 0),
+                Sc.utils.get_vector_string(path.origin.target_point, 0),
+                path.edges.size(),
+            ],
+            false)
+    if character.logs_low_level_navigator_events:
+        var format_string_template := (
+                "{" +
+                "\n\tdestination: %s," +
+                "\n\tpath: %s," +
+                "\n\ttimings: {" +
+                "\n\t\tduration_navigate_to_position: %sms" +
+                "\n\t}" +
+                "\n}")
+        var format_string_arguments := [
+            path.destination.to_string(),
+            path.to_string_with_newlines(1),
+            duration_navigate_to_position,
+        ]
+        _log(format_string_template % format_string_arguments, true)
+    
+    _start_edge(
+            0,
+            is_retry)
+    
+    emit_signal("navigation_started", is_retry)
+    
+    return true
 
 
 # Starts a new navigation to the given destination.

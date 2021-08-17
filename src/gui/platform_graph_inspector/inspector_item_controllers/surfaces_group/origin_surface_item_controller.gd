@@ -137,7 +137,7 @@ func _populate_debug_only_state() -> void:
         return
     
     var inter_surface_edges_results := []
-    graph.calculate_inter_surface_edges_for_origin(
+    graph._calculate_inter_surface_edges_for_origin(
             inter_surface_edges_results,
             origin_surface,
             surfaces_in_jump_range,

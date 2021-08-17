@@ -48,7 +48,8 @@ func _unhandled_input(event: InputEvent) -> void:
         var surface_position := \
                 SurfaceParser.find_closest_position_on_a_surface(
                         click_position,
-                        Sc.level.player_character)
+                        Sc.level.player_character,
+                        SurfaceReachability.ANY)
         
         if first_target == null:
             # Selecting the jump position.

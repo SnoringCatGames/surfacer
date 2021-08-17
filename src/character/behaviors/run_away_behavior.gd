@@ -161,9 +161,15 @@ func _move() -> bool:
         
         var possible_destination: PositionAlongSurface
         if can_leave_start_surface:
+            var surface_reachability := \
+                    SurfaceReachability.REVERSIBLY_REACHABLE if \
+                    only_navigates_reversible_paths else \
+                    SurfaceReachability.REACHABLE
             possible_destination = \
                     SurfaceParser.find_closest_position_on_a_surface(
-                            naive_target, character)
+                            naive_target,
+                            character,
+                            surface_reachability)
         else:
             possible_destination = PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(

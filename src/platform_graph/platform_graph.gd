@@ -14,6 +14,7 @@ signal calculation_progressed(
         origin_surface_index,
         surface_count)
 signal calculation_finished
+signal surface_exclusion_changed
 
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
@@ -45,7 +46,7 @@ var counts := {}
 var debug_params := {}
 
 # Dictionary<Surface, bool>
-var surface_exclusion_list := {}
+var _surface_exclusion_list := {}
 
 
 func calculate(character_name: String) -> void:
@@ -77,8 +78,8 @@ func calculate(character_name: String) -> void:
 func find_path(
         origin: PositionAlongSurface,
         destination: PositionAlongSurface) -> PlatformGraphPath:
-    # TODO: Add an early-cutoff mechanism for paths that deviate too far from
-    #       straight-line. Otherwise, this will check every connecected surface
+    # TODO: Add an early-cutoff mechanism for paths that deviate too far from a
+    #       straight-line. Otherwise, this will check every connected surface
     #       before knowing that a destination cannot be reached.
     
     var origin_surface := origin.surface
@@ -89,8 +90,8 @@ func find_path(
         # The graph only handles nodes along surfaces.
         return null
     
-    if surface_exclusion_list.has(origin_surface) or \
-            surface_exclusion_list.has(destination_surface):
+    if _surface_exclusion_list.has(origin_surface) or \
+            _surface_exclusion_list.has(destination_surface):
         # One of the surfaces is marked as non-navigable.
         return null
     
@@ -181,7 +182,7 @@ func find_path(
         var nodes_to_edges_for_current_node: Dictionary = \
                 nodes_to_nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
-            if surface_exclusion_list.has(next_node.surface):
+            if _surface_exclusion_list.has(next_node.surface):
                 # This surface is marked as non-navigable.
                 continue
             for next_edge in nodes_to_edges_for_current_node[next_node]:
@@ -233,6 +234,54 @@ func find_path(
     assert(!edges.empty())
     
     return PlatformGraphPath.new(edges)
+
+
+# FIXME: LEFT OFF HERE: --------------------------------
+# - Also update Navigator in general to handle mid-flight changes to
+#   surface_exclusion_list.
+
+func get_all_reachable_surfaces(
+        origin_surface: Surface,
+        max_distance: float) -> Array:
+    var max_distance_squared := max_distance * max_distance
+    
+    # FIXME: LEFT OFF HERE: ---------------------
+    return []
+
+
+func get_all_reversibly_reachable_surfaces(
+        origin_surface: Surface,
+        max_distance: float) -> Array:
+    var max_distance_squared := max_distance * max_distance
+    
+    # FIXME: LEFT OFF HERE: ---------------------
+    return []
+
+
+func update_surface_exclusion(
+        surface_or_surfaces,
+        is_excluded: bool) -> void:
+    assert(surface_or_surfaces is Surface or \
+            surface_or_surfaces is Array)
+    
+    var surfaces: Array = \
+            surface_or_surfaces if \
+            surface_or_surfaces is Array else \
+            [surface_or_surfaces]
+    
+    var changed := false
+    
+    if is_excluded:
+        for surface in surfaces:
+            changed = changed or !_surface_exclusion_list.has(surface)
+            _surface_exclusion_list[surface] = true
+    else:
+        for surface in surfaces:
+            changed = changed or _surface_exclusion_list.has(surface)
+            _surface_exclusion_list.erase(surface)
+    
+    if changed:
+        emit_signal("surface_exclusion_changed")
 
 
 static func _calculate_intra_surface_edge_weight(
@@ -390,7 +439,7 @@ func _calculate_inter_surface_edges_for_next_origin(
         # Array<InterSurfaceEdgesResult>
         var inter_surface_edges_results: Array = \
                 surfaces_to_inter_surface_edges_results[origin_surface]
-        calculate_inter_surface_edges_for_origin(
+        _calculate_inter_surface_edges_for_origin(
                 inter_surface_edges_results,
                 origin_surface,
                 surfaces,
@@ -422,7 +471,7 @@ func _calculate_inter_surface_edges_for_next_origin(
                     collision_params)
 
 
-func calculate_inter_surface_edges_for_origin(
+func _calculate_inter_surface_edges_for_origin(
         inter_surface_edges_results: Array,
         origin_surface: Surface,
         surfaces: Array,

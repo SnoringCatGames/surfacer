@@ -253,6 +253,10 @@ func _attempt_move() -> void:
     assert(_is_ready_to_move,
             "Behavior._attempt_move must not be called before the character " +
             "and behavior are both ready.")
+    assert(character.surface_state.last_position_along_surface == \
+                    character.reachable_basis_surface or \
+            character.surface_state.last_position_along_surface.surface == \
+                    null)
     
     # Update the start position and surface for this latest move.
     start_position_along_surface = \
@@ -348,6 +352,14 @@ func _update_parameters() -> void:
     if _configuration_warning != "":
         return
     
+    if only_navigates_reversible_paths and \
+            !Su.are_reachable_surfaces_per_player_tracked:
+        _set_configuration_warning(
+                "If only_navigates_reversible_paths is true, then " +
+                "you must configure the app manifest with " +
+                "are_reachable_surfaces_per_player_tracked as true.")
+        return
+    
     if returns_to_character_start_position and \
             !only_navigates_reversible_paths:
         _set_configuration_warning(
@@ -409,13 +421,6 @@ func _get_property_list() -> Array:
 func get_is_paused() -> bool:
     return _mid_movement_pause_timeout_id > 0 or \
             _post_movement_pause_timeout_id > 0
-
-
-# FIXME: LEFT OFF HERE: ------------------------- Define overrides.
-func get_behavior() -> int:
-    Sc.logger.error(
-            "Abstract Behavior.get_behavior is not implemented.")
-    return -1
 
 
 func _get_default_next_behavior() -> Behavior:
