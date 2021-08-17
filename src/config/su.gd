@@ -7,7 +7,7 @@ extends FrameworkConfig
 ## -   You will need to provide an `app_manifest` dictionary which defines some
 ##     of these parameters.[br]
 ## -   Define `Su` as an AutoLoad (in Project Settings).[br]
-## -   "Su" is short for "Surfacer."[br]
+## -   "Su" is short for "Surfacer".[br]
 
 
 # --- Constants ---
