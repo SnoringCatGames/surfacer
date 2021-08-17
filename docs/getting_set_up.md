@@ -15,12 +15,12 @@ I will not lie, **this is a complex framework**! Hopefully it's external API isn
     -   Add the [Surfacer](https://github.com/snoringcatgames/surfacer/) library to your `addons/` folder.
 -   `Sc`
     -   Define `Sc` as an AutoLoad (in Project Settings).
-    -   "Sc" is short for "Scaffolder."
+    -   "Sc" is short for "Scaffolder".
     -   It should point to the path `res://addons/scaffolder/src/sc.gd`.
     -   It should be the first AutoLoad in the list.
 -   `Su`
     -   Define `Su` as an AutoLoad (in Project Settings).
-    -   "Su" is short for "Surfacer."
+    -   "Su" is short for "Surfacer".
     -   It should point to the path `res://addons/surfacer/src/su.gd`.
     -   It should be the second AutoLoad in the list, just after `Sc`.
 -   `app_manifest`
