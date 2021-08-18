@@ -1,18 +1,18 @@
 class_name MovementUtils
 extends Reference
-# A collection of utility functions for calculating state related to movement.
+## A collection of utility functions for calculating state related to movement.
 
 
-# Calculates the duration to reach the destination with the given movement
-# parameters.
-#
-# -   Since we are dealing with a parabolic equation, there are likely two
-#     possible results. returns_lower_result indicates whether to return the
-#     lower, non-negative result.
-# -   expects_only_one_positive_result indicates whether to report an error if
-#     there are two positive results.
-# -   Returns INF if we cannot reach the destination with our movement
-#     parameters.
+## Calculates the duration to reach the destination with the given movement
+## parameters.
+##
+## -   Since we are dealing with a parabolic equation, there are likely two
+##     possible results. returns_lower_result indicates whether to return the
+##     lower, non-negative result.
+## -   expects_only_one_positive_result indicates whether to report an error if
+##     there are two positive results.
+## -   Returns INF if we cannot reach the destination with our movement
+##     parameters.
 static func calculate_movement_duration(
         displacement: float,
         v_0: float,
@@ -89,11 +89,11 @@ static func calculate_movement_duration(
             return max(t1, t2)
 
 
-# Calculates the duration to accelerate over in order to reach the destination
-# at the given time, given that velocity continues after acceleration stops and
-# a new backward acceleration is applied.
-# 
-# Note: This could depend on a speed that exceeds the max-allowed speed.
+## Calculates the duration to accelerate over in order to reach the destination
+## at the given time, given that velocity continues after acceleration stops and
+## a new backward acceleration is applied.
+## 
+## Note: This could depend on a speed that exceeds the max-allowed speed.
 # FIXME: Remove if no-one is still using this.
 static func calculate_time_to_release_acceleration(
         time_start: float,
@@ -152,8 +152,8 @@ static func calculate_time_to_release_acceleration(
             return max(t1, t2)
 
 
-# Calculates the minimum required duration to reach the displacement,
-# considering a maximum velocity.
+## Calculates the minimum required duration to reach the displacement,
+## considering a maximum velocity.
 static func calculate_duration_for_displacement(
         displacement: float,
         velocity_start: float,

@@ -171,9 +171,7 @@ func _move() -> bool:
             true,
             true)
     
-    return character.navigator.navigate_to_position(
-            _destination,
-            only_navigates_reversible_paths)
+    return _attempt_navigation_to_destination(_destination)
 
 
 func _update_parameters() -> void:

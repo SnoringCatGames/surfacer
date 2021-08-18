@@ -109,10 +109,9 @@ func _move() -> bool:
     if start_position_for_max_distance_checks.distance_squared_to(
             destination.target_point) <= \
             max_distance_squared_from_start_position:
-        var is_navigation_valid: bool = \
-                character.navigator.navigate_to_position(
-                        destination,
-                        only_navigates_reversible_paths)
+        var is_navigation_valid := _attempt_navigation_to_destination(
+                destination,
+                _is_first_move_since_active)
         if is_navigation_valid:
             return true
     
@@ -138,10 +137,9 @@ func _move() -> bool:
         if start_position_for_max_distance_checks.distance_squared_to(
                 destination.target_point) <= \
                 max_distance_squared_from_start_position:
-            var is_navigation_valid: bool = \
-                    character.navigator.navigate_to_position(
-                            destination,
-                            only_navigates_reversible_paths)
+            var is_navigation_valid := _attempt_navigation_to_destination(
+                    destination,
+                    _is_first_move_since_active)
             if is_navigation_valid:
                 return true
     

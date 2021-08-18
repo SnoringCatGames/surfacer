@@ -212,9 +212,9 @@ func _attempt_navigation() -> bool:
             _reached_max_distance = true
             return false
     
-    return character.navigator.navigate_to_position(
+    return _attempt_navigation_to_destination(
             destination,
-            only_navigates_reversible_paths)
+            _is_first_move_since_active)
 
 
 func _on_reached_max_distance() -> void:
