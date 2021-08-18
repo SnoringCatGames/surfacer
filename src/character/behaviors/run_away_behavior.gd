@@ -126,11 +126,6 @@ func _move() -> bool:
     # - Then base the following navigation calculation off of the end-position
     #   of the initial jump.
     
-    # FIXME: ---------------------------
-    # - Consider only_navigates_reversible_paths.
-    # - Use the new reachable/reverse-reachable set APIs that will be added in
-    #   SurfaceNavigator.
-    
     # TODO: Should we instead/also look at the distance for the resulting path?
     #       A close destination could require a long path.
     
@@ -199,7 +194,8 @@ func _move() -> bool:
             if !is_destination_too_far_from_intended:
                 var is_navigation_valid: bool = \
                         character.navigator.navigate_to_position(
-                                possible_destination)
+                                possible_destination,
+                                only_navigates_reversible_paths)
                 if is_navigation_valid:
                     return true
             else:
@@ -221,7 +217,9 @@ func _move() -> bool:
                 closest_destination = possible_destination
         
         var is_navigation_valid: bool = \
-                character.navigator.navigate_to_position(closest_destination)
+                character.navigator.navigate_to_position(
+                        closest_destination,
+                        only_navigates_reversible_paths)
         if is_navigation_valid:
             return true
         else:

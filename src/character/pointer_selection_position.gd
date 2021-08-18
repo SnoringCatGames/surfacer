@@ -75,7 +75,9 @@ func update_pointer_position(pointer_position: Vector2) -> void:
     
     if navigation_destination != null:
         if navigation_destination.surface != null:
-            self.path = _character.navigator.find_path(navigation_destination)
+            self.path = _character.navigator.find_path(
+                    navigation_destination,
+                    false)
             if path != null:
                 self.path_beats_time_start = Sc.time.get_scaled_play_time()
                 self.path_beats = \
@@ -105,6 +107,7 @@ func _update_path_for_in_air_destination(
         
         var path: PlatformGraphPath = _character.navigator.find_path(
                 navigation_destination,
+                false,
                 nearby_position_along_surface)
         if path != null:
             self.path = path

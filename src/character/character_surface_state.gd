@@ -689,3 +689,5 @@ func update_for_initial_surface_attachment(
     character.start_surface = surface
     character.start_position_along_surface = PositionAlongSurface.new(
             center_position_along_surface)
+    
+    character._update_reachable_surfaces(surface)

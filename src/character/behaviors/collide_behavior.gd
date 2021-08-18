@@ -87,20 +87,32 @@ func _move() -> bool:
             only_navigates_reversible_paths else \
             SurfaceReachability.REACHABLE
     
-    var destination: PositionAlongSurface = \
-            collision_target.surface_state.center_position_along_surface if \
-            collision_target.surface_state.is_grabbing_a_surface else \
-            SurfaceParser.find_closest_position_on_a_surface(
+    var destination: PositionAlongSurface
+    if can_leave_start_surface:
+        if collision_target.surface_state.is_grabbing_a_surface:
+            destination = collision_target.surface_state \
+                    .center_position_along_surface
+        else:
+            destination = SurfaceParser.find_closest_position_on_a_surface(
                     collision_target.position,
                     self,
                     surface_reachability)
+    else:
+        destination = PositionAlongSurfaceFactory \
+                .create_position_offset_from_target_point(
+                        collision_target.position,
+                        start_surface,
+                        character.movement_params.collider_half_width_height,
+                        true)
     
     # Prevent straying too far the start position.
     if start_position_for_max_distance_checks.distance_squared_to(
             destination.target_point) <= \
             max_distance_squared_from_start_position:
         var is_navigation_valid: bool = \
-                character.navigator.navigate_to_position(destination)
+                character.navigator.navigate_to_position(
+                        destination,
+                        only_navigates_reversible_paths)
         if is_navigation_valid:
             return true
     
@@ -127,7 +139,9 @@ func _move() -> bool:
                 destination.target_point) <= \
                 max_distance_squared_from_start_position:
             var is_navigation_valid: bool = \
-                    character.navigator.navigate_to_position(destination)
+                    character.navigator.navigate_to_position(
+                            destination,
+                            only_navigates_reversible_paths)
             if is_navigation_valid:
                 return true
     

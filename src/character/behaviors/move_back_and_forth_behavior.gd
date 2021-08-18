@@ -77,6 +77,8 @@ func _init().(
 
 
 func _move() -> bool:
+    # FIXME: ---------------------- Support can_leave_start_surface.
+    
     var is_moving_minward := _is_next_move_minward
     _is_next_move_minward = !_is_next_move_minward
 
@@ -169,7 +171,9 @@ func _move() -> bool:
             true,
             true)
     
-    return character.navigator.navigate_to_position(_destination)
+    return character.navigator.navigate_to_position(
+            _destination,
+            only_navigates_reversible_paths)
 
 
 func _update_parameters() -> void:

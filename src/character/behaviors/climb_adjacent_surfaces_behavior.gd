@@ -48,6 +48,7 @@ func _move() -> bool:
     # - max_distance_from_start_position
     # - start_position_for_max_distance_checks
     # - _reached_max_distance
+    # - can_leave_start_surface
     return false
 
 

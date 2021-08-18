@@ -68,10 +68,11 @@ func navigate_path(
                     character.position,
                     path.origin.target_point,
                     4.0):
-        # The selection and its path are stale, so update the path to match
-        # the character's current position.
+        # The selection and its path are stale, so update the path to match the
+        # character's current position.
         path = find_path(
                 path.destination,
+                false,
                 path.graph_destination_for_in_air_destination)
     
     if path == null:
@@ -147,6 +148,7 @@ func navigate_path(
 # Starts a new navigation to the given destination.
 func navigate_to_position(
         destination: PositionAlongSurface,
+        only_includes_bidirectional_edges := false,
         graph_destination_for_in_air_destination: PositionAlongSurface = null,
         is_retry := false) -> bool:
     # Nudge the destination away from any concave neighbor surfaces, if
@@ -168,13 +170,16 @@ func navigate_to_position(
                         graph_destination_for_in_air_destination)
     
     var path := find_path(
-            destination, graph_destination_for_in_air_destination)
+            destination,
+            only_includes_bidirectional_edges,
+            graph_destination_for_in_air_destination)
     
     return navigate_path(path, is_retry)
 
 
 func find_path(
         destination: PositionAlongSurface,
+        only_includes_bidirectional_edges := false,
         graph_destination_for_in_air_destination: PositionAlongSurface = \
                 null) -> PlatformGraphPath:
     Sc.profiler.start("navigator_find_path")
@@ -261,7 +266,8 @@ func find_path(
     
     var path := graph.find_path(
             graph_origin,
-            graph_destination_for_in_air_destination)
+            graph_destination_for_in_air_destination,
+            only_includes_bidirectional_edges)
     if path != null:
         path.graph_destination_for_in_air_destination = \
                 graph_destination_for_in_air_destination
@@ -496,6 +502,7 @@ func update(
         if is_retrying:
             navigate_to_position(
                     path.destination,
+                    false,
                     path.graph_destination_for_in_air_destination,
                     true)
         
