@@ -43,7 +43,7 @@ Some features include:
 -   [Variable-height jump and fast-fall](https://kotaku.com/the-mechanics-behind-satisfying-2d-jumping-1761940693).
 -   Adjusting movement trajectories to move around intermediate surfaces (such as jumping over a wall or around a floor).
 
-## Buy why?
+## But why?
 
 Because there aren't many other tools out there for intelligent pathfinding in a platformer.
 
