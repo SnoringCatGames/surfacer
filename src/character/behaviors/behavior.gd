@@ -42,7 +42,6 @@ export var max_distance_from_character_start_position := -1.0 \
 # max_distance_from_character_start_position.
 var max_distance_from_start_position := INF
 
-# FIXME: -----------------------
 ## -   If true, the run-away will start with the character jumping away from the
 ##     target.
 ## -   This initial jump will respect `can_leave_start_surface`, and will only
@@ -50,7 +49,6 @@ var max_distance_from_start_position := INF
 export var starts_with_a_jump := false \
         setget _set_starts_with_a_jump
 
-# FIXME: -----------------------
 ## -   If `starts_with_a_jump = true`, then the initial jump will use this
 ##     value, multiplied by the character's normal jump boost, as the starting
 ##     vertical speed.
@@ -98,6 +96,7 @@ var start_position_along_surface: PositionAlongSurface
 var start_position_for_max_distance_checks: Vector2
 var next_behavior: Behavior
 var is_active := false setget _set_is_active
+var _is_first_move_since_active := false
 var _reached_max_distance := false
 
 var _mid_movement_pause_timeout_id := -1
@@ -194,6 +193,8 @@ func _check_ready_to_move() -> void:
             next_behavior = _get_default_next_behavior()
             assert(is_instance_valid(next_behavior))
         
+        _is_first_move_since_active = true
+        
         _on_ready_to_move()
 
 
@@ -273,6 +274,9 @@ func _attempt_move() -> void:
     _reached_max_distance = false
     
     var is_move_successful := _move()
+    
+    _is_first_move_since_active = false
+    
     if !is_move_successful:
         if _reached_max_distance:
             character.navigator.stop()
@@ -290,6 +294,76 @@ func _attempt_move() -> void:
 func _move() -> bool:
     Sc.logger.error("Abstract Behavior._move is not implemented.")
     return false
+
+
+func _attempt_navigation_to_destination(
+        destination: PositionAlongSurface,
+        possibly_includes_jump_at_start := true) -> bool:
+    var path := _find_path(destination, possibly_includes_jump_at_start)
+    if path != null:
+        return character.navigator.navigate_path(path)
+    else:
+        return false
+
+
+func _find_path(
+        destination: PositionAlongSurface,
+        possibly_includes_jump_at_start: bool) -> PlatformGraphPath:
+    var path: PlatformGraphPath = character.navigator.find_path(
+            destination,
+            only_navigates_reversible_paths)
+    
+    if path == null:
+        # Unable to navigate to the destination.
+        return null
+    
+    if !starts_with_a_jump or \
+            !possibly_includes_jump_at_start:
+        # We don't need to prepend a jump to the navigation.
+        return path
+    
+    if path.edges[0] is FromAirEdge:
+        # Don't bother trying to jump at the start, since the character is
+        # already starting in the air.
+        return path
+    
+    var was_almost_starting_with_a_jump: bool = \
+            path.edges.size() > 1 and \
+            path.edges[0] is IntraSurfaceEdge and \
+            path.edges[1] is JumpFromSurfaceEdge and \
+            path.edges[0].distance < 4.0
+    
+    # TODO: Possibly support paths starting with inter-surface edges.
+    #       But then we'll need to also add a new intra-surface edge after our
+    #       new jump edge.
+    if path.edges[0] is IntraSurfaceEdge and \
+            !was_almost_starting_with_a_jump:
+        var calculator: JumpFromSurfaceCalculator = \
+                Su.movement.edge_calculators["JumpFromSurfaceCalculator"]
+        var velocity_start := JumpLandPositionsUtils.get_velocity_start(
+                    character.movement_params,
+                    path.origin.surface,
+                    true,
+                    false,
+                    true)
+        velocity_start.y *= start_jump_boost_multiplier
+        var jump_edge := calculator.calculate_edge(
+                null,
+                character.graph.collision_params,
+                path.origin,
+                path.origin,
+                velocity_start)
+        
+        if jump_edge != null:
+            path.push_front(jump_edge)
+            calculator.optimize_edge_land_position_for_path(
+                    character.graph.collision_params,
+                    path,
+                    0,
+                    jump_edge,
+                    path.edges[1])
+    
+    return path
 
 
 func _pause_mid_movement() -> void:

@@ -92,9 +92,7 @@ func _attempt_inter_surface_navigation() -> bool:
         if is_within_range_of_current_movement and \
                 is_within_range_from_start_position:
             var is_navigation_valid: bool = \
-                    character.navigator.navigate_to_position(
-                            destination,
-                            only_navigates_reversible_paths)
+                    _attempt_navigation_to_destination(destination)
             if is_navigation_valid:
                 return true
     
@@ -159,9 +157,7 @@ func _attempt_intra_surface_navigation() -> bool:
                     character.movement_params.collider_half_width_height,
                     true)
     
-    return character.navigator.navigate_to_position(
-            destination,
-            only_navigates_reversible_paths)
+    return _attempt_navigation_to_destination(destination)
 
 
 func _get_movement_distance_unsigned() -> float:
