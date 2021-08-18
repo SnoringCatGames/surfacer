@@ -120,12 +120,6 @@ func _move() -> bool:
     
     var possible_destinations := []
     
-    # FIXME: ---------------------------
-    # - Consider starts_with_a_jump and start_jump_boost_multiplier.
-    # - Calculate the one-off jump onto the same surface.
-    # - Then base the following navigation calculation off of the end-position
-    #   of the initial jump.
-    
     # TODO: Should we instead/also look at the distance for the resulting path?
     #       A close destination could require a long path.
     
@@ -192,10 +186,8 @@ func _move() -> bool:
                             max_distance_squared_retry_threshold
             
             if !is_destination_too_far_from_intended:
-                var is_navigation_valid: bool = \
-                        character.navigator.navigate_to_position(
-                                possible_destination,
-                                only_navigates_reversible_paths)
+                var is_navigation_valid := \
+                        _attempt_navigation(possible_destination)
                 if is_navigation_valid:
                     return true
             else:
@@ -216,16 +208,76 @@ func _move() -> bool:
                 closest_destination_distance = current_destination_distance
                 closest_destination = possible_destination
         
-        var is_navigation_valid: bool = \
-                character.navigator.navigate_to_position(
-                        closest_destination,
-                        only_navigates_reversible_paths)
+        var is_navigation_valid := _attempt_navigation(closest_destination)
         if is_navigation_valid:
             return true
         else:
             possible_destinations.erase(closest_destination)
     
     return false
+
+
+func _attempt_navigation(destination: PositionAlongSurface) -> bool:
+    var path := _find_path(destination)
+    if path != null:
+        return character.navigator.navigate_path(path)
+    else:
+        return false
+
+
+func _find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
+    var path: PlatformGraphPath = character.navigator.find_path(
+            destination,
+            only_navigates_reversible_paths)
+    
+    if path == null:
+        # Unable to navigate to the destination.
+        return null
+    
+    if !starts_with_a_jump:
+        # We don't need to prepend a jump to the navigation.
+        return path
+    
+    if path.edges[0] is FromAirEdge:
+        # Don't bother trying to jump at the start, since the character is
+        # already starting in the air.
+        return path
+    
+    var was_starting_with_a_jump := path.edges[0] is JumpFromSurfaceEdge
+    var was_almost_starting_with_a_jump: bool = \
+            path.edges.size() > 1 and \
+            path.edges[0] is IntraSurfaceEdge and \
+            path.edges[1] is JumpFromSurfaceEdge and \
+            path.edges[0].distance < 4.0
+    
+    if !was_starting_with_a_jump and \
+            !was_almost_starting_with_a_jump:
+        var calculator: JumpFromSurfaceCalculator = \
+                Su.movement.edge_calculators["JumpFromSurfaceCalculator"]
+        var velocity_start := JumpLandPositionsUtils.get_velocity_start(
+                    character.movement_params,
+                    path.origin.surface,
+                    true,
+                    false,
+                    true)
+        velocity_start.y *= start_jump_boost_multiplier
+        var jump_edge := calculator.calculate_edge(
+                null,
+                character.graph.collision_params,
+                path.origin,
+                path.origin,
+                velocity_start)
+        
+        if jump_edge != null:
+            path.push_front(jump_edge)
+            calculator.optimize_edge_land_position_for_path(
+                    character.graph.collision_params,
+                    path,
+                    0,
+                    jump_edge,
+                    path.edges[1])
+    
+    return path
 
 
 func _update_parameters() -> void:

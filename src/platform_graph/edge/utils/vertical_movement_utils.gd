@@ -163,7 +163,7 @@ static func calculate_time_to_jump_to_waypoint(
         # slower gravity is applied until either the jump button is released or
         # we hit the peak of the jump).
         var duration_to_reach_upward_displacement: float
-        if displacement.y < 0:
+        if displacement.y <= 0:
             # Derivation:
             # - Start with basic equations of motion
             # - v_1^2 = v_0^2 + 2*a_0*(s_1 - s_0)
@@ -235,7 +235,7 @@ static func calculate_time_to_jump_to_waypoint(
         # Calculate how long it will take for the jump to reach some lower
         # destination.
         var duration_to_reach_downward_displacement: float
-        if displacement.y > 0:
+        if displacement.y >= 0:
             duration_to_reach_downward_displacement = \
                     MovementUtils.calculate_movement_duration(
                             displacement.y,

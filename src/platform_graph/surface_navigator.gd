@@ -151,6 +151,20 @@ func navigate_to_position(
         only_includes_bidirectional_edges := false,
         graph_destination_for_in_air_destination: PositionAlongSurface = null,
         is_retry := false) -> bool:
+    var path := find_path(
+            destination,
+            only_includes_bidirectional_edges,
+            graph_destination_for_in_air_destination)
+    return navigate_path(path, is_retry)
+
+
+func find_path(
+        destination: PositionAlongSurface,
+        only_includes_bidirectional_edges := false,
+        graph_destination_for_in_air_destination: PositionAlongSurface = \
+                null) -> PlatformGraphPath:
+    Sc.profiler.start("navigator_find_path")
+    
     # Nudge the destination away from any concave neighbor surfaces, if
     # necessary.
     destination = PositionAlongSurface.new(destination)
@@ -168,21 +182,6 @@ func navigate_to_position(
                 .ensure_position_is_not_too_close_to_concave_neighbor(
                         movement_params,
                         graph_destination_for_in_air_destination)
-    
-    var path := find_path(
-            destination,
-            only_includes_bidirectional_edges,
-            graph_destination_for_in_air_destination)
-    
-    return navigate_path(path, is_retry)
-
-
-func find_path(
-        destination: PositionAlongSurface,
-        only_includes_bidirectional_edges := false,
-        graph_destination_for_in_air_destination: PositionAlongSurface = \
-                null) -> PlatformGraphPath:
-    Sc.profiler.start("navigator_find_path")
     
     var graph_origin: PositionAlongSurface
     var prefix_edge: FromAirEdge
