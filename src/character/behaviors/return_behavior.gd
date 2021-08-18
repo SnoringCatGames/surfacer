@@ -57,4 +57,4 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 
 
 func _move() -> bool:
-    return character.navigator.navigate_to_position(return_position)
+    return character.navigator.navigate_to_position(return_position, false)

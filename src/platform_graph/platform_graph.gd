@@ -82,7 +82,8 @@ func calculate(character_name: String) -> void:
 # Uses A* search.
 func find_path(
         origin: PositionAlongSurface,
-        destination: PositionAlongSurface) -> PlatformGraphPath:
+        destination: PositionAlongSurface,
+        only_includes_bidirectional_edges := false) -> PlatformGraphPath:
     # TODO: Add an early-cutoff mechanism for paths that deviate too far from a
     #       straight-line. Otherwise, this will check every connected surface
     #       before knowing that a destination cannot be reached.
@@ -187,9 +188,17 @@ func find_path(
         var nodes_to_edges_for_current_node: Dictionary = \
                 nodes_to_nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
-            if _surface_exclusion_list.has(next_node.surface):
-                # This surface is marked as non-navigable.
+            var is_surface_excluded := \
+                    _surface_exclusion_list.has(next_node.surface)
+            var is_surface_bidirectionally_invalid: bool = \
+                    only_includes_bidirectional_edges and \
+                    !surfaces_to_surfaces[next_node.surface] \
+                            .has(current_node.surface)
+            
+            if is_surface_excluded or \
+                    is_surface_bidirectionally_invalid:
                 continue
+            
             for next_edge in nodes_to_edges_for_current_node[next_node]:
                 var new_actual_weight: float = \
                         current_weight + next_edge.get_weight()
@@ -577,8 +586,8 @@ func _calculate_inter_surface_edges_for_origin(
 func _on_inter_surface_edges_calculated() -> void:
     _dedup_nodes()
     _derive_surfaces_to_outbound_nodes()
-    _derive_surfaces_to_surfaces()
     _derive_nodes_to_nodes_to_edges()
+    _derive_surfaces_to_surfaces()
     _update_counts()
     _cleanup_edge_calc_results()
     collision_params.crash_test_dummy.set_platform_graph(self)
@@ -639,16 +648,6 @@ func _derive_surfaces_to_outbound_nodes() -> void:
         surfaces_to_outbound_nodes[surface] = nodes_set.values()
 
 
-func _derive_surfaces_to_surfaces() -> void:
-    surfaces_to_surfaces.clear()
-    for surface in surfaces_to_outbound_nodes:
-        var connected_surfaces := {}
-        for origin in surfaces_to_outbound_nodes[surface]:
-            for destination in nodes_to_nodes_to_edges[origin]:
-                connected_surfaces[destination.surface] = true
-        surfaces_to_surfaces[surface] = connected_surfaces
-
-
 func _derive_nodes_to_nodes_to_edges() -> void:
     # Set up edge mappings.
     for surface in surfaces_to_outbound_nodes:
@@ -669,6 +668,16 @@ func _derive_nodes_to_nodes_to_edges() -> void:
                 nodes_to_nodes_to_edges \
                         [edge.start_position_along_surface] \
                         [edge.end_position_along_surface].push_back(edge)
+
+
+func _derive_surfaces_to_surfaces() -> void:
+    surfaces_to_surfaces.clear()
+    for surface in surfaces_to_outbound_nodes:
+        var connected_surfaces := {}
+        for origin in surfaces_to_outbound_nodes[surface]:
+            for destination in nodes_to_nodes_to_edges[origin]:
+                connected_surfaces[destination.surface] = true
+        surfaces_to_surfaces[surface] = connected_surfaces
 
 
 func _cleanup_edge_calc_results() -> void:
@@ -830,8 +839,8 @@ func load_from_json_object(
             context)
     
     _derive_surfaces_to_outbound_nodes()
-    _derive_surfaces_to_surfaces()
     _derive_nodes_to_nodes_to_edges()
+    _derive_surfaces_to_surfaces()
     _update_counts()
     _cleanup_edge_calc_results()
     crash_test_dummy.set_platform_graph(self)

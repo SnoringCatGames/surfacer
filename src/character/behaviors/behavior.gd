@@ -13,7 +13,6 @@ signal deactivated
 export var is_active_at_start := false \
         setget _set_is_active_at_start
 
-# FIXME: -----------------------
 ## -   If true, the character may leave the starting surface in order to
 ##     run-away far enough.
 ## -   If false, the character will only run, at the furthest, to the end of the
@@ -21,7 +20,6 @@ export var is_active_at_start := false \
 export var can_leave_start_surface := true \
         setget _set_can_leave_start_surface
 
-# FIXME: -----------------------
 ## -   If true, the character will not navigate to a destination if they cannot
 ##     afterward navigate back to their starting position.
 export var only_navigates_reversible_paths := true \
@@ -253,7 +251,7 @@ func _attempt_move() -> void:
     assert(_is_ready_to_move,
             "Behavior._attempt_move must not be called before the character " +
             "and behavior are both ready.")
-    assert(character.surface_state.last_position_along_surface == \
+    assert(character.surface_state.last_position_along_surface.surface == \
                     character.reachable_basis_surface or \
             character.surface_state.last_position_along_surface.surface == \
                     null)

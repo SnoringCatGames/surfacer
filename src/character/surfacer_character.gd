@@ -407,7 +407,8 @@ func processed_action(name: String) -> bool:
 
 func _update_surface_state(preserves_just_changed_state := false) -> void:
     surface_state.update_for_actions(self, preserves_just_changed_state)
-    if surface_state.just_changed_surface:
+    if surface_state.just_changed_surface and \
+            surface_state.is_grabbing_a_surface:
         _update_reachable_surfaces(surface_state.grabbed_surface)
 
 

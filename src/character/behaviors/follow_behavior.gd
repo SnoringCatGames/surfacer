@@ -181,10 +181,16 @@ func _attempt_navigation() -> bool:
     
     var target_position: PositionAlongSurface = \
             follow_target.get_intended_position(position_type)
+    
+    var surface := \
+            target_position.surface if \
+            can_leave_start_surface else \
+            start_surface
+    
     var destination := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     target_position.target_point,
-                    target_position.surface,
+                    surface,
                     character.movement_params.collider_half_width_height,
                     true)
     
@@ -206,7 +212,9 @@ func _attempt_navigation() -> bool:
             _reached_max_distance = true
             return false
     
-    return character.navigator.navigate_to_position(destination)
+    return character.navigator.navigate_to_position(
+            destination,
+            only_navigates_reversible_paths)
 
 
 func _on_reached_max_distance() -> void:
