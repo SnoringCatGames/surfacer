@@ -37,6 +37,11 @@ var surfaces_to_outbound_nodes := {}
 ##         Array<Edge>>>
 var nodes_to_nodes_to_edges := {}
 
+## A mapping from each surface to all the other surfaces it's connected to by a
+## single outbound edge.
+## Dictionary<Surface, Dictionary<Surface, bool>>
+var surfaces_to_surfaces := {}
+
 # Dictionary<Surface, Array<InterSurfaceEdgesResult>>
 var surfaces_to_inter_surface_edges_results := {}
 
@@ -236,17 +241,43 @@ func find_path(
     return PlatformGraphPath.new(edges)
 
 
-# FIXME: LEFT OFF HERE: --------------------------------
-# - Also update Navigator in general to handle mid-flight changes to
-#   surface_exclusion_list.
-
 func get_all_reachable_surfaces(
         origin_surface: Surface,
         max_distance: float) -> Array:
     var max_distance_squared := max_distance * max_distance
     
-    # FIXME: LEFT OFF HERE: ---------------------
-    return []
+    var frontier := [origin_surface]
+    # Dictionary<Surface, bool>
+    var all_surfaces_considered := {}
+    
+    # Iterate through all surfaces that are close enough.
+    while !frontier.empty():
+        var next_surface: Surface = frontier.pop_back()
+        
+        for origin in surfaces_to_outbound_nodes[next_surface]:
+            for destination in nodes_to_nodes_to_edges[origin]:
+                var destination_surface: Surface = destination.surface
+                if all_surfaces_considered.has(destination_surface):
+                    continue
+                
+                var is_surface_close_enough: bool = \
+                        Sc.geometry.get_distance_squared_from_rect_to_rect(
+                                origin_surface.bounding_box,
+                                destination_surface.bounding_box) <= \
+                        max_distance_squared
+                
+                all_surfaces_considered[destination_surface] = \
+                        is_surface_close_enough
+                if is_surface_close_enough:
+                    frontier.push_back(destination_surface)
+    
+    # Collect the surfaces that were close enough.
+    var reachable_surfaces := []
+    for surface in all_surfaces_considered:
+        if all_surfaces_considered[surface]:
+            reachable_surfaces.push_back(surface)
+    
+    return reachable_surfaces
 
 
 func get_all_reversibly_reachable_surfaces(
@@ -254,8 +285,43 @@ func get_all_reversibly_reachable_surfaces(
         max_distance: float) -> Array:
     var max_distance_squared := max_distance * max_distance
     
-    # FIXME: LEFT OFF HERE: ---------------------
-    return []
+    var frontier := [origin_surface]
+    # Dictionary<Surface, bool>
+    var all_surfaces_considered := {}
+    
+    # Iterate through all surfaces that are close enough.
+    while !frontier.empty():
+        var next_surface: Surface = frontier.pop_back()
+        
+        for origin in surfaces_to_outbound_nodes[next_surface]:
+            for destination in nodes_to_nodes_to_edges[origin]:
+                var destination_surface: Surface = destination.surface
+                var does_destination_lead_back: bool = \
+                        surfaces_to_surfaces[destination_surface] \
+                        .has(next_surface)
+                
+                if !does_destination_lead_back or \
+                        all_surfaces_considered.has(destination_surface):
+                    continue
+                
+                var is_surface_close_enough: bool = \
+                        Sc.geometry.get_distance_squared_from_rect_to_rect(
+                                origin_surface.bounding_box,
+                                destination_surface.bounding_box) <= \
+                        max_distance_squared
+                
+                all_surfaces_considered[destination_surface] = \
+                        is_surface_close_enough
+                if is_surface_close_enough:
+                    frontier.push_back(destination_surface)
+    
+    # Collect the surfaces that were close enough.
+    var reachable_surfaces := []
+    for surface in all_surfaces_considered:
+        if all_surfaces_considered[surface]:
+            reachable_surfaces.push_back(surface)
+    
+    return reachable_surfaces
 
 
 func update_surface_exclusion(
@@ -281,6 +347,9 @@ func update_surface_exclusion(
             _surface_exclusion_list.erase(surface)
     
     if changed:
+        # FIXME: --------------------------------
+        # - Update SurfaceNavigator in general to handle mid-flight changes to
+        #   surface_exclusion_list.
         emit_signal("surface_exclusion_changed")
 
 
@@ -508,6 +577,7 @@ func _calculate_inter_surface_edges_for_origin(
 func _on_inter_surface_edges_calculated() -> void:
     _dedup_nodes()
     _derive_surfaces_to_outbound_nodes()
+    _derive_surfaces_to_surfaces()
     _derive_nodes_to_nodes_to_edges()
     _update_counts()
     _cleanup_edge_calc_results()
@@ -567,6 +637,16 @@ func _derive_surfaces_to_outbound_nodes() -> void:
                 nodes_set[cell_id] = edge.start_position_along_surface
         
         surfaces_to_outbound_nodes[surface] = nodes_set.values()
+
+
+func _derive_surfaces_to_surfaces() -> void:
+    surfaces_to_surfaces.clear()
+    for surface in surfaces_to_outbound_nodes:
+        var connected_surfaces := {}
+        for origin in surfaces_to_outbound_nodes[surface]:
+            for destination in nodes_to_nodes_to_edges[origin]:
+                connected_surfaces[destination.surface] = true
+        surfaces_to_surfaces[surface] = connected_surfaces
 
 
 func _derive_nodes_to_nodes_to_edges() -> void:
@@ -750,6 +830,7 @@ func load_from_json_object(
             context)
     
     _derive_surfaces_to_outbound_nodes()
+    _derive_surfaces_to_surfaces()
     _derive_nodes_to_nodes_to_edges()
     _update_counts()
     _cleanup_edge_calc_results()
