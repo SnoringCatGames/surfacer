@@ -341,11 +341,11 @@ func _find_path(
         var calculator: JumpFromSurfaceCalculator = \
                 Su.movement.edge_calculators["JumpFromSurfaceCalculator"]
         var velocity_start := JumpLandPositionsUtils.get_velocity_start(
-                    character.movement_params,
-                    path.origin.surface,
-                    true,
-                    false,
-                    true)
+                character.movement_params,
+                path.origin.surface,
+                true,
+                false,
+                true)
         velocity_start.y *= start_jump_boost_multiplier
         var jump_edge := calculator.calculate_edge(
                 null,

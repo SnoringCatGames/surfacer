@@ -10,10 +10,9 @@ const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := true
 const COULD_RETURN_TO_START_POSITION := true
 
-# FIXME: ------------------------
 ## -   If true, the collide trajectory will end with the character jumping onto
 ##     the destination.
-export var ends_with_a_jump := false
+export var ends_with_a_jump := true
 
 # FIXME: ---------------------------
 ## -   FIXME: --
@@ -95,7 +94,7 @@ func _move() -> bool:
         else:
             destination = SurfaceParser.find_closest_position_on_a_surface(
                     collision_target.position,
-                    self,
+                    character,
                     surface_reachability)
     else:
         destination = PositionAlongSurfaceFactory \
@@ -130,7 +129,7 @@ func _move() -> bool:
                 direction * ratio * original_distance
         destination = SurfaceParser.find_closest_position_on_a_surface(
                 target,
-                self,
+                character,
                 surface_reachability)
         
         # Prevent straying too far the start position.
@@ -145,3 +144,59 @@ func _move() -> bool:
     
     _reached_max_distance = true
     return false
+
+
+func _find_path(
+        destination: PositionAlongSurface,
+        possibly_includes_jump_at_start: bool) -> PlatformGraphPath:
+    var path := ._find_path(destination, possibly_includes_jump_at_start)
+    
+    if path == null:
+        return null
+    
+    if !ends_with_a_jump:
+        return path
+    
+    var end_edge: Edge = path.edges[path.edges.size() - 1]
+    
+    if !(end_edge is IntraSurfaceEdge):
+        # Don't bother trying to jump at the end, since the character is
+        # already ending with an air-borne edge.
+        return path
+    
+    var was_almost_ending_with_a_jump: bool = \
+            path.edges.size() > 1 and \
+            !(path.edges[path.edges.size() - 2] is JumpFromSurfaceEdge) and \
+            end_edge.distance < 4.0
+    
+    if !was_almost_ending_with_a_jump:
+        var is_end_edge_moving_leftward := \
+                end_edge.get_end().x - end_edge.get_start().x < 0
+        var calculator: JumpFromSurfaceCalculator = \
+                Su.movement.edge_calculators["JumpFromSurfaceCalculator"]
+        var velocity_start := JumpLandPositionsUtils.get_velocity_start(
+                character.movement_params,
+                path.destination.surface,
+                true,
+                is_end_edge_moving_leftward,
+                false)
+        var jump_edge := calculator.calculate_edge(
+                null,
+                character.graph.collision_params,
+                path.destination,
+                path.destination,
+                velocity_start)
+        
+        if jump_edge != null:
+            path.push_back(jump_edge)
+            var previous_edge := end_edge
+            var previous_velocity_end_x := previous_edge.velocity_end.x
+            calculator.optimize_edge_jump_position_for_path(
+                    character.graph.collision_params,
+                    path,
+                    path.edges.size() - 1,
+                    previous_velocity_end_x,
+                    previous_edge,
+                    jump_edge)
+    
+    return path
