@@ -494,6 +494,9 @@ static func _update_waypoint_velocity_and_time(
                 time_to_pass_through_waypoint_ignoring_others = \
                         vertical_step.time_step_end
             else:
+                var must_reach_destination_on_fall := \
+                        additional_high_waypoint_position != Vector2.INF or \
+                        waypoint.side == SurfaceSide.FLOOR
                 time_to_pass_through_waypoint_ignoring_others = \
                         VerticalMovementUtils \
                                 .calculate_time_to_jump_to_waypoint(
@@ -501,8 +504,7 @@ static func _update_waypoint_velocity_and_time(
                                         displacement_from_origin_to_waypoint,
                                         velocity_start_origin,
                                         can_hold_jump_button_at_origin,
-                                        additional_high_waypoint_position != \
-                                                Vector2.INF)
+                                        must_reach_destination_on_fall)
                 if is_inf(time_to_pass_through_waypoint_ignoring_others):
                     # We can't reach this waypoint.
                     return WaypointValidity.OUT_OF_REACH_FROM_ORIGIN

@@ -26,7 +26,10 @@ static func calculate_movement_duration(
     # Use only non-negative results.
     assert(min_duration >= 0.0)
     
-    if displacement == 0.0 and returns_lower_result and min_duration == 0.0:
+    if displacement == 0.0 and \
+            (returns_lower_result or \
+            expects_only_one_positive_result) and \
+            min_duration == 0.0:
         # The start position is the destination.
         return 0.0
     elif a == 0.0:
