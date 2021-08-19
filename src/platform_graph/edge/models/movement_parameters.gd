@@ -328,6 +328,17 @@ var reached_in_air_destination_distance_squared_threshold := \
 var max_edges_to_remove_from_path_for_opt_to_in_air_dest := 2 \
         setget _set_max_edges_to_remove_from_path_for_opt_to_in_air_dest
 
+## -   When accelerating horizontally, i.e., pressing sideways input, the
+##     character will face the direction of acceleration.
+## -   However, the character's horizontal velocity isn't necessarily in the
+##     same direction as their acceleration.
+## -   This means that the character can sometimes appear to face the wrong way
+##     when jumping/falling.
+## -   If this flag is enabled, an extra face-left/face-right input will be
+##     triggered after a move-left/move-right input ends and the player is
+##     facing the opposite direction from motion.
+var always_tries_to_face_direction_of_motion := true
+
 var max_distance_for_reachable_surface_tracking := 1024.0 \
         setget _set_max_distance_for_reachable_surface_tracking
 
