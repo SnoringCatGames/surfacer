@@ -102,7 +102,8 @@ func _update_expected_position_along_surface(
 func _check_did_just_reach_surface_destination(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,
-        playback) -> bool:
+        playback,
+        just_started_new_edge: bool) -> bool:
     return check_just_landed_on_expected_surface(
             surface_state,
             self.get_end_surface(),

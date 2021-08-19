@@ -86,7 +86,8 @@ func _update_expected_position_along_surface(
 func _check_did_just_reach_surface_destination(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,
-        playback) -> bool:
+        playback,
+        just_started_new_edge: bool) -> bool:
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration
     else:

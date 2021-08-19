@@ -6,6 +6,7 @@ extends Node2D
 signal activated
 signal deactivated
 
+const IGNORE_SHORT_EDGE_BEFORE_JUMP_DISTANCE_THRESHOLD := 4.0
 
 ## -   Whether this should be the default initial behavior for the
 ##     character.[br]
@@ -331,7 +332,8 @@ func _find_path(
             path.edges.size() > 1 and \
             path.edges[0] is IntraSurfaceEdge and \
             path.edges[1] is JumpFromSurfaceEdge and \
-            path.edges[0].distance < 4.0
+            path.edges[0].distance < \
+                    IGNORE_SHORT_EDGE_BEFORE_JUMP_DISTANCE_THRESHOLD
     
     # TODO: Possibly support paths starting with inter-surface edges.
     #       But then we'll need to also add a new intra-surface edge after our

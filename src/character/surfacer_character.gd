@@ -323,7 +323,7 @@ func _on_physics_process(delta: float) -> void:
 
 
 func _update_navigator(delta_scaled: float) -> void:
-    navigator.update()
+    navigator._update()
     
     # TODO: There's probably a more efficient way to do this.
     if navigator.actions_might_be_dirty:

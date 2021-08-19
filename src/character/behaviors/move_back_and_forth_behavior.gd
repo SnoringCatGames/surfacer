@@ -43,15 +43,20 @@ export(float, 0.0, 1.0) var max_ratio_for_destination_offset_from_ends := 0.0 \
         setget _set_max_ratio_for_destination_offset_from_ends
 
 var _is_next_move_minward := true
-var _destination := PositionAlongSurface.new()
 
 
-func _init().(
-        NAME,
-        IS_ADDED_MANUALLY,
-        INCLUDES_MID_MOVEMENT_PAUSE,
-        INCLUDES_POST_MOVEMENT_PAUSE,
-        COULD_RETURN_TO_START_POSITION) -> void:
+func _init(
+        name := NAME,
+        is_added_manually := IS_ADDED_MANUALLY,
+        includes_mid_movement_pause := INCLUDES_MID_MOVEMENT_PAUSE,
+        includes_post_movement_pause := INCLUDES_POST_MOVEMENT_PAUSE,
+        could_return_to_start_position := COULD_RETURN_TO_START_POSITION
+        ).(
+        name,
+        is_added_manually,
+        includes_mid_movement_pause,
+        includes_post_movement_pause,
+        could_return_to_start_position) -> void:
     # Randomize which direction the character moves first.
     _is_next_move_minward = randf() < 0.5
 
@@ -77,11 +82,16 @@ func _init().(
 
 
 func _move() -> bool:
+    var destination := _calculate_destination()
+    return _attempt_navigation_to_destination(destination)
+
+
+func _calculate_destination() -> PositionAlongSurface:
     # FIXME: ---------------------- Support can_leave_start_surface.
     
     var is_moving_minward := _is_next_move_minward
     _is_next_move_minward = !_is_next_move_minward
-
+    
     var is_surface_horizontal: bool = \
             start_surface.side == SurfaceSide.FLOOR or \
             start_surface.side == SurfaceSide.CEILING
@@ -164,14 +174,11 @@ func _move() -> bool:
             Vector2(sample, start_position.y) if \
             is_surface_horizontal else \
             Vector2(start_position.x, sample)
-    _destination.match_surface_target_and_collider(
-            start_surface,
+    return PositionAlongSurfaceFactory.create_position_offset_from_target_point(
             target_point,
+            start_surface,
             character.movement_params.collider_half_width_height,
-            true,
             true)
-    
-    return _attempt_navigation_to_destination(_destination)
 
 
 func _update_parameters() -> void:
