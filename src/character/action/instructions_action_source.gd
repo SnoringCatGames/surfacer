@@ -29,7 +29,7 @@ func update(
         # Handle any new key presses up till the current time.
         var new_instructions: Array = playback.update(
                 time_scaled,
-                navigation_state)
+                character)
         
         non_pressed_keys.clear()
         

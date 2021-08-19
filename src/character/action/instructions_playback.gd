@@ -7,7 +7,7 @@ const EXTRA_DELAY_TO_ALLOW_COLLISION_WITH_SURFACE := 0.25
 var edge: Edge
 var is_additive: bool
 var next_index: int
-var next_instruction: EdgeInstruction
+var _next_instruction: EdgeInstruction
 var start_time_scaled: float
 var previous_time_scaled: float
 var current_time_scaled: float
@@ -31,11 +31,11 @@ func start(scaled_time: float) -> void:
     previous_time_scaled = scaled_time
     current_time_scaled = scaled_time
     next_index = 0
-    next_instruction = \
+    _next_instruction = \
             edge.instructions.instructions[next_index] if \
             edge.instructions.instructions.size() > next_index else \
             null
-    is_on_last_instruction = next_instruction == null
+    is_on_last_instruction = _next_instruction == null
     is_finished = is_on_last_instruction
     active_key_presses = {}
     _next_active_key_presses = {}
@@ -43,49 +43,56 @@ func start(scaled_time: float) -> void:
 
 func update(
         scaled_time: float,
-        navigation_state: CharacterNavigationState) -> Array:
-    # TODO: If we don't ever need more complicated dynamic instruction updates
-    #       based on navigation state, then remove that param.
-    
+        character) -> Array:
     previous_time_scaled = current_time_scaled
     current_time_scaled = scaled_time
     
     active_key_presses = _next_active_key_presses.duplicate()
     
     var new_instructions := []
+    
     while !is_finished and \
-            _get_start_time_scaled_for_next_instruction() <= \
-                    scaled_time:
+            _get_start_time_scaled_for_next_instruction() <= scaled_time:
         if !is_on_last_instruction:
-            new_instructions.push_back(next_instruction)
-        increment()
+            _ensure_facing_correct_direction_before_update(
+                    new_instructions,
+                    character)
+            
+            new_instructions.push_back(_next_instruction)
+        
+        _increment()
+    
+    _ensure_facing_correct_direction_after_update(
+            new_instructions,
+            character)
+    
     return new_instructions
 
 
-func increment() -> void:
+func _increment() -> void:
     is_finished = is_on_last_instruction
     if is_finished:
         return
     
     # Update the set of active key presses.
-    if next_instruction.is_pressed:
-        _next_active_key_presses[next_instruction.input_key] = true
-        active_key_presses[next_instruction.input_key] = true
+    if _next_instruction.is_pressed:
+        _next_active_key_presses[_next_instruction.input_key] = true
+        active_key_presses[_next_instruction.input_key] = true
     else:
-        _next_active_key_presses[next_instruction.input_key] = false
-        active_key_presses[next_instruction.input_key] = \
+        _next_active_key_presses[_next_instruction.input_key] = false
+        active_key_presses[_next_instruction.input_key] = \
                 true if \
                 is_additive and \
-                active_key_presses.has(next_instruction.input_key) and \
-                active_key_presses[next_instruction.input_key] else \
+                active_key_presses.has(_next_instruction.input_key) and \
+                active_key_presses[_next_instruction.input_key] else \
                 false
     
     next_index += 1
-    next_instruction = \
+    _next_instruction = \
             edge.instructions.instructions[next_index] if \
             edge.instructions.instructions.size() > next_index else \
             null
-    is_on_last_instruction = next_instruction == null
+    is_on_last_instruction = _next_instruction == null
 
 
 func get_previous_elapsed_time_scaled() -> float:
@@ -110,6 +117,70 @@ func _get_start_time_scaled_for_next_instruction() -> float:
             duration_until_next_instruction += \
                     EXTRA_DELAY_TO_ALLOW_COLLISION_WITH_SURFACE
     else:
-        duration_until_next_instruction = next_instruction.time
+        duration_until_next_instruction = _next_instruction.time
     
     return start_time_scaled + duration_until_next_instruction
+
+
+func _ensure_facing_correct_direction_before_update(
+        new_instructions: Array,
+        character) -> void:
+    if character.movement_params \
+            .always_tries_to_face_direction_of_motion and \
+            next_index == 0 and \
+            (character.velocity.x < 0) != \
+                    (character.surface_state.horizontal_facing_sign < 0):
+        # At the start of edge playback, turn the character to face the
+        # initial direction they're moving in.
+        var turn_around_instruction := \
+                _create_instruction_to_face_direction_of_movement(
+                        0.0,
+                        character)
+        new_instructions.push_back(turn_around_instruction)
+
+
+func _ensure_facing_correct_direction_after_update(
+        new_instructions: Array,
+        character) -> void:
+    var just_released_move_sideways := false
+    var is_facing_left := false
+    
+    for instruction in new_instructions:
+        match instruction.input_key:
+            "ml":
+                is_facing_left = true
+                just_released_move_sideways = !instruction.is_pressed
+            "mr":
+                is_facing_left = false
+                just_released_move_sideways = !instruction.is_pressed
+            "fl":
+                is_facing_left = true
+            "fr":
+                is_facing_left = false
+            _:
+                pass
+    
+    if character.movement_params.always_tries_to_face_direction_of_motion and \
+            just_released_move_sideways and \
+            character.velocity.x < 0 != is_facing_left:
+        # Turn the character around, so they are facing the direction they're
+        # moving in.
+        var turn_around_instruction := \
+                _create_instruction_to_face_direction_of_movement(
+                        new_instructions.back().time,
+                        character)
+        new_instructions.push_back(turn_around_instruction)
+
+
+func _create_instruction_to_face_direction_of_movement(
+        time: float,
+        character) -> EdgeInstruction:
+    var input_key := \
+            "fl" if \
+            character.velocity.x < 0 else \
+            "fr"
+    
+    _next_active_key_presses[input_key] = true
+    active_key_presses[input_key] = true
+    
+    return EdgeInstruction.new(input_key, time, true)
