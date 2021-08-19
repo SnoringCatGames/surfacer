@@ -419,19 +419,16 @@ func _start_edge(
         _log(format_string_template % format_string_arguments, true)
     
     # Some instructions could be immediately skipped, depending on runtime
-    # state, so this gives us a change to move straight to the next edge.
-    update(
+    # state, so this gives us a chance to move straight to the next edge.
+    _update(
             true,
             is_starting_navigation_retry)
 
 
-func update(
+func _update(
         just_started_new_edge := false,
         is_starting_navigation_retry := false) -> void:
     if !navigation_state.is_currently_navigating:
-        # -   If we are still navigating, then most of this is updated by the
-        #     current Edge.
-        # -   If not, we do it here.
         navigation_state.just_ended = false
         navigation_state.just_reached_destination = false
         navigation_state.just_canceled = false

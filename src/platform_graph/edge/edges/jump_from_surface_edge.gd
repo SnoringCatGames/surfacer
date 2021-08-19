@@ -76,8 +76,13 @@ func get_animation_state_at_time(
 func _check_did_just_reach_surface_destination(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,
-        playback) -> bool:
-    return check_just_landed_on_expected_surface(
-            surface_state,
-            self.get_end_surface(),
-            playback)
+        playback,
+        just_started_new_edge: bool) -> bool:
+    var just_landed_on_expected_surface := \
+            check_just_landed_on_expected_surface(
+                    surface_state,
+                    self.get_end_surface(),
+                    playback)
+    return just_landed_on_expected_surface and \
+            (!just_started_new_edge or \
+            get_start_surface() != get_end_surface())

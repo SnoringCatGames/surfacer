@@ -191,7 +191,8 @@ func update_navigation_state(
                 _check_did_just_reach_destination(
                         navigation_state,
                         surface_state,
-                        playback)
+                        playback,
+                        just_started_new_edge)
         _update_expected_position_along_surface(
                 navigation_state,
                 playback.get_elapsed_time_scaled())
@@ -200,7 +201,8 @@ func update_navigation_state(
                 _check_did_just_reach_destination(
                         navigation_state,
                         surface_state,
-                        playback)
+                        playback,
+                        just_started_new_edge)
 
 
 # This enables sub-classes to provide custom logic regarding how and when a
@@ -295,23 +297,27 @@ func _update_expected_position_along_surface(
 func _check_did_just_reach_destination(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,
-        playback) -> bool:
+        playback,
+        just_started_new_edge: bool) -> bool:
     if end_position_along_surface.surface == null:
         return _check_did_just_reach_in_air_destination(
                 navigation_state,
                 surface_state,
-                playback)
+                playback,
+                just_started_new_edge)
     else:
         return _check_did_just_reach_surface_destination(
                 navigation_state,
                 surface_state,
-                playback)
+                playback,
+                just_started_new_edge)
 
 
 func _check_did_just_reach_surface_destination(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,
-        playback) -> bool:
+        playback,
+        just_started_new_edge: bool) -> bool:
     Sc.logger.error(
             "Abstract Edge._check_did_just_reach_surface_destination is not " +
             "implemented")
@@ -321,7 +327,8 @@ func _check_did_just_reach_surface_destination(
 func _check_did_just_reach_in_air_destination(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,
-        playback) -> bool:
+        playback,
+        just_started_new_edge: bool) -> bool:
     return surface_state.center_position.distance_squared_to(
             end_position_along_surface.target_point) < \
             movement_params \

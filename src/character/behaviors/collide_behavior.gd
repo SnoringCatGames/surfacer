@@ -167,7 +167,8 @@ func _find_path(
     var was_almost_ending_with_a_jump: bool = \
             path.edges.size() > 1 and \
             !(path.edges[path.edges.size() - 2] is JumpFromSurfaceEdge) and \
-            end_edge.distance < 4.0
+            end_edge.distance < \
+                    IGNORE_SHORT_EDGE_BEFORE_JUMP_DISTANCE_THRESHOLD
     
     if !was_almost_ending_with_a_jump:
         var is_end_edge_moving_leftward := \
