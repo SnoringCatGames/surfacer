@@ -85,7 +85,6 @@ var DEFAULT_BEHAVIOR_CLASSES := [
     ClimbAdjacentSurfacesBehavior,
     CollideBehavior,
     FollowBehavior,
-    JumpBackAndForthBehavior,
     MoveBackAndForthBehavior,
     DefaultBehavior,
     ReturnBehavior,

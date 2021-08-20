@@ -14,6 +14,10 @@ extends ScaffolderCharacter
 ##     -   (Optional) ProximityDetector[br]
 
 
+## -   If true, then the character's movement will include jumps in place of
+##     walking, when possible.
+export var is_bouncy := false
+
 var movement_params: MovementParameters
 # Dictionary<Surface, Surface>
 var possible_surfaces_set: Dictionary

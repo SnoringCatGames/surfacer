@@ -6,8 +6,6 @@ extends Node2D
 signal activated
 signal deactivated
 
-const IGNORE_SHORT_EDGE_BEFORE_JUMP_DISTANCE_THRESHOLD := 4.0
-
 ## -   Whether this should be the default initial behavior for the
 ##     character.[br]
 ## -   At most one behavior should be marked `is_active_at_start = true`.[br]
@@ -55,6 +53,12 @@ export var starts_with_a_jump := false \
 ##     vertical speed.
 export var start_jump_boost_multiplier := 1.0 \
         setget _set_start_jump_boost_multiplier
+
+# FIXME: --------------------------------------------- set this to true for fox
+## -   If true, the collide trajectory will end with the character jumping onto
+##     the destination.
+export var ends_with_a_jump := false \
+        setget _set_ends_with_a_jump
 
 ## -   If true, the character will return to their starting position after this
 ##     behavior has finished.
@@ -318,52 +322,20 @@ func _find_path(
         # Unable to navigate to the destination.
         return null
     
-    if !starts_with_a_jump or \
-            !possibly_includes_jump_at_start:
-        # We don't need to prepend a jump to the navigation.
-        return path
-    
-    if path.edges[0] is FromAirEdge:
-        # Don't bother trying to jump at the start, since the character is
-        # already starting in the air.
-        return path
-    
-    var was_almost_starting_with_a_jump: bool = \
-            path.edges.size() > 1 and \
-            path.edges[0] is IntraSurfaceEdge and \
-            path.edges[1] is JumpFromSurfaceEdge and \
-            path.edges[0].distance < \
-                    IGNORE_SHORT_EDGE_BEFORE_JUMP_DISTANCE_THRESHOLD
-    
-    # TODO: Possibly support paths starting with inter-surface edges.
-    #       But then we'll need to also add a new intra-surface edge after our
-    #       new jump edge.
-    if path.edges[0] is IntraSurfaceEdge and \
-            !was_almost_starting_with_a_jump:
-        var calculator: JumpFromSurfaceCalculator = \
-                Su.movement.edge_calculators["JumpFromSurfaceCalculator"]
-        var velocity_start := JumpLandPositionsUtils.get_velocity_start(
-                character.movement_params,
-                path.origin.surface,
-                true,
-                false,
-                true)
-        velocity_start.y *= start_jump_boost_multiplier
-        var jump_edge := calculator.calculate_edge(
-                null,
-                character.graph.collision_params,
-                path.origin,
-                path.origin,
-                velocity_start)
+    if character.is_bouncy:
+        character.navigator.bouncify_path(path)
         
-        if jump_edge != null:
-            path.push_front(jump_edge)
-            calculator.optimize_edge_land_position_for_path(
-                    character.graph.collision_params,
+    else:
+        if starts_with_a_jump and \
+                possibly_includes_jump_at_start:
+            # Try to prepend a jump to the navigation.
+            character.navigator.try_to_start_path_with_a_jump(
                     path,
-                    0,
-                    jump_edge,
-                    path.edges[1])
+                    start_jump_boost_multiplier)
+        
+        if ends_with_a_jump:
+            # Try to append a jump to the navigation.
+            character.navigator.try_to_end_path_with_a_jump(path)
     
     return path
 
@@ -590,6 +562,11 @@ func _set_starts_with_a_jump(value: bool) -> void:
 
 func _set_start_jump_boost_multiplier(value: float) -> void:
     start_jump_boost_multiplier = value
+    _update_parameters()
+
+
+func _set_ends_with_a_jump(value: bool) -> void:
+    ends_with_a_jump = value
     _update_parameters()
 
 
