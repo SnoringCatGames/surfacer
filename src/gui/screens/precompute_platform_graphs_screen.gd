@@ -82,6 +82,7 @@ func _initialize_next() -> void:
             Sc.level_config.get_level_config(level_id).scene_path,
             false,
             true)
+    Sc.level = level
     Sc.level_session.reset(level_id)
     $VBoxContainer/LevelWrapper/Viewport.add_child(level)
     var graph_parser := PlatformGraphParser.new()
