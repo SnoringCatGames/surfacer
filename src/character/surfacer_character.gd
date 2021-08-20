@@ -392,6 +392,11 @@ func _process_animation() -> void:
                     Sc.logger.error()
             else:
                 animator.play("RestOnWall")
+        SurfaceType.CEILING:
+            if actions.pressed_left or actions.pressed_right:
+                animator.play("CrawlOnCeiling")
+            else:
+                animator.play("RestOnCeiling")
         SurfaceType.AIR:
             if velocity.y > 0:
                 animator.play("JumpFall")
@@ -421,7 +426,12 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
 func _update_collision_mask() -> void:
     set_collision_mask_bit(
             Su.FALL_THROUGH_FLOORS_COLLISION_MASK_BIT,
-            !surface_state.is_falling_through_floors)
+            !surface_state.is_descending_through_floors and \
+                    velocity.y > 0)
+    set_collision_mask_bit(
+            Su.FALL_THROUGH_FLOORS_COLLISION_MASK_BIT,
+            !surface_state.is_ascending_through_ceilings and \
+                    velocity.y < 0)
     set_collision_mask_bit(
             Su.WALK_THROUGH_WALLS_COLLISION_MASK_BIT,
             surface_state.is_grabbing_walk_through_walls)

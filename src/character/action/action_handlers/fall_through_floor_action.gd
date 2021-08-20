@@ -17,9 +17,9 @@ func _init().(
 
 
 func process(character) -> bool:
-    if character.surface_state.is_falling_through_floors:
-        # TODO: If we were already falling through the air, then we should
-        #       instead maintain the previous velocity here.
+    if character.surface_state.is_triggering_fall_through:
+        # If we were standing on a floor and just triggered a fall-through,
+        # then give a little downward velocity boost.
         character.velocity.y = \
                 character.movement_params.fall_through_floor_velocity_boost
         return true

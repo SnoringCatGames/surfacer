@@ -38,8 +38,28 @@ var is_pressing_into_wall := false
 var is_pressing_away_from_wall := false
 
 var is_triggering_wall_grab := false
+var is_triggering_ceiling_grab := false
 var is_triggering_fall_through := false
-var is_falling_through_floors := false
+
+var is_descending_through_floors := false
+# FIXME: -------------------------------
+# - Add support for grabbing jump-through ceilings.
+#   - Not via a directional key.
+#   - Make this configurable for climb_adjacent_surfaces behavior.
+#     - Add a property that indicates probability of climbing through instead
+#       of onto.
+#     - Use the same probability for fall-through-floor.
+# TODO:
+# - Create support for a ceiling_jump_up_action.gd?
+#   - Might need a new surface state property called
+#     is_triggering_jump_up_through, which would be similar to
+#     is_triggering_fall_through.
+# - Also create support for transitioning from standing-on-fall-through-floor
+#   to clinging-to-it-from-underneath and vice versa?
+#   - This might require adding support for the concept of a multi-frame
+#     action?
+#   - And this might require adding new Edge sub-classes for either direction?
+var is_ascending_through_ceilings := false
 var is_grabbing_walk_through_walls := false
 
 var which_wall := SurfaceSide.NONE
@@ -92,6 +112,26 @@ func release_wall(character) -> void:
     if is_touching_floor:
         is_grabbing_floor = true
         just_grabbed_floor = true
+        just_grabbed_a_surface = true
+    else:
+        is_grabbing_a_surface = false
+
+
+func release_ceiling(character) -> void:
+    if !is_grabbing_ceiling:
+        return
+    
+    is_grabbing_ceiling = false
+    
+    # FIXME: ------ Add support for an ascend-through ceiling input.
+    is_ascending_through_ceilings = true
+    
+    if is_triggering_wall_grab:
+        is_grabbing_wall = true
+        is_grabbing_left_wall = is_touching_left_wall
+        is_grabbing_right_wall = is_touching_right_wall
+        just_grabbed_left_wall = is_touching_left_wall
+        just_grabbed_right_wall = is_touching_right_wall
         just_grabbed_a_surface = true
     else:
         is_grabbing_a_surface = false
@@ -273,6 +313,10 @@ func _update_touched_surfaces(character) -> void:
 func _update_surface_actions(
         character,
         preserves_just_changed_state := false) -> void:
+    var touching_ceiling_and_pressing_up: bool = \
+            is_touching_ceiling and character.actions.pressed_up
+    is_triggering_ceiling_grab = touching_ceiling_and_pressing_up
+    
     # Flip the horizontal direction of the animation according to which way the
     # character is facing.
     if character.actions.pressed_face_right:
@@ -319,39 +363,64 @@ func _update_surface_actions(
             (is_pressing_into_wall or \
             facing_into_wall_and_pressing_up or \
             facing_into_wall_and_pressing_grab) and \
-            !touching_floor_and_pressing_down
+            !touching_floor_and_pressing_down and \
+            !is_triggering_ceiling_grab
     
     is_triggering_fall_through = \
+            is_touching_floor and \
             character.actions.pressed_down and \
             character.actions.just_pressed_jump
     
+    # Whether we are grabbing a ceiling.
+    is_grabbing_ceiling = \
+            character.movement_params.can_grab_ceilings and \
+            is_touching_ceiling and \
+            (is_grabbing_ceiling or \
+                    is_triggering_ceiling_grab)
+    
     # Whether we are grabbing a wall.
     is_grabbing_wall = \
-            character.movement_params.can_grab_walls and (
-                is_touching_wall and \
-                (is_grabbing_wall or is_triggering_wall_grab) and \
-                !touching_floor_and_pressing_down
-            )
+            character.movement_params.can_grab_walls and \
+            is_touching_wall and \
+            (is_grabbing_wall or \
+                    is_triggering_wall_grab) and \
+            !touching_floor_and_pressing_down and \
+            !is_triggering_ceiling_grab
     
-    if is_grabbing_wall:
-        surface_type = SurfaceType.WALL
-    elif is_grabbing_floor:
+    if is_grabbing_floor:
         surface_type = SurfaceType.FLOOR
+    elif is_grabbing_wall:
+        surface_type = SurfaceType.WALL
+    elif is_grabbing_ceiling:
+        surface_type = SurfaceType.CEILING
     else:
         surface_type = SurfaceType.AIR
     
     # Whether we should fall through fall-through floors.
-    if is_grabbing_wall:
-        is_falling_through_floors = character.actions.pressed_down
-    elif is_touching_floor:
-        is_falling_through_floors = is_triggering_fall_through
-    else:
-        is_falling_through_floors = character.actions.pressed_down
+    match surface_type:
+        SurfaceType.FLOOR:
+            is_descending_through_floors = is_triggering_fall_through
+        SurfaceType.WALL:
+            is_descending_through_floors = character.actions.pressed_down
+        SurfaceType.CEILING:
+            is_descending_through_floors = false
+        SurfaceType.AIR, \
+        SurfaceType.OTHER:
+            is_descending_through_floors = character.actions.pressed_down
+        _:
+            Sc.logger.error()
+    
+    # FIXME: ------- Add support for an ascend-through ceiling input.
+    # Whether we should ascend-up through jump-through ceilings.
+    is_ascending_through_ceilings = \
+            !character.movement_params.can_grab_ceilings or \
+                (!is_grabbing_ceiling and true)
     
     # Whether we should fall through fall-through floors.
     is_grabbing_walk_through_walls = \
             character.movement_params.can_grab_walls and \
-                (is_grabbing_wall or character.actions.pressed_up)
+                (is_grabbing_wall or \
+                        character.actions.pressed_up)
 
 
 func _update_which_side_is_grabbed(
@@ -659,12 +728,14 @@ func update_for_initial_surface_attachment(
     is_grabbing_wall = is_touching_wall
     is_grabbing_a_surface = is_touching_a_surface
     
-    surface_type = \
-            SurfaceType.FLOOR if \
-            is_grabbing_floor else \
-            SurfaceType.WALL if \
-            is_grabbing_wall else \
-            SurfaceType.OTHER
+    if is_grabbing_floor:
+        surface_type = SurfaceType.FLOOR
+    elif is_grabbing_wall:
+        surface_type = SurfaceType.WALL
+    elif is_grabbing_ceiling:
+        surface_type = SurfaceType.CEILING
+    else:
+        surface_type = SurfaceType.AIR
     
     surface_grab = SurfaceTouch.new()
     surface_grab.surface = surface

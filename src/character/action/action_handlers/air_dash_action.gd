@@ -5,7 +5,7 @@ extends CharacterActionHandler
 const NAME := "AirDashAction"
 const TYPE := SurfaceType.AIR
 const USES_RUNTIME_PHYSICS := true
-const PRIORITY := 330
+const PRIORITY := 430
 
 
 func _init().(
