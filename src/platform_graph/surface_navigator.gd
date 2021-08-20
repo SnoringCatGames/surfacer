@@ -396,7 +396,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                                 true)
                 jump_edge = calculator.calculate_edge(
                         null,
-                        character.graph.collision_params,
+                        graph.collision_params,
                         jump_origin,
                         jump_destination,
                         velocity_start)
@@ -489,6 +489,7 @@ func try_to_start_path_with_a_jump(
                     0,
                     jump_edge,
                     path.edges[1])
+            path.update_distance_and_duration()
             return true
     
     return false
@@ -521,7 +522,7 @@ func try_to_end_path_with_a_jump(path: PlatformGraphPath) -> bool:
                 false)
         var jump_edge := calculator.calculate_edge(
                 null,
-                character.graph.collision_params,
+                graph.collision_params,
                 path.destination,
                 path.destination,
                 velocity_start)
@@ -531,12 +532,19 @@ func try_to_end_path_with_a_jump(path: PlatformGraphPath) -> bool:
             var previous_edge := end_edge
             var previous_velocity_end_x := previous_edge.velocity_end.x
             calculator.optimize_edge_jump_position_for_path(
-                    character.graph.collision_params,
+                    graph.collision_params,
                     path,
                     path.edges.size() - 1,
                     previous_velocity_end_x,
                     previous_edge,
                     jump_edge)
+            var intra_surface_edge := IntraSurfaceEdge.new(
+                    jump_edge.end_position_along_surface,
+                    jump_edge.end_position_along_surface,
+                    Vector2(jump_edge.velocity_end.x, 0.0),
+                    movement_params)
+            path.edges.push_back(intra_surface_edge)
+            path.update_distance_and_duration()
             return true
     
     return false
