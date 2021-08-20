@@ -54,7 +54,6 @@ export var starts_with_a_jump := false \
 export var start_jump_boost_multiplier := 1.0 \
         setget _set_start_jump_boost_multiplier
 
-# FIXME: --------------------------------------------- set this to true for fox
 ## -   If true, the collide trajectory will end with the character jumping onto
 ##     the destination.
 export var ends_with_a_jump := false \
