@@ -23,7 +23,6 @@ const DEFAULT_ACTION_HANDLER_CLASSES := [
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_default_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_fall_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_jump_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/wall_walk_action.gd"),
 ]
 
 const DEFAULT_EDGE_CALCULATOR_CLASSES := [
@@ -49,6 +48,7 @@ var walk_acceleration_default := 8000.0
 var in_air_horizontal_acceleration_default := 2500.0
 var climb_up_speed_default := -230.0
 var climb_down_speed_default := 120.0
+var ceiling_crawl_speed_default := 230.0
 
 var friction_coefficient_default := 1.25
 
@@ -123,6 +123,9 @@ func _register_manifest(manifest: Dictionary) -> void:
     if manifest.has("climb_down_speed_default"):
         self.climb_down_speed_default = \
                 manifest.climb_down_speed_default
+    if manifest.has("ceiling_crawl_speed_default"):
+        self.ceiling_crawl_speed_default = \
+                manifest.ceiling_crawl_speed_default
     if manifest.has("friction_coefficient_default"):
         self.friction_coefficient_default = \
                 manifest.friction_coefficient_default
@@ -193,6 +196,7 @@ func _validate_configuration() -> void:
     assert(Su.movement.in_air_horizontal_acceleration_default >= 0)
     assert(Su.movement.climb_up_speed_default <= 0)
     assert(Su.movement.climb_down_speed_default >= 0)
+    assert(Su.movement.ceiling_crawl_speed_default >= 0)
     
     assert(Su.movement.jump_boost_default <= 0)
     assert(Su.movement.wall_jump_horizontal_boost_default >= 0 and \
@@ -292,7 +296,6 @@ func get_default_action_handler_names(
     if movement_params.can_grab_walls:
         names.push_back("WallClimbAction")
         names.push_back("WallDefaultAction")
-        names.push_back("WallWalkAction")
         if movement_params.can_jump:
             names.push_back("WallFallAction")
             names.push_back("WallJumpAction")

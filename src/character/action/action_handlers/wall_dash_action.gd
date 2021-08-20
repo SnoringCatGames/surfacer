@@ -5,7 +5,7 @@ extends CharacterActionHandler
 const NAME := "WallDashAction"
 const TYPE := SurfaceType.WALL
 const USES_RUNTIME_PHYSICS := true
-const PRIORITY := 160
+const PRIORITY := 150
 
 
 func _init().(

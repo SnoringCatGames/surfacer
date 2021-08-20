@@ -46,6 +46,8 @@ var climb_up_speed_multiplier := 1.0 \
         setget _set_climb_up_speed_multiplier
 var climb_down_speed_multiplier := 1.0 \
         setget _set_climb_down_speed_multiplier
+var ceiling_crawl_speed_multiplier := 1.0 \
+        setget _set_ceiling_crawl_speed_multiplier
 
 var friction_coefficient_multiplier := 1.0 \
         setget _set_friction_coefficient_multiplier
@@ -56,6 +58,8 @@ var wall_jump_horizontal_boost_multiplier := 1.0 \
         setget _set_wall_jump_horizontal_boost_multiplier
 var wall_fall_horizontal_boost_multiplier := 1.0 \
         setget _set_wall_fall_horizontal_boost_multiplier
+var ceiling_fall_velocity_boost := 100.0 \
+        setget _set_ceiling_fall_velocity_boost
 
 var max_horizontal_speed_default_multiplier := 1.0 \
         setget _set_max_horizontal_speed_default_multiplier
@@ -404,6 +408,7 @@ var walk_acceleration: float
 var in_air_horizontal_acceleration: float
 var climb_up_speed: float
 var climb_down_speed: float
+var ceiling_crawl_speed: float
 
 var friction_coefficient: float
 
@@ -631,6 +636,9 @@ func _validate_parameters() -> void:
         _set_configuration_warning(
                 "wall_fall_horizontal_boost must not be greater than " +
                 "max_horizontal_speed_default.")
+    elif ceiling_fall_velocity_boost < 0:
+        _set_configuration_warning(
+                "ceiling_fall_velocity_boost must be non-negative.")
     elif walk_acceleration < 0:
         _set_configuration_warning(
                 "walk_acceleration must be non-negative.")
@@ -640,6 +648,9 @@ func _validate_parameters() -> void:
     elif climb_down_speed < 0:
         _set_configuration_warning(
                 "climb_down_speed must be non-negative.")
+    elif ceiling_crawl_speed < 0:
+        _set_configuration_warning(
+                "ceiling_crawl_speed must be non-negative.")
     elif max_horizontal_speed_default < 0:
         _set_configuration_warning(
                 "max_horizontal_speed_default must be non-negative.")
@@ -728,6 +739,9 @@ func _derive_parameters() -> void:
     climb_down_speed = \
             climb_down_speed_multiplier * \
             Su.movement.climb_down_speed_default
+    ceiling_crawl_speed = \
+            ceiling_crawl_speed_multiplier * \
+            Su.movement.ceiling_crawl_speed_default
     friction_coefficient = \
             friction_coefficient_multiplier * \
             Su.movement.friction_coefficient_default
@@ -908,6 +922,11 @@ func _set_climb_down_speed_multiplier(value: float) -> void:
     _update_parameters()
 
 
+func _set_ceiling_crawl_speed_multiplier(value: float) -> void:
+    ceiling_crawl_speed_multiplier = value
+    _update_parameters()
+
+
 func _set_friction_coefficient_multiplier(value: float) -> void:
     friction_coefficient_multiplier = value
     _update_parameters()
@@ -925,6 +944,11 @@ func _set_wall_jump_horizontal_boost_multiplier(value: float) -> void:
 
 func _set_wall_fall_horizontal_boost_multiplier(value: float) -> void:
     wall_fall_horizontal_boost_multiplier = value
+    _update_parameters()
+
+
+func _set_ceiling_fall_velocity_boost(value: float) -> void:
+    ceiling_fall_velocity_boost = value
     _update_parameters()
 
 

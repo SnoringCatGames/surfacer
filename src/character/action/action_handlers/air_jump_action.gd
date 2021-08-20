@@ -5,7 +5,7 @@ extends CharacterActionHandler
 const NAME := "AirJumpAction"
 const TYPE := SurfaceType.AIR
 const USES_RUNTIME_PHYSICS := true
-const PRIORITY := 320
+const PRIORITY := 420
 
 
 func _init().(

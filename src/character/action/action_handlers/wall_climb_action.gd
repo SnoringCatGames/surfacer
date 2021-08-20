@@ -5,7 +5,7 @@ extends CharacterActionHandler
 const NAME := "WallClimbAction"
 const TYPE := SurfaceType.WALL
 const USES_RUNTIME_PHYSICS := true
-const PRIORITY := 150
+const PRIORITY := 140
 
 
 func _init().(
@@ -18,8 +18,7 @@ func _init().(
 
 func process(character) -> bool:
     if !character.processed_action(WallJumpAction.NAME) and \
-            !character.processed_action(WallFallAction.NAME) and \
-            !character.processed_action(WallWalkAction.NAME):
+            !character.processed_action(WallFallAction.NAME):
         if character.actions.pressed_up:
             character.velocity.y = character.movement_params.climb_up_speed
             return true

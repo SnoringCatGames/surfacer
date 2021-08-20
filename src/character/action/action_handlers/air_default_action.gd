@@ -5,7 +5,7 @@ extends CharacterActionHandler
 const NAME := "AirDefaultAction"
 const TYPE := SurfaceType.AIR
 const USES_RUNTIME_PHYSICS := true
-const PRIORITY := 310
+const PRIORITY := 410
 
 
 func _init().(
@@ -42,8 +42,9 @@ func process(character) -> bool:
             character.surface_state.horizontal_acceleration_sign,
             character.movement_params)
     
-    # Hit ceiling.
-    if character.surface_state.is_touching_ceiling:
+    # Bouncing off ceiling.
+    if character.surface_state.is_touching_ceiling and \
+            !character.surface_state.is_grabbing_ceiling:
         character.is_rising_from_jump = false
         character.velocity.y = \
                 CharacterActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
