@@ -68,6 +68,8 @@ var graphs: Array
 # Dictionary<String, PlatformGraphItemController>
 var graph_item_controllers := {}
 
+var last_selected_character_name := Sc.characters.default_character_name
+
 var root: TreeItem
 
 var _should_be_populated := false

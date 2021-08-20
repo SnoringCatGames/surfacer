@@ -1008,7 +1008,7 @@ static func find_closest_position_on_a_surface(
         character,
         surface_reachability: int,
         max_distance_squared_threshold := INF) -> PositionAlongSurface:
-    var surfaces: Array
+    var surfaces
     match surface_reachability:
         SurfaceReachability.ANY:
             surfaces = character.possible_surfaces_set
