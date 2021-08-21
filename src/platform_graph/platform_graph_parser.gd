@@ -391,4 +391,5 @@ func _get_os_path(includes_debug_only_state: bool) -> String:
 
 static func get_os_directory_path() -> String:
     return ProjectSettings.globalize_path("res://") + \
+            Sc.metadata.base_path + \
             PLATFORM_GRAPHS_DIRECTORY_NAME
