@@ -62,13 +62,13 @@ export var ends_with_a_jump := false \
 ## -   If true, the character will return to their starting position after this
 ##     behavior has finished.
 ## -   If true, then `only_navigates_reversible_paths` must also be true.
-var returns_to_character_start_position := true \
+var returns_to_character_start_position := false \
         setget _set_returns_to_character_start_position
 
 ## -   If true, after this behavior has finished, the character will return to
 ##     the position they were at before triggering this behavior.
 ## -   If true, then `only_navigates_reversible_paths` must also be true.
-var returns_to_pre_behavior_position := false \
+var returns_to_pre_behavior_position := true \
         setget _set_returns_to_pre_behavior_position
 
 ## The minimum amount of time to pause between movements.
