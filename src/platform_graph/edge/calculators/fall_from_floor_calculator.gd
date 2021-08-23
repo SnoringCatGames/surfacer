@@ -434,7 +434,7 @@ static func _prepend_walk_to_fall_off_portion(
         current_frame_position.x = frame_position_x
         current_frame_position.y = frame_position_y
         current_frame_velocity += acceleration * Time.PHYSICS_TIME_STEP
-        clamp(current_frame_velocity.x,
+        current_frame_velocity.x = clamp(current_frame_velocity.x,
                 -movement_params.max_horizontal_speed_default,
                 movement_params.max_horizontal_speed_default)
 
