@@ -140,7 +140,8 @@ static func get_collision_tile_map_coord(
         is_touching_ceiling: bool,
         is_touching_left_wall: bool,
         is_touching_right_wall: bool,
-        allows_errors := false) -> void:
+        allows_errors := false,
+        is_nested_call := false) -> void:
     var half_cell_size := tile_map.cell_size / 2.0
     var used_rect := tile_map.get_used_rect()
     var tile_map_top_left_position_world_coord := \
@@ -166,7 +167,6 @@ static func get_collision_tile_map_coord(
     
     var surface_side := SurfaceSide.NONE
     var tile_coord := Vector2.INF
-    var warning_message := ""
     var error_message := ""
     
     var top_left_cell_coord: Vector2
@@ -443,24 +443,29 @@ static func get_collision_tile_map_coord(
     result.surface_side = surface_side
     result.error_message = error_message
     
+    if !error_message.empty() and \
+            !is_nested_call:
+        # TODO: Will this always work? Or should we instead/also try just
+        #       flipping one direction at a time?
+        var nested_is_touching_floor := is_touching_ceiling
+        var nested_is_touching_ceiling := is_touching_floor
+        var nested_is_touching_left_wall := is_touching_right_wall
+        var nested_is_touching_right_wall := is_touching_left_wall
+        get_collision_tile_map_coord(
+                result,
+                collision_position,
+                tile_map,
+                nested_is_touching_floor,
+                nested_is_touching_ceiling,
+                nested_is_touching_left_wall,
+                nested_is_touching_right_wall,
+                allows_errors,
+                true)
+    
     if !allows_errors and \
-            (!error_message.empty() or \
-            !warning_message.empty()):
-        var first_statement: String
-        var second_statement: String
-        if !error_message.empty():
-            first_statement = "ERROR: INVALID COLLISION TILEMAP STATE"
-            second_statement = error_message
-        elif !warning_message.empty():
-            first_statement = "WARNING: UNUSUAL COLLISION TILEMAP STATE"
-            second_statement = warning_message
-        else:
-            first_statement = "WARNING: UNUSUAL COLLISION TILEMAP STATE"
-            second_statement = (
-                    "Godot's underlying collision engine presumably " +
-                    "calculated an incorrect result. This usually happens " +
-                    "when the character is sliding along a corner.")
-        var print_message := """%s: 
+            !error_message.empty() and \
+            !is_nested_call:
+        var print_message := """ERROR: INVALID COLLISION TILEMAP STATE: 
             %s; 
             collision_position=%s 
             is_touching_floor=%s 
@@ -482,8 +487,7 @@ static func get_collision_tile_map_coord(
             is_there_a_tile_at_bottom=%s 
             tile_coord=%s 
             """ % [
-                first_statement,
-                second_statement,
+                error_message,
                 collision_position,
                 is_touching_floor,
                 is_touching_ceiling,
