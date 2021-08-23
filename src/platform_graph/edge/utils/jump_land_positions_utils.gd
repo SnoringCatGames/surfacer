@@ -812,7 +812,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                 needs_extra_jump_duration,
                                                 less_likely_to_be_valid)
                     
-                SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+                SurfaceSide.LEFT_WALL, \
+                SurfaceSide.RIGHT_WALL:
                     # Jump from a floor, land on a wall.
                     # https://github.com/snoringcatgames/surfacer/tree/master/docs/
                     #         jump-land-positions-floor-to-wall.png
@@ -1559,7 +1560,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                 _:
                     Sc.logger.error("Unknown land surface side (jump from floor)")
             
-        SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
             var is_jumping_from_left_wall := \
                     jump_surface.side == SurfaceSide.LEFT_WALL
             
@@ -1819,7 +1821,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 velocity_start,
                                 all_jump_land_positions)
                     
-                SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+                SurfaceSide.LEFT_WALL, \
+                SurfaceSide.RIGHT_WALL:
                     # Jump from a wall, land on a wall.
                     # https://github.com/snoringcatgames/surfacer/tree/master/docs/
                     #         jump-land-positions-wall-to-same-wall.png
@@ -2193,10 +2196,137 @@ static func calculate_jump_land_positions_for_surface_pair(
                 SurfaceSide.CEILING:
                     # Jump from a wall, land on a ceiling.
                     
-                    # TODO: Implement ceiling use-cases.
-                    Sc.logger.error( \
-                            "calculate_jump_land_positions_for_surface_pair " +
-                            "ceiling cases not implemented yet")
+                    var is_wall_fully_higher_than_ceiling := \
+                            jump_surface_bottom_bound < land_surface_center.y
+                    var is_wall_fully_lower_than_ceiling := \
+                            jump_surface_top_bound > land_surface_center.y
+                    var is_ceiling_fully_in_front_of_wall := \
+                            is_jumping_from_left_wall and \
+                            jump_surface_center.x < land_surface_left_bound or \
+                            !is_jumping_from_left_wall and \
+                            jump_surface_center.x > land_surface_right_bound
+                    
+                    var is_there_room_to_land_in_front_of_wall := \
+                            land_surface_right_bound > \
+                            jump_surface_center.x + character_half_width_horizontal_offset if \
+                            is_jumping_from_left_wall else \
+                            land_surface_left_bound < \
+                            jump_surface_center.x - character_half_width_horizontal_offset
+                    
+                    if !is_wall_fully_higher_than_ceiling:
+                        if is_there_room_to_land_in_front_of_wall:
+                            # There is room to land on the ceiling in front of the wall.
+                            
+                            var jump_basis: Vector2
+                            if is_wall_fully_lower_than_ceiling:
+                                jump_basis = jump_surface_top_end_wrapper.target_point
+                            else:
+                                jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
+                                        Vector2(INF, land_surface_near_end_wrapper.target_point.y),
+                                        jump_surface,
+                                        movement_params.collider_half_width_height)
+                            
+                            var goal_x := jump_basis.x
+                            var land_basis: Vector2 = \
+                                    Sc.geometry.project_point_onto_surface_with_offset(
+                                            Vector2(goal_x, INF),
+                                            land_surface,
+                                            movement_params.collider_half_width_height)
+                            var horizontal_movement_distance := \
+                                    _calculate_horizontal_movement_distance(
+                                            movement_params,
+                                            jump_basis,
+                                            land_basis,
+                                            velocity_start,
+                                            is_a_jump_calculator,
+                                            false)
+                            goal_x = \
+                                    jump_basis.x + horizontal_movement_distance if \
+                                    is_jumping_from_left_wall else \
+                                    jump_basis.x - horizontal_movement_distance
+                            var land_position := _create_surface_interior_position(
+                                    goal_x,
+                                    land_surface,
+                                    movement_params.collider_half_width_height,
+                                    land_surface_left_end_wrapper,
+                                    land_surface_right_end_wrapper)
+                            land_basis = land_position.target_point
+                            var vertical_movement_displacement := \
+                                    _calculate_vertical_movement_displacement(
+                                            movement_params,
+                                            jump_basis,
+                                            land_basis,
+                                            velocity_start,
+                                            is_a_jump_calculator)
+                            var goal_y := \
+                                    land_basis.y - \
+                                    vertical_movement_displacement
+                            var fail_if_outside_of_bounds := true
+                            var jump_position := _create_surface_interior_position(
+                                    goal_y,
+                                    jump_surface,
+                                    movement_params.collider_half_width_height,
+                                    jump_surface_top_end_wrapper,
+                                    jump_surface_bottom_end_wrapper,
+                                    fail_if_outside_of_bounds)
+                            if jump_position != null:
+                                var jump_land_positions := _create_jump_land_positions(
+                                        movement_params,
+                                        jump_position,
+                                        land_position,
+                                        velocity_start,
+                                        all_jump_land_positions)
+                            
+                        elif is_wall_fully_lower_than_ceiling:
+                            # There is not room to land on the ceiling in front of the wall.
+                            # 
+                            # That means that we need to move back around over the wall in
+                            # order to land on the ceiling.
+                            
+                            var land_position := \
+                                    land_surface_right_end_wrapper if \
+                                    is_jumping_from_left_wall else \
+                                    land_surface_left_end_wrapper
+                            var jump_basis := jump_surface_top_end_wrapper.target_point
+                            var land_basis := land_position.target_point
+                            var vertical_movement_displacement := \
+                                    _calculate_vertical_movement_displacement(
+                                            movement_params,
+                                            jump_basis,
+                                            land_basis,
+                                            velocity_start,
+                                            is_a_jump_calculator)
+                            var goal_y := \
+                                    land_basis.y - \
+                                    vertical_movement_displacement
+                            var fail_if_outside_of_bounds := true
+                            var jump_position := _create_surface_interior_position(
+                                    goal_y,
+                                    jump_surface,
+                                    movement_params.collider_half_width_height,
+                                    jump_surface_top_end_wrapper,
+                                    jump_surface_bottom_end_wrapper,
+                                    fail_if_outside_of_bounds)
+                            if jump_position != null:
+                                var jump_land_positions := _create_jump_land_positions(
+                                        movement_params,
+                                        jump_position,
+                                        land_position,
+                                        velocity_start,
+                                        all_jump_land_positions)
+                            
+                        else:
+                            # The ceiling is behind and not above the wall.
+                            
+                            # Return no valid points, since we cannot reach it.
+                            pass
+                        
+                    else:
+                        # Jumping from a higher wall to a lower ceiling.
+                        
+                        # Return no valid points, since we cannot move upward
+                        # after descending down to the ceiling.
+                        pass
                     
                 _:
                     Sc.logger.error("Unknown land surface side (jump from wall)")
@@ -2205,19 +2335,256 @@ static func calculate_jump_land_positions_for_surface_pair(
             match land_surface.side:
                 SurfaceSide.FLOOR:
                     # Jump from a ceiling, land on a floor.
+                    # Similar to:
+                    # https://github.com/snoringcatgames/surfacer/tree/master/docs/jump-land-positions-floor-to-ceiling.png
                     
-                    # TODO: Implement ceiling use-cases.
-                    Sc.logger.error(
-                            "calculate_jump_land_positions_for_surface_pair " +
-                            "ceiling cases not implemented yet")
+                    if is_jump_surface_higher:
+                        var do_surfaces_overlap_horizontally := \
+                                jump_surface_left_bound < land_surface_right_bound and \
+                                jump_surface_right_bound > land_surface_left_bound
+                        
+                        if !do_surfaces_overlap_horizontally:
+                            # The surfaces don't overlap horizontally.
+                            # 
+                            # There is then only one pair we consider:
+                            # - The closest ends.
+                            
+                            var jump_position := jump_surface_near_end_wrapper
+                            var land_position := land_surface_near_end_wrapper
+                            
+                            var does_velocity_start_moving_leftward := \
+                                    !is_jump_surface_more_to_the_left
+                            var velocity_start := get_velocity_start(
+                                    movement_params,
+                                    jump_surface,
+                                    is_a_jump_calculator,
+                                    does_velocity_start_moving_leftward,
+                                    false)
+                            
+                            var min_movement_jump_land_positions := _create_jump_land_positions(
+                                    movement_params,
+                                    jump_position,
+                                    land_position,
+                                    velocity_start,
+                                    all_jump_land_positions)
+                            
+                        else:
+                            # The surfaces overlap horizontally.
+                            # 
+                            # - There are then three likely position pairs we consider:
+                            #   - Positions at the right-most x-coordinate of overlap.
+                            #   - Positions at the left-most x-coordinate of overlap.
+                            #   - The closest positions between the two surfaces (assuming they're
+                            #     distinct from the above two pairs).
+                            # - We only consider start velocity with zero horizontal speed.
+                            # - Since we only consider start velocity of zero, we don't care about
+                            #   whether velocity would need to start moving leftward or rightward.
+                            # - We don't need to include any horizontal offsets (to account for
+                            #   character width or for edge movement) for any of the jump/land
+                            #   positions.
+                            # 
+                            # TODO: We could also consider the same jump/land basis points, but
+                            #       with max-speed start velocity (and then a horizontal offset for
+                            #       the positions), but that's probably not useful for most cases.
+                            
+                            var left_end_displacement_x := \
+                                    land_surface_left_bound - jump_surface_left_bound
+                            var right_end_displacement_x := \
+                                    land_surface_right_bound - jump_surface_right_bound
+                            
+                            var velocity_start := get_velocity_start(
+                                    movement_params,
+                                    jump_surface,
+                                    is_a_jump_calculator,
+                                    false,
+                                    true)
+                            
+                            var jump_position: PositionAlongSurface
+                            var land_position: PositionAlongSurface
+                            
+                            # Consider the left ends.
+                            if left_end_displacement_x > 0.0:
+                                # J: floor-closest-point-to-ceiling-left-end
+                                # L: ceiling-left-end
+                                # V: zero
+                                # O: none
+                                jump_position = _create_surface_interior_position(
+                                        land_surface_left_bound,
+                                        jump_surface,
+                                        movement_params.collider_half_width_height,
+                                        jump_surface_left_end_wrapper,
+                                        jump_surface_right_end_wrapper)
+                                land_position = land_surface_left_end_wrapper
+                            else:
+                                # J: floor-left-end
+                                # L: ceiling-closest-point-to-floor-left-end
+                                # V: zero
+                                # O: none
+                                jump_position = jump_surface_left_end_wrapper
+                                land_position = _create_surface_interior_position(
+                                        jump_surface_left_bound,
+                                        land_surface,
+                                        movement_params.collider_half_width_height,
+                                        land_surface_left_end_wrapper,
+                                        land_surface_right_end_wrapper)
+                            var left_end_jump_land_positions := _create_jump_land_positions(
+                                    movement_params,
+                                    jump_position,
+                                    land_position,
+                                    velocity_start,
+                                    all_jump_land_positions)
+                            
+                            # Consider the right ends.
+                            if right_end_displacement_x > 0.0:
+                                # J: floor-right-end
+                                # L: ceiling-closest-point-to-floor-right-end
+                                # V: zero
+                                # O: none
+                                jump_position = jump_surface_right_end_wrapper
+                                land_position = _create_surface_interior_position(
+                                        jump_surface_right_bound,
+                                        land_surface,
+                                        movement_params.collider_half_width_height,
+                                        land_surface_left_end_wrapper,
+                                        land_surface_right_end_wrapper)
+                            else:
+                                # J: floor-closest-point-to-ceiling-right-end
+                                # L: ceiling-right-end
+                                # V: zero
+                                # O: none
+                                jump_position = _create_surface_interior_position(
+                                        land_surface_right_bound,
+                                        jump_surface,
+                                        movement_params.collider_half_width_height,
+                                        jump_surface_left_end_wrapper,
+                                        jump_surface_right_end_wrapper)
+                                land_position = land_surface_right_end_wrapper
+                            var right_end_jump_land_positions := _create_jump_land_positions(
+                                    movement_params,
+                                    jump_position,
+                                    land_position,
+                                    velocity_start,
+                                    all_jump_land_positions)
+                            
+                            # Consider the closest points.
+                            var jump_surface_closest_point: Vector2 = \
+                                    Sc.geometry.get_closest_point_on_polyline_to_polyline(
+                                            jump_surface.vertices,
+                                            land_surface.vertices)
+                            var land_surface_closest_point: Vector2 = \
+                                    Sc.geometry.get_closest_point_on_polyline_to_point(
+                                            jump_surface_closest_point,
+                                            land_surface.vertices)
+                            var is_jump_point_distinct := \
+                                    jump_surface_closest_point.x > \
+                                            jump_surface_left_bound + \
+                                            interior_point_min_horizontal_distance_from_end and \
+                                    jump_surface_closest_point.x < \
+                                            jump_surface_right_bound - \
+                                            interior_point_min_horizontal_distance_from_end
+                            var is_land_point_distinct := \
+                                    land_surface_closest_point.x > \
+                                            land_surface_left_bound + \
+                                            interior_point_min_horizontal_distance_from_end and \
+                                    land_surface_closest_point.x < \
+                                            land_surface_right_bound - \
+                                            interior_point_min_horizontal_distance_from_end
+                            if is_jump_point_distinct and is_land_point_distinct:
+                                # The closest points aren't too close to the ends, so we can create
+                                # new surface-interior positions for them.
+                                jump_position = PositionAlongSurfaceFactory \
+                                        .create_position_offset_from_target_point(
+                                                jump_surface_closest_point,
+                                                jump_surface,
+                                                movement_params.collider_half_width_height,
+                                                true)
+                                land_position = PositionAlongSurfaceFactory \
+                                        .create_position_offset_from_target_point(
+                                                land_surface_closest_point,
+                                                land_surface,
+                                                movement_params.collider_half_width_height,
+                                                true)
+                                var closest_point_jump_land_positions := \
+                                        _create_jump_land_positions(
+                                                movement_params,
+                                                jump_position,
+                                                land_position,
+                                                velocity_start)
+                                if closest_point_jump_land_positions != null:
+                                    # This closest-points pair is actually probably the most
+                                    # likely to produce the best edge, so insert it at the start
+                                    # of the result collection.
+                                    all_jump_land_positions.push_front(
+                                            closest_point_jump_land_positions)
+                        
+                    else:
+                        # Jumping from a lower ceiling to a higher floor.
+                        
+                        # Return no valid points, since we cannot move upward.
+                        pass
                     
-                SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+                SurfaceSide.LEFT_WALL, \
+                SurfaceSide.RIGHT_WALL:
                     # Jump from a ceiling, land on a wall.
                     
-                    # TODO: Implement ceiling use-cases.
-                    Sc.logger.error(
-                            "calculate_jump_land_positions_for_surface_pair " +
-                            "ceiling cases not implemented yet")
+                    var is_landing_on_left_wall := \
+                            land_surface.side == SurfaceSide.LEFT_WALL
+                    var is_wall_fully_higher_than_ceiling := \
+                            jump_surface_center.y > land_surface_bottom_bound
+                    var is_wall_fully_lower_than_ceiling := \
+                            jump_surface_center.y < land_surface_top_bound
+                    var is_ceiling_fully_in_front_of_wall := \
+                            is_landing_on_left_wall and \
+                            jump_surface_left_bound > land_surface_center.x or \
+                            !is_landing_on_left_wall and \
+                            jump_surface_right_bound < land_surface_center.x
+                    
+                    if is_wall_fully_lower_than_ceiling or \
+                            !is_wall_fully_higher_than_ceiling and \
+                                    is_ceiling_fully_in_front_of_wall:
+                        # The ceiling isn't either fully below of fully behind
+                        # the wall.
+                        
+                        # - There is only one likely position pair we consider:
+                        #   - The closest position along the ceiling, and the bottom of the
+                        #     wall.
+                        # - We only consider start velocity with zero horizontal speed.
+                        # - Since we only consider start velocity of zero, we don't care about
+                        #   whether velocity would need to start moving leftward or rightward.
+                        # - We don't need to include any horizontal offsets (to account for
+                        #   character width or for edge movement) for any of the jump/land
+                        #   positions.
+                        
+                        var velocity_start := get_velocity_start(
+                                movement_params,
+                                jump_surface,
+                                is_a_jump_calculator,
+                                false,
+                                true)
+                        
+                        # J: ceiling-closest-point-to-wall-bottom-end
+                        # L: wall-bottom-end
+                        # V: zero
+                        # O: none
+                        var jump_position := _create_surface_interior_position(
+                                land_surface_bottom_end_wrapper.target_point.x,
+                                jump_surface,
+                                movement_params.collider_half_width_height,
+                                jump_surface_left_end_wrapper,
+                                jump_surface_right_end_wrapper)
+                        var land_position := land_surface_bottom_end_wrapper
+                        var jump_land_positions := _create_jump_land_positions(
+                                movement_params,
+                                jump_position,
+                                land_position,
+                                velocity_start,
+                                all_jump_land_positions)
+                        
+                    else:
+                        # Jumping from a lower ceiling to a higher wall.
+                        
+                        # Return no valid points, since we cannot move upward.
+                        pass
                     
                 SurfaceSide.CEILING:
                     # Jump from a ceiling, land on a ceiling.
@@ -2530,8 +2897,49 @@ static func calculate_land_positions_on_surface(
             else:
                 # We may be able to reach the ceiling.
                 
-                # TODO: Implement this.
-                return []
+                var land_basis: Vector2 = \
+                        Sc.geometry.project_point_onto_surface_with_offset(
+                                origin_target_point,
+                                land_surface,
+                                movement_params.collider_half_width_height)
+                var is_a_jump_calculator := false
+                var must_reach_destination_on_fall := false
+                var horizontal_movement_distance := \
+                        _calculate_horizontal_movement_distance(
+                                movement_params,
+                                origin_target_point,
+                                land_basis,
+                                velocity_start,
+                                is_a_jump_calculator,
+                                must_reach_destination_on_fall)
+                var land_x := \
+                        origin_target_point.x + \
+                                horizontal_movement_distance if \
+                        velocity_start.x > 0.0 else \
+                        origin_target_point.x - \
+                                horizontal_movement_distance
+                var land_position_with_horizontal_movement_distance := \
+                        _create_surface_interior_position(
+                                land_x,
+                                land_surface,
+                                movement_params.collider_half_width_height,
+                                land_surface_first_point_wrapper,
+                                land_surface_last_point_wrapper)
+                var jump_land_positions_with_horizontal_movement_distance := \
+                        _create_jump_land_positions(
+                                movement_params,
+                                origin_position,
+                                land_position_with_horizontal_movement_distance,
+                                velocity_start,
+                                null,
+                                false,
+                                false,
+                                true,
+                                false)
+                if jump_land_positions_with_horizontal_movement_distance != null:
+                    return [jump_land_positions_with_horizontal_movement_distance]
+                else:
+                    return []
             
         _:
             Sc.logger.error("Unknown land surface side")
@@ -2563,6 +2971,9 @@ static func get_velocity_start(
                 velocity_start_y = movement_params.jump_boost
                 
             SurfaceSide.CEILING:
+                # We always prefer "falling" rather than "jumping-down" from
+                # ceilings, since starting with less vertical speed only gives
+                # us more flexibility.
                 velocity_start_y = 0.0
                 
             _:

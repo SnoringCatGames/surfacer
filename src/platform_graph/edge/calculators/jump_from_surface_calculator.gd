@@ -234,12 +234,17 @@ func create_edge_from_edge_calc_params(
     assert(EdgeCalcResultType.get_is_valid(
             edge_result_metadata.edge_calc_result_type))
     
+    # We always prefer "falling" rather than "jumping-down" from ceilings,
+    # since starting with less vertical speed only gives us more flexibility.
+    var includes_jump_instruction := \
+            edge_calc_params.origin_position.side != SurfaceSide.CEILING
+    
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions(
                     edge_result_metadata,
                     edge_calc_params.collision_params,
                     calc_result,
-                    true,
+                    includes_jump_instruction,
                     edge_calc_params.destination_position.side)
     var trajectory := EdgeTrajectoryUtils \
             .calculate_trajectory_from_calculation_steps(
