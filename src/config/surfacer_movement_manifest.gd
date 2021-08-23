@@ -73,6 +73,7 @@ var dash_cooldown_default := 1.0
 
 var additional_edge_weight_offset_default := 128.0
 var walking_edge_weight_multiplier_default := 1.2
+var ceiling_crawling_edge_weight_multiplier_default := 2.0
 var climbing_edge_weight_multiplier_default := 1.8
 var air_edge_weight_multiplier_default := 1.0
 
@@ -178,6 +179,9 @@ func _register_manifest(manifest: Dictionary) -> void:
     if manifest.has("walking_edge_weight_multiplier_default"):
         self.walking_edge_weight_multiplier_default = \
                 manifest.walking_edge_weight_multiplier_default
+    if manifest.has("ceiling_crawling_edge_weight_multiplier_default"):
+        self.ceiling_crawling_edge_weight_multiplier_default = \
+                manifest.ceiling_crawling_edge_weight_multiplier_default
     if manifest.has("climbing_edge_weight_multiplier_default"):
         self.climbing_edge_weight_multiplier_default = \
                 manifest.climbing_edge_weight_multiplier_default

@@ -116,6 +116,11 @@ var additional_edge_weight_offset_override := -1.0 \
 ## paths that involve more jumps, even if the path may take longer.
 var walking_edge_weight_multiplier_override := -1.0 \
         setget _set_walking_edge_weight_multiplier_override
+## If extra weight is applied to ceiling-crawling edges, then the character
+## will favor paths that don't involve ceilings, even if the path may take
+## longer.
+var ceiling_crawling_edge_weight_multiplier_override := -1.0 \
+        setget _set_ceiling_crawling_edge_weight_multiplier_override
 ## If extra weight is applied to climbing edges, then the character will favor
 ## paths that involve more jumps, even if the path may take longer.
 var climbing_edge_weight_multiplier_override := -1.0 \
@@ -427,6 +432,7 @@ var dash_cooldown: float
 
 var additional_edge_weight_offset: float
 var walking_edge_weight_multiplier: float
+var ceiling_crawling_edge_weight_multiplier: float
 var climbing_edge_weight_multiplier: float
 var air_edge_weight_multiplier: float
 
@@ -786,6 +792,10 @@ func _derive_parameters() -> void:
             walking_edge_weight_multiplier_override if \
             walking_edge_weight_multiplier_override != -1.0 else \
             Su.movement.walking_edge_weight_multiplier_default
+    ceiling_crawling_edge_weight_multiplier = \
+            ceiling_crawling_edge_weight_multiplier_override if \
+            ceiling_crawling_edge_weight_multiplier_override != -1.0 else \
+            Su.movement.ceiling_crawling_edge_weight_multiplier_default
     climbing_edge_weight_multiplier = \
             climbing_edge_weight_multiplier_override if \
             climbing_edge_weight_multiplier_override != -1.0 else \
@@ -1000,6 +1010,12 @@ func _set_additional_edge_weight_offset_override(value: float) -> void:
 
 func _set_walking_edge_weight_multiplier_override(value: float) -> void:
     walking_edge_weight_multiplier_override = value
+    _update_parameters()
+
+
+func _set_ceiling_crawling_edge_weight_multiplier_override(
+        value: float) -> void:
+    ceiling_crawling_edge_weight_multiplier_override = value
     _update_parameters()
 
 
