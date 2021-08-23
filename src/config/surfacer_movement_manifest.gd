@@ -11,6 +11,10 @@ const DEFAULT_ACTION_HANDLER_CLASSES := [
     preload("res://addons/surfacer/src/character/action/action_handlers/air_jump_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/all_default_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/cap_velocity_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_crawl_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_default_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_fall_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_jump_down_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_dash_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_default_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/fall_through_floor_action.gd"),
@@ -302,7 +306,14 @@ func get_default_action_handler_names(
         if movement_params.can_dash:
             names.push_back("WallDashAction")
     if movement_params.can_grab_ceilings:
-        pass
+        names.push_back("CeilingDefaultAction")
+        names.push_back("CeilingCrawlAction")
+        if movement_params.can_jump:
+            names.push_back("CeilingFallAction")
+            names.push_back("CeilingJumpDownAction")
+        if movement_params.can_dash:
+            # TODO: Add support for dashing on the ceiling?
+            pass
     if movement_params.can_jump:
         names.push_back("FloorFallThroughAction")
         names.push_back("FloorJumpAction")
