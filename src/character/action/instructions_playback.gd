@@ -128,6 +128,7 @@ func _ensure_facing_correct_direction_before_update(
     if character.movement_params \
             .always_tries_to_face_direction_of_motion and \
             next_index == 0 and \
+            character.velocity.x != 0 and \
             (character.velocity.x < 0) != \
                     (character.surface_state.horizontal_facing_sign < 0):
         # At the start of edge playback, turn the character to face the
@@ -162,6 +163,7 @@ func _ensure_facing_correct_direction_after_update(
     
     if character.movement_params.always_tries_to_face_direction_of_motion and \
             just_released_move_sideways and \
+            character.velocity.x != 0 and \
             character.velocity.x < 0 != is_facing_left:
         # Turn the character around, so they are facing the direction they're
         # moving in.
