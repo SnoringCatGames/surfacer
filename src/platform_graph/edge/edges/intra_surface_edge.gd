@@ -483,7 +483,7 @@ static func _calculate_stopping_distance(
                     abs(movement_params.climb_down_speed)
             return climb_speed * Time.PHYSICS_TIME_STEP + 0.01
         SurfaceSide.CEILING:
-            var climb_speed := abs(movement_params.velocity_start)
+            var climb_speed := abs(movement_params.ceiling_crawl_speed)
             return climb_speed * Time.PHYSICS_TIME_STEP + 0.01
         _:
             Sc.logger.error()

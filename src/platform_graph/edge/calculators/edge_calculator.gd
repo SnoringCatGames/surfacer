@@ -107,6 +107,11 @@ static func create_edge_calc_params(
             "create_edge_calc_params",
             collision_params.thread_id)
     
+    var can_backtrack_on_height := \
+            can_hold_jump_button and \
+            origin_position.side != SurfaceSide.CEILING and \
+            destination_position.side != SurfaceSide.CEILING
+    
     # When landing on a wall, ensure that we end with velocity moving into the
     # wall.
     var velocity_end_min_x := INF
@@ -154,7 +159,8 @@ static func create_edge_calc_params(
             velocity_start,
             needs_extra_jump_duration,
             needs_extra_wall_land_horizontal_speed,
-            can_hold_jump_button)
+            can_hold_jump_button,
+            can_backtrack_on_height)
     
     Sc.profiler.stop_with_optional_metadata(
             "create_edge_calc_params",

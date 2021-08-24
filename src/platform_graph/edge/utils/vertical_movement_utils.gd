@@ -19,7 +19,8 @@ static func calculate_vertical_step(
     var origin_waypoint := edge_calc_params.origin_waypoint
     var destination_waypoint := edge_calc_params.destination_waypoint
     var velocity_start := edge_calc_params.velocity_start
-    var can_hold_jump_button := edge_calc_params.can_backtrack_on_height
+    var can_hold_jump_button := edge_calc_params.can_hold_jump_button
+    var can_backtrack_on_height := edge_calc_params.can_backtrack_on_height
     
     var position_start := origin_waypoint.position
     var position_end := destination_waypoint.position
@@ -353,7 +354,8 @@ static func calculate_time_to_jump_to_waypoint(
         # vertically on the upward side of the trajectory. In that case, we
         # need to consider the minimum time for the upward and downward motion
         # of the jump.
-        return max(max(max(duration_to_reach_upward_displacement,
+        return max(max(max(
+                duration_to_reach_upward_displacement,
                 duration_to_reach_downward_displacement),
                 duration_to_reach_horizontal_displacement),
                 duration_to_reach_upward_displacement_on_fall)
