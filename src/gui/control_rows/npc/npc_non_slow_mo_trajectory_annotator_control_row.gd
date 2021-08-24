@@ -1,8 +1,8 @@
-class_name PreviousTrajectoryAnnotatorControlRow
+class_name NpcNonSlowMoTrajectoryAnnotatorControlRow
 extends CheckboxControlRow
 
 
-const LABEL := "Prev. trajectory"
+const LABEL := "NPC act traj"
 const DESCRIPTION := ("")
 
 
@@ -14,14 +14,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Su.ann_manifest.is_previous_trajectory_shown = pressed
+    Su.ann_manifest.is_npc_non_slow_mo_trajectory_shown = pressed
     Sc.save_state.set_setting(
-            Su.PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
+            Su.NPC_NON_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Su.ann_manifest.is_previous_trajectory_shown
+    return Su.ann_manifest.is_npc_non_slow_mo_trajectory_shown
 
 
 func get_is_enabled() -> bool:

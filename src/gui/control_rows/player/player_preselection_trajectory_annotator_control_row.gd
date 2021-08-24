@@ -1,8 +1,8 @@
-class_name NavigationDestinationAnnotatorControlRow
+class_name PlayerPreselectionTrajectoryAnnotatorControlRow
 extends CheckboxControlRow
 
 
-const LABEL := "Nav destination"
+const LABEL := "P presel traj"
 const DESCRIPTION := ("")
 
 
@@ -14,14 +14,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Su.ann_manifest.is_navigation_destination_shown = pressed
+    Su.ann_manifest.is_player_preselection_trajectory_shown = pressed
     Sc.save_state.set_setting(
-            Su.NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
+            Su.PLAYER_PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Su.ann_manifest.is_navigation_destination_shown
+    return Su.ann_manifest.is_player_preselection_trajectory_shown
 
 
 func get_is_enabled() -> bool:

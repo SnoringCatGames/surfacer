@@ -116,6 +116,7 @@ func _on_intro_choreography_finished() -> void:
 
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
+    set_background_visibility(false)
     Sc.annotators.on_level_ready()
     for group in [
             Sc.characters.GROUP_NAME_PLAYERS,
@@ -125,16 +126,23 @@ func _initialize_annotators() -> void:
 
 
 func set_tile_map_visibility(is_visible: bool) -> void:
-    # TODO: Also show/hide background. Parallax doesn't extend from CanvasItem
-    #       or have the `visible` field though.
-#    var backgrounds := Sc.utils.get_children_by_type(
-#            self,
-#            ParallaxBackground)
     var foregrounds: Array = Sc.utils.get_children_by_type(
             self,
             TileMap)
-    for node in foregrounds:
-        node.visible = is_visible
+    for foreground in foregrounds:
+        foreground.visible = is_visible
+
+
+func set_background_visibility(is_visible: bool) -> void:
+    var backgrounds: Array = Sc.utils.get_children_by_type(
+            self,
+            ParallaxBackground)
+    for background in backgrounds:
+        var layers: Array = Sc.utils.get_children_by_type(
+            background,
+            ParallaxLayer)
+        for layer in layers:
+            layer.visible = is_visible
 
 
 func get_is_intro_choreography_running() -> bool:

@@ -1,8 +1,8 @@
-class_name ActiveTrajectoryAnnotatorControlRow
+class_name NpcNavigationDestinationAnnotatorControlRow
 extends CheckboxControlRow
 
 
-const LABEL := "Active trajectory"
+const LABEL := "NPC nav dest"
 const DESCRIPTION := ("")
 
 
@@ -14,14 +14,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Su.ann_manifest.is_active_trajectory_shown = pressed
+    Su.ann_manifest.is_npc_navigation_destination_shown = pressed
     Sc.save_state.set_setting(
-            Su.ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY,
+            Su.NPC_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Su.ann_manifest.is_active_trajectory_shown
+    return Su.ann_manifest.is_npc_navigation_destination_shown
 
 
 func get_is_enabled() -> bool:

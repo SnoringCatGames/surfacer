@@ -8,10 +8,13 @@ var surface_side := SurfaceSide.NONE
 
 var tile_map_coord := Vector2.INF
 
+var flipped_sides_for_nested_call := false
+
 var error_message := ""
 
 
 func reset() -> void:
     self.surface_side = SurfaceSide.NONE
     self.tile_map_coord = Vector2.INF
+    self.flipped_sides_for_nested_call = false
     self.error_message = ""

@@ -555,22 +555,20 @@ static func check_frame_for_collision(
                 Sc.geometry.get_tile_map_index_from_grid_coord(
                         tile_map_result.tile_map_coord,
                         tile_map)
-        if !collision_params.surface_parser.has_surface_for_tile(
+        var surface := collision_params.surface_parser.get_surface_for_tile(
                 tile_map,
                 tile_map_index,
-                surface_side):
-            # Invalid collision state: This happens when tile_map_index
-            # corresponds to a tile that isn't open on the expected side.
+                surface_side)
+        
+        if !is_instance_valid(surface):
+            # -  Godot's collision engine has generated a false-positive with
+            #    an interior surface.
+            # -  This is uncommon.
             if collision_params.movement_params \
                     .asserts_no_preexisting_collisions_during_edge_calculations:
                 Sc.logger.error()
             surface_collision.is_valid_collision_state = false
             return null
-        
-        var surface := collision_params.surface_parser.get_surface_for_tile(
-                tile_map,
-                tile_map_index,
-                surface_side)
         
         surface_collision.surface = surface
         surface_collision.is_valid_collision_state = true

@@ -2,7 +2,7 @@ class_name CharacterPositionAnnotatorControlRow
 extends CheckboxControlRow
 
 
-const LABEL := "Character positions"
+const LABEL := "Char. positions"
 const DESCRIPTION := ""
 
 var annotator_type := AnnotatorType.CHARACTER_POSITION

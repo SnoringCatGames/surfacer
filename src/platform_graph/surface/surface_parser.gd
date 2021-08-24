@@ -57,16 +57,10 @@ func get_surface_for_tile(
         side: int) -> Surface:
     var _tile_map_index_to_surfaces: Dictionary = \
             _tile_map_index_to_surface_maps[tile_map][side]
-    return _tile_map_index_to_surfaces[tile_map_index]
-
-
-func has_surface_for_tile(
-        tile_map: SurfacesTileMap,
-        tile_map_index: int,
-        side: int) -> bool:
-    var _tile_map_index_to_surfaces: Dictionary = \
-            _tile_map_index_to_surface_maps[tile_map][side]
-    return _tile_map_index_to_surfaces.has(tile_map_index)
+    if _tile_map_index_to_surfaces.has(tile_map_index):
+        return _tile_map_index_to_surfaces[tile_map_index]
+    else:
+        return null
 
 
 func get_subset_of_surfaces(
