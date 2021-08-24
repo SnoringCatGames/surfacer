@@ -18,13 +18,41 @@ const WALK_THROUGH_WALLS_COLLISION_MASK_BIT := 2
 
 const IS_INSPECTOR_ENABLED_SETTINGS_KEY := "is_inspector_enabled"
 const IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY := "is_intro_choreography_shown"
-const NPC_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_npc_trajectory_shown"
-const ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_active_trajectory_shown"
-const PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_previous_trajectory_shown"
-const PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY := \
-        "is_preselection_trajectory_shown"
-const NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
-        "is_navigation_destination_shown"
+
+const PLAYER_PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY := \
+        "is_player_preselection_trajectory_shown"
+
+const PLAYER_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY := \
+        "is_player_slow_mo_trajectory_shown"
+const PLAYER_NON_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY := \
+        "is_player_non_slow_mo_trajectory_shown"
+const PLAYER_PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := \
+        "is_player_previous_trajectory_shown"
+const PLAYER_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
+        "is_player_navigation_destination_shown"
+
+const NPC_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY := \
+        "is_npc_slow_mo_trajectory_shown"
+const NPC_NON_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY := \
+        "is_npc_non_slow_mo_trajectory_shown"
+const NPC_PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := \
+        "is_npc_previous_trajectory_shown"
+const NPC_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
+        "is_npc_navigation_destination_shown"
+
+var is_player_preselection_trajectory_shown := true
+
+var is_player_slow_mo_trajectory_shown := false
+var is_player_non_slow_mo_trajectory_shown := true
+var is_player_previous_trajectory_shown := false
+var is_player_navigation_destination_shown := true
+var is_player_nav_pulse_shown := false
+
+var is_npc_slow_mo_trajectory_shown := true
+var is_npc_non_slow_mo_trajectory_shown := false
+var is_npc_previous_trajectory_shown := false
+var is_npc_navigation_destination_shown := false
+var is_npc_nav_pulse_shown := true
 
 const PLACEHOLDER_SURFACES_TILE_SET_PATH := \
         "res://addons/surfacer/src/level/placeholder_surfaces_tile_set.tres"
@@ -45,11 +73,15 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
             is_collapsible = true,
             item_classes = [
                 RulerAnnotatorControlRow,
-                PreselectionTrajectoryAnnotatorControlRow,
-                NpcCharacterTrajectoryAnnotatorControlRow,
-                ActiveTrajectoryAnnotatorControlRow,
-                PreviousTrajectoryAnnotatorControlRow,
-                NavigationDestinationAnnotatorControlRow,
+                PlayerPreselectionTrajectoryAnnotatorControlRow,
+                PlayerSlowMoTrajectoryAnnotatorControlRow,
+                PlayerNonSlowMoTrajectoryAnnotatorControlRow,
+                PlayerPreviousTrajectoryAnnotatorControlRow,
+                PlayerNavigationDestinationAnnotatorControlRow,
+                NpcSlowMoTrajectoryAnnotatorControlRow,
+                NpcNonSlowMoTrajectoryAnnotatorControlRow,
+                NpcPreviousTrajectoryAnnotatorControlRow,
+                NpcNavigationDestinationAnnotatorControlRow,
                 RecentMovementAnnotatorControlRow,
                 SurfacesAnnotatorControlRow,
                 CharacterPositionAnnotatorControlRow,
@@ -402,27 +434,44 @@ func _configure_sub_modules() -> void:
     self.is_intro_choreography_shown = Sc.save_state.get_setting(
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
             true)
-    self.ann_manifest.is_npc_current_nav_trajectory_shown_without_slow_mo = \
+    
+    self.ann_manifest.is_player_slow_mo_trajectory_shown = \
             Sc.save_state.get_setting(
-                    NPC_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest \
-                        .is_npc_current_nav_trajectory_shown_without_slow_mo)
-    self.ann_manifest.is_active_trajectory_shown = \
+                    PLAYER_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    self.ann_manifest.is_player_slow_mo_trajectory_shown)
+    self.ann_manifest.is_player_non_slow_mo_trajectory_shown = \
             Sc.save_state.get_setting(
-                    ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    true)
-    self.ann_manifest.is_previous_trajectory_shown = \
+                    PLAYER_NON_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    self.ann_manifest.is_player_non_slow_mo_trajectory_shown)
+    self.ann_manifest.is_player_previous_trajectory_shown = \
             Sc.save_state.get_setting(
-                    PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    false)
-    self.ann_manifest.is_preselection_trajectory_shown = \
+                    PLAYER_PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    self.ann_manifest.is_player_previous_trajectory_shown)
+    self.ann_manifest.is_player_preselection_trajectory_shown = \
             Sc.save_state.get_setting(
-                    PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    true)
-    self.ann_manifest.is_navigation_destination_shown = \
+                    PLAYER_PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    self.ann_manifest.is_player_preselection_trajectory_shown)
+    self.ann_manifest.is_player_navigation_destination_shown = \
             Sc.save_state.get_setting(
-                    NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
-                    true)
+                    PLAYER_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
+                    self.ann_manifest.is_player_navigation_destination_shown)
+    
+    self.ann_manifest.is_npc_slow_mo_trajectory_shown = \
+            Sc.save_state.get_setting(
+                    NPC_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    self.ann_manifest.is_npc_slow_mo_trajectory_shown)
+    self.ann_manifest.is_npc_non_slow_mo_trajectory_shown = \
+            Sc.save_state.get_setting(
+                    NPC_NON_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    self.ann_manifest.is_npc_non_slow_mo_trajectory_shown)
+    self.ann_manifest.is_npc_previous_trajectory_shown = \
+            Sc.save_state.get_setting(
+                    NPC_PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
+                    self.ann_manifest.is_npc_previous_trajectory_shown)
+    self.ann_manifest.is_npc_navigation_destination_shown = \
+            Sc.save_state.get_setting(
+                    NPC_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
+                    self.ann_manifest.is_npc_navigation_destination_shown)
     
     if manifest.has("annotation_element_defaults_class"):
         self.ann_defaults = manifest.annotation_element_defaults_class.new()

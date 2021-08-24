@@ -55,9 +55,13 @@ var level
 
 var _tween: ScaffolderTween
 
-var _initial_is_previous_trajectory_shown: bool
-var _initial_is_active_trajectory_shown: bool
-var _initial_is_navigation_destination_shown: bool
+var _initial_is_player_non_slow_mo_trajectory_shown: bool
+var _initial_is_player_previous_trajectory_shown: bool
+var _initial_is_player_navigation_destination_shown: bool
+
+var _initial_is_npc_non_slow_mo_trajectory_shown: bool
+var _initial_is_npc_previous_trajectory_shown: bool
+var _initial_is_npc_navigation_destination_shown: bool
 
 var _initial_zoom: float
 var _initial_time_scale: float
@@ -90,15 +94,25 @@ func start() -> void:
             self,
             "_execute_next_step")
     
-    _initial_is_previous_trajectory_shown = \
-            Su.ann_manifest.is_previous_trajectory_shown
-    Su.ann_manifest.is_previous_trajectory_shown = false
-    _initial_is_active_trajectory_shown = \
-            Su.ann_manifest.is_active_trajectory_shown
-    Su.ann_manifest.is_active_trajectory_shown = false
-    _initial_is_navigation_destination_shown = \
-            Su.ann_manifest.is_navigation_destination_shown
-    Su.ann_manifest.is_navigation_destination_shown = false
+    _initial_is_player_non_slow_mo_trajectory_shown = \
+            Su.ann_manifest.is_player_non_slow_mo_trajectory_shown
+    Su.ann_manifest.is_player_non_slow_mo_trajectory_shown = false
+    _initial_is_player_previous_trajectory_shown = \
+            Su.ann_manifest.is_player_previous_trajectory_shown
+    Su.ann_manifest.is_player_previous_trajectory_shown = false
+    _initial_is_player_navigation_destination_shown = \
+            Su.ann_manifest.is_player_navigation_destination_shown
+    Su.ann_manifest.is_player_navigation_destination_shown = false
+    
+    _initial_is_npc_non_slow_mo_trajectory_shown = \
+            Su.ann_manifest.is_npc_non_slow_mo_trajectory_shown
+    Su.ann_manifest.is_npc_non_slow_mo_trajectory_shown = false
+    _initial_is_npc_previous_trajectory_shown = \
+            Su.ann_manifest.is_npc_previous_trajectory_shown
+    Su.ann_manifest.is_npc_previous_trajectory_shown = false
+    _initial_is_npc_navigation_destination_shown = \
+            Su.ann_manifest.is_npc_navigation_destination_shown
+    Su.ann_manifest.is_npc_navigation_destination_shown = false
     
     _initial_zoom = Sc.camera_controller.zoom_factor
     _initial_time_scale = Sc.time.time_scale
@@ -119,12 +133,21 @@ func _on_finished() -> void:
             "_execute_next_step")
     index = -1
     is_finished = true
-    Su.ann_manifest.is_previous_trajectory_shown = \
-            _initial_is_previous_trajectory_shown
-    Su.ann_manifest.is_active_trajectory_shown = \
-            _initial_is_active_trajectory_shown
-    Su.ann_manifest.is_navigation_destination_shown = \
-            _initial_is_navigation_destination_shown
+    
+    Su.ann_manifest.is_player_non_slow_mo_trajectory_shown = \
+            _initial_is_player_non_slow_mo_trajectory_shown
+    Su.ann_manifest.is_player_previous_trajectory_shown = \
+            _initial_is_player_previous_trajectory_shown
+    Su.ann_manifest.is_player_navigation_destination_shown = \
+            _initial_is_player_navigation_destination_shown
+    
+    Su.ann_manifest.is_npc_non_slow_mo_trajectory_shown = \
+            _initial_is_npc_non_slow_mo_trajectory_shown
+    Su.ann_manifest.is_npc_previous_trajectory_shown = \
+            _initial_is_npc_previous_trajectory_shown
+    Su.ann_manifest.is_npc_navigation_destination_shown = \
+            _initial_is_npc_navigation_destination_shown
+    
     Sc.camera_controller.zoom_factor = _initial_zoom
     Sc.time.time_scale = _initial_time_scale
     emit_signal("finished")

@@ -196,7 +196,7 @@ func _draw() -> void:
         surface_base_color = INVALID_SURFACE_COLOR
         position_indicator_base_color = INVALID_POSITION_INDICATOR_COLOR
     
-    if Su.ann_manifest.is_preselection_trajectory_shown:
+    if Su.ann_manifest.is_player_preselection_trajectory_shown:
         # Draw path.
         if preselection_path != null:
             var path_alpha := \
@@ -242,7 +242,7 @@ func _draw() -> void:
                     surface_color,
                     PRESELECTION_SURFACE_DEPTH)
     
-    if Su.ann_manifest.is_navigation_destination_shown:
+    if Su.ann_manifest.is_player_navigation_destination_shown:
         # Draw destination marker.
         var position_indicator_alpha := \
                 position_indicator_base_color.a * alpha_multiplier

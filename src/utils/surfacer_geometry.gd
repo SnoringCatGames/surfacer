@@ -441,6 +441,7 @@ static func get_collision_tile_map_coord(
     
     result.tile_map_coord = tile_coord
     result.surface_side = surface_side
+    result.flipped_sides_for_nested_call = is_nested_call
     result.error_message = error_message
     
     if !error_message.empty() and \
@@ -461,6 +462,8 @@ static func get_collision_tile_map_coord(
                 nested_is_touching_right_wall,
                 allows_errors,
                 true)
+        if result.error_message.empty():
+            return
     
     if !allows_errors and \
             !error_message.empty() and \

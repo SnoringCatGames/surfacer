@@ -17,19 +17,23 @@ var _annotator_control_items := []
 
 var _annotator_control_item_classes := [
     CharacterAnnotatorControlRow,
-    LevelAnnotatorControlRow,
+    PlayerPreselectionTrajectoryAnnotatorControlRow,
     CharacterPositionAnnotatorControlRow,
+    PlayerNonSlowMoTrajectoryAnnotatorControlRow,
+    LevelAnnotatorControlRow,
+    PlayerSlowMoTrajectoryAnnotatorControlRow,
     SurfacesAnnotatorControlRow,
-    RecentMovementAnnotatorControlRow,
+    PlayerPreviousTrajectoryAnnotatorControlRow,
     RulerAnnotatorControlRow,
-    PreselectionTrajectoryAnnotatorControlRow,
-    NavigationDestinationAnnotatorControlRow,
-    NpcCharacterTrajectoryAnnotatorControlRow,
+    PlayerNavigationDestinationAnnotatorControlRow,
+    RecentMovementAnnotatorControlRow,
+    NpcNonSlowMoTrajectoryAnnotatorControlRow,
     TimeScaleControlRow,
-    PreviousTrajectoryAnnotatorControlRow,
+    NpcSlowMoTrajectoryAnnotatorControlRow,
     CameraZoomControlRow,
-    ActiveTrajectoryAnnotatorControlRow,
+    NpcPreviousTrajectoryAnnotatorControlRow,
     MetronomeControlRow,
+    NpcNavigationDestinationAnnotatorControlRow,
 ]
 
 

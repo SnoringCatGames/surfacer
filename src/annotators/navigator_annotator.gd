@@ -8,6 +8,11 @@ var current_path: PlatformGraphPath
 var previous_path_beats: Array
 var current_path_beats: Array
 var last_navigator_beat: PathBeatPrediction
+
+var is_active_trajectory_shown := false
+var is_previous_trajectory_shown := false
+var is_destination_shown := false
+
 var is_enabled := false
 var is_slow_motion_enabled := false
 
@@ -84,7 +89,7 @@ func _process(_delta: float) -> void:
             is_slow_motion_enabled:
         is_slow_motion_enabled = \
                 Sc.slow_motion.get_is_enabled_or_transitioning()
-        is_enabled = _get_is_enabled()
+        _update_is_enabled()
         _trigger_fade_in(is_enabled)
         update()
     
@@ -92,7 +97,7 @@ func _process(_delta: float) -> void:
         update()
     
     # Animate beats along the path as we hit them.
-    if is_enabled:
+    if is_active_trajectory_shown:
         var next_navigator_beat := _get_last_beat_from_navigator()
         if last_navigator_beat != next_navigator_beat:
             last_navigator_beat = next_navigator_beat
@@ -106,14 +111,16 @@ func _draw() -> void:
         return
     
     if current_path != null:
-        if Su.ann_manifest.is_active_trajectory_shown:
+        if is_active_trajectory_shown:
             _draw_current_path(current_path)
-        if Su.ann_manifest.is_navigation_destination_shown:
-            _draw_current_path_origin(current_path)
+        if is_destination_shown:
             _draw_current_path_destination(current_path)
+        if is_active_trajectory_shown and \
+                is_destination_shown:
+            _draw_current_path_origin(current_path)
     
     elif previous_path != null and \
-            Su.ann_manifest.is_previous_trajectory_shown:
+            is_previous_trajectory_shown:
         _draw_previous_path()
 
 
@@ -232,20 +239,31 @@ func _draw_beat_hashes(
             color)
 
 
-func _get_is_enabled() -> bool:
+func _update_is_enabled() -> void:
     if navigator.character.is_player_character:
-        if is_slow_motion_enabled:
-            return Su.ann_manifest \
-                    .is_player_current_nav_trajectory_shown_with_slow_mo
-        else:
-            return Su.ann_manifest \
-                    .is_player_current_nav_trajectory_shown_without_slow_mo
-    elif is_slow_motion_enabled:
-        return Su.ann_manifest \
-                .is_npc_current_nav_trajectory_shown_with_slow_mo
+        is_active_trajectory_shown = \
+                is_slow_motion_enabled and \
+                Su.ann_manifest.is_player_slow_mo_trajectory_shown or \
+                !is_slow_motion_enabled and \
+                Su.ann_manifest.is_player_non_slow_mo_trajectory_shown
+        is_previous_trajectory_shown = \
+                Su.ann_manifest.is_player_previous_trajectory_shown
+        is_destination_shown = \
+                Su.ann_manifest.is_player_navigation_destination_shown
     else:
-        return Su.ann_manifest \
-                        .is_npc_current_nav_trajectory_shown_without_slow_mo
+        is_active_trajectory_shown = \
+                is_slow_motion_enabled and \
+                Su.ann_manifest.is_npc_slow_mo_trajectory_shown or \
+                !is_slow_motion_enabled and \
+                Su.ann_manifest.is_npc_non_slow_mo_trajectory_shown
+        is_previous_trajectory_shown = \
+                Su.ann_manifest.is_npc_previous_trajectory_shown
+        is_destination_shown = \
+                Su.ann_manifest.is_npc_navigation_destination_shown
+    is_enabled = \
+            is_active_trajectory_shown or \
+            is_previous_trajectory_shown or \
+            is_destination_shown
 
 
 func _get_last_beat_from_navigator() -> PathBeatPrediction:

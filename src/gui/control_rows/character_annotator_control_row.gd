@@ -2,7 +2,7 @@ class_name CharacterAnnotatorControlRow
 extends CheckboxControlRow
 
 
-const LABEL := "Character sprites"
+const LABEL := "Char. sprites"
 const DESCRIPTION := ""
 
 var annotator_type := AnnotatorType.CHARACTER

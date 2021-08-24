@@ -285,6 +285,13 @@ func _update_touched_surfaces(character) -> void:
                         touched_tile_map,
                         touched_tile_map_index,
                         touched_side)
+        
+        if !is_instance_valid(touched_surface):
+            # -  Godot's collision engine has generated a false-positive with
+            #    an interior surface.
+            # -  This is uncommon.
+            continue
+        
         var just_started := !surfaces_to_touches.has(touched_surface)
         
         if just_started:
