@@ -2989,14 +2989,7 @@ static func get_horizontal_velocity_start(
         is_moving_leftward := false,
         prefer_zero_horizontal_speed := false) -> float:
     match origin_surface.side:
-        SurfaceSide.LEFT_WALL:
-            return movement_params.wall_jump_horizontal_boost
-            
-        SurfaceSide.RIGHT_WALL:
-            return -movement_params.wall_jump_horizontal_boost
-            
-        SurfaceSide.FLOOR, \
-        SurfaceSide.CEILING:
+        SurfaceSide.FLOOR:
             if prefer_zero_horizontal_speed:
                 return 0.0
             
@@ -3014,6 +3007,20 @@ static func get_horizontal_velocity_start(
                     return movement_params.max_horizontal_speed_default
             else:
                 return 0.0
+            
+        SurfaceSide.LEFT_WALL:
+            return movement_params.wall_jump_horizontal_boost
+            
+        SurfaceSide.RIGHT_WALL:
+            return -movement_params.wall_jump_horizontal_boost
+            
+        SurfaceSide.CEILING:
+            if prefer_zero_horizontal_speed:
+                return 0.0
+            elif is_moving_leftward:
+                return -movement_params.ceiling_crawl_speed
+            else:
+                return movement_params.ceiling_crawl_speed
             
         _:
             Sc.logger.error()

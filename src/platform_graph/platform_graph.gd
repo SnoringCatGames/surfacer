@@ -381,12 +381,13 @@ static func _calculate_intra_surface_edge_weight(
     
     # Apply a multiplier to the weight according to the type of edge.
     match node_a.side:
-        SurfaceSide.FLOOR, \
-        SurfaceSide.CEILING:
+        SurfaceSide.FLOOR:
             weight *= movement_params.walking_edge_weight_multiplier
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             weight *= movement_params.climbing_edge_weight_multiplier
+        SurfaceSide.CEILING:
+            weight *= movement_params.ceiling_crawling_edge_weight_multiplier
         _:
             Sc.logger.error()
     

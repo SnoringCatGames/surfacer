@@ -500,6 +500,18 @@ static func calculate_jump_or_fall_range_polygon_from_surface(
                         offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
             
+        SurfaceSide.CEILING:
+            top_left = origin_surface.last_point - \
+                    offset_for_acceleration_to_terminal_velocity
+            top_right = origin_surface.first_point + \
+                    offset_for_acceleration_to_terminal_velocity
+            bottom_left = top_left + Vector2(
+                    -offset_x_from_top_corner_to_bottom_corner,
+                    offset_y_from_top_corner_to_bottom_corner)
+            bottom_right = top_right + Vector2(
+                    offset_x_from_top_corner_to_bottom_corner,
+                    offset_y_from_top_corner_to_bottom_corner)
+            
         _:
             Sc.logger.error()
             return []

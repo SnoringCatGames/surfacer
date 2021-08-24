@@ -450,6 +450,16 @@ static func calculate_time_to_walk(
             movement_params.max_horizontal_speed_default)
 
 
+static func calculate_time_to_crawl_on_ceiling(
+        distance: float,
+        movement_params: MovementParameters) -> float:
+    # From a basic equation of motion:
+    #     s = s_0 + v*t
+    # Algebra...
+    #     t = (s - s_0) / v
+    return abs(distance / movement_params.ceiling_crawl_speed)
+
+
 static func calculate_distance_to_stop_from_friction(
         movement_params: MovementParameters,
         velocity_x_start: float,
