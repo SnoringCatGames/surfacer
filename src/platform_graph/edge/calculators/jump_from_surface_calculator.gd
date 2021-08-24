@@ -141,12 +141,14 @@ func calculate_edge(
             "calculate_jump_from_surface_edge",
             collision_params.thread_id)
     
+    var can_hold_jump_button := position_start.side != SurfaceSide.CEILING
+    
     var edge_calc_params := EdgeCalculator.create_edge_calc_params(
             edge_result_metadata,
             collision_params,
             position_start,
             position_end,
-            true,
+            can_hold_jump_button,
             velocity_start,
             needs_extra_jump_duration,
             needs_extra_wall_land_horizontal_speed)

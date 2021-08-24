@@ -282,6 +282,9 @@ static func calculate_jump_land_positions_for_surface_pair(
             jump_surface_center.x < land_surface_center.x
     
     var is_a_jump_calculator := true
+    var can_hold_jump_button_at_start := \
+            is_a_jump_calculator and \
+            jump_surface.side != SurfaceSide.CEILING
     
     var character_half_width_horizontal_offset := \
             movement_params.collider_half_width_height.x + \
@@ -396,7 +399,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     jump_basis,
                                                     land_basis,
                                                     velocity_start_max_speed,
-                                                    is_a_jump_calculator,
+                                                    can_hold_jump_button_at_start,
                                                     must_reach_destination_on_fall)
                                     var jump_position: PositionAlongSurface
                                     var land_position: PositionAlongSurface
@@ -487,7 +490,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     jump_basis,
                                                     land_basis,
                                                     velocity_start_max_speed,
-                                                    is_a_jump_calculator,
+                                                    can_hold_jump_button_at_start,
                                                     must_reach_destination_on_fall)
                                     var jump_position: PositionAlongSurface
                                     var land_position: PositionAlongSurface
@@ -622,7 +625,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     jump_basis,
                                                     land_basis,
                                                     velocity_start_max_speed,
-                                                    is_a_jump_calculator,
+                                                    can_hold_jump_button_at_start,
                                                     must_reach_destination_on_fall)
                                     var jump_position: PositionAlongSurface
                                     var land_position: PositionAlongSurface
@@ -713,7 +716,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     jump_basis,
                                                     land_basis,
                                                     velocity_start_max_speed,
-                                                    is_a_jump_calculator,
+                                                    can_hold_jump_button_at_start,
                                                     must_reach_destination_on_fall)
                                     var jump_position: PositionAlongSurface
                                     var land_position: PositionAlongSurface
@@ -873,7 +876,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator,
+                                            can_hold_jump_button_at_start,
                                             must_reach_destination_on_fall)
                             var goal_x := \
                                     land_basis.x + horizontal_movement_distance if \
@@ -892,7 +895,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator)
+                                            can_hold_jump_button_at_start)
                             var goal_y := \
                                     jump_basis.y + \
                                     vertical_movement_displacement
@@ -940,7 +943,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                 jump_basis,
                                                 land_basis,
                                                 velocity_start,
-                                                is_a_jump_calculator)
+                                                can_hold_jump_button_at_start)
                                 goal_y = \
                                         jump_basis.y + \
                                         vertical_movement_displacement
@@ -995,7 +998,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator,
+                                            can_hold_jump_button_at_start,
                                             must_reach_destination_on_fall)
                             goal_x += \
                                     horizontal_movement_distance if \
@@ -1014,7 +1017,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator)
+                                            can_hold_jump_button_at_start)
                             var goal_y := \
                                     jump_basis.y + \
                                     vertical_movement_displacement
@@ -1119,7 +1122,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator)
+                                            can_hold_jump_button_at_start)
                             var goal_y := \
                                     jump_basis.y + \
                                     vertical_movement_displacement
@@ -1241,7 +1244,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator,
+                                            can_hold_jump_button_at_start,
                                             true)
                             goal_x = \
                                     jump_basis.x - horizontal_movement_distance if \
@@ -1621,7 +1624,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator,
+                                            can_hold_jump_button_at_start,
                                             must_reach_destination_on_fall)
                             goal_x = \
                                     jump_basis.x + horizontal_movement_distance if \
@@ -1640,7 +1643,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator)
+                                            can_hold_jump_button_at_start)
                             var goal_y := \
                                     land_basis.y - \
                                     vertical_movement_displacement
@@ -1726,7 +1729,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator)
+                                            can_hold_jump_button_at_start)
                             var goal_y := \
                                     land_basis.y - \
                                     vertical_movement_displacement + \
@@ -1771,7 +1774,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         jump_basis,
                                         land_basis,
                                         velocity_start,
-                                        is_a_jump_calculator,
+                                        can_hold_jump_button_at_start,
                                         must_reach_destination_on_fall)
                         var goal_x := \
                                 jump_basis.x + horizontal_movement_distance if \
@@ -1790,7 +1793,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         jump_basis,
                                         land_basis,
                                         velocity_start,
-                                        is_a_jump_calculator)
+                                        can_hold_jump_button_at_start)
                         var goal_y := \
                                 land_basis.y - \
                                 vertical_movement_displacement
@@ -1879,7 +1882,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator)
+                                            can_hold_jump_button_at_start)
                             goal_y = \
                                     jump_basis.y + \
                                     vertical_movement_displacement + \
@@ -1918,7 +1921,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                 jump_basis,
                                                 land_basis,
                                                 velocity_start,
-                                                is_a_jump_calculator)
+                                                can_hold_jump_button_at_start)
                                 goal_y = \
                                         jump_surface_bottom_bound + \
                                         vertical_movement_displacement + \
@@ -1965,7 +1968,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator)
+                                            can_hold_jump_button_at_start)
                             goal_y = \
                                     land_position.target_point.y - \
                                     vertical_movement_displacement
@@ -2072,7 +2075,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         jump_basis,
                                         land_basis,
                                         velocity_start,
-                                        is_a_jump_calculator,
+                                        can_hold_jump_button_at_start,
                                         jump_surface,
                                         jump_surface_top_end_wrapper,
                                         jump_surface_bottom_end_wrapper,
@@ -2103,7 +2106,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         jump_basis,
                                         land_basis,
                                         velocity_start,
-                                        is_a_jump_calculator,
+                                        can_hold_jump_button_at_start,
                                         jump_surface,
                                         jump_surface_top_end_wrapper,
                                         jump_surface_bottom_end_wrapper,
@@ -2135,7 +2138,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         jump_basis,
                                         land_basis,
                                         velocity_start,
-                                        is_a_jump_calculator,
+                                        can_hold_jump_button_at_start,
                                         jump_surface,
                                         jump_surface_top_end_wrapper,
                                         jump_surface_bottom_end_wrapper,
@@ -2238,7 +2241,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator,
+                                            can_hold_jump_button_at_start,
                                             false)
                             goal_x = \
                                     jump_basis.x + horizontal_movement_distance if \
@@ -2257,7 +2260,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator)
+                                            can_hold_jump_button_at_start)
                             var goal_y := \
                                     land_basis.y - \
                                     vertical_movement_displacement
@@ -2295,7 +2298,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             jump_basis,
                                             land_basis,
                                             velocity_start,
-                                            is_a_jump_calculator)
+                                            can_hold_jump_button_at_start)
                             var goal_y := \
                                     land_basis.y - \
                                     vertical_movement_displacement
@@ -2687,6 +2690,9 @@ static func calculate_land_positions_on_surface(
     
     var origin_target_point := origin_position.target_point
     
+    var is_a_jump_calculator := false
+    var can_hold_jump_button_at_start := false
+    
     match land_surface.side:
         SurfaceSide.FLOOR:
             var land_surface_left_end_wrapper := \
@@ -2707,7 +2713,6 @@ static func calculate_land_positions_on_surface(
                                 origin_target_point,
                                 land_surface,
                                 movement_params.collider_half_width_height)
-                var is_a_jump_calculator := false
                 var must_reach_destination_on_fall := true
                 
                 var land_position_with_horizontal_movement_distance: \
@@ -2719,7 +2724,7 @@ static func calculate_land_positions_on_surface(
                                     origin_target_point,
                                     land_basis,
                                     velocity_start,
-                                    is_a_jump_calculator,
+                                    can_hold_jump_button_at_start,
                                     must_reach_destination_on_fall)
                     var land_x := \
                             origin_target_point.x + \
@@ -2860,14 +2865,13 @@ static func calculate_land_positions_on_surface(
                                 origin_target_point,
                                 land_surface,
                                 movement_params.collider_half_width_height)
-                var is_a_jump_calculator := false
                 var vertical_movement_displacement := \
                         _calculate_vertical_movement_displacement(
                                 movement_params,
                                 origin_target_point,
                                 land_basis,
                                 velocity_start,
-                                is_a_jump_calculator)
+                                can_hold_jump_button_at_start)
                 var land_y := origin_target_point.y + \
                         vertical_movement_displacement
                 var land_position := _create_surface_interior_position(
@@ -2902,7 +2906,6 @@ static func calculate_land_positions_on_surface(
                                 origin_target_point,
                                 land_surface,
                                 movement_params.collider_half_width_height)
-                var is_a_jump_calculator := false
                 var must_reach_destination_on_fall := false
                 var horizontal_movement_distance := \
                         _calculate_horizontal_movement_distance(
@@ -2910,7 +2913,7 @@ static func calculate_land_positions_on_surface(
                                 origin_target_point,
                                 land_basis,
                                 velocity_start,
-                                is_a_jump_calculator,
+                                can_hold_jump_button_at_start,
                                 must_reach_destination_on_fall)
                 var land_x := \
                         origin_target_point.x + \
@@ -3179,7 +3182,7 @@ static func _calculate_horizontal_movement_distance(
         jump_basis: Vector2,
         land_basis: Vector2,
         velocity_start: Vector2,
-        is_a_jump_calculator: bool,
+        can_hold_jump_button_at_start: bool,
         must_reach_destination_on_fall: bool) -> float:
     var displacement: Vector2 = land_basis - jump_basis
     
@@ -3188,7 +3191,7 @@ static func _calculate_horizontal_movement_distance(
                     movement_params,
                     displacement,
                     velocity_start,
-                    is_a_jump_calculator,
+                    can_hold_jump_button_at_start,
                     must_reach_destination_on_fall)
     if is_inf(duration):
         # We cannot reach the land position from the start position.
@@ -3240,7 +3243,7 @@ static func _calculate_vertical_movement_displacement(
         jump_basis: Vector2,
         land_basis: Vector2,
         velocity_start: Vector2,
-        is_a_jump_calculator: bool) -> float:
+        can_hold_jump_button_at_start: bool) -> float:
     var displacement: Vector2 = land_basis - jump_basis
     var acceleration_x := \
             movement_params.in_air_horizontal_acceleration if \
@@ -3267,7 +3270,7 @@ static func _calculate_vertical_movement_displacement(
         # horizontal offset, and fall as far as we want.
         return displacement.y
         
-    elif !is_a_jump_calculator:
+    elif !can_hold_jump_button_at_start:
         # Since we can't use any slow-rise gravity, this displacement with max
         # fast-fall gravity is the best we can do.
         return vertical_displacement_with_fast_fall_gravity
@@ -3309,7 +3312,7 @@ static func _calculate_jump_land_points_for_walls_facing_each_other(
         jump_basis_point: Vector2,
         land_basis_point: Vector2,
         velocity_start: Vector2,
-        is_a_jump_calculator: bool,
+        can_hold_jump_button_at_start: bool,
         jump_surface: Surface,
         jump_surface_top_end_wrapper: PositionAlongSurface,
         jump_surface_bottom_end_wrapper: PositionAlongSurface,
@@ -3327,7 +3330,7 @@ static func _calculate_jump_land_points_for_walls_facing_each_other(
                     jump_basis_point,
                     land_basis_point,
                     velocity_start,
-                    is_a_jump_calculator)
+                    can_hold_jump_button_at_start)
     
     var jump_goal_y := jump_basis_point.y
     var land_goal_y := jump_basis_point.y + vertical_movement_displacement

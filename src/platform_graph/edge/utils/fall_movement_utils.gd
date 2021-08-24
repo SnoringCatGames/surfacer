@@ -183,13 +183,16 @@ static func find_landing_trajectory_between_positions(
             "find_landing_trajectory_between_positions",
             collision_params.thread_id)
     
+    # FIXME: --------------------- Pass this in as a parameter.
+    var can_hold_jump_button_at_start := false
+    
     var edge_calc_params: EdgeCalcParams = \
             EdgeCalculator.create_edge_calc_params(
                     edge_result_metadata,
                     collision_params,
                     origin_position,
                     land_position,
-                    false,
+                    can_hold_jump_button_at_start,
                     velocity_start,
                     false,
                     needs_extra_wall_land_horizontal_speed)

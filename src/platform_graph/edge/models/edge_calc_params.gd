@@ -32,6 +32,10 @@ var origin_waypoint: Waypoint
 # The destination for the current edge instructions.
 var destination_waypoint: Waypoint
 
+# Whether the current edge corresponds to a jump with the jump button being
+# pressed at the start.
+var can_hold_jump_button: bool
+
 # Whether the calculations for the current edge are allowed to attempt
 # backtracking to consider a higher jump.
 var can_backtrack_on_height: bool
@@ -51,6 +55,7 @@ func _init(
         velocity_start: Vector2,
         needs_extra_jump_duration: bool,
         needs_extra_wall_land_horizontal_speed: bool,
+        can_hold_jump_button: bool,
         can_backtrack_on_height: bool) -> void:
     self.collision_params = collision_params
     self.movement_params = collision_params.movement_params
@@ -58,6 +63,7 @@ func _init(
     self.destination_position = destination_position
     self.origin_waypoint = origin_waypoint
     self.destination_waypoint = destination_waypoint
+    self.can_hold_jump_button = can_hold_jump_button
     self.can_backtrack_on_height = can_backtrack_on_height
     self.velocity_start = velocity_start
     self.needs_extra_jump_duration = needs_extra_jump_duration
