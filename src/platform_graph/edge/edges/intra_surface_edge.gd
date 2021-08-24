@@ -137,8 +137,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
     var displacement := get_end() - start
     var surface := get_start_surface()
     match surface.side:
-        SurfaceSide.FLOOR, \
-        SurfaceSide.CEILING:
+        SurfaceSide.FLOOR:
             var acceleration_x := \
                     movement_params.walk_acceleration if \
                     displacement.x > 0 else \
@@ -165,6 +164,16 @@ func get_position_at_time(edge_time: float) -> Vector2:
                     Vector2(0.0, position_y),
                     surface,
                     movement_params.collider_half_width_height)
+        SurfaceSide.CEILING:
+            var velocity_x := \
+                    movement_params.ceiling_crawl_speed if \
+                    displacement.x > 0.0 else \
+                    -movement_params.ceiling_crawl_speed
+            var position_x := start.x + velocity_x * edge_time
+            return Sc.geometry.project_point_onto_surface_with_offset(
+                    Vector2(position_x, 0.0),
+                    surface,
+                    movement_params.collider_half_width_height)
         _:
             Sc.logger.error()
             return Vector2.INF
@@ -177,8 +186,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
     var displacement := get_end() - start
     var surface := get_start_surface()
     match surface.side:
-        SurfaceSide.FLOOR, \
-        SurfaceSide.CEILING:
+        SurfaceSide.FLOOR:
             var acceleration_x := \
                     movement_params.walk_acceleration if \
                     displacement.x > 0 else \
@@ -188,12 +196,8 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
                     velocity_x,
                     -movement_params.max_horizontal_speed_default,
                     movement_params.max_horizontal_speed_default)
-            var velocity_y := \
-                    CharacterActionHandler \
-                            .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION if \
-                    surface.side == SurfaceSide.FLOOR else \
-                    -CharacterActionHandler \
-                            .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+            var velocity_y := CharacterActionHandler \
+                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
             velocity_y /= Sc.time.get_combined_scale()
             return Vector2(velocity_x, velocity_y)
         SurfaceSide.LEFT_WALL, \
@@ -210,6 +214,15 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
                     displacement.y < 0.0 else \
                     movement_params.climb_down_speed
             return Vector2(velocity_x, velocity_y)
+        SurfaceSide.CEILING:
+            var velocity_x := \
+                    movement_params.ceiling_crawl_speed if \
+                    displacement.x > 0.0 else \
+                    -movement_params.ceiling_crawl_speed
+            var velocity_y := -CharacterActionHandler \
+                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+            velocity_y /= Sc.time.get_combined_scale()
+            return Vector2(velocity_x, velocity_y)
         _:
             Sc.logger.error()
             return Vector2.INF
@@ -225,8 +238,7 @@ func get_animation_state_at_time(
     
     var side := get_start_surface().side
     match side:
-        SurfaceSide.FLOOR, \
-        SurfaceSide.CEILING:
+        SurfaceSide.FLOOR:
             result.animation_name = "Walk"
             result.facing_left = displacement.x < 0.0
         SurfaceSide.LEFT_WALL, \
@@ -236,6 +248,9 @@ func get_animation_state_at_time(
                     displacement.y < 0.0 else \
                     "ClimbDown"
             result.facing_left = side == SurfaceSide.LEFT_WALL
+        SurfaceSide.CEILING:
+            result.animation_name = "CrawlOnCeiling"
+            result.facing_left = displacement.x < 0.0
         _:
             Sc.logger.error()
 
@@ -393,28 +408,40 @@ static func _calculate_velocity_end(
         movement_params: MovementParameters) -> Vector2:
     var displacement := end.target_point - start.target_point
     
-    if start.side == SurfaceSide.FLOOR or \
-            start.side == SurfaceSide.CEILING:
-        # We need to calculate the end velocity, taking into account whether we
-        # will have had enough distance to reach max horizontal speed.
-        var acceleration := \
-                movement_params.walk_acceleration if \
-                displacement.x > 0.0 else \
-                -movement_params.walk_acceleration
-        var velocity_end_x: float = \
-                MovementUtils.calculate_velocity_end_for_displacement(
-                        displacement.x,
-                        velocity_start.x,
-                        acceleration,
-                        movement_params.max_horizontal_speed_default)
-        return Vector2(velocity_end_x, 0.0)
-    else:
-        # We use a constant speed (no acceleration) when climbing.
-        var velocity_end_y := \
-                movement_params.climb_up_speed if \
-                displacement.y < 0.0 else \
-                movement_params.climb_down_speed
-        return Vector2(0.0, velocity_end_y)
+    match start.side:
+        SurfaceSide.FLOOR:
+            # We need to calculate the end velocity, taking into account whether
+            # we will have had enough distance to reach max horizontal speed.
+            var acceleration := \
+                    movement_params.walk_acceleration if \
+                    displacement.x > 0.0 else \
+                    -movement_params.walk_acceleration
+            var velocity_end_x: float = \
+                    MovementUtils.calculate_velocity_end_for_displacement(
+                            displacement.x,
+                            velocity_start.x,
+                            acceleration,
+                            movement_params.max_horizontal_speed_default)
+            return Vector2(velocity_end_x, 0.0)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            # We use a constant speed (no acceleration) when climbing.
+            var velocity_end_y := \
+                    movement_params.climb_up_speed if \
+                    displacement.y < 0.0 else \
+                    movement_params.climb_down_speed
+            return Vector2(0.0, velocity_end_y)
+        SurfaceSide.CEILING:
+            # We use a constant speed (no acceleration) when crawling on the
+            # ceiling.
+            var velocity_end_x := \
+                    movement_params.ceiling_crawl_speed if \
+                    displacement.x > 0.0 else \
+                    -movement_params.ceiling_crawl_speed
+            return Vector2(velocity_end_x, 0.0)
+        _:
+            Sc.logger.error()
+            return Vector2.INF
 
 
 # Calculate the distance from the end position at which the move button should
@@ -429,36 +456,38 @@ static func _calculate_stopping_distance(
     if movement_params.forces_character_position_to_match_path_at_end:
         return 0.0
     
-    if edge.get_end_surface().side == SurfaceSide.FLOOR:
-        var friction_coefficient: float = \
-                movement_params.friction_coefficient * \
-                edge.get_end_surface().tile_map.collision_friction
-        var stopping_distance := MovementUtils \
-                .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
-                        movement_params,
-                        velocity_start.x,
-                        displacement_to_end.x,
-                        movement_params.gravity_fast_fall,
-                        friction_coefficient)
-        return stopping_distance if \
-                abs(displacement_to_end.x) - stopping_distance > \
-                        REACHED_DESTINATION_DISTANCE_THRESHOLD else \
-                max(abs(displacement_to_end.x) - \
-                        REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0, 0.0)
-        
-    else:
-        # TODO: Add support for acceleration and friction alongs walls and
-        #       ceilings.
-        
-        if edge.get_end_surface().side == SurfaceSide.LEFT_WALL or \
-                edge.get_end_surface().side == SurfaceSide.RIGHT_WALL:
+    # TODO: Add support for acceleration and friction alongs walls and
+    #       ceilings.
+    match edge.get_end_surface().side:
+        SurfaceSide.FLOOR:
+            var friction_coefficient: float = \
+                    movement_params.friction_coefficient * \
+                    edge.get_end_surface().tile_map.collision_friction
+            var stopping_distance := MovementUtils \
+                    .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
+                            movement_params,
+                            velocity_start.x,
+                            displacement_to_end.x,
+                            movement_params.gravity_fast_fall,
+                            friction_coefficient)
+            return stopping_distance if \
+                    abs(displacement_to_end.x) - stopping_distance > \
+                            REACHED_DESTINATION_DISTANCE_THRESHOLD else \
+                    max(abs(displacement_to_end.x) - \
+                            REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0, 0.0)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
             var climb_speed := \
                     abs(movement_params.climb_up_speed) if \
                     displacement_to_end.y < 0 else \
                     abs(movement_params.climb_down_speed)
             return climb_speed * Time.PHYSICS_TIME_STEP + 0.01
-        
-        return 0.0
+        SurfaceSide.CEILING:
+            var climb_speed := abs(movement_params.velocity_start)
+            return climb_speed * Time.PHYSICS_TIME_STEP + 0.01
+        _:
+            Sc.logger.error()
+            return INF
 
 
 static func calculate_duration_to_move_along_surface(
@@ -467,8 +496,7 @@ static func calculate_duration_to_move_along_surface(
         end: PositionAlongSurface,
         distance: float) -> float:
     match start.side:
-        SurfaceSide.FLOOR, \
-        SurfaceSide.CEILING:
+        SurfaceSide.FLOOR:
             return MovementUtils.calculate_time_to_walk(
                     distance,
                     0.0,
@@ -479,6 +507,10 @@ static func calculate_duration_to_move_along_surface(
             return MovementUtils.calculate_time_to_climb(
                     distance,
                     is_climbing_upward,
+                    movement_params)
+        SurfaceSide.CEILING:
+            return MovementUtils.calculate_time_to_crawl_on_ceiling(
+                    distance,
                     movement_params)
         _:
             Sc.logger.error()

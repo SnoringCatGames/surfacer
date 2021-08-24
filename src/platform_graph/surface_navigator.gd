@@ -597,9 +597,11 @@ func _set_reached_destination() -> void:
     if movement_params.forces_character_velocity_to_zero_at_path_end and \
             edge.get_end_surface() != null:
         match edge.get_end_surface().side:
-            SurfaceSide.FLOOR, SurfaceSide.CEILING:
+            SurfaceSide.FLOOR, \
+            SurfaceSide.CEILING:
                 character.velocity.x = 0.0
-            SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+            SurfaceSide.LEFT_WALL, \
+            SurfaceSide.RIGHT_WALL:
                 character.velocity.y = 0.0
             _:
                 Sc.logger.error("Invalid SurfaceSide")

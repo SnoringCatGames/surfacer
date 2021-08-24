@@ -97,12 +97,8 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
             velocity_x,
             -movement_params.max_horizontal_speed_default,
             movement_params.max_horizontal_speed_default)
-    var velocity_y := \
-            CharacterActionHandler \
-                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION if \
-            get_start_surface().side == SurfaceSide.FLOOR else \
-            -CharacterActionHandler \
-                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+    var velocity_y := CharacterActionHandler \
+            .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
     velocity_y /= Sc.time.get_combined_scale()
     return Vector2(velocity_x, velocity_y)
 
