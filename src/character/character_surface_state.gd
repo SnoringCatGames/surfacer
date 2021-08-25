@@ -334,6 +334,8 @@ func _update_surface_actions(
         horizontal_facing_sign = 1
     elif character.actions.pressed_left:
         horizontal_facing_sign = -1
+    elif is_grabbing_wall:
+        horizontal_facing_sign = toward_wall_sign
     
     if character.actions.pressed_right:
         horizontal_acceleration_sign = 1
