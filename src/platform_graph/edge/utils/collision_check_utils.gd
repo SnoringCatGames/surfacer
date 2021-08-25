@@ -142,7 +142,7 @@ static func check_instructions_discrete_trajectory_state(
                     # Record the positions of instruction starts and ends.
                     trajectory.horizontal_instructions.push_back(
                             instruction_with_position)
-                "gw":
+                "g":
                     pass
                 "fl":
                     pass

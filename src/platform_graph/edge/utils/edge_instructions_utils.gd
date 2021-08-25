@@ -86,31 +86,44 @@ static func convert_calculation_steps_to_movement_instructions(
         instructions.push_front(press)
     
     if destination_side == SurfaceSide.LEFT_WALL or \
-            destination_side == SurfaceSide.RIGHT_WALL:
-        # When landing on a wall, we need to press input that ensures we grab
-        # on to the wall, but we also need to not do so in a way that changes
-        # the trajectory we've carefully calculated.
+            destination_side == SurfaceSide.RIGHT_WALL or \
+            destination_side == SurfaceSide.CEILING:
+        # When landing on a wall or ceiling, we need to press input that
+        # ensures we grab on to the surface, but we also need to not do so in a
+        # way that changes the trajectory we've carefully calculated (e.g., by
+        # pressing sideways).
         
         var last_step: EdgeStep = steps[steps.size() - 1]
-        var time_step_start := last_step.time_instruction_end + \
+        var time_instruction_start := last_step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
+        # Ensure that the boosted instruction time doesn't exceed the edge end
+        # time.
+        time_instruction_start = max(
+                min(
+                        time_instruction_start,
+                        vertical_step.time_step_end - \
+                                Time.PHYSICS_TIME_STEP - \
+                                0.0001),
+                0.0)
         
-        var input_key := "gw"
+        var input_key := "g"
         var press := EdgeInstruction.new(
                 input_key,
-                time_step_start,
+                time_instruction_start,
                 true)
         instructions.push_back(press)
         
-        input_key = \
-                "fl" if \
-                destination_side == SurfaceSide.LEFT_WALL else \
-                "fr"
-        press = EdgeInstruction.new(
-                input_key,
-                time_step_start,
-                true)
-        instructions.push_back(press)
+        if destination_side == SurfaceSide.LEFT_WALL or \
+                destination_side == SurfaceSide.RIGHT_WALL:
+            input_key = \
+                    "fl" if \
+                    destination_side == SurfaceSide.LEFT_WALL else \
+                    "fr"
+            press = EdgeInstruction.new(
+                    input_key,
+                    time_instruction_start,
+                    true)
+            instructions.push_back(press)
     
     var vertical_step_duration := \
             vertical_step.time_step_end - vertical_step.time_step_start

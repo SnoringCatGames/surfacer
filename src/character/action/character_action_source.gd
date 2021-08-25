@@ -8,7 +8,7 @@ const input_key_to_action_name := {
     "md": "down",
     "ml": "left",
     "mr": "right",
-    "gw": "grab_wall",
+    "g": "grab",
     "fl": "face_left",
     "fr": "face_right",
 }

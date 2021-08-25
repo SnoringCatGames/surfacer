@@ -9,7 +9,7 @@ var is_touching_ceiling := false
 var is_touching_left_wall := false
 var is_touching_right_wall := false
 var is_touching_wall := false
-var is_touching_a_surface := false
+var is_touching_surface := false
 
 var just_touched_floor := false
 var just_stopped_touching_floor := false
@@ -17,8 +17,8 @@ var just_touched_ceiling := false
 var just_stopped_touching_ceiling := false
 var just_touched_wall := false
 var just_stopped_touching_wall := false
-var just_touched_a_surface := false
-var just_stopped_touching_a_surface := false
+var just_touched_surface := false
+var just_stopped_touching_surface := false
 
 var is_grabbing_floor := false
 var is_grabbing_ceiling := false
@@ -31,7 +31,7 @@ var just_grabbed_floor := false
 var just_grabbed_ceiling := false
 var just_grabbed_left_wall := false
 var just_grabbed_right_wall := false
-var just_grabbed_a_surface := false
+var just_grabbed_surface := false
 
 var is_facing_wall := false
 var is_pressing_into_wall := false
@@ -112,7 +112,7 @@ func release_wall(character) -> void:
     if is_touching_floor:
         is_grabbing_floor = true
         just_grabbed_floor = true
-        just_grabbed_a_surface = true
+        just_grabbed_surface = true
     else:
         is_grabbing_surface = false
 
@@ -132,7 +132,7 @@ func release_ceiling(character) -> void:
         is_grabbing_right_wall = is_touching_right_wall
         just_grabbed_left_wall = is_touching_left_wall
         just_grabbed_right_wall = is_touching_right_wall
-        just_grabbed_a_surface = true
+        just_grabbed_surface = true
     else:
         is_grabbing_surface = false
 
@@ -216,7 +216,7 @@ func _update_which_sides_are_touched(character) -> void:
     is_touching_left_wall = which_wall == SurfaceSide.LEFT_WALL
     is_touching_right_wall = which_wall == SurfaceSide.RIGHT_WALL
     
-    var next_is_touching_a_surface := \
+    var next_is_touching_surface := \
             next_is_touching_floor or \
             next_is_touching_ceiling or \
             next_is_touching_wall
@@ -236,15 +236,15 @@ func _update_which_sides_are_touched(character) -> void:
     just_stopped_touching_wall = \
             !next_is_touching_wall and is_touching_wall
     
-    just_touched_a_surface = \
-            next_is_touching_a_surface and !is_touching_a_surface
-    just_stopped_touching_a_surface = \
-            !next_is_touching_a_surface and is_touching_a_surface
+    just_touched_surface = \
+            next_is_touching_surface and !is_touching_surface
+    just_stopped_touching_surface = \
+            !next_is_touching_surface and is_touching_surface
     
     is_touching_floor = next_is_touching_floor
     is_touching_ceiling = next_is_touching_ceiling
     is_touching_wall = next_is_touching_wall
-    is_touching_a_surface = next_is_touching_a_surface
+    is_touching_surface = next_is_touching_surface
     
     # Calculate the sign of a colliding wall's direction.
     toward_wall_sign = \
@@ -320,10 +320,6 @@ func _update_touched_surfaces(character) -> void:
 func _update_surface_actions(
         character,
         preserves_just_changed_state := false) -> void:
-    var touching_ceiling_and_pressing_up: bool = \
-            is_touching_ceiling and character.actions.pressed_up
-    is_triggering_ceiling_grab = touching_ceiling_and_pressing_up
-    
     # Flip the horizontal direction of the animation according to which way the
     # character is facing.
     if character.actions.pressed_face_right:
@@ -343,6 +339,11 @@ func _update_surface_actions(
         horizontal_acceleration_sign = -1
     else:
         horizontal_acceleration_sign = 0
+    
+    is_triggering_ceiling_grab = \
+            is_touching_ceiling and \
+            (character.actions.pressed_up or \
+            character.actions.pressed_grab)
     
     is_facing_wall = \
             (which_wall == SurfaceSide.RIGHT_WALL and \
@@ -364,7 +365,7 @@ func _update_surface_actions(
             character.actions.pressed_up and \
             (is_facing_wall or is_pressing_into_wall)
     var facing_into_wall_and_pressing_grab: bool = \
-            character.actions.pressed_grab_wall and \
+            character.actions.pressed_grab and \
             (is_facing_wall or is_pressing_into_wall)
     var touching_floor_and_pressing_down: bool = \
             is_touching_floor and character.actions.pressed_down
@@ -466,7 +467,7 @@ func _update_which_side_is_grabbed(
     just_grabbed_right_wall = \
             (preserves_just_changed_state and just_grabbed_right_wall) or \
             (next_is_grabbing_right_wall and !is_grabbing_right_wall)
-    just_grabbed_a_surface = \
+    just_grabbed_surface = \
             just_grabbed_floor or \
             just_grabbed_ceiling or \
             just_grabbed_left_wall or \
@@ -711,7 +712,7 @@ func update_for_initial_surface_attachment(
         _:
             Sc.logger.error()
     
-    is_touching_a_surface = \
+    is_touching_surface = \
             is_touching_floor or \
             is_touching_left_wall or \
             is_touching_right_wall or \
@@ -735,7 +736,7 @@ func update_for_initial_surface_attachment(
     is_grabbing_left_wall = is_touching_left_wall
     is_grabbing_right_wall = is_touching_right_wall
     is_grabbing_wall = is_touching_wall
-    is_grabbing_surface = is_touching_a_surface
+    is_grabbing_surface = is_touching_surface
     
     if is_grabbing_floor:
         surface_type = SurfaceType.FLOOR
