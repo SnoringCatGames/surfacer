@@ -98,7 +98,7 @@ func _on_physics_process(delta: float) -> void:
         
     elif character.navigation_state.is_currently_navigating:
         if is_close_enough_to_stop_moving and \
-                character.surface_state.is_grabbing_a_surface:
+                character.surface_state.is_grabbing_surface:
             # We are navigating, and we are close enough to the leader.
             character.navigator.stop()
             
@@ -164,7 +164,7 @@ func _attempt_navigation() -> bool:
             max_distance_from_start_position * max_distance_from_start_position
     
     var position_type: int
-    if follow_target.surface_state.is_grabbing_a_surface:
+    if follow_target.surface_state.is_grabbing_surface:
         position_type = IntendedPositionType.CENTER_POSITION_ALONG_SURFACE
     elif follow_target.navigation_state.is_currently_navigating:
         if follow_target.navigator.edge.get_end_surface() != null:

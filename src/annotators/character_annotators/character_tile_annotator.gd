@@ -17,7 +17,7 @@ func _init(character: SurfacerCharacter) -> void:
 
 
 func _draw() -> void:
-    if character.surface_state.is_grabbing_a_surface:
+    if character.surface_state.is_grabbing_surface:
         _draw_tile_border()
 
 

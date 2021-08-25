@@ -417,7 +417,7 @@ func processed_action(name: String) -> bool:
 func _update_surface_state(preserves_just_changed_state := false) -> void:
     surface_state.update_for_actions(self, preserves_just_changed_state)
     if surface_state.just_changed_surface and \
-            surface_state.is_grabbing_a_surface:
+            surface_state.is_grabbing_surface:
         _update_reachable_surfaces(surface_state.grabbed_surface)
 
 
@@ -549,7 +549,7 @@ func get_intended_position(type: int) -> PositionAlongSurface:
     match type:
         IntendedPositionType.CENTER_POSITION:
             return surface_state.center_position_along_surface if \
-                    surface_state.is_grabbing_a_surface else \
+                    surface_state.is_grabbing_surface else \
                     PositionAlongSurfaceFactory.create_position_without_surface(
                             surface_state.center_position)
         IntendedPositionType.CENTER_POSITION_ALONG_SURFACE:
@@ -558,7 +558,7 @@ func get_intended_position(type: int) -> PositionAlongSurface:
             return surface_state.last_position_along_surface
         IntendedPositionType.CLOSEST_SURFACE_POSITION:
             return surface_state.center_position_along_surface if \
-                    surface_state.is_grabbing_a_surface else \
+                    surface_state.is_grabbing_surface else \
                     SurfaceParser.find_closest_position_on_a_surface(
                             surface_state.center_position,
                             self,

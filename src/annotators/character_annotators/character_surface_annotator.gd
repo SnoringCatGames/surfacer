@@ -13,7 +13,7 @@ func _init(character: SurfacerCharacter) -> void:
 
 
 func _draw() -> void:
-    if character.surface_state.is_grabbing_a_surface:
+    if character.surface_state.is_grabbing_surface:
         Sc.draw.draw_surface(
                 self,
                 character.surface_state.grabbed_surface,
