@@ -31,6 +31,11 @@ static func convert_calculation_steps_to_movement_instructions(
             "convert_calculation_steps_to_movement_instructions",
             collision_params.thread_id)
     
+    # This is always true, since IntraSurfaceEdge doesn't use this function.
+    var is_changing_surfaces := true
+    
+    var origin_side := calc_result.edge_calc_params.origin_position.side
+    
     var steps := calc_result.horizontal_steps
     var vertical_step := calc_result.vertical_step
     
@@ -77,8 +82,8 @@ static func convert_calculation_steps_to_movement_instructions(
         press.time = max(press.time, 0.0)
         release.time = max(release.time, 0.0)
     
-    # Record the jump instruction.
     if includes_jump:
+        # Record the jump instruction.
         var input_key := "j"
         var press := EdgeInstruction.new(
                 input_key,
@@ -91,6 +96,21 @@ static func convert_calculation_steps_to_movement_instructions(
         var release := EdgeInstruction.new(
                 input_key,
                 jump_end_time,
+                false)
+        instructions.push_front(release)
+        instructions.push_front(press)
+        
+    elif origin_side == SurfaceSide.CEILING and \
+            is_changing_surfaces:
+        # Record the let-go-of-ceiling instruction.
+        var input_key := "md"
+        var press := EdgeInstruction.new(
+                input_key,
+                0.0,
+                true)
+        var release := EdgeInstruction.new(
+                input_key,
+                Time.PHYSICS_TIME_STEP - 0.001,
                 false)
         instructions.push_front(release)
         instructions.push_front(press)
