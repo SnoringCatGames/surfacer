@@ -393,6 +393,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     movement_params.collider_half_width_height)
                                     var land_basis := land_surface_left_end_wrapper.target_point
                                     var must_reach_destination_on_fall := true
+                                    var must_reach_destination_on_rise := false
                                     var horizontal_movement_distance := \
                                             _calculate_horizontal_movement_distance(
                                                     movement_params,
@@ -400,7 +401,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     land_basis,
                                                     velocity_start_max_speed,
                                                     can_hold_jump_button_at_start,
-                                                    must_reach_destination_on_fall)
+                                                    must_reach_destination_on_fall,
+                                                    must_reach_destination_on_rise)
                                     var jump_position: PositionAlongSurface
                                     var land_position: PositionAlongSurface
                                     if land_surface_left_bound - jump_surface_left_bound > \
@@ -484,6 +486,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     land_surface,
                                                     movement_params.collider_half_width_height)
                                     var must_reach_destination_on_fall := true
+                                    var must_reach_destination_on_rise := false
                                     var horizontal_movement_distance := \
                                             _calculate_horizontal_movement_distance(
                                                     movement_params,
@@ -491,7 +494,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     land_basis,
                                                     velocity_start_max_speed,
                                                     can_hold_jump_button_at_start,
-                                                    must_reach_destination_on_fall)
+                                                    must_reach_destination_on_fall,
+                                                    must_reach_destination_on_rise)
                                     var jump_position: PositionAlongSurface
                                     var land_position: PositionAlongSurface
                                     if jump_surface_left_bound - land_surface_left_bound > \
@@ -619,6 +623,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     movement_params.collider_half_width_height)
                                     var land_basis := land_surface_right_end_wrapper.target_point
                                     var must_reach_destination_on_fall := true
+                                    var must_reach_destination_on_rise := false
                                     var horizontal_movement_distance := \
                                             _calculate_horizontal_movement_distance(
                                                     movement_params,
@@ -626,7 +631,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     land_basis,
                                                     velocity_start_max_speed,
                                                     can_hold_jump_button_at_start,
-                                                    must_reach_destination_on_fall)
+                                                    must_reach_destination_on_fall,
+                                                    must_reach_destination_on_rise)
                                     var jump_position: PositionAlongSurface
                                     var land_position: PositionAlongSurface
                                     if jump_surface_right_bound - land_surface_right_bound > \
@@ -710,6 +716,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     land_surface,
                                                     movement_params.collider_half_width_height)
                                     var must_reach_destination_on_fall := true
+                                    var must_reach_destination_on_rise := false
                                     var horizontal_movement_distance := \
                                             _calculate_horizontal_movement_distance(
                                                     movement_params,
@@ -717,7 +724,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                     land_basis,
                                                     velocity_start_max_speed,
                                                     can_hold_jump_button_at_start,
-                                                    must_reach_destination_on_fall)
+                                                    must_reach_destination_on_fall,
+                                                    must_reach_destination_on_rise)
                                     var jump_position: PositionAlongSurface
                                     var land_position: PositionAlongSurface
                                     if land_surface_right_bound - jump_surface_right_bound > \
@@ -870,6 +878,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     land_surface,
                                     movement_params.collider_half_width_height)
                             var must_reach_destination_on_fall := false
+                            var must_reach_destination_on_rise := false
                             var horizontal_movement_distance := \
                                     _calculate_horizontal_movement_distance(
                                             movement_params,
@@ -877,7 +886,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             land_basis,
                                             velocity_start,
                                             can_hold_jump_button_at_start,
-                                            must_reach_destination_on_fall)
+                                            must_reach_destination_on_fall,
+                                            must_reach_destination_on_rise)
                             var goal_x := \
                                     land_basis.x + horizontal_movement_distance if \
                                     is_landing_on_left_wall else \
@@ -992,6 +1002,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     movement_params.collider_half_width_height)
                             land_basis = land_surface_bottom_end_wrapper.target_point
                             var must_reach_destination_on_fall := false
+                            var must_reach_destination_on_rise := false
                             var horizontal_movement_distance := \
                                     _calculate_horizontal_movement_distance(
                                             movement_params,
@@ -999,7 +1010,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             land_basis,
                                             velocity_start,
                                             can_hold_jump_button_at_start,
-                                            must_reach_destination_on_fall)
+                                            must_reach_destination_on_fall,
+                                            must_reach_destination_on_rise)
                             goal_x += \
                                     horizontal_movement_distance if \
                                     is_landing_on_left_wall else \
@@ -1238,6 +1250,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     Vector2(goal_x, INF),
                                     jump_surface,
                                     movement_params.collider_half_width_height)
+                            var must_reach_destination_on_fall := true
+                            var must_reach_destination_on_rise := false
                             var horizontal_movement_distance := \
                                     _calculate_horizontal_movement_distance(
                                             movement_params,
@@ -1245,7 +1259,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             land_basis,
                                             velocity_start,
                                             can_hold_jump_button_at_start,
-                                            true)
+                                            must_reach_destination_on_fall,
+                                            must_reach_destination_on_rise)
                             goal_x = \
                                     jump_basis.x - horizontal_movement_distance if \
                                     is_landing_on_left_wall else \
@@ -1618,6 +1633,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             land_surface,
                                             movement_params.collider_half_width_height)
                             var must_reach_destination_on_fall := true
+                            var must_reach_destination_on_rise := false
                             var horizontal_movement_distance := \
                                     _calculate_horizontal_movement_distance(
                                             movement_params,
@@ -1625,7 +1641,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             land_basis,
                                             velocity_start,
                                             can_hold_jump_button_at_start,
-                                            must_reach_destination_on_fall)
+                                            must_reach_destination_on_fall,
+                                            must_reach_destination_on_rise)
                             goal_x = \
                                     jump_basis.x + horizontal_movement_distance if \
                                     is_jumping_from_left_wall else \
@@ -1768,6 +1785,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 movement_params.collider_half_width_height)
                         var land_basis := land_surface_near_end_wrapper.target_point
                         var must_reach_destination_on_fall := true
+                        var must_reach_destination_on_rise := false
                         var horizontal_movement_distance := \
                                 _calculate_horizontal_movement_distance(
                                         movement_params,
@@ -1775,7 +1793,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         land_basis,
                                         velocity_start,
                                         can_hold_jump_button_at_start,
-                                        must_reach_destination_on_fall)
+                                        must_reach_destination_on_fall,
+                                        must_reach_destination_on_rise)
                         var goal_x := \
                                 jump_basis.x + horizontal_movement_distance if \
                                 is_jumping_from_left_wall else \
@@ -2235,6 +2254,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             Vector2(goal_x, INF),
                                             land_surface,
                                             movement_params.collider_half_width_height)
+                            var must_reach_destination_on_fall := false
+                            var must_reach_destination_on_rise := true
                             var horizontal_movement_distance := \
                                     _calculate_horizontal_movement_distance(
                                             movement_params,
@@ -2242,7 +2263,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             land_basis,
                                             velocity_start,
                                             can_hold_jump_button_at_start,
-                                            false)
+                                            must_reach_destination_on_fall,
+                                            must_reach_destination_on_rise)
                             goal_x = \
                                     jump_basis.x + horizontal_movement_distance if \
                                     is_jumping_from_left_wall else \
@@ -2714,6 +2736,7 @@ static func calculate_land_positions_on_surface(
                                 land_surface,
                                 movement_params.collider_half_width_height)
                 var must_reach_destination_on_fall := true
+                var must_reach_destination_on_rise := false
                 
                 var land_position_with_horizontal_movement_distance: \
                         PositionAlongSurface
@@ -2725,7 +2748,8 @@ static func calculate_land_positions_on_surface(
                                     land_basis,
                                     velocity_start,
                                     can_hold_jump_button_at_start,
-                                    must_reach_destination_on_fall)
+                                    must_reach_destination_on_fall,
+                                    must_reach_destination_on_rise)
                     var land_x := \
                             origin_target_point.x + \
                                     horizontal_movement_distance if \
@@ -2907,6 +2931,7 @@ static func calculate_land_positions_on_surface(
                                 land_surface,
                                 movement_params.collider_half_width_height)
                 var must_reach_destination_on_fall := false
+                var must_reach_destination_on_rise := true
                 var horizontal_movement_distance := \
                         _calculate_horizontal_movement_distance(
                                 movement_params,
@@ -2914,7 +2939,8 @@ static func calculate_land_positions_on_surface(
                                 land_basis,
                                 velocity_start,
                                 can_hold_jump_button_at_start,
-                                must_reach_destination_on_fall)
+                                must_reach_destination_on_fall,
+                                must_reach_destination_on_rise)
                 var land_x := \
                         origin_target_point.x + \
                                 horizontal_movement_distance if \
@@ -3183,7 +3209,8 @@ static func _calculate_horizontal_movement_distance(
         land_basis: Vector2,
         velocity_start: Vector2,
         can_hold_jump_button_at_start: bool,
-        must_reach_destination_on_fall: bool) -> float:
+        must_reach_destination_on_fall: bool,
+        must_reach_destination_on_rise: bool) -> float:
     var displacement: Vector2 = land_basis - jump_basis
     
     var duration: float = \
@@ -3192,7 +3219,8 @@ static func _calculate_horizontal_movement_distance(
                     displacement,
                     velocity_start,
                     can_hold_jump_button_at_start,
-                    must_reach_destination_on_fall)
+                    must_reach_destination_on_fall,
+                    must_reach_destination_on_rise)
     if is_inf(duration):
         # We cannot reach the land position from the start position.
         return INF

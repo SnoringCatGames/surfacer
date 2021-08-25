@@ -34,6 +34,13 @@ static func convert_calculation_steps_to_movement_instructions(
     var steps := calc_result.horizontal_steps
     var vertical_step := calc_result.vertical_step
     
+    var vertical_step_duration := \
+            vertical_step.time_step_end - vertical_step.time_step_start
+    var duration := \
+            min(vertical_step_duration, calc_result.collision_time) if \
+            !is_inf(calc_result.collision_time) else \
+            vertical_step_duration
+    
     var instructions := []
     instructions.resize(steps.size() * 2)
     
@@ -77,10 +84,13 @@ static func convert_calculation_steps_to_movement_instructions(
                 input_key,
                 vertical_step.time_instruction_start,
                 true)
+        var jump_end_time := min(
+                vertical_step.time_instruction_end + \
+                JUMP_DURATION_INCREASE_EPSILON,
+                vertical_step.time_step_start + duration)
         var release := EdgeInstruction.new(
                 input_key,
-                vertical_step.time_instruction_end + \
-                        JUMP_DURATION_INCREASE_EPSILON,
+                jump_end_time,
                 false)
         instructions.push_front(release)
         instructions.push_front(press)
@@ -94,14 +104,16 @@ static func convert_calculation_steps_to_movement_instructions(
         # pressing sideways).
         
         var last_step: EdgeStep = steps[steps.size() - 1]
-        var time_instruction_start := last_step.time_instruction_end + \
+        var time_instruction_start := \
+                last_step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
         # Ensure that the boosted instruction time doesn't exceed the edge end
         # time.
         time_instruction_start = max(
                 min(
                         time_instruction_start,
-                        vertical_step.time_step_end - \
+                        vertical_step.time_step_start + \
+                                duration - \
                                 Time.PHYSICS_TIME_STEP - \
                                 0.0001),
                 0.0)
@@ -124,13 +136,6 @@ static func convert_calculation_steps_to_movement_instructions(
                     time_instruction_start,
                     true)
             instructions.push_back(press)
-    
-    var vertical_step_duration := \
-            vertical_step.time_step_end - vertical_step.time_step_start
-    var duration := \
-            min(vertical_step_duration, calc_result.collision_time) if \
-            !is_inf(calc_result.collision_time) else \
-            vertical_step_duration
     
     var instructions_wrapper := EdgeInstructions.new(
             instructions,

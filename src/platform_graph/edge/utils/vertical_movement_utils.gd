@@ -146,7 +146,8 @@ static func calculate_time_to_jump_to_waypoint(
         displacement: Vector2,
         velocity_start: Vector2,
         can_hold_jump_button_at_start: bool,
-        must_reach_destination_on_fall := false) -> float:
+        must_reach_destination_on_fall := false,
+        must_reach_destination_on_rise := false) -> float:
     if displacement.y < -movement_params.max_upward_jump_distance:
         # We cannot jump high enough for the displacement.
         return INF
@@ -278,6 +279,13 @@ static func calculate_time_to_jump_to_waypoint(
                             horizontal_acceleration_sign,
                             movement_params.max_horizontal_speed_default)
         assert(!is_inf(duration_to_reach_horizontal_displacement))
+        
+        if must_reach_destination_on_rise and \
+                duration_to_reach_horizontal_displacement > \
+                duration_to_reach_upward_displacement:
+            # We can't reach the horizontal displacement before we start
+            # descending.
+            return INF
         
         # From a basic equation of motion:
         #   v = v_0 + a*t
