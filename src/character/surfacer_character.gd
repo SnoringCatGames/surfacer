@@ -267,7 +267,7 @@ func _on_physics_process(delta: float) -> void:
                 ],
                 CharacterLogType.SURFACE,
                 true)
-    elif surface_state.just_touched_a_surface:
+    elif surface_state.just_touched_surface:
         var side_str: String
         if surface_state.is_touching_floor:
             side_str = "FLOOR"

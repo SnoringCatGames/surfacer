@@ -29,7 +29,7 @@ func check_for_update() -> void:
     elif character.actions.just_pressed_right:
         recent_actions[current_position_index] = \
                 CharacterActionType.PRESSED_RIGHT
-    elif character.actions.just_pressed_grab_wall:
+    elif character.actions.just_pressed_grab:
         recent_actions[current_position_index] = \
                 CharacterActionType.PRESSED_GRAB_WALL
     elif character.actions.just_pressed_face_left:

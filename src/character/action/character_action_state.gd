@@ -24,8 +24,8 @@ var pressed_right := false
 var just_pressed_right := false
 var just_released_right := false
 
-var pressed_grab_wall := false
-var just_pressed_grab_wall := false
+var pressed_grab := false
+var just_pressed_grab := false
 var just_released_grab_wall := false
 
 var pressed_face_left := false
@@ -62,8 +62,8 @@ func clear() -> void:
     self.just_pressed_right = false
     self.just_released_right = false
     
-    self.pressed_grab_wall = false
-    self.just_pressed_grab_wall = false
+    self.pressed_grab = false
+    self.just_pressed_grab = false
     self.just_released_grab_wall = false
     
     self.pressed_face_left = false
@@ -100,8 +100,8 @@ func copy(other: CharacterActionState) -> void:
     self.just_pressed_right = other.just_pressed_right
     self.just_released_right = other.just_released_right
     
-    self.pressed_grab_wall = other.pressed_grab_wall
-    self.just_pressed_grab_wall = other.just_pressed_grab_wall
+    self.pressed_grab = other.pressed_grab
+    self.just_pressed_grab = other.just_pressed_grab
     self.just_released_grab_wall = other.just_released_grab_wall
     
     self.pressed_face_left = other.pressed_face_left
@@ -151,7 +151,7 @@ func log_new_presses_and_releases(
     _log_new_press_or_release(
             character,
             "grab",
-            just_pressed_grab_wall,
+            just_pressed_grab,
             just_released_grab_wall,
             time)
     _log_new_press_or_release(

@@ -100,7 +100,7 @@ func get_is_facing_left_at_time(
             "j", \
             "mu", \
             "md", \
-            "gw":
+            "g":
                 # This input does not affect the direction the character faces.
                 pass
             _:
