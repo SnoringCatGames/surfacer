@@ -25,7 +25,7 @@ var is_grabbing_ceiling := false
 var is_grabbing_left_wall := false
 var is_grabbing_right_wall := false
 var is_grabbing_wall := false
-var is_grabbing_a_surface := false
+var is_grabbing_surface := false
 
 var just_grabbed_floor := false
 var just_grabbed_ceiling := false
@@ -114,7 +114,7 @@ func release_wall(character) -> void:
         just_grabbed_floor = true
         just_grabbed_a_surface = true
     else:
-        is_grabbing_a_surface = false
+        is_grabbing_surface = false
 
 
 func release_ceiling(character) -> void:
@@ -134,7 +134,7 @@ func release_ceiling(character) -> void:
         just_grabbed_right_wall = is_touching_right_wall
         just_grabbed_a_surface = true
     else:
-        is_grabbing_a_surface = false
+        is_grabbing_surface = false
 
 
 # Updates surface-related state according to the character's recent movement and
@@ -446,7 +446,7 @@ func _update_which_side_is_grabbed(
     elif is_touching_floor:
         next_is_grabbing_floor = true
     
-    var next_is_grabbing_a_surface := \
+    var next_is_grabbing_surface := \
             next_is_grabbing_floor or \
             next_is_grabbing_ceiling or \
             next_is_grabbing_left_wall or \
@@ -472,16 +472,16 @@ func _update_which_side_is_grabbed(
     
     just_entered_air = \
             (preserves_just_changed_state and just_entered_air) or \
-            (!next_is_grabbing_a_surface and is_grabbing_a_surface)
+            (!next_is_grabbing_surface and is_grabbing_surface)
     just_left_air = \
             (preserves_just_changed_state and just_left_air) or \
-            (next_is_grabbing_a_surface and !is_grabbing_a_surface)
+            (next_is_grabbing_surface and !is_grabbing_surface)
     
     is_grabbing_floor = next_is_grabbing_floor
     is_grabbing_ceiling = next_is_grabbing_ceiling
     is_grabbing_left_wall = next_is_grabbing_left_wall
     is_grabbing_right_wall = next_is_grabbing_right_wall
-    is_grabbing_a_surface = next_is_grabbing_a_surface
+    is_grabbing_surface = next_is_grabbing_surface
 
 
 func _update_surface_grab(
@@ -492,7 +492,7 @@ func _update_surface_grab(
     var previous_grabbed_tile_map := grabbed_tile_map
     var previous_grab_position_tile_map_coord := grab_position_tile_map_coord
     
-    if is_grabbing_a_surface and \
+    if is_grabbing_surface and \
             character.movement_params.bypasses_runtime_physics:
         # Populate surfaces_to_touches with a touch that matches expected
         # navigation state.
@@ -502,7 +502,7 @@ func _update_surface_grab(
     
     surface_grab = null
     
-    if is_grabbing_a_surface:
+    if is_grabbing_surface:
         for surface in surfaces_to_touches:
             if surface.side == SurfaceSide.FLOOR and \
                             is_grabbing_floor or \
@@ -733,7 +733,7 @@ func update_for_initial_surface_attachment(
     is_grabbing_left_wall = is_touching_left_wall
     is_grabbing_right_wall = is_touching_right_wall
     is_grabbing_wall = is_touching_wall
-    is_grabbing_a_surface = is_touching_a_surface
+    is_grabbing_surface = is_touching_a_surface
     
     if is_grabbing_floor:
         surface_type = SurfaceType.FLOOR

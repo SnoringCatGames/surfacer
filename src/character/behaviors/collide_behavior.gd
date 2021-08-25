@@ -93,7 +93,7 @@ func _move() -> bool:
     
     var destination: PositionAlongSurface
     if can_leave_start_surface:
-        if collision_target.surface_state.is_grabbing_a_surface:
+        if collision_target.surface_state.is_grabbing_surface:
             destination = collision_target.surface_state \
                     .center_position_along_surface
         else:

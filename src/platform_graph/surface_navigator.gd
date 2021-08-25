@@ -194,7 +194,7 @@ func find_path(
     var suffix_edge: JumpFromSurfaceEdge
     
     # Handle the start of the path.
-    if surface_state.is_grabbing_a_surface:
+    if surface_state.is_grabbing_surface:
         # Find a path from a starting character-position along a surface.
         graph_origin = PositionAlongSurface.new(
                 surface_state.center_position_along_surface)
@@ -782,7 +782,7 @@ func _update(
             ], true)
     else:
         # Continuing along an edge.
-        if surface_state.is_grabbing_a_surface:
+        if surface_state.is_grabbing_surface:
             pass
         else:
             # TODO: Detect when position is too far from expected. Then maybe
