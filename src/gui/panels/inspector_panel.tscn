@@ -411,8 +411,8 @@ custom_constants/separation = 0
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false,
-"gs_rect_min_size": Vector2( 360, 0 ),
-"gs_rect_size": Vector2( 360, 684 )
+"sc_rect_min_size": Vector2( 360, 0 ),
+"sc_rect_size": Vector2( 360, 684 )
 }
 
 [node name="ScaffolderPanelContainer" parent="." instance=ExtResource( 3 )]
@@ -435,8 +435,8 @@ margin_bottom = 597.0
 custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false,
-"gs_rect_size": Vector2( 354, 594 ),
-"gs_separation": 0
+"sc_rect_size": Vector2( 354, 594 ),
+"sc_separation": 0
 }
 
 [node name="Spacer" parent="ScaffolderPanelContainer/VBoxContainer" instance=ExtResource( 2 )]
@@ -456,8 +456,8 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 custom_constants/separation = 0
 __meta__ = {
-"gs_rect_size": Vector2( 354, 36 ),
-"gs_separation": 0
+"sc_rect_size": Vector2( 354, 36 ),
+"sc_separation": 0
 }
 
 [node name="Spacer" parent="ScaffolderPanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
@@ -479,8 +479,8 @@ size_flags_vertical = 4
 custom_fonts/font = ExtResource( 8 )
 text = "Pause"
 __meta__ = {
-"gs_rect_min_size": Vector2( 140, 0 ),
-"gs_rect_size": Vector2( 140, 36 )
+"sc_rect_min_size": Vector2( 140, 0 ),
+"sc_rect_size": Vector2( 140, 36 )
 }
 
 [node name="Spacer5" parent="ScaffolderPanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
@@ -525,8 +525,8 @@ margin_bottom = 594.0
 size_flags_vertical = 3
 custom_constants/separation = 0
 __meta__ = {
-"gs_rect_size": Vector2( 354, 560 ),
-"gs_separation": 0
+"sc_rect_size": Vector2( 354, 560 ),
+"sc_separation": 0
 }
 
 [node name="Spacer" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
@@ -618,8 +618,8 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
 __meta__ = {
-"gs_rect_size": Vector2( 354, 461 ),
-"gs_separation": 0
+"sc_rect_size": Vector2( 354, 461 ),
+"sc_separation": 0
 }
 
 [node name="ScaffolderPanelContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections/InspectorContainer" instance=ExtResource( 3 )]
@@ -671,11 +671,11 @@ custom_constants/margin_top = 4
 custom_constants/margin_left = 4
 custom_constants/margin_bottom = 4
 __meta__ = {
-"gs_margin_bottom": 4,
-"gs_margin_left": 4,
-"gs_margin_right": 4,
-"gs_margin_top": 4,
-"gs_rect_size": Vector2( 354, 8 )
+"sc_margin_bottom": 4,
+"sc_margin_left": 4,
+"sc_margin_right": 4,
+"sc_margin_top": 4,
+"sc_rect_size": Vector2( 354, 8 )
 }
 
 [node name="Annotators" type="GridContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections/MarginContainer"]
@@ -689,7 +689,7 @@ custom_constants/vseparation = 2
 custom_constants/hseparation = 16
 columns = 2
 __meta__ = {
-"gs_rect_size": Vector2( 346, 0 )
+"sc_rect_size": Vector2( 346, 0 )
 }
 
 [node name="Spacer" parent="." instance=ExtResource( 2 )]
@@ -713,8 +713,8 @@ size_flags_vertical = 4
 custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false,
-"gs_rect_size": Vector2( 180, 64 ),
-"gs_separation": 0
+"sc_rect_size": Vector2( 180, 64 ),
+"sc_separation": 0
 }
 
 [node name="Spacer" parent="Footer" instance=ExtResource( 2 )]
