@@ -54,7 +54,7 @@ func _ready() -> void:
     var x_button := \
             $ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper/ \
             XButton
-    x_button.set_meta("gs_rect_position", x_button.rect_position)
+    x_button.set_meta("sc_rect_position", x_button.rect_position)
     
     Sc.gui.add_gui_to_scale(self)
     
@@ -106,7 +106,7 @@ func _deferred_on_gui_scale_changed() -> void:
             $ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper/ \
             XButton
     x_button.rect_position = \
-            x_button.get_meta("gs_rect_position") * Sc.gui.scale
+            x_button.get_meta("sc_rect_position") * Sc.gui.scale
     
     for child in Sc.utils.get_children_by_type(self, Control):
         Sc.gui.scale_gui_recursively(child)
