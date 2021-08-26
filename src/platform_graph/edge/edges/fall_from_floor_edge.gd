@@ -134,7 +134,7 @@ func _update_navigation_state_edge_specific_helper(
     navigation_state.just_left_air_unexpectedly = \
             surface_state.just_left_air and \
             !is_grabbed_surface_expected and \
-            surface_state.collision_count > 0
+            surface_state.contact_count > 0
 
 
 func load_from_json_object(

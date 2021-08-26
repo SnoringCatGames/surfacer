@@ -969,32 +969,32 @@ func find_closest_surface_in_direction(
             true,
             false)
     
-    var touch_position: Vector2 = collision.position
-    var touched_side: int = \
+    var contact_position: Vector2 = collision.position
+    var contacted_side: int = \
             Sc.geometry.get_surface_side_for_normal(collision.normal)
     assert(collision.collider is SurfacesTileMap)
-    var touched_tile_map: SurfacesTileMap = collision.collider
+    var contacted_tile_map: SurfacesTileMap = collision.collider
     
     Sc.geometry.get_collision_tile_map_coord(
             collision_tile_map_coord_result,
-            touch_position,
-            touched_tile_map,
-            touched_side == SurfaceSide.FLOOR,
-            touched_side == SurfaceSide.CEILING,
-            touched_side == SurfaceSide.LEFT_WALL,
-            touched_side == SurfaceSide.RIGHT_WALL)
-    var touch_position_tile_map_coord := \
+            contact_position,
+            contacted_tile_map,
+            contacted_side == SurfaceSide.FLOOR,
+            contacted_side == SurfaceSide.CEILING,
+            contacted_side == SurfaceSide.LEFT_WALL,
+            contacted_side == SurfaceSide.RIGHT_WALL)
+    var contact_position_tile_map_coord := \
             collision_tile_map_coord_result.tile_map_coord
     
-    var touched_tile_map_index: int = \
+    var contacted_tile_map_index: int = \
             Sc.geometry.get_tile_map_index_from_grid_coord(
-                    touch_position_tile_map_coord,
-                    touched_tile_map)
+                    contact_position_tile_map_coord,
+                    contacted_tile_map)
     
     return get_surface_for_tile(
-            touched_tile_map,
-            touched_tile_map_index,
-            touched_side)
+            contacted_tile_map,
+            contacted_tile_map_index,
+            contacted_side)
 
 
 static func find_closest_position_on_a_surface(

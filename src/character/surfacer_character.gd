@@ -41,7 +41,7 @@ var _can_dash := true
 
 var _actions_from_previous_frame := CharacterActionState.new()
 var actions := CharacterActionState.new()
-var surface_state := CharacterSurfaceState.new()
+var surface_state := CharacterSurfaceState.new(self)
 var navigation_state: CharacterNavigationState
 
 var graph: PlatformGraph
@@ -108,7 +108,7 @@ func _ready() -> void:
     
     _init_platform_graph()
     surface_state.update_for_initial_surface_attachment(
-            self, _start_attachment_surface_side_or_position)
+            _start_attachment_surface_side_or_position)
     _init_navigator()
     _parse_behavior_children()
     
@@ -241,7 +241,23 @@ func _init_navigator() -> void:
 func _on_physics_process(delta: float) -> void:
     var delta_scaled: float = Sc.time.scale_delta(delta)
     
+    if !movement_params.bypasses_runtime_physics:
+        # Since move_and_slide automatically accounts for delta, we need to
+        # compensate for that in order to support our modified framerate.
+        var modified_velocity: Vector2 = \
+                velocity * Sc.time.get_combined_scale()
+        
+        # TODO: Use the remaining pre-collision movement that move_and_slide
+        #       returns. This might be needed in order to move along slopes?
+        move_and_slide(
+                modified_velocity,
+                Sc.geometry.UP,
+                false,
+                4,
+                Sc.geometry.FLOOR_MAX_ANGLE)
+    
     _update_actions(delta_scaled)
+    surface_state.clear_just_changed_state()
     _update_surface_state()
     
     for behavior in _behaviors_list:
@@ -303,24 +319,6 @@ func _on_physics_process(delta: float) -> void:
     _process_sounds()
     _update_collision_mask()
     
-    if !movement_params.bypasses_runtime_physics:
-        # Since move_and_slide automatically accounts for delta, we need to
-        # compensate for that in order to support our modified framerate.
-        var modified_velocity: Vector2 = \
-                velocity * Sc.time.get_combined_scale()
-        
-        # TODO: Use the remaining pre-collision movement that move_and_slide
-        #       returns. This might be needed in order to move along slopes?
-        move_and_slide(
-                modified_velocity,
-                Sc.geometry.UP,
-                false,
-                4,
-                Sc.geometry.FLOOR_MAX_ANGLE)
-    
-    # TODO: Only update surface_state if the character actually moved?
-    surface_state.update_for_movement(self)
-    
     if surface_state.did_move_last_frame and \
             is_player_character:
         pointer_listener.on_character_moved()
@@ -333,7 +331,7 @@ func _update_navigator(delta_scaled: float) -> void:
     if navigator.actions_might_be_dirty:
         actions.copy(_actions_from_previous_frame)
         _update_actions(delta_scaled)
-        _update_surface_state(true)
+        _update_surface_state()
 
 
 func _update_actions(delta_scaled: float) -> void:
@@ -414,8 +412,8 @@ func processed_action(name: String) -> bool:
     return _previous_actions_this_frame.get(name) == true
 
 
-func _update_surface_state(preserves_just_changed_state := false) -> void:
-    surface_state.update_for_actions(self, preserves_just_changed_state)
+func _update_surface_state() -> void:
+    surface_state.update()
     if surface_state.just_changed_surface and \
             surface_state.is_grabbing_surface:
         _update_reachable_surfaces(surface_state.grabbed_surface)
