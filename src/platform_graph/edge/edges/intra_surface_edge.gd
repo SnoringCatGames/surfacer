@@ -263,14 +263,14 @@ func _check_did_just_reach_surface_destination(
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration
     
-    if surface_state.collision_count > 1:
+    if surface_state.contact_count > 1:
         var surface := get_start_surface()
         var concave_neighbor_approaching := \
                 surface.clockwise_concave_neighbor if \
                 is_moving_clockwise else \
                 surface.counter_clockwise_concave_neighbor
-        for touched_surface in surface_state.surfaces_to_touches:
-            if touched_surface == concave_neighbor_approaching:
+        for contact_surface in surface_state.surfaces_to_contacts:
+            if contact_surface == concave_neighbor_approaching:
                 # Colliding with the neighbor that we're approaching at the
                 # end of the edge.
                 return true
@@ -332,19 +332,19 @@ func _update_navigation_state_edge_specific_helper(
     #     multiple surfaces,
     # -   and we don't need special updates if we already know the edge is
     #     done.
-    if surface_state.collision_count < 2 or \
+    if surface_state.contact_count < 2 or \
             navigation_state.just_interrupted:
         return
     
     var surface := get_start_surface()
     
-    for touched_surface in surface_state.surfaces_to_touches:
-        if touched_surface == surface or \
-                touched_surface == surface.clockwise_concave_neighbor or \
-                touched_surface == \
+    for contact_surface in surface_state.surfaces_to_contacts:
+        if contact_surface == surface or \
+                contact_surface == surface.clockwise_concave_neighbor or \
+                contact_surface == \
                         surface.counter_clockwise_concave_neighbor or \
-                touched_surface == surface.clockwise_convex_neighbor or \
-                touched_surface == surface.counter_clockwise_convex_neighbor:
+                contact_surface == surface.clockwise_convex_neighbor or \
+                contact_surface == surface.counter_clockwise_convex_neighbor:
             continue
         else:
             # Colliding with an unconnected surface.

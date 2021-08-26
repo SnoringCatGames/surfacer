@@ -19,7 +19,7 @@ func _init().(
 func process(character) -> bool:
     if !character.processed_action(CeilingJumpDownAction.NAME) and \
             character.actions.pressed_down:
-        character.surface_state.release_ceiling(character)
+        character.surface_state.release_ceiling()
         # Cancel any velocity toward the ceiling.
         character.velocity.y = \
                 character.movement_params.ceiling_fall_velocity_boost

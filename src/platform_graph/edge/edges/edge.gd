@@ -152,7 +152,7 @@ func update_navigation_state(
     navigation_state.just_left_air_unexpectedly = \
             surface_state.just_left_air and \
             !is_grabbed_surface_expected and \
-            surface_state.collision_count > 0 and \
+            surface_state.contact_count > 0 and \
             !still_grabbing_start_surface_at_start
     
     navigation_state.just_entered_air_unexpectedly = \

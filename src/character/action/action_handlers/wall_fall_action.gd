@@ -18,8 +18,8 @@ func _init().(
 
 func process(character) -> bool:
     if !character.processed_action(WallJumpAction.NAME) and \
-            character.surface_state.is_pressing_away_from_wall:
-        character.surface_state.release_wall(character)
+            character.surface_state.is_triggering_wall_release:
+        character.surface_state.release_wall()
         # Cancel any velocity toward the wall.
         character.velocity.x = \
                 -character.surface_state.toward_wall_sign * \
