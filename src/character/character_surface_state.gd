@@ -57,6 +57,7 @@ var is_rounding_ceiling_corner_to_upper_wall := false
 var is_rounding_wall_corner_to_lower_ceiling := false
 var is_rounding_wall_corner_to_upper_floor := false
 var is_rounding_corner := false
+var is_rounding_left_corner := false
 
 var just_changed_to_lower_wall_while_rounding_floor_corner := false
 var just_changed_to_upper_wall_while_rounding_ceiling_corner := false
@@ -594,8 +595,8 @@ func _get_expected_position_for_bypassing_runtime_physics() -> \
 
 func _update_surface_contact_for_explicit_grab(
         position_along_surface: PositionAlongSurface) -> void:
-    var side := position_along_surface.side
     var surface := position_along_surface.surface
+    var side := surface.side
     var contact_position := \
             position_along_surface.target_projection_onto_surface
     var tile_map := surface.tile_map
@@ -748,16 +749,6 @@ func _update_grab_trigger_state() -> void:
             is_pressing_floor_grab_input and \
             !is_pressing_wall_grab_input
     
-    is_triggering_ceiling_release = \
-            is_touching_ceiling and \
-            is_pressing_ceiling_release_input
-    is_triggering_wall_release = \
-            is_touching_wall and \
-            is_pressing_wall_release_input
-    is_triggering_fall_through = \
-            is_touching_floor and \
-            is_pressing_fall_through_input
-    
     var current_grabbed_side := \
             grabbed_surface.side if \
             is_instance_valid(grabbed_surface) else \
@@ -836,6 +827,18 @@ func _update_grab_trigger_state() -> void:
             is_still_triggering_floor_grab_since_rounding_corner_to_wall or \
             is_still_triggering_ceiling_grab_since_rounding_corner_to_wall) and \
             !is_triggering_ceiling_grab
+    
+    is_triggering_ceiling_release = \
+            is_touching_ceiling and \
+            is_pressing_ceiling_release_input and \
+            !is_triggering_ceiling_grab
+    is_triggering_wall_release = \
+            is_touching_wall and \
+            is_pressing_wall_release_input and \
+            !is_triggering_wall_grab
+    is_triggering_fall_through = \
+            is_touching_floor and \
+            is_pressing_fall_through_input
 
 
 func _update_rounding_corner_state() -> void:
@@ -900,6 +903,18 @@ func _update_rounding_corner_state() -> void:
             just_changed_to_upper_wall_while_rounding_ceiling_corner or \
             just_changed_to_lower_ceiling_while_rounding_wall_corner or \
             just_changed_to_upper_floor_while_rounding_wall_corner
+    
+    var is_rounding_right_wall_corner := \
+            (is_rounding_wall_corner_to_lower_ceiling or \
+            is_rounding_wall_corner_to_upper_floor) and \
+            grabbed_surface.side == SurfaceSide.RIGHT_WALL
+    var is_rounding_left_corner_of_horizontal_surafce := \
+            (is_rounding_floor_corner_to_lower_wall or \
+            is_rounding_ceiling_corner_to_upper_wall) and \
+            center_position.x <= grabbed_surface.center.x
+    is_rounding_left_corner = \
+            is_rounding_right_wall_corner or \
+            is_rounding_left_corner_of_horizontal_surafce
 
 
 func _update_grab_state() -> void:

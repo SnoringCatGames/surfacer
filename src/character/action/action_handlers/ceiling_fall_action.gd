@@ -18,7 +18,16 @@ func _init().(
 
 func process(character) -> bool:
     if !character.processed_action(CeilingJumpDownAction.NAME) and \
-            character.actions.pressed_down:
+            character.surface_state.is_triggering_ceiling_release:
+        character._log(
+                "Releasing ceiling:    %8s;%8.3fs;P%29s" % [
+                    character.character_name,
+                    Sc.time.get_play_time(),
+                    str(character.position),
+                ],
+                CharacterLogType.ACTION,
+                true)
+        
         character.surface_state.release_ceiling()
         # Cancel any velocity toward the ceiling.
         character.velocity.y = \

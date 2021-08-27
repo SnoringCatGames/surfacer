@@ -423,10 +423,11 @@ static func _prepend_walk_to_fall_off_portion(
                 start.target_point.x - frame_position_x if \
                 falls_on_left_side else \
                 frame_position_x - start.target_point.x
-        var frame_position_y := \
+        var frame_position_y: float = \
                 edge_point.y + \
-                _calculate_displacement_y_for_horizontal_distance_past_edge(
+                Sc.geometry.calculate_displacement_y_for_horizontal_distance_past_edge(
                         distance_past_edge,
+                        true,
                         movement_params.fall_from_floor_corner_calc_shape,
                         movement_params \
                                 .fall_from_floor_corner_calc_shape_rotation)
@@ -490,59 +491,3 @@ static func _calculate_character_center_at_fall_off_point(
                     falls_on_left_side else \
                     right_side_fall_off_displacement_x,
             fall_off_displacement_y)
-
-
-static func _calculate_displacement_y_for_horizontal_distance_past_edge( \
-        distance_past_edge: float,
-        collider_shape: Shape2D,
-        collider_rotation: float) -> float:
-    var is_rotated_90_degrees = \
-            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Sc.geometry.FLOAT_EPSILON
-    
-    if collider_shape is CircleShape2D:
-        if distance_past_edge >= collider_shape.radius:
-            return 0.0
-        else:
-            return _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
-                    distance_past_edge,
-                    collider_shape.radius)
-        
-    elif collider_shape is CapsuleShape2D:
-        if is_rotated_90_degrees:
-            distance_past_edge -= collider_shape.height * 0.5
-            if distance_past_edge <= 0:
-                # Treat the same as a rectangle.
-                return -collider_shape.radius
-            else:
-                # Treat the same as an offset circle.
-                return _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
-                        distance_past_edge,
-                        collider_shape.radius)
-        else:
-            return _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
-                    distance_past_edge,
-                    collider_shape.radius) + collider_shape.height / 2.0
-        
-    elif collider_shape is RectangleShape2D:
-        if is_rotated_90_degrees:
-            return -collider_shape.extents.x
-        else:
-            return -collider_shape.extents.y
-        
-    else:
-        Sc.logger.error((
-                "Invalid Shape2D provided for " +
-                "_calculate_displacement_y_for_horizontal_distance_past_edge: %s. " +
-                "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
-                "RectangleShape2D.") % \
-                collider_shape)
-        return INF
-
-
-static func _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
-        distance_past_edge: float,
-        radius: float) -> float:
-    return 0.0 if \
-            distance_past_edge >= radius else \
-            -sqrt(radius * radius - distance_past_edge * distance_past_edge)

@@ -183,9 +183,9 @@ static func _calculate_trajectory(
                 current_frame_position.y + \
                 velocity.y * Time.PHYSICS_TIME_STEP
         var distance_past_edge := start.target_point.y - frame_position_y
-        var frame_position_x := \
+        var frame_position_x: float = \
                 edge_point.x + \
-                _calculate_displacement_x_for_vertical_distance_past_edge(
+                Sc.geometry.calculate_displacement_x_for_vertical_distance_past_edge(
                         distance_past_edge,
                         is_left_wall,
                         movement_params.climb_over_wall_corner_calc_shape,
@@ -206,78 +206,3 @@ static func _calculate_trajectory(
     trajectory.frame_discrete_positions_from_test = \
             frame_discrete_positions_from_test
     return trajectory
-
-
-static func _calculate_displacement_x_for_vertical_distance_past_edge( \
-        distance_past_edge: float,
-        is_left_wall: bool,
-        collider_shape: Shape2D,
-        collider_rotation: float) -> float:
-    var is_rotated_90_degrees = \
-            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Sc.geometry.FLOAT_EPSILON
-    
-    if collider_shape is CircleShape2D:
-        if distance_past_edge >= collider_shape.radius:
-            return 0.0
-        else:
-            return _calculate_circular_displacement_x_for_vertical_distance_past_edge(
-                    distance_past_edge,
-                    collider_shape.radius,
-                    is_left_wall)
-        
-    elif collider_shape is CapsuleShape2D:
-        if is_rotated_90_degrees:
-            var half_height_offset: float = \
-                    collider_shape.height / 2.0 if \
-                    is_left_wall else \
-                    -collider_shape.height / 2.0
-            return _calculate_circular_displacement_x_for_vertical_distance_past_edge(
-                    distance_past_edge,
-                    collider_shape.radius,
-                    is_left_wall) + half_height_offset
-        else:
-            distance_past_edge -= collider_shape.height / 2.0
-            if distance_past_edge <= 0:
-                # Treat the same as a rectangle.
-                return collider_shape.radius if \
-                        is_left_wall else \
-                        -collider_shape.radius
-            else:
-                # Treat the same as an offset circle.
-                return _calculate_circular_displacement_x_for_vertical_distance_past_edge(
-                        distance_past_edge,
-                        collider_shape.radius,
-                        is_left_wall)
-        
-    elif collider_shape is RectangleShape2D:
-        if is_rotated_90_degrees:
-            return collider_shape.extents.y if \
-                    is_left_wall else \
-                    -collider_shape.extents.y
-        else:
-            return collider_shape.extents.x if \
-                    is_left_wall else \
-                    -collider_shape.extents.x
-        
-    else:
-        Sc.logger.error((
-                "Invalid Shape2D provided for " +
-                "_calculate_displacement_x_for_vertical_distance_past_edge: %s. " +
-                "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
-                "RectangleShape2D.") % \
-                collider_shape)
-        return INF
-
-
-static func _calculate_circular_displacement_x_for_vertical_distance_past_edge(
-        distance_past_edge: float,
-        radius: float,
-        is_left_wall: bool) -> float:
-    var distance_x := \
-            0.0 if \
-            distance_past_edge >= radius else \
-            sqrt(radius * radius - distance_past_edge * distance_past_edge)
-    return distance_x if \
-            is_left_wall else \
-            -distance_x
