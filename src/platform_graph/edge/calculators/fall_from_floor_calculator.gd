@@ -16,7 +16,9 @@ func _init().(
     pass
 
 
-func get_can_traverse_from_surface(surface: Surface) -> bool:
+func get_can_traverse_from_surface(
+        surface: Surface,
+        collision_params: CollisionCalcParams) -> bool:
     return surface != null and \
             surface.side == SurfaceSide.FLOOR and \
             (surface.counter_clockwise_concave_neighbor == null or \
@@ -438,6 +440,11 @@ static func _prepend_walk_to_fall_off_portion(
         current_frame_velocity.x = clamp(current_frame_velocity.x,
                 -movement_params.max_horizontal_speed_default,
                 movement_params.max_horizontal_speed_default)
+    
+    # Update the trajectory distance.
+    trajectory.distance_from_continuous_trajectory = \
+            EdgeTrajectoryUtils.sum_distance_between_frames(
+                    trajectory.frame_continuous_positions_from_steps)
 
 
 static func _calculate_character_center_at_fall_off_point(

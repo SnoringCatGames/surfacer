@@ -34,12 +34,10 @@ const DEFAULT_ACTION_HANDLER_CLASSES := [
 
 const DEFAULT_EDGE_CALCULATOR_CLASSES := [
     preload("res://addons/surfacer/src/platform_graph/edge/calculators/from_air_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/climb_down_wall_to_floor_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/climb_over_wall_to_floor_calculator.gd"),
+    preload("res://addons/surfacer/src/platform_graph/edge/calculators/climb_to_neighbor_surface_calculator.gd"),
     preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_floor_calculator.gd"),
     preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_wall_calculator.gd"),
     preload("res://addons/surfacer/src/platform_graph/edge/calculators/jump_from_surface_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/walk_to_ascend_wall_from_floor_calculator.gd"),
 ]
 
 # ---
@@ -341,9 +339,7 @@ func get_default_edge_calculator_names(
         movement_params: MovementParameters) -> Array:
     var edge_calculators := []
     if movement_params.can_grab_walls:
-        edge_calculators.push_back("ClimbDownWallToFloorCalculator")
-        edge_calculators.push_back("ClimbOverWallToFloorCalculator")
-        edge_calculators.push_back("WalkToAscendWallFromFloorCalculator")
+        edge_calculators.push_back("ClimbToNeighborSurfaceCalculator")
         if movement_params.can_jump:
             edge_calculators.push_back("FallFromWallCalculator")
     if movement_params.can_jump:

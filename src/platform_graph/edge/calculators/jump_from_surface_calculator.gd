@@ -14,7 +14,9 @@ func _init().(
     pass
 
 
-func get_can_traverse_from_surface(surface: Surface) -> bool:
+func get_can_traverse_from_surface(
+        surface: Surface,
+        collision_params: CollisionCalcParams) -> bool:
     return surface != null
 
 

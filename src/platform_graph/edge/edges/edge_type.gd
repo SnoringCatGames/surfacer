@@ -3,13 +3,11 @@ class_name EdgeType
 
 enum {
     FROM_AIR_EDGE,
-    CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
-    CLIMB_OVER_WALL_TO_FLOOR_EDGE,
+    CLIMB_TO_NEIGHBOR_SURFACE_EDGE,
     FALL_FROM_FLOOR_EDGE,
     FALL_FROM_WALL_EDGE,
     INTRA_SURFACE_EDGE,
     JUMP_FROM_SURFACE_EDGE,
-    WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
     UNKNOWN,
 }
 
@@ -18,10 +16,8 @@ static func get_string(type: int) -> String:
     match type:
         FROM_AIR_EDGE:
             return "FROM_AIR_EDGE"
-        CLIMB_DOWN_WALL_TO_FLOOR_EDGE:
-            return "CLIMB_DOWN_WALL_TO_FLOOR_EDGE"
-        CLIMB_OVER_WALL_TO_FLOOR_EDGE:
-            return "CLIMB_OVER_WALL_TO_FLOOR_EDGE"
+        CLIMB_TO_NEIGHBOR_SURFACE_EDGE:
+            return "CLIMB_TO_NEIGHBOR_SURFACE_EDGE"
         FALL_FROM_FLOOR_EDGE:
             return "FALL_FROM_FLOOR_EDGE"
         FALL_FROM_WALL_EDGE:
@@ -30,8 +26,6 @@ static func get_string(type: int) -> String:
             return "INTRA_SURFACE_EDGE"
         JUMP_FROM_SURFACE_EDGE:
             return "JUMP_FROM_SURFACE_EDGE"
-        WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE:
-            return "WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE"
         UNKNOWN:
             return "UNKNOWN"
         _:
@@ -44,14 +38,10 @@ static func get_description(type: int) -> String:
         FROM_AIR_EDGE:
             return ("An FROM_AIR_EDGE represents movement from an " +
                     "air position to land on a surface position.")
-        CLIMB_DOWN_WALL_TO_FLOOR_EDGE:
-            return ("A CLIMB_DOWN_WALL_TO_FLOOR_EDGE represents movement " +
-                    "from climbing down a wall to an adjacent floor to " +
-                    "then release the wall and stand on the floor.")
-        CLIMB_OVER_WALL_TO_FLOOR_EDGE:
-            return ("A CLIMB_OVER_WALL_TO_FLOOR_EDGE represents movement " +
-                    "from climbing up over the top end of a wall in order " +
-                    "to then stand on the adjacent floor.")
+        CLIMB_TO_NEIGHBOR_SURFACE_EDGE:
+            return ("A CLIMB_TO_NEIGHBOR_SURFACE_EDGE represents movement " +
+                    "from climbing around either an inside or outside " +
+                    "corner to a neighbor surface.")
         FALL_FROM_FLOOR_EDGE:
             return ("A FALL_FROM_FLOOR_EDGE represents movement from " +
                     "falling off the end of a floor surface to land on " +
@@ -66,10 +56,6 @@ static func get_description(type: int) -> String:
         JUMP_FROM_SURFACE_EDGE:
             return ("A JUMP_FROM_SURFACE_EDGE represents movement from " +
                     "jumping between two surface positions.")
-        WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE:
-            return ("A WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE represents " +
-                    "movement from walking along a floor to an adjacent " +
-                    "upward wall to then grab onto the wall.")
         UNKNOWN:
             return "UNKNOWN"
         _:
@@ -78,13 +64,11 @@ static func get_description(type: int) -> String:
 
 const KEYS = [
     "FROM_AIR_EDGE",
-    "CLIMB_DOWN_WALL_TO_FLOOR_EDGE",
-    "CLIMB_OVER_WALL_TO_FLOOR_EDGE",
+    "CLIMB_TO_NEIGHBOR_SURFACE_EDGE",
     "FALL_FROM_FLOOR_EDGE",
     "FALL_FROM_WALL_EDGE",
     "INTRA_SURFACE_EDGE",
     "JUMP_FROM_SURFACE_EDGE",
-    "WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE",
     "UNKNOWN",
 ]
 static func keys() -> Array:
@@ -92,13 +76,11 @@ static func keys() -> Array:
 
 const VALUES = [
     FROM_AIR_EDGE,
-    CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
-    CLIMB_OVER_WALL_TO_FLOOR_EDGE,
+    CLIMB_TO_NEIGHBOR_SURFACE_EDGE,
     FALL_FROM_FLOOR_EDGE,
     FALL_FROM_WALL_EDGE,
     INTRA_SURFACE_EDGE,
     JUMP_FROM_SURFACE_EDGE,
-    WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
     UNKNOWN,
 ]
 static func values() -> Array:

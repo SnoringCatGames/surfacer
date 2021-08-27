@@ -187,6 +187,12 @@ func release_wall() -> void:
     if !is_grabbing_wall:
         return
     
+    # FIXME: REMOVE: DEBUGGING: --------------------------
+    print("release_wall(): %s; is_rounding_corner=%s" % [
+        character.character_name,
+        is_rounding_corner,
+    ])
+    
     assert(is_instance_valid(wall_contact))
     surfaces_to_contacts.erase(wall_contact.surface)
     
@@ -204,6 +210,12 @@ func release_wall() -> void:
 func release_ceiling() -> void:
     if !is_grabbing_ceiling:
         return
+    
+    # FIXME: REMOVE: DEBUGGING: --------------------------
+    print("release_ceiling(): %s; is_rounding_corner=%s" % [
+        character.character_name,
+        is_rounding_corner,
+    ])
     
     assert(is_instance_valid(ceiling_contact))
     surfaces_to_contacts.erase(ceiling_contact.surface)
@@ -460,6 +472,13 @@ func _update_physics_contacts() -> void:
     # Remove any surfaces that are no longer touching.
     for surface_contact in surfaces_to_contacts.values():
         if !surface_contact._is_still_touching:
+            # FIXME: REMOVE: DEBUGGING: --------------------------
+            print(("_update_physics_contacts(); erase: " +
+                    "%s, is_rounding_corner=%s; surface=%s") % [
+                character.character_name,
+                is_rounding_corner,
+                surface_contact.surface.to_string(),
+            ])
             surfaces_to_contacts.erase(surface_contact.surface)
 
 
@@ -647,6 +666,14 @@ func _update_surface_contact_for_explicit_grab(
             Sc.logger.error()
     
     if just_started:
+        # FIXME: REMOVE: DEBUGGING: --------------------------
+        print(("_update_surface_contact_for_explicit_grab(); just_started: " +
+                "%s, is_rounding_corner=%s; surface=%s") % [
+            character.character_name,
+            is_rounding_corner,
+            surface_contact.surface.to_string(),
+        ])
+        
         surfaces_to_contacts.clear()
         surfaces_to_contacts[surface_contact.surface] = surface_contact
 

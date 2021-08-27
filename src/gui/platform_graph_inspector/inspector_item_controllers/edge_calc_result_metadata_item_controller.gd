@@ -120,6 +120,5 @@ func get_annotation_elements() -> Array:
                 false)
         elements.push_back(element)
     else:
-        assert(edge_attempt is Edge and \
-                !edge_attempt.includes_air_trajectory)
+        assert(edge_attempt is Edge)
     return elements

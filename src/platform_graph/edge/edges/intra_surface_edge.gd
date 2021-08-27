@@ -9,7 +9,7 @@ extends Edge
 const TYPE := EdgeType.INTRA_SURFACE_EDGE
 const IS_TIME_BASED := false
 const ENTERS_AIR := false
-const INCLUDES_AIR_TRAJECTORY := false
+const INCLUDES_TRAJECTORY := false
 
 const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
 
@@ -27,7 +27,7 @@ func _init(
         IS_TIME_BASED,
         SurfaceType.get_type_from_side(start.side),
         ENTERS_AIR,
-        INCLUDES_AIR_TRAJECTORY,
+        INCLUDES_TRAJECTORY,
         null,
         start,
         end,
