@@ -10,6 +10,23 @@ enum {
 }
 
 
+static func get_string(type: int) -> String:
+    match type:
+        FLOOR:
+            return "FLOOR"
+        WALL:
+            return "WALL"
+        CEILING:
+            return "CEILING"
+        AIR:
+            return "AIR"
+        OTHER:
+            return "OTHER"
+        _:
+            Sc.logger.error()
+            return ""
+
+
 static func get_type_from_side(side: int) -> int:
     match side:
         SurfaceSide.FLOOR:
