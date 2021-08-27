@@ -31,9 +31,9 @@ func process(character) -> bool:
                         distance_past_corner,
                         false,
                         character.movement_params \
-                                .fall_from_floor_corner_calc_shape,
+                                .rounding_corner_calc_shape,
                         character.movement_params \
-                                .fall_from_floor_corner_calc_shape_rotation)
+                                .rounding_corner_calc_shape_rotation)
         
         character.position.y = corner_position.y + character_offset_y
     

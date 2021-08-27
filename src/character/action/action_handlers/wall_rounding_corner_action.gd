@@ -34,9 +34,9 @@ func process(character) -> bool:
                         character.surface_state.grabbed_surface.side == \
                                 SurfaceSide.LEFT_WALL,
                         character.movement_params \
-                                .climb_over_wall_corner_calc_shape,
+                                .rounding_corner_calc_shape,
                         character.movement_params \
-                                .climb_over_wall_corner_calc_shape_rotation)
+                                .rounding_corner_calc_shape_rotation)
         
         character.position.x = corner_position.x + character_offset_x
     
