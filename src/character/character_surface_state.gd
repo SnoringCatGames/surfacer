@@ -817,8 +817,8 @@ func _update_grab_trigger_state() -> void:
             is_pressing_ceiling_grab_input
     
     is_triggering_explicit_floor_grab = \
-            standard_is_triggering_explicit_floor_grab or \
-            is_still_triggering_wall_grab_since_rounding_corner_to_floor
+            standard_is_triggering_explicit_floor_grab
+#            or is_still_triggering_wall_grab_since_rounding_corner_to_floor
     is_triggering_ceiling_grab = \
             standard_is_triggering_ceiling_grab or \
             is_still_triggering_wall_grab_since_rounding_corner_to_ceiling
@@ -880,7 +880,7 @@ func _update_rounding_corner_state() -> void:
             center_position.y >= grabbed_surface.bounding_box.end.y
     just_changed_to_lower_ceiling_while_rounding_wall_corner = \
             is_rounding_wall_corner_to_lower_ceiling and \
-            center_position.y - half_width >= \
+            center_position.y - half_height >= \
                     grabbed_surface.bounding_box.end.y
     
     is_rounding_wall_corner_to_upper_floor = \
@@ -890,7 +890,7 @@ func _update_rounding_corner_state() -> void:
             center_position.y <= grabbed_surface.bounding_box.position.y
     just_changed_to_upper_floor_while_rounding_wall_corner = \
             is_rounding_wall_corner_to_upper_floor and \
-            center_position.y + half_width <= \
+            center_position.y + half_height <= \
                     grabbed_surface.bounding_box.position.y
     
     is_rounding_corner = \

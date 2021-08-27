@@ -39,5 +39,7 @@ func process(character) -> bool:
                                 .rounding_corner_calc_shape_rotation)
         
         character.position.x = corner_position.x + character_offset_x
+        
+        return true
     
     return false
