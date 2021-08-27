@@ -49,6 +49,8 @@ static func draw_surface(
     var surface_depth_division_size := depth / SURFACE_DEPTH_DIVISIONS_COUNT
     var surface_depth_division_perpendicular_offset := \
             surface.normal * -surface_depth_division_size
+    var half_surface_depth_division_perpendicular_offset := \
+            surface_depth_division_perpendicular_offset / 2.0
     var surface_depth_division_parallel_start_offset = \
             surface_depth_division_perpendicular_offset.rotated(-PI / 2.0)
     var surface_depth_division_parallel_end_offset = \
@@ -60,7 +62,8 @@ static func draw_surface(
     if vertices.size() > 1:
         for i in SURFACE_DEPTH_DIVISIONS_COUNT:
             var translation: Vector2 = \
-                    surface_depth_division_perpendicular_offset * i
+                    surface_depth_division_perpendicular_offset * i + \
+                    half_surface_depth_division_perpendicular_offset
             var polyline: PoolVector2Array = \
                     Sc.utils.translate_polyline(vertices, translation)
             
@@ -71,6 +74,7 @@ static func draw_surface(
                     surface_depth_division_parallel_end_offset * i
             
             var progress: float = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
+            progress = Sc.utils.ease_by_name(progress, "ease_out")
             color.a = alpha_start + progress * (alpha_end - alpha_start)
             canvas.draw_polyline(
                     polyline,
