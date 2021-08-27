@@ -188,9 +188,9 @@ static func _calculate_trajectory(
                 Sc.geometry.calculate_displacement_x_for_vertical_distance_past_edge(
                         distance_past_edge,
                         is_left_wall,
-                        movement_params.climb_over_wall_corner_calc_shape,
+                        movement_params.rounding_corner_calc_shape,
                         movement_params \
-                                .climb_over_wall_corner_calc_shape_rotation)
+                                .rounding_corner_calc_shape_rotation)
         
         current_frame_position.x = frame_position_x
         current_frame_position.y = frame_position_y

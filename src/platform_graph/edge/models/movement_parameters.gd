@@ -468,8 +468,8 @@ var fall_from_floor_corner_calc_shape_rotation: float
 ##     might normally happen at runtime.[br]
 ## -   These trajectories could be used both for rendering navigation paths, as
 ##     well as for updating character positions at runtime.[br]
-var climb_over_wall_corner_calc_shape: Shape2D
-var climb_over_wall_corner_calc_shape_rotation: float
+var rounding_corner_calc_shape: Shape2D
+var rounding_corner_calc_shape_rotation: float
 
 var character_name := ""
 
@@ -834,8 +834,8 @@ func _derive_parameters() -> void:
         fall_from_floor_corner_calc_shape = fall_from_floor_shape
         fall_from_floor_corner_calc_shape_rotation = 0.0
         
-        climb_over_wall_corner_calc_shape = collider_shape
-        climb_over_wall_corner_calc_shape_rotation = collider_rotation
+        rounding_corner_calc_shape = collider_shape
+        rounding_corner_calc_shape_rotation = collider_rotation
     
     Su.movement._calculate_dependent_movement_params(self)
 
