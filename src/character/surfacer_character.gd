@@ -204,9 +204,8 @@ func set_is_player_character(value: bool) -> void:
         if Su.movement.uses_point_and_click_navigation:
             var player_navigation_behavior := \
                     PlayerNavigationBehavior.new()
-            player_navigation_behavior \
-                    .cancels_navigation_on_key_press = \
-                            Su.movement.cancels_point_and_click_nav_on_key_press
+            player_navigation_behavior.cancels_navigation_on_key_press = \
+                    Su.movement.cancels_point_and_click_nav_on_key_press
             add_behavior(player_navigation_behavior)
             
             self.pointer_listener = PlayerPointerListener.new(self)
@@ -234,7 +233,9 @@ func _init_navigator() -> void:
     navigator = SurfaceNavigator.new(self, graph)
     navigation_state = navigator.navigation_state
     navigator.connect(
-            "navigation_ended", self, "_on_surfacer_character_navigation_ended")
+            "navigation_ended",
+            self,
+            "_on_surfacer_character_navigation_ended")
     _action_sources.push_back(navigator.instructions_action_source)
 
 
@@ -369,8 +370,30 @@ func _process_actions() -> void:
                 !action_handler.uses_runtime_physics
         if is_action_relevant_for_surface and \
                 is_action_relevant_for_physics_mode:
-            _previous_actions_this_frame[action_handler.name] = \
-                    action_handler.process(self)
+            var executed: bool = action_handler.process(self)
+            _previous_actions_this_frame[action_handler.name] = executed
+            
+            # TODO: This is sometimes useful for debugging.
+#            if executed and \
+#                    action_handler.name != AllDefaultAction.NAME and \
+#                    action_handler.name != CapVelocityAction.NAME and \
+#                    action_handler.name != \
+#                            MatchExpectedEdgeTrajectoryAction.NAME and \
+#                    action_handler.name != FloorDefaultAction.NAME and \
+#                    action_handler.name != FloorFrictionAction.NAME and \
+#                    action_handler.name != AirDefaultAction.NAME:
+#                var name_str: String = Sc.utils.resize_string(
+#                        action_handler.name,
+#                        20)
+#                _log("%s;%8.3fs;P%29s;V%29s; %s" % [
+#                            name_str,
+#                            Sc.time.get_play_time(),
+#                            surface_state.center_position,
+#                            velocity,
+#                            character_name,
+#                        ],
+#                        CharacterLogType.ACTION,
+#                        true)
 
 
 func _process_animation() -> void:
@@ -672,6 +695,7 @@ func _update_reachable_surfaces(basis_surface: Surface) -> void:
     reachable_surfaces = graph.get_all_reachable_surfaces(
             reachable_basis_surface,
             movement_params.max_distance_for_reachable_surface_tracking)
-    reversibly_reachable_surfaces = graph.get_all_reversibly_reachable_surfaces(
-            reachable_basis_surface,
-            movement_params.max_distance_for_reachable_surface_tracking)
+    reversibly_reachable_surfaces = \
+            graph.get_all_reversibly_reachable_surfaces(
+                    reachable_basis_surface,
+                    movement_params.max_distance_for_reachable_surface_tracking)

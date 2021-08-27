@@ -21,7 +21,7 @@ func process(character) -> bool:
     
     # Cancel any horizontal velocity when bumping into a wall.
     if character.surface_state.is_touching_wall and \
-            !character.surface_state.is_pressing_away_from_wall:
+            !character.surface_state.is_triggering_wall_release:
         # The move_and_slide system depends on maintained velocity always
         # pushing the character into a collision, otherwise it will eventually
         # stop the collision. If we just zero this out, move_and_slide will
