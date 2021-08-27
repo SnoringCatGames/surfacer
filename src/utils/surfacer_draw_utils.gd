@@ -578,7 +578,7 @@ static func draw_edge(
         base_color = Su.ann_defaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS.get_color()
     
-    if edge.includes_air_trajectory:
+    if edge.includes_trajectory:
         _draw_edge_from_instructions_positions(
                 canvas,
                 edge,

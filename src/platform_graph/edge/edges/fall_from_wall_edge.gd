@@ -10,7 +10,7 @@ const TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
-const INCLUDES_AIR_TRAJECTORY := true
+const INCLUDES_TRAJECTORY := true
 
 
 func _init(
@@ -27,7 +27,7 @@ func _init(
         IS_TIME_BASED,
         SURFACE_TYPE,
         ENTERS_AIR,
-        INCLUDES_AIR_TRAJECTORY,
+        INCLUDES_TRAJECTORY,
         calculator,
         start,
         end,

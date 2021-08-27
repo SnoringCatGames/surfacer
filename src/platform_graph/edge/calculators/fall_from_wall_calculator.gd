@@ -14,8 +14,11 @@ func _init().(
     pass
 
 
-func get_can_traverse_from_surface(surface: Surface) -> bool:
-    return surface != null and (surface.side == SurfaceSide.LEFT_WALL or \
+func get_can_traverse_from_surface(
+        surface: Surface,
+        collision_params: CollisionCalcParams) -> bool:
+    return surface != null and \
+            (surface.side == SurfaceSide.LEFT_WALL or \
             surface.side == SurfaceSide.RIGHT_WALL)
 
 

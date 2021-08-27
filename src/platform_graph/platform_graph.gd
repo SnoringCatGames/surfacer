@@ -574,7 +574,9 @@ func _calculate_inter_surface_edges_for_origin(
             continue
         #######################################################################
         
-        if edge_calculator.get_can_traverse_from_surface(origin_surface):
+        if edge_calculator.get_can_traverse_from_surface(
+                origin_surface,
+                collision_params):
             # Calculate the inter-surface edges.
             edge_calculator.get_all_inter_surface_edges_from_surface(
                     inter_surface_edges_results,

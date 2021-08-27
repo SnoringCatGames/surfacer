@@ -42,7 +42,9 @@ func _init(
     self.is_a_jump_calculator = is_a_jump_calculator
 
 
-func get_can_traverse_from_surface(surface: Surface) -> bool:
+func get_can_traverse_from_surface(
+        surface: Surface,
+        collision_params: CollisionCalcParams) -> bool:
     Sc.logger.error(
             "Abstract EdgeCalculator.get_can_traverse_from_surface is not " +
             "implemented")

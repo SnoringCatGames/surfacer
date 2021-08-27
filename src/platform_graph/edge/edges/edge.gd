@@ -15,7 +15,7 @@ var surface_type: int
 # being airborne.
 var enters_air: bool
 
-var includes_air_trajectory: bool
+var includes_trajectory: bool
 
 var movement_params: MovementParameters
 
@@ -46,7 +46,7 @@ func _init(
         is_time_based: bool,
         surface_type: int,
         enters_air: bool,
-        includes_air_trajectory: bool,
+        includes_trajectory: bool,
         calculator,
         start_position_along_surface: PositionAlongSurface,
         end_position_along_surface: PositionAlongSurface,
@@ -72,7 +72,7 @@ func _init(
     self.is_time_based = is_time_based
     self.surface_type = surface_type
     self.enters_air = enters_air
-    self.includes_air_trajectory = includes_air_trajectory
+    self.includes_trajectory = includes_trajectory
     self.movement_params = movement_params
     self.velocity_end = velocity_end
     self.instructions = instructions
@@ -258,17 +258,23 @@ func populate_trajectory(collision_params: CollisionCalcParams) -> void:
 
 
 func get_position_at_time(edge_time: float) -> Vector2:
-    var index := int(edge_time / Time.PHYSICS_TIME_STEP)
-    if index >= trajectory.frame_continuous_positions_from_steps.size():
-        return Vector2.INF
-    return trajectory.frame_continuous_positions_from_steps[index]
+    if is_instance_valid(trajectory):
+        var index := int(edge_time / Time.PHYSICS_TIME_STEP)
+        if index >= trajectory.frame_continuous_positions_from_steps.size():
+            return end_position_along_surface.target_point
+        return trajectory.frame_continuous_positions_from_steps[index]
+    else:
+        return start_position_along_surface.target_point
 
 
 func get_velocity_at_time(edge_time: float) -> Vector2:
-    var index := int(edge_time / Time.PHYSICS_TIME_STEP)
-    if index >= trajectory.frame_continuous_velocities_from_steps.size():
-        return Vector2.INF
-    return trajectory.frame_continuous_velocities_from_steps[index]
+    if is_instance_valid(trajectory):
+        var index := int(edge_time / Time.PHYSICS_TIME_STEP)
+        if index >= trajectory.frame_continuous_velocities_from_steps.size():
+            return velocity_end
+        return trajectory.frame_continuous_velocities_from_steps[index]
+    else:
+        return velocity_start
 
 
 func get_animation_state_at_time(

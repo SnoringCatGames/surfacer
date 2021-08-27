@@ -4,14 +4,11 @@ extends Node
 
 var EDGE_TYPE_TO_CLASS := {
     EdgeType.FROM_AIR_EDGE: FromAirEdge,
-    EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE: ClimbDownWallToFloorEdge,
-    EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE: ClimbOverWallToFloorEdge,
+    EdgeType.CLIMB_TO_NEIGHBOR_SURFACE_EDGE: ClimbToNeighborSurfaceEdge,
     EdgeType.FALL_FROM_FLOOR_EDGE: FallFromFloorEdge,
     EdgeType.FALL_FROM_WALL_EDGE: FallFromWallEdge,
     EdgeType.INTRA_SURFACE_EDGE: IntraSurfaceEdge,
     EdgeType.JUMP_FROM_SURFACE_EDGE: JumpFromSurfaceEdge,
-    EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE: \
-            WalkToAscendWallFromFloorEdge,
 }
 
 
