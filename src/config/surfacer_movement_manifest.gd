@@ -15,11 +15,13 @@ const DEFAULT_ACTION_HANDLER_CLASSES := [
     preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_default_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_fall_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_jump_down_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_rounding_corner_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_dash_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_default_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/fall_through_floor_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_friction_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_jump_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/floor_rounding_corner_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_walk_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/match_expected_edge_trajectory_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_climb_action.gd"),
@@ -27,6 +29,7 @@ const DEFAULT_ACTION_HANDLER_CLASSES := [
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_default_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_fall_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_jump_action.gd"),
+    preload("res://addons/surfacer/src/character/action/action_handlers/wall_rounding_corner_action.gd"),
 ]
 
 const DEFAULT_EDGE_CALCULATOR_CLASSES := [
@@ -304,6 +307,7 @@ func get_default_action_handler_names(
     if movement_params.can_grab_walls:
         names.push_back("WallClimbAction")
         names.push_back("WallDefaultAction")
+        names.push_back("FloorRoundingCornerAction")
         if movement_params.can_jump:
             names.push_back("WallFallAction")
             names.push_back("WallJumpAction")
@@ -312,12 +316,16 @@ func get_default_action_handler_names(
     if movement_params.can_grab_ceilings:
         names.push_back("CeilingDefaultAction")
         names.push_back("CeilingCrawlAction")
+        names.push_back("CeilingRoundingCornerAction")
         if movement_params.can_jump:
             names.push_back("CeilingFallAction")
             names.push_back("CeilingJumpDownAction")
         if movement_params.can_dash:
             # TODO: Add support for dashing on the ceiling?
             pass
+    if movement_params.can_grab_walls or \
+            movement_params.can_grab_ceilings:
+        names.push_back("WallRoundingCornerAction")
     if movement_params.can_jump:
         names.push_back("FloorFallThroughAction")
         names.push_back("FloorJumpAction")
