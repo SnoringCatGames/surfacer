@@ -4,7 +4,7 @@ extends Node2D
 
 var surface_parser: SurfaceParser
 var color_params: ColorParams = Su.ann_defaults.SURFACE_COLOR_PARAMS
-var alpha_with_inspector_closed := AnnotationElementDefaults.SURFACE_ALPHA
+var alpha_with_inspector_closed := 0.9
 var alpha_with_inspector_open := alpha_with_inspector_closed * 0.2
 
 var was_inspector_open := false
