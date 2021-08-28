@@ -59,6 +59,7 @@ var is_rounding_ceiling_corner_to_upper_wall := false
 var is_rounding_wall_corner_to_lower_ceiling := false
 var is_rounding_wall_corner_to_upper_floor := false
 var is_rounding_corner := false
+var is_rounding_corner_from_previous_surface := false
 var is_rounding_left_corner := false
 
 var just_changed_to_lower_wall_while_rounding_floor_corner := false
@@ -883,13 +884,34 @@ func _update_rounding_corner_state() -> void:
     var half_height: float = \
             character.movement_params.collider_half_width_height.y
     
-    is_rounding_floor_corner_to_lower_wall = \
+    var are_current_and_previous_surfaces_convex_neighbors := \
+            is_instance_valid(grabbed_surface) and \
+            is_instance_valid(previous_grabbed_surface) and \
+            (previous_grabbed_surface.clockwise_convex_neighbor == \
+                    grabbed_surface or \
+            previous_grabbed_surface.counter_clockwise_convex_neighbor == \
+                    grabbed_surface)
+    
+    var is_rounding_floor_corner_from_previous_lower_wall: bool = \
             is_grabbing_floor and \
             (is_triggering_explicit_floor_grab or \
             is_still_triggering_previous_surface_grab_since_rounding_corner) and \
+            are_current_and_previous_surfaces_convex_neighbors and \
+            character.movement_params.can_grab_walls and \
+            (previous_grabbed_surface.side == SurfaceSide.LEFT_WALL and \
+            center_position.x >= grabbed_surface.last_point.x or \
+            previous_grabbed_surface.side == SurfaceSide.RIGHT_WALL and \
+            center_position.x <= grabbed_surface.first_point.x)
+    var is_rounding_floor_corner_to_next_lower_wall: bool = \
+            is_grabbing_floor and \
+            is_triggering_explicit_floor_grab and \
+            !is_rounding_floor_corner_from_previous_lower_wall and \
             character.movement_params.can_grab_walls and \
             (center_position.x <= grabbed_surface.first_point.x or \
             center_position.x >= grabbed_surface.last_point.x)
+    is_rounding_floor_corner_to_lower_wall = \
+            is_rounding_floor_corner_from_previous_lower_wall or \
+            is_rounding_floor_corner_to_next_lower_wall
     just_changed_to_lower_wall_while_rounding_floor_corner = \
             is_rounding_floor_corner_to_lower_wall and \
             (center_position.x + half_width <= \
@@ -897,13 +919,26 @@ func _update_rounding_corner_state() -> void:
             center_position.x - half_width >= \
                     grabbed_surface.last_point.x)
     
-    is_rounding_ceiling_corner_to_upper_wall = \
+    var is_rounding_ceiling_corner_from_previous_upper_wall: bool = \
             is_grabbing_ceiling and \
             (is_triggering_ceiling_grab or \
             is_still_triggering_previous_surface_grab_since_rounding_corner) and \
+            are_current_and_previous_surfaces_convex_neighbors and \
+            character.movement_params.can_grab_walls and \
+            (previous_grabbed_surface.side == SurfaceSide.LEFT_WALL and \
+            center_position.x >= grabbed_surface.first_point.x or \
+            previous_grabbed_surface.side == SurfaceSide.RIGHT_WALL and \
+            center_position.x <= grabbed_surface.last_point.x)
+    var is_rounding_ceiling_corner_to_next_upper_wall: bool = \
+            is_grabbing_ceiling and \
+            is_triggering_ceiling_grab and \
+            !is_rounding_ceiling_corner_from_previous_upper_wall and \
             character.movement_params.can_grab_walls and \
             (center_position.x <= grabbed_surface.last_point.x or \
             center_position.x >= grabbed_surface.first_point.x)
+    is_rounding_ceiling_corner_to_upper_wall = \
+            is_rounding_ceiling_corner_from_previous_upper_wall or \
+            is_rounding_ceiling_corner_to_next_upper_wall
     just_changed_to_upper_wall_while_rounding_ceiling_corner = \
             is_rounding_ceiling_corner_to_upper_wall and \
             (center_position.x + half_width <= \
@@ -911,23 +946,45 @@ func _update_rounding_corner_state() -> void:
             center_position.x - half_width >= \
                     grabbed_surface.first_point.x)
     
-    is_rounding_wall_corner_to_lower_ceiling = \
+    var is_rounding_wall_corner_from_previous_lower_ceiling: bool = \
             is_grabbing_wall and \
             (is_triggering_wall_grab or \
             is_still_triggering_previous_surface_grab_since_rounding_corner) and \
+            are_current_and_previous_surfaces_convex_neighbors and \
+            character.movement_params.can_grab_ceilings and \
+            previous_grabbed_surface.side == SurfaceSide.CEILING and \
+            center_position.y >= grabbed_surface.bounding_box.end.y
+    var is_rounding_wall_corner_to_next_lower_ceiling: bool = \
+            is_grabbing_wall and \
+            is_triggering_wall_grab and \
+            !is_rounding_wall_corner_from_previous_lower_ceiling and \
             character.movement_params.can_grab_ceilings and \
             center_position.y >= grabbed_surface.bounding_box.end.y
+    is_rounding_wall_corner_to_lower_ceiling = \
+            is_rounding_wall_corner_from_previous_lower_ceiling or \
+            is_rounding_wall_corner_to_next_lower_ceiling
     just_changed_to_lower_ceiling_while_rounding_wall_corner = \
             is_rounding_wall_corner_to_lower_ceiling and \
             center_position.y - half_height >= \
                     grabbed_surface.bounding_box.end.y
     
-    is_rounding_wall_corner_to_upper_floor = \
+    var is_rounding_wall_corner_from_previous_upper_floor: bool = \
             is_grabbing_wall and \
             (is_triggering_wall_grab or \
             is_still_triggering_previous_surface_grab_since_rounding_corner) and \
+            are_current_and_previous_surfaces_convex_neighbors and \
+            character.movement_params.can_grab_floors and \
+            previous_grabbed_surface.side == SurfaceSide.FLOOR and \
+            center_position.y <= grabbed_surface.bounding_box.position.y
+    var is_rounding_wall_corner_to_next_upper_floor: bool = \
+            is_grabbing_wall and \
+            is_triggering_wall_grab and \
+            !is_rounding_wall_corner_from_previous_upper_floor and \
             character.movement_params.can_grab_floors and \
             center_position.y <= grabbed_surface.bounding_box.position.y
+    is_rounding_wall_corner_to_upper_floor = \
+            is_rounding_wall_corner_from_previous_upper_floor or \
+            is_rounding_wall_corner_to_next_upper_floor
     just_changed_to_upper_floor_while_rounding_wall_corner = \
             is_rounding_wall_corner_to_upper_floor and \
             center_position.y + half_height <= \
@@ -943,6 +1000,11 @@ func _update_rounding_corner_state() -> void:
             just_changed_to_upper_wall_while_rounding_ceiling_corner or \
             just_changed_to_lower_ceiling_while_rounding_wall_corner or \
             just_changed_to_upper_floor_while_rounding_wall_corner
+    is_rounding_corner_from_previous_surface = \
+            is_rounding_floor_corner_from_previous_lower_wall or \
+            is_rounding_ceiling_corner_from_previous_upper_wall or \
+            is_rounding_wall_corner_from_previous_lower_ceiling or \
+            is_rounding_wall_corner_from_previous_upper_floor
     
     var is_rounding_right_wall_corner := \
             (is_rounding_wall_corner_to_lower_ceiling or \
