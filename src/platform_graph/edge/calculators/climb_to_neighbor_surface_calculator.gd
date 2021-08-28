@@ -146,16 +146,16 @@ func _calculate_jump_land_positions(
     var start_target_point: Vector2
     var end_target_point: Vector2
     if is_convex:
-        var is_starting_on_wall := \
+        var is_wall := \
                 origin_surface.side == SurfaceSide.LEFT_WALL or \
                 origin_surface.side == SurfaceSide.RIGHT_WALL
         var start_target_offset := \
                 Vector2(target_x_offset, 0.0) if \
-                is_starting_on_wall else \
+                is_wall else \
                 Vector2(0.0, target_y_offset)
         var end_target_offset := \
                 Vector2(0.0, target_y_offset) if \
-                is_starting_on_wall else \
+                is_wall else \
                 Vector2(target_x_offset, 0.0)
         start_target_point = corner_point + start_target_offset
         end_target_point = corner_point + end_target_offset
@@ -337,18 +337,10 @@ func _calculate_trajectory(
     
     var frame_count := int(ceil(duration / Time.PHYSICS_TIME_STEP))
     
-    if movement_params.includes_discrete_trajectory_state:
-        var positions := PoolVector2Array()
-        positions.resize(frame_count)
-        trajectory.frame_discrete_positions_from_test = positions
-    if movement_params.includes_continuous_trajectory_positions:
-        var positions := PoolVector2Array()
-        positions.resize(frame_count)
-        trajectory.frame_continuous_positions_from_steps = positions
-    if movement_params.includes_continuous_trajectory_velocities:
-        var velocities := PoolVector2Array()
-        velocities.resize(frame_count)
-        trajectory.frame_continuous_velocities_from_steps = velocities
+    var positions := []
+    positions.resize(frame_count)
+    var velocities := []
+    velocities.resize(frame_count)
     
     var frame_index := 0
     var position: Vector2
@@ -368,9 +360,9 @@ func _calculate_trajectory(
         # Rounding a corner from a wall.
         
         position.x = \
-                corner_position.x - half_height if \
+                corner_position.x - half_width if \
                 is_left_side else \
-                corner_position.x + half_height
+                corner_position.x + half_width
         position.y = corner_position.y
         
         velocity.x = \
@@ -386,15 +378,8 @@ func _calculate_trajectory(
         
         var is_character_past_end := false
         while !is_character_past_end:
-            if movement_params.includes_discrete_trajectory_state:
-                trajectory.frame_discrete_positions_from_test[ \
-                        frame_index] = position
-            if movement_params.includes_continuous_trajectory_positions:
-                trajectory.frame_continuous_positions_from_steps[ \
-                        frame_index] = position
-            if movement_params.includes_continuous_trajectory_velocities:
-                trajectory.frame_continuous_velocities_from_steps[ \
-                        frame_index] = velocity
+            positions[frame_index] = position
+            velocities[frame_index] = velocity
             
             frame_index += 1
             position.y += velocity.y * Time.PHYSICS_TIME_STEP
@@ -436,15 +421,8 @@ func _calculate_trajectory(
         var is_rounding_corner_finished := false
         while !is_rounding_corner_finished and \
                 frame_index < frame_count:
-            if movement_params.includes_discrete_trajectory_state:
-                trajectory.frame_discrete_positions_from_test[ \
-                        frame_index] = position
-            if movement_params.includes_continuous_trajectory_positions:
-                trajectory.frame_continuous_positions_from_steps[ \
-                        frame_index] = position
-            if movement_params.includes_continuous_trajectory_velocities:
-                trajectory.frame_continuous_velocities_from_steps[ \
-                        frame_index] = velocity
+            positions[frame_index] = position
+            velocities[frame_index] = velocity
             
             frame_index += 1
             position.x += velocity.x * Time.PHYSICS_TIME_STEP
@@ -493,15 +471,8 @@ func _calculate_trajectory(
         
         var is_character_past_end := false
         while !is_character_past_end:
-            if movement_params.includes_discrete_trajectory_state:
-                trajectory.frame_discrete_positions_from_test[ \
-                        frame_index] = position
-            if movement_params.includes_continuous_trajectory_positions:
-                trajectory.frame_continuous_positions_from_steps[ \
-                        frame_index] = position
-            if movement_params.includes_continuous_trajectory_velocities:
-                trajectory.frame_continuous_velocities_from_steps[ \
-                        frame_index] = velocity
+            positions[frame_index] = position
+            velocities[frame_index] = velocity
             
             frame_index += 1
             position.x += velocity.x * Time.PHYSICS_TIME_STEP
@@ -534,15 +505,8 @@ func _calculate_trajectory(
         var is_rounding_corner_finished := false
         while !is_rounding_corner_finished and \
                 frame_index < frame_count:
-            if movement_params.includes_discrete_trajectory_state:
-                trajectory.frame_discrete_positions_from_test[ \
-                        frame_index] = position
-            if movement_params.includes_continuous_trajectory_positions:
-                trajectory.frame_continuous_positions_from_steps[ \
-                        frame_index] = position
-            if movement_params.includes_continuous_trajectory_velocities:
-                trajectory.frame_continuous_velocities_from_steps[ \
-                        frame_index] = velocity
+            positions[frame_index] = position
+            velocities[frame_index] = velocity
             
             frame_index += 1
             position.y += velocity.y * Time.PHYSICS_TIME_STEP
@@ -561,10 +525,24 @@ func _calculate_trajectory(
                     is_top_side else \
                     position.y <= corner_position.y
     
+    # In case the movement reached the destination before the expected number
+    # of frames, we remove any trailing frames.
+    positions.resize(frame_index)
+    velocities.resize(frame_index)
+    
+    if movement_params.includes_discrete_trajectory_state:
+        trajectory.frame_discrete_positions_from_test = \
+                PoolVector2Array(positions)
+    if movement_params.includes_continuous_trajectory_positions:
+        trajectory.frame_continuous_positions_from_steps = \
+                PoolVector2Array(positions)
+    if movement_params.includes_continuous_trajectory_velocities:
+        trajectory.frame_continuous_velocities_from_steps = \
+                PoolVector2Array(velocities)
+    
     # Update the trajectory distance.
     trajectory.distance_from_continuous_trajectory = \
-            EdgeTrajectoryUtils.sum_distance_between_frames(
-                    trajectory.frame_continuous_positions_from_steps)
+            EdgeTrajectoryUtils.sum_distance_between_frames(positions)
     
     return trajectory
 
@@ -649,6 +627,7 @@ func _calculate_duration(
                         movement_params.rounding_corner_calc_shape_rotation)
     
     var duration_start := abs(distance_start / speed_start)
+    # FIXME: ----- Account for acceleration-along-floor when climbing over wall.
     var duration_end := abs(distance_end / speed_end)
     
     return duration_start + duration_end

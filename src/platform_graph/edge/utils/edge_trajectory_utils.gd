@@ -97,15 +97,14 @@ static func _concatenate_step_frame_velocities(
     return PoolVector2Array(combined_velocities)
 
 
-static func sum_distance_between_frames(
-        frame_positions: PoolVector2Array) -> float:
+static func sum_distance_between_frames(frame_positions) -> float:
     if frame_positions.size() < 2:
         return 0.0
     
-    var previous_position := frame_positions[0]
+    var previous_position: Vector2 = frame_positions[0]
     var sum := 0.0
     for i in range(1, frame_positions.size()):
-        var next_position := frame_positions[i]
+        var next_position: Vector2 = frame_positions[i]
         sum += previous_position.distance_to(next_position)
         previous_position = next_position
     return sum
