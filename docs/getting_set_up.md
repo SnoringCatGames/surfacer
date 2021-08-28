@@ -9,8 +9,6 @@ I will not lie, **this is a complex framework**! Hopefully it's external API isn
     -   This is a framework that provides assorted general-purpose infrastructure that can be useful for adding a bunch of app boilerplate that you may or may not want for your game.
     -   Surfacer currently depends on this additional framework.
     -   See the Scaffolder [README](https://github.com/snoringcatgames/scaffolder/blob/master/README.md) for details on setting it up.
--   `addons/crypto_uuid_v4`
-    -   Add the [Crypto UUID v4](https://godotengine.org/asset-library/asset/748) library to your `addons/` folder.
 -   `addons/surfacer`
     -   Add the [Surfacer](https://github.com/snoringcatgames/surfacer/) library to your `addons/` folder.
 -   `Sc`
