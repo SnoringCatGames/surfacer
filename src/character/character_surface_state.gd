@@ -43,9 +43,13 @@ var is_facing_wall := false
 var is_pressing_into_wall := false
 var is_pressing_away_from_wall := false
 
-var is_triggering_wall_grab := false
-var is_triggering_ceiling_grab := false
+var is_triggering_explicit_wall_grab := false
+var is_triggering_explicit_ceiling_grab := false
 var is_triggering_explicit_floor_grab := false
+
+var is_triggering_implicit_wall_grab := false
+var is_triggering_implicit_ceiling_grab := false
+var is_triggering_implicit_floor_grab := false
 
 var is_triggering_wall_release := false
 var is_triggering_ceiling_release := false
@@ -737,14 +741,6 @@ func _update_grab_trigger_state() -> void:
             character.actions.pressed_up and is_facing_wall
     var facing_into_wall_and_pressing_grab: bool = \
             character.actions.pressed_grab and is_facing_wall
-    var touching_concave_floor_and_pressing_down: bool = \
-            character.actions.pressed_down and \
-            is_touching_floor and \
-            is_touching_wall and \
-            (floor_contact.surface.clockwise_concave_neighbor == \
-                    wall_contact or \
-            floor_contact.surface.counter_clockwise_concave_neighbor == \
-                    wall_contact)
     
     var is_pressing_floor_grab_input: bool = \
             (character.actions.pressed_down or \
@@ -769,17 +765,18 @@ func _update_grab_trigger_state() -> void:
             character.actions.pressed_down and \
             character.actions.just_pressed_jump
     
-    var standard_is_triggering_ceiling_grab: bool = \
-            is_touching_ceiling and \
-            is_pressing_ceiling_grab_input
-    var standard_is_triggering_wall_grab := \
-            is_touching_wall and \
-            is_pressing_wall_grab_input and \
-            !touching_concave_floor_and_pressing_down
-    var standard_is_triggering_explicit_floor_grab: bool = \
+    is_triggering_explicit_floor_grab = \
             is_touching_floor and \
             is_pressing_floor_grab_input and \
-            !is_pressing_wall_grab_input
+            character.movement_params.can_grab_floors
+    is_triggering_explicit_ceiling_grab = \
+            is_touching_ceiling and \
+            is_pressing_ceiling_grab_input and \
+            character.movement_params.can_grab_ceilings
+    is_triggering_explicit_wall_grab = \
+            is_touching_wall and \
+            is_pressing_wall_grab_input and \
+            character.movement_params.can_grab_walls
     
     var current_grabbed_side := \
             grabbed_surface.side if \
@@ -853,26 +850,27 @@ func _update_grab_trigger_state() -> void:
             is_still_triggering_floor_grab_since_rounding_corner_to_wall or \
             is_still_triggering_ceiling_grab_since_rounding_corner_to_wall
     
-    is_triggering_explicit_floor_grab = \
-            standard_is_triggering_explicit_floor_grab
-#            or is_still_triggering_wall_grab_since_rounding_corner_to_floor
-    is_triggering_ceiling_grab = \
-            standard_is_triggering_ceiling_grab or \
-            is_still_triggering_wall_grab_since_rounding_corner_to_ceiling
-    is_triggering_wall_grab = \
-            (standard_is_triggering_wall_grab or \
-            is_still_triggering_floor_grab_since_rounding_corner_to_wall or \
+    is_triggering_implicit_floor_grab = \
+            is_touching_floor and \
+            character.movement_params.can_grab_floors
+    is_triggering_implicit_ceiling_grab = \
+            is_still_triggering_wall_grab_since_rounding_corner_to_ceiling and \
+            character.movement_params.can_grab_ceilings
+    is_triggering_implicit_wall_grab = \
+            (is_still_triggering_floor_grab_since_rounding_corner_to_wall or \
             is_still_triggering_ceiling_grab_since_rounding_corner_to_wall) and \
-            !is_triggering_ceiling_grab
+            character.movement_params.can_grab_walls
     
     is_triggering_ceiling_release = \
             is_touching_ceiling and \
             is_pressing_ceiling_release_input and \
-            !is_triggering_ceiling_grab
+            !is_triggering_explicit_ceiling_grab and \
+            !is_triggering_implicit_ceiling_grab
     is_triggering_wall_release = \
             is_touching_wall and \
             is_pressing_wall_release_input and \
-            !is_triggering_wall_grab
+            !is_triggering_explicit_wall_grab and \
+            !is_triggering_implicit_wall_grab
     is_triggering_fall_through = \
             is_touching_floor and \
             is_pressing_fall_through_input
@@ -921,8 +919,8 @@ func _update_rounding_corner_state() -> void:
     
     var is_rounding_ceiling_corner_from_previous_upper_wall: bool = \
             is_grabbing_ceiling and \
-            (is_triggering_ceiling_grab or \
-            is_still_triggering_previous_surface_grab_since_rounding_corner) and \
+            (is_triggering_explicit_ceiling_grab or \
+            is_triggering_implicit_ceiling_grab) and \
             are_current_and_previous_surfaces_convex_neighbors and \
             character.movement_params.can_grab_walls and \
             (previous_grabbed_surface.side == SurfaceSide.LEFT_WALL and \
@@ -931,7 +929,8 @@ func _update_rounding_corner_state() -> void:
             center_position.x <= grabbed_surface.last_point.x)
     var is_rounding_ceiling_corner_to_next_upper_wall: bool = \
             is_grabbing_ceiling and \
-            is_triggering_ceiling_grab and \
+            (is_triggering_explicit_ceiling_grab or \
+            is_triggering_implicit_ceiling_grab) and \
             !is_rounding_ceiling_corner_from_previous_upper_wall and \
             character.movement_params.can_grab_walls and \
             (center_position.x <= grabbed_surface.last_point.x or \
@@ -948,15 +947,16 @@ func _update_rounding_corner_state() -> void:
     
     var is_rounding_wall_corner_from_previous_lower_ceiling: bool = \
             is_grabbing_wall and \
-            (is_triggering_wall_grab or \
-            is_still_triggering_previous_surface_grab_since_rounding_corner) and \
+            (is_triggering_explicit_wall_grab or \
+            is_triggering_implicit_wall_grab) and \
             are_current_and_previous_surfaces_convex_neighbors and \
             character.movement_params.can_grab_ceilings and \
             previous_grabbed_surface.side == SurfaceSide.CEILING and \
             center_position.y >= grabbed_surface.bounding_box.end.y
     var is_rounding_wall_corner_to_next_lower_ceiling: bool = \
             is_grabbing_wall and \
-            is_triggering_wall_grab and \
+            (is_triggering_explicit_wall_grab or \
+            is_triggering_implicit_wall_grab) and \
             !is_rounding_wall_corner_from_previous_lower_ceiling and \
             character.movement_params.can_grab_ceilings and \
             center_position.y >= grabbed_surface.bounding_box.end.y
@@ -970,15 +970,16 @@ func _update_rounding_corner_state() -> void:
     
     var is_rounding_wall_corner_from_previous_upper_floor: bool = \
             is_grabbing_wall and \
-            (is_triggering_wall_grab or \
-            is_still_triggering_previous_surface_grab_since_rounding_corner) and \
+            (is_triggering_explicit_wall_grab or \
+            is_triggering_implicit_wall_grab) and \
             are_current_and_previous_surfaces_convex_neighbors and \
             character.movement_params.can_grab_floors and \
             previous_grabbed_surface.side == SurfaceSide.FLOOR and \
             center_position.y <= grabbed_surface.bounding_box.position.y
     var is_rounding_wall_corner_to_next_upper_floor: bool = \
             is_grabbing_wall and \
-            is_triggering_wall_grab and \
+            (is_triggering_explicit_wall_grab or \
+            is_triggering_implicit_wall_grab) and \
             !is_rounding_wall_corner_from_previous_upper_floor and \
             character.movement_params.can_grab_floors and \
             center_position.y <= grabbed_surface.bounding_box.position.y
@@ -1022,13 +1023,13 @@ func _update_rounding_corner_state() -> void:
 func _update_grab_state() -> void:
     # Whether we are grabbing a ceiling.
     var standard_is_grabbing_ceiling: bool = \
-            character.movement_params.can_grab_ceilings and \
             (is_touching_ceiling or \
                     is_rounding_ceiling_corner_to_upper_wall) and \
             (is_grabbing_ceiling or \
-                    is_triggering_ceiling_grab) and \
-            (!is_triggering_wall_grab or \
-                    is_triggering_ceiling_grab)
+                    is_triggering_explicit_ceiling_grab or \
+                    is_triggering_implicit_ceiling_grab) and \
+            (is_triggering_explicit_ceiling_grab or \
+                    !is_triggering_explicit_wall_grab)
     var next_is_grabbing_ceiling := \
             (standard_is_grabbing_ceiling or \
             just_changed_to_lower_ceiling_while_rounding_wall_corner) and \
@@ -1036,32 +1037,34 @@ func _update_grab_state() -> void:
     
     # Whether we are grabbing a wall.
     var standard_is_grabbing_wall: bool = \
-            character.movement_params.can_grab_walls and \
             (is_touching_wall or \
                     is_rounding_wall_corner_to_lower_ceiling or \
                     is_rounding_wall_corner_to_upper_floor) and \
             (is_grabbing_wall or \
-                    is_triggering_wall_grab) and \
+                    is_triggering_explicit_wall_grab or \
+                    is_triggering_implicit_wall_grab) and \
             !is_triggering_explicit_floor_grab and \
-            !is_triggering_ceiling_grab
+            !is_triggering_explicit_ceiling_grab
     var next_is_grabbing_wall := \
             (standard_is_grabbing_wall or \
             just_changed_to_lower_wall_while_rounding_floor_corner or \
             just_changed_to_upper_wall_while_rounding_ceiling_corner) and \
             !just_changed_to_upper_floor_while_rounding_wall_corner and \
-            !just_changed_to_lower_ceiling_while_rounding_wall_corner and \
-            !next_is_grabbing_ceiling
+            !just_changed_to_lower_ceiling_while_rounding_wall_corner
     
     # Whether we are grabbing a floor.
     var standard_is_grabbing_floor: bool = \
-            is_touching_floor or \
-            is_rounding_floor_corner_to_lower_wall
+            (is_touching_floor or \
+                    is_rounding_floor_corner_to_lower_wall) and \
+            (is_grabbing_floor or \
+                    is_triggering_explicit_floor_grab or \
+                    is_triggering_implicit_floor_grab) and \
+            (is_triggering_explicit_floor_grab or \
+                    !is_triggering_explicit_wall_grab)
     var next_is_grabbing_floor := \
             (standard_is_grabbing_floor or \
             just_changed_to_upper_floor_while_rounding_wall_corner) and \
-            !just_changed_to_lower_wall_while_rounding_floor_corner and \
-            !next_is_grabbing_wall and \
-            !next_is_grabbing_ceiling
+            !just_changed_to_lower_wall_while_rounding_floor_corner
     
     var next_is_grabbing_left_wall := \
             next_is_grabbing_wall and \
