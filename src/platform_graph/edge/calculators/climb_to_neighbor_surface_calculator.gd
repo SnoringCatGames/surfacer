@@ -302,7 +302,10 @@ func _calculate_trajectory(
     
     var trajectory := EdgeTrajectory.new()
     
-    trajectory.waypoint_positions = [position_start, position_end]
+    trajectory.waypoint_positions = [
+        position_start.target_point,
+        position_end.target_point,
+    ]
     
     if !movement_params.includes_discrete_trajectory_state and \
             !movement_params \
