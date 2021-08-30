@@ -62,7 +62,7 @@ var _behaviors_list := []
 # Array<CharacterActionSource>
 var _action_sources := []
 # Dictionary<String, bool>
-var _previous_actions_this_frame := {}
+var _previous_actions_handlers_this_frame := {}
 
 var _dash_cooldown_timeout: int
 var _dash_fade_tween: ScaffolderTween
@@ -257,6 +257,9 @@ func _on_physics_process(delta: float) -> void:
                 4,
                 Sc.geometry.FLOOR_MAX_ANGLE)
     
+    if character_name == "squirrel":
+        print("break")
+    
     _update_actions(delta_scaled)
     surface_state.clear_just_changed_state()
     _update_surface_state()
@@ -273,7 +276,7 @@ func _on_physics_process(delta: float) -> void:
                     surface_state.grabbed_surface.to_string(),
                 ],
                 CharacterLogType.SURFACE,
-                true)
+                false)
     elif surface_state.just_entered_air:
         _log("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s" % [
                     character_name,
@@ -283,7 +286,7 @@ func _on_physics_process(delta: float) -> void:
                     surface_state.previous_grabbed_surface.to_string(),
                 ],
                 CharacterLogType.SURFACE,
-                true)
+                false)
     elif surface_state.just_touched_surface:
         var side_str: String
         if surface_state.is_touching_floor:
@@ -300,7 +303,7 @@ func _on_physics_process(delta: float) -> void:
                     side_str,
                 ],
                 CharacterLogType.SURFACE,
-                true)
+                false)
     
     _update_navigator(delta_scaled)
     
@@ -327,18 +330,11 @@ func _on_physics_process(delta: float) -> void:
 
 func _update_navigator(delta_scaled: float) -> void:
     navigator._update()
-    
-    # TODO: There's probably a more efficient way to do this.
-    if navigator.actions_might_be_dirty:
-        actions.copy(_actions_from_previous_frame)
-        _update_actions(delta_scaled)
-        _update_surface_state()
 
 
 func _update_actions(delta_scaled: float) -> void:
     # Record actions for the previous frame.
     _actions_from_previous_frame.copy(actions)
-    
     # Clear actions for the current frame.
     actions.clear()
     
@@ -355,11 +351,15 @@ func _update_actions(delta_scaled: float) -> void:
             Sc.level_button_input.is_action_just_pressed("dash") and \
             movement_params.can_dash and \
             _can_dash
+    
+    CharacterActionSource.update_for_implicit_key_events(
+            actions,
+            _actions_from_previous_frame)
 
 
 # Updates physics and character states in response to the current actions.
 func _process_actions() -> void:
-    _previous_actions_this_frame.clear()
+    _previous_actions_handlers_this_frame.clear()
     
     for action_handler in movement_params.action_handlers:
         var is_action_relevant_for_surface: bool = \
@@ -371,7 +371,7 @@ func _process_actions() -> void:
         if is_action_relevant_for_surface and \
                 is_action_relevant_for_physics_mode:
             var executed: bool = action_handler.process(self)
-            _previous_actions_this_frame[action_handler.name] = executed
+            _previous_actions_handlers_this_frame[action_handler.name] = executed
             
             # TODO: This is sometimes useful for debugging.
 #            if executed and \
@@ -432,7 +432,7 @@ func _process_sounds() -> void:
 
 
 func processed_action(name: String) -> bool:
-    return _previous_actions_this_frame.get(name) == true
+    return _previous_actions_handlers_this_frame.get(name) == true
 
 
 func _update_surface_state() -> void:

@@ -603,15 +603,7 @@ func _update_parameters_debounced() -> void:
 
 
 func _validate_parameters() -> void:
-    if (action_handlers_override.find(
-            "MatchExpectedEdgeTrajectoryAction") >= 0) == \
-            (syncs_character_position_to_edge_trajectory or \
-                    syncs_character_velocity_to_edge_trajectory):
-        _set_configuration_warning(
-                "MatchExpectedEdgeTrajectoryAction should be included iff " +
-                "syncs_character_position_to_edge_trajectory or " +
-                "syncs_character_velocity_to_edge_trajectory.")
-    elif gravity_fast_fall < 0:
+    if gravity_fast_fall < 0:
         _set_configuration_warning(
                 "gravity_fast_fall must be non-negative.")
     elif slow_rise_gravity_multiplier < 0:

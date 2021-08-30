@@ -176,11 +176,12 @@ func clear_just_changed_state() -> void:
     just_entered_air = false
     just_left_air = false
     
-    just_changed_to_lower_wall_while_rounding_floor_corner = false
-    just_changed_to_upper_wall_while_rounding_ceiling_corner = false
-    just_changed_to_lower_ceiling_while_rounding_wall_corner = false
-    just_changed_to_upper_floor_while_rounding_wall_corner = false
-    just_changed_surface_while_rounding_corner = false
+    # FIXME: LEFT OFF HERE: ----------------------------
+#    just_changed_to_lower_wall_while_rounding_floor_corner = false
+#    just_changed_to_upper_wall_while_rounding_ceiling_corner = false
+#    just_changed_to_lower_ceiling_while_rounding_wall_corner = false
+#    just_changed_to_upper_floor_while_rounding_wall_corner = false
+#    just_changed_surface_while_rounding_corner = false
     
     just_changed_surface = false
     just_changed_tile_map = false
@@ -193,9 +194,10 @@ func release_wall() -> void:
         return
     
     # FIXME: REMOVE: DEBUGGING: --------------------------
-    print("release_wall(): %s; is_rounding_corner=%s" % [
+    print("release_wall(): %s; is_rounding_corner=%s; P=%s" % [
         character.character_name,
         is_rounding_corner,
+        str(character.position),
     ])
     
     assert(is_instance_valid(wall_contact))
@@ -217,9 +219,10 @@ func release_ceiling() -> void:
         return
     
     # FIXME: REMOVE: DEBUGGING: --------------------------
-    print("release_ceiling(): %s; is_rounding_corner=%s" % [
+    print("release_ceiling(): %s; is_rounding_corner=%s; P=%s" % [
         character.character_name,
         is_rounding_corner,
+        str(character.position),
     ])
     
     assert(is_instance_valid(ceiling_contact))
@@ -479,11 +482,14 @@ func _update_physics_contacts() -> void:
         if !surface_contact._is_still_touching:
             # FIXME: REMOVE: DEBUGGING: --------------------------
             print(("_update_physics_contacts(); erase: " +
-                    "%s, is_rounding_corner=%s; surface=%s") % [
+                    "%s, is_rounding_corner=%s; surface=%s; P=%s") % [
                 character.character_name,
                 is_rounding_corner,
                 surface_contact.surface.to_string(),
+                str(character.position),
             ])
+            if Sc.geometry.are_points_equal_with_epsilon(character.position, Vector2(-660.5, -58.166), 1.0):
+                print("break")
             surfaces_to_contacts.erase(surface_contact.surface)
 
 
@@ -673,10 +679,11 @@ func _update_surface_contact_for_explicit_grab(
     if just_started:
         # FIXME: REMOVE: DEBUGGING: --------------------------
         print(("_update_surface_contact_for_explicit_grab(); just_started: " +
-                "%s, is_rounding_corner=%s; surface=%s") % [
+                "%s, is_rounding_corner=%s; surface=%s; P=%s") % [
             character.character_name,
             is_rounding_corner,
             surface_contact.surface.to_string(),
+            str(character.position),
         ])
         
         surfaces_to_contacts.clear()
@@ -825,25 +832,29 @@ func _update_grab_trigger_state() -> void:
             (previous_grabbed_side == SurfaceSide.LEFT_WALL or \
             previous_grabbed_side == SurfaceSide.RIGHT_WALL) and \
             are_current_and_previous_surfaces_convex_neighbors and \
-            is_pressing_previous_wall_grab_input
+            (is_pressing_previous_wall_grab_input or \
+            just_changed_surface_while_rounding_corner)
     var is_still_triggering_wall_grab_since_rounding_corner_to_ceiling := \
             current_grabbed_side == SurfaceSide.CEILING and \
             (previous_grabbed_side == SurfaceSide.LEFT_WALL or \
             previous_grabbed_side == SurfaceSide.RIGHT_WALL) and \
             are_current_and_previous_surfaces_convex_neighbors and \
-            is_pressing_previous_wall_grab_input
+            (is_pressing_previous_wall_grab_input or \
+            just_changed_surface_while_rounding_corner)
     var is_still_triggering_floor_grab_since_rounding_corner_to_wall := \
             (current_grabbed_side == SurfaceSide.LEFT_WALL or \
             current_grabbed_side == SurfaceSide.RIGHT_WALL) and \
             previous_grabbed_side == SurfaceSide.FLOOR and \
             are_current_and_previous_surfaces_convex_neighbors and \
-            is_pressing_floor_grab_input
+            (is_pressing_floor_grab_input or \
+            just_changed_surface_while_rounding_corner)
     var is_still_triggering_ceiling_grab_since_rounding_corner_to_wall := \
             (current_grabbed_side == SurfaceSide.LEFT_WALL or \
             current_grabbed_side == SurfaceSide.RIGHT_WALL) and \
             previous_grabbed_side == SurfaceSide.CEILING and \
             are_current_and_previous_surfaces_convex_neighbors and \
-            is_pressing_ceiling_grab_input
+            (is_pressing_ceiling_grab_input or \
+            just_changed_surface_while_rounding_corner)
     is_still_triggering_previous_surface_grab_since_rounding_corner = \
             is_still_triggering_wall_grab_since_rounding_corner_to_floor or \
             is_still_triggering_wall_grab_since_rounding_corner_to_ceiling or \
@@ -996,6 +1007,25 @@ func _update_rounding_corner_state() -> void:
             is_rounding_ceiling_corner_to_upper_wall or \
             is_rounding_wall_corner_to_lower_ceiling or \
             is_rounding_wall_corner_to_upper_floor
+    # FIXME: REMOVE: DEBUGGING: -------------------------------
+    if just_changed_surface_while_rounding_corner and \
+            !is_rounding_corner:
+        print("just_changed_surface_while_rounding_corner and !is_rounding_corner")
+    if !is_rounding_corner and \
+            Sc.geometry.are_points_equal_with_epsilon(character.position, Vector2(-660.5, -58.166), 3.0):
+        print("break")
+    if character.character_name == "squirrel" and \
+            just_changed_to_lower_wall_while_rounding_floor_corner:
+        print("just_changed_to_lower_wall_while_rounding_floor_corner")
+    if character.character_name == "squirrel" and \
+            just_changed_to_upper_wall_while_rounding_ceiling_corner:
+        print("just_changed_to_upper_wall_while_rounding_ceiling_corner")
+    if character.character_name == "squirrel" and \
+            just_changed_to_lower_ceiling_while_rounding_wall_corner:
+        print("just_changed_to_lower_ceiling_while_rounding_wall_corner")
+    if character.character_name == "squirrel" and \
+            just_changed_to_upper_floor_while_rounding_wall_corner:
+        print("just_changed_to_upper_floor_while_rounding_wall_corner")
     just_changed_surface_while_rounding_corner = \
             just_changed_to_lower_wall_while_rounding_floor_corner or \
             just_changed_to_upper_wall_while_rounding_ceiling_corner or \
@@ -1011,13 +1041,13 @@ func _update_rounding_corner_state() -> void:
             (is_rounding_wall_corner_to_lower_ceiling or \
             is_rounding_wall_corner_to_upper_floor) and \
             grabbed_surface.side == SurfaceSide.RIGHT_WALL
-    var is_rounding_left_corner_of_horizontal_surafce := \
+    var is_rounding_left_corner_of_horizontal_surface := \
             (is_rounding_floor_corner_to_lower_wall or \
             is_rounding_ceiling_corner_to_upper_wall) and \
             center_position.x <= grabbed_surface.center.x
     is_rounding_left_corner = \
             is_rounding_right_wall_corner or \
-            is_rounding_left_corner_of_horizontal_surafce
+            is_rounding_left_corner_of_horizontal_surface
 
 
 func _update_grab_state() -> void:
@@ -1066,6 +1096,11 @@ func _update_grab_state() -> void:
             just_changed_to_upper_floor_while_rounding_wall_corner) and \
             !just_changed_to_lower_wall_while_rounding_floor_corner
     
+    # FIXME: ---------------------------------------
+    if is_rounding_floor_corner_to_lower_wall and \
+            !next_is_grabbing_floor:
+        print("break")
+    
     var next_is_grabbing_left_wall := \
             next_is_grabbing_wall and \
             ((is_rounding_corner and \
@@ -1104,6 +1139,9 @@ func _update_grab_state() -> void:
     var next_just_stopped_grabbing_right_wall := \
             !next_is_grabbing_right_wall and is_grabbing_right_wall
     
+    if next_just_stopped_grabbing_right_wall:
+        print("break")
+    
     var next_just_entered_air := \
             !next_is_grabbing_surface and is_grabbing_surface
     var next_just_left_air := \
@@ -1118,38 +1156,48 @@ func _update_grab_state() -> void:
     
     just_grabbed_floor = \
             next_just_grabbed_floor or \
-            just_grabbed_floor and !next_just_stopped_grabbing_floor
+            just_grabbed_floor and \
+            !next_just_stopped_grabbing_floor
     just_stopped_grabbing_floor = \
             next_just_stopped_grabbing_floor or \
-            just_stopped_grabbing_floor and !next_just_grabbed_floor
+            just_stopped_grabbing_floor and \
+            !next_just_grabbed_floor
     
     just_grabbed_ceiling = \
             next_just_grabbed_ceiling or \
-            just_grabbed_ceiling and !next_just_stopped_grabbing_ceiling
+            just_grabbed_ceiling and \
+            !next_just_stopped_grabbing_ceiling
     just_stopped_grabbing_ceiling = \
             next_just_stopped_grabbing_ceiling or \
-            just_stopped_grabbing_ceiling and !next_just_grabbed_ceiling
+            just_stopped_grabbing_ceiling and \
+            !next_just_grabbed_ceiling
     
     just_grabbed_left_wall = \
             next_just_grabbed_left_wall or \
-            just_grabbed_left_wall and !next_just_stopped_grabbing_left_wall
+            just_grabbed_left_wall and \
+            !next_just_stopped_grabbing_left_wall
     just_stopped_grabbing_left_wall = \
             next_just_stopped_grabbing_left_wall or \
-            just_stopped_grabbing_left_wall and !next_just_grabbed_left_wall
+            just_stopped_grabbing_left_wall and \
+            !next_just_grabbed_left_wall
     
     just_grabbed_right_wall = \
             next_just_grabbed_right_wall or \
-            just_grabbed_right_wall and !next_just_stopped_grabbing_right_wall
+            just_grabbed_right_wall and \
+            !next_just_stopped_grabbing_right_wall
     just_stopped_grabbing_right_wall = \
             next_just_stopped_grabbing_right_wall or \
-            just_stopped_grabbing_right_wall and !next_just_grabbed_right_wall
+            just_stopped_grabbing_right_wall and \
+            !next_just_grabbed_right_wall
     
     just_entered_air = \
             next_just_entered_air or \
-            just_entered_air and !next_just_left_air
+            just_entered_air and \
+            !next_just_left_air
     just_left_air = \
             next_just_left_air or \
-            just_left_air and !next_just_entered_air
+            just_left_air and \
+            !next_just_entered_air
     
     just_grabbed_surface = \
             just_grabbed_floor or \

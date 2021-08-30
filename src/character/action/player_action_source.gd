@@ -35,7 +35,7 @@ func update(
         var input_key: String = ACTIONS_TO_INPUT_KEYS[action]
         var is_pressed: bool = Sc.level_button_input.is_action_pressed(action)
         if !Sc.level_button_input.is_key_pressed(KEY_CONTROL):
-            CharacterActionSource.update_for_key_press(
+            CharacterActionSource.update_for_explicit_key_event(
                     actions,
                     previous_actions,
                     input_key,
