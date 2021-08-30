@@ -36,7 +36,7 @@ func update(
         # Handle all previously started keys that are still pressed.
         for input_key in playback.active_key_presses:
             var is_pressed: bool = playback.active_key_presses[input_key]
-            CharacterActionSource.update_for_key_press(
+            CharacterActionSource.update_for_explicit_key_event(
                     actions,
                     previous_actions,
                     input_key,

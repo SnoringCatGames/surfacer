@@ -284,7 +284,8 @@ func _calculate_instructions(
     
     return EdgeInstructions.new(
             instructions,
-            duration)
+            duration,
+            false)
 
 
 func _calculate_trajectory(

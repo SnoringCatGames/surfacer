@@ -7,13 +7,19 @@ var instructions: Array
 
 var duration: float
 
+# If false, then these instructions won't finish playback automatically when
+# the expected duration is finished.
+var stops_when_duration_elapses: bool
+
 
 # Instructions don't need to be pre-sorted.
 func _init(
         instructions := [],
-        duration := INF) -> void:
+        duration := INF,
+        stops_when_duration_elapses := true) -> void:
     self.instructions = instructions
     self.duration = duration
+    self.stops_when_duration_elapses = stops_when_duration_elapses
     self.instructions.sort_custom(
             self,
             "instruction_comparator")

@@ -26,7 +26,7 @@ func process(character) -> bool:
                     str(character.position),
                 ],
                 CharacterLogType.ACTION,
-                true)
+                false)
         
         character.surface_state.release_wall()
         # Cancel any velocity toward the wall.

@@ -39,7 +39,6 @@ var previous_path_beats: Array
 var edge: Edge
 var edge_index := -1
 var playback: InstructionsPlayback
-var actions_might_be_dirty := false
 var current_navigation_attempt_count := 0
 
 var navigation_state := CharacterNavigationState.new()
@@ -637,7 +636,6 @@ func _reset() -> void:
     edge_index = -1
     playback = null
     instructions_action_source.cancel_all_playback()
-    actions_might_be_dirty = true
     current_navigation_attempt_count = 0
     navigation_state.reset()
 
@@ -700,8 +698,6 @@ func _update(
         navigation_state.just_interrupted_by_player_action = false
         navigation_state.just_reached_end_of_edge = false
         return
-    
-    actions_might_be_dirty = just_started_new_edge
     
     # FIXME: ------ This can result in character's getting stuck in mid-air in a
     #        continuous, new-nav-every-frame loop.
@@ -779,7 +775,7 @@ func _update(
                 Sc.time.get_play_time(),
                 character.character_name,
                 edge.get_name(),
-            ], true)
+            ], false)
     else:
         # Continuing along an edge.
         if surface_state.is_grabbing_surface:

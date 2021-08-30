@@ -380,7 +380,8 @@ static func _calculate_instructions(
     
     return EdgeInstructions.new(
             [instruction],
-            duration)
+            duration,
+            false)
 
 
 static func _calculate_is_moving_clockwise(

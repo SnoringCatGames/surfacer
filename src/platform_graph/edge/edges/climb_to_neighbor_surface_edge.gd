@@ -112,9 +112,44 @@ func _check_did_just_reach_surface_destination(
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration
     else:
-        return surface_state.just_grabbed_surface and \
-                surface_state.grabbed_surface == \
-                end_position_along_surface.surface
+        var is_clockwise := get_is_clockwise()
+        var current_point := surface_state.center_position
+        var target_point := end_position_along_surface.target_point
+        
+        var is_past_end_point: bool
+        match end_position_along_surface.side:
+            SurfaceSide.FLOOR:
+                is_past_end_point = \
+                        current_point.x >= target_point.x if \
+                        is_clockwise else \
+                        current_point.x <= target_point.x
+            SurfaceSide.CEILING:
+                is_past_end_point = \
+                        current_point.x <= target_point.x if \
+                        is_clockwise else \
+                        current_point.x >= target_point.x
+            SurfaceSide.LEFT_WALL:
+                is_past_end_point = \
+                        current_point.y >= target_point.y if \
+                        is_clockwise else \
+                        current_point.y <= target_point.y
+            SurfaceSide.RIGHT_WALL:
+                is_past_end_point = \
+                        current_point.y <= target_point.y if \
+                        is_clockwise else \
+                        current_point.y >= target_point.y
+            _:
+                Sc.logger.error()
+                is_past_end_point = false
+        
+        if surface_state.grabbed_surface == \
+                end_position_along_surface.surface and \
+                is_past_end_point:
+            print("break")
+        
+        return surface_state.grabbed_surface == \
+                end_position_along_surface.surface and \
+                is_past_end_point
 
 
 func load_from_json_object(

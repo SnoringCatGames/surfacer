@@ -356,12 +356,15 @@ func get_action_handlers_from_names(
         action_handlers.push_back(Su.movement.action_handlers[name])
     
     var name := "MatchExpectedEdgeTrajectoryAction"
-    if includes_edge_match and !names.has(name):
+    if includes_edge_match and \
+            !names.has(name):
         action_handlers.push_back(Su.movement.action_handlers[name])
-    elif !includes_edge_match and names.has(name):
+    elif !includes_edge_match and \
+            names.has(name):
         names.erase(Su.movement.action_handlers[name])
     
     action_handlers.sort_custom(_CharacterActionHandlerComparator, "sort")
+    
     return action_handlers
 
 

@@ -190,8 +190,8 @@ static func _log_new_press_or_release(
     if just_pressed:
         character._log("START %5s:%8s;%8.3fs;P%29s;V%29s" % message_args,
                 CharacterLogType.ACTION,
-                true)
+                false)
     if just_released:
         character._log("STOP  %5s:%8s;%8.3fs;P%29s;V%29s" % message_args,
                 CharacterLogType.ACTION,
-                true)
+                false)

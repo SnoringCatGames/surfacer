@@ -80,7 +80,7 @@ func _handle_pointer_selections() -> void:
                 "[No matching surface]",
             ],
             CharacterLogType.ACTION,
-            true)
+            false)
     
     if new_selection.get_is_selection_navigable():
         _was_last_input_a_touch = true
@@ -90,7 +90,7 @@ func _handle_pointer_selections() -> void:
         character._log(
                 "Target is too far from any surface",
                 CharacterLogType.ACTION,
-                true)
+                false)
         Sc.audio.play_sound("nav_select_fail")
     
     new_selection.clear()

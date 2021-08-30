@@ -108,7 +108,10 @@ func _get_start_time_scaled_for_next_instruction() -> float:
     
     var duration_until_next_instruction: float
     if is_on_last_instruction:
-        duration_until_next_instruction = edge.instructions.duration
+        duration_until_next_instruction = \
+                edge.instructions.duration if \
+                edge.instructions.stops_when_duration_elapses else \
+                INF
         if edge.get_should_end_by_colliding_with_surface():
             # With slight movement error it's possible for the edge duration to
             # elapse before actually landing on the destination surface. So

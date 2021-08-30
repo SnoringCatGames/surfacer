@@ -27,7 +27,7 @@ func process(character) -> bool:
                 character.surface_state \
                         .is_rounding_wall_corner_to_upper_floor else \
                 character.position.y - corner_position.y
-        assert(distance_past_corner >= 0)
+        distance_past_corner = max(distance_past_corner, 0.0)
         var character_offset_x: float = Sc.geometry \
                 .calculate_displacement_x_for_vertical_distance_past_edge(
                         distance_past_corner,
