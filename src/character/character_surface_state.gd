@@ -148,11 +148,6 @@ func update() -> void:
     
     _update_contacts()
     _update_touch_state()
-    # FIXME: ---------------------
-    if character.character_name == "squirrel" and \
-            (just_left_air or \
-            just_entered_air):
-        pass
     _update_action_state()
 
 
@@ -180,13 +175,6 @@ func clear_just_changed_state() -> void:
     
     just_entered_air = false
     just_left_air = false
-    
-    # FIXME: LEFT OFF HERE: ----------------------------
-#    just_changed_to_lower_wall_while_rounding_floor_corner = false
-#    just_changed_to_upper_wall_while_rounding_ceiling_corner = false
-#    just_changed_to_lower_ceiling_while_rounding_wall_corner = false
-#    just_changed_to_upper_floor_while_rounding_wall_corner = false
-#    just_changed_surface_while_rounding_corner = false
     
     just_changed_surface = false
     just_changed_tile_map = false
@@ -320,6 +308,25 @@ func update_for_initial_surface_attachment(
     
     _update_surface_contact_for_explicit_grab(center_position_along_surface)
     _update_touch_state()
+    
+    match side:
+        SurfaceSide.FLOOR:
+            is_grabbing_floor = true
+        SurfaceSide.LEFT_WALL:
+            is_grabbing_left_wall = true
+        SurfaceSide.RIGHT_WALL:
+            is_grabbing_right_wall = true
+        SurfaceSide.CEILING:
+            is_grabbing_ceiling = true
+        _:
+            Sc.logger.error()
+    is_grabbing_wall = is_grabbing_left_wall or is_grabbing_right_wall
+    is_grabbing_surface = \
+            is_grabbing_floor or \
+            is_grabbing_ceiling or \
+            is_grabbing_left_wall or \
+            is_grabbing_right_wall
+    
     _update_action_state()
     
     center_position = center_position_along_surface.target_point
@@ -514,12 +521,6 @@ func _update_physics_contacts() -> void:
                     details,
                     CharacterLogType.SURFACE,
                     true)
-            # FIXME: REMOVE: DEBUGGING: --------------------------
-            if Sc.geometry.are_points_equal_with_epsilon(
-                    character.position,
-                    Vector2(-660.5, -58.166),
-                    1.0):
-                print("break")
             surfaces_to_contacts.erase(surface_contact.surface)
 
 
@@ -825,14 +826,6 @@ func _update_grab_trigger_state() -> void:
             character.actions.pressed_down and \
             character.actions.just_pressed_jump
     
-    # FIXME: ---------------------------------
-    if character.character_name == "squirrel":
-        pass
-    if just_touched_ceiling:
-        if previous_grabbed_surface.side == SurfaceSide.RIGHT_WALL or \
-                previous_grabbed_surface.side == SurfaceSide.CEILING:
-            pass
-    
     is_triggering_explicit_floor_grab = \
             is_touching_floor and \
             is_pressing_floor_grab_input and \
@@ -1068,25 +1061,6 @@ func _update_rounding_corner_state() -> void:
             is_rounding_ceiling_corner_to_upper_wall or \
             is_rounding_wall_corner_to_lower_ceiling or \
             is_rounding_wall_corner_to_upper_floor
-    # FIXME: REMOVE: DEBUGGING: -------------------------------
-    if just_changed_surface_while_rounding_corner and \
-            !is_rounding_corner:
-        print("just_changed_surface_while_rounding_corner and !is_rounding_corner")
-    if !is_rounding_corner and \
-            Sc.geometry.are_points_equal_with_epsilon(character.position, Vector2(-660.5, -58.166), 3.0):
-        print("break")
-    if character.character_name == "squirrel" and \
-            just_changed_to_lower_wall_while_rounding_floor_corner:
-        print("just_changed_to_lower_wall_while_rounding_floor_corner")
-    if character.character_name == "squirrel" and \
-            just_changed_to_upper_wall_while_rounding_ceiling_corner:
-        print("just_changed_to_upper_wall_while_rounding_ceiling_corner")
-    if character.character_name == "squirrel" and \
-            just_changed_to_lower_ceiling_while_rounding_wall_corner:
-        print("just_changed_to_lower_ceiling_while_rounding_wall_corner")
-    if character.character_name == "squirrel" and \
-            just_changed_to_upper_floor_while_rounding_wall_corner:
-        print("just_changed_to_upper_floor_while_rounding_wall_corner")
     just_changed_surface_while_rounding_corner = \
             just_changed_to_lower_wall_while_rounding_floor_corner or \
             just_changed_to_upper_wall_while_rounding_ceiling_corner or \
@@ -1157,11 +1131,6 @@ func _update_grab_state() -> void:
             just_changed_to_upper_floor_while_rounding_wall_corner) and \
             !just_changed_to_lower_wall_while_rounding_floor_corner
     
-    # FIXME: ---------------------------------------
-    if is_rounding_floor_corner_to_lower_wall and \
-            !next_is_grabbing_floor:
-        print("break")
-    
     var next_is_grabbing_left_wall := \
             next_is_grabbing_wall and \
             ((is_rounding_corner and \
@@ -1199,9 +1168,6 @@ func _update_grab_state() -> void:
             next_is_grabbing_right_wall and !is_grabbing_right_wall
     var next_just_stopped_grabbing_right_wall := \
             !next_is_grabbing_right_wall and is_grabbing_right_wall
-    
-    if next_just_stopped_grabbing_right_wall:
-        print("break")
     
     var next_just_entered_air := \
             !next_is_grabbing_surface and is_grabbing_surface

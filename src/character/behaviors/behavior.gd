@@ -262,12 +262,14 @@ func _attempt_move() -> void:
                     null)
     
     # Update the start position and surface for this latest move.
-    start_position_along_surface = \
+    var basis_position_along_surface: PositionAlongSurface = \
             character.surface_state.last_position_along_surface if \
-            character.surface_state.last_position_along_surface \
-                    .surface != null else \
+            is_instance_valid(character.surface_state \
+                    .last_position_along_surface.surface) else \
             character.get_intended_position(
                     IntendedPositionType.CLOSEST_SURFACE_POSITION)
+    start_position_along_surface = \
+            PositionAlongSurface.new(basis_position_along_surface)
     start_position = start_position_along_surface.target_point
     start_surface = start_position_along_surface.surface
     start_position_for_max_distance_checks = \
