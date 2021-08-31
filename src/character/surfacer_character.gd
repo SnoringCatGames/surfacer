@@ -257,9 +257,6 @@ func _on_physics_process(delta: float) -> void:
                 4,
                 Sc.geometry.FLOOR_MAX_ANGLE)
     
-    if character_name == "squirrel":
-        print("break")
-    
     _update_actions(delta_scaled)
     surface_state.clear_just_changed_state()
     _update_surface_state()
