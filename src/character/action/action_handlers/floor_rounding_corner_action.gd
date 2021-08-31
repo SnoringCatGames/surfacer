@@ -26,7 +26,6 @@ func process(character) -> bool:
                 corner_position.x - character.position.x if \
                 character.surface_state.is_rounding_left_corner else \
                 character.position.x - corner_position.x
-        distance_past_corner = max(distance_past_corner, 0.0)
         var character_offset_y: float = Sc.geometry \
                 .calculate_displacement_y_for_horizontal_distance_past_edge(
                         distance_past_corner,
