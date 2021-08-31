@@ -20,11 +20,8 @@ func process(character) -> bool:
     if !character.processed_action(CeilingJumpDownAction.NAME) and \
             character.surface_state.is_triggering_ceiling_release:
         character._log(
-                "Releasing ceiling:    %8s;%8.3fs;P%29s" % [
-                    character.character_name,
-                    Sc.time.get_play_time(),
-                    str(character.position),
-                ],
+                "Release ceil",
+                "",
                 CharacterLogType.ACTION,
                 false)
         

@@ -71,13 +71,12 @@ func _handle_pointer_selections() -> void:
         return
     
     character._log(
-            "New pointer selection:%8s;%8.3fs;P%29s; %s" % [
-                character.character_name,
-                Sc.time.get_play_time(),
-                str(new_selection.pointer_position),
-                new_selection.navigation_destination.to_string() if \
+            "Pointer sel",
+            "target=%s; %s" % [
+                Sc.utils.get_vector_string(new_selection.pointer_position, 1),
+                new_selection.navigation_destination.to_string(false) if \
                 new_selection.get_is_selection_navigable() else \
-                "[No matching surface]",
+                "NO MATCH",
             ],
             CharacterLogType.ACTION,
             false)
@@ -87,10 +86,6 @@ func _handle_pointer_selections() -> void:
         last_selection.copy(new_selection)
         trigger(false)
     else:
-        character._log(
-                "Target is too far from any surface",
-                CharacterLogType.ACTION,
-                false)
         Sc.audio.play_sound("nav_select_fail")
     
     new_selection.clear()

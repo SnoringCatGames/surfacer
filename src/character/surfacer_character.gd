@@ -264,49 +264,10 @@ func _on_physics_process(delta: float) -> void:
     for behavior in _behaviors_list:
         behavior._on_physics_process(delta)
     
-    if surface_state.just_left_air:
-        _log("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s" % [
-                    character_name,
-                    Sc.time.get_play_time(),
-                    surface_state.center_position,
-                    velocity,
-                    surface_state.grabbed_surface.to_string(),
-                ],
-                CharacterLogType.SURFACE,
-                false)
-    elif surface_state.just_entered_air:
-        _log("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s" % [
-                    character_name,
-                    Sc.time.get_play_time(),
-                    surface_state.center_position,
-                    velocity,
-                    surface_state.previous_grabbed_surface.to_string(),
-                ],
-                CharacterLogType.SURFACE,
-                false)
-    elif surface_state.just_touched_surface:
-        var side_str: String
-        if surface_state.is_touching_floor:
-            side_str = "FLOOR"
-        elif surface_state.is_touching_ceiling:
-            side_str = "CEILING"
-        else:
-            side_str = "WALL"
-        _log("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s" % [
-                    character_name,
-                    Sc.time.get_play_time(),
-                    surface_state.center_position,
-                    velocity,
-                    side_str,
-                ],
-                CharacterLogType.SURFACE,
-                false)
-    
     _update_navigator(delta_scaled)
     
     actions.delta_scaled = delta_scaled
-    actions.log_new_presses_and_releases(
-            self, Sc.time.get_play_time())
+    actions.log_new_presses_and_releases(self)
     
     # Flip the horizontal direction of the animation according to which way the
     # character is facing.
@@ -382,13 +343,8 @@ func _process_actions() -> void:
 #                var name_str: String = Sc.utils.resize_string(
 #                        action_handler.name,
 #                        20)
-#                _log("%s;%8.3fs;P%29s;V%29s; %s" % [
-#                            name_str,
-#                            Sc.time.get_play_time(),
-#                            surface_state.center_position,
-#                            velocity,
-#                            character_name,
-#                        ],
+#                _log(name_str,
+#                        "",
 #                        CharacterLogType.ACTION,
 #                        true)
 
@@ -434,9 +390,43 @@ func processed_action(name: String) -> bool:
 
 func _update_surface_state() -> void:
     surface_state.update()
+    
     if surface_state.just_changed_surface and \
             surface_state.is_grabbing_surface:
         _update_reachable_surfaces(surface_state.grabbed_surface)
+    
+    if surface_state.just_left_air:
+        _log("Grabbed",
+                "grab_p=%s, %s" % [
+                    Sc.utils.get_vector_string(surface_state.grab_position, 1),
+                    surface_state.grabbed_surface.to_string(false),
+                ],
+                CharacterLogType.SURFACE,
+                false)
+        
+    elif surface_state.just_entered_air:
+        _log("Launched",
+                "grab_p=%s, %s" % [
+                    Sc.utils.get_vector_string(surface_state.grab_position, 1),
+                    surface_state.previous_grabbed_surface.to_string(false),
+                ],
+                CharacterLogType.SURFACE,
+                false)
+        
+    elif surface_state.just_touched_surface:
+        var side_prefixes := []
+        if surface_state.is_touching_floor:
+            side_prefixes.push_back("F")
+        elif surface_state.is_touching_ceiling:
+            side_prefixes.push_back("C")
+        elif surface_state.is_touching_left_wall:
+            side_prefixes.push_back("LW")
+        elif surface_state.is_touching_right_wall:
+            side_prefixes.push_back("RW")
+        _log("Touched",
+                "side=%s" % Sc.utils.join(side_prefixes),
+                CharacterLogType.SURFACE,
+                false)
 
 
 # Update whether or not we should currently consider collisions with

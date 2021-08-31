@@ -134,13 +134,11 @@ func _on_physics_process(delta: float) -> void:
 
 
 func on_detached() -> void:
-    character._log("Detached:            %8.3fs; %s; from=%s; pos=%s" % [
-                Sc.time.get_play_time(),
-                character.character_name,
-                follow_target.character_name,
-                character.position,
-            ],
-            CharacterLogType.BEHAVIOR)
+    character._log(
+            "Fol detached",
+            "from=%s" % follow_target.character_name,
+            CharacterLogType.BEHAVIOR,
+            false)
     
     if shows_exclamation_mark_on_detached:
         character.show_exclamation_mark()

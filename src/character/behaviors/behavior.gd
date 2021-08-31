@@ -372,16 +372,16 @@ func _log_transition() -> void:
     if !character.logs_behavior_events:
         return
     
-    character._log("Behavior change:     %8.3fs; %s; to=%s; from=%s; pos=%s" % [
-                Sc.time.get_play_time(),
-                character.character_name,
+    character._log(
+            "Behav change",
+            "to=%s; from=%s" % [
                 behavior_name,
                 character.previous_behavior.behavior_name if \
                     is_instance_valid(character.previous_behavior) else \
                     "_",
-                character.position,
             ],
-            CharacterLogType.BEHAVIOR)
+            CharacterLogType.BEHAVIOR,
+            false)
 
 
 func _update_parameters() -> void:

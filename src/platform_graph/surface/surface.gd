@@ -55,12 +55,18 @@ func _init(
         self.normal = SurfaceSide.get_normal(side)
 
 
-func to_string() -> String:
-    return "Surface{ %s, [ %s, %s ] }" % [
-            SurfaceSide.get_string(side),
-            vertices[0],
-            vertices[vertices.size() - 1],
-        ]
+func to_string(verbose := true) -> String:
+    if verbose:
+        return "Surface{ %s, [ %s, %s ] }" % [
+                SurfaceSide.get_string(side),
+                vertices[0],
+                vertices[vertices.size() - 1],
+            ]
+    else:
+        return "%s%s" % [
+                SurfaceSide.get_prefix(side),
+                Sc.utils.get_vector_string(vertices[0]),
+            ]
 
 
 func _get_first_point() -> Vector2:

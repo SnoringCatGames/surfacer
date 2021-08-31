@@ -56,13 +56,11 @@ func _init().(
 
 
 func on_collided() -> void:
-    character._log("Collided:            %8.3fs; %s; with=%s; pos=%s" % [
-                Sc.time.get_play_time(),
-                character.character_name,
-                collision_target.character_name,
-                character.position,
-            ],
-            CharacterLogType.BEHAVIOR)
+    character._log(
+            "Col collided",
+            "with=%s" % collision_target.character_name,
+            CharacterLogType.BEHAVIOR,
+            false)
     
     _pause_post_movement()
     
