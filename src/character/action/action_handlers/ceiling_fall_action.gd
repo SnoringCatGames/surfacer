@@ -25,10 +25,10 @@ func process(character) -> bool:
                 CharacterLogType.ACTION,
                 false)
         
-        character.surface_state.release_ceiling()
         # Cancel any velocity toward the ceiling.
         character.velocity.y = \
                 character.movement_params.ceiling_fall_velocity_boost
+        
         return true
     else:
         return false
