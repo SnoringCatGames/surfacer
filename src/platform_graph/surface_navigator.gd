@@ -83,10 +83,8 @@ func navigate_path(
     if path == null:
         # Destination cannot be reached from origin.
         Sc.profiler.stop("navigator_navigate_path")
-        _log("Cannot navigate null path: %s; from=%s" % [
-                    character.character_name,
-                    Sc.utils.get_vector_string(character.position),
-                ],
+        _log("Null path",
+                "",
                 false)
         return false
     
@@ -116,30 +114,35 @@ func navigate_path(
     var duration_navigate_to_position: float = \
             Sc.profiler.stop("navigator_navigate_path")
     
-    _log("Path start:          %8.3fs; %s; to=%s; from=%s; edges=%d" % [
-                Sc.time.get_play_time(),
-                character.character_name,
+    _log("Path start",
+            "to=%s; from=%s; edges=%d" % [
                 Sc.utils.get_vector_string(
                         path.destination.target_point, 0),
                 Sc.utils.get_vector_string(path.origin.target_point, 0),
                 path.edges.size(),
             ],
             false)
-    if character.logs_low_level_navigator_events:
-        var format_string_template := (
-                "{" +
-                "\n\tdestination: %s," +
-                "\n\tpath: %s," +
-                "\n\ttimings: {" +
-                "\n\t\tduration_navigate_to_position: %sms" +
-                "\n\t}" +
-                "\n}")
-        var format_string_arguments := [
-            path.destination.to_string(),
-            path.to_string_with_newlines(1),
-            duration_navigate_to_position,
-        ]
-        _log(format_string_template % format_string_arguments, true)
+    if character.logs_verbose_navigator_events:
+        var message := (
+                    "{" +
+                    "\n\tdestination: %s," +
+                    "\n\tpath: %s," +
+                    "\n\ttimings: {" +
+                    "\n\t\tduration_navigate_to_position: %sms" +
+                    "\n\t}" +
+                    "\n}"
+                ) % [
+                    path.destination.to_string(),
+                    path.to_string_with_newlines(1),
+                    duration_navigate_to_position,
+                ]
+        character._log(
+                message,
+                "",
+                CharacterLogType.NAVIGATION,
+                true,
+                false,
+                false)
     
     _start_edge(
             0,
@@ -605,9 +608,8 @@ func _set_reached_destination() -> void:
             _:
                 Sc.logger.error("Invalid SurfaceSide")
     
-    _log("Path end:            %8.3fs; %s; to=%s; from=%s; edges=%d" % [
-                Sc.time.get_play_time(),
-                character.character_name,
+    _log("Path end",
+            "to=%s; from=%s; edges=%d" % [
                 Sc.utils.get_vector_string(path.destination.target_point, 0),
                 Sc.utils.get_vector_string(path.origin.target_point, 0),
                 path.edges.size(),
@@ -666,16 +668,21 @@ func _start_edge(
     var duration_start_edge: float = \
             Sc.profiler.stop("navigator_start_edge")
     
-    if character.logs_low_level_navigator_events:
-        var format_string_template := \
-                "Starting edge nav:   %8.3fs; %s; %s; calc duration=%sms"
-        var format_string_arguments := [
-                Sc.time.get_play_time(),
-                character.character_name,
-                edge.to_string_with_newlines(0),
-                str(duration_start_edge),
-            ]
-        _log(format_string_template % format_string_arguments, true)
+    _log("Edge start",
+            edge.to_string(false),
+            false)
+    if character.logs_verbose_navigator_events:
+        var message := "%s; calc duration=%sms" % [
+                    edge.to_string_with_newlines(0),
+                    str(duration_start_edge),
+                ]
+        character._log(
+                message,
+                "",
+                CharacterLogType.NAVIGATION,
+                true,
+                false,
+                false)
     
     # Some instructions could be immediately skipped, depending on runtime
     # state, so this gives us a chance to move straight to the next edge.
@@ -739,9 +746,8 @@ func _update(
         else: # navigation_state.just_interrupted_by_player_action
             interruption_type_label = "just_interrupted_by_player_action"
         
-        _log("Edge interrupted:    %8.3fs; %s; %s; to=%s; from=%s" % [
-                    Sc.time.get_play_time(),
-                    character.character_name,
+        _log("Edge interru",
+                "%s; to=%s; from=%s" % [
                     interruption_type_label,
                     Sc.utils.get_vector_string(path.destination.target_point),
                     Sc.utils.get_vector_string(path.origin.target_point),
@@ -770,12 +776,10 @@ func _update(
         return
         
     elif navigation_state.just_reached_end_of_edge:
-        if character.logs_low_level_navigator_events:
-            _log("Edge end:            %8.3fs; %s; %s" % [
-                Sc.time.get_play_time(),
-                character.character_name,
-                edge.get_name(),
-            ], false)
+        if character.logs_verbose_navigator_events:
+            _log("Edge end",
+                    edge.get_name(),
+                    false)
     else:
         # Continuing along an edge.
         if surface_state.is_grabbing_surface:
@@ -806,15 +810,9 @@ func _update(
             if backtracking_edge == null:
                 _set_reached_destination()
             else:
-                if character.logs_low_level_navigator_events:
-                    var format_string_template := \
-                            "Insrt ctr-potr edge:%8.3fs; %s; %s"
-                    var format_string_arguments := [
-                            Sc.time.get_play_time(),
-                            character.character_name,
-                            backtracking_edge.to_string_with_newlines(0),
-                        ]
-                    _log(format_string_template % format_string_arguments,
+                if character.logs_verbose_navigator_events:
+                    _log("Bcktrck edge",
+                            backtracking_edge.to_string(true),
                             true)
                 
                 path.edges.push_back(backtracking_edge)
@@ -866,11 +864,13 @@ func get_previous_destination() -> PositionAlongSurface:
 # configuration.
 func _log(
         message: String,
-        is_low_level_framework_event = false) -> void:
+        details: String,
+        is_verbose = false) -> void:
     character._log(
             message,
+            details,
             CharacterLogType.NAVIGATOR,
-            is_low_level_framework_event)
+            is_verbose)
 
 
 static func _possibly_backtrack_to_not_protrude_past_surface_end(

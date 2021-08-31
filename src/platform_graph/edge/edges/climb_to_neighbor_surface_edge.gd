@@ -142,11 +142,6 @@ func _check_did_just_reach_surface_destination(
                 Sc.logger.error()
                 is_past_end_point = false
         
-        if surface_state.grabbed_surface == \
-                end_position_along_surface.surface and \
-                is_past_end_point:
-            print("break")
-        
         return surface_state.grabbed_surface == \
                 end_position_along_surface.surface and \
                 is_past_end_point

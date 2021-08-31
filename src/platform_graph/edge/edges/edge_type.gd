@@ -33,6 +33,27 @@ static func get_string(type: int) -> String:
             return "???"
 
 
+static func get_prefix(type: int) -> String:
+    match type:
+        FROM_AIR_EDGE:
+            return "AIR"
+        CLIMB_TO_NEIGHBOR_SURFACE_EDGE:
+            return "ADJ"
+        FALL_FROM_FLOOR_EDGE:
+            return "F_FALL"
+        FALL_FROM_WALL_EDGE:
+            return "W_FALL"
+        INTRA_SURFACE_EDGE:
+            return "INTRA"
+        JUMP_FROM_SURFACE_EDGE:
+            return "JUMP"
+        UNKNOWN:
+            return "UNK"
+        _:
+            Sc.logger.error("Invalid EdgeType: %s" % type)
+            return "???"
+
+
 static func get_description(type: int) -> String:
     match type:
         FROM_AIR_EDGE:

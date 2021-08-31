@@ -115,83 +115,68 @@ func copy(other: CharacterActionState) -> void:
     self.start_dash = other.start_dash
 
 
-func log_new_presses_and_releases(
-        character,
-        time: float) -> void:
+func log_new_presses_and_releases(character) -> void:
     _log_new_press_or_release(
             character,
             "jump",
             just_pressed_jump,
-            just_released_jump,
-            time)
+            just_released_jump)
     _log_new_press_or_release(
             character,
             "up",
             just_pressed_up,
-            just_released_up,
-            time)
+            just_released_up)
     _log_new_press_or_release(
             character,
             "down",
             just_pressed_down,
-            just_released_down,
-            time)
+            just_released_down)
     _log_new_press_or_release(
             character,
             "left",
             just_pressed_left,
-            just_released_left,
-            time)
+            just_released_left)
     _log_new_press_or_release(
             character,
             "right",
             just_pressed_right,
-            just_released_right,
-            time)
+            just_released_right)
     _log_new_press_or_release(
             character,
             "grab",
             just_pressed_grab,
-            just_released_grab_wall,
-            time)
+            just_released_grab_wall)
     _log_new_press_or_release(
             character,
             "faceL",
             just_pressed_face_left,
-            just_released_face_left,
-            time)
+            just_released_face_left)
     _log_new_press_or_release(
             character,
             "faceR",
             just_pressed_face_right,
-            just_released_face_right,
-            time)
+            just_released_face_right)
     _log_new_press_or_release(
             character,
             "dash",
             start_dash,
-            false,
-            time)
+            false)
 
 
 static func _log_new_press_or_release(
         character,
         action_name: String,
         just_pressed: bool,
-        just_released: bool,
-        time: float) -> void:
-    var message_args := [
-        action_name,
-        character.character_name,
-        time,
-        character.surface_state.center_position,
-        character.velocity,
-    ]
+        just_released: bool) -> void:
     if just_pressed:
-        character._log("START %5s:%8s;%8.3fs;P%29s;V%29s" % message_args,
+        character._log(
+                "START %5s" % action_name,
+                "",
                 CharacterLogType.ACTION,
                 false)
     if just_released:
-        character._log("STOP  %5s:%8s;%8.3fs;P%29s;V%29s" % message_args,
+        character._log(
+                "STOP  %5s" % action_name,
+                "",
                 CharacterLogType.ACTION,
                 false)

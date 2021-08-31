@@ -363,6 +363,8 @@ func _get_weight_multiplier() -> float:
             return movement_params.walking_edge_weight_multiplier
         SurfaceType.WALL:
             return movement_params.climbing_edge_weight_multiplier
+        SurfaceType.CEILING:
+            return movement_params.ceiling_crawling_edge_weight_multiplier
         SurfaceType.AIR:
             return movement_params.air_edge_weight_multiplier
         _:
@@ -370,14 +372,16 @@ func _get_weight_multiplier() -> float:
             return INF
 
 
-func _get_start_string() -> String:
-    return start_position_along_surface.to_string()
-func _get_end_string() -> String:
-    return end_position_along_surface.to_string()
+func _get_start_string(verbose := true) -> String:
+    return start_position_along_surface.to_string(verbose)
+func _get_end_string(verbose := true) -> String:
+    return end_position_along_surface.to_string(verbose)
 
 
-func get_name() -> String:
-    return EdgeType.get_string(edge_type)
+func get_name(verbose := true) -> String:
+    return EdgeType.get_string(edge_type) if \
+            verbose else \
+            EdgeType.get_prefix(edge_type)
 
 
 func get_should_end_by_colliding_with_surface() -> bool:
@@ -386,8 +390,9 @@ func get_should_end_by_colliding_with_surface() -> bool:
             end_position_along_surface.surface != null
 
 
-func to_string() -> String:
-    var format_string_template := (
+func to_string(verbose := true) -> String:
+    if verbose:
+        return (
             "%s{ " +
             "start: %s, " +
             "end: %s, " +
@@ -397,11 +402,11 @@ func to_string() -> String:
             "duration: %s, " +
             "is_optimized_for_path: %s, " +
             "instructions: %s " +
-            "}")
-    var format_string_arguments := [
-            get_name(),
-            _get_start_string(),
-            _get_end_string(),
+            "}"
+        ) % [
+            get_name(verbose),
+            _get_start_string(verbose),
+            _get_end_string(verbose),
             str(velocity_start),
             str(velocity_end),
             distance,
@@ -409,7 +414,14 @@ func to_string() -> String:
             is_optimized_for_path,
             instructions.to_string(),
         ]
-    return format_string_template % format_string_arguments
+    else:
+        return (
+            "%s{ p0: %s, p1: %s }"
+        ) % [
+            get_name(verbose),
+            _get_start_string(verbose),
+            _get_end_string(verbose),
+        ]
 
 
 func to_string_with_newlines(indent_level: int) -> String:

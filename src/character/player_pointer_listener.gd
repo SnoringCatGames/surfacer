@@ -95,10 +95,9 @@ func _unhandled_input(event: InputEvent) -> void:
 #    if pointer_up_position != Vector2.INF or \
 #            pointer_drag_position != Vector2.INF:
 #        _character._log(
-#                "%s:         %8.3fs" % [
-#                    event_type,
-#                    Sc.time.get_play_time(),
-#                ],
+#                event_type,
+#                "",
+#                CharacterLogType.ACTION,
 #                true)
     
     if pointer_up_position != Vector2.INF:

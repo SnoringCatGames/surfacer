@@ -103,12 +103,22 @@ func _clip_and_project_target_point_for_center_of_collider(
                     target_offset_from_surface
 
 
-func to_string() -> String:
-    return "PositionAlongSurface{ %s, %s }" % [
+func to_string(verbose := true) -> String:
+    if verbose:
+        return (
+            "PositionAlongSurface{ %s, %s }"
+        ) % [
             target_point,
-            surface.to_string() if \
-                    surface != null else \
+            surface.to_string(verbose) if \
+                    is_instance_valid(surface) else \
                     "NULL SURFACE",
+        ]
+    else:
+        return "P{%s, %s}" % [
+            Sc.utils.get_vector_string(target_point, 1),
+            surface.to_string(verbose) if \
+                    is_instance_valid(surface) else \
+                    "NULL",
         ]
 
 

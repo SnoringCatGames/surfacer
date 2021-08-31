@@ -148,6 +148,11 @@ func update() -> void:
     
     _update_contacts()
     _update_touch_state()
+    # FIXME: ---------------------
+    if character.character_name == "squirrel" and \
+            (just_left_air or \
+            just_entered_air):
+        pass
     _update_action_state()
 
 
@@ -193,14 +198,22 @@ func release_wall() -> void:
     if !is_grabbing_wall:
         return
     
-    # FIXME: REMOVE: DEBUGGING: --------------------------
-    print("release_wall(): %s; is_rounding_corner=%s; P=%s" % [
-        character.character_name,
-        is_rounding_corner,
-        str(character.position),
-    ])
-    
     assert(is_instance_valid(wall_contact))
+    
+    var details := (
+                "release_wall(); " +
+                "is_rounding_corner=%s; " +
+                "surface=%s"
+            ) % [
+                is_rounding_corner,
+                wall_contact.surface.to_string(false),
+            ]
+    character._log(
+            "Rem contact",
+            details,
+            CharacterLogType.SURFACE,
+            true)
+    
     surfaces_to_contacts.erase(wall_contact.surface)
     
     is_grabbing_floor = false
@@ -218,14 +231,22 @@ func release_ceiling() -> void:
     if !is_grabbing_ceiling:
         return
     
-    # FIXME: REMOVE: DEBUGGING: --------------------------
-    print("release_ceiling(): %s; is_rounding_corner=%s; P=%s" % [
-        character.character_name,
-        is_rounding_corner,
-        str(character.position),
-    ])
-    
     assert(is_instance_valid(ceiling_contact))
+    
+    var details := (
+                "release_ceiling(); " +
+                "is_rounding_corner=%s; " +
+                "surface=%s"
+            ) % [
+                is_rounding_corner,
+                ceiling_contact.surface.to_string(false),
+            ]
+    character._log(
+            "Rem contact",
+            details,
+            CharacterLogType.SURFACE,
+            true)
+    
     surfaces_to_contacts.erase(ceiling_contact.surface)
     
     is_grabbing_floor = false
@@ -480,15 +501,24 @@ func _update_physics_contacts() -> void:
     # Remove any surfaces that are no longer touching.
     for surface_contact in surfaces_to_contacts.values():
         if !surface_contact._is_still_touching:
+            var details := (
+                        "_update_physics_contacts(); " +
+                        "is_rounding_corner=%s; " +
+                        "surface=%s"
+                    ) % [
+                        is_rounding_corner,
+                        surface_contact.surface.to_string(false),
+                    ]
+            character._log(
+                    "Rem contact",
+                    details,
+                    CharacterLogType.SURFACE,
+                    true)
             # FIXME: REMOVE: DEBUGGING: --------------------------
-            print(("_update_physics_contacts(); erase: " +
-                    "%s, is_rounding_corner=%s; surface=%s; P=%s") % [
-                character.character_name,
-                is_rounding_corner,
-                surface_contact.surface.to_string(),
-                str(character.position),
-            ])
-            if Sc.geometry.are_points_equal_with_epsilon(character.position, Vector2(-660.5, -58.166), 1.0):
+            if Sc.geometry.are_points_equal_with_epsilon(
+                    character.position,
+                    Vector2(-660.5, -58.166),
+                    1.0):
                 print("break")
             surfaces_to_contacts.erase(surface_contact.surface)
 
@@ -677,14 +707,37 @@ func _update_surface_contact_for_explicit_grab(
             Sc.logger.error()
     
     if just_started:
-        # FIXME: REMOVE: DEBUGGING: --------------------------
-        print(("_update_surface_contact_for_explicit_grab(); just_started: " +
-                "%s, is_rounding_corner=%s; surface=%s; P=%s") % [
-            character.character_name,
-            is_rounding_corner,
-            surface_contact.surface.to_string(),
-            str(character.position),
-        ])
+        if !surfaces_to_contacts.empty():
+            var surface_strings := []
+            for s in surfaces_to_contacts:
+                surface_strings.push_back(s.to_string(false))
+            var details := (
+                        "_update_surface_contact_for_explicit_grab(); " +
+                        "is_rounding_corner=%s; " +
+                        "surfaces=[%s]"
+                    ) % [
+                        is_rounding_corner,
+                        Sc.utils.join(surface_strings),
+                    ]
+            character._log(
+                    "Rem contacts",
+                    details,
+                    CharacterLogType.SURFACE,
+                    true)
+        
+        var details := (
+                    "_update_surface_contact_for_explicit_grab(); " +
+                    "is_rounding_corner=%s; " +
+                    "surface=%s"
+                ) % [
+                    is_rounding_corner,
+                    surface_contact.surface.to_string(false),
+                ]
+        character._log(
+                "Add contact",
+                details,
+                CharacterLogType.SURFACE,
+                true)
         
         surfaces_to_contacts.clear()
         surfaces_to_contacts[surface_contact.surface] = surface_contact
@@ -771,6 +824,14 @@ func _update_grab_trigger_state() -> void:
     var is_pressing_fall_through_input: bool = \
             character.actions.pressed_down and \
             character.actions.just_pressed_jump
+    
+    # FIXME: ---------------------------------
+    if character.character_name == "squirrel":
+        pass
+    if just_touched_ceiling:
+        if previous_grabbed_surface.side == SurfaceSide.RIGHT_WALL or \
+                previous_grabbed_surface.side == SurfaceSide.CEILING:
+            pass
     
     is_triggering_explicit_floor_grab = \
             is_touching_floor and \

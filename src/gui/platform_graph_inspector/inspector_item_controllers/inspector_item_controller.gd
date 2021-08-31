@@ -70,14 +70,14 @@ func on_item_selected() -> void:
     Su.graph_inspector.last_selected_character_name = graph.character_name
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
-        _log("Inspector item selected: %s" % to_string())
+        _log("Selected: %s" % to_string())
 
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
-        _log("Inspector item expanded: %s" % to_string())
+        _log("Expanded: %s" % to_string())
 
 
 func on_item_collapsed() -> void:
@@ -85,7 +85,7 @@ func on_item_collapsed() -> void:
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress() and \
             get_has_children():
-        _log("Inspector item collapsed: %s" % to_string())
+        _log("Collapsed: %s" % to_string())
 
 
 func expand() -> void:
@@ -245,4 +245,4 @@ func get_annotation_elements() -> Array:
 # configuration.
 func _log(message: String) -> void:
     if graph.movement_params.logs_inspector_events:
-        Sc.logger.print(message)
+        Sc.logger.print("[Inspector] %s" % message)

@@ -455,7 +455,7 @@ func _on_find_and_expand_complete(
         character_name: String,
         search_type: int,
         metadata: Dictionary) -> void:
-    _log("Inspector search complete: character_name=%s, search_type=%s" % [
+    _log("Search complete: character=%s, search_type=%s" % [
         character_name,
         InspectorSearchType.get_string(search_type),
     ])
@@ -556,4 +556,4 @@ static func _find_closest_jump_land_positions(
 func _log(message: String) -> void:
     if Sc.characters.get_player_character().movement_params \
             .logs_inspector_events:
-        Sc.logger.print(message)
+        Sc.logger.print("[Inpsector] %s" % message)
