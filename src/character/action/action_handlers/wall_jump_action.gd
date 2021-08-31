@@ -18,7 +18,6 @@ func _init().(
 
 func process(character) -> bool:
     if character.actions.just_pressed_jump:
-        character.surface_state.release_wall()
         character.jump_count = 1
         character.just_triggered_jump = true
         character.is_rising_from_jump = true

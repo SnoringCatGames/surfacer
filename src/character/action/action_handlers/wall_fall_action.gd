@@ -25,11 +25,11 @@ func process(character) -> bool:
                 CharacterLogType.ACTION,
                 false)
         
-        character.surface_state.release_wall()
         # Cancel any velocity toward the wall.
         character.velocity.x = \
                 -character.surface_state.toward_wall_sign * \
                 character.movement_params.wall_fall_horizontal_boost
+        
         return true
     else:
         return false
