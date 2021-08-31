@@ -1354,11 +1354,10 @@ func _update_grab_contact() -> void:
                 just_changed_surface or \
                 (just_left_air or \
                         next_grabbed_surface != grabbed_surface)
-        if just_changed_surface:
-            previous_grabbed_surface = \
-                    previous_grabbed_surface if \
-                    next_grabbed_surface == grabbed_surface else \
-                    grabbed_surface
+        if just_changed_surface and \
+                next_grabbed_surface != grabbed_surface and \
+                is_instance_valid(grabbed_surface):
+            previous_grabbed_surface = grabbed_surface
         grabbed_surface = next_grabbed_surface
         
     else:

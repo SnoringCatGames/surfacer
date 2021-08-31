@@ -341,16 +341,24 @@ func _find_path(
 
 func _pause_mid_movement() -> void:
     _clear_timeouts()
-    _mid_movement_pause_timeout_id = Sc.time.set_timeout(
-            funcref(self, "_on_mid_movement_pause_finished"),
-            _get_mid_movement_pause_time())
+    var delay := _get_mid_movement_pause_time()
+    if delay > 0.0:
+        _mid_movement_pause_timeout_id = Sc.time.set_timeout(
+                funcref(self, "_on_mid_movement_pause_finished"),
+                delay)
+    else:
+        _on_mid_movement_pause_finished()
 
 
 func _pause_post_movement() -> void:
     _clear_timeouts()
-    _post_movement_pause_timeout_id = Sc.time.set_timeout(
-            funcref(self, "_on_post_movement_pause_finished"),
-            _get_post_movement_pause_time())
+    var delay := _get_post_movement_pause_time()
+    if delay > 0.0:
+        _post_movement_pause_timeout_id = Sc.time.set_timeout(
+                funcref(self, "_on_post_movement_pause_finished"),
+                delay)
+    else:
+        _on_post_movement_pause_finished()
 
 
 func _on_mid_movement_pause_finished() -> void:
