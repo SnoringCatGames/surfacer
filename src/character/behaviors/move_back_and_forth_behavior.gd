@@ -98,20 +98,20 @@ func _calculate_destination() -> PositionAlongSurface:
 func _calculate_inter_surface_destination(
         is_moving_minward: bool) -> PositionAlongSurface:
     var is_surface_horizontal: bool = \
-            start_surface.side == SurfaceSide.FLOOR or \
-            start_surface.side == SurfaceSide.CEILING
+            latest_activate_start_surface.side == SurfaceSide.FLOOR or \
+            latest_activate_start_surface.side == SurfaceSide.CEILING
     
-    var min_x: float = start_position.x
-    var max_x: float = start_position.x
-    var min_y: float = start_position.y
-    var max_y: float = start_position.y
+    var min_x: float = latest_activate_start_position.x
+    var max_x: float = latest_activate_start_position.x
+    var min_y: float = latest_activate_start_position.y
+    var max_y: float = latest_activate_start_position.y
     
     if is_surface_horizontal:
-        min_x = start_position.x - movement_radius
-        max_x = start_position.x + movement_radius
+        min_x = latest_activate_start_position.x - movement_radius
+        max_x = latest_activate_start_position.x + movement_radius
     else:
-        min_y = start_position.y - movement_radius
-        max_y = start_position.y + movement_radius
+        min_y = latest_activate_start_position.y - movement_radius
+        max_y = latest_activate_start_position.y + movement_radius
     
     var range_x := max_x - min_x
     var range_y := max_y - min_y
@@ -147,41 +147,41 @@ func _calculate_inter_surface_destination(
     
     var sample := randf() * (sample_max - sample_min) + sample_min
     var target_point := \
-            Vector2(sample, start_position.y) if \
+            Vector2(sample, latest_activate_start_position.y) if \
             is_surface_horizontal else \
-            Vector2(start_position.x, sample)
+            Vector2(latest_activate_start_position.x, sample)
     
     return SurfaceParser.find_closest_position_on_a_surface(
             target_point,
             character,
             SurfaceReachability.REVERSIBLY_REACHABLE,
             movement_radius,
-            start_position)
+            latest_activate_start_position)
 
 
 func _calculate_intra_surface_destination(
         is_moving_minward: bool) -> PositionAlongSurface:
     var is_surface_horizontal: bool = \
-            start_surface.side == SurfaceSide.FLOOR or \
-            start_surface.side == SurfaceSide.CEILING
+            latest_activate_start_surface.side == SurfaceSide.FLOOR or \
+            latest_activate_start_surface.side == SurfaceSide.CEILING
     
     var min_x_from_surface_bounds: float = \
-            start_surface.bounding_box.position.x + \
+            latest_activate_start_surface.bounding_box.position.x + \
             min_distance_from_surface_ends
     var max_x_from_surface_bounds: float = \
-            start_surface.bounding_box.end.x - \
+            latest_activate_start_surface.bounding_box.end.x - \
             min_distance_from_surface_ends
     var min_y_from_surface_bounds: float = \
-            start_surface.bounding_box.position.y + \
+            latest_activate_start_surface.bounding_box.position.y + \
             min_distance_from_surface_ends
     var max_y_from_surface_bounds: float = \
-            start_surface.bounding_box.end.y - \
+            latest_activate_start_surface.bounding_box.end.y - \
             min_distance_from_surface_ends
     
-    var min_x: float = start_position.x
-    var max_x: float = start_position.x
-    var min_y: float = start_position.y
-    var max_y: float = start_position.y
+    var min_x: float = latest_activate_start_position.x
+    var max_x: float = latest_activate_start_position.x
+    var min_y: float = latest_activate_start_position.y
+    var max_y: float = latest_activate_start_position.y
     
     if moves_to_surface_ends:
         if is_surface_horizontal:
@@ -193,17 +193,17 @@ func _calculate_intra_surface_destination(
     else:
         if is_surface_horizontal:
             min_x = max( \
-                    start_position.x - movement_radius, \
+                    latest_activate_start_position.x - movement_radius, \
                     min_x_from_surface_bounds)
             max_x = min( \
-                    start_position.x + movement_radius, \
+                    latest_activate_start_position.x + movement_radius, \
                     max_x_from_surface_bounds)
         else:
             min_y = max( \
-                    start_position.y - movement_radius, \
+                    latest_activate_start_position.y - movement_radius, \
                     min_y_from_surface_bounds)
             max_y = min( \
-                    start_position.y + movement_radius, \
+                    latest_activate_start_position.y + movement_radius, \
                     max_y_from_surface_bounds)
     
     var range_x := max_x - min_x
@@ -240,12 +240,12 @@ func _calculate_intra_surface_destination(
     
     var sample := randf() * (sample_max - sample_min) + sample_min
     var target_point := \
-            Vector2(sample, start_position.y) if \
+            Vector2(sample, latest_activate_start_position.y) if \
             is_surface_horizontal else \
-            Vector2(start_position.x, sample)
+            Vector2(latest_activate_start_position.x, sample)
     return PositionAlongSurfaceFactory.create_position_offset_from_target_point(
             target_point,
-            start_surface,
+            latest_activate_start_surface,
             character.movement_params.collider_half_width_height,
             true)
 

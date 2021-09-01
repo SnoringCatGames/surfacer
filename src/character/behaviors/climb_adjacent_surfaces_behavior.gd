@@ -66,9 +66,9 @@ func _move() -> int:
 
 func _attempt_navigation(just_turned_around: bool) -> int:
     var next_surface := \
-            start_surface.clockwise_neighbor if \
+            latest_move_start_surface.clockwise_neighbor if \
             is_clockwise else \
-            start_surface.counter_clockwise_neighbor
+            latest_move_start_surface.counter_clockwise_neighbor
     var can_grab_next_surface: bool = \
             next_surface.side == SurfaceSide.FLOOR and \
             character.movement_params.can_grab_floors or \
@@ -78,7 +78,8 @@ func _attempt_navigation(just_turned_around: bool) -> int:
             next_surface.side == SurfaceSide.RIGHT_WALL) and \
             character.movement_params.can_grab_walls
     var intra_surface_destination := _get_intra_surface_destination()
-    var is_already_at_surface_end := start_position.distance_squared_to( \
+    var is_already_at_surface_end := \
+            latest_move_start_position.distance_squared_to( \
                     intra_surface_destination.target_point) < \
             DISTANCE_TO_SURFACE_END_THRESHOLD * \
                     DISTANCE_TO_SURFACE_END_THRESHOLD
@@ -95,7 +96,7 @@ func _attempt_navigation(just_turned_around: bool) -> int:
     
     if !is_already_at_surface_end:
         var intra_surface_edge := IntraSurfaceEdge.new(
-                start_position_along_surface,
+                latest_move_start_position_along_surface,
                 intra_surface_destination,
                 Vector2.ZERO,
                 character.movement_params)
@@ -125,8 +126,8 @@ func _attempt_navigation(just_turned_around: bool) -> int:
 func _get_intra_surface_destination() -> PositionAlongSurface:
     var max_distance_point := \
             Sc.geometry.get_intersection_of_segment_and_circle(
-                    start_surface.first_point,
-                    start_surface.last_point,
+                    latest_move_start_surface.first_point,
+                    latest_move_start_surface.last_point,
                     start_position_for_max_distance_checks,
                     max_distance_from_start_position,
                     true)
@@ -135,9 +136,9 @@ func _get_intra_surface_destination() -> PositionAlongSurface:
     
     if max_distance_point != Vector2.INF:
         var is_max_distance_point_clockwise := is_point_clockwise(
-                start_position,
+                latest_move_start_position,
                 max_distance_point,
-                start_surface)
+                latest_move_start_surface)
         is_max_distance_point_in_the_direction_of_movement = \
                 is_max_distance_point_clockwise == is_clockwise
         
@@ -147,30 +148,30 @@ func _get_intra_surface_destination() -> PositionAlongSurface:
             # the other point.
             max_distance_point = \
                     Sc.geometry.get_intersection_of_segment_and_circle(
-                            start_surface.first_point,
-                            start_surface.last_point,
+                            latest_move_start_surface.first_point,
+                            latest_move_start_surface.last_point,
                             start_position_for_max_distance_checks,
                             max_distance_from_start_position,
                             false)
             
             is_max_distance_point_clockwise = is_point_clockwise(
-                    start_position,
+                    latest_move_start_position,
                     max_distance_point,
-                    start_surface)
+                    latest_move_start_surface)
             is_max_distance_point_in_the_direction_of_movement = \
                     is_max_distance_point_clockwise == is_clockwise
     
     var intra_surface_destination_target := \
             max_distance_point if \
             is_max_distance_point_in_the_direction_of_movement else \
-            start_surface.last_point if \
+            latest_move_start_surface.last_point if \
             is_clockwise else \
-            start_surface.first_point
+            latest_move_start_surface.first_point
     
     return PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     intra_surface_destination_target,
-                    start_surface,
+                    latest_move_start_surface,
                     character.movement_params.collider_half_width_height,
                     true)
 
@@ -180,7 +181,7 @@ func _create_climb_to_neighbor_surface_edge() -> ClimbToAdjacentSurfaceEdge:
             Su.movement.edge_calculators["ClimbToAdjacentSurfaceCalculator"]
     var climb_edge_jump_land_positions := \
             calculator._calculate_jump_land_positions(
-                    start_surface,
+                    latest_move_start_surface,
                     is_clockwise,
                     character.movement_params)
     return calculator.calculate_edge(

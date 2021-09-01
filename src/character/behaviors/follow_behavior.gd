@@ -180,7 +180,7 @@ func _attempt_navigation() -> int:
     var surface := \
             target_position.surface if \
             can_leave_start_surface else \
-            start_surface
+            latest_activate_start_surface
     
     var destination := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(

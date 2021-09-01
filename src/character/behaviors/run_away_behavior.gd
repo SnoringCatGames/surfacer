@@ -134,7 +134,8 @@ func _move() -> int:
     # -   Then, try the two perpendicular alternate directions.
     #     -   Try the upward alternate direction first.
     # -   Then, try the direction into the target.
-    var away_direction := run_away_target_point.direction_to(start_position)
+    var away_direction := run_away_target_point.direction_to(
+            latest_move_start_position)
     var directions := [away_direction]
     if away_direction.x > 0.0:
         directions.push_back(Vector2(away_direction.y, -away_direction.x))
@@ -190,7 +191,7 @@ func _move() -> int:
             possible_destination = PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
                             naive_target,
-                            start_surface,
+                            latest_move_start_surface,
                             character.movement_params \
                                     .collider_half_width_height,
                             true)

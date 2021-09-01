@@ -96,9 +96,12 @@ var could_return_to_start_position: bool
 
 var character: ScaffolderCharacter
 var move_target: Node2D setget _set_move_target
-var start_position: Vector2
-var start_surface: Surface
-var start_position_along_surface: PositionAlongSurface
+var latest_move_start_position: Vector2
+var latest_move_start_surface: Surface
+var latest_move_start_position_along_surface: PositionAlongSurface
+var latest_activate_start_position: Vector2
+var latest_activate_start_surface: Surface
+var latest_activate_start_position_along_surface: PositionAlongSurface
 var start_position_for_max_distance_checks: Vector2
 var next_behavior: Behavior
 var is_active := false setget _set_is_active
@@ -267,21 +270,7 @@ func _attempt_move() -> void:
             character.surface_state.last_position_along_surface.surface == \
                     null)
     
-    # Update the start position and surface for this latest move.
-    var basis_position_along_surface: PositionAlongSurface = \
-            character.surface_state.last_position_along_surface if \
-            is_instance_valid(character.surface_state \
-                    .last_position_along_surface.surface) else \
-            character.get_intended_position(
-                    IntendedPositionType.CLOSEST_SURFACE_POSITION)
-    start_position_along_surface = \
-            PositionAlongSurface.new(basis_position_along_surface)
-    start_position = start_position_along_surface.target_point
-    start_surface = start_position_along_surface.surface
-    start_position_for_max_distance_checks = \
-            character.start_position if \
-            max_distance_from_character_start_position >= 0.0 else \
-            start_position
+    _update_start_positions(false)
     
     if uses_move_target and \
             !is_instance_valid(move_target):
@@ -520,6 +509,37 @@ func _get_character_reference_from_parent() -> void:
     character = parent
 
 
+func _update_start_positions(is_new_activation: bool) -> void:
+    var basis_position_along_surface: PositionAlongSurface = \
+            character.surface_state.last_position_along_surface if \
+            is_instance_valid(character.surface_state \
+                    .last_position_along_surface.surface) else \
+            character.get_intended_position(
+                    IntendedPositionType.CLOSEST_SURFACE_POSITION)
+    
+    if is_new_activation:
+        # Update the start position and surface for this latest activation.
+        latest_activate_start_position_along_surface = \
+                PositionAlongSurface.new(basis_position_along_surface)
+        latest_activate_start_position = \
+                latest_activate_start_position_along_surface.target_point
+        latest_activate_start_surface = \
+                latest_activate_start_position_along_surface.surface
+    else:
+        # Update the start position and surface for this latest move.
+        latest_move_start_position_along_surface = \
+                PositionAlongSurface.new(basis_position_along_surface)
+        latest_move_start_position = \
+                latest_move_start_position_along_surface.target_point
+        latest_move_start_surface = \
+                latest_move_start_position_along_surface.surface
+    
+    start_position_for_max_distance_checks = \
+            character.start_position if \
+            max_distance_from_character_start_position >= 0.0 else \
+            latest_activate_start_position
+
+
 func _set_is_active(value: bool) -> void:
     var was_active := is_active
     is_active = value
@@ -530,6 +550,7 @@ func _set_is_active(value: bool) -> void:
                 character.behavior.is_active = false
             character.previous_behavior = character.behavior
             character.behavior = self
+            _update_start_positions(true)
             _log_transition()
             _on_active()
             _check_ready_to_move()

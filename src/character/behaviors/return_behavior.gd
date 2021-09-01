@@ -33,8 +33,8 @@ func _on_ready_to_move() -> void:
     if character.previous_behavior.returns_to_character_start_position:
         return_position = character.start_position_along_surface
     if character.previous_behavior.returns_to_pre_behavior_position:
-        return_position = \
-                character.previous_behavior.start_position_along_surface
+        return_position = character.previous_behavior \
+                .latest_activate_start_position_along_surface
     assert(is_instance_valid(return_position))
 
 
