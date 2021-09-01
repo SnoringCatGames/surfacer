@@ -17,10 +17,16 @@ var position_along_surface_color: Color
 
 
 func _init(character: SurfacerCharacter).(character) -> void:
-    self.grab_position_color = Sc.colors.opacify(
-            character.position_annotation_color, GRAB_POSITION_OPACITY)
-    self.position_along_surface_color = Sc.colors.opacify(
-            character.position_annotation_color, POSITION_ALONG_SURFACE_OPACITY)
+    self.grab_position_color = Color.from_hsv(
+            character.position_annotation_color.h,
+            0.7,
+            0.9,
+            GRAB_POSITION_OPACITY)
+    self.position_along_surface_color = Color.from_hsv(
+            character.position_annotation_color.h,
+            0.7,
+            0.9,
+            POSITION_ALONG_SURFACE_OPACITY)
 
 
 func _draw() -> void:
