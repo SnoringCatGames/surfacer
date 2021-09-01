@@ -148,7 +148,9 @@ func _process(_delta: float) -> void:
             preselection_path_beats_time_start = INF
             preselection_path_beats = []
         
-        _predictions_container.visible = preselection_path != null
+        _predictions_container.visible = \
+                preselection_path != null and \
+                Sc.annotators.is_annotator_enabled(AnnotatorType.CHARACTER)
         
         update()
     
