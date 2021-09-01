@@ -115,7 +115,7 @@ func _draw() -> void:
                 is_destination_shown:
             _draw_current_path_origin(current_path)
     
-    elif previous_path != null and \
+    if previous_path != null and \
             is_previous_trajectory_shown:
         _draw_previous_path()
 
