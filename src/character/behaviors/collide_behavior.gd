@@ -6,6 +6,7 @@ extends Behavior
 
 const NAME := "collide"
 const IS_ADDED_MANUALLY := true
+const USES_MOVE_TARGET := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := true
 const COULD_RETURN_TO_START_POSITION := true
@@ -23,12 +24,11 @@ export var anticipates_target_path := false
 ## -   FIXME: --
 export var recomputes_nav_on_target_edge_change := true
 
-var collision_target: ScaffolderCharacter
-
 
 func _init().(
         NAME,
         IS_ADDED_MANUALLY,
+        USES_MOVE_TARGET,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
         COULD_RETURN_TO_START_POSITION) -> void:
@@ -58,7 +58,7 @@ func _init().(
 func on_collided() -> void:
     character._log(
             "Col collided",
-            "with=%s" % collision_target.character_name,
+            "with=%s" % move_target.character_name,
             CharacterLogType.BEHAVIOR,
             false)
     
@@ -69,18 +69,7 @@ func on_collided() -> void:
         character.navigator.stop()
 
 
-func _move() -> bool:
-    # FIXME: LEFT OFF HERE: ------------------- 
-    # - Update move to return an enum value.
-    # - Reached max
-    # - Was valid
-    # - Error
-    # - Cancel back to default
-    # - THEN, add checks to all other references in Behaviors to other
-    #   characters.
-    if !is_instance_valid(collision_target):
-        return false
-    
+func _move() -> int:
     var max_distance_squared_from_start_position := \
             max_distance_from_start_position * max_distance_from_start_position
     
@@ -91,18 +80,18 @@ func _move() -> bool:
     
     var destination: PositionAlongSurface
     if can_leave_start_surface:
-        if collision_target.surface_state.is_grabbing_surface:
-            destination = collision_target.surface_state \
+        if move_target.surface_state.is_grabbing_surface:
+            destination = move_target.surface_state \
                     .center_position_along_surface
         else:
             destination = SurfaceParser.find_closest_position_on_a_surface(
-                    collision_target.position,
+                    move_target.position,
                     character,
                     surface_reachability)
     else:
         destination = PositionAlongSurfaceFactory \
                 .create_position_offset_from_target_point(
-                        collision_target.position,
+                        move_target.position,
                         start_surface,
                         character.movement_params.collider_half_width_height,
                         true)
@@ -115,7 +104,7 @@ func _move() -> bool:
                 destination,
                 _is_first_move_since_active)
         if is_navigation_valid:
-            return true
+            return BehaviorMoveResult.VALID_MOVE
     
     var original_destination := destination
     var original_distance := \
@@ -143,7 +132,6 @@ func _move() -> bool:
                     destination,
                     _is_first_move_since_active)
             if is_navigation_valid:
-                return true
+                return BehaviorMoveResult.VALID_MOVE
     
-    _reached_max_distance = true
-    return false
+    return BehaviorMoveResult.REACHED_MAX_DISTANCE

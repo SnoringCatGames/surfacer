@@ -6,6 +6,7 @@ extends Behavior
 
 const NAME := "wander"
 const IS_ADDED_MANUALLY := true
+const USES_MOVE_TARGET := false
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
@@ -27,6 +28,7 @@ export(float, 0.0, 1.0) var probability_of_leaving_surface_if_available := 0.5
 func _init().(
         NAME,
         IS_ADDED_MANUALLY,
+        USES_MOVE_TARGET,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
         COULD_RETURN_TO_START_POSITION) -> void:
@@ -53,12 +55,12 @@ func _init().(
 #    ._on_physics_process(delta)
 
 
-func _move() -> bool:
+func _move() -> int:
     if can_leave_start_surface and \
             _get_should_leave_surface_if_available():
         var is_navigation_valid := _attempt_inter_surface_navigation()
         if is_navigation_valid:
-            return true
+            return BehaviorMoveResult.VALID_MOVE
     
     return _attempt_intra_surface_navigation()
 
@@ -99,7 +101,7 @@ func _attempt_inter_surface_navigation() -> bool:
     return false
 
 
-func _attempt_intra_surface_navigation() -> bool:
+func _attempt_intra_surface_navigation() -> int:
     var target_distance_signed := _get_movement_distance_signed()
 
     var is_surface_horizontal: bool = \

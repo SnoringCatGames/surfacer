@@ -10,6 +10,7 @@ extends Behavior
 
 const NAME := "climb_adjacent_surfaces"
 const IS_ADDED_MANUALLY := true
+const USES_MOVE_TARGET := false
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
@@ -30,6 +31,7 @@ export var randomizes_initial_direction := false
 func _init().(
         NAME,
         IS_ADDED_MANUALLY,
+        USES_MOVE_TARGET,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
         COULD_RETURN_TO_START_POSITION) -> void:
@@ -58,13 +60,11 @@ func _on_active() -> void:
 #    ._on_physics_process(delta)
 
 
-func _move() -> bool:
+func _move() -> int:
     return _attempt_navigation(false)
 
 
-func _attempt_navigation(just_turned_around: bool) -> bool:
-    _reached_max_distance = false
-    
+func _attempt_navigation(just_turned_around: bool) -> int:
     var next_surface := \
             start_surface.clockwise_neighbor if \
             is_clockwise else \
@@ -116,7 +116,10 @@ func _attempt_navigation(just_turned_around: bool) -> bool:
     
     var path := PlatformGraphPath.new(edges)
     
-    return character.navigator.navigate_path(path)
+    var is_navigation_valid: bool = character.navigator.navigate_path(path)
+    return BehaviorMoveResult.VALID_MOVE if \
+            is_navigation_valid else \
+            BehaviorMoveResult.INVALID_MOVE
 
 
 func _get_intra_surface_destination() -> PositionAlongSurface:
@@ -156,9 +159,6 @@ func _get_intra_surface_destination() -> PositionAlongSurface:
                     start_surface)
             is_max_distance_point_in_the_direction_of_movement = \
                     is_max_distance_point_clockwise == is_clockwise
-    
-    if is_max_distance_point_in_the_direction_of_movement:
-        _reached_max_distance = true
     
     var intra_surface_destination_target := \
             max_distance_point if \
@@ -215,7 +215,5 @@ func is_point_clockwise(
 #
 #    if _configuration_warning != "":
 #        return
-#
-#    # FIXME: ----------------------------
 #
 #    _set_configuration_warning("")

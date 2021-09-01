@@ -6,6 +6,7 @@ extends Behavior
 
 const NAME := "follow"
 const IS_ADDED_MANUALLY := true
+const USES_MOVE_TARGET := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := true
 const COULD_RETURN_TO_START_POSITION := true
@@ -27,8 +28,6 @@ export var detach_distance := -1.0 \
 
 export var shows_exclamation_mark_on_detached := false
 
-var follow_target: ScaffolderCharacter
-
 var is_close_enough_to_stop_moving := false
 var is_far_enough_to_start_moving := false
 var is_far_enough_to_detach := false
@@ -37,6 +36,7 @@ var is_far_enough_to_detach := false
 func _init().(
         NAME,
         IS_ADDED_MANUALLY,
+        USES_MOVE_TARGET,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
         COULD_RETURN_TO_START_POSITION) -> void:
@@ -73,7 +73,7 @@ func _on_physics_process(delta: float) -> void:
         return
     
     var distance_squared_to_target := \
-            character.position.distance_squared_to(follow_target.position)
+            character.position.distance_squared_to(move_target.position)
     
     var close_enough_to_stop_moving_distance_squared := \
             close_enough_to_stop_moving_distance * \
@@ -136,7 +136,7 @@ func _on_physics_process(delta: float) -> void:
 func on_detached() -> void:
     character._log(
             "Fol detached",
-            "from=%s" % follow_target.character_name,
+            "from=%s" % move_target.character_name,
             CharacterLogType.BEHAVIOR,
             false)
     
@@ -150,35 +150,32 @@ func on_detached() -> void:
     _pause_post_movement()
 
 
-func _move() -> bool:
-    assert(is_instance_valid(follow_target))
+func _move() -> int:
     return _attempt_navigation()
 
 
-func _attempt_navigation() -> bool:
-    _reached_max_distance = false
-    
+func _attempt_navigation() -> int:
     var max_distance_squared_from_start_position := \
             max_distance_from_start_position * max_distance_from_start_position
     
     var position_type: int
-    if follow_target.surface_state.is_grabbing_surface:
+    if move_target.surface_state.is_grabbing_surface:
         position_type = IntendedPositionType.CENTER_POSITION_ALONG_SURFACE
-    elif follow_target.navigation_state.is_currently_navigating:
-        if follow_target.navigator.edge.get_end_surface() != null:
+    elif move_target.navigation_state.is_currently_navigating:
+        if move_target.navigator.edge.get_end_surface() != null:
             position_type = IntendedPositionType.EDGE_DESTINATION
-        elif follow_target.navigator.edge.get_start_surface() != null:
+        elif move_target.navigator.edge.get_start_surface() != null:
             position_type = IntendedPositionType.EDGE_ORIGIN
         else:
             position_type = IntendedPositionType.LAST_POSITION_ALONG_SURFACE
-    elif follow_target.surface_state.last_position_along_surface.surface != \
+    elif move_target.surface_state.last_position_along_surface.surface != \
             null:
         position_type = IntendedPositionType.LAST_POSITION_ALONG_SURFACE
     else:
-        return false
+        return BehaviorMoveResult.ERROR
     
     var target_position: PositionAlongSurface = \
-            follow_target.get_intended_position(position_type)
+            move_target.get_intended_position(position_type)
     
     var surface := \
             target_position.surface if \
@@ -207,8 +204,7 @@ func _attempt_navigation() -> bool:
         if destination.target_point.distance_squared_to(
                 start_position_for_max_distance_checks) > \
                 max_distance_squared_from_start_position:
-            _reached_max_distance = true
-            return false
+            return BehaviorMoveResult.REACHED_MAX_DISTANCE
     
     return _attempt_navigation_to_destination(
             destination,
@@ -217,7 +213,7 @@ func _attempt_navigation() -> bool:
 
 func _on_reached_max_distance() -> void:
     # -   Do nothing.
-    # -   The character will detected as "detached" elsewhere.
+    # -   The character will be detected as "detached" elsewhere.
     pass
 
 

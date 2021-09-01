@@ -8,6 +8,7 @@ extends Behavior
 
 const NAME := "move_back_and_forth"
 const IS_ADDED_MANUALLY := true
+const USES_MOVE_TARGET := false
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
@@ -45,18 +46,13 @@ export(float, 0.0, 1.0) var max_ratio_for_destination_offset_from_ends := 0.0 \
 var _is_next_move_minward := true
 
 
-func _init(
-        name := NAME,
-        is_added_manually := IS_ADDED_MANUALLY,
-        includes_mid_movement_pause := INCLUDES_MID_MOVEMENT_PAUSE,
-        includes_post_movement_pause := INCLUDES_POST_MOVEMENT_PAUSE,
-        could_return_to_start_position := COULD_RETURN_TO_START_POSITION
-        ).(
-        name,
-        is_added_manually,
-        includes_mid_movement_pause,
-        includes_post_movement_pause,
-        could_return_to_start_position) -> void:
+func _init().(
+        NAME,
+        IS_ADDED_MANUALLY,
+        USES_MOVE_TARGET,
+        INCLUDES_MID_MOVEMENT_PAUSE,
+        INCLUDES_POST_MOVEMENT_PAUSE,
+        COULD_RETURN_TO_START_POSITION) -> void:
     # Randomize which direction the character moves first.
     _is_next_move_minward = randf() < 0.5
 
@@ -81,13 +77,13 @@ func _init(
 #    ._on_physics_process(delta)
 
 
-func _move() -> bool:
+func _move() -> int:
     var destination := _calculate_destination()
     return _attempt_navigation_to_destination(destination)
 
 
 func _calculate_destination() -> PositionAlongSurface:
-    # FIXME: ---------------------- Support can_leave_start_surface.
+    # FIXME: ----------------------- Support can_leave_start_surface.
     
     var is_moving_minward := _is_next_move_minward
     _is_next_move_minward = !_is_next_move_minward

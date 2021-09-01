@@ -5,6 +5,7 @@ extends Behavior
 
 const NAME := "player_navigation"
 const IS_ADDED_MANUALLY := false
+const USES_MOVE_TARGET := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
@@ -21,6 +22,7 @@ var _was_last_input_a_touch := false
 func _init().(
         NAME,
         IS_ADDED_MANUALLY,
+        USES_MOVE_TARGET,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
         COULD_RETURN_TO_START_POSITION) -> void:
@@ -92,13 +94,15 @@ func _handle_pointer_selections() -> void:
     pre_selection.clear()
 
 
-func _move() -> bool:
+func _move() -> int:
     if !_was_last_input_a_touch:
-        return true
+        return BehaviorMoveResult.VALID_MOVE
     
     assert(last_selection.get_is_selection_navigable())
     var is_navigation_valid: bool = \
             character.navigator.navigate_path(last_selection.path)
     Sc.audio.play_sound("nav_select_success")
     
-    return is_navigation_valid
+    return BehaviorMoveResult.VALID_MOVE if \
+            is_navigation_valid else \
+            BehaviorMoveResult.INVALID_MOVE
