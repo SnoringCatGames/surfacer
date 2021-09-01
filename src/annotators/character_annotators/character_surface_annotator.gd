@@ -2,14 +2,16 @@ class_name CharacterSurfaceAnnotator
 extends Node2D
 
 
-var character: SurfacerCharacter
+const OPACITY := ScaffolderColors.ALPHA_XFAINT
 
-var COLOR := Sc.colors.opacify(
-        Sc.colors.character_position, ScaffolderColors.ALPHA_XFAINT)
+var character: SurfacerCharacter
+var color: Color
 
 
 func _init(character: SurfacerCharacter) -> void:
     self.character = character
+    self.color = Sc.colors.opacify(
+            character.position_annotation_color, OPACITY)
 
 
 func _draw() -> void:
@@ -17,7 +19,7 @@ func _draw() -> void:
         Sc.draw.draw_surface(
                 self,
                 character.surface_state.grabbed_surface,
-                COLOR)
+                color)
 
 
 func check_for_update() -> void:

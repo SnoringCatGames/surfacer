@@ -38,11 +38,7 @@ func _init(navigator: SurfaceNavigator) -> void:
             navigator.character.movement_params.collider_half_width_height.x,
             navigator.character.movement_params.collider_half_width_height.y)
     
-    var base_color: Color = \
-            navigator.character.navigation_annotation_color_override if \
-            navigator.character.navigation_annotation_color_override != \
-                    Color.black else \
-            navigator.character.primary_annotation_color
+    var base_color: Color = navigator.character.navigation_annotation_color
     current_path_color = Sc.colors.opacify(
             base_color,
             ScaffolderColors.ALPHA_XFAINT)

@@ -112,8 +112,8 @@ func _draw_action_indicator(
         position: Vector2,
         opacity: float) -> void:
     var color := Color.from_hsv(
-            MOVEMENT_HUE,
-            0.3,
+            movement_color_base.h,
+            movement_color_base.s * 0.3,
             0.99,
             opacity)
     

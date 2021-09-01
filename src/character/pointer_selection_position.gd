@@ -78,9 +78,9 @@ func update_pointer_position(pointer_position: Vector2) -> void:
             self.path = _character.navigator.find_path(
                     navigation_destination,
                     false)
-            if _character.is_bouncy:
-                _character.navigator.bouncify_path(path)
             if path != null:
+                if _character.is_bouncy:
+                    _character.navigator.bouncify_path(path)
                 self.path_beats_time_start = Sc.time.get_scaled_play_time()
                 self.path_beats = \
                         Sc.beats.calculate_path_beat_hashes_for_current_mode(
@@ -111,9 +111,9 @@ func _update_path_for_in_air_destination(
                 navigation_destination,
                 false,
                 nearby_position_along_surface)
-        if _character.is_bouncy:
-            _character.navigator.bouncify_path(path)
         if path != null:
+            if _character.is_bouncy:
+                _character.navigator.bouncify_path(path)
             self.path = path
             self.path_beats_time_start = Sc.time.get_scaled_play_time()
             self.path_beats = \
