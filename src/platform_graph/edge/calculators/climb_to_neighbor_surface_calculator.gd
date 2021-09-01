@@ -101,12 +101,18 @@ func calculate_edge(
     var trajectory := _calculate_trajectory(
             position_start,
             position_end,
+            collision_params.movement_params,
+            instructions.duration)
+    var velocity_end := _get_velocity_end(
+            position_start,
+            position_end,
             collision_params.movement_params)
     return ClimbToNeighborSurfaceEdge.new(
             self,
             position_start,
             position_end,
             velocity_start,
+            velocity_end,
             collision_params.movement_params,
             instructions,
             trajectory)
@@ -176,19 +182,10 @@ func _calculate_jump_land_positions(
                     neighbor,
                     movement_params.collider_half_width_height)
     
-    var velocity_start: Vector2
-    if origin_surface.side == SurfaceSide.FLOOR:
-        # Assume that the character will have reached max speed by the time
-        # they've walked to the end of the floor surface.
-        var velocity_x := \
-                movement_params.max_horizontal_speed_default if \
-                is_clockwise else \
-                -movement_params.max_horizontal_speed_default
-        velocity_start = Vector2(velocity_x, 0.0)
-    else:
-        # Non-floor surfaces use constant velocity, so we don't need to
-        # bother with setting the initial velocity
-        velocity_start = Vector2.ZERO
+    var velocity_start := _get_velocity_start(
+            start_position,
+            end_position,
+            movement_params)
     
     return JumpLandPositions.new(
             start_position,
@@ -291,7 +288,8 @@ func _calculate_instructions(
 func _calculate_trajectory(
         position_start: PositionAlongSurface,
         position_end: PositionAlongSurface,
-        movement_params: MovementParameters) -> EdgeTrajectory:
+        movement_params: MovementParameters,
+        duration: float) -> EdgeTrajectory:
     var is_convex := \
             position_start.surface.clockwise_convex_neighbor == \
                     position_end.surface or \
@@ -333,11 +331,6 @@ func _calculate_trajectory(
             position_start.surface.first_point
     var half_width := movement_params.collider_half_width_height.x
     var half_height := movement_params.collider_half_width_height.y
-    
-    var duration := _calculate_duration(
-            position_start,
-            position_end,
-            movement_params)
     
     var frame_count := int(ceil(duration / Time.PHYSICS_TIME_STEP))
     
@@ -460,12 +453,18 @@ func _calculate_trajectory(
                 is_top_side else \
                 corner_position.y + half_height
         
-        # Assume that the character will have reached max speed by the time
-        # they've walked to the end of a floor surface.
-        velocity.x = \
-                -movement_params.max_horizontal_speed_default if \
-                is_left_side else \
-                movement_params.max_horizontal_speed_default
+        if is_top_side:
+            # Assume that the character will have reached max speed by the time
+            # they've walked to the end of a floor surface.
+            velocity.x = \
+                    -movement_params.max_horizontal_speed_default if \
+                    is_left_side else \
+                    movement_params.max_horizontal_speed_default
+        else:
+            velocity.x = \
+                    -movement_params.ceiling_crawl_speed if \
+                    is_left_side else \
+                    movement_params.ceiling_crawl_speed
         velocity.y = \
                 CharacterActionHandler \
                         .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION if \
@@ -551,6 +550,116 @@ func _calculate_trajectory(
     return trajectory
 
 
+func _get_velocity_start(
+        position_start: PositionAlongSurface,
+        position_end: PositionAlongSurface,
+        movement_params: MovementParameters) -> Vector2:
+    var is_left_side := \
+            position_start.side == SurfaceSide.RIGHT_WALL or \
+            position_end.side == SurfaceSide.RIGHT_WALL
+    var is_top_side := \
+            position_start.side == SurfaceSide.FLOOR or \
+            position_end.side == SurfaceSide.FLOOR
+    
+    var velocity_x: float
+    var velocity_y: float
+    match position_start.side:
+        SurfaceSide.FLOOR:
+            # Assume that the character will have reached max speed by the time
+            # they've walked to the end of the floor surface.
+            velocity_x = \
+                    -movement_params.max_horizontal_speed_default if \
+                    is_left_side else \
+                    movement_params.max_horizontal_speed_default
+            velocity_y = CharacterActionHandler \
+                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+        SurfaceSide.CEILING:
+            velocity_x = \
+                    -movement_params.ceiling_crawl_speed if \
+                    is_left_side else \
+                    movement_params.ceiling_crawl_speed
+            velocity_y = -CharacterActionHandler \
+                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            velocity_x = \
+                    CharacterActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
+                    is_left_side else \
+                    -CharacterActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+            velocity_y = \
+                    movement_params.climb_up_speed if \
+                    is_top_side else \
+                    movement_params.climb_down_speed
+        _:
+            Sc.logger.error()
+    
+    return Vector2(velocity_x, velocity_y)
+
+
+func _get_velocity_end(
+        position_start: PositionAlongSurface,
+        position_end: PositionAlongSurface,
+        movement_params: MovementParameters) -> Vector2:
+    var is_left_side := \
+            position_start.side == SurfaceSide.RIGHT_WALL or \
+            position_end.side == SurfaceSide.RIGHT_WALL
+    var is_top_side := \
+            position_start.side == SurfaceSide.FLOOR or \
+            position_end.side == SurfaceSide.FLOOR
+    
+    var velocity_x: float
+    var velocity_y: float
+    match position_end.side:
+        SurfaceSide.FLOOR:
+            var acceleration_x := movement_params.walk_acceleration
+            var floor_component_distance: float = Sc.geometry \
+                    .calculate_displacement_x_for_vertical_distance_past_edge(
+                            movement_params.collider_half_width_height.x,
+                            !is_left_side,
+                            movement_params.rounding_corner_calc_shape,
+                            movement_params.rounding_corner_calc_shape_rotation)
+            var floor_component_speed_x_start := CharacterActionHandler \
+                    .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+            
+            # From a basic equation of motion:
+            #     v^2 = v_0^2 + 2a(s - s_0)
+            #     v = sqrt(v_0^2 + 2a(s - s_0))
+            velocity_x = sqrt(
+                    floor_component_speed_x_start * \
+                    floor_component_speed_x_start + \
+                    2 * acceleration_x * floor_component_distance)
+            if !is_left_side:
+                velocity_x = -velocity_x
+            
+            velocity_y = CharacterActionHandler \
+                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+        SurfaceSide.CEILING:
+            velocity_x = \
+                    -movement_params.ceiling_crawl_speed if \
+                    is_left_side else \
+                    movement_params.ceiling_crawl_speed
+            velocity_y = -CharacterActionHandler \
+                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            velocity_x = \
+                    CharacterActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
+                    is_left_side else \
+                    -CharacterActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+            velocity_y = \
+                    movement_params.climb_up_speed if \
+                    is_top_side else \
+                    movement_params.climb_down_speed
+        _:
+            Sc.logger.error()
+    
+    return Vector2(velocity_x, velocity_y)
+
+
 func _calculate_duration(
         position_start: PositionAlongSurface,
         position_end: PositionAlongSurface,
@@ -592,22 +701,14 @@ func _calculate_duration(
     #     when the character's center is no longer past the end of the end
     #     surface.
     
-    var speed_start := \
+    var speed_start := abs(
             movement_params.max_horizontal_speed_default if \
             start_side == SurfaceSide.FLOOR else \
             movement_params.ceiling_crawl_speed if \
             start_side == SurfaceSide.CEILING else \
             movement_params.climb_up_speed if \
             is_top_side else \
-            movement_params.climb_down_speed
-    var speed_end := \
-            movement_params.max_horizontal_speed_default if \
-            end_side == SurfaceSide.FLOOR else \
-            movement_params.ceiling_crawl_speed if \
-            end_side == SurfaceSide.CEILING else \
-            movement_params.climb_down_speed if \
-            is_top_side else \
-            movement_params.climb_up_speed
+            movement_params.climb_down_speed)
     
     var distance_start := \
             movement_params.collider_half_width_height.y if \
@@ -616,23 +717,49 @@ func _calculate_duration(
     
     var distance_end: float
     if is_wall:
-        distance_end = Sc.geometry \
+        distance_end = abs(Sc.geometry \
                 .calculate_displacement_x_for_vertical_distance_past_edge(
                         distance_start,
                         !is_left_side,
                         movement_params.rounding_corner_calc_shape,
-                        movement_params.rounding_corner_calc_shape_rotation)
+                        movement_params.rounding_corner_calc_shape_rotation))
     else:
-        distance_end = Sc.geometry \
+        distance_end = abs(Sc.geometry \
                 .calculate_displacement_y_for_horizontal_distance_past_edge(
                         distance_start,
                         is_top_side,
                         movement_params.rounding_corner_calc_shape,
-                        movement_params.rounding_corner_calc_shape_rotation)
+                        movement_params.rounding_corner_calc_shape_rotation))
     
-    var duration_start := abs(distance_start / speed_start)
-    # FIXME: ----- Account for acceleration-along-floor when climbing over wall.
-    var duration_end := abs(distance_end / speed_end)
+    var duration_start := distance_start / speed_start
+    
+    var duration_end: float
+    if end_side != SurfaceSide.FLOOR:
+        var speed_end := abs(
+                movement_params.max_horizontal_speed_default if \
+                end_side == SurfaceSide.FLOOR else \
+                movement_params.ceiling_crawl_speed if \
+                end_side == SurfaceSide.CEILING else \
+                movement_params.climb_down_speed if \
+                is_top_side else \
+                movement_params.climb_up_speed)
+        duration_end = distance_end / speed_end
+    else:
+        # Account for acceleration-along-floor when climbing over a wall.
+        var acceleration_x := movement_params.walk_acceleration
+        var end_speed_x_start := CharacterActionHandler \
+                .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+        # From a basic equation of motion:
+        #     v^2 = v_0^2 + 2a(s - s_0)
+        #     v = sqrt(v_0^2 + 2a(s - s_0))
+        var end_speed_x_end := sqrt(
+                end_speed_x_start * \
+                end_speed_x_start + \
+                2 * acceleration_x * distance_end)
+        # From a basic equation of motion:
+        #     v = v_0 + at
+        #     t = (v - v_0) / a
+        duration_end = (end_speed_x_end - end_speed_x_start) / acceleration_x
     
     return duration_start + duration_end
 

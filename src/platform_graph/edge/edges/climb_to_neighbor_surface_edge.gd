@@ -25,6 +25,7 @@ func _init(
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
+        velocity_end := Vector2.INF,
         movement_params: MovementParameters = null,
         instructions: EdgeInstructions = null,
         trajectory: EdgeTrajectory = null) \
@@ -40,7 +41,7 @@ func _init(
         start,
         end,
         velocity_start,
-        Vector2.ZERO,
+        velocity_end,
         false,
         false,
         movement_params,
