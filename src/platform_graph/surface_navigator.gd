@@ -385,11 +385,12 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                     [movement_direction * remaining_distance]
             
             var current_end_point: Vector2
+            var jump_destination: PositionAlongSurface
             var jump_edge: JumpFromSurfaceEdge
             
             for jump_displacement in possible_displacements:
                 current_end_point = current_start_point + jump_displacement
-                var jump_destination := PositionAlongSurfaceFactory \
+                jump_destination = PositionAlongSurfaceFactory \
                         .create_position_offset_from_target_point(
                                 current_end_point,
                                 surface,
@@ -416,6 +417,16 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                         Vector2(previous_velocity_end_x, 0.0),
                         character.movement_params)
                 new_edges.push_back(intra_surface_edge)
+            else:
+                # We weren't able to calculate a jump edge for this span, so
+                # just use an intra-surface edge.
+                previous_velocity_end_x = intra_surface_edge.velocity_end.x
+                intra_surface_edge = IntraSurfaceEdge.new(
+                        jump_origin,
+                        jump_destination,
+                        Vector2(previous_velocity_end_x, 0.0),
+                        character.movement_params)
+                new_edges.push_back(intra_surface_edge)
             
             remaining_distance = abs(end_point.x - current_end_point.x)
             current_start_point = current_end_point
@@ -431,6 +442,22 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                     intra_surface_edge.velocity_start,
                     character.movement_params)
             new_edges[new_edges.size() - 1] = intra_surface_edge
+        
+        # Merge any adjacent intra-surface edges.
+        var j := 0
+        while j < new_edges.size() - 1:
+            var previous: Edge = new_edges[j]
+            var next: Edge = new_edges[j + 1]
+            if previous is IntraSurfaceEdge and \
+                    next is IntraSurfaceEdge:
+                new_edges[j] = IntraSurfaceEdge.new(
+                        previous.start_position_along_surface,
+                        next.end_position_along_surface,
+                        previous.velocity_start,
+                        character.movement_params)
+                new_edges.remove(j + 1)
+                j -= 1
+            j += 1
         
         if new_edges.size() > 1:
             # We created some new jumps, so replace the old edge with them.
