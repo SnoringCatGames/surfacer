@@ -83,31 +83,84 @@ func _move() -> int:
 
 
 func _calculate_destination() -> PositionAlongSurface:
-    if can_leave_start_surface:
-        var destination := _calculate_inter_surface_destination()
-        if is_instance_valid(destination):
-            return destination
-    
-    return _calculate_intra_surface_destination()
-
-
-func _calculate_inter_surface_destination() -> PositionAlongSurface:
-    # FIXME: --------------------------
-    pass
-    return null
-    
-#    possible_destination = SurfaceParser.find_closest_position_on_a_surface(
-#            naive_target,
-#            character,
-#            SurfaceReachability.REVERSIBLY_REACHABLE,
-#            max_distance_squared_from_start_position,
-#            start_position_for_max_distance_checks)
-
-
-func _calculate_intra_surface_destination() -> PositionAlongSurface:
     var is_moving_minward := _is_next_move_minward
     _is_next_move_minward = !_is_next_move_minward
     
+    if can_leave_start_surface:
+        var destination := \
+                _calculate_inter_surface_destination(is_moving_minward)
+        if is_instance_valid(destination):
+            return destination
+    
+    return _calculate_intra_surface_destination(is_moving_minward)
+
+
+func _calculate_inter_surface_destination(
+        is_moving_minward: bool) -> PositionAlongSurface:
+    var is_surface_horizontal: bool = \
+            start_surface.side == SurfaceSide.FLOOR or \
+            start_surface.side == SurfaceSide.CEILING
+    
+    var min_x: float = start_position.x
+    var max_x: float = start_position.x
+    var min_y: float = start_position.y
+    var max_y: float = start_position.y
+    
+    if is_surface_horizontal:
+        min_x = start_position.x - movement_radius
+        max_x = start_position.x + movement_radius
+    else:
+        min_y = start_position.y - movement_radius
+        max_y = start_position.y + movement_radius
+    
+    var range_x := max_x - min_x
+    var range_y := max_y - min_y
+    
+    var sample_min: float
+    var sample_max: float
+    if is_surface_horizontal:
+        if is_moving_minward:
+            sample_min = min_x
+            sample_max = \
+                    min_x + \
+                    range_x * max_ratio_for_destination_offset_from_ends
+            sample_max = max(sample_max, sample_min)
+        else:
+            sample_min = \
+                    max_x - \
+                    range_x * max_ratio_for_destination_offset_from_ends
+            sample_max = max_x
+            sample_min = min(sample_min, sample_max)
+    else:
+        if is_moving_minward:
+            sample_min = min_y
+            sample_max = \
+                    min_y + \
+                    range_y * max_ratio_for_destination_offset_from_ends
+            sample_max = max(sample_max, sample_min)
+        else:
+            sample_min = \
+                    max_y - \
+                    range_y * max_ratio_for_destination_offset_from_ends
+            sample_max = max_y
+            sample_min = min(sample_min, sample_max)
+    
+    var sample := randf() * (sample_max - sample_min) + sample_min
+    var target_point := \
+            Vector2(sample, start_position.y) if \
+            is_surface_horizontal else \
+            Vector2(start_position.x, sample)
+    
+    return SurfaceParser.find_closest_position_on_a_surface(
+            target_point,
+            character,
+            SurfaceReachability.REVERSIBLY_REACHABLE,
+            movement_radius,
+            start_position)
+
+
+func _calculate_intra_surface_destination(
+        is_moving_minward: bool) -> PositionAlongSurface:
     var is_surface_horizontal: bool = \
             start_surface.side == SurfaceSide.FLOOR or \
             start_surface.side == SurfaceSide.CEILING
@@ -216,6 +269,11 @@ func _update_parameters() -> void:
         _set_configuration_warning(
                 "If moves_to_surface_ends is false, " +
                 "then movement_radius must be non-negative.")
+    elif moves_to_surface_ends and \
+            can_leave_start_surface:
+        _set_configuration_warning(
+                "can_leave_start_surface and moves_to_surface_ends " +
+                "must not both be true.")
     elif movement_radius > max_distance_from_start_position:
         _set_configuration_warning(
                 "movement_radius must not be greater than " +
