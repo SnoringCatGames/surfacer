@@ -650,6 +650,9 @@ func _get_velocity_end(
                         2 * acceleration_x * floor_component_distance)
                 if is_starting_from_left_wall:
                     velocity_x = -velocity_x
+                velocity_x = clamp(velocity_x,
+                        -movement_params.max_horizontal_speed_default,
+                        movement_params.max_horizontal_speed_default)
             else:
                 velocity_x = 0.0
             
@@ -785,13 +788,40 @@ func _calculate_duration(
         #     v^2 = v_0^2 + 2a(s - s_0)
         #     v = sqrt(v_0^2 + 2a(s - s_0))
         var end_speed_x_end := sqrt(
-                end_speed_x_start * \
-                end_speed_x_start + \
+                end_speed_x_start * end_speed_x_start + \
                 2 * acceleration_x * distance_end)
-        # From a basic equation of motion:
-        #     v = v_0 + at
-        #     t = (v - v_0) / a
-        duration_end = (end_speed_x_end - end_speed_x_start) / acceleration_x
+        
+        if end_speed_x_end > movement_params.max_horizontal_speed_default:
+            # We hit max speed before reaching the end, so we need to account
+            # separately for the duration while acceleration and the duration
+            # at max speed.
+            
+            end_speed_x_end = movement_params.max_horizontal_speed_default
+            # From a basic equation of motion:
+            #     v = v_0 + at
+            #     t = (v - v_0) / a
+            var acceleration_duration := \
+                    (end_speed_x_end - end_speed_x_start) / acceleration_x
+            # From a basic equation of motion:
+            #     v^2 = v_0^2 + 2a(s - s_0)
+            #     (s - s_0) = (v^2 - v_0^2) / 2 / a
+            var acceleration_distance := \
+                    (end_speed_x_end * end_speed_x_end - \
+                    end_speed_x_start * end_speed_x_start) / \
+                    2.0 / acceleration_x
+            # From a basic equation of motion:
+            #     s = s_0 + vt
+            #     t = (s - s_0) / v
+            var max_velocity_duration := \
+                    (distance_end - acceleration_distance) / end_speed_x_end
+            
+            duration_end = acceleration_duration + max_velocity_duration
+        else:
+            # From a basic equation of motion:
+            #     v = v_0 + at
+            #     t = (v - v_0) / a
+            duration_end = \
+                    (end_speed_x_end - end_speed_x_start) / acceleration_x
     
     return duration_start + duration_end
 
