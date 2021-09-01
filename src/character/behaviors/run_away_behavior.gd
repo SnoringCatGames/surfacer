@@ -8,6 +8,7 @@ extends Behavior
 
 const NAME := "run_away"
 const IS_ADDED_MANUALLY := true
+const USES_MOVE_TARGET := true
 const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := true
 const COULD_RETURN_TO_START_POSITION := true
@@ -35,17 +36,16 @@ export var keeps_running_until_far_enough_away := true \
 export var min_distance_from_target_to_stop_running := -1.0 \
         setget _set_min_distance_from_target_to_stop_running
 
-# FIXME: ---------------------------
+# FIXME: ----------------------------
 # - But also check whether the target destination has changed.
 ## -   FIXME: --
 export var recomputes_nav_on_target_edge_change := true
-
-var target_to_run_from: ScaffolderCharacter
 
 
 func _init().(
         NAME,
         IS_ADDED_MANUALLY,
+        USES_MOVE_TARGET,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
         COULD_RETURN_TO_START_POSITION) -> void:
@@ -75,7 +75,7 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
             min_distance_from_target_to_stop_running
     if !keeps_running_until_far_enough_away or \
             character.position.distance_squared_to(
-                    target_to_run_from.position) >= \
+                    move_target.position) >= \
             min_distance_squared_from_target_to_stop_running:
         _pause_post_movement()
     else:
@@ -86,9 +86,7 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 #    ._on_physics_process(delta)
     
     
-func _move() -> bool:
-    assert(is_instance_valid(target_to_run_from))
-
+func _move() -> int:
     var min_distance_retry_threshold := \
             run_distance * \
             retry_threshold_ratio_from_intended_distance
@@ -108,7 +106,7 @@ func _move() -> bool:
     #     -   Try the upward alternate direction first.
     # -   Then, try the direction into the target.
     var away_direction := \
-            target_to_run_from.position.direction_to(start_position)
+            move_target.position.direction_to(start_position)
     var directions := [away_direction]
     if away_direction.x > 0.0:
         directions.push_back(Vector2(away_direction.y, -away_direction.x))
@@ -126,7 +124,7 @@ func _move() -> bool:
     # Return the first possible destination that is within the correct range.
     for direction in directions:
         var naive_target: Vector2 = \
-                target_to_run_from.position + direction * run_distance
+                move_target.position + direction * run_distance
         
         # Prevent straying too far the start position.
         if start_position_for_max_distance_checks.distance_squared_to(
@@ -138,7 +136,7 @@ func _move() -> bool:
                             naive_target) * \
                     max_distance_from_start_position
             var target_distance_squared := \
-                    target_to_run_from.position.distance_squared_to(
+                    move_target.position.distance_squared_to(
                             naive_target)
             var is_target_too_far_from_intended := \
                     target_distance_squared < \
@@ -177,7 +175,7 @@ func _move() -> bool:
         if !is_destination_too_far_from_start_position:
             # Ensure run-away target is the right distance away.
             var actual_distance_squared := \
-                    target_to_run_from.position.distance_squared_to(
+                    move_target.position.distance_squared_to(
                             possible_destination.target_point)
             var is_destination_too_far_from_intended := \
                     actual_distance_squared < \
@@ -190,7 +188,7 @@ func _move() -> bool:
                         possible_destination,
                         _is_first_move_since_active)
                 if is_navigation_valid:
-                    return true
+                    return BehaviorMoveResult.VALID_MOVE
             else:
                 possible_destinations.push_back(possible_destination)
     
@@ -202,7 +200,7 @@ func _move() -> bool:
         for possible_destination in possible_destinations:
             var current_destination_distance := \
                     abs(run_distance - \
-                            target_to_run_from.position.distance_to(
+                            move_target.position.distance_to(
                                     possible_destination.target_point))
             if current_destination_distance < \
                     closest_destination_distance:
@@ -213,11 +211,11 @@ func _move() -> bool:
                 closest_destination,
                 _is_first_move_since_active)
         if is_navigation_valid:
-            return true
+            return BehaviorMoveResult.VALID_MOVE
         else:
             possible_destinations.erase(closest_destination)
     
-    return false
+    return BehaviorMoveResult.INVALID_MOVE
 
 
 func _update_parameters() -> void:

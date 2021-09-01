@@ -7,6 +7,7 @@ extends Behavior
 
 const NAME := "default"
 const IS_ADDED_MANUALLY := false
+const USES_MOVE_TARGET := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
@@ -15,6 +16,7 @@ const COULD_RETURN_TO_START_POSITION := false
 func _init().(
         NAME,
         IS_ADDED_MANUALLY,
+        USES_MOVE_TARGET,
         INCLUDES_MID_MOVEMENT_PAUSE,
         INCLUDES_POST_MOVEMENT_PAUSE,
         COULD_RETURN_TO_START_POSITION) -> void:
@@ -41,9 +43,9 @@ func _init().(
 #    ._on_physics_process(delta)
 
 
-func _move() -> bool:
+func _move() -> int:
     # Do nothing.
-    return true
+    return BehaviorMoveResult.VALID_MOVE
 
 
 func get_is_paused() -> bool:

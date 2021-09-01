@@ -89,11 +89,13 @@ var max_pause_after_movements := 0.0 \
 
 var behavior_name: String
 var is_added_manually: bool
+var uses_move_target: bool
 var includes_mid_movement_pause: bool
 var includes_post_movement_pause: bool
 var could_return_to_start_position: bool
 
 var character: ScaffolderCharacter
+var move_target: Node2D
 var start_position: Vector2
 var start_surface: Surface
 var start_position_along_surface: PositionAlongSurface
@@ -101,7 +103,6 @@ var start_position_for_max_distance_checks: Vector2
 var next_behavior: Behavior
 var is_active := false setget _set_is_active
 var _is_first_move_since_active := false
-var _reached_max_distance := false
 
 var _mid_movement_pause_timeout_id := -1
 var _post_movement_pause_timeout_id := -1
@@ -116,11 +117,13 @@ var _property_list_addendum := []
 func _init(
         behavior_name: String,
         is_added_manually: bool,
+        uses_move_target: bool,
         includes_mid_movement_pause: bool,
         includes_post_movement_pause: bool,
         could_return_to_start_position: bool) -> void:
     self.behavior_name = behavior_name
     self.is_added_manually = is_added_manually
+    self.uses_move_target = uses_move_target
     self.includes_mid_movement_pause = includes_mid_movement_pause
     self.includes_post_movement_pause = includes_post_movement_pause
     self.could_return_to_start_position = could_return_to_start_position
@@ -219,7 +222,7 @@ func _on_inactive() -> void:
     pass
 
 
-# FIXME: ------ Call this.
+# FIXME: ------- Call this.
 func _on_finished() -> void:
     _clear_timeouts()
     character._on_behavior_finished(self)
@@ -231,7 +234,11 @@ func _on_error(message: String) -> void:
 
 
 func _on_reached_max_distance() -> void:
-    pass
+    _on_finished()
+
+
+func _on_move_target_destroyed() -> void:
+    character._on_behavior_move_target_destroyed(self)
 
 
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
@@ -277,39 +284,53 @@ func _attempt_move() -> void:
             max_distance_from_character_start_position >= 0.0 else \
             start_position
     
-    _reached_max_distance = false
+    if uses_move_target and \
+            !is_instance_valid(move_target):
+        _on_move_target_destroyed()
+        return
     
-    var is_move_successful := _move()
+    var move_result := _move()
     
     _is_first_move_since_active = false
     
-    if !is_move_successful:
-        if _reached_max_distance:
-            character.navigator.stop()
-            _on_reached_max_distance()
-        else:
+    match move_result:
+        BehaviorMoveResult.ERROR:
             _on_error(
-                    ("Behavior._move() failed: " +
+                    ("ERROR: Behavior._move() failed: " +
                     "behavior=%s, character=%s, position=%s") % [
                         behavior_name,
                         character.character_name,
                         Sc.utils.get_vector_string(character.position),
                     ])
+        BehaviorMoveResult.REACHED_MAX_DISTANCE:
+            character.navigator.stop()
+            _on_reached_max_distance()
+        BehaviorMoveResult.VALID_MOVE:
+            # Do nothing.
+            pass
+        BehaviorMoveResult.INVALID_MOVE:
+            # Abort to the default behavior.
+            _on_finished()
+        _:
+            Sc.logger.error()
 
 
-func _move() -> bool:
+func _move() -> int:
     Sc.logger.error("Abstract Behavior._move is not implemented.")
-    return false
+    return BehaviorMoveResult.ERROR
 
 
 func _attempt_navigation_to_destination(
         destination: PositionAlongSurface,
-        possibly_includes_jump_at_start := true) -> bool:
+        possibly_includes_jump_at_start := true) -> int:
     var path := _find_path(destination, possibly_includes_jump_at_start)
     if path != null:
-        return character.navigator.navigate_path(path)
+        var is_navigation_valid: bool = character.navigator.navigate_path(path)
+        return BehaviorMoveResult.VALID_MOVE if \
+                is_navigation_valid else \
+                BehaviorMoveResult.ERROR
     else:
-        return false
+        return BehaviorMoveResult.INVALID_MOVE
 
 
 func _find_path(

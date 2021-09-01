@@ -481,6 +481,10 @@ func _on_behavior_error(behavior: Behavior) -> void:
             false)
 
 
+func _on_behavior_move_target_destroyed(behavior: Behavior) -> void:
+    _on_behavior_finished(behavior)
+
+
 func start_dash(horizontal_acceleration_sign: int) -> void:
     if !_can_dash or \
             !movement_params.can_dash:
