@@ -554,12 +554,27 @@ func _get_velocity_start(
         position_start: PositionAlongSurface,
         position_end: PositionAlongSurface,
         movement_params: MovementParameters) -> Vector2:
-    var is_left_side := \
-            position_start.side == SurfaceSide.RIGHT_WALL or \
-            position_end.side == SurfaceSide.RIGHT_WALL
-    var is_top_side := \
-            position_start.side == SurfaceSide.FLOOR or \
-            position_end.side == SurfaceSide.FLOOR
+    var is_convex := \
+            position_start.surface.clockwise_convex_neighbor == \
+                    position_end.surface or \
+            position_start.surface.counter_clockwise_convex_neighbor == \
+                    position_end.surface
+    var is_moving_left: bool
+    var is_moving_up: bool
+    if is_convex:
+        is_moving_left = \
+                position_start.side == SurfaceSide.LEFT_WALL or \
+                position_end.side == SurfaceSide.RIGHT_WALL
+        is_moving_up = \
+                position_start.side == SurfaceSide.CEILING or \
+                position_end.side == SurfaceSide.FLOOR
+    else:
+        is_moving_left = \
+                position_start.side == SurfaceSide.LEFT_WALL or \
+                position_end.side == SurfaceSide.LEFT_WALL
+        is_moving_up = \
+                position_start.side == SurfaceSide.CEILING or \
+                position_end.side == SurfaceSide.CEILING
     
     var velocity_x: float
     var velocity_y: float
@@ -569,28 +584,28 @@ func _get_velocity_start(
             # they've walked to the end of the floor surface.
             velocity_x = \
                     -movement_params.max_horizontal_speed_default if \
-                    is_left_side else \
+                    is_moving_left else \
                     movement_params.max_horizontal_speed_default
             velocity_y = CharacterActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
         SurfaceSide.CEILING:
             velocity_x = \
                     -movement_params.ceiling_crawl_speed if \
-                    is_left_side else \
+                    is_moving_left else \
                     movement_params.ceiling_crawl_speed
             velocity_y = -CharacterActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             velocity_x = \
-                    CharacterActionHandler \
-                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
-                    is_left_side else \
                     -CharacterActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
+                    is_moving_left else \
+                    CharacterActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
             velocity_y = \
                     movement_params.climb_up_speed if \
-                    is_top_side else \
+                    is_moving_up else \
                     movement_params.climb_down_speed
         _:
             Sc.logger.error()
@@ -602,58 +617,75 @@ func _get_velocity_end(
         position_start: PositionAlongSurface,
         position_end: PositionAlongSurface,
         movement_params: MovementParameters) -> Vector2:
-    var is_left_side := \
-            position_start.side == SurfaceSide.RIGHT_WALL or \
-            position_end.side == SurfaceSide.RIGHT_WALL
-    var is_top_side := \
-            position_start.side == SurfaceSide.FLOOR or \
-            position_end.side == SurfaceSide.FLOOR
+    var is_convex := \
+            position_start.surface.clockwise_convex_neighbor == \
+                    position_end.surface or \
+            position_start.surface.counter_clockwise_convex_neighbor == \
+                    position_end.surface
     
     var velocity_x: float
     var velocity_y: float
     match position_end.side:
         SurfaceSide.FLOOR:
-            var acceleration_x := movement_params.walk_acceleration
-            var floor_component_distance: float = Sc.geometry \
-                    .calculate_displacement_x_for_vertical_distance_past_edge(
-                            movement_params.collider_half_width_height.x,
-                            !is_left_side,
-                            movement_params.rounding_corner_calc_shape,
-                            movement_params.rounding_corner_calc_shape_rotation)
-            var floor_component_speed_x_start := CharacterActionHandler \
-                    .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
-            
-            # From a basic equation of motion:
-            #     v^2 = v_0^2 + 2a(s - s_0)
-            #     v = sqrt(v_0^2 + 2a(s - s_0))
-            velocity_x = sqrt(
-                    floor_component_speed_x_start * \
-                    floor_component_speed_x_start + \
-                    2 * acceleration_x * floor_component_distance)
-            if !is_left_side:
-                velocity_x = -velocity_x
+            var is_starting_from_left_wall := \
+                    position_start.side == SurfaceSide.LEFT_WALL
+            if is_convex:
+                var acceleration_x := movement_params.walk_acceleration
+                var floor_component_distance: float = abs(Sc.geometry \
+                        .calculate_displacement_x_for_vertical_distance_past_edge(
+                                movement_params.collider_half_width_height.y,
+                                is_starting_from_left_wall,
+                                movement_params.rounding_corner_calc_shape,
+                                movement_params \
+                                        .rounding_corner_calc_shape_rotation))
+                var floor_component_speed_x_start := CharacterActionHandler \
+                        .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+                
+                # From a basic equation of motion:
+                #     v^2 = v_0^2 + 2a(s - s_0)
+                #     v = sqrt(v_0^2 + 2a(s - s_0))
+                velocity_x = sqrt(
+                        floor_component_speed_x_start * \
+                        floor_component_speed_x_start + \
+                        2 * acceleration_x * floor_component_distance)
+                if is_starting_from_left_wall:
+                    velocity_x = -velocity_x
+            else:
+                velocity_x = 0.0
             
             velocity_y = CharacterActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
         SurfaceSide.CEILING:
-            velocity_x = \
-                    -movement_params.ceiling_crawl_speed if \
-                    is_left_side else \
-                    movement_params.ceiling_crawl_speed
+            var is_starting_from_left_wall := \
+                    position_start.side == SurfaceSide.LEFT_WALL
+            if is_convex:
+                velocity_x = \
+                        -movement_params.ceiling_crawl_speed if \
+                        is_starting_from_left_wall else \
+                        movement_params.ceiling_crawl_speed
+            else:
+                velocity_x = 0.0
             velocity_y = -CharacterActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
+            var is_starting_from_floor := \
+                    position_start.side == SurfaceSide.FLOOR
+            var is_ending_on_left_wall := \
+                    position_end.side == SurfaceSide.LEFT_WALL
             velocity_x = \
-                    CharacterActionHandler \
-                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
-                    is_left_side else \
                     -CharacterActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
+                    is_ending_on_left_wall else \
+                    CharacterActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
-            velocity_y = \
-                    movement_params.climb_up_speed if \
-                    is_top_side else \
-                    movement_params.climb_down_speed
+            if is_convex:
+                velocity_y = \
+                        movement_params.climb_down_speed if \
+                        is_starting_from_floor else \
+                        movement_params.climb_up_speed
+            else:
+                velocity_y = 0.0
         _:
             Sc.logger.error()
     
