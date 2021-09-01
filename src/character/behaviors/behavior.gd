@@ -95,7 +95,7 @@ var includes_post_movement_pause: bool
 var could_return_to_start_position: bool
 
 var character: ScaffolderCharacter
-var move_target: Node2D
+var move_target: Node2D setget _set_move_target
 var start_position: Vector2
 var start_surface: Surface
 var start_position_along_surface: PositionAlongSurface
@@ -222,7 +222,6 @@ func _on_inactive() -> void:
     pass
 
 
-# FIXME: ------- Call this.
 func _on_finished() -> void:
     _clear_timeouts()
     character._on_behavior_finished(self)
@@ -644,3 +643,8 @@ func _get_post_movement_pause_time() -> float:
     return randf() * \
             (max_pause_after_movements - min_pause_after_movements) + \
             min_pause_after_movements
+
+
+func _set_move_target(value: Node2D) -> void:
+    move_target = value
+    assert(move_target is ScaffolderCharacter)

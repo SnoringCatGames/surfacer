@@ -35,11 +35,11 @@ export var pause_delay_max := 0.0 setget _set_pause_delay_max
 ## -   This can be used to give the character's movement some randomness.[br]
 ## -   A value of 0.0 causes the character to always move to the far ends of
 ##     their range.[br]
-## -   A value of 1.0 causes the character to move to any random position within
-##     their range. This might mean that the character moves in the same
+## -   A value of 1.0 causes the character to move to any random position
+##     within their range. This might mean that the character moves in the same
 ##     direction during sequential movements.[br]
-## -   A value of 0.5 causes the character to always at least move to a point on
-##     the other half of their range.[br]
+## -   A value of 0.5 causes the character to always at least move to a point
+##     on the other half of their range.[br]
 export(float, 0.0, 1.0) var max_ratio_for_destination_offset_from_ends := 0.0 \
         setget _set_max_ratio_for_destination_offset_from_ends
 
@@ -83,8 +83,28 @@ func _move() -> int:
 
 
 func _calculate_destination() -> PositionAlongSurface:
-    # FIXME: ----------------------- Support can_leave_start_surface.
+    if can_leave_start_surface:
+        var destination := _calculate_inter_surface_destination()
+        if is_instance_valid(destination):
+            return destination
     
+    return _calculate_intra_surface_destination()
+
+
+func _calculate_inter_surface_destination() -> PositionAlongSurface:
+    # FIXME: --------------------------
+    pass
+    return null
+    
+#    possible_destination = SurfaceParser.find_closest_position_on_a_surface(
+#            naive_target,
+#            character,
+#            SurfaceReachability.REVERSIBLY_REACHABLE,
+#            max_distance_squared_from_start_position,
+#            start_position_for_max_distance_checks)
+
+
+func _calculate_intra_surface_destination() -> PositionAlongSurface:
     var is_moving_minward := _is_next_move_minward
     _is_next_move_minward = !_is_next_move_minward
     
@@ -201,6 +221,10 @@ func _update_parameters() -> void:
                 "movement_radius must not be greater than " +
                 "max_distance_from_start_position, if " +
                 "max_distance_from_start_position is greater than 0.")
+    elif !only_navigates_reversible_paths:
+        _set_configuration_warning(
+                "only_navigates_reversible_paths must be true for " +
+                "MoveBackAndForthBehaviors.")
     elif pause_delay_min < 0.0:
         _set_configuration_warning(
                 "pause_delay_min must be non-negative.")

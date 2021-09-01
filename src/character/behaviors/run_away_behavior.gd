@@ -24,7 +24,7 @@ export var run_distance := 384.0 \
 ##     navigation destination.
 export(float, 0.0, 1.0) var retry_threshold_ratio_from_intended_distance := 0.5
 
-## -   If this is true, the palyer wil keep re-navigating to run away from the
+## -   If this is true, the player wil keep re-navigating to run away from the
 ##     target as long as they still aren't far enough away.
 ## -   If this is false, the character will stop running away as soon as the
 ##     first run-away navigation completes.
@@ -36,10 +36,22 @@ export var keeps_running_until_far_enough_away := true \
 export var min_distance_from_target_to_stop_running := -1.0 \
         setget _set_min_distance_from_target_to_stop_running
 
-# FIXME: ----------------------------
-# - But also check whether the target destination has changed.
-## -   FIXME: --
+## -   If true, the character will navigate based on the target's current edge
+##     destination rather than to the target's current position.
+export var anticipates_target_edge := true \
+        setget _set_anticipates_target_edge
+
+## -   If true, the character will navigate based on the target's current path
+##     destination rather than to the target's current position.
+export var anticipates_target_path := false \
+        setget _set_anticipates_target_path
+
+## -   If true, the character will adjust their navigation each time the target
+##     starts a new edge during their own navigation.
 export var recomputes_nav_on_target_edge_change := true
+
+var _last_target_edge: Edge
+var _last_target_destination: PositionAlongSurface
 
 
 func _init().(
@@ -75,17 +87,32 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
             min_distance_from_target_to_stop_running
     if !keeps_running_until_far_enough_away or \
             character.position.distance_squared_to(
-                    move_target.position) >= \
+                    _get_run_away_target_point()) >= \
             min_distance_squared_from_target_to_stop_running:
         _pause_post_movement()
     else:
         _pause_mid_movement()
 
 
-#func _on_physics_process(delta: float) -> void:
-#    ._on_physics_process(delta)
-    
-    
+func _on_physics_process(delta: float) -> void:
+    ._on_physics_process(delta)
+    if !is_instance_valid(move_target):
+        return
+    _update_target_edge()
+
+
+func _on_target_edge_change(
+        next_target_edge: Edge,
+        previous_target_edge: Edge,
+        next_target_destination: PositionAlongSurface,
+        previous_target_destination: PositionAlongSurface) -> void:
+    if recomputes_nav_on_target_edge_change and \
+            !anticipates_target_path or \
+            next_target_destination != \
+            previous_target_destination:
+        trigger(false)
+
+
 func _move() -> int:
     var min_distance_retry_threshold := \
             run_distance * \
@@ -101,12 +128,13 @@ func _move() -> int:
     var max_distance_squared_from_start_position := \
             max_distance_from_start_position * max_distance_from_start_position
     
+    var run_away_target_point := _get_run_away_target_point()
+    
     # -   First, try the direction away from the target.
     # -   Then, try the two perpendicular alternate directions.
     #     -   Try the upward alternate direction first.
     # -   Then, try the direction into the target.
-    var away_direction := \
-            move_target.position.direction_to(start_position)
+    var away_direction := run_away_target_point.direction_to(start_position)
     var directions := [away_direction]
     if away_direction.x > 0.0:
         directions.push_back(Vector2(away_direction.y, -away_direction.x))
@@ -124,7 +152,7 @@ func _move() -> int:
     # Return the first possible destination that is within the correct range.
     for direction in directions:
         var naive_target: Vector2 = \
-                move_target.position + direction * run_distance
+                run_away_target_point + direction * run_distance
         
         # Prevent straying too far the start position.
         if start_position_for_max_distance_checks.distance_squared_to(
@@ -136,8 +164,7 @@ func _move() -> int:
                             naive_target) * \
                     max_distance_from_start_position
             var target_distance_squared := \
-                    move_target.position.distance_squared_to(
-                            naive_target)
+                    run_away_target_point.distance_squared_to(naive_target)
             var is_target_too_far_from_intended := \
                     target_distance_squared < \
                             min_distance_squared_retry_threshold or \
@@ -156,7 +183,9 @@ func _move() -> int:
                     SurfaceParser.find_closest_position_on_a_surface(
                             naive_target,
                             character,
-                            surface_reachability)
+                            surface_reachability,
+                            max_distance_squared_from_start_position,
+                            start_position_for_max_distance_checks)
         else:
             possible_destination = PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
@@ -166,31 +195,24 @@ func _move() -> int:
                                     .collider_half_width_height,
                             true)
         
-        # Prevent straying too far the start position.
-        var is_destination_too_far_from_start_position := \
-                start_position_for_max_distance_checks.distance_squared_to(
-                        possible_destination.target_point) > \
-                max_distance_squared_from_start_position
+        # Ensure run-away target is the right distance away.
+        var actual_distance_squared := \
+                run_away_target_point.distance_squared_to(
+                        possible_destination.target_point)
+        var is_destination_too_far_from_intended := \
+                actual_distance_squared < \
+                        min_distance_squared_retry_threshold or \
+                actual_distance_squared > \
+                        max_distance_squared_retry_threshold
         
-        if !is_destination_too_far_from_start_position:
-            # Ensure run-away target is the right distance away.
-            var actual_distance_squared := \
-                    move_target.position.distance_squared_to(
-                            possible_destination.target_point)
-            var is_destination_too_far_from_intended := \
-                    actual_distance_squared < \
-                            min_distance_squared_retry_threshold or \
-                    actual_distance_squared > \
-                            max_distance_squared_retry_threshold
-            
-            if !is_destination_too_far_from_intended:
-                var is_navigation_valid := _attempt_navigation_to_destination(
-                        possible_destination,
-                        _is_first_move_since_active)
-                if is_navigation_valid:
-                    return BehaviorMoveResult.VALID_MOVE
-            else:
-                possible_destinations.push_back(possible_destination)
+        if !is_destination_too_far_from_intended:
+            var is_navigation_valid := _attempt_navigation_to_destination(
+                    possible_destination,
+                    _is_first_move_since_active)
+            if is_navigation_valid:
+                return BehaviorMoveResult.VALID_MOVE
+        else:
+            possible_destinations.push_back(possible_destination)
     
     while !possible_destinations.empty():
         # None of the destination options we considered are at the right
@@ -200,7 +222,7 @@ func _move() -> int:
         for possible_destination in possible_destinations:
             var current_destination_distance := \
                     abs(run_distance - \
-                            move_target.position.distance_to(
+                            run_away_target_point.distance_to(
                                     possible_destination.target_point))
             if current_destination_distance < \
                     closest_destination_distance:
@@ -216,6 +238,32 @@ func _move() -> int:
             possible_destinations.erase(closest_destination)
     
     return BehaviorMoveResult.INVALID_MOVE
+
+
+func _update_target_edge() -> void:
+    var previous_target_edge := _last_target_edge
+    var previous_target_destination := _last_target_destination
+    _last_target_edge = move_target.navigator.edge
+    _last_target_destination = \
+            move_target.navigator.path.destination if \
+            move_target.navigation_state.is_currently_navigating else \
+            null
+    if _last_target_edge != previous_target_edge:
+        _on_target_edge_change(
+                _last_target_edge,
+                previous_target_edge,
+                _last_target_destination,
+                previous_target_destination)
+
+
+func _get_run_away_target_point() -> Vector2:
+    if move_target.navigation_state.is_currently_navigating:
+        if anticipates_target_path:
+            return move_target.navigator.path.destination.target_point
+        elif anticipates_target_edge:
+            return move_target.navigator.edge.end_position_along_surface \
+                    .target_point
+    return move_target.position
 
 
 func _update_parameters() -> void:
@@ -263,3 +311,20 @@ func _set_min_distance_from_target_to_stop_running(value: float) -> void:
     if min_distance_from_target_to_stop_running >= 0.0:
         keeps_running_until_far_enough_away = true
     _update_parameters()
+
+
+func _set_anticipates_target_edge(value: bool) -> void:
+    anticipates_target_edge = value
+    if anticipates_target_edge:
+        anticipates_target_path = false
+
+
+func _set_anticipates_target_path(value: bool) -> void:
+    anticipates_target_path = value
+    if anticipates_target_path:
+        anticipates_target_edge = false
+
+
+func _set_move_target(value: Node2D) -> void:
+    ._set_move_target(value)
+    _update_target_edge()
