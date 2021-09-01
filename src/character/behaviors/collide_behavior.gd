@@ -11,18 +11,22 @@ const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := true
 const COULD_RETURN_TO_START_POSITION := true
 
-# FIXME: ---------------------------
-## -   FIXME: --
-export var anticipates_target_edge := false
+## -   If true, the character will navigate based on the target's current edge
+##     destination rather than to the target's current position.
+export var anticipates_target_edge := true \
+        setget _set_anticipates_target_edge
 
-# FIXME: ---------------------------
-## -   FIXME: --
-export var anticipates_target_path := false
+## -   If true, the character will navigate based on the target's current path
+##     destination rather than to the target's current position.
+export var anticipates_target_path := false \
+        setget _set_anticipates_target_path
 
-# FIXME: ---------------------------
-# - But also check whether the target destination has changed.
-## -   FIXME: --
+## -   If true, the character will adjust their navigation each time the target
+##     starts a new edge during their own navigation.
 export var recomputes_nav_on_target_edge_change := true
+
+var _last_target_edge: Edge
+var _last_target_destination: PositionAlongSurface
 
 
 func _init().(
@@ -51,8 +55,23 @@ func _init().(
 #    ._on_navigation_ended(did_navigation_finish)
 
 
-#func _on_physics_process(delta: float) -> void:
-#    ._on_physics_process(delta)
+func _on_physics_process(delta: float) -> void:
+    ._on_physics_process(delta)
+    if !is_instance_valid(move_target):
+        return
+    _update_target_edge()
+
+
+func _on_target_edge_change(
+        next_target_edge: Edge,
+        previous_target_edge: Edge,
+        next_target_destination: PositionAlongSurface,
+        previous_target_destination: PositionAlongSurface) -> void:
+    if recomputes_nav_on_target_edge_change and \
+            !anticipates_target_path or \
+            next_target_destination != \
+            previous_target_destination:
+        trigger(false)
 
 
 func on_collided() -> void:
@@ -78,20 +97,13 @@ func _move() -> int:
             only_navigates_reversible_paths else \
             SurfaceReachability.REACHABLE
     
-    var destination: PositionAlongSurface
-    if can_leave_start_surface:
-        if move_target.surface_state.is_grabbing_surface:
-            destination = move_target.surface_state \
-                    .center_position_along_surface
-        else:
-            destination = SurfaceParser.find_closest_position_on_a_surface(
-                    move_target.position,
-                    character,
-                    surface_reachability)
-    else:
+    var destination := _get_collide_target_position()
+    
+    if !can_leave_start_surface and \
+            destination.surface != start_surface:
         destination = PositionAlongSurfaceFactory \
                 .create_position_offset_from_target_point(
-                        move_target.position,
+                        destination.target_point,
                         start_surface,
                         character.movement_params.collider_half_width_height,
                         true)
@@ -135,3 +147,61 @@ func _move() -> int:
                 return BehaviorMoveResult.VALID_MOVE
     
     return BehaviorMoveResult.REACHED_MAX_DISTANCE
+
+
+func _update_target_edge() -> void:
+    var previous_target_edge := _last_target_edge
+    var previous_target_destination := _last_target_destination
+    _last_target_edge = move_target.navigator.edge
+    _last_target_destination = \
+            move_target.navigator.path.destination if \
+            move_target.navigation_state.is_currently_navigating else \
+            null
+    if _last_target_edge != previous_target_edge:
+        _on_target_edge_change(
+                _last_target_edge,
+                previous_target_edge,
+                _last_target_destination,
+                previous_target_destination)
+
+
+func _get_collide_target_position() -> PositionAlongSurface:
+    if move_target.navigation_state.is_currently_navigating:
+        if anticipates_target_path:
+            return move_target.navigator.path.destination
+        elif anticipates_target_edge:
+            return move_target.navigator.edge.end_position_along_surface
+    
+    if move_target.surface_state.is_grabbing_surface:
+        return move_target.surface_state.center_position_along_surface
+    else:
+        var surface_reachability := \
+                SurfaceReachability.REVERSIBLY_REACHABLE if \
+                only_navigates_reversible_paths else \
+                SurfaceReachability.REACHABLE
+        var max_distance_squared_from_start_position := \
+                max_distance_from_start_position * \
+                max_distance_from_start_position
+        return SurfaceParser.find_closest_position_on_a_surface(
+                move_target.position,
+                character,
+                surface_reachability,
+                max_distance_squared_from_start_position,
+                start_position_for_max_distance_checks)
+
+
+func _set_anticipates_target_edge(value: bool) -> void:
+    anticipates_target_edge = value
+    if anticipates_target_edge:
+        anticipates_target_path = false
+
+
+func _set_anticipates_target_path(value: bool) -> void:
+    anticipates_target_path = value
+    if anticipates_target_path:
+        anticipates_target_edge = false
+
+
+func _set_move_target(value: Node2D) -> void:
+    ._set_move_target(value)
+    _update_target_edge()

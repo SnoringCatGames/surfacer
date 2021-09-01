@@ -1001,7 +1001,8 @@ static func find_closest_position_on_a_surface(
         target: Vector2,
         character,
         surface_reachability: int,
-        max_distance_squared_threshold := INF) -> PositionAlongSurface:
+        max_distance_squared_threshold := INF,
+        max_distance_basis_point := Vector2.INF) -> PositionAlongSurface:
     var surfaces
     match surface_reachability:
         SurfaceReachability.ANY:
@@ -1020,6 +1021,7 @@ static func find_closest_position_on_a_surface(
             character,
             1,
             max_distance_squared_threshold,
+            max_distance_basis_point,
             surfaces)
     if positions.empty():
         return null
@@ -1032,6 +1034,7 @@ static func find_closest_positions_on_surfaces(
         character,
         position_count: int,
         max_distance_squared_threshold := INF,
+        max_distance_basis_point := Vector2.INF,
         surfaces = []) -> Array:
     surfaces = \
                 surfaces if \
@@ -1041,7 +1044,8 @@ static func find_closest_positions_on_surfaces(
             target,
             surfaces,
             position_count,
-            max_distance_squared_threshold)
+            max_distance_squared_threshold,
+            max_distance_basis_point)
     
     var closest_positions := []
     closest_positions.resize(closest_surfaces.size())
@@ -1064,25 +1068,42 @@ static func get_closest_surfaces(
         target: Vector2,
         surfaces,
         surface_count: int,
-        max_distance_squared_threshold := INF) -> Array:
+        max_distance_squared_threshold := INF,
+        max_distance_basis_point := Vector2.INF) -> Array:
     assert(!surfaces.empty())
     
+    max_distance_basis_point = \
+            max_distance_basis_point if \
+            max_distance_basis_point != Vector2.INF else \
+            target
     var next_distance_squared_to_beat := max_distance_squared_threshold
     var closest_surfaces_and_distances := []
     
     for current_surface in surfaces:
-        var current_distance_squared: float = \
+        var current_target_distance_squared: float = \
                 Sc.geometry.distance_squared_from_point_to_rect(
                         target,
                         current_surface.bounding_box)
-        if current_distance_squared < next_distance_squared_to_beat:
+        var current_max_distance_basis_distance_squared: float = \
+                Sc.geometry.distance_squared_from_point_to_rect(
+                        max_distance_basis_point,
+                        current_surface.bounding_box)
+        if current_target_distance_squared < \
+                        next_distance_squared_to_beat and \
+                current_max_distance_basis_distance_squared < \
+                        max_distance_squared_threshold:
             var closest_point: Vector2 = \
                     Sc.geometry.get_closest_point_on_polyline_to_point(
                             target,
                             current_surface.vertices)
-            current_distance_squared = \
+            current_target_distance_squared = \
                     target.distance_squared_to(closest_point)
-            if current_distance_squared < next_distance_squared_to_beat:
+            current_max_distance_basis_distance_squared = \
+                    max_distance_basis_point.distance_squared_to(closest_point)
+            if current_target_distance_squared < \
+                            next_distance_squared_to_beat and \
+                    current_max_distance_basis_distance_squared < \
+                            max_distance_squared_threshold:
                 var is_closest_to_first_point: bool = \
                         Sc.geometry.are_points_equal_with_epsilon(
                                 closest_point,
@@ -1143,14 +1164,14 @@ static func get_closest_surfaces(
                         _:
                             Sc.logger.error("Invalid SurfaceSide")
                     
-                    current_distance_squared += \
+                    current_target_distance_squared += \
                             CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET if \
                             is_more_than_45_deg_from_normal_from_corner else \
                             CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET
                 
                 var was_added := maybe_add_surface_to_closest_n_collection(
                         closest_surfaces_and_distances,
-                        [current_surface, current_distance_squared],
+                        [current_surface, current_target_distance_squared],
                         surface_count)
                 if was_added:
                     next_distance_squared_to_beat = \
