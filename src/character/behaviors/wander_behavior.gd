@@ -75,7 +75,8 @@ func _attempt_inter_surface_navigation() -> bool:
     # Get a shuffled list of all inter-surface nodes that are reachable from
     # the character's current surface.
     var possible_destinations := []
-    for origin in character.graph.surfaces_to_outbound_nodes[start_surface]:
+    for origin in character.graph.surfaces_to_outbound_nodes[ \
+            latest_move_start_surface]:
         Sc.utils.concat(
                 possible_destinations,
                 character.graph.nodes_to_nodes_to_edges[origin].keys())
@@ -84,7 +85,7 @@ func _attempt_inter_surface_navigation() -> bool:
     # Try to find an inter-surface node that is within range and navigable.
     for destination in possible_destinations:
         var is_within_range_of_current_movement := \
-                start_position.distance_squared_to(
+                latest_move_start_position.distance_squared_to(
                         destination.target_point) < \
                         target_distance_squared
         var is_within_range_from_start_position := \
@@ -105,16 +106,16 @@ func _attempt_intra_surface_navigation() -> int:
     var target_distance_signed := _get_movement_distance_signed()
 
     var is_surface_horizontal: bool = \
-            start_surface.side == SurfaceSide.FLOOR or \
-            start_surface.side == SurfaceSide.CEILING
+            latest_move_start_surface.side == SurfaceSide.FLOOR or \
+            latest_move_start_surface.side == SurfaceSide.CEILING
     
     var current_coord: float
     var min_coord: float
     var max_coord: float
     if is_surface_horizontal:
-        current_coord = start_position.x
-        min_coord = start_surface.bounding_box.position.x
-        max_coord = start_surface.bounding_box.end.x
+        current_coord = latest_move_start_position.x
+        min_coord = latest_move_start_surface.bounding_box.position.x
+        max_coord = latest_move_start_surface.bounding_box.end.x
         min_coord = max(
                 min_coord,
                 start_position_for_max_distance_checks.x - \
@@ -124,9 +125,9 @@ func _attempt_intra_surface_navigation() -> int:
                 start_position_for_max_distance_checks.x + \
                 max_distance_from_start_position)
     else:
-        current_coord = start_position.y
-        min_coord = start_surface.bounding_box.position.y
-        max_coord = start_surface.bounding_box.end.y
+        current_coord = latest_move_start_position.y
+        min_coord = latest_move_start_surface.bounding_box.position.y
+        max_coord = latest_move_start_surface.bounding_box.end.y
         min_coord = max(
                 min_coord,
                 start_position_for_max_distance_checks.y - \
@@ -148,14 +149,14 @@ func _attempt_intra_surface_navigation() -> int:
         target_coord = min(target_coord, max_coord)
     
     var target := \
-            Vector2(target_coord, start_position.y) if \
+            Vector2(target_coord, latest_move_start_position.y) if \
             is_surface_horizontal else \
-            Vector2(start_position.x, target_coord)
+            Vector2(latest_move_start_position.x, target_coord)
     
     var destination := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     target,
-                    start_surface,
+                    latest_move_start_surface,
                     character.movement_params.collider_half_width_height,
                     true)
     

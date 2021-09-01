@@ -100,11 +100,11 @@ func _move() -> int:
     var destination := _get_collide_target_position()
     
     if !can_leave_start_surface and \
-            destination.surface != start_surface:
+            destination.surface != latest_move_start_surface:
         destination = PositionAlongSurfaceFactory \
                 .create_position_offset_from_target_point(
                         destination.target_point,
-                        start_surface,
+                        latest_move_start_surface,
                         character.movement_params.collider_half_width_height,
                         true)
     
@@ -119,17 +119,17 @@ func _move() -> int:
             return BehaviorMoveResult.VALID_MOVE
     
     var original_destination := destination
-    var original_distance := \
-            start_position.distance_to(original_destination.target_point)
+    var original_distance := latest_move_start_position.distance_to(
+            original_destination.target_point)
     var direction := \
-            (start_position - original_destination.target_point) / \
+            (latest_move_start_position - original_destination.target_point) / \
             original_distance
     
     # If the original destination is too far from the start position, then try
     # moving the character slightly less far from their current position.
     for ratio in [0.5, 0.25]:
         var target: Vector2 = \
-                start_position + \
+                latest_move_start_position + \
                 direction * ratio * original_distance
         destination = SurfaceParser.find_closest_position_on_a_surface(
                 target,
