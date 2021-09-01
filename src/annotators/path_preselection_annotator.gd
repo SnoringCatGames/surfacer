@@ -51,19 +51,14 @@ func _init(character: SurfacerCharacter) -> void:
     self.player_nav = \
             character.get_behavior(PlayerNavigationBehavior)
     
-    var base_color: Color = \
-            character.navigation_annotation_color_override if \
-            character.navigation_annotation_color_override != \
-                    Color.black else \
-            character.primary_annotation_color
     surface_color = Sc.colors.opacify(
-            base_color,
+            character.navigation_annotation_color,
             ScaffolderColors.ALPHA_XFAINT)
     indicator_color = Sc.colors.opacify(
-            base_color,
+            character.navigation_annotation_color,
             ScaffolderColors.ALPHA_XFAINT)
     path_color = Sc.colors.opacify(
-            base_color,
+            character.navigation_annotation_color,
             ScaffolderColors.ALPHA_XFAINT)
     
     self.path_front_end_trim_radius = min(

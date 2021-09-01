@@ -16,8 +16,6 @@ var surface_click_selection: Color
 var grid_indices: Color
 var ruler: Color
 var invalid: Color
-var character_position: Color
-var recent_movement: Color
 var inspector_origin: Color
 
 var _surfacer_defaults := {
@@ -29,8 +27,6 @@ var _surfacer_defaults := {
             WHITE, ScaffolderColors.ALPHA_FAINT),
     ruler = WHITE,
     invalid = RED,
-    character_position = TEAL,
-    recent_movement = TEAL,
     inspector_origin = ScaffolderColors.static_opacify(
             ORANGE, ScaffolderColors.ALPHA_FAINT),
 }
