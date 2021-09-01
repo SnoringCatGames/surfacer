@@ -214,7 +214,7 @@ static func calculate_duration_for_displacement(
                 acceleration,
                 true,
                 0.0,
-                true)
+                false)
     else:
         # We reach max speed before we reach the displacement.
         
