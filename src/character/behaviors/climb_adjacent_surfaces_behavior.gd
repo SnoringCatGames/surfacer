@@ -175,9 +175,9 @@ func _get_intra_surface_destination() -> PositionAlongSurface:
                     true)
 
 
-func _create_climb_to_neighbor_surface_edge() -> ClimbToNeighborSurfaceEdge:
-    var calculator: ClimbToNeighborSurfaceCalculator = \
-            Su.movement.edge_calculators["ClimbToNeighborSurfaceCalculator"]
+func _create_climb_to_neighbor_surface_edge() -> ClimbToAdjacentSurfaceEdge:
+    var calculator: ClimbToAdjacentSurfaceCalculator = \
+            Su.movement.edge_calculators["ClimbToAdjacentSurfaceCalculator"]
     var climb_edge_jump_land_positions := \
             calculator._calculate_jump_land_positions(
                     start_surface,
@@ -189,7 +189,7 @@ func _create_climb_to_neighbor_surface_edge() -> ClimbToNeighborSurfaceEdge:
                     climb_edge_jump_land_positions.jump_position,
                     climb_edge_jump_land_positions.land_position,
                     climb_edge_jump_land_positions.velocity_start) as \
-                    ClimbToNeighborSurfaceEdge
+                    ClimbToAdjacentSurfaceEdge
 
 
 func is_point_clockwise(

@@ -1,4 +1,4 @@
-class_name ClimbToNeighborSurfaceEdge
+class_name ClimbToAdjacentSurfaceEdge
 extends Edge
 ## Information for how to transition from a surface to a neighbor surface.
 ## (climbing around an inside or outside corner).
@@ -15,7 +15,7 @@ extends Edge
 ##             -   In order to move.
 
 
-const TYPE := EdgeType.CLIMB_TO_NEIGHBOR_SURFACE_EDGE
+const TYPE := EdgeType.CLIMB_TO_ADJACENT_SURFACE_EDGE
 const IS_TIME_BASED := false
 const ENTERS_AIR := false
 

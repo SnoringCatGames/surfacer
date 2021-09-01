@@ -3,7 +3,7 @@ class_name EdgeType
 
 enum {
     FROM_AIR_EDGE,
-    CLIMB_TO_NEIGHBOR_SURFACE_EDGE,
+    CLIMB_TO_ADJACENT_SURFACE_EDGE,
     FALL_FROM_FLOOR_EDGE,
     FALL_FROM_WALL_EDGE,
     INTRA_SURFACE_EDGE,
@@ -16,8 +16,8 @@ static func get_string(type: int) -> String:
     match type:
         FROM_AIR_EDGE:
             return "FROM_AIR_EDGE"
-        CLIMB_TO_NEIGHBOR_SURFACE_EDGE:
-            return "CLIMB_TO_NEIGHBOR_SURFACE_EDGE"
+        CLIMB_TO_ADJACENT_SURFACE_EDGE:
+            return "CLIMB_TO_ADJACENT_SURFACE_EDGE"
         FALL_FROM_FLOOR_EDGE:
             return "FALL_FROM_FLOOR_EDGE"
         FALL_FROM_WALL_EDGE:
@@ -37,7 +37,7 @@ static func get_prefix(type: int) -> String:
     match type:
         FROM_AIR_EDGE:
             return "AIR"
-        CLIMB_TO_NEIGHBOR_SURFACE_EDGE:
+        CLIMB_TO_ADJACENT_SURFACE_EDGE:
             return "ADJ"
         FALL_FROM_FLOOR_EDGE:
             return "F_FALL"
@@ -59,8 +59,8 @@ static func get_description(type: int) -> String:
         FROM_AIR_EDGE:
             return ("An FROM_AIR_EDGE represents movement from an " +
                     "air position to land on a surface position.")
-        CLIMB_TO_NEIGHBOR_SURFACE_EDGE:
-            return ("A CLIMB_TO_NEIGHBOR_SURFACE_EDGE represents movement " +
+        CLIMB_TO_ADJACENT_SURFACE_EDGE:
+            return ("A CLIMB_TO_ADJACENT_SURFACE_EDGE represents movement " +
                     "from climbing around either an inside or outside " +
                     "corner to a neighbor surface.")
         FALL_FROM_FLOOR_EDGE:
@@ -85,7 +85,7 @@ static func get_description(type: int) -> String:
 
 const KEYS = [
     "FROM_AIR_EDGE",
-    "CLIMB_TO_NEIGHBOR_SURFACE_EDGE",
+    "CLIMB_TO_ADJACENT_SURFACE_EDGE",
     "FALL_FROM_FLOOR_EDGE",
     "FALL_FROM_WALL_EDGE",
     "INTRA_SURFACE_EDGE",
@@ -97,7 +97,7 @@ static func keys() -> Array:
 
 const VALUES = [
     FROM_AIR_EDGE,
-    CLIMB_TO_NEIGHBOR_SURFACE_EDGE,
+    CLIMB_TO_ADJACENT_SURFACE_EDGE,
     FALL_FROM_FLOOR_EDGE,
     FALL_FROM_WALL_EDGE,
     INTRA_SURFACE_EDGE,
