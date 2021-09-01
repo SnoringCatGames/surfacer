@@ -1,9 +1,9 @@
-class_name ClimbToNeighborSurfaceCalculator
+class_name ClimbToAdjacentSurfaceCalculator
 extends EdgeCalculator
 
 
-const NAME := "ClimbToNeighborSurfaceCalculator"
-const EDGE_TYPE := EdgeType.CLIMB_TO_NEIGHBOR_SURFACE_EDGE
+const NAME := "ClimbToAdjacentSurfaceCalculator"
+const EDGE_TYPE := EdgeType.CLIMB_TO_ADJACENT_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := false
 
 
@@ -107,7 +107,7 @@ func calculate_edge(
             position_start,
             position_end,
             collision_params.movement_params)
-    return ClimbToNeighborSurfaceEdge.new(
+    return ClimbToAdjacentSurfaceEdge.new(
             self,
             position_start,
             position_end,

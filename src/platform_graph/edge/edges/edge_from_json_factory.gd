@@ -4,7 +4,7 @@ extends Node
 
 var EDGE_TYPE_TO_CLASS := {
     EdgeType.FROM_AIR_EDGE: FromAirEdge,
-    EdgeType.CLIMB_TO_NEIGHBOR_SURFACE_EDGE: ClimbToNeighborSurfaceEdge,
+    EdgeType.CLIMB_TO_ADJACENT_SURFACE_EDGE: ClimbToAdjacentSurfaceEdge,
     EdgeType.FALL_FROM_FLOOR_EDGE: FallFromFloorEdge,
     EdgeType.FALL_FROM_WALL_EDGE: FallFromWallEdge,
     EdgeType.INTRA_SURFACE_EDGE: IntraSurfaceEdge,
