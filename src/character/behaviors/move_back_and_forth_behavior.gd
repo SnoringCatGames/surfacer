@@ -155,7 +155,7 @@ func _calculate_inter_surface_destination(
             target_point,
             character,
             SurfaceReachability.REVERSIBLY_REACHABLE,
-            movement_radius,
+            movement_radius * movement_radius,
             latest_activate_start_position)
 
 
