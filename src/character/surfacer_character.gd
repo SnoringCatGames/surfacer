@@ -170,7 +170,7 @@ func _update_editor_configuration_debounced() -> void:
                         "of type %s.") % behavior.behavior_name)
             behavior_names[behavior.behavior_name] = true
             
-            default_behavior = null
+            var default_behavior: Behavior
             if behavior.is_active_at_start:
                 if is_instance_valid(default_behavior):
                     _set_configuration_warning(
@@ -608,6 +608,16 @@ func _parse_behavior_children() -> void:
     var behaviors: Array = \
             Sc.utils.get_children_by_type(self, Behavior)
     
+    var projected_behaviors := []
+    for behavior in behaviors:
+        if behavior.owner != self:
+            projected_behaviors.push_back(behavior)
+    
+    # If there are any projected behavior nodes, then disregard all owned
+    # behaviors, and only use the projected ones instead.
+    if !projected_behaviors.empty():
+        behaviors = projected_behaviors
+    
     default_behavior = null
     
     for behavior in behaviors:
@@ -615,6 +625,7 @@ func _parse_behavior_children() -> void:
         assert(get_behavior(script) == null)
         _behaviors_by_class[script] = behavior
         _behaviors_list.push_back(behavior)
+        behavior.is_enabled = true
         if behavior.is_active_at_start:
             default_behavior = behavior
         _add_return_behavior_if_needed(behavior)
@@ -636,6 +647,7 @@ func add_behavior(behavior: Behavior) -> void:
     _behaviors_list.push_back(behavior)
     if Engine.editor_hint:
         return
+    behavior.is_enabled = true
     add_child(behavior)
     _add_return_behavior_if_needed(behavior)
 

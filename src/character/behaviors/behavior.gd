@@ -111,7 +111,9 @@ var _mid_movement_pause_timeout_id := -1
 var _post_movement_pause_timeout_id := -1
 
 var _is_ready := false
+var _was_ready_called := false
 var _is_ready_to_move := false
+var is_enabled := false
 var _was_already_ready_to_move_this_frame := false
 var _configuration_warning := ""
 var _property_list_addendum := []
@@ -173,6 +175,7 @@ func _init(
 
 func _enter_tree() -> void:
     _get_character_reference_from_parent()
+    _check_ready()
     if !is_added_manually and \
             Engine.editor_hint:
         Sc.logger.error(
@@ -181,8 +184,18 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-    _is_ready = true
+    _was_ready_called = true
     _update_parameters()
+    _check_ready()
+
+
+func _check_ready() -> void:
+    if !is_instance_valid(character) or \
+            !_was_ready_called or \
+            _is_ready:
+        return
+    
+    _is_ready = true
     if Engine.editor_hint:
         return
     _check_ready_to_move()
@@ -191,8 +204,10 @@ func _ready() -> void:
 func _check_ready_to_move() -> void:
     _is_ready_to_move = \
             _is_ready and \
+            is_enabled and \
+            is_instance_valid(character) and \
             character._is_ready and \
-            character.start_surface != null and \
+            is_instance_valid(character.start_surface) and \
             is_active
     
     if _is_ready_to_move and \
@@ -404,7 +419,7 @@ func _log_transition() -> void:
 
 
 func _update_parameters() -> void:
-    if !_is_ready:
+    if !_was_ready_called:
         return
     
     if !Sc.utils.check_whether_sub_classes_are_tools(self):
@@ -462,7 +477,7 @@ func _update_parameters() -> void:
 
 
 func _set_configuration_warning(value: String) -> void:
-    if !_is_ready:
+    if !_was_ready_called:
         return
     _configuration_warning = value
     update_configuration_warning()
@@ -503,10 +518,16 @@ func _get_character_reference_from_parent() -> void:
     if !is_instance_valid(parent):
         return
     
-    if !parent.is_in_group(Sc.characters.GROUP_NAME_SURFACER_CHARACTERS):
-        _set_configuration_warning("Must define a SurfacerCharacter parent.")
+    var is_parent_a_character := \
+            parent.is_in_group(Sc.characters.GROUP_NAME_SURFACER_CHARACTERS)
+    var is_parent_a_spawn_position := parent is SpawnPosition
+    if !is_parent_a_character and \
+            !is_parent_a_spawn_position:
+        _set_configuration_warning(
+                "Must be a child of a SurfacerCharacter or SpawnPosition.")
     
-    character = parent
+    if is_parent_a_character:
+        character = parent
 
 
 func _update_start_positions(is_new_activation: bool) -> void:
