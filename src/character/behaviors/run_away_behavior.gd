@@ -85,7 +85,8 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
     var min_distance_squared_from_target_to_stop_running := \
             min_distance_from_target_to_stop_running * \
             min_distance_from_target_to_stop_running
-    if !keeps_running_until_far_enough_away or \
+    if !did_navigation_finish or \
+            !keeps_running_until_far_enough_away or \
             character.position.distance_squared_to(
                     _get_run_away_target_point()) >= \
             min_distance_squared_from_target_to_stop_running:
