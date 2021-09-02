@@ -259,7 +259,9 @@ func _on_move_target_destroyed() -> void:
 
 
 func _on_navigation_ended(did_navigation_finish: bool) -> void:
-    if is_active and \
+    if !did_navigation_finish:
+        _pause_post_movement()
+    elif is_active and \
             includes_mid_movement_pause:
         _pause_mid_movement()
 
