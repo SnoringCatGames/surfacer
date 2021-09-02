@@ -477,22 +477,26 @@ func bouncify_path(path: PlatformGraphPath) -> void:
 func try_to_start_path_with_a_jump(
         path: PlatformGraphPath,
         jump_boost_multiplier := 1.0) -> bool:
-    if path.edges[0] is FromAirEdge:
+    var first_edge: Edge = path.edges[0]
+
+    if first_edge is FromAirEdge:
         # Don't bother trying to jump at the start, since the character is
         # already starting in the air.
         return false
     
     var was_almost_starting_with_a_jump: bool = \
             path.edges.size() > 1 and \
-            path.edges[0] is IntraSurfaceEdge and \
+            first_edge is IntraSurfaceEdge and \
             path.edges[1] is JumpFromSurfaceEdge and \
-            path.edges[0].distance < \
+            first_edge.distance < \
                     IGNORE_SHORT_EDGE_BEFORE_INITIAL_JUMP_DISTANCE_THRESHOLD
     
     # TODO: Possibly support paths starting with inter-surface edges.
     #       But then we'll need to also add a new intra-surface edge after our
     #       new jump edge.
-    if path.edges[0] is IntraSurfaceEdge and \
+    if first_edge is IntraSurfaceEdge and \
+            first_edge.start_position_along_surface.side == \
+                    SurfaceSide.FLOOR and \
             !was_almost_starting_with_a_jump:
         var calculator: JumpFromSurfaceCalculator = \
                 Su.movement.edge_calculators["JumpFromSurfaceCalculator"]
@@ -538,7 +542,8 @@ func try_to_end_path_with_a_jump(path: PlatformGraphPath) -> bool:
             end_edge.distance < \
                     IGNORE_SHORT_EDGE_BEFORE_INITIAL_JUMP_DISTANCE_THRESHOLD
     
-    if !was_almost_ending_with_a_jump:
+    if !was_almost_ending_with_a_jump and \
+            end_edge.end_position_along_surface.side == SurfaceSide.FLOOR:
         var is_end_edge_moving_leftward := \
                 end_edge.get_end().x - end_edge.get_start().x < 0
         var calculator: JumpFromSurfaceCalculator = \
@@ -556,7 +561,7 @@ func try_to_end_path_with_a_jump(path: PlatformGraphPath) -> bool:
                 path.destination,
                 velocity_start)
         
-        if jump_edge != null:
+        if is_instance_valid(jump_edge):
             path.push_back(jump_edge)
             var previous_edge := end_edge
             var previous_velocity_end_x := previous_edge.velocity_end.x

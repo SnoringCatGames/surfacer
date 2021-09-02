@@ -456,6 +456,8 @@ func _update_physics_contacts() -> void:
                     CharacterLogType.SURFACE,
                     true)
             surfaces_to_contacts.erase(surface_contact.surface)
+            if surface_grab == surface_contact:
+                surface_grab = null
 
 
 func _update_surface_contact_from_rounded_corner() -> void:
@@ -687,6 +689,8 @@ func _update_action_state() -> void:
     if is_rounding_corner:
         _update_surface_contact_from_rounded_corner()
         _update_touch_state()
+    
+    assert(!is_grabbing_surface or is_touching_surface)
     
     _update_grab_contact()
 
