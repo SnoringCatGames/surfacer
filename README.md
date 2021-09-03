@@ -13,7 +13,7 @@
 
 _Point-and-click platformers!_
 
-_A procedural pathfinding 2D-platformer framework for [Godot](https://godotengine.org/)._
+_An AI and pathfinding 2D-platformer framework for [Godot](https://godotengine.org/)._
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 
