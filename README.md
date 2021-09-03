@@ -70,6 +70,8 @@ But there are use-cases for which we really benefit from an AI that can accurate
 -   [Notable limitations](./docs/limitations.md)
 -   [Other features](./docs/other_features.md)
 
+You can also read more about how Surfacer's AI and movement works in [this series of devlog posts on devlog.levi.dev](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html).
+
 ## Licenses
 
 -   All code is published under the [MIT license](LICENSE).
