@@ -1,5 +1,7 @@
 # Platformer AI
 
+> _You can also read more about how Surfacer's AI and movement works in [this series of devlog posts on devlog.levi.dev](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html)._
+
 ## The platform graph: Pre-parsing the world
 
 Surfacer depends on the level being represented as a [`TileMap`](https://docs.godotengine.org/en/stable/classes/class_tilemap.html#class-tilemap).
