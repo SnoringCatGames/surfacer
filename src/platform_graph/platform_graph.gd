@@ -417,11 +417,11 @@ static func _record_frontier(
         # Record this node's weight.
         nodes_to_weights[next] = new_actual_weight
         
-        var heuristic_weight = \
+        var heuristic_weight := \
                 next.target_point.distance_to(destination.target_point)
         
         # Add this node to the frontier with a priority.
-        var priority = new_actual_weight + heuristic_weight
+        var priority := new_actual_weight + heuristic_weight
         frontier.insert(priority, next)
 
 
