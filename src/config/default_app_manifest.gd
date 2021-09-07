@@ -72,10 +72,20 @@ func _update_to_emphasize_annotations(manifest: Dictionary) -> void:
     ann_params_man.edge_hue_max = 1.0
     ann_params_man.edge_discrete_trajectory_saturation = 0.8
     ann_params_man.edge_discrete_trajectory_value = 0.9
-    ann_params_man.edge_discrete_trajectory_alpha = 0.4
+    ann_params_man.edge_discrete_trajectory_alpha = 0.0
     ann_params_man.edge_continuous_trajectory_saturation = 0.6
     ann_params_man.edge_continuous_trajectory_value = 0.6
-    ann_params_man.edge_continuous_trajectory_alpha = 0.35
+    ann_params_man.edge_continuous_trajectory_alpha = 0.8
+    ann_params_man.waypoint_hue_min = 0.0
+    ann_params_man.waypoint_hue_max = 1.0
+    ann_params_man.waypoint_saturation = 0.6
+    ann_params_man.waypoint_value = 0.7
+    ann_params_man.waypoint_alpha = 0.7
+    ann_params_man.instruction_hue_min = 0.0
+    ann_params_man.instruction_hue_max = 1.0
+    ann_params_man.instruction_saturation = 0.3
+    ann_params_man.instruction_value = 0.9
+    ann_params_man.instruction_alpha = 0.0
     ann_params_man.edge_discrete_trajectory_color_params = \
             ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
                     ann_params_man.edge_hue_min,
@@ -90,6 +100,37 @@ func _update_to_emphasize_annotations(manifest: Dictionary) -> void:
                     ann_params_man.edge_continuous_trajectory_saturation,
                     ann_params_man.edge_continuous_trajectory_value,
                     ann_params_man.edge_continuous_trajectory_alpha)
+    ann_params_man.waypoint_color_params = \
+            ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+                    ann_params_man.waypoint_hue_min,
+                    ann_params_man.waypoint_hue_max,
+                    ann_params_man.waypoint_saturation,
+                    ann_params_man.waypoint_value,
+                    ann_params_man.waypoint_alpha)
+    ann_params_man.instruction_color_params = \
+            ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+                    ann_params_man.instruction_hue_min,
+                    ann_params_man.instruction_hue_max,
+                    ann_params_man.instruction_saturation,
+                    ann_params_man.instruction_value,
+                    ann_params_man.instruction_alpha)
+    
+    ann_params_man.preselection_min_opacity = 0.8
+    ann_params_man.preselection_max_opacity = 1.0
+    ann_params_man.preselection_surface_opacity = 0.6
+    ann_params_man.preselection_indicator_opacity = 0.6
+    ann_params_man.preselection_path_opacity = 0.6
+    ann_params_man.preselection_hash_opacity = 0.0
+    
+    ann_params_man.recent_movement_opacity_newest = 0.0
+    ann_params_man.recent_movement_opacity_oldest = 0.0
+    
+    ann_params_man.character_position_opacity = 0.0
+    ann_params_man.character_collider_opacity = 0.95
+    ann_params_man.character_grab_position_opacity = 0.0
+    ann_params_man.character_position_along_surface_opacity = 0.0
+    ann_params_man.character_grab_tile_border_opacity = 0.0
+
 
 # ---
 

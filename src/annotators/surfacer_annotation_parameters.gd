@@ -164,8 +164,14 @@ var preselection_invalid_position_indicator_color := Sc.colors.opacify(
         Sc.colors.invalid,
         ScaffolderColors.ALPHA_XFAINT)
 
+var preselection_surface_opacity := ScaffolderColors.ALPHA_XFAINT
+var preselection_indicator_opacity := ScaffolderColors.ALPHA_XFAINT
+var preselection_path_opacity := ScaffolderColors.ALPHA_XFAINT
+var preselection_hash_opacity := ScaffolderColors.ALPHA_XFAINT
+
 var preselection_min_opacity := 0.5
 var preselection_max_opacity := 1.0
+
 var preselection_default_duration := 0.6
 var preselection_surface_depth: float = surface_depth + 4.0
 var preselection_surface_outward_offset := 4.0
@@ -225,6 +231,9 @@ var inspector_select_delay_for_tree_to_handle_inspector_selection_threshold := \
 var character_grab_position_opacity := ScaffolderColors.ALPHA_XXFAINT
 var character_grab_position_line_width := 5.0
 var character_grab_position_line_length := 10.0
+
+var character_grab_tile_border_opacity := ScaffolderColors.ALPHA_XFAINT
+var character_grab_tile_border_width := 6.0
 
 var character_position_along_surface_opacity := ScaffolderColors.ALPHA_XXFAINT
 var character_position_along_surface_target_point_radius := 4.0
