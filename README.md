@@ -17,6 +17,8 @@ _An AI and pathfinding 2D-platformer framework for [Godot](https://godotengine.o
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 
+![An animated GIF showing characters moving around with various behaviors and paths](./demo.gif)
+
 --------
 
 > **NOTE:** _This framework depends the separate [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library. You'll need to add both of these libraries to your `addons/` folder._
