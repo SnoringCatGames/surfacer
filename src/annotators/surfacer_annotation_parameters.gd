@@ -5,36 +5,6 @@ extends ScaffolderAnnotationParameters
 
 # TODO: Remove/refactor this class.
 
-
-# TODO: Re-organize these miscellaneous properties into other sections.
-### Miscellaneous draw utilities
-
-var surface_depth_divisions_count := 8
-var surface_alpha_end_ratio := 0.2
-
-var instruction_indicator_head_length_ratio := 0.35
-var instruction_indicator_head_width_ratio := 0.3
-var instruction_indicator_strike_trough_length_ratio := 0.8
-var instruction_indicator_stroke_width := 1.0
-
-var edge_trajectory_width := 1.0
-
-var edge_waypoint_stroke_width := edge_trajectory_width
-var edge_waypoint_radius := 6.0 * edge_waypoint_stroke_width
-var edge_start_radius := 3.0 * edge_waypoint_stroke_width
-var edge_end_radius := edge_waypoint_radius
-var edge_end_cone_length := edge_waypoint_radius * 2.0
-
-var path_downbeat_hash_length := edge_trajectory_width * 5
-var path_offbeat_hash_length := edge_trajectory_width * 3
-
-var edge_instruction_indicator_length := 24
-
-var in_air_destination_indicator_cone_count := 3
-var in_air_destination_indicator_size_ratio := 0.8
-
-var adjacent_vertex_too_close_distance_squared_threshold := 0.25
-
 ### Surface
 
 var surface_hue_min := 0.0
@@ -51,7 +21,21 @@ var destination_surface_hue := 0.61
 
 var surface_depth := 16.0
 
+var surface_depth_divisions_count := 8
+var surface_alpha_end_ratio := 0.2
+
 ### Edge
+
+var edge_trajectory_width := 1.0
+
+var edge_waypoint_stroke_width := edge_trajectory_width
+var edge_waypoint_radius := 6.0 * edge_waypoint_stroke_width
+var edge_start_radius := 3.0 * edge_waypoint_stroke_width
+var edge_end_radius := edge_waypoint_radius
+var edge_end_cone_length := edge_waypoint_radius * 2.0
+
+var in_air_destination_indicator_cone_count := 3
+var in_air_destination_indicator_size_ratio := 0.8
 
 var edge_hue_min := 0.0
 var edge_hue_max := 1.0
@@ -68,6 +52,18 @@ var includes_waypoints := true
 var includes_instruction_indicators := true
 var includes_continuous_positions := true
 var includes_discrete_positions := true
+
+var instruction_indicator_head_length_ratio := 0.35
+var instruction_indicator_head_width_ratio := 0.3
+var instruction_indicator_strike_trough_length_ratio := 0.8
+var instruction_indicator_stroke_width := edge_trajectory_width
+
+var edge_instruction_indicator_length := edge_trajectory_width * 24
+
+var path_downbeat_hash_length := edge_trajectory_width * 5.0
+var path_offbeat_hash_length := edge_trajectory_width * 3.0
+
+var adjacent_vertex_too_close_distance_squared_threshold := 0.25
 
 ### Waypoint
 

@@ -48,8 +48,52 @@ func _derive_overrides_according_to_debug_or_playtest(
             manifest.gui_manifest.hud_manifest.is_inspector_enabled_default or \
             is_debug or is_playtest
 
+
+func _update_to_emphasize_annotations(manifest: Dictionary) -> void:
+    manifest.colors_manifest.background = \
+            BACKGROUND_COLOR_TO_EMPHASIZE_ANNOTATIONS
+    
+    var ann_params_man: Dictionary = manifest.annotation_parameters_manifest
+    
+    ann_params_man.edge_trajectory_width = 2.0
+    ann_params_man.edge_waypoint_stroke_width = \
+            ann_params_man.edge_trajectory_width
+    ann_params_man.path_downbeat_hash_length = \
+            ann_params_man.edge_trajectory_width * 5.0
+    ann_params_man.path_offbeat_hash_length = \
+            ann_params_man.edge_trajectory_width * 3.0
+    ann_params_man.instruction_indicator_stroke_width = \
+            ann_params_man.edge_trajectory_width
+    ann_params_man.edge_instruction_indicator_length = \
+            ann_params_man.edge_trajectory_width * 24.0
+    ann_params_man.surface_alpha_ratio_with_inspector_open = 0.99
+    
+    ann_params_man.edge_hue_min = 0.0
+    ann_params_man.edge_hue_max = 1.0
+    ann_params_man.edge_discrete_trajectory_saturation = 0.8
+    ann_params_man.edge_discrete_trajectory_value = 0.9
+    ann_params_man.edge_discrete_trajectory_alpha = 0.4
+    ann_params_man.edge_continuous_trajectory_saturation = 0.6
+    ann_params_man.edge_continuous_trajectory_value = 0.6
+    ann_params_man.edge_continuous_trajectory_alpha = 0.35
+    ann_params_man.edge_discrete_trajectory_color_params = \
+            ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+                    ann_params_man.edge_hue_min,
+                    ann_params_man.edge_hue_max,
+                    ann_params_man.edge_discrete_trajectory_saturation,
+                    ann_params_man.edge_discrete_trajectory_value,
+                    ann_params_man.edge_discrete_trajectory_alpha)
+    ann_params_man.edge_continuous_trajectory_color_params = \
+            ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+                    ann_params_man.edge_hue_min,
+                    ann_params_man.edge_hue_max,
+                    ann_params_man.edge_continuous_trajectory_saturation,
+                    ann_params_man.edge_continuous_trajectory_value,
+                    ann_params_man.edge_continuous_trajectory_alpha)
+
 # ---
 
+const BACKGROUND_COLOR_TO_EMPHASIZE_ANNOTATIONS := Color("20222A")
 
 var _default_fonts_manifest_normal := {
     fonts = {
