@@ -17,7 +17,7 @@ _An AI and pathfinding 2D-platformer framework for [Godot](https://godotengine.o
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 
-![An animated GIF showing characters moving around with various behaviors and paths](./demo.gif)
+![An animated GIF showing characters moving around with various behaviors and paths](./docs/demo.gif)
 
 --------
 
