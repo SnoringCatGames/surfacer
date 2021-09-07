@@ -22,6 +22,5 @@ func _draw_shape(
             "mr",
             true,
             center,
-            SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH * SCALE,
-            Su.ann_defaults.DEFAULT_INSTRUCTION_COLOR_PARAMS \
-                    .get_color())
+            Sc.ann_params.edge_instruction_indicator_length * SCALE,
+            Sc.ann_params.default_instruction_color_params.get_color())

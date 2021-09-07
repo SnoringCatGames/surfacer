@@ -2,28 +2,6 @@ class_name PathPreselectionAnnotator
 extends Node2D
 
 
-var INVALID_SURFACE_COLOR := Sc.colors.opacify(
-        Sc.colors.invalid, ScaffolderColors.ALPHA_XFAINT)
-var INVALID_POSITION_INDICATOR_COLOR := Sc.colors.opacify(
-        Sc.colors.invalid, ScaffolderColors.ALPHA_XFAINT)
-
-const PRESELECTION_MIN_OPACITY := 0.5
-const PRESELECTION_MAX_OPACITY := 1.0
-const PRESELECTION_DEFAULT_DURATION := 0.6
-var PRESELECTION_SURFACE_DEPTH: float = SurfacerDrawUtils.SURFACE_DEPTH + 4.0
-const PRESELECTION_SURFACE_OUTWARD_OFFSET := 4.0
-const PRESELECTION_SURFACE_LENGTH_PADDING := 4.0
-const PRESELECTION_POSITION_INDICATOR_LENGTH := 128.0
-const PRESELECTION_POSITION_INDICATOR_RADIUS := 32.0
-const PRESELECTION_PATH_STROKE_WIDTH := 12.0
-const PRESELECTION_PATH_DOWNBEAT_HASH_LENGTH := \
-        PRESELECTION_PATH_STROKE_WIDTH * 5
-const PRESELECTION_PATH_OFFBEAT_HASH_LENGTH := \
-        PRESELECTION_PATH_STROKE_WIDTH * 3
-const PRESELECTION_PATH_DOWNBEAT_STROKE_WIDTH := PRESELECTION_PATH_STROKE_WIDTH
-const PRESELECTION_PATH_OFFBEAT_STROKE_WIDTH := PRESELECTION_PATH_STROKE_WIDTH
-const PATH_BACK_END_TRIM_RADIUS := 0.0
-
 var _predictions_container: Node2D
 var character: SurfacerCharacter
 var player_nav: PlayerNavigationBehavior
@@ -33,7 +11,7 @@ var path_color: Color
 
 var path_front_end_trim_radius: float
 var preselection_destination: PositionAlongSurface = null
-var animation_start_time := -PRESELECTION_DEFAULT_DURATION
+var animation_start_time: float = -Sc.ann_params.preselection_default_duration
 var animation_progress := 1.0
 var phantom_surface := Surface.new(
         [Vector2.INF],
@@ -78,7 +56,7 @@ func _init(character: SurfacerCharacter) -> void:
 
 
 func _on_slow_motion_toggled(is_enabled: bool) -> void:
-    animation_start_time = -PRESELECTION_DEFAULT_DURATION
+    animation_start_time = -Sc.ann_params.preselection_default_duration
 
 
 func _on_slow_motion_tick_tock_beat(
@@ -161,7 +139,7 @@ func _process(_delta: float) -> void:
                     Sc.slow_motion.tick_tock_tempo_multiplier * \
                     2.0 if \
                 Sc.slow_motion.is_enabled else \
-                PRESELECTION_DEFAULT_DURATION
+                Sc.ann_params.preselection_default_duration
         animation_progress = fmod((current_time - animation_start_time) / \
                 preselection_duration, 1.0)
         update()
@@ -173,9 +151,10 @@ func _draw() -> void:
         # buffer.
         return
     
-    var alpha_multiplier := ((1 - animation_progress) * \
-            (PRESELECTION_MAX_OPACITY - PRESELECTION_MIN_OPACITY) + \
-            PRESELECTION_MIN_OPACITY)
+    var alpha_multiplier: float = ((1 - animation_progress) * \
+            (Sc.ann_params.preselection_max_opacity - \
+                    Sc.ann_params.preselection_min_opacity) + \
+            Sc.ann_params.preselection_min_opacity)
     
     var surface_base_color: Color
     var position_indicator_base_color: Color
@@ -190,8 +169,10 @@ func _draw() -> void:
             position_indicator_base_color = indicator_color
             path_base_color = path_color
     else:
-        surface_base_color = INVALID_SURFACE_COLOR
-        position_indicator_base_color = INVALID_POSITION_INDICATOR_COLOR
+        surface_base_color = \
+                Sc.ann_params.preselection_invalid_surface_color
+        position_indicator_base_color = \
+                Sc.ann_params.preselection_invalid_position_indicator_color
     
     if Su.ann_manifest.is_player_preselection_trajectory_shown:
         # Draw path.
@@ -206,10 +187,10 @@ func _draw() -> void:
             Sc.draw.draw_path(
                     self,
                     preselection_path,
-                    PRESELECTION_PATH_STROKE_WIDTH,
+                    Sc.ann_params.preselection_path_stroke_width,
                     path_color,
                     path_front_end_trim_radius,
-                    PATH_BACK_END_TRIM_RADIUS,
+                    Sc.ann_params.preselection_path_back_end_trim_radius,
                     false,
                     false,
                     true,
@@ -218,10 +199,10 @@ func _draw() -> void:
             Sc.draw.draw_beat_hashes(
                     self,
                     preselection_path_beats,
-                    PRESELECTION_PATH_DOWNBEAT_HASH_LENGTH,
-                    PRESELECTION_PATH_OFFBEAT_HASH_LENGTH,
-                    PRESELECTION_PATH_DOWNBEAT_STROKE_WIDTH,
-                    PRESELECTION_PATH_OFFBEAT_STROKE_WIDTH,
+                    Sc.ann_params.preselection_path_downbeat_hash_length,
+                    Sc.ann_params.preselection_path_offbeat_hash_length,
+                    Sc.ann_params.preselection_path_downbeat_stroke_width,
+                    Sc.ann_params.preselection_path_offbeat_stroke_width,
                     path_color,
                     path_color)
         
@@ -232,12 +213,12 @@ func _draw() -> void:
                     surface_base_color.r,
                     surface_base_color.g,
                     surface_base_color.b,
-                    surface_alpha)
+                    Sc.ann_params.surface_alpha)
             Sc.draw.draw_surface(
                     self,
                     phantom_surface,
                     surface_color,
-                    PRESELECTION_SURFACE_DEPTH)
+                    Sc.ann_params.preselection_surface_depth)
     
     if Su.ann_manifest.is_player_navigation_destination_shown:
         # Draw destination marker.
@@ -248,15 +229,16 @@ func _draw() -> void:
                 position_indicator_base_color.g,
                 position_indicator_base_color.b,
                 position_indicator_alpha)
-        var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
-                PRESELECTION_POSITION_INDICATOR_RADIUS
+        var cone_length: float = \
+                Sc.ann_params.preselection_position_indicator_length - \
+                Sc.ann_params.preselection_position_indicator_radius
         Sc.draw.draw_destination_marker(
                 self,
                 phantom_position_along_surface,
                 false,
                 position_indicator_color,
                 cone_length,
-                PRESELECTION_POSITION_INDICATOR_RADIUS,
+                Sc.ann_params.preselection_position_indicator_radius,
                 true,
                 INF,
                 4.0)
@@ -284,12 +266,15 @@ func _update_phantom_surface() -> void:
                 preselection_destination.surface.bounding_box.size.x if \
                 preselection_destination.surface.normal.x == 0.0 else \
                 preselection_destination.surface.bounding_box.size.y
-        var scale_factor := \
-                (length + PRESELECTION_SURFACE_LENGTH_PADDING * 2.0) / length
+        var scale_factor: float = \
+                (length + \
+                Sc.ann_params.preselection_surface_length_padding * 2.0) / \
+                length
         var scale := Vector2(scale_factor, scale_factor)
         
-        var translation := preselection_destination.surface.normal * \
-                PRESELECTION_SURFACE_OUTWARD_OFFSET
+        var translation: Vector2 = \
+                preselection_destination.surface.normal * \
+                Sc.ann_params.preselection_surface_outward_offset
         
         var transform := Transform2D()
         transform = transform.translated(-surface_center)

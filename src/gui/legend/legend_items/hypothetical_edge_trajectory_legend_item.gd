@@ -18,14 +18,14 @@ func _draw_shape(
     var offset_from_center := size * 0.35
     var start := center - offset_from_center
     var end := center + offset_from_center
-    var color: Color = Su.ann_defaults \
-            .DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS.get_color()
+    var color: Color = Sc.ann_params \
+            .default_jump_land_positions_color_params.get_color()
     Sc.draw.draw_dashed_line(
             self,
             start,
             end,
             color,
-            AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH,
-            AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP,
+            Sc.ann_params.jump_land_positions_dash_length,
+            Sc.ann_params.jump_land_positions_dash_gap,
             0.0,
-            AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH)
+            Sc.ann_params.jump_land_positions_dash_stroke_width)

@@ -126,17 +126,12 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
     Sc.draw.draw_path(
             self,
             current_path,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+            Sc.ann_params.navigator_trajectory_stroke_width,
             current_path_color,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_ORIGIN_INDICATOR_RADIUS + 
-                    AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH / 2.0,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_DESTINATION_INDICATOR_RADIUS + 
-                    AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH / 2.0,
+            Sc.ann_params.navigator_origin_indicator_radius + 
+                    Sc.ann_params.navigator_trajectory_stroke_width / 2.0,
+            Sc.ann_params.navigator_destination_indicator_radius + 
+                    Sc.ann_params.navigator_trajectory_stroke_width / 2.0,
             true,
             false,
             true,
@@ -152,25 +147,23 @@ func _draw_current_path_origin(current_path: PlatformGraphPath) -> void:
     origin_indicator_fill_color.a *= fade_progress
     self.draw_circle(
             current_path.origin.target_point,
-            AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
+            Sc.ann_params.navigator_origin_indicator_radius,
             origin_indicator_fill_color)
     var origin_indicator_stroke_color := indicator_stroke_color
     origin_indicator_stroke_color.a *= fade_progress
     Sc.draw.draw_circle_outline(
             self,
             current_path.origin.target_point,
-            AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
+            Sc.ann_params.navigator_origin_indicator_radius,
             origin_indicator_stroke_color,
-            AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
+            Sc.ann_params.navigator_indicator_stroke_width,
             4.0)
 
 
 func _draw_current_path_destination(current_path: PlatformGraphPath) -> void:
     var cone_length: float = \
-            AnnotationElementDefaults \
-                    .NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH - \
-            AnnotationElementDefaults \
-                    .NAVIGATOR_DESTINATION_INDICATOR_RADIUS
+            Sc.ann_params.navigator_destination_indicator_length - \
+            Sc.ann_params.navigator_destination_indicator_radius
     var destination_indicator_fill_color := indicator_fill_color
     destination_indicator_fill_color.a *= fade_progress
     Sc.draw.draw_destination_marker(
@@ -179,8 +172,7 @@ func _draw_current_path_destination(current_path: PlatformGraphPath) -> void:
             false,
             destination_indicator_fill_color,
             cone_length,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
+            Sc.ann_params.navigator_destination_indicator_radius,
             true,
             INF,
             4.0)
@@ -192,10 +184,9 @@ func _draw_current_path_destination(current_path: PlatformGraphPath) -> void:
             false,
             destination_indicator_stroke_color,
             cone_length,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
+            Sc.ann_params.navigator_destination_indicator_radius,
             false,
-            AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
+            Sc.ann_params.navigator_indicator_stroke_width,
             4.0)
 
 
@@ -203,8 +194,7 @@ func _draw_previous_path() -> void:
     Sc.draw.draw_path(
             self,
             previous_path,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+            Sc.ann_params.navigator_trajectory_stroke_width,
             previous_path_color,
             0.0,
             previous_path_back_end_trim_radius,
@@ -223,14 +213,10 @@ func _draw_beat_hashes(
     Sc.draw.draw_beat_hashes(
             self,
             beats,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_OFFBEAT_HASH_LENGTH,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+            Sc.ann_params.navigator_trajectory_downbeat_hash_length,
+            Sc.ann_params.navigator_trajectory_offbeat_hash_length,
+            Sc.ann_params.navigator_trajectory_stroke_width,
+            Sc.ann_params.navigator_trajectory_stroke_width,
             color,
             color)
 
@@ -296,13 +282,9 @@ func _trigger_beat_hash_animation(beat: PathBeatPrediction) -> void:
     
     Sc.annotators.add_transient(OnBeatHashAnnotator.new(
             beat,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_OFFBEAT_HASH_LENGTH,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-            AnnotationElementDefaults \
-                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+            Sc.ann_params.navigator_trajectory_downbeat_hash_length,
+            Sc.ann_params.navigator_trajectory_offbeat_hash_length,
+            Sc.ann_params.navigator_trajectory_stroke_width,
+            Sc.ann_params.navigator_trajectory_stroke_width,
             beat_color,
             beat_color))

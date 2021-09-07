@@ -2,18 +2,6 @@ class_name PlatformGraphInspectorSelector
 extends Node2D
 
 
-var ORIGIN_SURFACE_SELECTION_COLOR: Color = Sc.colors.inspector_origin
-
-const ORIGIN_SURFACE_SELECTION_DASH_LENGTH := 6.0
-const ORIGIN_SURFACE_SELECTION_DASH_GAP := 8.0
-const ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH := 4.0
-
-const ORIGIN_POSITION_RADIUS := 5.0
-
-const CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD := 10000
-
-const DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD := 0.6
-
 var inspector
 
 var first_target: PositionAlongSurface
@@ -101,17 +89,17 @@ func _draw_selected_origin() -> void:
     Sc.draw.draw_dashed_polyline(
             self,
             first_target.surface.vertices,
-            ORIGIN_SURFACE_SELECTION_COLOR,
-            ORIGIN_SURFACE_SELECTION_DASH_LENGTH,
-            ORIGIN_SURFACE_SELECTION_DASH_GAP,
+            Sc.ann_params.inspector_select_origin_surface_color,
+            Sc.ann_params.inspector_select_origin_surface_dash_length,
+            Sc.ann_params.inspector_select_origin_surface_dash_gap,
             0.0,
-            ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
+            Sc.ann_params.inspector_select_origin_surface_dash_stroke_width)
     Sc.draw.draw_circle_outline(
             self,
             first_target.target_point,
-            ORIGIN_POSITION_RADIUS,
-            ORIGIN_SURFACE_SELECTION_COLOR,
-            ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
+            Sc.ann_params.inspector_select_origin_position_radius,
+            Sc.ann_params.inspector_select_origin_surface_color,
+            Sc.ann_params.inspector_select_origin_surface_dash_stroke_width)
 
 
 func _draw_possible_jump_land_positions() -> void:
@@ -132,5 +120,6 @@ func clear() -> void:
 
 func should_selection_have_been_handled_in_tree_by_now() -> bool:
     return selection_time + \
-            DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD < \
+    Sc.ann_params \
+            .inspector_select_delay_for_tree_to_handle_inspector_selection_threshold < \
             Sc.time.get_play_time()

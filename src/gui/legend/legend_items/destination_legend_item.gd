@@ -19,15 +19,15 @@ func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
     var cone_length: float = \
-            SurfacerDrawUtils.EDGE_END_CONE_LENGTH * SCALE * Sc.gui.scale
+            Sc.ann_params.edge_end_cone_length * SCALE * Sc.gui.scale
     var radius: float = \
-            SurfacerDrawUtils.EDGE_END_RADIUS * SCALE * Sc.gui.scale
+            Sc.ann_params.edge_end_radius * SCALE * Sc.gui.scale
     var length := cone_length + radius * Sc.gui.scale
     var cone_end_point := Vector2(
             center.x,
             center.y + length / 2.0)
     var color: Color = \
-            Su.ann_defaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
+            Sc.ann_params.default_waypoint_color_params.get_color()
     var surface := Surface.new()
     surface.side = SurfaceSide.FLOOR
     var position := PositionAlongSurface.new()
@@ -42,5 +42,5 @@ func _draw_shape(
             cone_length,
             radius,
             false,
-            SurfacerDrawUtils.EDGE_WAYPOINT_STROKE_WIDTH,
+            Sc.ann_params.edge_waypoint_stroke_width,
             SECTOR_ARC_LENGTH)

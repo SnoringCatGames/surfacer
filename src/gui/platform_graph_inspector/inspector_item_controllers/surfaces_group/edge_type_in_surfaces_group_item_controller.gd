@@ -125,11 +125,11 @@ func get_annotation_elements() -> Array:
     for jump_land_positions in edges_results.all_jump_land_positions:
         element = JumpLandPositionsAnnotationElement.new(
                 jump_land_positions,
-                Su.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS,
-                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH,
-                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP,
-                AnnotationElementDefaults \
-                        .JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH)
+                Sc.ann_params.jump_land_positions_color_params,
+                Sc.ann_params.jump_land_positions_dash_length,
+                Sc.ann_params.jump_land_positions_dash_gap,
+                Sc.ann_params \
+                        .jump_land_positions_dash_stroke_width)
         elements.push_back(element)
     
     return elements

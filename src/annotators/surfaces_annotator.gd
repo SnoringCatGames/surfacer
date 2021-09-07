@@ -3,9 +3,11 @@ extends Node2D
 
 
 var surface_parser: SurfaceParser
-var color_params: ColorParams = Su.ann_defaults.SURFACE_COLOR_PARAMS
+var color_params: ColorParams = Sc.ann_params.surface_color_params
 var alpha_with_inspector_closed := 0.9
-var alpha_with_inspector_open := alpha_with_inspector_closed * 0.2
+var alpha_with_inspector_open: float = \
+        alpha_with_inspector_closed * \
+        Sc.ann_params.surface_alpha_ratio_with_inspector_open
 
 var was_inspector_open := false
 

@@ -18,14 +18,12 @@ func _init().(
 func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
-    var color: Color = \
-            Su.ann_defaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
-    var radius: float = \
-            SurfacerDrawUtils.EDGE_START_RADIUS * SCALE * Sc.gui.scale
+    var color: Color = Sc.ann_params.default_waypoint_color_params.get_color()
+    var radius: float = Sc.ann_params.edge_start_radius * SCALE * Sc.gui.scale
     Sc.draw.draw_origin_marker(
             self,
             center,
             color,
             radius,
-            SurfacerDrawUtils.EDGE_WAYPOINT_STROKE_WIDTH,
+            Sc.ann_params.edge_waypoint_stroke_width,
             SECTOR_ARC_LENGTH)

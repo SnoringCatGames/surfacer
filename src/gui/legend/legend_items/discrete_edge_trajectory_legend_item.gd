@@ -5,7 +5,7 @@ extends ValidEdgeTrajectoryLegendItem
 const TYPE := LegendItemType.DISCRETE_EDGE_TRAJECTORY
 const TEXT := "Edge trajectory\n(discrete)"
 var COLOR_PARAMS: ColorParams = \
-        Su.ann_defaults.DEFAULT_EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS
+        Sc.ann_params.default_edge_discrete_trajectory_color_params
 
 
 func _init().(

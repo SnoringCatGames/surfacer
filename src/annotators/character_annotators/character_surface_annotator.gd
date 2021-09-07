@@ -35,7 +35,8 @@ func _draw() -> void:
 
 func check_for_update() -> void:
     if character.surface_state.just_changed_surface:
-        if is_instance_valid(Sc.annotators):
+        if is_instance_valid(Sc.annotators) and \
+                is_instance_valid(Sc.annotators.surfaces_annotator):
             Sc.annotators.surfaces_annotator.exclude(
                     character.surface_state.grabbed_surface,
                     character)

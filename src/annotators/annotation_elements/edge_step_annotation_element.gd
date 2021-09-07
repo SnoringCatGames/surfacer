@@ -29,32 +29,30 @@ func _init(
     
     if renders_faintly:
         self.opacity = \
-                AnnotationElementDefaults.STEP_OPACITY_FAINT
+                Sc.ann_params.step_opacity_faint
         self.trajectory_stroke_width = \
-                AnnotationElementDefaults.STEP_TRAJECTORY_STROKE_WIDTH_FAINT
+                Sc.ann_params.step_trajectory_stroke_width_faint
         self.waypoint_stroke_width = \
-                AnnotationElementDefaults.WAYPOINT_STROKE_WIDTH_FAINT
+                Sc.ann_params.waypoint_stroke_width_faint
         self.collision_color = \
-                Su.ann_defaults.COLLISION_COLOR_FAINT
+                Sc.ann_params.collision_color_faint
         self.collision_x_stroke_width = \
-                AnnotationElementDefaults.COLLISION_X_STROKE_WIDTH_FAINT
+                Sc.ann_params.collision_x_stroke_width_faint
         self.collision_character_boundary_stroke_width = \
-                AnnotationElementDefaults \
-                        .COLLISION_CHARACTER_BOUNDARY_STROKE_WIDTH_FAINT
+                Sc.ann_params.collision_character_boundary_stroke_width_faint
     else:
         self.opacity = \
-                AnnotationElementDefaults.STEP_OPACITY_STRONG
+                Sc.ann_params.step_opacity_strong
         self.trajectory_stroke_width = \
-                AnnotationElementDefaults.STEP_TRAJECTORY_STROKE_WIDTH_STRONG
+                Sc.ann_params.step_trajectory_stroke_width_strong
         self.waypoint_stroke_width = \
-                AnnotationElementDefaults.WAYPOINT_STROKE_WIDTH_STRONG
+                Sc.ann_params.waypoint_stroke_width_strong
         self.collision_color = \
-                Su.ann_defaults.COLLISION_COLOR_STRONG
+                Sc.ann_params.collision_color_strong
         self.collision_x_stroke_width = \
-                AnnotationElementDefaults.COLLISION_X_STROKE_WIDTH_STRONG
+                Sc.ann_params.collision_x_stroke_width_strong
         self.collision_character_boundary_stroke_width = \
-                AnnotationElementDefaults \
-                        .COLLISION_CHARACTER_BOUNDARY_STROKE_WIDTH_STRONG
+                Sc.ann_params.collision_character_boundary_stroke_width_strong
     
     self.color = _calculate_color(renders_faintly)
     
@@ -70,14 +68,14 @@ func _calculate_color(renders_faintly: bool) -> Color:
             total_step_count > 1 else \
             1.0
     var step_hue: float = \
-            AnnotationElementDefaults.STEP_HUE_START + \
-            (AnnotationElementDefaults.STEP_HUE_END - \
-                    AnnotationElementDefaults.STEP_HUE_START) * \
+            Sc.ann_params.step_hue_start + \
+            (Sc.ann_params.step_hue_end - \
+                    Sc.ann_params.step_hue_start) * \
             step_ratio
     return Color.from_hsv(
             step_hue,
-            AnnotationElementDefaults.STEP_SATURATION,
-            AnnotationElementDefaults.STEP_VALUE,
+            Sc.ann_params.step_saturation,
+            Sc.ann_params.step_value,
             opacity)
 
 
@@ -118,8 +116,8 @@ func _draw_trajectory(canvas: CanvasItem) -> void:
                 canvas,
                 PoolVector2Array(step.frame_positions),
                 color,
-                AnnotationElementDefaults.STEP_TRAJECTORY_DASH_LENGTH,
-                AnnotationElementDefaults.STEP_TRAJECTORY_DASH_GAP,
+                Sc.ann_params.step_trajectory_dash_length,
+                Sc.ann_params.step_trajectory_dash_gap,
                 0.0,
                 trajectory_stroke_width)
     else:
@@ -132,14 +130,14 @@ func _draw_step_end_points(canvas: CanvasItem) -> void:
     Sc.draw.draw_circle_outline(
             canvas,
             step_result_metadata.get_start().position,
-            AnnotationElementDefaults.WAYPOINT_RADIUS,
+            Sc.ann_params.waypoint_radius,
             color,
             waypoint_stroke_width,
             4.0)
     Sc.draw.draw_circle_outline(
             canvas,
             step_result_metadata.get_end().position,
-            AnnotationElementDefaults.WAYPOINT_RADIUS,
+            Sc.ann_params.waypoint_radius,
             color,
             waypoint_stroke_width,
             4.0)
@@ -158,8 +156,8 @@ func _draw_collision(canvas: CanvasItem) -> void:
             Sc.draw.draw_x(
                     canvas,
                     collision.position,
-                    AnnotationElementDefaults.COLLISION_X_WIDTH_HEIGHT.x,
-                    AnnotationElementDefaults.COLLISION_X_WIDTH_HEIGHT.y,
+                    Sc.ann_params.collision_x_width_height.x,
+                    Sc.ann_params.collision_x_width_height.y,
                     collision_color,
                     collision_x_stroke_width)
         
@@ -182,8 +180,7 @@ func _draw_collision(canvas: CanvasItem) -> void:
         # Draw a dot at the center of the character's collision boundary.
         canvas.draw_circle(
                 collision.character_position,
-                AnnotationElementDefaults \
-                        .COLLISION_CHARACTER_BOUNDARY_CENTER_RADIUS,
+                Sc.ann_params.collision_character_boundary_center_radius,
                 collision_color)
         
         if !renders_faintly:
@@ -193,34 +190,31 @@ func _draw_collision(canvas: CanvasItem) -> void:
                     Sc.draw.draw_checkmark(
                             canvas,
                             upcoming_waypoint.position,
-                            AnnotationElementDefaults.VALID_WAYPOINT_WIDTH,
+                            Sc.ann_params.valid_waypoint_width,
                             color,
-                            AnnotationElementDefaults \
-                                    .VALID_WAYPOINT_STROKE_WIDTH)
+                            Sc.ann_params.valid_waypoint_stroke_width)
                 else:
                     Sc.draw.draw_x(
                             canvas,
                             upcoming_waypoint.position,
-                            AnnotationElementDefaults.INVALID_WAYPOINT_WIDTH,
-                            AnnotationElementDefaults \
-                                    .INVALID_WAYPOINT_HEIGHT,
+                            Sc.ann_params.invalid_waypoint_width,
+                            Sc.ann_params.invalid_waypoint_height,
                             color,
-                            AnnotationElementDefaults \
-                                    .INVALID_WAYPOINT_STROKE_WIDTH)
+                            Sc.ann_params.invalid_waypoint_stroke_width)
             
             # Draw the bounding boxes at frame start, end, and previous.
             _draw_bounding_box_and_margin(
                     canvas,
                     collision_result_metadata.frame_start_position,
-                    Su.ann_defaults.COLLISION_FRAME_START_COLOR)
+                    Sc.ann_params.collision_frame_start_color)
             _draw_bounding_box_and_margin(
                     canvas,
                     collision_result_metadata.frame_end_position,
-                    Su.ann_defaults.COLLISION_FRAME_END_COLOR)
+                    Sc.ann_params.collision_frame_end_color)
             _draw_bounding_box_and_margin(
                     canvas,
                     collision_result_metadata.frame_previous_position,
-                    Su.ann_defaults.COLLISION_FRAME_PREVIOUS_COLOR)
+                    Sc.ann_params.collision_frame_previous_color)
 
 
 func _draw_bounding_box_and_margin(
@@ -235,7 +229,7 @@ func _draw_bounding_box_and_margin(
             collision_result_metadata.collider_half_width_height,
             false,
             color,
-            AnnotationElementDefaults.COLLISION_BOUNDING_BOX_STROKE_WIDTH)
+            Sc.ann_params.collision_bounding_box_stroke_width)
     Sc.draw.draw_dashed_rectangle(
             canvas,
             center,
@@ -244,10 +238,10 @@ func _draw_bounding_box_and_margin(
                             collision_result_metadata.margin),
             false,
             color,
-            AnnotationElementDefaults.COLLISION_MARGIN_DASH_LENGTH,
-            AnnotationElementDefaults.COLLISION_MARGIN_DASH_GAP,
+            Sc.ann_params.collision_margin_dash_length,
+            Sc.ann_params.collision_margin_dash_gap,
             0.0,
-            AnnotationElementDefaults.COLLISION_MARGIN_STROKE_WIDTH,
+            Sc.ann_params.collision_margin_stroke_width,
             false)
 
 
@@ -261,10 +255,8 @@ func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
         Sc.draw.draw_diamond_outline(
                 canvas,
                 step_result_metadata.previous_out_of_reach_waypoint.position,
-                AnnotationElementDefaults \
-                        .PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT,
-                AnnotationElementDefaults \
-                        .PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT,
+                Sc.ann_params.previous_out_of_reach_waypoint_width_height,
+                Sc.ann_params.previous_out_of_reach_waypoint_width_height,
                 color,
                 1.0)
         
@@ -272,7 +264,7 @@ func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
         previous_out_of_reach_waypoint_label.rect_position = \
                 step_result_metadata.previous_out_of_reach_waypoint \
                         .position + \
-                AnnotationElementDefaults.LABEL_OFFSET
+                Sc.ann_params.label_offset
         previous_out_of_reach_waypoint_label.add_color_override(
                 "font_color",
                 color)
@@ -288,7 +280,7 @@ func _draw_description(canvas: CanvasItem) -> void:
         # Draw some text describing the current step.
         step_label.rect_position = \
                 step_result_metadata.get_start().position + \
-                AnnotationElementDefaults.LABEL_OFFSET
+                Sc.ann_params.label_offset
         step_label.add_color_override("font_color", color)
         var description_list := step_result_metadata.get_description_list()
         var line_1 := "Step %s/%s:" % [
@@ -325,18 +317,18 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             canvas,
             start,
             end,
-            Su.ann_defaults.INVALID_EDGE_COLOR_PARAMS.get_color(),
-            AnnotationElementDefaults.INVALID_EDGE_DASH_LENGTH,
-            AnnotationElementDefaults.INVALID_EDGE_DASH_GAP,
+            Sc.ann_params.invalid_edge_color_params.get_color(),
+            Sc.ann_params.invalid_edge_dash_length,
+            Sc.ann_params.invalid_edge_dash_gap,
             0.0,
-            AnnotationElementDefaults.INVALID_EDGE_DASH_STROKE_WIDTH)
+            Sc.ann_params.invalid_edge_dash_stroke_width)
     Sc.draw.draw_x(
             canvas,
             middle,
-            AnnotationElementDefaults.INVALID_EDGE_X_WIDTH,
-            AnnotationElementDefaults.INVALID_EDGE_X_HEIGHT,
-            Su.ann_defaults.INVALID_EDGE_COLOR_PARAMS.get_color(),
-            AnnotationElementDefaults.INVALID_EDGE_DASH_STROKE_WIDTH)
+            Sc.ann_params.invalid_edge_x_width,
+            Sc.ann_params.invalid_edge_x_height,
+            Sc.ann_params.invalid_edge_color_params.get_color(),
+            Sc.ann_params.invalid_edge_dash_stroke_width)
 
 
 func _attach_labels(canvas: CanvasItem) -> void:

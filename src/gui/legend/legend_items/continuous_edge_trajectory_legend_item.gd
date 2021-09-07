@@ -4,8 +4,8 @@ extends ValidEdgeTrajectoryLegendItem
 
 const TYPE := LegendItemType.CONTINUOUS_EDGE_TRAJECTORY
 const TEXT := "Edge trajectory\n(continuous)"
-var COLOR_PARAMS: ColorParams = Su.ann_defaults \
-        .DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS
+var COLOR_PARAMS: ColorParams = Sc.ann_params \
+        .default_edge_continuous_trajectory_color_params
 
 
 func _init().(

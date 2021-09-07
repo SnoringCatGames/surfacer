@@ -110,13 +110,13 @@ func get_annotation_elements() -> Array:
     elif edge_attempt is FailedEdgeAttempt:
         var element := FailedEdgeAttemptAnnotationElement.new(
                 edge_attempt,
-                Su.ann_defaults \
-                        .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,
-                Su.ann_defaults.INVALID_EDGE_COLOR_PARAMS,
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH,
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP,
-                AnnotationElementDefaults \
-                        .FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH,
+                Sc.ann_params \
+                        .edge_discrete_trajectory_color_params,
+                Sc.ann_params.invalid_edge_color_params,
+                Sc.ann_params.failed_edge_attempt_dash_length,
+                Sc.ann_params.failed_edge_attempt_dash_gap,
+                Sc.ann_params \
+                        .failed_edge_attempt_dash_stroke_width,
                 false)
         elements.push_back(element)
     else:

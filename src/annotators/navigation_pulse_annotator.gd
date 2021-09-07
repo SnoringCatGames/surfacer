@@ -105,7 +105,7 @@ func _draw() -> void:
             current_path,
             path_segment_time_start,
             path_segment_time_end,
-            AnnotationElementDefaults.NAVIGATOR_PULSE_STROKE_WIDTH,
+            Sc.ann_params.navigator_pulse_stroke_width,
             path_color,
             trim_front_end_radius,
             trim_back_end_radius)

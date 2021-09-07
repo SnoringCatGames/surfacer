@@ -403,12 +403,12 @@ func _select_canonical_edge_or_edge_attempt_item_controller(
             land_position == null or \
             jump_position.target_projection_onto_surface \
                     .distance_squared_to(target_projection_start) > \
-                    PlatformGraphInspectorSelector \
-                            .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD or \
+                    Sc.ann_params \
+                    .inspector_select_click_position_distance_squared_threshold or \
             land_position.target_projection_onto_surface \
                     .distance_squared_to(target_projection_end) > \
-                    PlatformGraphInspectorSelector \
-                            .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD:
+                    Sc.ann_params \
+                    .inspector_select_click_position_distance_squared_threshold:
         
         var metadata := { \
             origin_surface = start_surface,

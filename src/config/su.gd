@@ -280,7 +280,6 @@ var surface_parser_metric_keys := [
 var graph_inspector: PlatformGraphInspector
 var legend: Legend
 var selection_description: SelectionDescription
-var ann_defaults: AnnotationElementDefaults
 var ann_manifest: SurfacerAnnotationsManifest
 var movement: SurfacerMovementManifest
 var edge_from_json_factory := EdgeFromJsonFactory.new()
@@ -300,11 +299,13 @@ func _ready() -> void:
 
 func _amend_app_manifest(app_manifest: Dictionary) -> void:
     if !app_manifest.has("colors_class"):
-            app_manifest.colors_class = SurfacerColors
+        app_manifest.colors_class = SurfacerColors
     if !app_manifest.has("geometry_class"):
-            app_manifest.geometry_class = SurfacerGeometry
+        app_manifest.geometry_class = SurfacerGeometry
     if !app_manifest.has("draw_utils_class"):
-            app_manifest.draw_utils_class = SurfacerDrawUtils
+        app_manifest.draw_utils_class = SurfacerDrawUtils
+    if !app_manifest.has("ann_params_class"):
+        app_manifest.ann_params_class = SurfacerAnnotationParameters
     
     var is_precomputing_platform_graphs: bool = \
             app_manifest.surfacer_manifest \
@@ -470,13 +471,6 @@ func _configure_sub_modules() -> void:
             Sc.save_state.get_setting(
                     NPC_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
                     self.ann_manifest.is_npc_navigation_destination_shown)
-    
-    if manifest.has("annotation_element_defaults_class"):
-        self.ann_defaults = manifest.annotation_element_defaults_class.new()
-        assert(self.ann_defaults is AnnotationElementDefaults)
-    else:
-        self.ann_defaults = AnnotationElementDefaults.new()
-    add_child(self.ann_defaults)
 
 
 func _parse_behaviors(manifest: Dictionary) -> Dictionary:

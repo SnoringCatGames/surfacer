@@ -14,14 +14,11 @@ var dash_stroke_width: float
 
 func _init(
         jump_land_positions: JumpLandPositions,
-        color_params := \
-                Su.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS,
-        dash_length := \
-                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH,
-        dash_gap := \
-                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP,
-        dash_stroke_width := AnnotationElementDefaults \
-                .JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH) \
+        color_params := Sc.ann_params.jump_land_positions_color_params,
+        dash_length := Sc.ann_params.jump_land_positions_dash_length,
+        dash_gap := Sc.ann_params.jump_land_positions_dash_gap,
+        dash_stroke_width := \
+                Sc.ann_params.jump_land_positions_dash_stroke_width) \
         .(TYPE) -> void:
     self.jump_land_positions = jump_land_positions
     self.color_params = color_params
