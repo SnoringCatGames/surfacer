@@ -72,6 +72,10 @@ func _calculate_duration(
             0.0
 
 
+func _get_weight_multiplier() -> float:
+    return movement_params.climb_to_adjacent_surface_edge_weight_multiplier
+
+
 func get_animation_state_at_time(
         result: CharacterAnimationState,
         edge_time: float) -> void:

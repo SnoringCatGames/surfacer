@@ -125,6 +125,11 @@ var ceiling_crawling_edge_weight_multiplier_override := -1.0 \
 ## paths that involve more jumps, even if the path may take longer.
 var climbing_edge_weight_multiplier_override := -1.0 \
         setget _set_climbing_edge_weight_multiplier_override
+## If extra weight is applied to climb-to-adjacent_surface edges, then the
+## character will favor paths that involve jumping between surfaces, even if
+## the path may take longer.
+var climb_to_adjacent_surface_edge_weight_multiplier_override := -1.0 \
+        setget _set_climb_to_adjacent_surface_edge_weight_multiplier_override
 ## If extra weight is applied to air edges, then the character will favor
 ## paths that involve fewer jumps, even if the path may take longer.
 var air_edge_weight_multiplier_override := -1.0 \
@@ -434,6 +439,7 @@ var additional_edge_weight_offset: float
 var walking_edge_weight_multiplier: float
 var ceiling_crawling_edge_weight_multiplier: float
 var climbing_edge_weight_multiplier: float
+var climb_to_adjacent_surface_edge_weight_multiplier: float
 var air_edge_weight_multiplier: float
 
 var floor_jump_max_horizontal_jump_distance: float
@@ -792,6 +798,11 @@ func _derive_parameters() -> void:
             climbing_edge_weight_multiplier_override if \
             climbing_edge_weight_multiplier_override != -1.0 else \
             Su.movement.climbing_edge_weight_multiplier_default
+    climb_to_adjacent_surface_edge_weight_multiplier = \
+            climb_to_adjacent_surface_edge_weight_multiplier_override if \
+            climb_to_adjacent_surface_edge_weight_multiplier_override \
+                    != -1.0 else \
+            Su.movement.climb_to_adjacent_surface_edge_weight_multiplier_default
     air_edge_weight_multiplier = \
             air_edge_weight_multiplier_override if \
             air_edge_weight_multiplier_override != -1.0 else \
@@ -1013,6 +1024,12 @@ func _set_ceiling_crawling_edge_weight_multiplier_override(
 
 func _set_climbing_edge_weight_multiplier_override(value: float) -> void:
     climbing_edge_weight_multiplier_override = value
+    _update_parameters()
+
+
+func _set_climb_to_adjacent_surface_edge_weight_multiplier_override(
+        value: float) -> void:
+    climb_to_adjacent_surface_edge_weight_multiplier_override = value
     _update_parameters()
 
 
