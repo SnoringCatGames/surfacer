@@ -156,14 +156,14 @@ static func _calculate_background_color(
             total_step_count > 1 else \
             1.0
     var step_hue: float = \
-            AnnotationElementDefaults.STEP_HUE_START + \
-            (AnnotationElementDefaults.STEP_HUE_END - \
-                    AnnotationElementDefaults.STEP_HUE_START) * \
+            Sc.ann_params.step_hue_start + \
+            (Sc.ann_params.step_hue_end - \
+                    Sc.ann_params.step_hue_start) * \
             step_ratio
     return Color.from_hsv(
             step_hue,
-            Su.ann_defaults \
-                    .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.s,
-            Su.ann_defaults \
-                    .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.v,
+            Sc.ann_params \
+                    .inspector_step_calc_item_background_color.s,
+            Sc.ann_params \
+                    .inspector_step_calc_item_background_color.v,
             1.0)

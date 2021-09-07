@@ -15,21 +15,25 @@ var color_params: ColorParams
 func _init(
         edge: Edge,
         includes_waypoints := \
-                AnnotationElementDefaults.INCLUDES_WAYPOINTS,
+                Sc.ann_params.includes_waypoints,
         includes_instruction_indicators := \
-                AnnotationElementDefaults.INCLUDES_INSTRUCTION_INDICATORS,
+                Sc.ann_params.includes_instruction_indicators,
         includes_continuous_positions := \
-                AnnotationElementDefaults.INCLUDES_CONTINUOUS_POSITIONS,
+                Sc.ann_params.includes_continuous_positions,
         includes_discrete_positions := \
-                AnnotationElementDefaults.INCLUDES_DISCRETE_POSITIONS,
-        color_params := Su.ann_defaults \
-                .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS) \
+                Sc.ann_params.includes_discrete_positions,
+        color_params := \
+                Sc.ann_params.edge_discrete_trajectory_color_params) \
         .(TYPE) -> void:
     self.edge = edge
-    self.includes_waypoints = includes_waypoints
-    self.includes_instruction_indicators = includes_instruction_indicators
-    self.includes_continuous_positions = includes_continuous_positions
-    self.includes_discrete_positions = includes_discrete_positions
+    self.includes_waypoints = \
+            Sc.ann_params.includes_waypoints
+    self.includes_instruction_indicators = \
+            Sc.ann_params.includes_instruction_indicators
+    self.includes_continuous_positions = \
+            Sc.ann_params.includes_continuous_positions
+    self.includes_discrete_positions = \
+            Sc.ann_params.includes_discrete_positions
     self.color_params = color_params
 
 
@@ -38,33 +42,33 @@ func draw(canvas: CanvasItem) -> void:
     Sc.draw.draw_edge(
             canvas,
             edge,
-            SurfacerDrawUtils.EDGE_TRAJECTORY_WIDTH,
+            Sc.ann_params.edge_trajectory_width,
             color,
-            includes_waypoints,
-            includes_instruction_indicators,
-            includes_continuous_positions,
-            includes_discrete_positions)
+            Sc.ann_params.includes_waypoints,
+            Sc.ann_params.includes_instruction_indicators,
+            Sc.ann_params.includes_continuous_positions,
+            Sc.ann_params.includes_discrete_positions)
 
 
 func _create_legend_items() -> Array:
     var items := []
     
-    if includes_discrete_positions:
+    if Sc.ann_params.includes_discrete_positions:
         var discrete_trajectory_item := DiscreteEdgeTrajectoryLegendItem.new()
         items.push_back(discrete_trajectory_item)
     
-    if includes_continuous_positions:
+    if Sc.ann_params.includes_continuous_positions:
         var continuous_trajectory_item := \
                 ContinuousEdgeTrajectoryLegendItem.new()
         items.push_back(continuous_trajectory_item)
     
-    if includes_waypoints:
+    if Sc.ann_params.includes_waypoints:
         var origin_item := OriginLegendItem.new()
         items.push_back(origin_item)
         var destination_item := DestinationLegendItem.new()
         items.push_back(destination_item)
     
-    if includes_instruction_indicators:
+    if Sc.ann_params.includes_instruction_indicators:
         var instruction_start_item := InstructionStartLegendItem.new()
         items.push_back(instruction_start_item)
         var instruction_end_item := InstructionEndLegendItem.new()

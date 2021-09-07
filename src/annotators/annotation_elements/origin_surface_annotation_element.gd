@@ -7,11 +7,11 @@ const TYPE := AnnotationElementType.ORIGIN_SURFACE
 
 func _init(
         surface: Surface,
-        depth := AnnotationElementDefaults.SURFACE_DEPTH) \
+        depth := Sc.ann_params.surface_depth) \
         .(
         surface,
         depth,
-        Su.ann_defaults.ORIGIN_SURFACE_COLOR_PARAMS,
+        Sc.ann_params.origin_surface_color_params,
         true,
         false,
         TYPE) -> void:

@@ -2,16 +2,6 @@ class_name SurfacerCharacterPositionAnnotator
 extends ScaffolderCharacterPositionAnnotator
 
 
-const GRAB_POSITION_OPACITY := ScaffolderColors.ALPHA_XXFAINT
-const GRAB_POSITION_LINE_WIDTH := 5.0
-const GRAB_POSITION_LINE_LENGTH := 10.0
-
-const POSITION_ALONG_SURFACE_OPACITY := ScaffolderColors.ALPHA_XXFAINT
-const POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS := 4.0
-const POSITION_ALONG_SURFACE_T_LENGTH_IN_SURFACE := 0.0
-const POSITION_ALONG_SURFACE_T_LENGTH_OUT_OF_SURFACE := 20.0
-const POSITION_ALONG_SURFACE_T_WIDTH := 4.0
-
 var grab_position_color: Color
 var position_along_surface_color: Color
 
@@ -21,12 +11,12 @@ func _init(character: SurfacerCharacter).(character) -> void:
             character.position_annotation_color.h,
             0.7,
             0.9,
-            GRAB_POSITION_OPACITY)
+            Sc.ann_params.character_grab_position_opacity)
     self.position_along_surface_color = Color.from_hsv(
             character.position_annotation_color.h,
             0.7,
             0.9,
-            POSITION_ALONG_SURFACE_OPACITY)
+            Sc.ann_params.character_position_along_surface_opacity)
 
 
 func _draw() -> void:
@@ -40,12 +30,12 @@ func _draw_grab_position() -> void:
     var to: Vector2 = \
             from + \
             character.surface_state.grabbed_surface.normal * \
-                    GRAB_POSITION_LINE_LENGTH
+                    Sc.ann_params.character_grab_position_line_length
     draw_line(
             from,
             to,
             grab_position_color,
-            GRAB_POSITION_LINE_WIDTH)
+            Sc.ann_params.character_grab_position_line_width)
 
 
 func _draw_position_along_surface() -> void:
@@ -54,10 +44,11 @@ func _draw_position_along_surface() -> void:
             character.surface_state.center_position_along_surface,
             position_along_surface_color,
             position_along_surface_color,
-            POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS,
-            POSITION_ALONG_SURFACE_T_LENGTH_IN_SURFACE,
-            POSITION_ALONG_SURFACE_T_LENGTH_OUT_OF_SURFACE,
-            POSITION_ALONG_SURFACE_T_WIDTH,
+            Sc.ann_params.character_position_along_surface_target_point_radius,
+            Sc.ann_params.character_position_along_surface_t_length_in_surface,
+            Sc.ann_params \
+                    .character_position_along_surface_t_length_out_of_surface,
+            Sc.ann_params.character_position_along_surface_t_width,
             true,
             false,
             false)

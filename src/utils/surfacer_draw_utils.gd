@@ -5,39 +5,12 @@ extends ScaffolderDrawUtils
 
 const SQRT_TWO := sqrt(2.0)
 
-const SURFACE_DEPTH := 16.0
-const SURFACE_DEPTH_DIVISIONS_COUNT := 8
-const SURFACE_ALPHA_END_RATIO := .2
 
-const INSTRUCTION_INDICATOR_HEAD_LENGTH_RATIO := 0.35
-const INSTRUCTION_INDICATOR_HEAD_WIDTH_RATIO := 0.3
-const INSTRUCTION_INDICATOR_STRIKE_THROUGH_LENGTH_RATIO := 0.8
-const INSTRUCTION_INDICATOR_STROKE_WIDTH := 1.0
-
-const EDGE_TRAJECTORY_WIDTH := 1.0
-
-const EDGE_WAYPOINT_STROKE_WIDTH := EDGE_TRAJECTORY_WIDTH
-const EDGE_WAYPOINT_RADIUS := 6.0 * EDGE_WAYPOINT_STROKE_WIDTH
-const EDGE_START_RADIUS := 3.0 * EDGE_WAYPOINT_STROKE_WIDTH
-const EDGE_END_RADIUS := EDGE_WAYPOINT_RADIUS
-const EDGE_END_CONE_LENGTH := EDGE_WAYPOINT_RADIUS * 2.0
-
-const PATH_DOWNBEAT_HASH_LENGTH := EDGE_TRAJECTORY_WIDTH * 5
-const PATH_OFFBEAT_HASH_LENGTH := EDGE_TRAJECTORY_WIDTH * 3
-
-const EDGE_INSTRUCTION_INDICATOR_LENGTH := 24
-
-const IN_AIR_DESTINATION_INDICATOR_CONE_COUNT := 3
-const IN_AIR_DESTINATION_INDICATOR_SIZE_RATIO := 0.8
-
-const ADJACENT_VERTEX_TOO_CLOSE_DISTANCE_SQUARED_THRESHOLD := 0.25
-
-
-static func draw_surface(
+func draw_surface(
         canvas: CanvasItem,
         surface: Surface,
         color: Color,
-        depth := SURFACE_DEPTH) -> void:
+        depth: float = Sc.ann_params.surface_depth) -> void:
     var vertices := surface.vertices
     assert(!vertices.empty())
     
@@ -46,7 +19,8 @@ static func draw_surface(
         canvas.draw_circle(vertices[0], depth / 2.0, color)
         return
     
-    var surface_depth_division_size := depth / SURFACE_DEPTH_DIVISIONS_COUNT
+    var surface_depth_division_size: float = \
+            depth / Sc.ann_params.surface_depth_divisions_count
     var surface_depth_division_perpendicular_offset := \
             surface.normal * -surface_depth_division_size
     var half_surface_depth_division_perpendicular_offset := \
@@ -56,11 +30,11 @@ static func draw_surface(
     var surface_depth_division_parallel_end_offset = \
             surface_depth_division_perpendicular_offset.rotated(PI / 2.0)
     var alpha_start := color.a
-    var alpha_end := alpha_start * SURFACE_ALPHA_END_RATIO
+    var alpha_end: float = alpha_start * Sc.ann_params.surface_alpha_end_ratio
     
     # "Surfaces" can single vertices in the degenerate case.
     if vertices.size() > 1:
-        for i in SURFACE_DEPTH_DIVISIONS_COUNT:
+        for i in Sc.ann_params.surface_depth_divisions_count:
             var translation: Vector2 = \
                     surface_depth_division_perpendicular_offset * i + \
                     half_surface_depth_division_perpendicular_offset
@@ -73,7 +47,8 @@ static func draw_surface(
             polyline[polyline.size() - 1] += \
                     surface_depth_division_parallel_end_offset * i
             
-            var progress: float = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
+            var progress: float = \
+                    i / (Sc.ann_params.surface_depth_divisions_count - 1.0)
             progress = Sc.utils.ease_by_name(progress, "ease_out")
             color.a = alpha_start + progress * (alpha_end - alpha_start)
             canvas.draw_polyline(
@@ -87,7 +62,7 @@ static func draw_surface(
                 color)
 
 
-static func draw_position_along_surface(
+func draw_position_along_surface(
         canvas: CanvasItem,
         position: PositionAlongSurface,
         target_point_color: Color,
@@ -132,11 +107,11 @@ static func draw_position_along_surface(
                 target_point_color)
 
 
-static func draw_origin_marker(
+func draw_origin_marker(
         canvas: CanvasItem,
         target: Vector2,
         color: Color,
-        radius := EDGE_START_RADIUS,
+        radius: float = Sc.ann_params.edge_start_radius,
         border_width := 1.0,
         sector_arc_length := 3.0) -> void:
     draw_circle_outline(
@@ -148,15 +123,15 @@ static func draw_origin_marker(
             sector_arc_length)
 
 
-static func draw_destination_marker(
+func draw_destination_marker(
         canvas: CanvasItem,
         destination: PositionAlongSurface,
         is_based_on_target_point: bool,
         color: Color,
-        cone_length := EDGE_END_CONE_LENGTH,
-        circle_radius := EDGE_END_RADIUS,
+        cone_length: float = Sc.ann_params.edge_end_cone_length,
+        circle_radius: float = Sc.ann_params.edge_end_radius,
         is_filled := false,
-        border_width := EDGE_WAYPOINT_STROKE_WIDTH,
+        border_width: float = Sc.ann_params.edge_waypoint_stroke_width,
         sector_arc_length := 4.0) -> void:
     if destination.surface != null:
         # Draw a cone pointing toward the surface.
@@ -188,9 +163,9 @@ static func draw_destination_marker(
         
         var cone_end_point := destination.target_point
         
-        var cone_center_displacement := \
+        var cone_center_displacement: float = \
                 cone_length * SQRT_TWO / 2.0 * \
-                IN_AIR_DESTINATION_INDICATOR_SIZE_RATIO
+                Sc.ann_params.in_air_destination_indicator_size_ratio
         var circle_centers := [
             cone_end_point + Vector2(
                     cone_center_displacement,
@@ -206,22 +181,25 @@ static func draw_destination_marker(
                     -cone_center_displacement),
         ]
         
-        for i in IN_AIR_DESTINATION_INDICATOR_CONE_COUNT:
+        for i in Sc.ann_params.in_air_destination_indicator_cone_count:
             var circle_offset := Vector2(0.0, -cone_center_displacement) \
                     .rotated((2.0 * PI * i) / \
-                            IN_AIR_DESTINATION_INDICATOR_CONE_COUNT)
+                            Sc.ann_params \
+                            .in_air_destination_indicator_cone_count)
             draw_ice_cream_cone(
                     canvas,
                     cone_end_point,
                     cone_end_point + circle_offset,
-                    circle_radius * IN_AIR_DESTINATION_INDICATOR_SIZE_RATIO,
+                    circle_radius * \
+                                Sc.ann_params \
+                                .in_air_destination_indicator_size_ratio,
                     color,
                     is_filled,
                     border_width,
                     sector_arc_length)
 
 
-static func draw_instruction_indicator(
+func draw_instruction_indicator(
         canvas: CanvasItem,
         input_key: String,
         is_pressed: bool,
@@ -242,12 +220,15 @@ static func draw_instruction_indicator(
     
     var start := position - end_offset_from_mid
     var end := position + end_offset_from_mid
-    var head_length := length * INSTRUCTION_INDICATOR_HEAD_LENGTH_RATIO
-    var head_width := length * INSTRUCTION_INDICATOR_HEAD_WIDTH_RATIO
-    var strike_through_length := \
+    var head_length: float = \
+            length * Sc.ann_params.instruction_indicator_head_length_ratio
+    var head_width: float= \
+            length * Sc.ann_params.instruction_indicator_head_width_ratio
+    var strike_through_length: float= \
             INF if \
             is_pressed else \
-            length * INSTRUCTION_INDICATOR_STRIKE_THROUGH_LENGTH_RATIO
+            length * \
+            Sc.ann_params.instruction_indicator_strike_trough_length_ratio
     
     draw_strike_through_arrow(
             canvas,
@@ -257,13 +238,13 @@ static func draw_instruction_indicator(
             head_width,
             strike_through_length,
             color,
-            INSTRUCTION_INDICATOR_STROKE_WIDTH)
+            Sc.ann_params.instruction_indicator_stroke_width)
 
 
-static func draw_path(
+func draw_path(
         canvas: CanvasItem,
         path: PlatformGraphPath,
-        stroke_width := EDGE_TRAJECTORY_WIDTH,
+        stroke_width: float = Sc.ann_params.edge_trajectory_width,
         color := Color.white,
         trim_front_end_radius := 0.0,
         trim_back_end_radius := 0.0,
@@ -301,12 +282,12 @@ static func draw_path(
 # -   And distance calculations would require performing many sqrt calls for
 #     adjacent vertices each frame, as well as allocating and resizing unknown
 #     space for arrays to store this data.
-static func draw_path_duration_segment(
+func draw_path_duration_segment(
         canvas: CanvasItem,
         path: PlatformGraphPath,
         segment_time_start: float,
         segment_time_end: float,
-        stroke_width := EDGE_TRAJECTORY_WIDTH,
+        stroke_width: float = Sc.ann_params.edge_trajectory_width,
         color := Color.white,
         trim_front_end_radius := 0.0,
         trim_back_end_radius := 0.0) -> void:
@@ -453,7 +434,7 @@ static func draw_path_duration_segment(
             stroke_width)
 
 
-static func _trim_front_end(
+func _trim_front_end(
         vertices: PoolVector2Array,
         trim_radius: float) -> PoolVector2Array:
     if vertices.empty():
@@ -490,7 +471,7 @@ static func _trim_front_end(
     return vertices
 
 
-static func _trim_back_end(
+func _trim_back_end(
         vertices: PoolVector2Array,
         trim_radius: float) -> PoolVector2Array:
     if vertices.empty():
@@ -530,13 +511,13 @@ static func _trim_back_end(
     return vertices
 
 
-static func draw_beat_hashes(
+func draw_beat_hashes(
         canvas: CanvasItem,
         beats: Array,
-        downbeat_hash_length := PATH_DOWNBEAT_HASH_LENGTH,
-        offbeat_hash_length := PATH_OFFBEAT_HASH_LENGTH,
-        downbeat_stroke_width := EDGE_TRAJECTORY_WIDTH,
-        offbeat_stroke_width := EDGE_TRAJECTORY_WIDTH,
+        downbeat_hash_length: float = Sc.ann_params.path_downbeat_hash_length,
+        offbeat_hash_length: float = Sc.ann_params.path_offbeat_hash_length,
+        downbeat_stroke_width: float = Sc.ann_params.edge_trajectory_width,
+        offbeat_stroke_width: float = Sc.ann_params.edge_trajectory_width,
         downbeat_color := Color.white,
         offbeat_color := Color.white) -> void:
     for beat in beats:
@@ -565,18 +546,18 @@ static func draw_beat_hashes(
                 false)
 
 
-static func draw_edge(
+func draw_edge(
         canvas: CanvasItem,
         edge: Edge,
-        stroke_width := EDGE_TRAJECTORY_WIDTH,
+        stroke_width: float = Sc.ann_params.edge_trajectory_width,
         base_color := Color.white,
         includes_waypoints := false,
         includes_instruction_indicators := false,
         includes_continuous_positions := true,
         includes_discrete_positions := false) -> void:
     if base_color == Color.white:
-        base_color = Su.ann_defaults \
-                .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS.get_color()
+        base_color = Sc.ann_params \
+                .edge_discrete_trajectory_color_params.get_color()
     
     if edge.includes_trajectory:
         _draw_edge_from_instructions_positions(
@@ -584,21 +565,21 @@ static func draw_edge(
                 edge,
                 stroke_width,
                 base_color,
-                includes_waypoints,
-                includes_instruction_indicators,
-                includes_continuous_positions,
-                includes_discrete_positions)
+                Sc.ann_params.includes_waypoints,
+                Sc.ann_params.includes_instruction_indicators,
+                Sc.ann_params.includes_continuous_positions,
+                Sc.ann_params.includes_discrete_positions)
     else:
         _draw_edge_from_end_points(
                 canvas,
                 edge,
                 stroke_width,
                 base_color,
-                includes_waypoints,
-                includes_instruction_indicators)
+                Sc.ann_params.includes_waypoints,
+                Sc.ann_params.includes_instruction_indicators)
 
 
-static func _draw_edge_from_end_points(
+func _draw_edge_from_end_points(
         canvas: CanvasItem,
         edge: Edge,
         stroke_width: float,
@@ -611,9 +592,9 @@ static func _draw_edge_from_end_points(
             base_color,
             stroke_width)
     
-    if includes_waypoints:
-        var waypoint_color: Color = Su.ann_defaults \
-                .WAYPOINT_COLOR_PARAMS.get_color()
+    if Sc.ann_params.includes_waypoints:
+        var waypoint_color: Color = Sc.ann_params \
+                .waypoint_color_params.get_color()
         waypoint_color.h = base_color.h
         waypoint_color.a = base_color.a
         
@@ -627,16 +608,16 @@ static func _draw_edge_from_end_points(
                 edge.get_start(),
                 waypoint_color)
     
-    if includes_instruction_indicators:
-        var instruction_color: Color = Su.ann_defaults \
-                .INSTRUCTION_COLOR_PARAMS.get_color()
+    if Sc.ann_params.includes_instruction_indicators:
+        var instruction_color: Color = Sc.ann_params \
+                .instruction_color_params.get_color()
         instruction_color.h = base_color.h
         instruction_color.a = base_color.a
         
         # TODO: Draw instruction indicators.
 
 
-static func _draw_edge_from_instructions_positions(
+func _draw_edge_from_instructions_positions(
         canvas: CanvasItem,
         edge: Edge,
         stroke_width: float,
@@ -647,44 +628,44 @@ static func _draw_edge_from_instructions_positions(
         includes_discrete_positions: bool,
         origin_position_override := Vector2.INF) -> void:
     # Set up colors.
-    var continuous_trajectory_color: Color = Su.ann_defaults \
-            .EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS.get_color()
+    var continuous_trajectory_color: Color = Sc.ann_params \
+            .edge_continuous_trajectory_color_params.get_color()
     continuous_trajectory_color.h = discrete_trajectory_color.h
-    var waypoint_color: Color = Su.ann_defaults \
-            .WAYPOINT_COLOR_PARAMS.get_color()
+    var waypoint_color: Color = Sc.ann_params \
+            .waypoint_color_params.get_color()
     waypoint_color.h = discrete_trajectory_color.h
     waypoint_color.a = discrete_trajectory_color.a
-    var instruction_color: Color = Su.ann_defaults \
-            .INSTRUCTION_COLOR_PARAMS.get_color()
+    var instruction_color: Color = Sc.ann_params \
+            .instruction_color_params.get_color()
     instruction_color.h = discrete_trajectory_color.h
     instruction_color.a = discrete_trajectory_color.a
     
-    if includes_continuous_positions:
+    if Sc.ann_params.includes_continuous_positions:
         # Draw the trajectory (as calculated via continuous equations of motion
         # during step calculations).
         var vertices := _get_edge_trajectory_vertices(
                 edge,
                 true,
-                includes_continuous_positions)
+                Sc.ann_params.includes_continuous_positions)
         if vertices.size() >= 2:
             canvas.draw_polyline(
                     vertices,
                     continuous_trajectory_color,
                 stroke_width)
-    if includes_discrete_positions:
+    if Sc.ann_params.includes_discrete_positions:
         # Draw the trajectory (as approximated via discrete time steps during
         # instruction test calculations).
         var vertices := _get_edge_trajectory_vertices(
                 edge,
                 true,
-                includes_discrete_positions)
+                Sc.ann_params.includes_discrete_positions)
         if vertices.size() >= 2:
             canvas.draw_polyline(
                     vertices,
                     discrete_trajectory_color,
                     stroke_width)
     
-    if includes_waypoints:
+    if Sc.ann_params.includes_waypoints:
         # Draw the intermediate waypoints.
         var waypoint_positions := \
                 edge.trajectory.waypoint_positions if \
@@ -695,7 +676,7 @@ static func _draw_edge_from_instructions_positions(
             draw_circle_outline(
                     canvas,
                     waypoint_position,
-                    EDGE_WAYPOINT_RADIUS,
+                    Sc.ann_params.edge_waypoint_radius,
                     waypoint_color,
                     stroke_width,
                     4.0)
@@ -715,7 +696,7 @@ static func _draw_edge_from_instructions_positions(
                 origin_position,
                 waypoint_color)
     
-    if includes_instruction_indicators and \
+    if Sc.ann_params.includes_instruction_indicators and \
             edge.trajectory != null:
         # Draw the horizontal instruction positions.
         for instruction in edge.trajectory.horizontal_instructions:
@@ -724,7 +705,7 @@ static func _draw_edge_from_instructions_positions(
                     instruction.input_key,
                     instruction.is_pressed,
                     instruction.position,
-                    EDGE_INSTRUCTION_INDICATOR_LENGTH,
+                    Sc.ann_params.edge_instruction_indicator_length,
                     instruction_color)
         
         # Draw the vertical instruction end position.
@@ -734,11 +715,11 @@ static func _draw_edge_from_instructions_positions(
                     "j",
                     false,
                     edge.trajectory.jump_instruction_end.position,
-                    EDGE_INSTRUCTION_INDICATOR_LENGTH,
+                    Sc.ann_params.edge_instruction_indicator_length,
                     instruction_color)
 
 
-static func _get_edge_trajectory_vertices(
+func _get_edge_trajectory_vertices(
         edge: Edge,
         includes_end_points := true,
         is_continuous := true,
@@ -762,7 +743,7 @@ static func _get_edge_trajectory_vertices(
         ])
 
 
-static func _remove_too_close_neighbors(
+func _remove_too_close_neighbors(
         vertices: PoolVector2Array) -> PoolVector2Array:
     var result := PoolVector2Array()
     result.resize(vertices.size())
@@ -773,7 +754,8 @@ static func _remove_too_close_neighbors(
     for index in range(1, vertices.size()):
         var vertex := vertices[index]
         if vertex.distance_squared_to(previous_vertex) > \
-                ADJACENT_VERTEX_TOO_CLOSE_DISTANCE_SQUARED_THRESHOLD:
+                Sc.ann_params \
+                .adjacent_vertex_too_close_distance_squared_threshold:
             previous_vertex = vertex
             result[result_size] = previous_vertex
             result_size += 1

@@ -13,9 +13,9 @@ var is_destination: bool
 
 func _init(
         surface: Surface,
-        depth := AnnotationElementDefaults.SURFACE_DEPTH,
+        depth := Sc.ann_params.surface_depth,
         color_params: ColorParams = \
-                Su.ann_defaults.SURFACE_COLOR_PARAMS,
+                Sc.ann_params.surface_color_params,
         is_origin := false,
         is_destination := false,
         type := DEFAULT_TYPE) \
@@ -28,23 +28,10 @@ func _init(
 
 
 func draw(canvas: CanvasItem) -> void:
-    draw_from_surface(
+    _draw_from_surface(
             canvas,
             surface,
             color_params,
-            depth)
-
-
-static func draw_from_surface(
-        canvas: CanvasItem,
-        surface: Surface,
-        color_params: ColorParams,
-        depth := AnnotationElementDefaults.SURFACE_DEPTH) -> void:
-    var color := color_params.get_color()
-    Sc.draw.draw_surface(
-            canvas,
-            surface,
-            color,
             depth)
 
 

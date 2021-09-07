@@ -16,18 +16,18 @@ var includes_surfaces: bool
 
 func _init(
         failed_edge_attempt: FailedEdgeAttempt,
-        end_color_params := Su.ann_defaults \
-                .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,
+        end_color_params := Sc.ann_params \
+                .edge_discrete_trajectory_color_params,
         line_color_params := \
-                Su.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS,
+                Sc.ann_params.failed_edge_attempt_color_params,
         dash_length := \
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH,
+                Sc.ann_params.failed_edge_attempt_dash_length,
         dash_gap := \
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP,
-        dash_stroke_width := AnnotationElementDefaults \
-                .FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH,
-        includes_surfaces := AnnotationElementDefaults \
-                .FAILED_EDGE_ATTEMPT_INCLUDES_SURFACES) \
+                Sc.ann_params.failed_edge_attempt_dash_gap,
+        dash_stroke_width := Sc.ann_params \
+                .failed_edge_attempt_dash_stroke_width,
+        includes_surfaces := Sc.ann_params \
+                .failed_edge_attempt_includes_surfaces) \
         .(TYPE) -> void:
     assert(failed_edge_attempt != null)
     self.failed_edge_attempt = failed_edge_attempt
@@ -58,8 +58,8 @@ func draw(canvas: CanvasItem) -> void:
     Sc.draw.draw_x(
             canvas,
             middle,
-            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_WIDTH,
-            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_HEIGHT,
+            Sc.ann_params.failed_edge_attempt_x_width,
+            Sc.ann_params.failed_edge_attempt_x_height,
             line_color,
             dash_stroke_width)
     Sc.draw.draw_origin_marker(
@@ -72,11 +72,11 @@ func draw(canvas: CanvasItem) -> void:
             true,
             end_color)
     if includes_surfaces:
-        SurfaceAnnotationElement.draw_from_surface(
+        _draw_from_surface(
                 canvas,
                 failed_edge_attempt.get_start_surface(),
                 end_color_params)
-        SurfaceAnnotationElement.draw_from_surface(
+        _draw_from_surface(
                 canvas,
                 failed_edge_attempt.get_end_surface(),
                 end_color_params)

@@ -2,12 +2,6 @@ class_name SurfacerClickAnnotator
 extends ScaffolderClickAnnotator
 
 
-var VALID_SURFACE_COLOR: Color = Sc.colors.surface_click_selection
-var INVALID_SURFACE_COLOR: Color = Sc.colors.opacify(
-        Sc.colors.invalid, ScaffolderColors.ALPHA_SOLID)
-
-const SURFACE_DURATION := 0.4
-
 var selected_surface: Surface
 var is_surface_navigable: bool
 
@@ -21,9 +15,9 @@ func _init(
         ).(
         click_position,
         max(max(
-                CLICK_INNER_DURATION,
-                CLICK_OUTER_DURATION),
-                SURFACE_DURATION)
+                Sc.ann_params.click_inner_duration,
+                Sc.ann_params.click_outer_duration),
+                Sc.ann_params.click_surface_duration)
         ) -> void:
     self.selected_surface = selected_surface
     self.is_surface_navigable = is_surface_navigable
@@ -33,7 +27,9 @@ func _init(
 func _update() -> void:
     ._update()
     
-    surface_progress = (current_time - start_time) / SURFACE_DURATION
+    surface_progress = \
+            (current_time - start_time) / \
+            Sc.ann_params.click_surface_duration
     surface_progress = Sc.utils.ease_by_name(surface_progress, "ease_out")
 
 
@@ -42,10 +38,10 @@ func _draw() -> void:
     
     if !is_surface_animation_complete and \
             selected_surface != null:
-        var color := \
-                VALID_SURFACE_COLOR if \
+        var color: Color = \
+                Sc.ann_params.click_valid_surface_color if \
                 is_surface_navigable else \
-                VALID_SURFACE_COLOR
+                Sc.ann_params.click_invalid_surface_color
         var alpha := color.a * (1 - surface_progress)
         color.a = alpha
         

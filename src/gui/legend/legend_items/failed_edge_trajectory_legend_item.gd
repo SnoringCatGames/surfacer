@@ -24,8 +24,8 @@ func _draw_shape(
     var offset_from_center := size * 0.35 - Vector2(0.0, 6.0) * Sc.gui.scale
     var start := center - offset_from_center
     var end := center + offset_from_center
-    var color: Color = Su.ann_defaults \
-            .FAILED_EDGE_ATTEMPT_COLOR_PARAMS.get_color()
+    var color: Color = Sc.ann_params \
+            .failed_edge_attempt_color_params.get_color()
     Sc.draw.draw_dashed_line(
             self,
             start,
