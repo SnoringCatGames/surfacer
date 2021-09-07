@@ -2,9 +2,6 @@ class_name CharacterTileAnnotator
 extends Node2D
 
 
-const TILE_BORDER_OPACITY := ScaffolderColors.ALPHA_XFAINT
-const TILE_BORDER_WIDTH := 6.0
-
 var character: SurfacerCharacter
 var polyline: PoolVector2Array
 var tile_border_color: Color
@@ -18,7 +15,7 @@ func _init(character: SurfacerCharacter) -> void:
             character.position_annotation_color.h,
             0.7,
             0.9,
-            TILE_BORDER_OPACITY)
+            Sc.ann_params.character_grab_tile_border_opacity)
 
 
 func _draw() -> void:
@@ -38,7 +35,7 @@ func _draw_tile_border() -> void:
             cell_size / 2.0,
             false,
             tile_border_color,
-            TILE_BORDER_WIDTH)
+            Sc.ann_params.character_grab_tile_border_width)
 
 
 func check_for_update() -> void:

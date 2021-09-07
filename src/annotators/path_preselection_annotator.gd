@@ -8,6 +8,7 @@ var player_nav: PlayerNavigationBehavior
 var surface_color: Color
 var indicator_color: Color
 var path_color: Color
+var hash_color: Color
 
 var path_front_end_trim_radius: float
 var preselection_destination: PositionAlongSurface = null
@@ -26,18 +27,20 @@ var preselection_path_beats: Array
 
 func _init(character: SurfacerCharacter) -> void:
     self.character = character
-    self.player_nav = \
-            character.get_behavior(PlayerNavigationBehavior)
+    self.player_nav = character.get_behavior(PlayerNavigationBehavior)
     
     surface_color = Sc.colors.opacify(
             character.navigation_annotation_color,
-            ScaffolderColors.ALPHA_XFAINT)
+            Sc.ann_params.preselection_surface_opacity)
     indicator_color = Sc.colors.opacify(
             character.navigation_annotation_color,
-            ScaffolderColors.ALPHA_XFAINT)
+            Sc.ann_params.preselection_indicator_opacity)
     path_color = Sc.colors.opacify(
             character.navigation_annotation_color,
-            ScaffolderColors.ALPHA_XFAINT)
+            Sc.ann_params.preselection_path_opacity)
+    hash_color = Sc.colors.opacify(
+            character.navigation_annotation_color,
+            Sc.ann_params.preselection_hash_opacity)
     
     self.path_front_end_trim_radius = min(
             character.movement_params.collider_half_width_height.x,
@@ -159,15 +162,18 @@ func _draw() -> void:
     var surface_base_color: Color
     var position_indicator_base_color: Color
     var path_base_color: Color
+    var hash_base_color: Color
     if preselection_path != null:
         if character.is_player_character:
             surface_base_color = surface_color
             position_indicator_base_color = indicator_color
             path_base_color = path_color
+            hash_base_color = hash_color
         else:
             surface_base_color = surface_color
             position_indicator_base_color = indicator_color
             path_base_color = path_color
+            hash_base_color = hash_color
     else:
         surface_base_color = \
                 Sc.ann_params.preselection_invalid_surface_color
@@ -196,6 +202,13 @@ func _draw() -> void:
                     true,
                     false)
             
+            var hash_alpha := \
+                    hash_base_color.a * alpha_multiplier
+            var hash_color := Color(
+                    hash_base_color.r,
+                    hash_base_color.g,
+                    hash_base_color.b,
+                    hash_alpha)
             Sc.draw.draw_beat_hashes(
                     self,
                     preselection_path_beats,
@@ -203,8 +216,8 @@ func _draw() -> void:
                     Sc.ann_params.preselection_path_offbeat_hash_length,
                     Sc.ann_params.preselection_path_downbeat_stroke_width,
                     Sc.ann_params.preselection_path_offbeat_stroke_width,
-                    path_color,
-                    path_color)
+                    hash_color,
+                    hash_color)
         
         if phantom_surface.side != SurfaceSide.NONE:
             # Draw Surface.

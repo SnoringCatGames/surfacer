@@ -565,18 +565,18 @@ func draw_edge(
                 edge,
                 stroke_width,
                 base_color,
-                Sc.ann_params.includes_waypoints,
-                Sc.ann_params.includes_instruction_indicators,
-                Sc.ann_params.includes_continuous_positions,
-                Sc.ann_params.includes_discrete_positions)
+                includes_waypoints,
+                includes_instruction_indicators,
+                includes_continuous_positions,
+                includes_discrete_positions)
     else:
         _draw_edge_from_end_points(
                 canvas,
                 edge,
                 stroke_width,
                 base_color,
-                Sc.ann_params.includes_waypoints,
-                Sc.ann_params.includes_instruction_indicators)
+                includes_waypoints,
+                includes_instruction_indicators)
 
 
 func _draw_edge_from_end_points(
@@ -592,7 +592,7 @@ func _draw_edge_from_end_points(
             base_color,
             stroke_width)
     
-    if Sc.ann_params.includes_waypoints:
+    if includes_waypoints:
         var waypoint_color: Color = Sc.ann_params \
                 .waypoint_color_params.get_color()
         waypoint_color.h = base_color.h
@@ -608,7 +608,7 @@ func _draw_edge_from_end_points(
                 edge.get_start(),
                 waypoint_color)
     
-    if Sc.ann_params.includes_instruction_indicators:
+    if includes_instruction_indicators:
         var instruction_color: Color = Sc.ann_params \
                 .instruction_color_params.get_color()
         instruction_color.h = base_color.h
@@ -634,38 +634,36 @@ func _draw_edge_from_instructions_positions(
     var waypoint_color: Color = Sc.ann_params \
             .waypoint_color_params.get_color()
     waypoint_color.h = discrete_trajectory_color.h
-    waypoint_color.a = discrete_trajectory_color.a
     var instruction_color: Color = Sc.ann_params \
             .instruction_color_params.get_color()
     instruction_color.h = discrete_trajectory_color.h
-    instruction_color.a = discrete_trajectory_color.a
     
-    if Sc.ann_params.includes_continuous_positions:
+    if includes_continuous_positions:
         # Draw the trajectory (as calculated via continuous equations of motion
         # during step calculations).
         var vertices := _get_edge_trajectory_vertices(
                 edge,
                 true,
-                Sc.ann_params.includes_continuous_positions)
+                includes_continuous_positions)
         if vertices.size() >= 2:
             canvas.draw_polyline(
                     vertices,
                     continuous_trajectory_color,
                 stroke_width)
-    if Sc.ann_params.includes_discrete_positions:
+    if includes_discrete_positions:
         # Draw the trajectory (as approximated via discrete time steps during
         # instruction test calculations).
         var vertices := _get_edge_trajectory_vertices(
                 edge,
                 true,
-                Sc.ann_params.includes_discrete_positions)
+                includes_discrete_positions)
         if vertices.size() >= 2:
             canvas.draw_polyline(
                     vertices,
                     discrete_trajectory_color,
                     stroke_width)
     
-    if Sc.ann_params.includes_waypoints:
+    if includes_waypoints:
         # Draw the intermediate waypoints.
         var waypoint_positions := \
                 edge.trajectory.waypoint_positions if \
@@ -696,7 +694,7 @@ func _draw_edge_from_instructions_positions(
                 origin_position,
                 waypoint_color)
     
-    if Sc.ann_params.includes_instruction_indicators and \
+    if includes_instruction_indicators and \
             edge.trajectory != null:
         # Draw the horizontal instruction positions.
         for instruction in edge.trajectory.horizontal_instructions:
