@@ -97,7 +97,9 @@ The edges of this graph correspond to a type of movement that the character coul
 -   We have a broad-phase check to quickly eliminate possible surfaces that are obviously out of reach.
     -   This primarily looks at the horizontal and vertical distance from the origin to the destination.
 
-### Calculating "good" jump and land positions
+### Calculating "good" potential jump and land positions
+
+![A screenshot showing some "good" potential jump/land positions between two floor surfaces.](./jump-land-positions.png)
 
 Deciding which jump and land positions to base an edge calculation off of is non-trivial. We could just try calculating edges for a bunch of different jump/land positions for a given pair of surfaces. But edge calculations aren't cheap, and executing too many of them impacts performance. So it's important that we carefully choose "good" jump/land positions that have a relatively high likelihood of producing a valid and efficient edge.
 
@@ -222,15 +224,55 @@ Unfortunately, most jump/land position calculations are highly dependent on the 
 -   The actual waypoint that the final movement should move through, is instead the "real" waypoint that cooresponds to the far edge of this adjacent wall surface.
 -   So, when we find a fake waypoint, we immediately replace it with its adjacent real waypoint.
 -   Example scenario:
-  -   Origin is waypoint #0, Destination is waypoint #3
-  -   Assume we are jumping from a low-left platform to a high-right platform, and there is an intermediate block in the way.
-  -   Our first step attempt hits the underside of the block, so we try waypoints on either side.
-  -   After trying the left-hand waypoint (#1), we then hit the left side of the block. So we then try a top-side waypoint (#2).
-      -   (Bottom-side fails the surface-already-encountered check).
-  -   After going through this new left-side (right-wall), top-side waypoint (#2), we can successfully reach the destination.
-  -   With the resulting scenario, we shouldn't actually move through both of the intermediate waypoints (#1 and #2). We should should instead skip the first intermediate waypoint (#1) and go straight from the origin to the second intermediate waypoint (#2).
+    -   _(The following section illustrates this example.)_
+    -   Origin is waypoint #0, Destination is waypoint #3
+    -   Assume we are jumping from a low-left platform to a high-right platform, and there is an intermediate block in the way.
+    -   Our first step attempt hits the underside of the block, so we try waypoints on either side.
+    -   After trying the left-hand waypoint (#1), we then hit the left side of the block. So we then try a top-side waypoint (#2).
+        -   (Bottom-side fails the surface-already-encountered check).
+    -   After going through this new left-side (right-wall), top-side waypoint (#2), we can successfully reach the destination.
+    -   With the resulting scenario, we shouldn't actually move through both of the intermediate waypoints (#1 and #2). We should should instead skip the first intermediate waypoint (#1) and go straight from the origin to the second intermediate waypoint (#2).
 
-> TODO: screenshot of example scenario
+### An illustrated example of edge calculation with backtracking
+
+#### The resulting edge
+
+![A screenshot showing the final edge we're calculating, and the nearby surfaces we're navigating around.](./edge-calc-result.png)
+
+-   This shows the final edge jump trajectory that we are calculating.
+-   We're jumping from the lower floor surface to the upper floor surface.
+-   And we're moving around the upper wall surface.
+
+#### Step 1
+
+![A screenshot showing that we hit the lower-side of the platform, and will need to go around either side.](./edge-calc-step-1.png)
+
+-   This shows that when we consider naïve horizontal motion, we hit the lower-side of the platform.
+-   This means that we will need to go through a waypoint around either side of the platform.
+-   However, with the original jump height we were considering, we couldn't reach either waypoint.
+-   So we will need to backtrack and consider a greater jump height.
+
+#### Step 2
+
+![A screenshot showing that we have backtracked in our calculations, in order to consider a higher jump height. We are still colliding with the underside of the platform, but now we can reach one of the waypoints around the platform.](./edge-calc-step-2.png)
+
+-   This shows that we have backtracked in our calculations in order to consider a higher jump height.
+-   We are still colliding with the underside of the platform, but now we can reach one of the waypoints around the platform.
+
+#### Step 3
+
+![A screenshot showing that we can successfully move from the origin to the waypoint (we didn't collide with anything else on the way there).](./edge-calc-step-3.png)
+
+-   This shows that we can successfully move from the origin to the intermediate waypoint.
+-   This means that we didn't collide with anything else on the way there.
+-   Also, this mentions that this calculation involved a "fake" waypoint (outside the lower-left corner), and we replaced this with a "real" waypoint (outside the upper-left corner), since we didn't actually want to move through the lower-left-corner waypoint.
+
+#### Step 4
+
+![A screenshot showing that we can successfully move from our waypoint to the original destination.](./edge-calc-step-4.png)
+
+-   This shows that we can successfully move from our intermediate waypoint to the original destination.
+-   Now we can create the final edge trajectory by simply concatenating the parts leading to and from this intermediate waypoint.
 
 ### Collision calculation madness
 
@@ -254,6 +296,8 @@ Some known limitations and rough edges include:
 -   Similarly, Godot can also sometimes report two collisions instead of one, when it thinks that the character might be intersecting an interior surface.
 -   Inconsistency between the behavior of the [`KinematicBody2D`](https://docs.godotengine.org/en/stable/classes/class_kinematicbody2d.html) and [`Physics2DDirectSpaceState`](https://docs.godotengine.org/en/stable/classes/class_physics2ddirectspacestate.html) collision APIs.
     -   We were originally using the Physics2DDirectSpaceState for most of our graph calculations. However, this API seems to be more broken than the KinematicBody2D API. Also, we're using the KinematicBody2D API at run time, so we see more consistent results by using the KinematicBody2D API at build time as well.
+
+![All of the surfaces and inter-surface edge trajectories in a platform graph](./surfaces-and-edges.png)
 
 ## SurfaceNavigator: Using the platform graph to move from A to B
 
@@ -280,3 +324,5 @@ When we create the edges, we represent the movement trajectories according to th
 When executing edge instructions, the resulting run-time trajectory is usually slightly off from the expected trajectory that was pre-calculated when creating the edge. This variance is usually pretty minor, but, just in case, a given character can be configured to use the exact pre-calculated edge trajectory rather than the run-time version.
 
 Theoretically, this discrepancy shouldn't exist, and we should be able to eliminate it at some point.
+
+![An animated GIF showing a player-controlled character moving around according to player clicks within the level. Path preselections are shown as the click is dragged around the level.](./navigation.gif)
