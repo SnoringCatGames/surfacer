@@ -236,6 +236,7 @@ func _get_all_edges_from_one_side(
                         position_fall_off_wrapper,
                         exclusive_land_position,
                         fall_off_point_velocity_start,
+                        false,
                         needs_extra_wall_land_horizontal_speed)
         if calc_result != null:
             assert(EdgeCalcResultType.get_is_valid(
@@ -257,6 +258,7 @@ func _get_all_edges_from_one_side(
                 surfaces_in_fall_range_set,
                 position_fall_off_wrapper,
                 fall_off_point_velocity_start,
+                false,
                 self,
                 records_profile)
     

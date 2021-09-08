@@ -207,15 +207,20 @@ func find_path(
         # current in-air position.
         var origin := PositionAlongSurfaceFactory \
                 .create_position_without_surface(surface_state.center_position)
-        var from_air_edge := \
-                from_air_calculator.find_a_landing_trajectory(
-                        null,
-                        graph.collision_params,
-                        graph.surfaces_set,
-                        origin,
-                        character.velocity,
-                        destination,
-                        null)
+        # FIXME: --------------- Test/tweak/remove? this.
+        var start_velocity_epsilon := Vector2(0.0, -5.0)
+        var start_velocity := character.velocity + start_velocity_epsilon
+        var can_hold_jump_button_at_start: bool = \
+                character.actions.pressed_jump
+        var from_air_edge := from_air_calculator.find_a_landing_trajectory(
+                null,
+                graph.collision_params,
+                graph.surfaces_set,
+                origin,
+                start_velocity,
+                can_hold_jump_button_at_start,
+                destination,
+                null)
         
         if from_air_edge == null and \
                 navigation_state.is_currently_navigating and \

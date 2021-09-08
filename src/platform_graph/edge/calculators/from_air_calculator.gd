@@ -49,6 +49,7 @@ func calculate_edge(
             {},
             position_start,
             velocity_start,
+            false,
             position_end,
             position_end,
             needs_extra_wall_land_horizontal_speed)
@@ -82,6 +83,7 @@ func find_a_landing_trajectory(
         all_possible_surfaces_set: Dictionary,
         origin: PositionAlongSurface,
         velocity_start: Vector2,
+        can_hold_jump_button_at_start: bool,
         goal: PositionAlongSurface,
         exclusive_land_position: PositionAlongSurface,
         needs_extra_wall_land_horizontal_speed := false) -> FromAirEdge:
@@ -99,6 +101,7 @@ func find_a_landing_trajectory(
                         origin,
                         exclusive_land_position,
                         velocity_start,
+                        can_hold_jump_button_at_start,
                         needs_extra_wall_land_horizontal_speed)
         if calc_result == null:
             return null
@@ -110,7 +113,8 @@ func find_a_landing_trajectory(
                 all_possible_surfaces_set,
                 result_set,
                 origin.target_point,
-                velocity_start)
+                velocity_start,
+                can_hold_jump_button_at_start)
         var possible_landing_surfaces_from_point := result_set.keys()
         possible_landing_surfaces_from_point.sort_custom(
                 SurfaceMaxYComparator,
@@ -124,6 +128,7 @@ func find_a_landing_trajectory(
                 all_possible_surfaces_set,
                 origin,
                 velocity_start,
+                can_hold_jump_button_at_start,
                 self,
                 false,
                 possible_landing_surfaces_from_point,
@@ -142,7 +147,7 @@ func find_a_landing_trajectory(
                     false,
                     collision_params,
                     calc_result,
-                    false,
+                    can_hold_jump_button_at_start,
                     land_position.side)
     var trajectory := \
             EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps(

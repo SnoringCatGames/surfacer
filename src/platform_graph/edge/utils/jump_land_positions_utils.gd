@@ -2743,7 +2743,8 @@ static func calculate_land_positions_on_surface(
         movement_params: MovementParameters,
         land_surface: Surface,
         origin_position: PositionAlongSurface,
-        velocity_start: Vector2) -> Array:
+        velocity_start: Vector2,
+        can_hold_jump_button_at_start: bool) -> Array:
     var land_surface_first_point_wrapper: PositionAlongSurface = \
             PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
@@ -2782,9 +2783,6 @@ static func calculate_land_positions_on_surface(
     
     var origin_target_point := origin_position.target_point
     
-    var is_a_jump_calculator := false
-    var can_hold_jump_button_at_start := false
-    
     match land_surface.side:
         SurfaceSide.FLOOR:
             var land_surface_left_end_wrapper := \
@@ -2807,6 +2805,16 @@ static func calculate_land_positions_on_surface(
                                 movement_params.collider_half_width_height)
                 var must_reach_destination_on_fall := true
                 var must_reach_destination_on_rise := false
+                
+                var can_reach_vertical_displacement := VerticalMovementUtils \
+                        .check_can_reach_vertical_displacement(
+                                movement_params,
+                                origin_target_point,
+                                land_basis,
+                                velocity_start,
+                                can_hold_jump_button_at_start)
+                if !can_reach_vertical_displacement:
+                    return result
                 
                 var land_position_with_horizontal_movement_distance: \
                         PositionAlongSurface
@@ -2911,6 +2919,16 @@ static func calculate_land_positions_on_surface(
             elif is_behind_wall and \
                     is_below_bottom_of_wall and \
                     velocity_start.y < 0.0:
+                var can_reach_vertical_displacement := VerticalMovementUtils \
+                        .check_can_reach_vertical_displacement(
+                                movement_params,
+                                origin_target_point,
+                                land_surface_bottom_end_wrapper.target_point,
+                                velocity_start,
+                                can_hold_jump_button_at_start)
+                if !can_reach_vertical_displacement:
+                    return []
+                
                 # We may be able to reach around to the bottom of the wall.
                 var jump_land_positions := _create_jump_land_positions(
                         movement_params,
@@ -2937,6 +2955,17 @@ static func calculate_land_positions_on_surface(
                         movement_params.collider_half_width_height,
                         land_surface_top_end_wrapper,
                         land_surface_bottom_end_wrapper)
+                
+                var can_reach_vertical_displacement := VerticalMovementUtils \
+                        .check_can_reach_vertical_displacement(
+                                movement_params,
+                                origin_target_point,
+                                land_position.target_point,
+                                velocity_start,
+                                can_hold_jump_button_at_start)
+                if !can_reach_vertical_displacement:
+                    return []
+                
                 var jump_land_positions := _create_jump_land_positions(
                         movement_params,
                         origin_position,
@@ -2959,6 +2988,17 @@ static func calculate_land_positions_on_surface(
                                 origin_target_point,
                                 land_surface,
                                 movement_params.collider_half_width_height)
+                
+                var can_reach_vertical_displacement := VerticalMovementUtils \
+                        .check_can_reach_vertical_displacement(
+                                movement_params,
+                                origin_target_point,
+                                land_basis,
+                                velocity_start,
+                                can_hold_jump_button_at_start)
+                if !can_reach_vertical_displacement:
+                    return []
+                
                 var vertical_movement_displacement := \
                         _calculate_vertical_movement_displacement(
                                 movement_params,
@@ -3002,6 +3042,17 @@ static func calculate_land_positions_on_surface(
                                 movement_params.collider_half_width_height)
                 var must_reach_destination_on_fall := false
                 var must_reach_destination_on_rise := true
+                
+                var can_reach_vertical_displacement := VerticalMovementUtils \
+                        .check_can_reach_vertical_displacement(
+                                movement_params,
+                                origin_target_point,
+                                land_basis,
+                                velocity_start,
+                                can_hold_jump_button_at_start)
+                if !can_reach_vertical_displacement:
+                    return []
+                
                 var horizontal_movement_distance := \
                         _calculate_horizontal_movement_distance(
                                 movement_params,
