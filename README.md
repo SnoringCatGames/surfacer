@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="assets/images/device_icons/icon_128.png"
-       alt="The Surfacer icon, showing a path between surfaces">
+       alt="The Surfacer icon, showing a path between surfaces.">
 </p>
 
 > _**[Live demo](https://snoringcat.games/play/squirrel-away)**_
@@ -28,8 +28,8 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 --------
 
 <p align="center">
-  <img src="docs/demo.gif"
-       alt="An animated GIF showing characters moving around with various behaviors and paths">
+  <img src="docs/navigation.gif"
+       alt="An animated GIF showing a player-controlled character moving around according to player clicks within the level. Path preselections are shown as the click is dragged around the level.">
 </p>
 
 ## What is this?
@@ -75,6 +75,11 @@ But there are use-cases for which we really benefit from an AI that can accurate
 
 You can also read more about how Surfacer's AI and movement works in [this series of devlog posts on devlog.levi.dev](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html).
 
+<p align="center">
+  <img src="docs/demo.gif"
+       alt="An animated GIF showing characters moving around with various behaviors and paths.">
+</p>
+
 ## Licenses
 
 -   All code is published under the [MIT license](LICENSE).
@@ -82,5 +87,5 @@ You can also read more about how Surfacer's AI and movement works in [this serie
 
 <p align="center">
   <img src="assets/images/device_icons/icon_128.png"
-       alt="The Surfacer icon, showing a path between surfaces">
+       alt="The Surfacer icon, showing a path between surfaces.">
 </p>
