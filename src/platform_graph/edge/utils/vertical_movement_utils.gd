@@ -20,7 +20,6 @@ static func calculate_vertical_step(
     var destination_waypoint := edge_calc_params.destination_waypoint
     var velocity_start := edge_calc_params.velocity_start
     var can_hold_jump_button := edge_calc_params.can_hold_jump_button
-    var can_backtrack_on_height := edge_calc_params.can_backtrack_on_height
     
     var position_start := origin_waypoint.position
     var position_end := destination_waypoint.position
@@ -684,3 +683,24 @@ static func calculate_min_upward_distance(
     #     s = -v_0^2 / 2 / a
     return (movement_params.jump_boost * movement_params.jump_boost) / 2.0 / \
             movement_params.gravity_fast_fall
+
+
+static func check_can_reach_vertical_displacement(
+        movement_params: MovementParameters,
+        position_start: Vector2,
+        position_end: Vector2,
+        velocity_start: Vector2,
+        can_hold_jump_button_at_start: bool) -> bool:
+    var ascent_gravity := \
+            movement_params.gravity_slow_rise if \
+            can_hold_jump_button_at_start else \
+            movement_params.gravity_fast_fall
+    # From a basic equation of motion:
+    #     v^2 = v_0^2 + 2*a*(s - s_0)
+    #     s_0 = 0
+    #     v = 0
+    # Algebra...:
+    #     s = -v_0^2 / 2 / a
+    var max_upward_distance := \
+            velocity_start.y * velocity_start.y / 2.0 / ascent_gravity
+    return position_end.y - position_start.y > -max_upward_distance

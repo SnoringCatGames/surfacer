@@ -54,6 +54,7 @@ func get_all_inter_surface_edges_from_surface(
                 surfaces_in_fall_range_set,
                 jump_position,
                 velocity_start,
+                false,
                 self,
                 true)
         
@@ -88,6 +89,7 @@ func calculate_edge(
                     position_start,
                     position_end,
                     velocity_start,
+                    false,
                     needs_extra_wall_land_horizontal_speed)
     if calc_result != null:
         return _create_edge_from_calc_results(
