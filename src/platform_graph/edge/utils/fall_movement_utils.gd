@@ -379,16 +379,31 @@ static func calculate_jump_or_fall_range_polygon_from_point(
     var top_right := Vector2.INF
     var bottom_left := Vector2.INF
     var bottom_right := Vector2.INF
-    if is_considering_jump_distance:
-        var max_horizontal_jump_distance := \
-                movement_params.get_max_horizontal_jump_distance(
-                        SurfaceSide.NONE)
+    if is_considering_jump_distance and \
+            velocity_start.y < 0.0:
+        # From a basic equation of motion:
+        #     v^2 = v_0^2 + 2*a*(s - s_0)
+        #     s_0 = 0
+        #     v = 0
+        # Algebra...:
+        #     s = -v_0^2 / 2 / a
+        var max_upward_distance := \
+                velocity_start.y * velocity_start.y / 2.0 / \
+                movement_params.gravity_slow_rise
+        var offset_y_to_top_corner := -max_upward_distance
+        
+        var horizontal_offset_for_jump_distance := HorizontalMovementUtils \
+                .calculate_max_horizontal_displacement_before_returning_to_starting_height(
+                        abs(velocity_start.x),
+                        velocity_start.y,
+                        movement_params.max_horizontal_speed_default,
+                        movement_params.gravity_slow_rise,
+                        movement_params.gravity_fast_fall)
         var horizontal_offset_during_jump_vertical_offset := \
-                movement_params.max_upward_jump_distance / slope
+                max_upward_distance / slope
         var offset_x_to_top_corner := \
-                max_horizontal_jump_distance - \
+                horizontal_offset_for_jump_distance - \
                 horizontal_offset_during_jump_vertical_offset
-        var offset_y_to_top_corner := -movement_params.max_upward_jump_distance
         
         top_left = origin + Vector2(
                 -offset_x_to_top_corner,
