@@ -549,14 +549,6 @@ func set_start_attachment_surface_side_or_position(
     _start_attachment_surface_side_or_position = surface_side_or_position
 
 
-func set_position(position: Vector2) -> void:
-    self.position = position
-    surface_state.center_position = position
-    surface_state.center_position_along_surface.match_current_grab(
-            surface_state.grabbed_surface,
-            surface_state.center_position)
-
-
 func get_intended_position(type: int) -> PositionAlongSurface:
     match type:
         IntendedPositionType.CENTER_POSITION:

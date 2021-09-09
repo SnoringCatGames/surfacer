@@ -62,7 +62,8 @@ func check_for_update() -> void:
             Sc.ann_params.recent_positions_buffer_size
     
     # Record the new position for the current frame.
-    recent_positions[current_position_index] = character.position
+    recent_positions[current_position_index] = \
+            character.surface_state.center_position
     # Record an empty place-holder action value for the current frame.
     recent_actions[current_position_index] = CharacterActionType.NONE
     # Record an empty place-holder beat value for the current frame.

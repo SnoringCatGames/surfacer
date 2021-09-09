@@ -144,7 +144,8 @@ func update() -> void:
     velocity = character.velocity
     previous_center_position = center_position
     center_position = character.position
-    did_move_last_frame = previous_center_position != center_position
+    did_move_last_frame = !Sc.geometry.are_points_equal_with_epsilon(
+            previous_center_position, center_position, 0.00001)
     
     _update_contacts()
     _update_touch_state()

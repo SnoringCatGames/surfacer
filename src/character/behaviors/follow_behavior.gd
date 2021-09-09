@@ -72,8 +72,9 @@ func _on_physics_process(delta: float) -> void:
             get_is_paused():
         return
     
-    var distance_squared_to_target := \
-            character.position.distance_squared_to(move_target.position)
+    var distance_squared_to_target: float = \
+            character.surface_state.center_position.distance_squared_to(
+                    move_target.position)
     
     var close_enough_to_stop_moving_distance_squared := \
             close_enough_to_stop_moving_distance * \
@@ -116,7 +117,8 @@ func _on_physics_process(delta: float) -> void:
                         "behavior=%s, character=%s, position=%s") % [
                             behavior_name,
                             character.character_name,
-                            Sc.utils.get_vector_string(character.position),
+                            Sc.utils.get_vector_string(
+                                    character.surface_state.center_position),
                         ])
     else:
         if is_far_enough_to_start_moving:
@@ -129,7 +131,8 @@ func _on_physics_process(delta: float) -> void:
                         "behavior=%s, character=%s, position=%s") % [
                             behavior_name,
                             character.character_name,
-                            Sc.utils.get_vector_string(character.position),
+                            Sc.utils.get_vector_string(
+                                    character.surface_state.center_position),
                         ])
 
 

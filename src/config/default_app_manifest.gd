@@ -85,7 +85,8 @@ func _update_to_emphasize_annotations(manifest: Dictionary) -> void:
     ann_params_man.instruction_hue_max = 1.0
     ann_params_man.instruction_saturation = 0.3
     ann_params_man.instruction_value = 0.9
-    ann_params_man.instruction_alpha = 0.0
+    ann_params_man.instruction_alpha = 0.9
+#    ann_params_man.instruction_alpha = 0.0
     ann_params_man.edge_discrete_trajectory_color_params = \
             ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
                     ann_params_man.edge_hue_min,
@@ -120,9 +121,11 @@ func _update_to_emphasize_annotations(manifest: Dictionary) -> void:
     ann_params_man.preselection_surface_opacity = 0.6
     ann_params_man.preselection_indicator_opacity = 0.6
     ann_params_man.preselection_path_opacity = 0.6
+#    ann_params_man.preselection_hash_opacity = 0.0
     ann_params_man.preselection_hash_opacity = 0.0
     
-    ann_params_man.recent_movement_opacity_newest = 0.0
+    ann_params_man.recent_movement_opacity_newest = 0.99
+#    ann_params_man.recent_movement_opacity_newest = 0.0
     ann_params_man.recent_movement_opacity_oldest = 0.0
     
     ann_params_man.character_position_opacity = 0.0

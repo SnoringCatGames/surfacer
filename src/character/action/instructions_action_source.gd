@@ -27,9 +27,7 @@ func update(
     
     for playback in _all_playback:
         # Handle any new key presses up till the current time.
-        var new_instructions: Array = playback.update(
-                time_scaled,
-                character)
+        playback.update(time_scaled, character)
         
         non_pressed_keys.clear()
         
