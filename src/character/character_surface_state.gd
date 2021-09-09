@@ -737,10 +737,10 @@ func _update_horizontal_direction() -> void:
 
 
 func _update_grab_trigger_state() -> void:
-    var facing_into_wall_and_pressing_up: bool = \
-            character.actions.pressed_up and is_facing_wall
-    var facing_into_wall_and_pressing_grab: bool = \
-            character.actions.pressed_grab and is_facing_wall
+    var is_touching_wall_and_pressing_up: bool = \
+            character.actions.pressed_up and is_touching_wall
+    var is_touching_wall_and_pressing_grab: bool = \
+            character.actions.pressed_grab and is_touching_wall
     
     var is_pressing_floor_grab_input: bool = \
             character.actions.pressed_down
@@ -806,14 +806,14 @@ func _update_grab_trigger_state() -> void:
                     character.actions.pressed_left) or \
             (previous_grabbed_side == SurfaceSide.LEFT_WALL and \
                     character.actions.pressed_right)
-    var facing_into_previous_wall_and_pressing_up: bool = \
+    var is_facing_into_previous_wall_and_pressing_up: bool = \
             character.actions.pressed_up and is_facing_previous_wall
-    var facing_into_previous_wall_and_pressing_grab: bool = \
+    var is_facing_into_previous_wall_and_pressing_grab: bool = \
             character.actions.pressed_grab and is_facing_previous_wall
     var is_pressing_previous_wall_grab_input := \
             (is_pressing_into_previous_wall or \
-            facing_into_previous_wall_and_pressing_up or \
-            facing_into_previous_wall_and_pressing_grab) and \
+            is_facing_into_previous_wall_and_pressing_up or \
+            is_facing_into_previous_wall_and_pressing_grab) and \
             !is_pressing_away_from_previous_wall
     
     var is_still_triggering_wall_grab_since_rounding_corner_to_floor := \
@@ -861,8 +861,8 @@ func _update_grab_trigger_state() -> void:
             is_still_triggering_wall_grab_since_rounding_corner_to_ceiling) and \
             character.movement_params.can_grab_ceilings
     is_triggering_implicit_wall_grab = \
-            (facing_into_wall_and_pressing_up or \
-            facing_into_wall_and_pressing_grab or \
+            (is_touching_wall_and_pressing_up or \
+            is_touching_wall_and_pressing_grab or \
             is_still_triggering_floor_grab_since_rounding_corner_to_wall or \
             is_still_triggering_ceiling_grab_since_rounding_corner_to_wall) and \
             character.movement_params.can_grab_walls
