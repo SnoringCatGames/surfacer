@@ -99,6 +99,7 @@ var surface_type := SurfaceType.AIR
 var center_position := Vector2.INF
 var previous_center_position := Vector2.INF
 var did_move_last_frame := false
+var did_move_frame_before_last := false
 var grab_position := Vector2.INF
 var grab_position_tile_map_coord := Vector2.INF
 var grabbed_tile_map: SurfacesTileMap
@@ -144,6 +145,7 @@ func update() -> void:
     velocity = character.velocity
     previous_center_position = center_position
     center_position = character.position
+    did_move_frame_before_last = did_move_last_frame
     did_move_last_frame = !Sc.geometry.are_points_equal_with_epsilon(
             previous_center_position, center_position, 0.00001)
     

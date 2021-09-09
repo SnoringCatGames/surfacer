@@ -109,8 +109,7 @@ func navigate_path(
             path, path_start_time_scaled)
     navigation_state.is_currently_navigating = true
     navigation_state.has_reached_destination = false
-    navigation_state.path_start_frame_index = \
-            Sc.time.get_play_physics_frame_count()
+    navigation_state.path_start_time = Sc.time.get_scaled_play_time()
     current_navigation_attempt_count += 1
     
     var duration_navigate_to_position: float = \
@@ -733,8 +732,7 @@ func _update(
         just_started_new_edge := false,
         is_starting_navigation_retry := false) -> void:
     if just_started_new_edge:
-        navigation_state.edge_start_frame_index = \
-                Sc.time.get_play_physics_frame_count()
+        navigation_state.edge_start_time = Sc.time.get_scaled_play_time()
     
     if !navigation_state.is_currently_navigating:
         navigation_state.just_ended = false
@@ -748,9 +746,14 @@ func _update(
         navigation_state.just_reached_end_of_edge = false
         return
     
-    if !character.surface_state.did_move_last_frame and \
-            navigation_state.edge_start_frame_index <= \
-                    Sc.time.get_play_physics_frame_count() - 2:
+    var is_character_stuck: bool = \
+            !character.surface_state.did_move_last_frame and \
+            !character.surface_state.did_move_frame_before_last and \
+            navigation_state.edge_start_time <= \
+                    Sc.time.get_scaled_play_time() - \
+                    Sc.time.PHYSICS_TIME_STEP * 2.0
+    
+    if is_character_stuck:
         # FIXME: ------------
         # - This work-around shouldn't be needed. What's the underlying
         #   problem?
