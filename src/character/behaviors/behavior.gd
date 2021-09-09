@@ -305,7 +305,8 @@ func _attempt_move() -> void:
                     "behavior=%s, character=%s, position=%s") % [
                         behavior_name,
                         character.character_name,
-                        Sc.utils.get_vector_string(character.position),
+                        Sc.utils.get_vector_string(
+                                character.surface_state.center_position),
                     ])
         BehaviorMoveResult.REACHED_MAX_DISTANCE:
             character.navigator.stop()

@@ -109,6 +109,8 @@ func navigate_path(
             path, path_start_time_scaled)
     navigation_state.is_currently_navigating = true
     navigation_state.has_reached_destination = false
+    navigation_state.path_start_frame_index = \
+            Sc.time.get_play_physics_frame_count()
     current_navigation_attempt_count += 1
     
     var duration_navigate_to_position: float = \
@@ -232,7 +234,6 @@ func find_path(
             
             # TODO: This case shouldn't be needed; in theory, we should have
             #       been able to find a valid land trajectory above.
-            Sc.logger.warning("Unable to calculate air-to-surface edge")
             
             var elapsed_edge_time := playback.get_elapsed_time_scaled()
             if elapsed_edge_time < edge.duration:
@@ -242,7 +243,7 @@ func find_path(
                                 elapsed_edge_time,
                                 character)
             else:
-                Sc.logger.warning(
+                Sc.logger.error(
                         "Unable to re-use current edge as air-to-surface " +
                         "edge: edge playback time exceeds edge duration")
         
@@ -272,7 +273,7 @@ func find_path(
             # We were able to calculate a valid surface-to-air edge.
             suffix_edge = surface_to_air_edge
         else:
-            Sc.logger.warning("Unable to calculate surface-to-air edge")
+            # We were unable to calculate a valid surface-to-air edge.
             Sc.profiler.stop("navigator_find_path")
             return null
     
@@ -632,7 +633,7 @@ func _calculate_surface_to_air_edge(
 
 func _set_reached_destination() -> void:
     if movement_params.forces_character_position_to_match_path_at_end:
-        character.set_position(edge.get_end())
+        character.position = edge.get_end()
     if movement_params.forces_character_velocity_to_zero_at_path_end and \
             edge.get_end_surface() != null:
         match edge.get_end_surface().side:
@@ -688,7 +689,7 @@ func _start_edge(
     edge = path.edges[index]
     
     if movement_params.forces_character_position_to_match_edge_at_start:
-        character.set_position(edge.get_start())
+        character.position = edge.get_start()
     if movement_params.forces_character_velocity_to_match_edge_at_start:
         character.velocity = edge.velocity_start
         surface_state.horizontal_acceleration_sign = 0
@@ -731,6 +732,10 @@ func _start_edge(
 func _update(
         just_started_new_edge := false,
         is_starting_navigation_retry := false) -> void:
+    if just_started_new_edge:
+        navigation_state.edge_start_frame_index = \
+                Sc.time.get_play_physics_frame_count()
+    
     if !navigation_state.is_currently_navigating:
         navigation_state.just_ended = false
         navigation_state.just_reached_destination = false
@@ -743,16 +748,15 @@ func _update(
         navigation_state.just_reached_end_of_edge = false
         return
     
-    # FIXME: ------ This can result in character's getting stuck in mid-air in a
-    #        continuous, new-nav-every-frame loop.
-#    if !character.surface_state.did_move_last_frame and \
-#            !just_started_navigating:
-#        # FIXME: ------------
-#        # - This work-around shouldn't be needed. What's the underlying
-#        #   problem?
-#        Sc.logger.warning(
-#                "SurfaceNavigator.is_currently_navigating and " +
-#                "!CharacterSurfaceState.did_move_last_frame")
+    if !character.surface_state.did_move_last_frame and \
+            navigation_state.edge_start_frame_index <= \
+                    Sc.time.get_play_physics_frame_count() - 2:
+        # FIXME: ------------
+        # - This work-around shouldn't be needed. What's the underlying
+        #   problem?
+        Sc.logger.error(
+                "SurfaceNavigator.is_currently_navigating and " +
+                "!CharacterSurfaceState.did_move_last_frame")
 #        var destination := path.destination
 #        var graph_destination_for_in_air_destination := \
 #                path.graph_destination_for_in_air_destination

@@ -24,6 +24,9 @@ var just_interrupted_by_player_action := false
 var just_reached_end_of_edge := false
 var is_stalling_one_frame_before_reaching_end := false
 
+var path_start_frame_index := -1
+var edge_start_frame_index := -1
+
 var expected_position_along_surface := PositionAlongSurface.new()
 
 
@@ -44,5 +47,8 @@ func reset() -> void:
     self.just_interrupted_by_player_action = false
     self.just_reached_end_of_edge = false
     self.is_stalling_one_frame_before_reaching_end = false
+    
+    self.path_start_frame_index = -1
+    self.edge_start_frame_index = -1
     
     self.expected_position_along_surface.reset()

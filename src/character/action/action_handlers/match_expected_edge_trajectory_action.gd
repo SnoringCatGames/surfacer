@@ -39,7 +39,7 @@ func process(character) -> bool:
             var is_movement_beyond_expected_trajectory := \
                     position == Vector2.INF
             if !is_movement_beyond_expected_trajectory:
-                character.set_position(position)
+                character.position = position
                 synced_positions = true
         
         var synced_velocities := false

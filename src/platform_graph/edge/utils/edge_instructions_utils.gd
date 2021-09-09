@@ -134,7 +134,7 @@ static func convert_calculation_steps_to_movement_instructions(
                         time_instruction_start,
                         vertical_step.time_step_start + \
                                 duration - \
-                                Time.PHYSICS_TIME_STEP - \
+                                Time.PHYSICS_TIME_STEP * 2.0 - \
                                 0.0001),
                 0.0)
         
