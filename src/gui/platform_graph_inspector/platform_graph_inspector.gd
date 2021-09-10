@@ -554,6 +554,9 @@ static func _find_closest_jump_land_positions(
 # Conditionally prints the given message, depending on the SurfacerCharacter's
 # configuration.
 func _log(message: String) -> void:
-    if Sc.characters.get_player_character().movement_params \
-            .logs_inspector_events:
+    var player_character: ScaffolderCharacter = \
+            Sc.characters.get_player_character()
+    if !is_instance_valid(player_character):
+        return
+    if player_character.movement_params.logs_inspector_events:
         Sc.logger.print("[Inpsector] %s" % message)

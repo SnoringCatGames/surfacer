@@ -33,6 +33,12 @@ func _unhandled_input(event: InputEvent) -> void:
         
         var click_position: Vector2 = \
                 Sc.utils.get_level_touch_position(event)
+        
+        # TODO: Update SurfaceParser APIs to not need the character to be given.
+        if !is_instance_valid(Sc.level.player_character):
+            first_target = null
+            return
+        
         var surface_position := \
                 SurfaceParser.find_closest_position_on_a_surface(
                         click_position,
@@ -46,18 +52,28 @@ func _unhandled_input(event: InputEvent) -> void:
         else:
             # Selecting the land position.
             
+            var character_name: String = \
+                    Su.graph_inspector.last_selected_character_name
+            
+            if character_name == "":
+                # We don't know what character to base our inspection on.
+                first_target = null
+                return
+            
+            var movement_params: MovementParameters = \
+                    Su.movement.character_movement_params[character_name]
             possible_jump_land_positions = JumpLandPositionsUtils \
                     .calculate_jump_land_positions_for_surface_pair(
-                            Sc.level.player_character.movement_params,
+                            movement_params,
                             first_target.surface,
                             surface_position.surface)
             
             selection_time = Sc.time.get_play_time()
             
             # TODO: Add support for configuring edge type and graph from radio
-            #       buttons in the inspector.
-            var graph: PlatformGraph = Sc.level.graph_parser.platform_graphs[ \
-                    Su.graph_inspector.last_selected_character_name]
+            #       buttons in the inspector?
+            var graph: PlatformGraph = \
+                    Sc.level.graph_parser.platform_graphs[character_name]
             inspector.select_edge_or_surface(
                     first_target,
                     surface_position,

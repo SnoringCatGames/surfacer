@@ -6,6 +6,8 @@ extends SurfacerLevel
 func _start() -> void:
     ._start()
     
+    assert(Sc.characters.default_character_name != "")
+    
     # FIXME: Move this character creation (and readiness recording) back into
     #        Level.
     # Add the character after removing the loading screen, since the camera

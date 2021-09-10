@@ -2,7 +2,9 @@ class_name PathPreselectionAnnotator
 extends Node2D
 
 
+# TODO: Move predictions out into a separate annotator.
 var _predictions_container: Node2D
+
 var character: SurfacerCharacter
 var player_nav: PlayerNavigationBehavior
 var surface_color: Color
