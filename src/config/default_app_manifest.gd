@@ -72,7 +72,8 @@ func _update_to_emphasize_annotations(manifest: Dictionary) -> void:
     ann_params_man.edge_hue_max = 1.0
     ann_params_man.edge_discrete_trajectory_saturation = 0.8
     ann_params_man.edge_discrete_trajectory_value = 0.9
-    ann_params_man.edge_discrete_trajectory_alpha = 0.0
+    ann_params_man.edge_discrete_trajectory_alpha = 0.8
+#    ann_params_man.edge_discrete_trajectory_alpha = 0.0
     ann_params_man.edge_continuous_trajectory_saturation = 0.6
     ann_params_man.edge_continuous_trajectory_value = 0.6
     ann_params_man.edge_continuous_trajectory_alpha = 0.8
