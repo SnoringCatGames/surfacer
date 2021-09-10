@@ -644,19 +644,19 @@ func _draw_edge_from_instructions_positions(
         var vertices := _get_edge_trajectory_vertices(
                 edge,
                 true,
-                includes_continuous_positions)
+                true)
         if vertices.size() >= 2:
             canvas.draw_polyline(
                     vertices,
                     continuous_trajectory_color,
-                stroke_width)
+                    stroke_width)
     if includes_discrete_positions:
         # Draw the trajectory (as approximated via discrete time steps during
         # instruction test calculations).
         var vertices := _get_edge_trajectory_vertices(
                 edge,
                 true,
-                includes_discrete_positions)
+                false)
         if vertices.size() >= 2:
             canvas.draw_polyline(
                     vertices,
