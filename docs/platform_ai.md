@@ -301,7 +301,9 @@ Some known limitations and rough edges include:
 
 ## SurfaceNavigator: Using the platform graph to move from A to B
 
-Once the platform graph has been parsed, finding and moving along a path through the graph is relatively straight-forward. The sequence of events looks like the following:
+Once the platform graph has been parsed, finding and moving along a path through the graph is relatively straight-forward.
+
+The sequence of events looks like the following:
 
 -   Given a target point to navigate towards and the character's current position.
 -   Find the closest point along the closest surface to the target point.
@@ -309,20 +311,72 @@ Once the platform graph has been parsed, finding and moving along a path through
     -   We can use distance or duration as the edge weights.
 -   Execute playback of the instruction set for each edge of the path, in sequence.
 
-![SurfaceNavigator finding a path to a destination](./navigator-preselection.png)
+![An animated GIF showing a player-controlled character moving around according to player clicks within the level. Path preselections are shown as the click is dragged around the level.](./navigation.gif)
+> The green character is controlled by player clicks. The orange character is controlled by AI behaviors.
 
 ### Dynamic edge optimization according to runtime approach
 
-At runtime, after finding a path through build-time-calculated edges, we try to optimize the jump-off points of the edges to better account for the direction that the character will be approaching the edge from. This produces more efficient and natural movement. The build-time-calculated edge state would only use surface end-points or closest points. We also take this opportunity to update start velocities to exactly match what is allowed from the ramp-up distance along the edge, rather than either the fixed zero or max-speed value used for the build-time-calculated edge state.
+At runtime, after finding a path through build-time-calculated edges, we try to optimize the jump-off points of the edges to better account for the direction that the character will be approaching the edge from.
+
+-   This produces more efficient and natural movement.
+-   The build-time-calculated edge state would only use surface end-points or closest points.
+-   We also take this opportunity to update start velocities to exactly match what is allowed from the ramp-up distance along the edge, rather than either the fixed zero or max-speed value used for the build-time-calculated edge state.
+
+![A screenshot showing an unoptimized path. There are some un-smooth angles between adjacent edges.](./unoptimized-path.png)
+> An unoptimized path.
+
+![A screenshot showing an optimized path. The jump-off points have been moved slightly earlier, and produce less-perpendicular angles in the aggregate movement.](./optimized-path.png)
+> An optimized path. Notice how the jump-off points from the upper floor surfaces produce less-perpendicular angles.
 
 ### Edge instructions playback
 
-When we create the edges, we represent the movement trajectories according to the sequence of instructions that would produce the trajectory. Each instruction is simply represented by an ID for the relevant input key, whether the key is being pressed or released, and the time. The character movement system can then handle these input key events in the same way as actual player-triggered input key events.
+When we initially calculate the edges, we also store the sequence of instructions that would produce the edge's movement.
+
+Each instruction defines the following:
+
+-   An ID for the relevant input key
+-   Whether the key is being pressed or released.
+-   The time.
+
+The character movement system can then handle these input key events in the same way as actual player-triggered input key events.
+
+![A screenshot showing a jump trajectory with instruction indicators drawn over-top it.](./edge-instructions.png)
+> Instruction input corresponding to the jump trajectory.
+
+-   An arrow represents a key-down event.
+-   An arrow with a slash represents a key-up event.
+-   So, from start to end, the instructions for this jump trajectory are:
+    -   jump-down
+    -   right-down
+    -   right-up
+    -   jump-up
+-   The jump-down input isn't shown explicitly.
 
 ### Correcting for runtime vs buildtime trajectory discrepancies
 
-When executing edge instructions, the resulting run-time trajectory is usually slightly off from the expected trajectory that was pre-calculated when creating the edge. This variance is usually pretty minor, but, just in case, a given character can be configured to use the exact pre-calculated edge trajectory rather than the run-time version.
+When executing edge instructions, the resulting runtime trajectory is usually slightly off from the expected trajectory that was pre-calculated when creating the edge. This variance is usually pretty minor, but, just in case, a given character can be configured to use the exact pre-calculated edge trajectory rather than the runtime version.
 
-Theoretically, this discrepancy shouldn't exist, and we should be able to eliminate it at some point.
+Theoretically, we should be able to fix our calculations and eliminate this discrepancy, but it's difficult to get these things just right.
 
-![An animated GIF showing a player-controlled character moving around according to player clicks within the level. Path preselections are shown as the click is dragged around the level.](./navigation.gif)
+![A screenshot showing to jump-trajectory arcs that differ slightly. One arc represents positions that we've calculated at build-time, and one represents what happens at runtime.](./edge-continuous-vs-discrete-trajectories.png)
+> Runtime movement differs slightly from what we calculate at build-time.
+
+-    The slightly-more-grey lower arc represents "continuous" movement.
+    -    These are frame-by-frame positions that were calculated according to classic one-dimensional equations of motion for constant acceleration that look at the expected state for the current time relative to the overall start of the jump.
+    -    These represent more-accurate and more-predictable movement according to our physics rules.
+    -    With this approach, any position-calculation errors stay insignificant over time.
+    -    We use this trajectory for correcting character positions at runtime.
+-    The slightly-more-colorful upper arc represents "discrete" movement.
+    -    These are frame-by-frame positions that were calculated according to isolated acceleration/velocity/position updates that are just relative to the state from previous frame.
+    -    These better represent the movement that would actually happen at runtime, since runtime movement is only based off discrete updates to the state left from the previous frame.
+    -    With this approach, position-calculation errors tends to become gradually larger over time.
+        -    You can see at the end of the arc that there is an abrupt cusp near the end-point, since the trajectory didn't line-up perfectly with the expected destination.
+
+### Dynamic edge calculation for in-air origins or destinations
+
+We only store surface-to-surface edges in our platform graph, since it wouldn't make sense to try to account for all possible in-air end points ahead of time.
+
+But it is easy to calculate an edge to or from a specific in-air position and include this in our navigation as needed.
+
+![A screenshot showing a path that starts and ends at in-air positions.](./in-air-destination.png)
+> Starting and ending at in-air positions.
