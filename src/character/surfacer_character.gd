@@ -134,7 +134,8 @@ func _attach_prediction() -> void:
     if !Sc.level_session.has_started:
         return
     
-    if is_instance_valid(prediction):
+    if is_instance_valid(prediction) and \
+            is_instance_valid(Sc.annotators.path_preselection_annotator):
         Sc.annotators.path_preselection_annotator \
                 .add_prediction(prediction)
 

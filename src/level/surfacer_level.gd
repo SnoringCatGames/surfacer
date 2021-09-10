@@ -92,15 +92,21 @@ func _on_initial_input() -> void:
 
 # Execute any intro cut-scene or initial navigation.
 func _execute_intro_choreography() -> void:
+    if !is_instance_valid(Sc.level.player_character):
+        _on_intro_choreography_finished()
+        return
+    
     intro_choreographer = \
             Sc.level_config.get_intro_choreographer(Sc.level.player_character)
-    if is_instance_valid(intro_choreographer):
-        intro_choreographer.connect(
-                "finished", self, "_on_intro_choreography_finished")
-        add_child(intro_choreographer)
-        intro_choreographer.start()
-    else:
+    
+    if !is_instance_valid(intro_choreographer):
         _on_intro_choreography_finished()
+        return
+    
+    intro_choreographer.connect(
+            "finished", self, "_on_intro_choreography_finished")
+    add_child(intro_choreographer)
+    intro_choreographer.start()
 
 
 func _on_intro_choreography_finished() -> void:
