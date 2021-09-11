@@ -266,6 +266,7 @@ var non_surface_parser_metric_keys := [
 ]
 
 var surface_parser_metric_keys := [
+    "validate_tile_set_duration",
     "parse_tile_map_into_sides_duration",
     "remove_internal_surfaces_duration",
     "merge_continuous_surfaces_duration",
