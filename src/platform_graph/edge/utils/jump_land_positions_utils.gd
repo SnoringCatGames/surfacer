@@ -81,9 +81,12 @@ static func calculate_jump_land_positions_for_surface_pair(
     
     var jump_surface_has_only_one_point := jump_surface.vertices.size() == 1
     var land_surface_has_only_one_point := land_surface.vertices.size() == 1
-    if jump_surface_has_only_one_point or land_surface_has_only_one_point:
-        # TODO: Add support for single-vertex surfaces in a separate helper
-        #       function that we call here.
+    
+    if jump_surface_has_only_one_point or \
+            land_surface_has_only_one_point:
+        # FIXME: LEFT OFF HERE: -----------------------------------------------
+        # - Probably adapting each case in this function is better than
+        #   creating a separate function... 
         
         # If either surface has only a single point, then we only want to
         # consider the one jump/land pair.

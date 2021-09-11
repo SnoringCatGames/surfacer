@@ -598,35 +598,141 @@ static func _parse_polygon_into_sides(
 
 # Removes some "internal" surfaces.
 # 
-# Specifically, this checks for pairs of floor+ceiling segments or
-# left-wall+right-wall segments that share the same vertices. Both segments in
-# these pairs are considered internal, and are removed.
-# 
-# Any surface polyline that consists of more than one segment is ignored.
+# -   Specifically, this checks for pairs of floor+ceiling segments or
+#     left-wall+right-wall segments that share the same vertices.
+#     -   In this case, both segments in these pairs are considered internal,
+#         and are removed.
+# -   This also considers whether any single-vertex surfaces match any vertex
+#     of an opposite-side surface.
+#     -   In this case, the single-vertex surface is removed, and the
+#         multi-vertex surface is kept.
+# -   Any surface polyline that consists of more than one segment is ignored.
 static func _remove_internal_surfaces(
         surfaces: Array,
         opposite_surfaces: Array) -> void:
-    var removal_count := 0
+    var removal_count_i := 0
+    var removal_count_j := 0
     var count_i := surfaces.size()
     var count_j := opposite_surfaces.size()
     var i := 0
+    var j := 0
     
+    # Remove single-vertex surfaces from the first set.
+    i = 0
     while i < count_i:
         var surface1: _TmpSurface = surfaces[i]
         
-        if surface1.vertices_array.size() > 2:
+        if surface1 == null or \
+                surface1.vertices_array.size() != 1:
+            # We're only considering single-vertex surfaces in this loop.
+            i += 1
+            continue
+        
+        var surface1_point: Vector2 = surface1.vertices_array[0]
+        
+        j = 0
+        while j < count_j:
+            var surface2: _TmpSurface = opposite_surfaces[j]
+            
+            if surface2 == null:
+                j += 1
+                continue
+            
+            var surface2_front: Vector2 = surface2.vertices_array.front()
+            var surface2_back: Vector2 = surface2.vertices_array.back()
+            
+            # Vector equality checks, allowing for some round-off error.
+            var back_diff_x := surface1_point.x - surface2_back.x
+            var back_diff_y := surface1_point.y - surface2_back.y
+            var front_diff_x := surface1_point.x - surface2_front.x
+            var front_diff_y := surface1_point.y - surface2_front.y
+            if (back_diff_x < _EQUAL_POINT_EPSILON and \
+                    back_diff_x > -_EQUAL_POINT_EPSILON and \
+                    back_diff_y < _EQUAL_POINT_EPSILON and \
+                    back_diff_y > -_EQUAL_POINT_EPSILON) or \
+                    (front_diff_x < _EQUAL_POINT_EPSILON and \
+                    front_diff_x > -_EQUAL_POINT_EPSILON and \
+                    front_diff_y < _EQUAL_POINT_EPSILON and \
+                    front_diff_y > -_EQUAL_POINT_EPSILON):
+                # We found a matching surface, so remove the single-vertex
+                # surface.
+                surfaces[i] = null
+                surface1.free()
+                removal_count_i += 1
+                break
+            
+            j += 1
+        
+        i += 1
+    
+    # Remove single-vertex surfaces from the second set.
+    j = 0
+    while j < count_j:
+        var surface2: _TmpSurface = opposite_surfaces[j]
+        
+        if surface2 == null or \
+                surface2.vertices_array.size() != 1:
+            # We're only considering single-vertex surfaces in this loop.
+            j += 1
+            continue
+        
+        var surface2_point: Vector2 = surface2.vertices_array[0]
+        
+        i = 0
+        while i < count_i:
+            var surface1: _TmpSurface = surfaces[i]
+            
+            if surface1 == null:
+                i += 1
+                continue
+            
+            var surface1_front: Vector2 = surface1.vertices_array.front()
+            var surface1_back: Vector2 = surface1.vertices_array.back()
+            
+            # Vector equality checks, allowing for some round-off error.
+            var back_diff_x := surface2_point.x - surface1_back.x
+            var back_diff_y := surface2_point.y - surface1_back.y
+            var front_diff_x := surface2_point.x - surface1_front.x
+            var front_diff_y := surface2_point.y - surface1_front.y
+            if (back_diff_x < _EQUAL_POINT_EPSILON and \
+                    back_diff_x > -_EQUAL_POINT_EPSILON and \
+                    back_diff_y < _EQUAL_POINT_EPSILON and \
+                    back_diff_y > -_EQUAL_POINT_EPSILON) or \
+                    (front_diff_x < _EQUAL_POINT_EPSILON and \
+                    front_diff_x > -_EQUAL_POINT_EPSILON and \
+                    front_diff_y < _EQUAL_POINT_EPSILON and \
+                    front_diff_y > -_EQUAL_POINT_EPSILON):
+                # We found a matching surface, so remove the single-vertex
+                # surface.
+                opposite_surfaces[j] = null
+                surface2.free()
+                removal_count_j += 1
+                break
+            
+            i += 1
+        
+        j += 1
+    
+    # Remove two-vertex surfaces.
+    i = 0
+    while i < count_i:
+        var surface1: _TmpSurface = surfaces[i]
+        
+        if surface1 == null or \
+                surface1.vertices_array.size() != 2:
+            # We're only considering two-vertex surfaces in this loop.
             i += 1
             continue
         
         var surface1_front: Vector2 = surface1.vertices_array.front()
         var surface1_back: Vector2 = surface1.vertices_array.back()
         
-        var j := 0
+        j = 0
         while j < count_j:
             var surface2: _TmpSurface = opposite_surfaces[j]
             
             if surface2 == null or \
-                    surface2.vertices_array.size() > 2:
+                    surface2.vertices_array.size() != 2:
                 j += 1
                 continue
             
@@ -652,7 +758,8 @@ static func _remove_internal_surfaces(
                 opposite_surfaces[j] = null
                 surface1.free()
                 surface2.free()
-                removal_count += 1
+                removal_count_i += 1
+                removal_count_j += 1
                 break
             
             j += 1
@@ -666,7 +773,7 @@ static func _remove_internal_surfaces(
         if surface != null:
             surfaces[new_index] = surface
             new_index += 1
-    surfaces.resize(count_i - removal_count)
+    surfaces.resize(count_i - removal_count_i)
     
     # Resize surfaces array, removing any deleted elements.
     new_index = 0
@@ -675,7 +782,7 @@ static func _remove_internal_surfaces(
         if surface != null:
             opposite_surfaces[new_index] = surface
             new_index += 1
-    opposite_surfaces.resize(count_j - removal_count)
+    opposite_surfaces.resize(count_j - removal_count_j)
 
 
 # Merges adjacent continuous surfaces.
@@ -934,8 +1041,6 @@ static func _assign_neighbor_surfaces(
                                 null and \
                         ceiling.clockwise_convex_neighbor != null:
                     break
-    
-    # FIXME: LEFT OFF HERE: ----------------- Still not quite perfect yet?
     
     # -   If surfaces align with the FLOOR_MAX_ANGLE, then it is possible for a
     #     floor to be adjacent to a ceiling.
