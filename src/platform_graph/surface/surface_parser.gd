@@ -9,6 +9,8 @@ const SURFACES_TILE_MAPS_COLLISION_LAYER := 1
 const CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET := 0.02
 const CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01
 
+const _EQUAL_POINT_EPSILON := 0.1
+
 # Collections of surfaces.
 # Array<Surface>
 var floors := []
@@ -125,6 +127,10 @@ func _parse_tile_map(tile_map: SurfacesTileMap) -> void:
     var ceilings := []
     var left_walls := []
     var right_walls := []
+    
+    Sc.profiler.start("validate_tile_set_duration")
+    _validate_tile_set(tile_map)
+    Sc.profiler.stop("validate_tile_set_duration")
     
     Sc.profiler.start("parse_tile_map_into_sides_duration")
     _parse_tile_map_into_sides(
@@ -297,6 +303,43 @@ func _populate_derivative_collections(tile_map: SurfacesTileMap) -> void:
     }
 
 
+static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
+    var tile_set := tile_map.tile_set
+    assert(is_instance_valid(tile_set))
+    
+    var ids := tile_set.get_tiles_ids()
+    assert(ids.size() > 0)
+    
+    for id in ids:
+        var shapes := tile_set.tile_get_shapes(id)
+        assert(shapes.size() <= 1)
+        
+        if shapes.size() == 0:
+            continue
+        
+        var info: Dictionary = shapes[0]
+        var shape: Shape2D = info.shape
+        var shape_transform: Transform2D = info.shape_transform
+        
+        assert(shape is ConvexPolygonShape2D,
+                "TileSet collision shapes must be of type " +
+                "ConvexPolygonShape2D.")
+        
+        var points: PoolVector2Array = shape.points
+        
+        for i in points.size() - 1:
+            assert(points[i] != points[i + 1],
+                    "TileSet collision shapes must not have " +
+                    "duplicated vertices.")
+        
+        for i in points.size():
+            assert(points[i].x == int(points[i].x) and \
+                    points[i].y == int(points[i].y), 
+                    "TileSet collision-shape vertices must align with " +
+                    "whole-pixel coordinates (this is important for merging " +
+                    "adjacent-tile surfaces).")
+
+
 # Parses the tiles of given TileMap into their constituent top-sides,
 # left-sides, and right-sides.
 static func _parse_tile_map_into_sides(
@@ -405,14 +448,21 @@ static func _parse_polygon_into_sides(
     
     # Find the start of the top-side.
     
+    var WALL_ANGLE_EPSILON := 0.0001
+    var FLOOR_MAX_ANGLE_BELOW_90: float = \
+            Sc.geometry.FLOOR_MAX_ANGLE + WALL_ANGLE_EPSILON
+    var FLOOR_MIN_ANGLE_ABOVE_90: float = \
+            PI - Sc.geometry.FLOOR_MAX_ANGLE - WALL_ANGLE_EPSILON
+    
     # Fence-post problem: Calculate the first segment.
     i1 = left_most_vertex_index
     i2 = (i1 + step) % vertex_count
     v1 = vertices[i1]
     v2 = vertices[i2]
     pos_angle = abs(v1.angle_to_point(v2))
-    is_wall_segment = pos_angle > Sc.geometry.FLOOR_MAX_ANGLE and \
-            pos_angle < PI - Sc.geometry.FLOOR_MAX_ANGLE
+    is_wall_segment = \
+            pos_angle > FLOOR_MAX_ANGLE_BELOW_90 and \
+            pos_angle < FLOOR_MIN_ANGLE_ABOVE_90
     
     # If we find a non-wall segment, that's the start of the top-side. If we
     # instead find no non-wall segments until one segment after the top-most
@@ -424,8 +474,9 @@ static func _parse_polygon_into_sides(
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Sc.geometry.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Sc.geometry.FLOOR_MAX_ANGLE
+        is_wall_segment = \
+                pos_angle > FLOOR_MAX_ANGLE_BELOW_90 and \
+                pos_angle < FLOOR_MIN_ANGLE_ABOVE_90
     
     top_side_start_index = i1
     
@@ -441,8 +492,9 @@ static func _parse_polygon_into_sides(
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Sc.geometry.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Sc.geometry.FLOOR_MAX_ANGLE
+        is_wall_segment = \
+                pos_angle > FLOOR_MAX_ANGLE_BELOW_90 and \
+                pos_angle < FLOOR_MIN_ANGLE_ABOVE_90
     
     top_side_end_index = i1
     
@@ -458,8 +510,9 @@ static func _parse_polygon_into_sides(
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Sc.geometry.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Sc.geometry.FLOOR_MAX_ANGLE
+        is_wall_segment = \
+                pos_angle > FLOOR_MAX_ANGLE_BELOW_90 and \
+                pos_angle < FLOOR_MIN_ANGLE_ABOVE_90
     
     right_side_end_index = i1
     
@@ -475,8 +528,9 @@ static func _parse_polygon_into_sides(
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Sc.geometry.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Sc.geometry.FLOOR_MAX_ANGLE
+        is_wall_segment = \
+                pos_angle > FLOOR_MAX_ANGLE_BELOW_90 and \
+                pos_angle < FLOOR_MIN_ANGLE_ABOVE_90
     
     left_side_start_index = i1
     
@@ -552,9 +606,11 @@ static func _parse_polygon_into_sides(
 static func _remove_internal_surfaces(
         surfaces: Array,
         opposite_surfaces: Array) -> void:
+    var removal_count := 0
     var count_i := surfaces.size()
     var count_j := opposite_surfaces.size()
     var i := 0
+    
     while i < count_i:
         var surface1: _TmpSurface = surfaces[i]
         
@@ -569,7 +625,8 @@ static func _remove_internal_surfaces(
         while j < count_j:
             var surface2: _TmpSurface = opposite_surfaces[j]
             
-            if surface2.vertices_array.size() > 2:
+            if surface2 == null or \
+                    surface2.vertices_array.size() > 2:
                 j += 1
                 continue
             
@@ -581,30 +638,44 @@ static func _remove_internal_surfaces(
             var front_back_diff_y := surface1_front.y - surface2_back.y
             var back_front_diff_x := surface1_back.x - surface2_front.x
             var back_front_diff_y := surface1_back.y - surface2_front.y
-            if front_back_diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    front_back_diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    front_back_diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    front_back_diff_y > -Sc.geometry.FLOAT_EPSILON and \
-                    back_front_diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    back_front_diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    back_front_diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    back_front_diff_y > -Sc.geometry.FLOAT_EPSILON:
+            if front_back_diff_x < _EQUAL_POINT_EPSILON and \
+                    front_back_diff_x > -_EQUAL_POINT_EPSILON and \
+                    front_back_diff_y < _EQUAL_POINT_EPSILON and \
+                    front_back_diff_y > -_EQUAL_POINT_EPSILON and \
+                    back_front_diff_x < _EQUAL_POINT_EPSILON and \
+                    back_front_diff_x > -_EQUAL_POINT_EPSILON and \
+                    back_front_diff_y < _EQUAL_POINT_EPSILON and \
+                    back_front_diff_y > -_EQUAL_POINT_EPSILON:
                 # We found a pair of equivalent (internal) segments, so remove
                 # them.
-                surfaces.remove(i)
-                opposite_surfaces.remove(j)
+                surfaces[i] = null
+                opposite_surfaces[j] = null
                 surface1.free()
                 surface2.free()
-                
-                i -= 1
-                j -= 1
-                count_i -= 1
-                count_j -= 1
+                removal_count += 1
                 break
             
             j += 1
         
         i += 1
+    
+    # Resize surfaces array, removing any deleted elements.
+    var new_index := 0
+    for old_index in count_i:
+        var surface: _TmpSurface = surfaces[old_index]
+        if surface != null:
+            surfaces[new_index] = surface
+            new_index += 1
+    surfaces.resize(count_i - removal_count)
+    
+    # Resize surfaces array, removing any deleted elements.
+    new_index = 0
+    for old_index in count_j:
+        var surface: _TmpSurface = opposite_surfaces[old_index]
+        if surface != null:
+            opposite_surfaces[new_index] = surface
+            new_index += 1
+    opposite_surfaces.resize(count_j - removal_count)
 
 
 # Merges adjacent continuous surfaces.
@@ -630,10 +701,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                 var front_back_diff_y := surface1_front.y - surface2_back.y
                 var back_front_diff_x := surface1_back.x - surface2_front.x
                 var back_front_diff_y := surface1_back.y - surface2_front.y
-                if front_back_diff_x < Sc.geometry.FLOAT_EPSILON and \
-                        front_back_diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                        front_back_diff_y < Sc.geometry.FLOAT_EPSILON and \
-                        front_back_diff_y > -Sc.geometry.FLOAT_EPSILON:
+                if front_back_diff_x < _EQUAL_POINT_EPSILON and \
+                        front_back_diff_x > -_EQUAL_POINT_EPSILON and \
+                        front_back_diff_y < _EQUAL_POINT_EPSILON and \
+                        front_back_diff_y > -_EQUAL_POINT_EPSILON:
                     # The start of surface 1 connects with the end of surface
                     # 2.
                     
@@ -656,10 +727,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                     j -= 1
                     count -= 1
                     merge_count += 1
-                elif back_front_diff_x < Sc.geometry.FLOAT_EPSILON and \
-                        back_front_diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                        back_front_diff_y < Sc.geometry.FLOAT_EPSILON and \
-                        back_front_diff_y > -Sc.geometry.FLOAT_EPSILON:
+                elif back_front_diff_x < _EQUAL_POINT_EPSILON and \
+                        back_front_diff_x > -_EQUAL_POINT_EPSILON and \
+                        back_front_diff_y < _EQUAL_POINT_EPSILON and \
+                        back_front_diff_y > -_EQUAL_POINT_EPSILON:
                     # The end of surface 1 connects with the start of surface
                     # 2.
                     
@@ -722,10 +793,10 @@ static func _assign_neighbor_surfaces(
             surface2_end = right_wall.last_point
             diff_x = surface1_end1.x - surface2_end.x
             diff_y = surface1_end1.y - surface2_end.y
-            if diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    diff_y > -Sc.geometry.FLOAT_EPSILON:
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
                 floor_surface.counter_clockwise_convex_neighbor = right_wall
                 right_wall.clockwise_convex_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
@@ -740,10 +811,10 @@ static func _assign_neighbor_surfaces(
             surface2_end = right_wall.first_point
             diff_x = surface1_end2.x - surface2_end.x
             diff_y = surface1_end2.y - surface2_end.y
-            if diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    diff_y > -Sc.geometry.FLOAT_EPSILON:
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
                 floor_surface.clockwise_concave_neighbor = right_wall
                 right_wall.counter_clockwise_concave_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
@@ -758,10 +829,10 @@ static func _assign_neighbor_surfaces(
             surface2_end = left_wall.first_point
             diff_x = surface1_end2.x - surface2_end.x
             diff_y = surface1_end2.y - surface2_end.y
-            if diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    diff_y > -Sc.geometry.FLOAT_EPSILON:
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
                 floor_surface.clockwise_convex_neighbor = left_wall
                 left_wall.counter_clockwise_convex_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
@@ -775,10 +846,10 @@ static func _assign_neighbor_surfaces(
             surface2_end = left_wall.last_point
             diff_x = surface1_end1.x - surface2_end.x
             diff_y = surface1_end1.y - surface2_end.y
-            if diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    diff_y > -Sc.geometry.FLOAT_EPSILON:
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
                 floor_surface.counter_clockwise_concave_neighbor = left_wall
                 left_wall.clockwise_concave_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
@@ -799,10 +870,10 @@ static func _assign_neighbor_surfaces(
             surface2_end = left_wall.last_point
             diff_x = surface1_end1.x - surface2_end.x
             diff_y = surface1_end1.y - surface2_end.y
-            if diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    diff_y > -Sc.geometry.FLOAT_EPSILON:
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
                 ceiling.counter_clockwise_convex_neighbor = left_wall
                 left_wall.clockwise_convex_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
@@ -816,10 +887,10 @@ static func _assign_neighbor_surfaces(
             surface2_end = left_wall.first_point
             diff_x = surface1_end2.x - surface2_end.x
             diff_y = surface1_end2.y - surface2_end.y
-            if diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    diff_y > -Sc.geometry.FLOAT_EPSILON:
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
                 ceiling.clockwise_concave_neighbor = left_wall
                 left_wall.counter_clockwise_concave_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
@@ -834,10 +905,10 @@ static func _assign_neighbor_surfaces(
             surface2_end = right_wall.first_point
             diff_x = surface1_end2.x - surface2_end.x
             diff_y = surface1_end2.y - surface2_end.y
-            if diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    diff_y > -Sc.geometry.FLOAT_EPSILON:
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
                 ceiling.clockwise_convex_neighbor = right_wall
                 right_wall.counter_clockwise_convex_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
@@ -851,10 +922,10 @@ static func _assign_neighbor_surfaces(
             surface2_end = right_wall.last_point
             diff_x = surface1_end1.x - surface2_end.x
             diff_y = surface1_end1.y - surface2_end.y
-            if diff_x < Sc.geometry.FLOAT_EPSILON and \
-                    diff_x > -Sc.geometry.FLOAT_EPSILON and \
-                    diff_y < Sc.geometry.FLOAT_EPSILON and \
-                    diff_y > -Sc.geometry.FLOAT_EPSILON:
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
                 ceiling.counter_clockwise_concave_neighbor = right_wall
                 right_wall.clockwise_concave_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
@@ -863,6 +934,44 @@ static func _assign_neighbor_surfaces(
                                 null and \
                         ceiling.clockwise_convex_neighbor != null:
                     break
+    
+    # FIXME: LEFT OFF HERE: ----------------- Still not quite perfect yet?
+    
+    # -   If surfaces align with the FLOOR_MAX_ANGLE, then it is possible for a
+    #     floor to be adjacent to a ceiling.
+    # -   So check for any corresponding unassigned neighbor references.
+    for floor_surface in floors:
+        # There can only be one clockwise and one counter-clockwise neighbor.
+        if floor_surface.counter_clockwise_neighbor == null:
+            # The left edge of the floor.
+            surface1_end1 = floor_surface.first_point
+            for ceiling in ceilings:
+                # Check for a concave neighbor at the left edge of the ceiling.
+                surface2_end = ceiling.last_point
+                diff_x = surface1_end1.x - surface2_end.x
+                diff_y = surface1_end1.y - surface2_end.y
+                if diff_x < _EQUAL_POINT_EPSILON and \
+                        diff_x > -_EQUAL_POINT_EPSILON and \
+                        diff_y < _EQUAL_POINT_EPSILON and \
+                        diff_y > -_EQUAL_POINT_EPSILON:
+                    floor_surface.counter_clockwise_concave_neighbor = ceiling
+                    ceiling.clockwise_concave_neighbor = floor_surface
+        
+        # There can only be one clockwise and one counter-clockwise neighbor.
+        if floor_surface.clockwise_neighbor == null:
+            # The right edge of the floor.
+            surface1_end2 = floor_surface.last_point
+            for ceiling in ceilings:
+                # Check for a concave neighbor at the left edge of the ceiling.
+                surface2_end = ceiling.first_point
+                diff_x = surface1_end2.x - surface2_end.x
+                diff_y = surface1_end2.y - surface2_end.y
+                if diff_x < _EQUAL_POINT_EPSILON and \
+                        diff_x > -_EQUAL_POINT_EPSILON and \
+                        diff_y < _EQUAL_POINT_EPSILON and \
+                        diff_y > -_EQUAL_POINT_EPSILON:
+                    floor_surface.clockwise_concave_neighbor = ceiling
+                    ceiling.counter_clockwise_concave_neighbor = floor_surface
 
 
 static func _calculate_shape_bounding_boxes_for_surfaces(
@@ -871,40 +980,26 @@ static func _calculate_shape_bounding_boxes_for_surfaces(
         # Calculate the combined bounding box for the overall collection of
         # transitively connected surfaces.
         var connected_region_bounding_box: Rect2 = surface.bounding_box
-        var connected_surface: Surface = \
-                surface.clockwise_concave_neighbor if \
-                surface.clockwise_concave_neighbor != null else \
-                surface.clockwise_convex_neighbor
+        var connected_surface: Surface = surface.clockwise_neighbor
         while connected_surface != surface:
             connected_region_bounding_box = \
                     connected_region_bounding_box.merge(
                             connected_surface.bounding_box)
-            connected_surface = \
-                    connected_surface.clockwise_concave_neighbor if \
-                    connected_surface.clockwise_concave_neighbor != null else \
-                    connected_surface.clockwise_convex_neighbor
+            connected_surface = connected_surface.clockwise_neighbor
         
         # Record the combined bounding box on each surface.
         surface.connected_region_bounding_box = connected_region_bounding_box
-        connected_surface = \
-                surface.clockwise_concave_neighbor if \
-                surface.clockwise_concave_neighbor != null else \
-                surface.clockwise_convex_neighbor
+        connected_surface = surface.clockwise_neighbor
         while connected_surface != surface:
             connected_surface.connected_region_bounding_box = \
                     connected_region_bounding_box
-            connected_surface = \
-                    connected_surface.clockwise_concave_neighbor if \
-                    connected_surface.clockwise_concave_neighbor != null else \
-                    connected_surface.clockwise_convex_neighbor
+            connected_surface = connected_surface.clockwise_neighbor
 
 
 static func _assert_surfaces_fully_calculated(surfaces: Array) -> void:
     for surface in surfaces:
-        assert(surface.clockwise_concave_neighbor != null or \
-                surface.clockwise_convex_neighbor != null)
-        assert(surface.counter_clockwise_concave_neighbor != null or \
-                surface.counter_clockwise_convex_neighbor != null)
+        assert(surface.clockwise_neighbor != null)
+        assert(surface.counter_clockwise_neighbor != null)
         assert(surface.connected_region_bounding_box.position != \
                 Vector2.INF and \
                 surface.connected_region_bounding_box.size != Vector2.INF)
