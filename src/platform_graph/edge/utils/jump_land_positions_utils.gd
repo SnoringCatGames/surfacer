@@ -82,18 +82,6 @@ static func calculate_jump_land_positions_for_surface_pair(
     var jump_surface_has_only_one_point := jump_surface.vertices.size() == 1
     var land_surface_has_only_one_point := land_surface.vertices.size() == 1
     
-    if jump_surface_has_only_one_point or \
-            land_surface_has_only_one_point:
-        # FIXME: LEFT OFF HERE: -----------------------------------------------
-        # - Probably adapting each case in this function is better than
-        #   creating a separate function... 
-        
-        # If either surface has only a single point, then we only want to
-        # consider the one jump/land pair.
-        Sc.logger.error("Single-point surfaces are not yet supported in" +
-                "calculate_jump_land_positions_for_surface_pair (but they " +
-                "should be easy to add support for).")
-    
     var jump_surface_first_point := jump_surface.first_point
     var jump_surface_last_point := jump_surface.last_point
     var land_surface_first_point := land_surface.first_point
@@ -2738,6 +2726,31 @@ static func calculate_jump_land_positions_for_surface_pair(
                         land_surface_end_position,
                         velocity_start_zero,
                         all_jump_land_positions)
+    
+    # If either surface has only one point, then it might be possible that we
+    # added a duplicate result.
+    if jump_surface_has_only_one_point or \
+            land_surface_has_only_one_point:
+        var i := 0
+        while i < all_jump_land_positions.size() - 1:
+            var j := i + 1
+            while j < all_jump_land_positions.size():
+                var jump_land_positions1: JumpLandPositions = \
+                        all_jump_land_positions[i]
+                var jump_land_positions2: JumpLandPositions = \
+                        all_jump_land_positions[j]
+                if jump_land_positions1.jump_position == \
+                        jump_land_positions2.jump_position and \
+                        jump_land_positions1.land_position == \
+                        jump_land_positions2.land_position and \
+                        jump_land_positions1.velocity_start == \
+                        jump_land_positions2.velocity_start:
+                    all_jump_land_positions.remove(j)
+                    j -= 1
+                    # FIXME: ------ If this never happens, maybe remove it?
+                    Sc.logger.error()
+                j += 1
+            i += 1
     
     return all_jump_land_positions
 
