@@ -353,6 +353,11 @@ func _calculate_trajectory(
     #     when the character's center is no longer past the end of the end
     #     surface.
     
+    # FIXME: ---------------- REMOVE?
+    # FIXME: LEFT OFF HERE: -----------------
+    # - Update min-speed-to-maintain-horizontal/vertical-collision according to
+    #   surface normal.
+    
     if is_wall:
         # Rounding a corner from a wall.
         
@@ -576,6 +581,11 @@ func _get_velocity_start(
                 position_start.side == SurfaceSide.CEILING or \
                 position_end.side == SurfaceSide.CEILING
     
+    # FIXME: ---------------- REMOVE?
+    # FIXME: LEFT OFF HERE: -----------------
+    # - Update min-speed-to-maintain-horizontal/vertical-collision according to
+    #   surface normal.
+    
     var velocity_x: float
     var velocity_y: float
     match position_start.side:
@@ -622,6 +632,11 @@ func _get_velocity_end(
                     position_end.surface or \
             position_start.surface.counter_clockwise_convex_neighbor == \
                     position_end.surface
+    
+    # FIXME: ---------------- REMOVE?
+    # FIXME: LEFT OFF HERE: -----------------
+    # - Update min-speed-to-maintain-horizontal/vertical-collision according to
+    #   surface normal.
     
     var velocity_x: float
     var velocity_y: float
@@ -780,6 +795,11 @@ func _calculate_duration(
                 movement_params.climb_up_speed)
         duration_end = distance_end / speed_end
     else:
+        # FIXME: ---------------- REMOVE?
+        # FIXME: LEFT OFF HERE: -----------------
+        # - Update min-speed-to-maintain-horizontal/vertical-collision
+        #   according to surface normal.
+        
         # Account for acceleration-along-floor when climbing over a wall.
         var acceleration_x := movement_params.walk_acceleration
         var end_speed_x_start := CharacterActionHandler \

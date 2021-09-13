@@ -256,7 +256,7 @@ func _on_physics_process(delta: float) -> void:
         move_and_slide(
                 modified_velocity,
                 Sc.geometry.UP,
-                false,
+                true,
                 4,
                 Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON)
     

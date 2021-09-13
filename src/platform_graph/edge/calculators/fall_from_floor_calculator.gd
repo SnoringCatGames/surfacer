@@ -405,9 +405,20 @@ static func _prepend_walk_to_fall_off_portion(
     var acceleration := Vector2(acceleration_x, 0.0)
     
     var current_frame_position := start.target_point
-    var current_frame_velocity := Vector2(
-            velocity_x_start,
-            CharacterActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
+    # FIXME: ---------------- REMOVE?
+    if Su.uses_surface_normal_to_maintain_collision:
+        var edge_normal: Vector2 = Sc.geometry.get_surface_normal_at_point(
+                start.surface, edge_point)
+        var floor_counter_cling_velocity: Vector2 = \
+                CharacterActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * \
+                edge_normal
+        var current_frame_velocity := Vector2(
+                velocity_x_start,
+                floor_counter_cling_velocity.y)
+    else:
+        var current_frame_velocity := Vector2(
+                velocity_x_start,
+                CharacterActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
     
     for frame_index in frame_count_before_fall_off:
         if movement_params.includes_discrete_trajectory_state:
