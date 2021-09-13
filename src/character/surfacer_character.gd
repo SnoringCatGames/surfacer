@@ -249,6 +249,8 @@ func _on_physics_process(delta: float) -> void:
         var modified_velocity: Vector2 = \
                 velocity * Sc.time.get_combined_scale()
         
+        # FIXME: LEFT OFF HERE: ------------------ Use move_and_slide_with_snap.
+        
         # TODO: Use the remaining pre-collision movement that move_and_slide
         #       returns. This might be needed in order to move along slopes?
         move_and_slide(

@@ -101,6 +101,9 @@ var previous_center_position := Vector2.INF
 var did_move_last_frame := false
 var did_move_frame_before_last := false
 var grab_position := Vector2.INF
+var grab_normal := Vector2.INF
+var previous_grab_position := Vector2.INF
+var previous_grab_normal := Vector2.INF
 var grab_position_tile_map_coord := Vector2.INF
 var grabbed_tile_map: SurfacesTileMap
 var grabbed_surface: Surface
@@ -409,6 +412,9 @@ func _update_physics_contacts() -> void:
             # -  This is uncommon.
             continue
         
+        var contact_normal: Vector2 = Sc.geometry.get_surface_normal_at_point(
+                contacted_surface, contact_position)
+        
         var just_started := !surfaces_to_contacts.has(contacted_surface)
         
         if just_started:
@@ -418,6 +424,7 @@ func _update_physics_contacts() -> void:
                 surfaces_to_contacts[contacted_surface]
         surface_contact.surface = contacted_surface
         surface_contact.contact_position = contact_position
+        surface_contact.contact_normal = contact_normal
         surface_contact.tile_map_coord = contact_tile_map_coord
         surface_contact.tile_map_index = contact_tile_map_index
         surface_contact.position_along_surface.match_current_grab(
@@ -609,6 +616,8 @@ func _update_surface_contact_for_explicit_grab(
     assert(_collision_surface_result.surface == surface)
     var tile_map_coord := _collision_surface_result.tile_map_coord
     var tile_map_index := _collision_surface_result.tile_map_index
+    var contact_normal: Vector2 = Sc.geometry.get_surface_normal_at_point(
+            surface, contact_position)
     
     var just_started := \
             !is_instance_valid(surface_grab) or \
@@ -621,6 +630,7 @@ func _update_surface_contact_for_explicit_grab(
             SurfaceContact.new()
     surface_contact.surface = surface
     surface_contact.contact_position = contact_position
+    surface_contact.contact_normal = contact_normal
     surface_contact.tile_map_coord = tile_map_coord
     surface_contact.tile_map_index = tile_map_index
     surface_contact.position_along_surface = position_along_surface
@@ -1209,7 +1219,6 @@ func _update_grab_state() -> void:
 
 
 func _update_grab_contact() -> void:
-    var previous_grab_position := grab_position
     var previous_grabbed_tile_map := grabbed_tile_map
     var previous_grab_position_tile_map_coord := grab_position_tile_map_coord
     
@@ -1229,10 +1238,11 @@ func _update_grab_contact() -> void:
                 break
         assert(is_instance_valid(surface_grab))
         
-        grab_position = surface_grab.contact_position
+        var next_grabbed_surface := surface_grab.surface
+        var next_grab_position := surface_grab.contact_position
+        var next_grab_normal := surface_grab.contact_normal
         grabbed_tile_map = surface_grab.surface.tile_map
         grab_position_tile_map_coord = surface_grab.tile_map_coord
-        var next_grabbed_surface: Surface = surface_grab.surface
         PositionAlongSurface.copy(
                 center_position_along_surface,
                 surface_grab.position_along_surface)
@@ -1240,10 +1250,27 @@ func _update_grab_contact() -> void:
                 last_position_along_surface,
                 center_position_along_surface)
         
+        just_changed_surface = \
+                just_changed_surface or \
+                (just_left_air or \
+                        next_grabbed_surface != grabbed_surface)
+        if just_changed_surface and \
+                next_grabbed_surface != grabbed_surface and \
+                is_instance_valid(grabbed_surface):
+            previous_grabbed_surface = grabbed_surface
+        grabbed_surface = next_grabbed_surface
+        
         just_changed_grab_position = \
                 just_changed_grab_position or \
                 (just_left_air or \
-                        grab_position != previous_grab_position)
+                        next_grab_position != grab_position)
+        if just_changed_grab_position and \
+                next_grab_position != grab_position and \
+                grab_position != Vector2.INF:
+            previous_grab_position = grab_position
+            previous_grab_normal = grab_normal
+        grab_position = next_grab_position
+        grab_normal = next_grab_normal
         
         just_changed_tile_map = \
                 just_changed_tile_map or \
@@ -1256,16 +1283,6 @@ func _update_grab_contact() -> void:
                         grab_position_tile_map_coord != \
                         previous_grab_position_tile_map_coord)
         
-        just_changed_surface = \
-                just_changed_surface or \
-                (just_left_air or \
-                        next_grabbed_surface != grabbed_surface)
-        if just_changed_surface and \
-                next_grabbed_surface != grabbed_surface and \
-                is_instance_valid(grabbed_surface):
-            previous_grabbed_surface = grabbed_surface
-        grabbed_surface = next_grabbed_surface
-        
     else:
         if just_entered_air:
             just_changed_grab_position = true
@@ -1276,8 +1293,17 @@ func _update_grab_contact() -> void:
                     grabbed_surface if \
                     is_instance_valid(grabbed_surface) else \
                     previous_grabbed_surface
+            previous_grab_position = \
+                    grab_position if \
+                    grab_position != Vector2.INF else \
+                    previous_grab_position
+            previous_grab_normal = \
+                    grab_normal if \
+                    grab_normal != Vector2.INF else \
+                    previous_grab_normal
         
         grab_position = Vector2.INF
+        grab_normal = Vector2.INF
         grabbed_tile_map = null
         grab_position_tile_map_coord = Vector2.INF
         grabbed_surface = null

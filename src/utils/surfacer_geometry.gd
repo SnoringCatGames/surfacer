@@ -76,6 +76,95 @@ static func offset_point_from_surface(
     return point + offset_magnitude * surface.normal
 
 
+static func get_surface_normal_at_point(
+        surface: Surface,
+        point: Vector2) -> Vector2:
+    if !is_instance_valid(surface):
+        return Vector2.INF
+    
+    var epsilon := 0.01
+    
+    var vertices := surface.vertices
+    var count := vertices.size()
+    
+    if count <= 1:
+        return surface.normal
+    
+    var segment_start := Vector2.INF
+    var segment_end := Vector2.INF
+    
+    match surface.side:
+        SurfaceSide.FLOOR:
+            if point.x < vertices[0].x + epsilon:
+                segment_start = vertices[0]
+                segment_end = vertices[1]
+            elif point.x > vertices[count - 1].x - epsilon:
+                segment_start = vertices[count - 2]
+                segment_end = vertices[count - 1]
+            else:
+                for i in range(1, count):
+                    if point.x < vertices[i].x:
+                        segment_start = vertices[i - 1]
+                        segment_end = vertices[i]
+                        break
+        SurfaceSide.LEFT_WALL:
+            if point.y < vertices[0].y + epsilon:
+                segment_start = vertices[0]
+                segment_end = vertices[1]
+            elif point.y > vertices[count - 1].y - epsilon:
+                segment_start = vertices[count - 2]
+                segment_end = vertices[count - 1]
+            else:
+                for i in range(1, count):
+                    if point.y < vertices[i].y:
+                        segment_start = vertices[i - 1]
+                        segment_end = vertices[i]
+                        break
+        SurfaceSide.RIGHT_WALL:
+            if point.y > vertices[0].y - epsilon:
+                segment_start = vertices[0]
+                segment_end = vertices[1]
+            elif point.y < vertices[count - 1].y + epsilon:
+                segment_start = vertices[count - 2]
+                segment_end = vertices[count - 1]
+            else:
+                for i in range(1, count):
+                    if point.y > vertices[i].y:
+                        segment_start = vertices[i - 1]
+                        segment_end = vertices[i]
+                        break
+        SurfaceSide.CEILING:
+            if point.x > vertices[0].x - epsilon:
+                segment_start = vertices[0]
+                segment_end = vertices[1]
+            elif point.x < vertices[count - 1].x + epsilon:
+                segment_start = vertices[count - 2]
+                segment_end = vertices[count - 1]
+            else:
+                for i in range(1, count):
+                    if point.x > vertices[i].x:
+                        segment_start = vertices[i - 1]
+                        segment_end = vertices[i]
+                        break
+        _:
+            Sc.logger.error()
+    
+    var displacement := segment_end - segment_start
+    # Displacement is clockwise around convex surfaces, so the normal is the
+    # counter-clockwise perpendicular direction from the displacement.
+    var perpendicular := Vector2(displacement.y, -displacement.x)
+    var normal := perpendicular.normalized()
+    
+    # FIXME: LEFT OFF HERE: REMOVE -----------------------------
+    if is_inf(normal.x) or \
+            is_nan(normal.x) or \
+            is_inf(normal.y) or \
+            is_nan(normal.y):
+        print("break")
+    
+    return normal
+
+
 static func are_position_wrappers_equal_with_epsilon(
         a: PositionAlongSurface,
         b: PositionAlongSurface,
