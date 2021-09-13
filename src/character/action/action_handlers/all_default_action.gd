@@ -26,11 +26,22 @@ func process(character) -> bool:
         # pushing the character into a collision, otherwise it will eventually
         # stop the collision. If we just zero this out, move_and_slide will
         # produce false-negatives.
-        character.velocity.x = \
-                CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
-                character.surface_state.toward_wall_sign / \
-                Sc.time.get_combined_scale()
+        # FIXME: ---------------- REMOVE?
+        if Su.uses_surface_normal_to_maintain_collision:
+            var wall_cling_velocity: Vector2 = \
+                    CharacterActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
+                    Sc.time.get_combined_scale() * \
+                    -character.surface_state.grab_normal
+            character.velocity.x = wall_cling_velocity.x
+            character.velocity.y += wall_cling_velocity.y
+        else:
+            character.velocity.x = \
+                    CharacterActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
+                    character.surface_state.toward_wall_sign / \
+                    Sc.time.get_combined_scale()
+        
         return true
     else:
         return false
