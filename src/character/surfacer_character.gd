@@ -256,7 +256,7 @@ func _on_physics_process(delta: float) -> void:
                 Sc.geometry.UP,
                 false,
                 4,
-                Sc.geometry.FLOOR_MAX_ANGLE)
+                Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON)
     
     _update_actions(delta_scaled)
     surface_state.clear_just_changed_state()
