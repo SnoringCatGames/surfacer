@@ -94,10 +94,10 @@ static func are_position_wrappers_equal_with_epsilon(
 
 static func get_surface_side_for_normal(normal: Vector2) -> int:
     if abs(normal.angle_to(Sc.geometry.UP)) <= \
-            Sc.geometry.FLOOR_MAX_ANGLE:
+            Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON:
         return SurfaceSide.FLOOR
     elif abs(normal.angle_to(Sc.geometry.DOWN)) <= \
-            Sc.geometry.FLOOR_MAX_ANGLE:
+            Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON:
         return SurfaceSide.CEILING
     elif normal.x > 0:
         return SurfaceSide.LEFT_WALL

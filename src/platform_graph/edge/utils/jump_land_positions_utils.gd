@@ -2747,8 +2747,8 @@ static func calculate_jump_land_positions_for_surface_pair(
                         jump_land_positions2.velocity_start:
                     all_jump_land_positions.remove(j)
                     j -= 1
-                    # FIXME: ------ If this never happens, maybe remove it?
-                    Sc.logger.error()
+                    # FIXME: LEFT OFF HERE: ------ If this never happens, maybe remove it?
+#                    Sc.logger.error()
                 j += 1
             i += 1
     

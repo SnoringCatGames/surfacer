@@ -453,11 +453,10 @@ static func _parse_polygon_into_sides(
     
     # Find the start of the top-side.
     
-    var WALL_ANGLE_EPSILON := 0.0001
     var FLOOR_MAX_ANGLE_BELOW_90: float = \
-            Sc.geometry.FLOOR_MAX_ANGLE + WALL_ANGLE_EPSILON
+            Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON
     var FLOOR_MIN_ANGLE_ABOVE_90: float = \
-            PI - Sc.geometry.FLOOR_MAX_ANGLE - WALL_ANGLE_EPSILON
+            PI - Sc.geometry.FLOOR_MAX_ANGLE - Sc.geometry.WALL_ANGLE_EPSILON
     
     # Fence-post problem: Calculate the first segment.
     i1 = left_most_vertex_index
@@ -1447,7 +1446,7 @@ func calculate_collision_surface(
     
     if is_between_cells_horizontally and \
             is_between_cells_vertically:
-        var top_left_cell_coord := Sc.geometry.world_to_tile_map(
+        var top_left_cell_coord: Vector2 = Sc.geometry.world_to_tile_map(
                 Vector2(collision_position.x - half_cell_size.x,
                         collision_position.y - half_cell_size.y),
                 tile_map)
@@ -1461,19 +1460,23 @@ func calculate_collision_surface(
                 top_left_cell_coord.x + 1,
                 top_left_cell_coord.y + 1)
         
-        var top_left_cell_index := \
+        var top_left_cell_index: int = \
                 Sc.geometry.get_tile_map_index_from_grid_coord(
                         top_left_cell_coord, tile_map)
-        var top_right_cell_index := \
+        var top_right_cell_index: int = \
                 Sc.geometry.get_tile_map_index_from_grid_coord(
                         top_right_cell_coord, tile_map)
-        var bottom_left_cell_index := \
+        var bottom_left_cell_index: int = \
                 Sc.geometry.get_tile_map_index_from_grid_coord(
                         bottom_left_cell_coord, tile_map)
-        var bottom_right_cell_index := \
+        var bottom_right_cell_index: int = \
                 Sc.geometry.get_tile_map_index_from_grid_coord(
                         bottom_right_cell_coord, tile_map)
         
+        var is_there_a_floor_at_top_left := get_surface_for_tile(
+                tile_map,
+                top_left_cell_index,
+                SurfaceSide.FLOOR) != null
         var is_there_a_ceiling_at_top_left := get_surface_for_tile(
                 tile_map,
                 top_left_cell_index,
@@ -1482,26 +1485,57 @@ func calculate_collision_surface(
                 tile_map,
                 top_left_cell_index,
                 SurfaceSide.LEFT_WALL) != null
+        var is_there_a_right_wall_at_top_left := get_surface_for_tile(
+                tile_map,
+                top_left_cell_index,
+                SurfaceSide.RIGHT_WALL) != null
+        
+        var is_there_a_floor_at_top_right := get_surface_for_tile(
+                tile_map,
+                top_right_cell_index,
+                SurfaceSide.FLOOR) != null
         var is_there_a_ceiling_at_top_right := get_surface_for_tile(
                 tile_map,
                 top_right_cell_index,
                 SurfaceSide.CEILING) != null
+        var is_there_a_left_wall_at_top_right := get_surface_for_tile(
+                tile_map,
+                top_right_cell_index,
+                SurfaceSide.LEFT_WALL) != null
         var is_there_a_right_wall_at_top_right := get_surface_for_tile(
                 tile_map,
                 top_right_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
+        
         var is_there_a_floor_at_bottom_left := get_surface_for_tile(
                 tile_map,
                 bottom_left_cell_index,
                 SurfaceSide.FLOOR) != null
+        var is_there_a_ceiling_at_bottom_left := get_surface_for_tile(
+                tile_map,
+                bottom_left_cell_index,
+                SurfaceSide.CEILING) != null
         var is_there_a_left_wall_at_bottom_left := get_surface_for_tile(
                 tile_map,
                 bottom_left_cell_index,
                 SurfaceSide.LEFT_WALL) != null
+        var is_there_a_right_wall_at_bottom_left := get_surface_for_tile(
+                tile_map,
+                bottom_left_cell_index,
+                SurfaceSide.RIGHT_WALL) != null
+        
         var is_there_a_floor_at_bottom_right := get_surface_for_tile(
                 tile_map,
                 bottom_right_cell_index,
                 SurfaceSide.FLOOR) != null
+        var is_there_a_ceiling_at_bottom_right := get_surface_for_tile(
+                tile_map,
+                bottom_right_cell_index,
+                SurfaceSide.CEILING) != null
+        var is_there_a_left_wall_at_bottom_right := get_surface_for_tile(
+                tile_map,
+                bottom_right_cell_index,
+                SurfaceSide.LEFT_WALL) != null
         var is_there_a_right_wall_at_bottom_right := get_surface_for_tile(
                 tile_map,
                 bottom_right_cell_index,
@@ -1521,6 +1555,14 @@ func calculate_collision_surface(
                 elif is_there_a_left_wall_at_bottom_left:
                     tile_coord = bottom_left_cell_coord
                     surface_side = SurfaceSide.LEFT_WALL
+                # Can happen with angled tile shapes.
+                elif is_there_a_left_wall_at_bottom_right:
+                    tile_coord = bottom_right_cell_coord
+                    surface_side = SurfaceSide.LEFT_WALL
+                # Can happen with angled tile shapes.
+                elif is_there_a_floor_at_top_left:
+                    tile_coord = top_left_cell_coord
+                    surface_side = SurfaceSide.FLOOR
                 else:
                     error_message = (
                             "Horizontally/vertically between cells, " +
@@ -1539,6 +1581,14 @@ func calculate_collision_surface(
                 elif is_there_a_right_wall_at_bottom_right:
                     tile_coord = bottom_right_cell_coord
                     surface_side = SurfaceSide.RIGHT_WALL
+                # Can happen with angled tile shapes.
+                elif is_there_a_right_wall_at_bottom_left:
+                    tile_coord = bottom_left_cell_coord
+                    surface_side = SurfaceSide.RIGHT_WALL
+                # Can happen with angled tile shapes.
+                elif is_there_a_floor_at_top_right:
+                    tile_coord = top_right_cell_coord
+                    surface_side = SurfaceSide.FLOOR
                 else:
                     error_message = (
                             "Horizontally/vertically between cells, " +
@@ -1549,6 +1599,14 @@ func calculate_collision_surface(
                 surface_side = SurfaceSide.FLOOR
             elif is_there_a_floor_at_bottom_right:
                 tile_coord = bottom_right_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            # Can happen with angled tile shapes.
+            elif is_there_a_floor_at_top_left:
+                tile_coord = top_left_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            # Can happen with angled tile shapes.
+            elif is_there_a_floor_at_top_right:
+                tile_coord = top_right_cell_coord
                 surface_side = SurfaceSide.FLOOR
             else:
                 error_message = (
@@ -1570,6 +1628,14 @@ func calculate_collision_surface(
                 elif is_there_a_ceiling_at_top_left:
                     tile_coord = top_left_cell_coord
                     surface_side = SurfaceSide.CEILING
+                # Can happen with angled tile shapes.
+                elif is_there_a_ceiling_at_bottom_left:
+                    tile_coord = bottom_left_cell_coord
+                    surface_side = SurfaceSide.CEILING
+                # Can happen with angled tile shapes.
+                elif is_there_a_left_wall_at_top_right:
+                    tile_coord = top_right_cell_coord
+                    surface_side = SurfaceSide.LEFT_WALL
                 else:
                     error_message = (
                             "Horizontally/vertically between cells, " +
@@ -1588,6 +1654,14 @@ func calculate_collision_surface(
                 elif is_there_a_ceiling_at_top_right:
                     tile_coord = top_right_cell_coord
                     surface_side = SurfaceSide.CEILING
+                # Can happen with angled tile shapes.
+                elif is_there_a_ceiling_at_bottom_right:
+                    tile_coord = bottom_right_cell_coord
+                    surface_side = SurfaceSide.CEILING
+                # Can happen with angled tile shapes.
+                elif is_there_a_right_wall_at_top_left:
+                    tile_coord = top_left_cell_coord
+                    surface_side = SurfaceSide.RIGHT_WALL
                 else:
                     error_message = (
                             "Horizontally/vertically between cells, " +
@@ -1598,6 +1672,14 @@ func calculate_collision_surface(
                 surface_side = SurfaceSide.CEILING
             elif is_there_a_ceiling_at_top_right:
                 tile_coord = top_right_cell_coord
+                surface_side = SurfaceSide.CEILING
+            # Can happen with angled tile shapes.
+            elif is_there_a_ceiling_at_bottom_left:
+                tile_coord = bottom_left_cell_coord
+                surface_side = SurfaceSide.CEILING
+            # Can happen with angled tile shapes.
+            elif is_there_a_ceiling_at_bottom_right:
+                tile_coord = bottom_right_cell_coord
                 surface_side = SurfaceSide.CEILING
             else:
                 error_message = (
@@ -1612,6 +1694,14 @@ func calculate_collision_surface(
             elif is_there_a_left_wall_at_bottom_left:
                 tile_coord = bottom_left_cell_coord
                 surface_side = SurfaceSide.LEFT_WALL
+            # Can happen with angled tile shapes.
+            elif is_there_a_left_wall_at_top_right:
+                tile_coord = top_right_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
+            # Can happen with angled tile shapes.
+            elif is_there_a_left_wall_at_bottom_right:
+                tile_coord = bottom_right_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
             else:
                 error_message = (
                         "Horizontally/vertically between cells, " +
@@ -1624,6 +1714,14 @@ func calculate_collision_surface(
                 surface_side = SurfaceSide.RIGHT_WALL
             elif is_there_a_right_wall_at_bottom_right:
                 tile_coord = bottom_right_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            # Can happen with angled tile shapes.
+            elif is_there_a_right_wall_at_top_left:
+                tile_coord = top_left_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            # Can happen with angled tile shapes.
+            elif is_there_a_right_wall_at_bottom_left:
+                tile_coord = bottom_left_cell_coord
                 surface_side = SurfaceSide.RIGHT_WALL
             else:
                 error_message = (
@@ -1638,7 +1736,7 @@ func calculate_collision_surface(
                     "(horizontally/vertically between cells)")
         
     elif is_between_cells_vertically:
-        var top_cell_coord := Sc.geometry.world_to_tile_map(
+        var top_cell_coord: Vector2 = Sc.geometry.world_to_tile_map(
                 Vector2(collision_position.x,
                         collision_position.y - half_cell_size.y),
                 tile_map)
@@ -1646,11 +1744,17 @@ func calculate_collision_surface(
                 top_cell_coord.x,
                 top_cell_coord.y + 1)
         
-        var top_cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
-                top_cell_coord, tile_map)
-        var bottom_cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
-                bottom_cell_coord, tile_map)
+        var top_cell_index: int = \
+                Sc.geometry.get_tile_map_index_from_grid_coord(
+                        top_cell_coord, tile_map)
+        var bottom_cell_index: int = \
+                Sc.geometry.get_tile_map_index_from_grid_coord(
+                        bottom_cell_coord, tile_map)
         
+        var is_there_a_floor_at_top := get_surface_for_tile(
+                tile_map,
+                top_cell_index,
+                SurfaceSide.FLOOR) != null
         var is_there_a_ceiling_at_top := get_surface_for_tile(
                 tile_map,
                 top_cell_index,
@@ -1663,10 +1767,15 @@ func calculate_collision_surface(
                 tile_map,
                 top_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
+        
         var is_there_a_floor_at_bottom := get_surface_for_tile(
                 tile_map,
                 bottom_cell_index,
                 SurfaceSide.FLOOR) != null
+        var is_there_a_ceiling_at_bottom := get_surface_for_tile(
+                tile_map,
+                bottom_cell_index,
+                SurfaceSide.CEILING) != null
         var is_there_a_left_wall_at_bottom := get_surface_for_tile(
                 tile_map,
                 bottom_cell_index,
@@ -1680,6 +1789,10 @@ func calculate_collision_surface(
             if is_there_a_floor_at_bottom:
                 tile_coord = bottom_cell_coord
                 surface_side = SurfaceSide.FLOOR
+            # Can happen with angled tile shapes.
+            elif is_there_a_floor_at_top:
+                tile_coord = top_cell_coord
+                surface_side = SurfaceSide.FLOOR
             else:
                 error_message = (
                         "Vertically between cells, " +
@@ -1688,6 +1801,10 @@ func calculate_collision_surface(
         elif is_touching_ceiling:
             if is_there_a_ceiling_at_top:
                 tile_coord = top_cell_coord
+                surface_side = SurfaceSide.CEILING
+            # Can happen with angled tile shapes.
+            elif is_there_a_ceiling_at_bottom:
+                tile_coord = bottom_cell_coord
                 surface_side = SurfaceSide.CEILING
             else:
                 error_message = (
@@ -1725,7 +1842,7 @@ func calculate_collision_surface(
                     "(vertically between cells)")
         
     elif is_between_cells_horizontally:
-        var left_cell_coord := Sc.geometry.world_to_tile_map(
+        var left_cell_coord: Vector2 = Sc.geometry.world_to_tile_map(
                 Vector2(collision_position.x - half_cell_size.x,
                         collision_position.y),
                 tile_map)
@@ -1733,39 +1850,54 @@ func calculate_collision_surface(
                 left_cell_coord.x + 1,
                 left_cell_coord.y)
         
-        var left_cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
-                left_cell_coord, tile_map)
-        var right_cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
-                right_cell_coord, tile_map)
+        var left_cell_index: int = \
+                Sc.geometry.get_tile_map_index_from_grid_coord(
+                        left_cell_coord, tile_map)
+        var right_cell_index: int = \
+                Sc.geometry.get_tile_map_index_from_grid_coord(
+                        right_cell_coord, tile_map)
         
-        var is_there_a_left_wall_at_left := get_surface_for_tile(
-                tile_map,
-                left_cell_index,
-                SurfaceSide.LEFT_WALL) != null
-        var is_there_a_ceiling_at_left := get_surface_for_tile(
-                tile_map,
-                left_cell_index,
-                SurfaceSide.CEILING) != null
         var is_there_a_floor_at_left := get_surface_for_tile(
                 tile_map,
                 left_cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_right_wall_at_right := get_surface_for_tile(
+        var is_there_a_ceiling_at_left := get_surface_for_tile(
                 tile_map,
-                right_cell_index,
-                SurfaceSide.RIGHT_WALL) != null
-        var is_there_a_ceiling_at_right := get_surface_for_tile(
-                tile_map,
-                right_cell_index,
+                left_cell_index,
                 SurfaceSide.CEILING) != null
+        var is_there_a_left_wall_at_left := get_surface_for_tile(
+                tile_map,
+                left_cell_index,
+                SurfaceSide.LEFT_WALL) != null
+        var is_there_a_right_wall_at_left := get_surface_for_tile(
+                tile_map,
+                left_cell_index,
+                SurfaceSide.RIGHT_WALL) != null
+        
         var is_there_a_floor_at_right := get_surface_for_tile(
                 tile_map,
                 right_cell_index,
                 SurfaceSide.FLOOR) != null
+        var is_there_a_ceiling_at_right := get_surface_for_tile(
+                tile_map,
+                right_cell_index,
+                SurfaceSide.CEILING) != null
+        var is_there_a_left_wall_at_right := get_surface_for_tile(
+                tile_map,
+                right_cell_index,
+                SurfaceSide.LEFT_WALL) != null
+        var is_there_a_right_wall_at_right := get_surface_for_tile(
+                tile_map,
+                right_cell_index,
+                SurfaceSide.RIGHT_WALL) != null
         
         if is_touching_left_wall:
             if is_there_a_left_wall_at_left:
                 tile_coord = left_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
+            # Can happen with angled tile shapes.
+            elif is_there_a_left_wall_at_right:
+                tile_coord = right_cell_coord
                 surface_side = SurfaceSide.LEFT_WALL
             else:
                 error_message = (
@@ -1775,6 +1907,10 @@ func calculate_collision_surface(
         elif is_touching_right_wall:
             if is_there_a_right_wall_at_right:
                 tile_coord = right_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            # Can happen with angled tile shapes.
+            elif is_there_a_right_wall_at_left:
+                tile_coord = left_cell_coord
                 surface_side = SurfaceSide.RIGHT_WALL
             else:
                 error_message = (
@@ -1811,11 +1947,12 @@ func calculate_collision_surface(
                     "but not touching any floor/ceiling/wall " +
                     "(horizontally between cells)")
         
+    # In cell interior (not between cells).
     else:
-        var cell_coord := Sc.geometry.world_to_tile_map(
+        var cell_coord: Vector2 = Sc.geometry.world_to_tile_map(
                 collision_position,
                 tile_map)
-        var cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+        var cell_index: int = Sc.geometry.get_tile_map_index_from_grid_coord(
                 cell_coord, tile_map)
         
         var is_there_a_floor := get_surface_for_tile(
@@ -1877,15 +2014,15 @@ func calculate_collision_surface(
                     "but not touching any floor/ceiling/wall " +
                     "(in cell interior)")
     
-    var cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+    var cell_index := -1
+    var surface: Surface = null
+    if tile_coord != Vector2.INF:
+        cell_index = Sc.geometry.get_tile_map_index_from_grid_coord(
                 tile_coord, tile_map)
-    var surface := \
-            get_surface_for_tile(
-                    tile_map,
-                    cell_index,
-                    surface_side) if \
-            tile_coord != Vector2.INF else \
-            null
+        surface = get_surface_for_tile(
+                tile_map,
+                cell_index,
+                surface_side)
     
     result.surface = surface
     result.surface_side = surface_side
