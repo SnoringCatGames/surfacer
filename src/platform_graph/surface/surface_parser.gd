@@ -9,6 +9,11 @@ const SURFACES_TILE_MAPS_COLLISION_LAYER := 1
 const CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET := 0.02
 const CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01
 
+# TODO: We might want to instead replace this with a ratio (like 1.1) of the
+#       KinematicBody2D.get_safe_margin value (defaults to 0.08, but we set it
+#       higher during graph calculations).
+const _COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD := 0.5
+
 const _EQUAL_POINT_EPSILON := 0.1
 
 # Collections of surfaces.
@@ -32,7 +37,7 @@ var combined_tile_map_rect: Rect2
 var _tile_map_index_to_surface_maps := {}
 
 var _space_state: Physics2DDirectSpaceState
-var _collision_tile_map_coord_result := CollisionTileMapCoordResult.new()
+var _collision_surface_result := CollisionSurfaceResult.new()
 
 
 func calculate(tile_maps: Array) -> void:
@@ -1154,12 +1159,12 @@ class _TmpSurface extends Object:
 func find_closest_surface_in_direction(
         target: Vector2,
         direction: Vector2,
-        collision_tile_map_coord_result: CollisionTileMapCoordResult = null,
+        collision_surface_result: CollisionSurfaceResult = null,
         max_distance := 10000.0) -> Surface:
-    collision_tile_map_coord_result = \
-            collision_tile_map_coord_result if \
-            collision_tile_map_coord_result != null else \
-            _collision_tile_map_coord_result
+    collision_surface_result = \
+            collision_surface_result if \
+            collision_surface_result != null else \
+            _collision_surface_result
     
     var collision: Dictionary = _space_state.intersect_ray(
             target,
@@ -1175,26 +1180,16 @@ func find_closest_surface_in_direction(
     assert(collision.collider is SurfacesTileMap)
     var contacted_tile_map: SurfacesTileMap = collision.collider
     
-    Sc.geometry.get_collision_tile_map_coord(
-            collision_tile_map_coord_result,
+    calculate_collision_surface(
+            collision_surface_result,
             contact_position,
             contacted_tile_map,
             contacted_side == SurfaceSide.FLOOR,
             contacted_side == SurfaceSide.CEILING,
             contacted_side == SurfaceSide.LEFT_WALL,
             contacted_side == SurfaceSide.RIGHT_WALL)
-    var contact_position_tile_map_coord := \
-            collision_tile_map_coord_result.tile_map_coord
     
-    var contacted_tile_map_index: int = \
-            Sc.geometry.get_tile_map_index_from_grid_coord(
-                    contact_position_tile_map_coord,
-                    contacted_tile_map)
-    
-    return get_surface_for_tile(
-            contacted_tile_map,
-            contacted_tile_map_index,
-            contacted_side)
+    return collision_surface_result.surface
 
 
 static func find_closest_position_on_a_surface(
@@ -1411,6 +1406,544 @@ class _SurfaceAndDistanceComparator:
         if a[1] < b[1]:
             return true
         return false
+
+
+func calculate_collision_surface(
+        result: CollisionSurfaceResult,
+        collision_position: Vector2,
+        tile_map: TileMap,
+        is_touching_floor: bool,
+        is_touching_ceiling: bool,
+        is_touching_left_wall: bool,
+        is_touching_right_wall: bool,
+        allows_errors := false,
+        is_nested_call := false) -> void:
+    var half_cell_size := tile_map.cell_size / 2.0
+    var used_rect := tile_map.get_used_rect()
+    var tile_map_top_left_position_world_coord := \
+            tile_map.position - used_rect.position * tile_map.cell_size
+    var position_relative_to_tile_map := \
+            collision_position - tile_map_top_left_position_world_coord
+    
+    var cell_width_mod := abs(fmod(
+            position_relative_to_tile_map.x,
+            tile_map.cell_size.x))
+    var cell_height_mod := abs(fmod(
+            position_relative_to_tile_map.y,
+            tile_map.cell_size.y))
+    
+    var is_between_cells_horizontally := \
+            cell_width_mod < _COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD or \
+            tile_map.cell_size.x - cell_width_mod < \
+                    _COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD
+    var is_between_cells_vertically := \
+            cell_height_mod < _COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD or \
+            tile_map.cell_size.y - cell_height_mod < \
+                    _COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD
+    
+    var surface_side := SurfaceSide.NONE
+    var tile_coord := Vector2.INF
+    var error_message := ""
+    
+    if is_between_cells_horizontally and \
+            is_between_cells_vertically:
+        var top_left_cell_coord := Sc.geometry.world_to_tile_map(
+                Vector2(collision_position.x - half_cell_size.x,
+                        collision_position.y - half_cell_size.y),
+                tile_map)
+        var top_right_cell_coord := Vector2(
+                top_left_cell_coord.x + 1,
+                top_left_cell_coord.y)
+        var bottom_left_cell_coord := Vector2(
+                top_left_cell_coord.x,
+                top_left_cell_coord.y + 1)
+        var bottom_right_cell_coord := Vector2(
+                top_left_cell_coord.x + 1,
+                top_left_cell_coord.y + 1)
+        
+        var top_left_cell_index := \
+                Sc.geometry.get_tile_map_index_from_grid_coord(
+                        top_left_cell_coord, tile_map)
+        var top_right_cell_index := \
+                Sc.geometry.get_tile_map_index_from_grid_coord(
+                        top_right_cell_coord, tile_map)
+        var bottom_left_cell_index := \
+                Sc.geometry.get_tile_map_index_from_grid_coord(
+                        bottom_left_cell_coord, tile_map)
+        var bottom_right_cell_index := \
+                Sc.geometry.get_tile_map_index_from_grid_coord(
+                        bottom_right_cell_coord, tile_map)
+        
+        var is_there_a_ceiling_at_top_left := get_surface_for_tile(
+                tile_map,
+                top_left_cell_index,
+                SurfaceSide.CEILING) != null
+        var is_there_a_left_wall_at_top_left := get_surface_for_tile(
+                tile_map,
+                top_left_cell_index,
+                SurfaceSide.LEFT_WALL) != null
+        var is_there_a_ceiling_at_top_right := get_surface_for_tile(
+                tile_map,
+                top_right_cell_index,
+                SurfaceSide.CEILING) != null
+        var is_there_a_right_wall_at_top_right := get_surface_for_tile(
+                tile_map,
+                top_right_cell_index,
+                SurfaceSide.RIGHT_WALL) != null
+        var is_there_a_floor_at_bottom_left := get_surface_for_tile(
+                tile_map,
+                bottom_left_cell_index,
+                SurfaceSide.FLOOR) != null
+        var is_there_a_left_wall_at_bottom_left := get_surface_for_tile(
+                tile_map,
+                bottom_left_cell_index,
+                SurfaceSide.LEFT_WALL) != null
+        var is_there_a_floor_at_bottom_right := get_surface_for_tile(
+                tile_map,
+                bottom_right_cell_index,
+                SurfaceSide.FLOOR) != null
+        var is_there_a_right_wall_at_bottom_right := get_surface_for_tile(
+                tile_map,
+                bottom_right_cell_index,
+                SurfaceSide.RIGHT_WALL) != null
+        
+        if is_touching_floor:
+            if is_touching_left_wall:
+                if is_there_a_floor_at_bottom_right:
+                    tile_coord = bottom_right_cell_coord
+                    surface_side = SurfaceSide.FLOOR
+                elif is_there_a_left_wall_at_top_left:
+                    tile_coord = top_left_cell_coord
+                    surface_side = SurfaceSide.LEFT_WALL
+                elif is_there_a_floor_at_bottom_left:
+                    tile_coord = bottom_left_cell_coord
+                    surface_side = SurfaceSide.FLOOR
+                elif is_there_a_left_wall_at_bottom_left:
+                    tile_coord = bottom_left_cell_coord
+                    surface_side = SurfaceSide.LEFT_WALL
+                else:
+                    error_message = (
+                            "Horizontally/vertically between cells, " +
+                            "touching floor and left-wall, and " +
+                            "no floor or left-wall in lower or left cells")
+            elif is_touching_right_wall:
+                if is_there_a_floor_at_bottom_left:
+                    tile_coord = bottom_left_cell_coord
+                    surface_side = SurfaceSide.FLOOR
+                elif is_there_a_right_wall_at_top_right:
+                    tile_coord = top_right_cell_coord
+                    surface_side = SurfaceSide.RIGHT_WALL
+                elif is_there_a_floor_at_bottom_right:
+                    tile_coord = bottom_right_cell_coord
+                    surface_side = SurfaceSide.FLOOR
+                elif is_there_a_right_wall_at_bottom_right:
+                    tile_coord = bottom_right_cell_coord
+                    surface_side = SurfaceSide.RIGHT_WALL
+                else:
+                    error_message = (
+                            "Horizontally/vertically between cells, " +
+                            "touching floor and right-wall, and " +
+                            "no floor or right-wall in lower or right cells")
+            elif is_there_a_floor_at_bottom_left:
+                tile_coord = bottom_left_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            elif is_there_a_floor_at_bottom_right:
+                tile_coord = bottom_right_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            else:
+                error_message = (
+                        "Horizontally/vertically between cells, " +
+                        "touching floor, and " +
+                        "no floor or wall in lower cells")
+            
+        elif is_touching_ceiling:
+            if is_touching_left_wall:
+                if is_there_a_left_wall_at_bottom_left:
+                    tile_coord = bottom_left_cell_coord
+                    surface_side = SurfaceSide.LEFT_WALL
+                elif is_there_a_ceiling_at_top_right:
+                    tile_coord = top_right_cell_coord
+                    surface_side = SurfaceSide.CEILING
+                elif is_there_a_left_wall_at_top_left:
+                    tile_coord = top_left_cell_coord
+                    surface_side = SurfaceSide.LEFT_WALL
+                elif is_there_a_ceiling_at_top_left:
+                    tile_coord = top_left_cell_coord
+                    surface_side = SurfaceSide.CEILING
+                else:
+                    error_message = (
+                            "Horizontally/vertically between cells, " +
+                            "touching ceiling and left-wall, and " +
+                            "no ceiling or left-wall in upper or left cells")
+            elif is_touching_right_wall:
+                if is_there_a_right_wall_at_bottom_right:
+                    tile_coord = bottom_right_cell_coord
+                    surface_side = SurfaceSide.RIGHT_WALL
+                elif is_there_a_ceiling_at_top_left:
+                    tile_coord = top_left_cell_coord
+                    surface_side = SurfaceSide.CEILING
+                elif is_there_a_right_wall_at_top_right:
+                    tile_coord = top_right_cell_coord
+                    surface_side = SurfaceSide.RIGHT_WALL
+                elif is_there_a_ceiling_at_top_right:
+                    tile_coord = top_right_cell_coord
+                    surface_side = SurfaceSide.CEILING
+                else:
+                    error_message = (
+                            "Horizontally/vertically between cells, " +
+                            "touching ceiling and right-wall, and " +
+                            "no ceiling or right-wall in upper or right cells")
+            elif is_there_a_ceiling_at_top_left:
+                tile_coord = top_left_cell_coord
+                surface_side = SurfaceSide.CEILING
+            elif is_there_a_ceiling_at_top_right:
+                tile_coord = top_right_cell_coord
+                surface_side = SurfaceSide.CEILING
+            else:
+                error_message = (
+                        "Horizontally/vertically between cells, " +
+                        "touching ceiling, and " +
+                        "no ceiling or wall in upper cells")
+            
+        elif is_touching_left_wall:
+            if is_there_a_left_wall_at_top_left:
+                tile_coord = top_left_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
+            elif is_there_a_left_wall_at_bottom_left:
+                tile_coord = bottom_left_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
+            else:
+                error_message = (
+                        "Horizontally/vertically between cells, " +
+                        "touching left-wall, and " +
+                        "no left-wall in left cells")
+            
+        elif is_touching_right_wall:
+            if is_there_a_right_wall_at_top_right:
+                tile_coord = top_right_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            elif is_there_a_right_wall_at_bottom_right:
+                tile_coord = bottom_right_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            else:
+                error_message = (
+                        "Horizontally/vertically between cells, " +
+                        "touching right-wall, and " +
+                        "no right-wall in right cells")
+            
+        else:
+            error_message = (
+                    "Somehow colliding, " +
+                    "but not touching any floor/ceiling/wall " +
+                    "(horizontally/vertically between cells)")
+        
+    elif is_between_cells_vertically:
+        var top_cell_coord := Sc.geometry.world_to_tile_map(
+                Vector2(collision_position.x,
+                        collision_position.y - half_cell_size.y),
+                tile_map)
+        var bottom_cell_coord := Vector2(
+                top_cell_coord.x,
+                top_cell_coord.y + 1)
+        
+        var top_cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+                top_cell_coord, tile_map)
+        var bottom_cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+                bottom_cell_coord, tile_map)
+        
+        var is_there_a_ceiling_at_top := get_surface_for_tile(
+                tile_map,
+                top_cell_index,
+                SurfaceSide.CEILING) != null
+        var is_there_a_left_wall_at_top := get_surface_for_tile(
+                tile_map,
+                top_cell_index,
+                SurfaceSide.LEFT_WALL) != null
+        var is_there_a_right_wall_at_top := get_surface_for_tile(
+                tile_map,
+                top_cell_index,
+                SurfaceSide.RIGHT_WALL) != null
+        var is_there_a_floor_at_bottom := get_surface_for_tile(
+                tile_map,
+                bottom_cell_index,
+                SurfaceSide.FLOOR) != null
+        var is_there_a_left_wall_at_bottom := get_surface_for_tile(
+                tile_map,
+                bottom_cell_index,
+                SurfaceSide.LEFT_WALL) != null
+        var is_there_a_right_wall_at_bottom := get_surface_for_tile(
+                tile_map,
+                bottom_cell_index,
+                SurfaceSide.RIGHT_WALL) != null
+        
+        if is_touching_floor:
+            if is_there_a_floor_at_bottom:
+                tile_coord = bottom_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            else:
+                error_message = (
+                        "Vertically between cells, " +
+                        "touching floor, and " +
+                        "no floor in lower cell")
+        elif is_touching_ceiling:
+            if is_there_a_ceiling_at_top:
+                tile_coord = top_cell_coord
+                surface_side = SurfaceSide.CEILING
+            else:
+                error_message = (
+                        "Vertically between cells, " +
+                        "touching ceiling, and " +
+                        "no ceiling in upper cell")
+        elif is_touching_left_wall:
+            if is_there_a_left_wall_at_top:
+                tile_coord = top_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
+            if is_there_a_left_wall_at_bottom:
+                tile_coord = bottom_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
+            else:
+                error_message = (
+                        "Vertically between cells, " +
+                        "touching left-wall, and " +
+                        "no left-wall in upper or lower cell")
+        elif is_touching_right_wall:
+            if is_there_a_right_wall_at_top:
+                tile_coord = top_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            if is_there_a_right_wall_at_bottom:
+                tile_coord = bottom_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            else:
+                error_message = (
+                        "Vertically between cells, " +
+                        "touching right-wall, and " +
+                        "no right-wall in upper or lower cell")
+        else:
+            error_message = (
+                    "Somehow colliding, " +
+                    "but not touching any floor/ceiling/wall " +
+                    "(vertically between cells)")
+        
+    elif is_between_cells_horizontally:
+        var left_cell_coord := Sc.geometry.world_to_tile_map(
+                Vector2(collision_position.x - half_cell_size.x,
+                        collision_position.y),
+                tile_map)
+        var right_cell_coord := Vector2(
+                left_cell_coord.x + 1,
+                left_cell_coord.y)
+        
+        var left_cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+                left_cell_coord, tile_map)
+        var right_cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+                right_cell_coord, tile_map)
+        
+        var is_there_a_left_wall_at_left := get_surface_for_tile(
+                tile_map,
+                left_cell_index,
+                SurfaceSide.LEFT_WALL) != null
+        var is_there_a_ceiling_at_left := get_surface_for_tile(
+                tile_map,
+                left_cell_index,
+                SurfaceSide.CEILING) != null
+        var is_there_a_floor_at_left := get_surface_for_tile(
+                tile_map,
+                left_cell_index,
+                SurfaceSide.FLOOR) != null
+        var is_there_a_right_wall_at_right := get_surface_for_tile(
+                tile_map,
+                right_cell_index,
+                SurfaceSide.RIGHT_WALL) != null
+        var is_there_a_ceiling_at_right := get_surface_for_tile(
+                tile_map,
+                right_cell_index,
+                SurfaceSide.CEILING) != null
+        var is_there_a_floor_at_right := get_surface_for_tile(
+                tile_map,
+                right_cell_index,
+                SurfaceSide.FLOOR) != null
+        
+        if is_touching_left_wall:
+            if is_there_a_left_wall_at_left:
+                tile_coord = left_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
+            else:
+                error_message = (
+                        "Horizontally between cells, " +
+                        "touching left-wall, and " +
+                        "no floor in left cell")
+        elif is_touching_right_wall:
+            if is_there_a_right_wall_at_right:
+                tile_coord = right_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            else:
+                error_message = (
+                        "Horizontally between cells, " +
+                        "touching right-wall, and " +
+                        "no floor in right cell")
+        elif is_touching_floor:
+            if is_there_a_floor_at_left:
+                tile_coord = left_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            if is_there_a_floor_at_right:
+                tile_coord = right_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            else:
+                error_message = (
+                        "Horizontally between cells, " +
+                        "touching floor, and " +
+                        "no floor in left or right cell")
+        elif is_touching_ceiling:
+            if is_there_a_ceiling_at_left:
+                tile_coord = left_cell_coord
+                surface_side = SurfaceSide.CEILING
+            if is_there_a_ceiling_at_right:
+                tile_coord = right_cell_coord
+                surface_side = SurfaceSide.CEILING
+            else:
+                error_message = (
+                        "Horizontally between cells, " +
+                        "touching ceiling, and " +
+                        "no ceiling in left or right cell")
+        else:
+            error_message = (
+                    "Somehow colliding, " +
+                    "but not touching any floor/ceiling/wall " +
+                    "(horizontally between cells)")
+        
+    else:
+        var cell_coord := Sc.geometry.world_to_tile_map(
+                collision_position,
+                tile_map)
+        var cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+                cell_coord, tile_map)
+        
+        var is_there_a_floor := get_surface_for_tile(
+                tile_map,
+                cell_index,
+                SurfaceSide.FLOOR) != null
+        var is_there_a_ceiling := get_surface_for_tile(
+                tile_map,
+                cell_index,
+                SurfaceSide.CEILING) != null
+        var is_there_a_left_wall := get_surface_for_tile(
+                tile_map,
+                cell_index,
+                SurfaceSide.LEFT_WALL) != null
+        var is_there_a_right_wall := get_surface_for_tile(
+                tile_map,
+                cell_index,
+                SurfaceSide.RIGHT_WALL) != null
+        
+        if is_touching_floor:
+            if is_there_a_floor:
+                tile_coord = cell_coord
+                surface_side = SurfaceSide.FLOOR
+            else:
+                error_message = (
+                        "In cell interior, " +
+                        "touching floor, and " +
+                        "no floor in cell")
+        elif is_touching_ceiling:
+            if is_there_a_ceiling:
+                tile_coord = cell_coord
+                surface_side = SurfaceSide.CEILING
+            else:
+                error_message = (
+                        "In cell interior, " +
+                        "touching ceiling, and " +
+                        "no ceiling in cell")
+        elif is_touching_left_wall:
+            if is_there_a_left_wall:
+                tile_coord = cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
+            else:
+                error_message = (
+                        "In cell interior, " +
+                        "touching left-wall, and " +
+                        "no left-wall in cell")
+        elif is_touching_right_wall:
+            if is_there_a_right_wall:
+                tile_coord = cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            else:
+                error_message = (
+                        "In cell interior, " +
+                        "touching right-wall, and " +
+                        "no right-wall in cell")
+        else:
+            error_message = (
+                    "Somehow colliding, " +
+                    "but not touching any floor/ceiling/wall " +
+                    "(in cell interior)")
+    
+    var cell_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+                tile_coord, tile_map)
+    var surface := \
+            get_surface_for_tile(
+                    tile_map,
+                    cell_index,
+                    surface_side) if \
+            tile_coord != Vector2.INF else \
+            null
+    
+    result.surface = surface
+    result.surface_side = surface_side
+    result.tile_map_coord = tile_coord
+    result.tile_map_index = cell_index
+    result.flipped_sides_for_nested_call = is_nested_call
+    result.error_message = error_message
+    
+    if !error_message.empty() and \
+            !is_nested_call:
+        # TODO: Will this always work? Or should we instead/also try just
+        #       flipping one direction at a time?
+        var nested_is_touching_floor := is_touching_ceiling
+        var nested_is_touching_ceiling := is_touching_floor
+        var nested_is_touching_left_wall := is_touching_right_wall
+        var nested_is_touching_right_wall := is_touching_left_wall
+        calculate_collision_surface(
+                result,
+                collision_position,
+                tile_map,
+                nested_is_touching_floor,
+                nested_is_touching_ceiling,
+                nested_is_touching_left_wall,
+                nested_is_touching_right_wall,
+                allows_errors,
+                true)
+        if result.error_message.empty():
+            return
+    
+    if !allows_errors and \
+            !error_message.empty() and \
+            !is_nested_call:
+        var print_message := """ERROR: INVALID COLLISION TILEMAP STATE: 
+            %s; 
+            collision_position=%s 
+            is_touching_floor=%s 
+            is_touching_ceiling=%s 
+            is_touching_left_wall=%s 
+            is_touching_right_wall=%s 
+            is_between_cells_horizontally=%s 
+            is_between_cells_vertically=%s 
+            tile_coord=%s 
+            """ % [
+                error_message,
+                collision_position,
+                is_touching_floor,
+                is_touching_ceiling,
+                is_touching_left_wall,
+                is_touching_right_wall,
+                is_between_cells_horizontally,
+                is_between_cells_vertically,
+                tile_coord,
+            ]
+        if !error_message.empty() and \
+                !allows_errors:
+            Sc.logger.error(print_message)
+        else:
+            Sc.logger.warning(print_message)
 
 
 func load_from_json_object(
