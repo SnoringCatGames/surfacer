@@ -34,8 +34,8 @@ func process(character) -> bool:
         var synced_positions := false
         if character.movement_params \
                 .syncs_character_position_to_edge_trajectory:
-            var position := \
-                    current_edge.get_position_at_time(playback_elapsed_time)
+            var position := current_edge.get_position_at_time(
+                    playback_elapsed_time)
             var is_movement_beyond_expected_trajectory := \
                     position == Vector2.INF
             if !is_movement_beyond_expected_trajectory:
@@ -45,8 +45,9 @@ func process(character) -> bool:
         var synced_velocities := false
         if character.movement_params \
                 .syncs_character_velocity_to_edge_trajectory:
-            var velocity := \
-                    current_edge.get_velocity_at_time(playback_elapsed_time)
+            var velocity := current_edge.get_velocity_at_time(
+                    playback_elapsed_time,
+                    character.surface_state)
             var is_movement_beyond_expected_trajectory := \
                     velocity == Vector2.INF
             if !is_movement_beyond_expected_trajectory:
