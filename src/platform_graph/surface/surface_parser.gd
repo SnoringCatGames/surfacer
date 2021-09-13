@@ -1706,7 +1706,7 @@ func calculate_collision_surface(
                 error_message = (
                         "Horizontally/vertically between cells, " +
                         "touching left-wall, and " +
-                        "no left-wall in left cells")
+                        "no left-wall in any neighbor cells")
             
         elif is_touching_right_wall:
             if is_there_a_right_wall_at_top_right:
@@ -1727,7 +1727,7 @@ func calculate_collision_surface(
                 error_message = (
                         "Horizontally/vertically between cells, " +
                         "touching right-wall, and " +
-                        "no right-wall in right cells")
+                        "no right-wall in any neighbor cells")
             
         else:
             error_message = (
