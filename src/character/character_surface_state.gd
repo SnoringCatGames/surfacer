@@ -132,7 +132,7 @@ var contact_count: int setget ,_get_contact_count
 
 var character: ScaffolderCharacter
 
-var _collision_tile_map_coord_result := CollisionTileMapCoordResult.new()
+var _collision_surface_result := CollisionSurfaceResult.new()
 
 
 func _init(character: ScaffolderCharacter) -> void:
@@ -228,7 +228,7 @@ func update_for_initial_surface_attachment(
             character.surface_parser.find_closest_surface_in_direction(
                     start_position,
                     -normal,
-                    _collision_tile_map_coord_result)
+                    _collision_surface_result)
     
     if start_attachment_surface_side_or_position is PositionAlongSurface:
         PositionAlongSurface.copy(
@@ -389,25 +389,19 @@ func _update_physics_contacts() -> void:
         var contacted_side: int = \
                 Sc.geometry.get_surface_side_for_normal(collision.normal)
         var contacted_tile_map: SurfacesTileMap = collision.collider
-        Sc.geometry.get_collision_tile_map_coord(
-                _collision_tile_map_coord_result,
+        
+        character.surface_parser.calculate_collision_surface(
+                _collision_surface_result,
                 contact_position,
                 contacted_tile_map,
                 contacted_side == SurfaceSide.FLOOR,
                 contacted_side == SurfaceSide.CEILING,
                 contacted_side == SurfaceSide.LEFT_WALL,
                 contacted_side == SurfaceSide.RIGHT_WALL)
-        var contact_position_tile_map_coord := \
-                _collision_tile_map_coord_result.tile_map_coord
-        var contacted_tile_map_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
-                        contact_position_tile_map_coord,
-                        contacted_tile_map)
-        var contacted_surface: Surface = \
-                character.surface_parser.get_surface_for_tile(
-                        contacted_tile_map,
-                        contacted_tile_map_index,
-                        contacted_side)
+        
+        var contacted_surface := _collision_surface_result.surface
+        var contact_tile_map_coord := _collision_surface_result.tile_map_coord
+        var contact_tile_map_index := _collision_surface_result.tile_map_index
         
         if !is_instance_valid(contacted_surface):
             # -  Godot's collision engine has generated a false-positive with
@@ -424,8 +418,8 @@ func _update_physics_contacts() -> void:
                 surfaces_to_contacts[contacted_surface]
         surface_contact.surface = contacted_surface
         surface_contact.contact_position = contact_position
-        surface_contact.tile_map_coord = contact_position_tile_map_coord
-        surface_contact.tile_map_index = contacted_tile_map_index
+        surface_contact.tile_map_coord = contact_tile_map_coord
+        surface_contact.tile_map_index = contact_tile_map_index
         surface_contact.position_along_surface.match_current_grab(
                 contacted_surface, center_position)
         surface_contact.just_started = just_started
@@ -603,18 +597,19 @@ func _update_surface_contact_for_explicit_grab(
             position_along_surface.target_projection_onto_surface
     var tile_map := surface.tile_map
     
-    Sc.geometry.get_collision_tile_map_coord(
-            _collision_tile_map_coord_result,
+    character.surface_parser.calculate_collision_surface(
+            _collision_surface_result,
             contact_position,
             tile_map,
             side == SurfaceSide.FLOOR,
             side == SurfaceSide.CEILING,
             side == SurfaceSide.LEFT_WALL,
             side == SurfaceSide.RIGHT_WALL)
-    var tile_map_coord := _collision_tile_map_coord_result.tile_map_coord
-    var tile_map_index: int = Sc.geometry.get_tile_map_index_from_grid_coord(
-            tile_map_coord,
-            tile_map)
+    
+    assert(_collision_surface_result.surface == surface)
+    var tile_map_coord := _collision_surface_result.tile_map_coord
+    var tile_map_index := _collision_surface_result.tile_map_index
+    
     var just_started := \
             !is_instance_valid(surface_grab) or \
             surface_grab.surface != surface

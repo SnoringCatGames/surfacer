@@ -401,7 +401,7 @@ static func check_frame_for_collision(
     var tile_map: SurfacesTileMap = kinematic_collision.collider
     var surface_side: int = \
             Sc.geometry.get_surface_side_for_normal(kinematic_collision.normal)
-    var tile_map_result := CollisionTileMapCoordResult.new()
+    var tile_map_result := CollisionSurfaceResult.new()
     
     # Is this collision with a surface that we're actually moving away from?
     var is_moving_away_from_surface: bool
@@ -509,7 +509,7 @@ static func check_frame_for_collision(
                 var expected_touching_right_wall := \
                         expected_surface_side_for_displacement == \
                         SurfaceSide.RIGHT_WALL
-                Sc.geometry.get_collision_tile_map_coord(
+                collision_params.surface_parser.calculate_collision_surface(
                         tile_map_result,
                         most_likely_collision_point,
                         tile_map,
@@ -518,20 +518,15 @@ static func check_frame_for_collision(
                         expected_touching_left_wall,
                         expected_touching_right_wall,
                         true)
-                
-                if tile_map_result.error_message == "":
-                    surface_side = expected_surface_side_for_displacement
     
-    if tile_map_result.tile_map_coord == Vector2.INF:
+    if tile_map_result.surface == null:
         # Consider the default collision point returned from move_and_collide.
-        
         tile_map_result.reset()
-        
         var is_touching_floor := surface_side == SurfaceSide.FLOOR
         var is_touching_ceiling := surface_side == SurfaceSide.CEILING
         var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
         var is_touching_right_wall := surface_side == SurfaceSide.RIGHT_WALL
-        Sc.geometry.get_collision_tile_map_coord(
+        collision_params.surface_parser.calculate_collision_surface(
                 tile_map_result,
                 kinematic_collision.position,
                 tile_map,
@@ -539,53 +534,33 @@ static func check_frame_for_collision(
                 is_touching_ceiling,
                 is_touching_left_wall,
                 is_touching_right_wall)
-        
-        if tile_map_result.tile_map_coord == Vector2.INF:
-            # Invalid collision state.
-            if collision_params.movement_params \
-                    .asserts_no_preexisting_collisions_during_edge_calculations:
-                Sc.logger.error()
-            surface_collision.is_valid_collision_state = false
-            return null
     
-    if tile_map_result.tile_map_coord != Vector2.INF:
-        # Put-together the return result.
-        
-        var tile_map_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
-                        tile_map_result.tile_map_coord,
-                        tile_map)
-        var surface := collision_params.surface_parser.get_surface_for_tile(
-                tile_map,
-                tile_map_index,
-                surface_side)
-        
-        if !is_instance_valid(surface):
-            # -  Godot's collision engine has generated a false-positive with
-            #    an interior surface.
-            # -  This is uncommon.
-            if collision_params.movement_params \
-                    .asserts_no_preexisting_collisions_during_edge_calculations:
-                Sc.logger.error()
-            surface_collision.is_valid_collision_state = false
-            return null
-        
-        surface_collision.surface = surface
-        surface_collision.is_valid_collision_state = true
-        
-        # Is this collision with a surface that we're actually moving away
-        # from.
-        match surface.side:
-            SurfaceSide.FLOOR:
-                is_moving_away_from_surface = displacement.y < 0.0
-            SurfaceSide.LEFT_WALL:
-                is_moving_away_from_surface = displacement.x > 0.0
-            SurfaceSide.RIGHT_WALL:
-                is_moving_away_from_surface = displacement.x < 0.0
-            SurfaceSide.CEILING:
-                is_moving_away_from_surface = displacement.y > 0.0
-            _:
-                Sc.logger.error()
+    if tile_map_result.surface == null:
+        # Invalid collision state.
+        if collision_params.movement_params \
+                .asserts_no_preexisting_collisions_during_edge_calculations:
+            Sc.logger.error()
+        surface_collision.is_valid_collision_state = false
+        return null
+    
+    var surface := tile_map_result.surface
+    surface_side = tile_map_result.surface_side
+    
+    surface_collision.surface = surface
+    surface_collision.is_valid_collision_state = true
+    
+    # Is this collision with a surface that we're actually moving away from.
+    match surface.side:
+        SurfaceSide.FLOOR:
+            is_moving_away_from_surface = displacement.y < 0.0
+        SurfaceSide.LEFT_WALL:
+            is_moving_away_from_surface = displacement.x > 0.0
+        SurfaceSide.RIGHT_WALL:
+            is_moving_away_from_surface = displacement.x < 0.0
+        SurfaceSide.CEILING:
+            is_moving_away_from_surface = displacement.y > 0.0
+        _:
+            Sc.logger.error()
     
     if is_moving_away_from_surface:
         # The character is moving away from the collision point.
