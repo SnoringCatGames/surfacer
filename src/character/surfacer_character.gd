@@ -286,9 +286,8 @@ func _apply_movement() -> void:
     var modified_velocity: Vector2 = \
             velocity * Sc.time.get_combined_scale()
     
-    move_and_slide_with_snap(
+    move_and_slide(
             modified_velocity,
-            surface_state.snap_to_surface_vector,
             Sc.geometry.UP,
             movement_params.stops_on_slope,
             4,
@@ -308,9 +307,14 @@ func _maintain_collisions() -> void:
             actions.just_pressed_jump:
         return
     
+    var normal := \
+            surface_state.grab_normal if \
+            false else \
+            surface_state.grabbed_surface.normal
+    
     var maintain_collision_velocity: Vector2 = \
             STRONG_SPEED_TO_MAINTAIN_COLLISION * \
-            -surface_state.grab_normal
+            -normal
     
     # Also maintain wall collisions.
     if !surface_state.is_grabbing_wall and \
@@ -320,17 +324,16 @@ func _maintain_collisions() -> void:
                 STRONG_SPEED_TO_MAINTAIN_COLLISION * \
                 surface_state.toward_wall_sign
     
-    # Trigger another move_and_slide, in order maintain collision state
-    # within Godot's collision system.
-    var original_position: Vector2 = position
+    # Trigger another move_and_slide.
+    # -   This will maintain collision state within Godot's collision system.
+    # -   This will also ensure the character snaps to the surface.
     move_and_slide(
-            maintain_collision_velocity,
+            maintain_collision_velocity * 4,
             Sc.geometry.UP,
             movement_params.stops_on_slope,
             1,
             Sc.geometry.FLOOR_MAX_ANGLE + \
                     Sc.geometry.WALL_ANGLE_EPSILON)
-    position = original_position
 
 
 func _update_navigator(delta_scaled: float) -> void:
