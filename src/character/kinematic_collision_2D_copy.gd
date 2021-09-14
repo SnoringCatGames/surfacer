@@ -3,8 +3,8 @@ extends Reference
 ## -   This is a simple copy of the built-in KinematicCollision2D class.
 ## -   The built-in KinematicCollision2D class doesn't allow mutation from
 ##     GDScript.
-## -   Godot re-uses and mutates pre-existings instances of
-##     KinematicCollision2D when calling move_and_slide.
+## -   Godot re-uses and mutates pre-existing instances of KinematicCollision2D
+##     when calling move_and_slide.
 ## -   We need to be able to collect collision references across multiple calls
 ##     to move_and_slide.
 ## -   Therefore, we need to create our own copies of collision state.
