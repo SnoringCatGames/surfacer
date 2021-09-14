@@ -10,11 +10,6 @@ extends FrameworkConfig
 ## -   "Su" is short for "Surfacer".[br]
 
 
-# FIXME: ---------------- REMOVE?
-# FIXME: LEFT OFF HERE: REMOVE: ----------------------------
-# - Things _seem_ to behave the same either way?
-var uses_surface_normal_to_maintain_collision := true
-
 # --- Constants ---
 
 const WALLS_AND_FLOORS_COLLISION_MASK_BIT := 0

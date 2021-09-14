@@ -353,11 +353,6 @@ func _calculate_trajectory(
     #     when the character's center is no longer past the end of the end
     #     surface.
     
-    # FIXME: ---------------- REMOVE?
-    # FIXME: LEFT OFF HERE: -----------------
-    # - Update min-speed-to-maintain-horizontal/vertical-collision according to
-    #   surface normal.
-    
     if is_wall:
         # Rounding a corner from a wall.
         
@@ -367,12 +362,7 @@ func _calculate_trajectory(
                 corner_position.x + half_width
         position.y = corner_position.y
         
-        velocity.x = \
-                CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
-                is_left_side else \
-                -CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+        velocity.x = 0.0
         velocity.y = \
                 movement_params.climb_up_speed if \
                 is_top_side else \
@@ -413,12 +403,7 @@ func _calculate_trajectory(
                     is_left_side else \
                     -movement_params.walk_acceleration
         
-        velocity.y = \
-                CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION if \
-                is_top_side else \
-                -CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+        velocity.y = 0.0
         
         var is_rounding_corner_finished := false
         while !is_rounding_corner_finished and \
@@ -470,12 +455,7 @@ func _calculate_trajectory(
                     -movement_params.ceiling_crawl_speed if \
                     is_left_side else \
                     movement_params.ceiling_crawl_speed
-        velocity.y = \
-                CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION if \
-                is_top_side else \
-                -CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+        velocity.y = 0.0
         
         var is_character_past_end := false
         while !is_character_past_end:
@@ -499,12 +479,7 @@ func _calculate_trajectory(
                     is_left_side else \
                     position.x - half_width >= corner_position.x
         
-        velocity.x = \
-                CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
-                is_left_side else \
-                -CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+        velocity.x = 0.0
         velocity.y = \
                 movement_params.climb_down_speed if \
                 is_top_side else \
@@ -581,11 +556,6 @@ func _get_velocity_start(
                 position_start.side == SurfaceSide.CEILING or \
                 position_end.side == SurfaceSide.CEILING
     
-    # FIXME: ---------------- REMOVE?
-    # FIXME: LEFT OFF HERE: -----------------
-    # - Update min-speed-to-maintain-horizontal/vertical-collision according to
-    #   surface normal.
-    
     var velocity_x: float
     var velocity_y: float
     match position_start.side:
@@ -596,23 +566,16 @@ func _get_velocity_start(
                     -movement_params.max_horizontal_speed_default if \
                     is_moving_left else \
                     movement_params.max_horizontal_speed_default
-            velocity_y = CharacterActionHandler \
-                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+            velocity_y = 0.0
         SurfaceSide.CEILING:
             velocity_x = \
                     -movement_params.ceiling_crawl_speed if \
                     is_moving_left else \
                     movement_params.ceiling_crawl_speed
-            velocity_y = -CharacterActionHandler \
-                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+            velocity_y = 0.0
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
-            velocity_x = \
-                    -CharacterActionHandler \
-                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
-                    is_moving_left else \
-                    CharacterActionHandler \
-                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+            velocity_x = 0.0
             velocity_y = \
                     movement_params.climb_up_speed if \
                     is_moving_up else \
@@ -633,11 +596,6 @@ func _get_velocity_end(
             position_start.surface.counter_clockwise_convex_neighbor == \
                     position_end.surface
     
-    # FIXME: ---------------- REMOVE?
-    # FIXME: LEFT OFF HERE: -----------------
-    # - Update min-speed-to-maintain-horizontal/vertical-collision according to
-    #   surface normal.
-    
     var velocity_x: float
     var velocity_y: float
     match position_end.side:
@@ -653,8 +611,7 @@ func _get_velocity_end(
                                 movement_params.rounding_corner_calc_shape,
                                 movement_params \
                                         .rounding_corner_calc_shape_rotation))
-                var floor_component_speed_x_start := CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+                var floor_component_speed_x_start := 0.0
                 
                 # From a basic equation of motion:
                 #     v^2 = v_0^2 + 2a(s - s_0)
@@ -671,8 +628,7 @@ func _get_velocity_end(
             else:
                 velocity_x = 0.0
             
-            velocity_y = CharacterActionHandler \
-                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+            velocity_y = 0.0
         SurfaceSide.CEILING:
             var is_starting_from_left_wall := \
                     position_start.side == SurfaceSide.LEFT_WALL
@@ -683,20 +639,14 @@ func _get_velocity_end(
                         movement_params.ceiling_crawl_speed
             else:
                 velocity_x = 0.0
-            velocity_y = -CharacterActionHandler \
-                    .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+            velocity_y = 0.0
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var is_starting_from_floor := \
                     position_start.side == SurfaceSide.FLOOR
             var is_ending_on_left_wall := \
                     position_end.side == SurfaceSide.LEFT_WALL
-            velocity_x = \
-                    -CharacterActionHandler \
-                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
-                    is_ending_on_left_wall else \
-                    CharacterActionHandler \
-                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+            velocity_x = 0.0
             if is_convex:
                 velocity_y = \
                         movement_params.climb_down_speed if \
@@ -795,15 +745,9 @@ func _calculate_duration(
                 movement_params.climb_up_speed)
         duration_end = distance_end / speed_end
     else:
-        # FIXME: ---------------- REMOVE?
-        # FIXME: LEFT OFF HERE: -----------------
-        # - Update min-speed-to-maintain-horizontal/vertical-collision
-        #   according to surface normal.
-        
         # Account for acceleration-along-floor when climbing over a wall.
         var acceleration_x := movement_params.walk_acceleration
-        var end_speed_x_start := CharacterActionHandler \
-                .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+        var end_speed_x_start := 0.0
         # From a basic equation of motion:
         #     v^2 = v_0^2 + 2a(s - s_0)
         #     v = sqrt(v_0^2 + 2a(s - s_0))
