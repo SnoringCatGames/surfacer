@@ -391,75 +391,15 @@ func _update_physics_contacts() -> void:
     var was_a_valid_contact_found := false
     
     for i in slide_count:
-        var collision: KinematicCollision2D = character.get_slide_collision(i)
-        var contact_position := collision.position
-        var contacted_side: int = \
-                Sc.geometry.get_surface_side_for_normal(collision.normal)
-        var contacted_tile_map: SurfacesTileMap = collision.collider
+        var surface_contact := \
+                _calculate_surface_contact_from_collision(i, false)
         
-        character.surface_parser.calculate_collision_surface(
-                _collision_surface_result,
-                contact_position,
-                contacted_tile_map,
-                contacted_side == SurfaceSide.FLOOR,
-                contacted_side == SurfaceSide.CEILING,
-                contacted_side == SurfaceSide.LEFT_WALL,
-                contacted_side == SurfaceSide.RIGHT_WALL,
-                true)
-        
-        if _collision_surface_result.error_message != "":
-            # -   Sometimes Godot's move_and_slide API can produce bogus
-            #     collision normals.
-            # -   This seems to happen mostly near corners and sloped surfaces.
-            # -   This isn't a problem as long as one of the other reported
-            #     collisions is valid.
-            if !was_a_valid_contact_found and \
-                    i == slide_count - 1:
-                # There is no other valid contact.
-                var collisions_str := ""
-                for j in slide_count:
-                    var c := character.get_slide_collision(j)
-                    collisions_str += "{p=%s, n=%s}, " % [c.position, c.normal]
-                Sc.logger.error("There are only invalid collisions: %s" %
-                        collisions_str)
-            else:
-                # We can just ignore this invalid contact, since there is
-                # another valid contact we can use.
-                continue
+        if !is_instance_valid(surface_contact):
+            continue
         
         was_a_valid_contact_found = true
         
-        var contacted_surface := _collision_surface_result.surface
-        var contact_tile_map_coord := _collision_surface_result.tile_map_coord
-        var contact_tile_map_index := _collision_surface_result.tile_map_index
-        
-        if !is_instance_valid(contacted_surface):
-            # -  Godot's collision engine has generated a false-positive with
-            #    an interior surface.
-            # -  This is uncommon.
-            continue
-        
-        var contact_normal: Vector2 = Sc.geometry.get_surface_normal_at_point(
-                contacted_surface, contact_position)
-        
-        var just_started := !surfaces_to_contacts.has(contacted_surface)
-        
-        if just_started:
-            surfaces_to_contacts[contacted_surface] = SurfaceContact.new()
-        
-        var surface_contact: SurfaceContact = \
-                surfaces_to_contacts[contacted_surface]
-        surface_contact.surface = contacted_surface
-        surface_contact.contact_position = contact_position
-        surface_contact.contact_normal = contact_normal
-        surface_contact.tile_map_coord = contact_tile_map_coord
-        surface_contact.tile_map_index = contact_tile_map_index
-        surface_contact.position_along_surface.match_current_grab(
-                contacted_surface, center_position)
-        surface_contact.just_started = just_started
-        surface_contact._is_still_touching = true
-        
-        match contacted_side:
+        match surface_contact.surface.side:
             SurfaceSide.FLOOR:
                 floor_contact = surface_contact
             SurfaceSide.LEFT_WALL, \
@@ -469,6 +409,49 @@ func _update_physics_contacts() -> void:
                 ceiling_contact = surface_contact
             _:
                 Sc.logger.error()
+    
+    if !was_a_valid_contact_found and \
+            slide_count > 0:
+        # -   Sometimes Godot's move_and_slide API can produce invalid
+        #     collisions or collisions with invalid normals.
+        # -   This seems to happen mostly near corners and sloped surfaces.
+        # -   This isn't a problem as long as one of the other reported
+        #     collisions is valid.
+        # -   But, if we only have invalid collisions to work with, then let's
+        #     try considering them with adjusting their normals for the next
+        #     most likely surface side.
+        for i in slide_count:
+            var surface_contact := \
+                    _calculate_surface_contact_from_collision(i, true)
+            
+            if !is_instance_valid(surface_contact):
+                continue
+            
+            was_a_valid_contact_found = true
+            
+            match surface_contact.surface.side:
+                SurfaceSide.FLOOR:
+                    floor_contact = surface_contact
+                SurfaceSide.LEFT_WALL, \
+                SurfaceSide.RIGHT_WALL:
+                    wall_contact = surface_contact
+                SurfaceSide.CEILING:
+                    ceiling_contact = surface_contact
+                _:
+                    Sc.logger.error()
+        
+        # FIXME: ---- REMOVE? Does this ever trigger? Even if it did, we
+        #             probably want to just ignore the collision this frame.
+        if !was_a_valid_contact_found and \
+                slide_count > 0:
+            var collisions_str := ""
+            for i in slide_count:
+                var collision := character.get_slide_collision(i)
+                collisions_str += \
+                        "{p=%s, n=%s}, " % \
+                        [collision.position, collision.normal]
+            Sc.logger.error(
+                    "There are only invalid collisions: %s" % collisions_str)
     
     # Remove any surfaces that are no longer touching.
     for surface_contact in surfaces_to_contacts.values():
@@ -489,6 +472,73 @@ func _update_physics_contacts() -> void:
             surfaces_to_contacts.erase(surface_contact.surface)
             if surface_grab == surface_contact:
                 surface_grab = null
+
+
+func _calculate_surface_contact_from_collision(
+        collision_index: int,
+        adjusts_collision_normal := false) -> SurfaceContact:
+    var collision: KinematicCollision2D = \
+            character.get_slide_collision(collision_index)
+    
+    var normal := collision.normal
+    if adjusts_collision_normal:
+        # -   Flip the normal around the diagonal within the same quadrant.
+        # -   For example:
+        #     -   (1,4) => (4,1)
+        #     -   (-1,4) => (-4,1)
+        if (normal.x < 0.0) == (normal.y < 0.0):
+            normal = Vector2(normal.y, normal.x)
+        else:
+            normal = Vector2(-normal.y, -normal.x)
+    
+    var contact_position := collision.position
+    var contacted_side: int = \
+            Sc.geometry.get_surface_side_for_normal(normal)
+    var contacted_tile_map: SurfacesTileMap = collision.collider
+    
+    character.surface_parser.calculate_collision_surface(
+            _collision_surface_result,
+            contact_position,
+            contacted_tile_map,
+            contacted_side == SurfaceSide.FLOOR,
+            contacted_side == SurfaceSide.CEILING,
+            contacted_side == SurfaceSide.LEFT_WALL,
+            contacted_side == SurfaceSide.RIGHT_WALL,
+            true)
+    
+    var contacted_surface := _collision_surface_result.surface
+    var contact_tile_map_coord := _collision_surface_result.tile_map_coord
+    var contact_tile_map_index := _collision_surface_result.tile_map_index
+    
+    if !is_instance_valid(contacted_surface):
+        # -  Godot's collision engine has generated an invalid collision value.
+        #    -   This might be a false-positive with an interior surface.
+        #    -   This might be a reasonable collision, but with an innaccurate
+        #        normal.
+        # -  This is uncommon.
+        return null
+    
+    var contact_normal: Vector2 = Sc.geometry.get_surface_normal_at_point(
+            contacted_surface, contact_position)
+    
+    var just_started := !surfaces_to_contacts.has(contacted_surface)
+    
+    if just_started:
+        surfaces_to_contacts[contacted_surface] = SurfaceContact.new()
+    
+    var surface_contact: SurfaceContact = \
+            surfaces_to_contacts[contacted_surface]
+    surface_contact.surface = contacted_surface
+    surface_contact.contact_position = contact_position
+    surface_contact.contact_normal = contact_normal
+    surface_contact.tile_map_coord = contact_tile_map_coord
+    surface_contact.tile_map_index = contact_tile_map_index
+    surface_contact.position_along_surface.match_current_grab(
+            contacted_surface, center_position)
+    surface_contact.just_started = just_started
+    surface_contact._is_still_touching = true
+    
+    return surface_contact
 
 
 func _update_surface_contact_from_rounded_corner() -> void:
