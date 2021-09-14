@@ -288,7 +288,7 @@ func _apply_movement() -> void:
     
     move_and_slide_with_snap(
             modified_velocity,
-            movement_params.snap_to_floor_vector,
+            surface_state.snap_to_surface_vector,
             Sc.geometry.UP,
             movement_params.stops_on_slope,
             4,
@@ -301,7 +301,11 @@ func _apply_movement() -> void:
 #     collisions.
 func _maintain_collisions() -> void:
     if movement_params.bypasses_runtime_physics or \
-            !surface_state.is_grabbing_surface:
+            !surface_state.is_grabbing_surface or \
+            surface_state.is_triggering_wall_release or \
+            surface_state.is_triggering_ceiling_release or \
+            surface_state.is_triggering_fall_through or \
+            actions.just_pressed_jump:
         return
     
     var maintain_collision_velocity: Vector2 = \

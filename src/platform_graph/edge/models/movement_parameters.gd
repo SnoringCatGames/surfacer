@@ -467,7 +467,7 @@ var collider_rotation: float \
 
 var collider_half_width_height := Vector2.INF
 
-var snap_to_floor_vector := Vector2.INF
+var snap_to_surface_vector_length := INF
 
 ## -   This shape is used for calculating trajectories that approximate what
 ##     might normally happen at runtime.[br]
@@ -837,12 +837,11 @@ func _derive_parameters() -> void:
         collider_half_width_height = Sc.geometry.calculate_half_width_height(
                 collider_shape, collider_rotation)
         
-        var snap_length := \
+        snap_to_surface_vector_length = \
                 collider_half_width_height.y + \
                 collider_half_width_height.x + \
                 max_horizontal_speed_default * Time.PHYSICS_TIME_STEP * \
                 1.2
-        snap_to_floor_vector = Vector2(0.0, snap_length)
         
         var fall_from_floor_shape := RectangleShape2D.new()
         fall_from_floor_shape.extents = collider_half_width_height
