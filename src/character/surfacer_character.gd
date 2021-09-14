@@ -243,23 +243,8 @@ func _init_navigator() -> void:
 func _on_physics_process(delta: float) -> void:
     var delta_scaled: float = Sc.time.scale_delta(delta)
     
-    if !movement_params.bypasses_runtime_physics:
-        # Since move_and_slide automatically accounts for delta, we need to
-        # compensate for that in order to support our modified framerate.
-        var modified_velocity: Vector2 = \
-                velocity * Sc.time.get_combined_scale()
-        
-        # FIXME: LEFT OFF HERE: ------------------ Use move_and_slide_with_snap.
-        
-        # TODO: Use the remaining pre-collision movement that move_and_slide
-        #       returns. This might be needed in order to move along slopes?
-        move_and_slide_with_snap(
-                modified_velocity,
-                movement_params.snap_to_floor_vector,
-                Sc.geometry.UP,
-                movement_params.stops_on_slope,
-                4,
-                Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON)
+    _apply_movement()
+    _maintain_collisions()
     
     _update_actions(delta_scaled)
     surface_state.clear_just_changed_state()
@@ -288,6 +273,58 @@ func _on_physics_process(delta: float) -> void:
     if surface_state.did_move_last_frame and \
             is_player_character:
         pointer_listener.on_character_moved()
+
+
+func _apply_movement() -> void:
+    if movement_params.bypasses_runtime_physics:
+        return
+    
+    # Since move_and_slide automatically accounts for delta, we need to
+    # compensate for that in order to support our modified framerate.
+    var modified_velocity: Vector2 = \
+            velocity * Sc.time.get_combined_scale()
+    
+    move_and_slide_with_snap(
+            modified_velocity,
+            movement_params.snap_to_floor_vector,
+            Sc.geometry.UP,
+            movement_params.stops_on_slope,
+            4,
+            Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON)
+
+
+# -   The move_and_slide system depends on some velocity always pushing the
+#     character into the floor (or other touched surface).
+# -   If we just zero this out, move_and_slide will produce false-negatives for
+#     collisions.
+func _maintain_collisions() -> void:
+    if movement_params.bypasses_runtime_physics or \
+            !surface_state.is_grabbing_surface:
+        return
+    
+    var maintain_collision_velocity: Vector2 = CharacterActionHandler \
+            .STRONG_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
+            -surface_state.grab_normal
+    
+    # Also maintain wall collisions.
+    if !surface_state.is_grabbing_wall and \
+            surface_state.is_touching_wall and \
+            !surface_state.is_triggering_wall_release:
+        maintain_collision_velocity.x = CharacterActionHandler \
+                .STRONG_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
+                surface_state.toward_wall_sign
+    
+    # Trigger another move_and_slide, in order maintain collision state
+    # within Godot's collision system.
+    var original_position: Vector2 = position
+    move_and_slide(
+            maintain_collision_velocity,
+            Sc.geometry.UP,
+            movement_params.stops_on_slope,
+            1,
+            Sc.geometry.FLOOR_MAX_ANGLE + \
+                    Sc.geometry.WALL_ANGLE_EPSILON)
+    position = original_position
 
 
 func _update_navigator(delta_scaled: float) -> void:
@@ -333,7 +370,8 @@ func _process_actions() -> void:
         if is_action_relevant_for_surface and \
                 is_action_relevant_for_physics_mode:
             var executed: bool = action_handler.process(self)
-            _previous_actions_handlers_this_frame[action_handler.name] = executed
+            _previous_actions_handlers_this_frame[action_handler.name] = \
+                    executed
             
             # TODO: This is sometimes useful for debugging.
 #            if executed and \

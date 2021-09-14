@@ -19,6 +19,7 @@ func _init().(
 func process(character) -> bool:
     character.jump_count = 0
     character.is_rising_from_jump = false
+    character.velocity.x = 0.0
     character.velocity.y = 0.0
     
     # Force the character horizontal position to bypass gravity and cling to

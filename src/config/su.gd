@@ -13,7 +13,7 @@ extends FrameworkConfig
 # FIXME: ---------------- REMOVE?
 # FIXME: LEFT OFF HERE: REMOVE: ----------------------------
 # - Things _seem_ to behave the same either way?
-var uses_surface_normal_to_maintain_collision := false
+var uses_surface_normal_to_maintain_collision := true
 
 # --- Constants ---
 
