@@ -386,7 +386,11 @@ func _update_physics_contacts() -> void:
     for surface_contact in surfaces_to_contacts.values():
         surface_contact._is_still_touching = false
     
-    for i in character.get_slide_count():
+    var slide_count := character.get_slide_count()
+    
+    var was_a_valid_contact_found := false
+    
+    for i in slide_count:
         var collision: KinematicCollision2D = character.get_slide_collision(i)
         var contact_position := collision.position
         var contacted_side: int = \
@@ -400,7 +404,30 @@ func _update_physics_contacts() -> void:
                 contacted_side == SurfaceSide.FLOOR,
                 contacted_side == SurfaceSide.CEILING,
                 contacted_side == SurfaceSide.LEFT_WALL,
-                contacted_side == SurfaceSide.RIGHT_WALL)
+                contacted_side == SurfaceSide.RIGHT_WALL,
+                true)
+        
+        if _collision_surface_result.error_message != "":
+            # -   Sometimes Godot's move_and_slide API can produce bogus
+            #     collision normals.
+            # -   This seems to happen mostly near corners and sloped surfaces.
+            # -   This isn't a problem as long as one of the other reported
+            #     collisions is valid.
+            if !was_a_valid_contact_found and \
+                    i == slide_count - 1:
+                # There is no other valid contact.
+                var collisions_str := ""
+                for j in slide_count:
+                    var c := character.get_slide_collision(j)
+                    collisions_str += "{p=%s, n=%s}, " % [c.position, c.normal]
+                Sc.logger.error("There are only invalid collisions: %s" %
+                        collisions_str)
+            else:
+                # We can just ignore this invalid contact, since there is
+                # another valid contact we can use.
+                continue
+        
+        was_a_valid_contact_found = true
         
         var contacted_surface := _collision_surface_result.surface
         var contact_tile_map_coord := _collision_surface_result.tile_map_coord

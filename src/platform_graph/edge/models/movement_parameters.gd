@@ -69,6 +69,9 @@ var max_vertical_speed_multiplier := 1.0 \
 var fall_through_floor_velocity_boost := 100.0 \
         setget _set_fall_through_floor_velocity_boost
 
+## This is passed into `KinematicBody2D.move_and_slide`.
+var stops_on_slope := true
+
 # --- Dash ---
 
 const _DASH_GROUP := {
@@ -464,6 +467,8 @@ var collider_rotation: float \
 
 var collider_half_width_height := Vector2.INF
 
+var snap_to_floor_vector := Vector2.INF
+
 ## -   This shape is used for calculating trajectories that approximate what
 ##     might normally happen at runtime.[br]
 ## -   These trajectories could be used both for rendering navigation paths, as
@@ -831,6 +836,13 @@ func _derive_parameters() -> void:
     if is_instance_valid(collider_shape):
         collider_half_width_height = Sc.geometry.calculate_half_width_height(
                 collider_shape, collider_rotation)
+        
+        var snap_length := \
+                collider_half_width_height.y + \
+                collider_half_width_height.x + \
+                max_horizontal_speed_default * Time.PHYSICS_TIME_STEP * \
+                1.2
+        snap_to_floor_vector = Vector2(0.0, snap_length)
         
         var fall_from_floor_shape := RectangleShape2D.new()
         fall_from_floor_shape.extents = collider_half_width_height
