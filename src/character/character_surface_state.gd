@@ -159,13 +159,6 @@ func update() -> void:
     _update_action_state()
 
 
-# FIXME: LEFT OFF HERE: -----------------------
-# - Do I still need this?
-# - Call this.
-func _update_ray_casts() -> void:
-    pass
-
-
 func clear_just_changed_state() -> void:
     just_touched_floor = false
     just_touched_ceiling = false

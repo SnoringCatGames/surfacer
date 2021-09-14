@@ -314,32 +314,31 @@ static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
     
     for id in ids:
         var shapes := tile_set.tile_get_shapes(id)
-        assert(shapes.size() <= 1)
         
         if shapes.size() == 0:
             continue
         
-        var info: Dictionary = shapes[0]
-        var shape: Shape2D = info.shape
-        var shape_transform: Transform2D = info.shape_transform
-        
-        assert(shape is ConvexPolygonShape2D,
-                "TileSet collision shapes must be of type " +
-                "ConvexPolygonShape2D.")
-        
-        var points: PoolVector2Array = shape.points
-        
-        for i in points.size() - 1:
-            assert(points[i] != points[i + 1],
-                    "TileSet collision shapes must not have " +
-                    "duplicated vertices.")
-        
-        for i in points.size():
-            assert(points[i].x == int(points[i].x) and \
-                    points[i].y == int(points[i].y), 
-                    "TileSet collision-shape vertices must align with " +
-                    "whole-pixel coordinates (this is important for merging " +
-                    "adjacent-tile surfaces).")
+        for info in shapes:
+            var shape: Shape2D = info.shape
+            var shape_transform: Transform2D = info.shape_transform
+            
+            assert(shape is ConvexPolygonShape2D,
+                    "TileSet collision shapes must be of type " +
+                    "ConvexPolygonShape2D.")
+            
+            var points: PoolVector2Array = shape.points
+            
+            for i in points.size() - 1:
+                assert(points[i] != points[i + 1],
+                        "TileSet collision shapes must not have " +
+                        "duplicated vertices.")
+            
+            for i in points.size():
+                assert(points[i].x == int(points[i].x) and \
+                        points[i].y == int(points[i].y), 
+                        "TileSet collision-shape vertices must align with " +
+                        "whole-pixel coordinates (this is important for " +
+                        "merging adjacent-tile surfaces).")
 
 
 # Parses the tiles of given TileMap into their constituent top-sides,

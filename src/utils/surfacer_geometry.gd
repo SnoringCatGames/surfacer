@@ -155,13 +155,6 @@ static func get_surface_normal_at_point(
     var perpendicular := Vector2(displacement.y, -displacement.x)
     var normal := perpendicular.normalized()
     
-    # FIXME: LEFT OFF HERE: REMOVE -----------------------------
-    if is_inf(normal.x) or \
-            is_nan(normal.x) or \
-            is_inf(normal.y) or \
-            is_nan(normal.y):
-        print("break")
-    
     return normal
 
 
