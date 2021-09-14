@@ -253,11 +253,12 @@ func _on_physics_process(delta: float) -> void:
         
         # TODO: Use the remaining pre-collision movement that move_and_slide
         #       returns. This might be needed in order to move along slopes?
-        move_and_slide(
+        move_and_slide_with_snap(
                 modified_velocity,
+                movement_params.snap_to_floor_vector,
                 Sc.geometry.UP,
-                true,
-                4,
+                movement_params.stops_on_slope,
+                3,
                 Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON)
     
     _update_actions(delta_scaled)
