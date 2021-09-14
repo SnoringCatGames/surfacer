@@ -290,6 +290,8 @@ var ann_manifest: SurfacerAnnotationsManifest
 var movement: SurfacerMovementManifest
 var edge_from_json_factory := EdgeFromJsonFactory.new()
 
+var space_state: Physics2DDirectSpaceState
+
 # ---
 
 
