@@ -111,6 +111,8 @@ var previous_grabbed_surface: Surface
 var center_position_along_surface := PositionAlongSurface.new()
 var last_position_along_surface := PositionAlongSurface.new()
 
+var snap_to_surface_vector := Vector2.INF
+
 var velocity := Vector2.INF
 
 var just_changed_surface := false
@@ -1300,6 +1302,31 @@ func _update_grab_state() -> void:
             character.movement_params.can_grab_walls and \
                 (is_grabbing_wall or \
                         character.actions.pressed_up)
+    
+    var surface_side := SurfaceSide.NONE
+    match surface_type:
+        SurfaceType.FLOOR:
+            surface_side = SurfaceSide.FLOOR
+        SurfaceType.WALL:
+            if is_grabbing_left_wall:
+                surface_side = SurfaceSide.LEFT_WALL
+            else:
+                surface_side = SurfaceSide.RIGHT_WALL
+        SurfaceType.CEILING:
+            surface_side = SurfaceSide.CEILING
+        SurfaceType.AIR, \
+        SurfaceType.OTHER:
+            surface_side = SurfaceSide.NONE
+        _:
+            Sc.logger.error()
+    var surface_normal := SurfaceSide.get_normal(surface_side)
+    
+    snap_to_surface_vector = \
+            Vector2.ZERO if \
+            !is_grabbing_surface or \
+                    character.actions.just_pressed_jump else \
+            -surface_normal * \
+                    character.movement_params.snap_to_surface_vector_length
 
 
 func _update_grab_contact() -> void:
