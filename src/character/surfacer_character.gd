@@ -14,6 +14,8 @@ extends ScaffolderCharacter
 ##     -   (Optional) ProximityDetector[br]
 
 
+const STRONG_SPEED_TO_MAINTAIN_COLLISION := 300.0
+
 ## -   If true, then the character's movement will include jumps in place of
 ##     walking, when possible.
 export var is_bouncy := false
@@ -302,16 +304,16 @@ func _maintain_collisions() -> void:
             !surface_state.is_grabbing_surface:
         return
     
-    var maintain_collision_velocity: Vector2 = CharacterActionHandler \
-            .STRONG_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
+    var maintain_collision_velocity: Vector2 = \
+            STRONG_SPEED_TO_MAINTAIN_COLLISION * \
             -surface_state.grab_normal
     
     # Also maintain wall collisions.
     if !surface_state.is_grabbing_wall and \
             surface_state.is_touching_wall and \
             !surface_state.is_triggering_wall_release:
-        maintain_collision_velocity.x = CharacterActionHandler \
-                .STRONG_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
+        maintain_collision_velocity.x = \
+                STRONG_SPEED_TO_MAINTAIN_COLLISION * \
                 surface_state.toward_wall_sign
     
     # Trigger another move_and_slide, in order maintain collision state

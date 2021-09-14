@@ -7,6 +7,8 @@ const TYPE := SurfaceType.AIR
 const USES_RUNTIME_PHYSICS := true
 const PRIORITY := 410
 
+const BOUNCE_OFF_CEILING_VELOCITY := 15.0
+
 
 func _init().(
         NAME,
@@ -46,7 +48,6 @@ func process(character) -> bool:
     if character.surface_state.is_touching_ceiling and \
             !character.surface_state.is_grabbing_ceiling:
         character.is_rising_from_jump = false
-        character.velocity.y = \
-                CharacterActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+        character.velocity.y = BOUNCE_OFF_CEILING_VELOCITY
     
     return true

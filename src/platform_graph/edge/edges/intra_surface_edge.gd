@@ -198,57 +198,20 @@ func get_velocity_at_time(
                     velocity_x,
                     -movement_params.max_horizontal_speed_default,
                     movement_params.max_horizontal_speed_default)
-            # FIXME: ---------------- REMOVE?
-            var velocity_y: float
-            if Su.uses_surface_normal_to_maintain_collision:
-                var cling_velocity: Vector2 = CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * \
-                        -surface_state.grab_normal
-                velocity_y = cling_velocity.y
-            else:
-                velocity_y = CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
-            velocity_y /= Sc.time.get_combined_scale()
-            return Vector2(velocity_x, velocity_y)
+            return Vector2(velocity_x, 0.0)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
-            # FIXME: ---------------- REMOVE?
-            var velocity_x: float
-            if Su.uses_surface_normal_to_maintain_collision:
-                var cling_velocity: Vector2 = CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
-                        -surface_state.grab_normal
-                velocity_x = cling_velocity.x
-            else:
-                velocity_x = \
-                        -CharacterActionHandler \
-                                .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
-                        surface.side == SurfaceSide.LEFT_WALL else \
-                        CharacterActionHandler \
-                                .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
-            velocity_x /= Sc.time.get_combined_scale()
             var velocity_y := \
                     movement_params.climb_up_speed if \
                     displacement.y < 0.0 else \
                     movement_params.climb_down_speed
-            return Vector2(velocity_x, velocity_y)
+            return Vector2(0.0, velocity_y)
         SurfaceSide.CEILING:
             var velocity_x := \
                     movement_params.ceiling_crawl_speed if \
                     displacement.x > 0.0 else \
                     -movement_params.ceiling_crawl_speed
-            # FIXME: ---------------- REMOVE?
-            var velocity_y: float
-            if Su.uses_surface_normal_to_maintain_collision:
-                var cling_velocity: Vector2 = CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * \
-                        -surface_state.grab_normal
-                velocity_y = cling_velocity.y
-            else:
-                velocity_y = -CharacterActionHandler \
-                        .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
-            velocity_y /= Sc.time.get_combined_scale()
-            return Vector2(velocity_x, velocity_y)
+            return Vector2(velocity_x, 0.0)
         _:
             Sc.logger.error()
             return Vector2.INF

@@ -6,10 +6,6 @@ extends Reference
 ## on the ground, and triggers character jump state accordingly.
 
 
-const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15.0
-const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := 60.0
-const STRONG_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := 1000.0
-
 var name: String
 # SurfaceType
 var type: int
