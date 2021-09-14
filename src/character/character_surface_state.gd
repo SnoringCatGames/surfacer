@@ -388,13 +388,11 @@ func _update_physics_contacts() -> void:
     for surface_contact in surfaces_to_contacts.values():
         surface_contact._is_still_touching = false
     
-    var slide_count := character.get_slide_count()
-    
     var was_a_valid_contact_found := false
     
-    for i in slide_count:
+    for collision in character.collisions:
         var surface_contact := \
-                _calculate_surface_contact_from_collision(i, false)
+                _calculate_surface_contact_from_collision(collision, false)
         
         if !is_instance_valid(surface_contact):
             continue
@@ -413,7 +411,7 @@ func _update_physics_contacts() -> void:
                 Sc.logger.error()
     
     if !was_a_valid_contact_found and \
-            slide_count > 0:
+            !character.collisions.empty():
         # -   Sometimes Godot's move_and_slide API can produce invalid
         #     collisions or collisions with invalid normals.
         # -   This seems to happen mostly near corners and sloped surfaces.
@@ -422,9 +420,9 @@ func _update_physics_contacts() -> void:
         # -   But, if we only have invalid collisions to work with, then let's
         #     try considering them with adjusting their normals for the next
         #     most likely surface side.
-        for i in slide_count:
+        for collision in character.collisions:
             var surface_contact := \
-                    _calculate_surface_contact_from_collision(i, true)
+                    _calculate_surface_contact_from_collision(collision, true)
             
             if !is_instance_valid(surface_contact):
                 continue
@@ -444,11 +442,9 @@ func _update_physics_contacts() -> void:
         
         # FIXME: ---- REMOVE? Does this ever trigger? Even if it did, we
         #             probably want to just ignore the collision this frame.
-        if !was_a_valid_contact_found and \
-                slide_count > 0:
+        if !was_a_valid_contact_found:
             var collisions_str := ""
-            for i in slide_count:
-                var collision := character.get_slide_collision(i)
+            for collision in character.collisions:
                 collisions_str += \
                         "{p=%s, n=%s}, " % \
                         [collision.position, collision.normal]
@@ -477,11 +473,8 @@ func _update_physics_contacts() -> void:
 
 
 func _calculate_surface_contact_from_collision(
-        collision_index: int,
+        collision: KinematicCollision2DCopy,
         adjusts_collision_normal := false) -> SurfaceContact:
-    var collision: KinematicCollision2D = \
-            character.get_slide_collision(collision_index)
-    
     var normal := collision.normal
     if adjusts_collision_normal:
         # -   Flip the normal around the diagonal within the same quadrant.

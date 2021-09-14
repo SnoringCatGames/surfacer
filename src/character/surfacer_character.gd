@@ -46,6 +46,9 @@ var actions := CharacterActionState.new()
 var surface_state := CharacterSurfaceState.new(self)
 var navigation_state: CharacterNavigationState
 
+# Array<KinematicCollision2DCopy>
+var collisions := []
+
 var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: SurfaceNavigator
@@ -245,8 +248,10 @@ func _init_navigator() -> void:
 func _on_physics_process(delta: float) -> void:
     var delta_scaled: float = Sc.time.scale_delta(delta)
     
+    collisions.clear()
     _apply_movement()
     _maintain_collisions()
+    collisions.invert()
     
     _update_actions(delta_scaled)
     surface_state.clear_just_changed_state()
@@ -292,6 +297,8 @@ func _apply_movement() -> void:
             movement_params.stops_on_slope,
             4,
             Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON)
+    
+    _record_collisions()
 
 
 # -   The move_and_slide system depends on some velocity always pushing the
@@ -333,6 +340,18 @@ func _maintain_collisions() -> void:
             1,
             Sc.geometry.FLOOR_MAX_ANGLE + \
                     Sc.geometry.WALL_ANGLE_EPSILON)
+    
+    _record_collisions()
+
+
+func _record_collisions() -> void:
+    var new_collision_count := get_slide_count()
+    var old_collision_count := collisions.size()
+    collisions.resize(old_collision_count + new_collision_count)
+    
+    for i in new_collision_count:
+        collisions[old_collision_count + i] = \
+                KinematicCollision2DCopy.new(get_slide_collision(i))
 
 
 func _update_navigator(delta_scaled: float) -> void:
