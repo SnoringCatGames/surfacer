@@ -14,7 +14,7 @@ extends ScaffolderCharacter
 ##     -   (Optional) ProximityDetector[br]
 
 
-const STRONG_SPEED_TO_MAINTAIN_COLLISION := 300.0
+const STRONG_SPEED_TO_MAINTAIN_COLLISION := 900.0
 
 ## -   If true, then the character's movement will include jumps in place of
 ##     walking, when possible.
@@ -307,10 +307,9 @@ func _maintain_collisions() -> void:
             actions.just_pressed_jump:
         return
     
-    var normal := \
-            surface_state.grab_normal if \
-            false else \
-            surface_state.grabbed_surface.normal
+    # TODO: We could use surface_state.grab_normal here, if we wanted to walk
+    #       more slowly down hills.
+    var normal := surface_state.grabbed_surface.normal
     
     var maintain_collision_velocity: Vector2 = \
             STRONG_SPEED_TO_MAINTAIN_COLLISION * \
@@ -328,7 +327,7 @@ func _maintain_collisions() -> void:
     # -   This will maintain collision state within Godot's collision system.
     # -   This will also ensure the character snaps to the surface.
     move_and_slide(
-            maintain_collision_velocity * 4,
+            maintain_collision_velocity,
             Sc.geometry.UP,
             movement_params.stops_on_slope,
             1,
