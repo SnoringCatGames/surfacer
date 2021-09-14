@@ -36,7 +36,6 @@ var combined_tile_map_rect: Rect2
 # Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
-var _space_state: Physics2DDirectSpaceState
 var _collision_surface_result := CollisionSurfaceResult.new()
 
 
@@ -45,8 +44,6 @@ func calculate(tile_maps: Array) -> void:
     
     # TODO: Add support for more than one collidable TileMap.
     assert(tile_maps.size() == 1)
-    
-    self._space_state = tile_maps[0].get_world_2d().direct_space_state
     
     # Record the maximum cell size and combined region from all tile maps.
     _calculate_max_tile_map_cell_size(tile_maps)
@@ -1165,7 +1162,7 @@ func find_closest_surface_in_direction(
             collision_surface_result != null else \
             _collision_surface_result
     
-    var collision: Dictionary = _space_state.intersect_ray(
+    var collision: Dictionary = Su.space_state.intersect_ray(
             target,
             direction * max_distance,
             [],
@@ -2087,7 +2084,6 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     var tile_maps: Array = context.id_to_tile_map.values()
-    _space_state = tile_maps[0].get_world_2d().direct_space_state
     _calculate_max_tile_map_cell_size(tile_maps)
     _calculate_combined_tile_map_rect(tile_maps)
     

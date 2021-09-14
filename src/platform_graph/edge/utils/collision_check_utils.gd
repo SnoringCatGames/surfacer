@@ -445,7 +445,6 @@ static func check_frame_for_collision(
         # adjacent surface around a corner, and a less oblique collision.
         
         var space_rid := crash_test_dummy.get_world_2d().space
-        var space_state := Physics2DServer.space_get_direct_state(space_rid)
         var params := Physics2DShapeQueryParameters.new()
         
         params.set_shape(crash_test_dummy.movement_params.collider_shape)
@@ -456,7 +455,7 @@ static func check_frame_for_collision(
         params.margin = crash_test_dummy.movement_params \
                 .collision_margin_for_edge_calculations
         
-        var intersection_points := space_state.collide_shape(params)
+        var intersection_points: Array = Su.space_state.collide_shape(params)
         
         if !intersection_points.empty():
             # Choose the intersection point that most likely corresponds to a

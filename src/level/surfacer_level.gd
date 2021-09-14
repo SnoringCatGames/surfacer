@@ -21,6 +21,10 @@ func _init() -> void:
     add_child(graph_parser)
 
 
+func _enter_tree() -> void:
+    Su.space_state = self.get_world_2d().direct_space_state
+
+
 func _load() -> void:
     ._load()
     

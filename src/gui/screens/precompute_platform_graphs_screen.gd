@@ -85,8 +85,6 @@ func _initialize_next() -> void:
     Sc.level = level
     Sc.level_session.reset(level_id)
     $VBoxContainer/LevelWrapper/Viewport.add_child(level)
-    var graph_parser := PlatformGraphParser.new()
-    level.add_child(graph_parser)
     Sc.profiler.stop("initialize")
     _on_stage_progress("initialize")
     defer("_parse_next")
