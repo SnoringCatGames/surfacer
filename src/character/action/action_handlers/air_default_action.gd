@@ -49,5 +49,12 @@ func process(character) -> bool:
             !character.surface_state.is_grabbing_ceiling:
         character.is_rising_from_jump = false
         character.velocity.y = BOUNCE_OFF_CEILING_VELOCITY
+        
+        var is_ceiling_sloped_against_movement: bool = \
+                (character.surface_state.ceiling_contact \
+                        .contact_normal.x < 0.0) != \
+                (character.velocity.x < 0.0)
+        if is_ceiling_sloped_against_movement:
+            character.velocity.x = 0.0
     
     return true
