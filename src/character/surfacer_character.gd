@@ -258,7 +258,7 @@ func _on_physics_process(delta: float) -> void:
                 movement_params.snap_to_floor_vector,
                 Sc.geometry.UP,
                 movement_params.stops_on_slope,
-                3,
+                4,
                 Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON)
     
     _update_actions(delta_scaled)
