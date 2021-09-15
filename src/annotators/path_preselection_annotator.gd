@@ -281,6 +281,8 @@ func _update_phantom_surface() -> void:
                 preselection_destination.surface.bounding_box.size.x if \
                 preselection_destination.surface.normal.x == 0.0 else \
                 preselection_destination.surface.bounding_box.size.y
+        # Single-vertex surfaces have zero length.
+        length = max(1.0, length)
         var scale_factor: float = \
                 (length + \
                 Sc.ann_params.preselection_surface_length_padding * 2.0) / \

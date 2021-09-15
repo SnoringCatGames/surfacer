@@ -250,7 +250,7 @@ func _on_physics_process(delta: float) -> void:
     
     collisions.clear()
     _apply_movement()
-    _match_expected_edge_trajectory()
+    _match_expected_navigation_trajectory()
     _maintain_collisions()
     collisions.invert()
     
@@ -303,10 +303,31 @@ func _apply_movement() -> void:
     _record_collisions()
 
 
+func _match_expected_navigation_trajectory() -> void:
+    if navigation_state.just_reached_destination:
+        _match_expected_path_end_trajectory()
+    elif navigation_state.just_started_edge:
+        _match_expected_edge_start_trajectory()
+    elif is_instance_valid(navigator.edge):
+        _match_expected_edge_trajectory()
+
+
+func _match_expected_path_end_trajectory() -> void:
+    if movement_params.forces_character_position_to_match_path_at_end:
+        position = navigator.previous_path.destination.target_point
+    if movement_params.forces_character_velocity_to_zero_at_path_end:
+        velocity = Vector2.ZERO
+
+
+func _match_expected_edge_start_trajectory() -> void:
+    if movement_params.forces_character_position_to_match_edge_at_start:
+        position = navigator.edge.get_start()
+    if movement_params.forces_character_velocity_to_match_edge_at_start:
+        velocity = navigator.edge.velocity_start
+        surface_state.horizontal_acceleration_sign = 0
+
+
 func _match_expected_edge_trajectory() -> void:
-    if !is_instance_valid(navigator.edge):
-        return
-    
     var playback_previous_elapsed_time: float = \
             navigator.playback.get_previous_elapsed_time_scaled()
     var playback_elapsed_time: float = \
@@ -321,21 +342,21 @@ func _match_expected_edge_trajectory() -> void:
         return
     
     if movement_params.syncs_character_position_to_edge_trajectory:
-        var position := navigator.edge.get_position_at_time(
+        var expected_position := navigator.edge.get_position_at_time(
                 playback_elapsed_time)
         var is_movement_beyond_expected_trajectory := \
-                position == Vector2.INF
+                expected_position == Vector2.INF
         if !is_movement_beyond_expected_trajectory:
-            position = position
+            position = expected_position
     
     if movement_params.syncs_character_velocity_to_edge_trajectory:
-        var velocity := navigator.edge.get_velocity_at_time(
+        var expected_velocity := navigator.edge.get_velocity_at_time(
                 playback_elapsed_time,
                 surface_state)
         var is_movement_beyond_expected_trajectory := \
-                velocity == Vector2.INF
+                expected_velocity == Vector2.INF
         if !is_movement_beyond_expected_trajectory:
-            velocity = velocity
+            velocity = expected_velocity
 
 
 # -   The move_and_slide system depends on some velocity always pushing the
