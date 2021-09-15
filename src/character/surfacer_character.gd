@@ -284,7 +284,8 @@ func _on_physics_process(delta: float) -> void:
 
 
 func _apply_movement() -> void:
-    if movement_params.bypasses_runtime_physics:
+    if movement_params.bypasses_runtime_physics or \
+            velocity == Vector2.ZERO:
         return
     
     # Since move_and_slide automatically accounts for delta, we need to
@@ -358,6 +359,8 @@ func _maintain_collisions() -> void:
             STRONG_SPEED_TO_MAINTAIN_COLLISION * \
             -normal
     
+    var max_slides := 1
+    
     # Also maintain wall collisions.
     if !surface_state.is_grabbing_wall and \
             surface_state.is_touching_wall and \
@@ -365,6 +368,7 @@ func _maintain_collisions() -> void:
         maintain_collision_velocity.x = \
                 STRONG_SPEED_TO_MAINTAIN_COLLISION * \
                 surface_state.toward_wall_sign
+        max_slides = 2
     
     # Trigger another move_and_slide.
     # -   This will maintain collision state within Godot's collision system.
@@ -373,7 +377,7 @@ func _maintain_collisions() -> void:
             maintain_collision_velocity,
             Sc.geometry.UP,
             movement_params.stops_on_slope,
-            1,
+            max_slides,
             Sc.geometry.FLOOR_MAX_ANGLE + \
                     Sc.geometry.WALL_ANGLE_EPSILON)
     
