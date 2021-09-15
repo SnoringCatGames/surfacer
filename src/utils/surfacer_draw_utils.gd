@@ -6,60 +6,183 @@ extends ScaffolderDrawUtils
 const SQRT_TWO := sqrt(2.0)
 
 
+func draw_single_vertex_surface(
+        canvas: CanvasItem,
+        surface: Surface,
+        color: Color,
+        depth: float = Sc.ann_params.surface_depth) -> void:
+    var point: Vector2 = surface.vertices[0]
+    
+    var alpha_start: float = Sc.ann_params.surface_alpha_end_ratio
+    var alpha_delta: float = \
+            (color.a - alpha_start) / \
+            Sc.ann_params.surface_depth_divisions_count
+    
+    var color_start := color
+    color_start.a = alpha_start
+    var color_overlay := color
+    color_overlay.a = alpha_delta
+    
+    var radius := depth
+    var delta_radius: float = \
+            depth / Sc.ann_params.surface_depth_divisions_count
+    
+    canvas.draw_circle(point, radius, color_start)
+    radius -= delta_radius
+    
+    for i in range(1, Sc.ann_params.surface_depth_divisions_count):
+        radius -= delta_radius
+        canvas.draw_circle(point, radius, color_overlay)
+
+
 func draw_surface(
         canvas: CanvasItem,
         surface: Surface,
         color: Color,
         depth: float = Sc.ann_params.surface_depth) -> void:
     var vertices := surface.vertices
-    assert(!vertices.empty())
+    var vertex_count := vertices.size()
     
-    if vertices.size() == 1:
-        # Handle the degenerate case.
-        canvas.draw_circle(vertices[0], depth / 2.0, color)
+    assert(vertex_count > 0)
+    
+    if vertex_count == 1:
+        # Handle the degenerate case: One point in the surface.
+        draw_single_vertex_surface(
+                canvas,
+                surface,
+                color,
+                depth)
         return
+    
+    var preceding_vertices := surface.counter_clockwise_neighbor.vertices
+    if preceding_vertices.size() <= 1:
+        preceding_vertices = \
+                surface.counter_clockwise_neighbor \
+                .counter_clockwise_neighbor.vertices
+        assert(preceding_vertices.size() > 1)
+    var first_segment_preceding_point: Vector2 = \
+            preceding_vertices[preceding_vertices.size() - 2]
+    
+    var following_vertices := surface.clockwise_neighbor.vertices
+    if following_vertices.size() <= 1:
+        following_vertices = \
+                surface.clockwise_neighbor.clockwise_neighbor.vertices
+        assert(following_vertices.size() > 1)
+    var last_segment_following_point: Vector2 = \
+            following_vertices[following_vertices.size() - 2]
+    
+    if vertex_count == 2:
+        # Two points in the surface.
+        draw_surface_segment(
+                canvas,
+                vertices[0],
+                vertices[1],
+                first_segment_preceding_point,
+                last_segment_following_point,
+                surface,
+                color,
+                depth)
+        
+    else:
+        # At least three points in the surface.
+        
+        # Draw the first segment.
+        draw_surface_segment(
+                canvas,
+                vertices[0],
+                vertices[1],
+                first_segment_preceding_point,
+                vertices[2],
+                surface,
+                color,
+                depth)
+        
+        # Draw the middle segments.
+        for i in range(1, vertex_count - 2):
+            draw_surface_segment(
+                    canvas,
+                    vertices[i],
+                    vertices[i + 1],
+                    vertices[i - 1],
+                    vertices[i + 2],
+                    surface,
+                    color,
+                    depth)
+        
+        # Draw the last segment.
+        draw_surface_segment(
+                canvas,
+                vertices[vertex_count - 2],
+                vertices[vertex_count - 1],
+                vertices[vertex_count - 3],
+                last_segment_following_point,
+                surface,
+                color,
+                depth)
+
+
+func draw_surface_segment(
+        canvas: CanvasItem,
+        segment_start: Vector2,
+        segment_end: Vector2,
+        preceding_point: Vector2,
+        following_point: Vector2,
+        surface: Surface,
+        color: Color,
+        depth: float) -> void:
+    
+    # FIXME: LEFT OFF HERE: ------------------------------------
+    # - Calculate and use the "angle bisector" for the segment-depth parallel
+    #   offsets.
+    
+    var displacement := segment_end - segment_start
+    # Displacement is clockwise around convex surfaces, so the normal is the
+    # counter-clockwise perpendicular direction from the displacement.
+    var perpendicular := Vector2(displacement.y, -displacement.x)
+    var segment_normal := perpendicular.normalized()
     
     var surface_depth_division_size: float = \
             depth / Sc.ann_params.surface_depth_divisions_count
-    var surface_depth_division_perpendicular_offset := \
-            surface.normal * -surface_depth_division_size
-    var half_surface_depth_division_perpendicular_offset := \
-            surface_depth_division_perpendicular_offset / 2.0
+    var segment_depth_division_offset := \
+            segment_normal * -surface_depth_division_size
+    var half_segment_depth_division_offset := \
+            segment_depth_division_offset / 2.0
+    
+    
+    
+    
+    
+    
     var surface_depth_division_parallel_start_offset = \
-            surface_depth_division_perpendicular_offset.rotated(-PI / 2.0)
+            segment_depth_division_offset.rotated(-PI / 2.0)
     var surface_depth_division_parallel_end_offset = \
-            surface_depth_division_perpendicular_offset.rotated(PI / 2.0)
+            segment_depth_division_offset.rotated(PI / 2.0)
     var alpha_start := color.a
     var alpha_end: float = alpha_start * Sc.ann_params.surface_alpha_end_ratio
     
-    # "Surfaces" can single vertices in the degenerate case.
-    if vertices.size() > 1:
-        for i in Sc.ann_params.surface_depth_divisions_count:
-            var translation: Vector2 = \
-                    surface_depth_division_perpendicular_offset * i + \
-                    half_surface_depth_division_perpendicular_offset
-            var polyline: PoolVector2Array = \
-                    Sc.utils.translate_polyline(vertices, translation)
-            
-            # TODO: Update this to consider non-axially-aligned surface
-            #       segments.
-            polyline[0] += surface_depth_division_parallel_start_offset * i
-            polyline[polyline.size() - 1] += \
-                    surface_depth_division_parallel_end_offset * i
-            
-            var progress: float = \
-                    i / (Sc.ann_params.surface_depth_divisions_count - 1.0)
-            progress = Sc.utils.ease_by_name(progress, "ease_out")
-            color.a = alpha_start + progress * (alpha_end - alpha_start)
-            canvas.draw_polyline(
-                    polyline,
-                    color,
-                    surface_depth_division_size)
-    else:
-        canvas.draw_circle(
-                vertices[0],
-                6.0,
-                color)
+    for i in Sc.ann_params.surface_depth_divisions_count:
+        var translation: Vector2 = \
+                segment_depth_division_offset * i + \
+                half_segment_depth_division_offset
+        var offset_segment_start: Vector2 = \
+                segment_start + \
+                translation + \
+                surface_depth_division_parallel_start_offset * i
+        var offset_segment_end: Vector2 = \
+                segment_end + \
+                translation + \
+                surface_depth_division_parallel_end_offset * i
+        
+        var progress: float = \
+                i / (Sc.ann_params.surface_depth_divisions_count - 1.0)
+        progress = Sc.utils.ease_by_name(progress, "ease_out")
+        color.a = alpha_start + progress * (alpha_end - alpha_start)
+        
+        canvas.draw_line(
+                offset_segment_start,
+                offset_segment_end,
+                color,
+                surface_depth_division_size)
 
 
 func draw_position_along_surface(
