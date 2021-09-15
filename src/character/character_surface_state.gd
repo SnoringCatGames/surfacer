@@ -352,6 +352,11 @@ func _update_touch_state() -> void:
             next_just_stopped_touching_floor or \
             just_stopped_touching_floor and !next_just_touched_floor
     
+    if just_touched_floor and \
+            character.character_name == "cat" and \
+            character.actions.pressed_down:
+        pass
+    
     just_touched_ceiling = \
             next_just_touched_ceiling or \
             just_touched_ceiling and !next_just_stopped_touching_ceiling
