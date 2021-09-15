@@ -364,7 +364,8 @@ func _maintain_collisions() -> void:
     # Also maintain wall collisions.
     if !surface_state.is_grabbing_wall and \
             surface_state.is_touching_wall and \
-            !surface_state.is_triggering_wall_release:
+            !surface_state.is_triggering_wall_release and \
+            !surface_state.is_pressing_away_from_wall:
         maintain_collision_velocity.x = \
                 STRONG_SPEED_TO_MAINTAIN_COLLISION * \
                 surface_state.toward_wall_sign
