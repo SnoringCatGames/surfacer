@@ -817,12 +817,8 @@ func _derive_parameters() -> void:
             action_handlers_override if \
             !action_handlers_override.empty() else \
             Su.movement.get_default_action_handler_names(self)
-    var includes_edge_match := \
-            syncs_character_position_to_edge_trajectory or \
-            syncs_character_velocity_to_edge_trajectory
     action_handlers = Su.movement.get_action_handlers_from_names(
-            action_handler_names,
-            includes_edge_match)
+            action_handler_names)
     
     var edge_calculator_names := \
             edge_calculators_override if \
