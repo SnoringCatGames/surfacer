@@ -1298,7 +1298,8 @@ func _ensure_edges_have_trajectory_state(
                 edge.end_position_along_surface,
                 edge.velocity_start,
                 edge.includes_extra_jump_duration,
-                edge.includes_extra_wall_land_horizontal_speed)
+                edge.includes_extra_wall_land_horizontal_speed,
+                edge)
         if edge_with_trajectory == null:
             # TODO: I may be able to remove this, and may have only hit this
             #       bug because I was using stale platform graph files after

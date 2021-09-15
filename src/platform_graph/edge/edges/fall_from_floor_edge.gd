@@ -137,19 +137,19 @@ func _update_navigation_state_edge_specific_helper(
             surface_state.contact_count > 0
 
 
-func load_from_json_object(
+func _load_edge_state_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
-    _load_edge_state_from_json_object(json_object, context)
+    ._load_edge_state_from_json_object(json_object, context)
     falls_on_left_side = json_object.fl
     fall_off_position = \
             context.id_to_position_along_surface[int(json_object.fp)]
+    time_fall_off = json_object.ft
 
 
-func to_json_object() -> Dictionary:
-    var json_object := {
-        fl = falls_on_left_side,
-        fp = fall_off_position.get_instance_id(),
-    }
-    _edge_state_to_json_object(json_object)
-    return json_object
+func _edge_state_to_json_object(json_object: Dictionary) -> void:
+    ._edge_state_to_json_object(json_object)
+    json_object.fl = falls_on_left_side
+    json_object.fp = fall_off_position.get_instance_id()
+    json_object.ft = time_fall_off
+    

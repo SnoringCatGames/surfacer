@@ -22,7 +22,7 @@ static func find_landing_trajectories_to_any_surface(
         calculator,
         records_profile := false,
         possible_landing_surfaces_from_point := [],
-        only_returns_first_result := false) -> void:
+        only_returns_first_result := false) -> int:
     var debug_params := collision_params.debug_params
     var movement_params := collision_params.movement_params
     
@@ -47,6 +47,8 @@ static func find_landing_trajectories_to_any_surface(
                 records_profile)
     
     var jump_land_position_results_for_destination_surface := []
+    
+    var new_results_count := 0
     
     # Find the first possible edge to a landing surface.
     for destination_surface in possible_landing_surfaces_from_point:
@@ -87,6 +89,7 @@ static func find_landing_trajectories_to_any_surface(
                 calculator.edge_type,
                 jump_land_positions_to_consider)
         inter_surface_edges_results.push_back(inter_surface_edges_result)
+        new_results_count += 1
         
         for jump_land_positions in jump_land_positions_to_consider:
             ###################################################################
@@ -137,7 +140,7 @@ static func find_landing_trajectories_to_any_surface(
                         jump_land_positions)
                 
                 if only_returns_first_result:
-                    return
+                    return 1
             else:
                 var failed_attempt := FailedEdgeAttempt.new(
                         jump_land_positions,
@@ -145,6 +148,8 @@ static func find_landing_trajectories_to_any_surface(
                         calculator)
                 inter_surface_edges_result.failed_edge_attempts.push_back(
                         failed_attempt)
+    
+    return new_results_count
 
 
 static func find_landing_trajectory_between_positions(

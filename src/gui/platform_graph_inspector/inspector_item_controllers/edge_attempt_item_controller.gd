@@ -130,7 +130,8 @@ static func _calculate_edge_calc_result_metadata(
             edge_attempt.end_position_along_surface,
             edge_attempt.velocity_start,
             edge_attempt.includes_extra_jump_duration,
-            edge_attempt.includes_extra_wall_land_horizontal_speed)
+            edge_attempt.includes_extra_wall_land_horizontal_speed,
+            edge_attempt)
     return edge_result_metadata
 
 

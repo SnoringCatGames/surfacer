@@ -11,6 +11,9 @@ var waypoint_validity := WaypointValidity.UNKNOWN
 
 var is_broad_phase_failure: bool
 
+# This could mean different things for different edge types.
+var extra_flag_metadata := false
+
 
 func _init(
         jump_land_positions: JumpLandPositions = null,
@@ -73,6 +76,7 @@ func load_from_json_object(
     _load_edge_attempt_state_from_json_object(json_object, context)
     jump_land_positions = context.id_to_jump_land_positions[int(json_object.p)]
     waypoint_validity = json_object.w
+    extra_flag_metadata = json_object.x
     is_broad_phase_failure = EdgeCalcResultType.get_is_broad_phase_failure(
             edge_calc_result_type)
 
@@ -81,6 +85,7 @@ func to_json_object() -> Dictionary:
     var json_object := {
         p = jump_land_positions.get_instance_id(),
         w = waypoint_validity,
+        x = extra_flag_metadata,
     }
     _edge_attempt_state_to_json_object(json_object)
     return json_object
