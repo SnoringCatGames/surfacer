@@ -21,7 +21,6 @@ const DEFAULT_ACTION_HANDLER_CLASSES := [
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_friction_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_jump_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/floor_walk_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/match_expected_edge_trajectory_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_climb_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_dash_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/wall_default_action.gd"),
@@ -345,23 +344,11 @@ func get_default_edge_calculator_names(
     return edge_calculators
 
 
-func get_action_handlers_from_names(
-        names: Array,
-        includes_edge_match: bool) -> Array:
+func get_action_handlers_from_names(names: Array) -> Array:
     var action_handlers := []
     for name in names:
         action_handlers.push_back(Su.movement.action_handlers[name])
-    
-    var name := "MatchExpectedEdgeTrajectoryAction"
-    if includes_edge_match and \
-            !names.has(name):
-        action_handlers.push_back(Su.movement.action_handlers[name])
-    elif !includes_edge_match and \
-            names.has(name):
-        names.erase(Su.movement.action_handlers[name])
-    
     action_handlers.sort_custom(_CharacterActionHandlerComparator, "sort")
-    
     return action_handlers
 
 
