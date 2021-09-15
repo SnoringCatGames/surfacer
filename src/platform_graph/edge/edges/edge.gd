@@ -257,6 +257,7 @@ func populate_trajectory(collision_params: CollisionCalcParams) -> void:
             self)
     # FIXME: ------------------------------------------------ REMOVE
     if !is_instance_valid(edge_with_trajectory):
+        assert(is_instance_valid(edge_with_trajectory))
         edge_with_trajectory = calculator.calculate_edge(
                 null,
                 collision_params,

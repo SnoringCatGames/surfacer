@@ -24,15 +24,29 @@ func _init(
 func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
-    var vertices := [
-            Vector2(center.x - size.x / 2.0, center.y),
-            Vector2(center.x + size.x / 2.0, center.y),
-            ]
+    var top_left := Vector2(center.x - size.x / 2.0, center.y)
+    var top_right := Vector2(center.x + size.x / 2.0, center.y)
+    var bottom_right := Vector2(center.x + size.x / 2.0, center.y + 100.0)
+    var bottom_left := Vector2(center.x - size.x / 2.0, center.y + 100.0)
+    
     var surface := Surface.new(
-            vertices,
+            [top_left, top_right],
             SurfaceSide.FLOOR,
             null,
             [])
+    var clockwise_neighbor := Surface.new(
+            [top_right, bottom_right],
+            SurfaceSide.LEFT_WALL,
+            null,
+            [])
+    var counter_clockwise_neighbor := Surface.new(
+            [bottom_left, top_left],
+            SurfaceSide.RIGHT_WALL,
+            null,
+            [])
+    surface.clockwise_convex_neighbor = clockwise_neighbor
+    surface.counter_clockwise_convex_neighbor = counter_clockwise_neighbor
+    
     Sc.draw.draw_surface(
             self,
             surface,
