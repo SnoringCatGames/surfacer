@@ -88,7 +88,8 @@ func calculate_edge(
         position_end: PositionAlongSurface,
         velocity_start := Vector2.INF,
         needs_extra_jump_duration := false,
-        needs_extra_wall_land_horizontal_speed := false) -> Edge:
+        needs_extra_wall_land_horizontal_speed := false,
+        basis_edge: EdgeAttempt = null) -> Edge:
     if edge_result_metadata != null:
         edge_result_metadata.edge_calc_result_type = \
                 EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP

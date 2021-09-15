@@ -69,7 +69,8 @@ func calculate_edge(
         position_end: PositionAlongSurface,
         velocity_start := Vector2.INF,
         needs_extra_jump_duration := false,
-        needs_extra_wall_land_horizontal_speed := false) -> Edge:
+        needs_extra_wall_land_horizontal_speed := false,
+        basis_edge: EdgeAttempt = null) -> Edge:
     Sc.logger.error(
             "Abstract EdgeCalculator.calculate_edge is not implemented")
     return null
@@ -445,7 +446,8 @@ static func _optimize_edge_jump_position_for_floor(
                 edge.end_position_along_surface,
                 velocity_start,
                 edge.includes_extra_jump_duration,
-                edge.includes_extra_wall_land_horizontal_speed)
+                edge.includes_extra_wall_land_horizontal_speed,
+                edge)
         
         if is_instance_valid(optimized_edge):
             return optimized_edge
@@ -488,7 +490,8 @@ static func _optimize_edge_jump_position_for_wall(
                 edge.end_position_along_surface,
                 velocity_start,
                 edge.includes_extra_jump_duration,
-                edge.includes_extra_wall_land_horizontal_speed)
+                edge.includes_extra_wall_land_horizontal_speed,
+                edge)
         
         if is_instance_valid(optimized_edge):
             return optimized_edge
@@ -531,7 +534,8 @@ static func _optimize_edge_jump_position_for_ceiling(
                 edge.end_position_along_surface,
                 velocity_start,
                 edge.includes_extra_jump_duration,
-                edge.includes_extra_wall_land_horizontal_speed)
+                edge.includes_extra_wall_land_horizontal_speed,
+                edge)
         
         if is_instance_valid(optimized_edge):
             return optimized_edge
@@ -615,7 +619,8 @@ static func _optimize_edge_land_position_for_horizontal_surface(
                 land_position,
                 edge.velocity_start,
                 edge.includes_extra_jump_duration,
-                false)
+                false,
+                edge)
         
         if is_instance_valid(optimized_edge):
             return optimized_edge
@@ -658,7 +663,8 @@ static func _optimize_edge_land_position_for_wall(
                 land_position,
                 edge.velocity_start,
                 edge.includes_extra_jump_duration,
-                edge.includes_extra_wall_land_horizontal_speed)
+                edge.includes_extra_wall_land_horizontal_speed,
+                edge)
         
         if is_instance_valid(optimized_edge):
             return optimized_edge

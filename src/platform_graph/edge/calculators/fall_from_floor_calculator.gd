@@ -66,13 +66,15 @@ func calculate_edge(
         position_end: PositionAlongSurface,
         velocity_start := Vector2.INF,
         needs_extra_jump_duration := false,
-        needs_extra_wall_land_horizontal_speed := false) -> Edge:
+        needs_extra_wall_land_horizontal_speed := false,
+        basis_edge: EdgeAttempt = null) -> Edge:
     var inter_surface_edges_results := []
     var surfaces_in_fall_range_set := {}
     var origin_surface := position_start.surface
-    var falls_on_left_side := \
-            position_start.target_projection_onto_surface == \
-            origin_surface.first_point
+    var falls_on_left_side: bool = \
+            basis_edge.extra_flag_metadata if \
+            basis_edge is FailedEdgeAttempt else \
+            basis_edge.falls_on_left_side
     edge_result_metadata = \
             edge_result_metadata if \
             edge_result_metadata != null else \
@@ -249,18 +251,25 @@ func _get_all_edges_from_one_side(
                     jump_land_positions,
                     edge_result_metadata,
                     self)
+            failed_attempt.extra_flag_metadata = falls_on_left_side
             inter_surface_edges_result.failed_edge_attempts.push_back(
                     failed_attempt)
     else:
-        FallMovementUtils.find_landing_trajectories_to_any_surface(
-                inter_surface_edges_results,
-                collision_params,
-                surfaces_in_fall_range_set,
-                position_fall_off_wrapper,
-                fall_off_point_velocity_start,
-                false,
-                self,
-                records_profile)
+        var new_results_count := \
+                FallMovementUtils.find_landing_trajectories_to_any_surface(
+                        inter_surface_edges_results,
+                        collision_params,
+                        surfaces_in_fall_range_set,
+                        position_fall_off_wrapper,
+                        fall_off_point_velocity_start,
+                        false,
+                        self,
+                        records_profile)
+        for i in new_results_count:
+            var result: InterSurfaceEdgesResult = \
+                    inter_surface_edges_results[-new_results_count + i]
+            for failed_attempt in result.failed_edge_attempts:
+                failed_attempt.extra_flag_metadata = falls_on_left_side
     
     for i in range(
             new_inter_surface_edges_results_start_index,

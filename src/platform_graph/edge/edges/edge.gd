@@ -253,7 +253,8 @@ func populate_trajectory(collision_params: CollisionCalcParams) -> void:
             end_position_along_surface,
             velocity_start,
             includes_extra_jump_duration,
-            includes_extra_wall_land_horizontal_speed)
+            includes_extra_wall_land_horizontal_speed,
+            self)
     self.trajectory = edge_with_trajectory.trajectory
 
 
