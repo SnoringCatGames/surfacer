@@ -250,6 +250,7 @@ func _on_physics_process(delta: float) -> void:
     
     collisions.clear()
     _apply_movement()
+    _match_expected_edge_trajectory()
     _maintain_collisions()
     collisions.invert()
     
@@ -299,6 +300,41 @@ func _apply_movement() -> void:
             Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON)
     
     _record_collisions()
+
+
+func _match_expected_edge_trajectory() -> void:
+    if !is_instance_valid(navigator.edge):
+        return
+    
+    var playback_previous_elapsed_time: float = \
+            navigator.playback.get_previous_elapsed_time_scaled()
+    var playback_elapsed_time: float = \
+            navigator.playback.get_elapsed_time_scaled()
+    var has_trajectory_index_changed := \
+            int(playback_previous_elapsed_time / Time.PHYSICS_TIME_STEP) != \
+            int(playback_elapsed_time / Time.PHYSICS_TIME_STEP)
+    
+    # Don't re-sync if we already synced for the current index.
+    if !has_trajectory_index_changed and \
+            playback_elapsed_time != 0:
+        return
+    
+    if movement_params.syncs_character_position_to_edge_trajectory:
+        var position := navigator.edge.get_position_at_time(
+                playback_elapsed_time)
+        var is_movement_beyond_expected_trajectory := \
+                position == Vector2.INF
+        if !is_movement_beyond_expected_trajectory:
+            position = position
+    
+    if movement_params.syncs_character_velocity_to_edge_trajectory:
+        var velocity := navigator.edge.get_velocity_at_time(
+                playback_elapsed_time,
+                surface_state)
+        var is_movement_beyond_expected_trajectory := \
+                velocity == Vector2.INF
+        if !is_movement_beyond_expected_trajectory:
+            velocity = velocity
 
 
 # -   The move_and_slide system depends on some velocity always pushing the
@@ -404,8 +440,6 @@ func _process_actions() -> void:
 #            if executed and \
 #                    action_handler.name != AllDefaultAction.NAME and \
 #                    action_handler.name != CapVelocityAction.NAME and \
-#                    action_handler.name != \
-#                            MatchExpectedEdgeTrajectoryAction.NAME and \
 #                    action_handler.name != FloorDefaultAction.NAME and \
 #                    action_handler.name != FloorFrictionAction.NAME and \
 #                    action_handler.name != AirDefaultAction.NAME:
