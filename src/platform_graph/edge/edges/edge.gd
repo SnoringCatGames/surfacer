@@ -255,6 +255,17 @@ func populate_trajectory(collision_params: CollisionCalcParams) -> void:
             includes_extra_jump_duration,
             includes_extra_wall_land_horizontal_speed,
             self)
+    # FIXME: ------------------------------------------------ REMOVE
+    if !is_instance_valid(edge_with_trajectory):
+        edge_with_trajectory = calculator.calculate_edge(
+                null,
+                collision_params,
+                start_position_along_surface,
+                end_position_along_surface,
+                velocity_start,
+                includes_extra_jump_duration,
+                includes_extra_wall_land_horizontal_speed,
+                self)
     self.trajectory = edge_with_trajectory.trajectory
 
 

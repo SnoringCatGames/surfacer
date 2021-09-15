@@ -631,20 +631,6 @@ func _calculate_surface_to_air_edge(
 
 
 func _set_reached_destination() -> void:
-    if movement_params.forces_character_position_to_match_path_at_end:
-        character.position = edge.get_end()
-    if movement_params.forces_character_velocity_to_zero_at_path_end and \
-            edge.get_end_surface() != null:
-        match edge.get_end_surface().side:
-            SurfaceSide.FLOOR, \
-            SurfaceSide.CEILING:
-                character.velocity.x = 0.0
-            SurfaceSide.LEFT_WALL, \
-            SurfaceSide.RIGHT_WALL:
-                character.velocity.y = 0.0
-            _:
-                Sc.logger.error("Invalid SurfaceSide")
-    
     _log("Path end",
             "to=%s; from=%s; edges=%d" % [
                 Sc.utils.get_vector_string(path.destination.target_point, 0),
@@ -687,12 +673,6 @@ func _start_edge(
     edge_index = index
     edge = path.edges[index]
     
-    if movement_params.forces_character_position_to_match_edge_at_start:
-        character.position = edge.get_start()
-    if movement_params.forces_character_velocity_to_match_edge_at_start:
-        character.velocity = edge.velocity_start
-        surface_state.horizontal_acceleration_sign = 0
-    
     edge.update_for_surface_state(
             surface_state,
             edge == path.edges.back())
@@ -732,7 +712,10 @@ func _update(
         just_started_new_edge := false,
         is_starting_navigation_retry := false) -> void:
     if just_started_new_edge:
+        navigation_state.just_started_edge = true
         navigation_state.edge_start_time = Sc.time.get_scaled_play_time()
+    else:
+        navigation_state.just_started_edge = false
     
     if !navigation_state.is_currently_navigating:
         navigation_state.just_ended = false
@@ -743,6 +726,7 @@ func _update(
         navigation_state.just_entered_air_unexpectedly = false
         navigation_state.just_interrupted_by_unexpected_collision = false
         navigation_state.just_interrupted_by_player_action = false
+        navigation_state.just_started_edge = false
         navigation_state.just_reached_end_of_edge = false
         return
     
