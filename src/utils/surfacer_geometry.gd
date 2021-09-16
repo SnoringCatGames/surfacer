@@ -130,10 +130,10 @@ static func get_surface_normal_at_point(
 #     -   Most surfaces should be created with long enough segments, relative
 #         to character sizes, that this shouldn't be a problem.
 static func project_shape_onto_surface(
-        start_position: Vector2,
+        shape_position: Vector2,
         shape: Shape2D,
-        is_rotated_90: bool,
-        half_width_height: Vector2,
+        is_rotated_90_degrees: bool,
+        shape_half_width_height: Vector2,
         surface: Surface) -> Vector2:
     
     
@@ -168,6 +168,14 @@ static func project_shape_onto_surface(
 #            ,
 #            false)
     
+    var segment_start: Vector2
+    var segment_end: Vector2
+    if segment_points_result.size() == 2:
+        segment_start = segment_points_result[0]
+        segment_end = segment_points_result[1]
+    else:
+        # This side of the shape extends beyond the bounds of the surface.
+        pass
     
     
     
@@ -192,16 +200,575 @@ static func project_shape_onto_surface(
 
 
 # -   Calculates where the center position of the given shape would be if it
-#     were moved along the given axially-aligned normal until it just rested
-#     against the given segment.
+#     were moved along the given axially-aligned surface normal until it just
+#     rested against the given segment.
+# -   This works for whichever side of the segment the shape starts on.
 static func project_shape_onto_segment(
-        start_position: Vector2,
+        shape_position: Vector2,
         shape: Shape2D,
-        is_rotated_90: bool,
+        is_rotated_90_degrees: bool,
+        shape_half_width_height: Vector2,
+        surface_side: int,
         segment_start: Vector2,
         segment_end: Vector2) -> Vector2:
-    # FIXME: LEFT OFF HERE: --------------------------------
-    return Vector2.INF
+    var surface_normal: Vector2 = SurfaceSide.get_normal(surface_side)
+    
+    var segment_displacement := segment_end - segment_start
+    # Segment displacement is clockwise around convex surfaces, so the normal
+    # is the counter-clockwise perpendicular direction from the displacement.
+    var segment_perpendicular := \
+            Vector2(segment_displacement.y, -segment_displacement.x)
+    var segment_normal := segment_perpendicular.normalized()
+    
+    var shape_min_x := shape_position.x - shape_half_width_height.x
+    var shape_max_x := shape_position.x + shape_half_width_height.x
+    var shape_min_y := shape_position.y - shape_half_width_height.y
+    var shape_max_y := shape_position.y + shape_half_width_height.y
+    
+    var leftward_segment_point := Vector2.INF
+    var rightward_segment_point := Vector2.INF
+    var upper_segment_point := Vector2.INF
+    var lower_segment_point := Vector2.INF
+    match surface_side:
+        SurfaceSide.FLOOR:
+            leftward_segment_point = segment_start
+            rightward_segment_point = segment_end
+        SurfaceSide.LEFT_WALL:
+            upper_segment_point = segment_start
+            lower_segment_point = segment_end
+        SurfaceSide.RIGHT_WALL:
+            upper_segment_point = segment_end
+            lower_segment_point = segment_start
+        SurfaceSide.CEILING:
+            leftward_segment_point = segment_end
+            rightward_segment_point = segment_start
+        _:
+            Sc.logger.error()
+    
+    var segment_slope: float
+    match surface_side:
+        SurfaceSide.FLOOR, \
+        SurfaceSide.CEILING:
+            segment_slope = \
+                    (rightward_segment_point.y - leftward_segment_point.y) / \
+                    (rightward_segment_point.x - leftward_segment_point.x)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            segment_slope = \
+                    (upper_segment_point.y - lower_segment_point.y) / \
+                    (upper_segment_point.x - lower_segment_point.x)
+        _:
+            Sc.logger.error()
+    
+    var is_shape_circle := shape is CircleShape2D
+    var is_shape_capsule := shape is CapsuleShape2D
+    var is_shape_rectangle := shape is RectangleShape2D
+    
+    assert(is_shape_circle or \
+            is_shape_capsule or \
+            is_shape_rectangle)
+    
+    var projection_displacement_x := INF
+    var projection_displacement_y := INF
+    
+    if shape is CapsuleShape2D:
+        # All of our capsule-projection cases involve modifying parameters and
+        # redirecting to either the circle-handling branch or the
+        # rectangle-handling branch.
+        
+        var radius: float = shape.radius
+        var height: float = shape.height
+        var half_height := height * 0.5
+        
+        var is_horizontal_surface := \
+                surface_side == SurfaceSide.FLOOR or \
+                surface_side == SurfaceSide.CEILING
+        
+        var capsule_center := shape_position
+        
+        var leftward_capsule_end_center := Vector2.INF
+        var rightward_capsule_end_center := Vector2.INF
+        var upper_capsule_end_center := Vector2.INF
+        var lower_capsule_end_center := Vector2.INF
+        if is_rotated_90_degrees:
+            leftward_capsule_end_center = \
+                    capsule_center - Vector2(half_height, 0.0)
+            rightward_capsule_end_center = \
+                    capsule_center + Vector2(half_height, 0.0)
+        else:
+            upper_capsule_end_center = \
+                    capsule_center - Vector2(0.0, half_height)
+            lower_capsule_end_center = \
+                    capsule_center + Vector2(0.0, half_height)
+        
+        var circle_half_width_height := Vector2(radius, radius)
+        var rectangle_half_width_height := \
+                Vector2(half_height, radius) if \
+                is_rotated_90_degrees else \
+                Vector2(radius, half_height)
+        
+        if is_rotated_90_degrees != is_horizontal_surface or \
+                height == 0.0:
+            # If the round-end of the capsule is facing the surface, then we
+            # can treat it the same as a circle.
+            is_shape_circle = true
+            shape_half_width_height = circle_half_width_height
+            match surface_side:
+                SurfaceSide.FLOOR:
+                    shape_position = lower_capsule_end_center
+                SurfaceSide.LEFT_WALL:
+                    shape_position = leftward_capsule_end_center
+                SurfaceSide.RIGHT_WALL:
+                    shape_position = rightward_capsule_end_center
+                SurfaceSide.CEILING:
+                    shape_position = upper_capsule_end_center
+                _:
+                    Sc.logger.error()
+            
+        else:
+            # The flat-side of the capsule is facing the surface.
+            # -   In this case, we can assume that the segment will only ever
+            #     contact either round end, unless the segment ends between the
+            #     capsule-end centers.
+            # -   We can handle the former case by modifying our parameters and
+            #     redirecting to our circle-handling branch.
+            # -   We can handle the latter case by modifying our parameters and
+            #     redirecting to our rectangle-handling branch.
+            
+            match surface_side:
+                SurfaceSide.FLOOR, \
+                SurfaceSide.CEILING:
+                    if segment_normal.x <= 0:
+                        # -   Either is floor, and is level or slopes up to the
+                        #     right.
+                        # -   Or is ceiling, and is level or slopes up to the
+                        #     left.
+                        if rightward_segment_point.x < \
+                                leftward_capsule_end_center.x:
+                            # We can treat this as a circle-projection with the
+                            # left-end of the capsule.
+                            is_shape_circle = true
+                            shape_position = leftward_capsule_end_center
+                            shape_half_width_height = circle_half_width_height
+                        elif rightward_segment_point.x < \
+                                rightward_capsule_end_center.x:
+                            # We can treat this as a rectangle-projection with
+                            # the center of the capsule.
+                            is_shape_rectangle = true
+                            shape_position = capsule_center
+                            shape_half_width_height = \
+                                    rectangle_half_width_height
+                        else:
+                            # We can treat this as a circle-projection with the
+                            # right-end of the capsule.
+                            is_shape_circle = true
+                            shape_position = rightward_capsule_end_center
+                            shape_half_width_height = circle_half_width_height
+                    else:
+                        # -   Either is floor, and slopes up to the left.
+                        # -   Or is ceiling, and slopes up to the right.
+                        if leftward_segment_point.x > \
+                                rightward_capsule_end_center.x:
+                            # We can treat this as a circle-projection with the
+                            # right-end of the capsule.
+                            is_shape_circle = true
+                            shape_position = rightward_capsule_end_center
+                            shape_half_width_height = circle_half_width_height
+                        elif leftward_segment_point.x > \
+                                leftward_capsule_end_center.x:
+                            # We can treat this as a rectangle-projection with
+                            # the center of the capsule.
+                            is_shape_rectangle = true
+                            shape_position = capsule_center
+                            shape_half_width_height = \
+                                    rectangle_half_width_height
+                        else:
+                            # We can treat this as a circle-projection with the
+                            # left-end of the capsule.
+                            is_shape_circle = true
+                            shape_position = leftward_capsule_end_center
+                            shape_half_width_height = circle_half_width_height
+                    
+                SurfaceSide.LEFT_WALL, \
+                SurfaceSide.RIGHT_WALL:
+                    if segment_normal.y <= 0:
+                        # -   Either is left-wall, and is level or slopes up to
+                        #     the left.
+                        # -   Or is right-wall, and is level or slopes up to
+                        #     the right.
+                        if lower_segment_point.y < \
+                                upper_capsule_end_center.y:
+                            # We can treat this as a circle-projection with the
+                            # upper-end of the capsule.
+                            is_shape_circle = true
+                            shape_position = upper_capsule_end_center
+                            shape_half_width_height = circle_half_width_height
+                        elif lower_segment_point.y < \
+                                lower_capsule_end_center.y:
+                            # We can treat this as a rectangle-projection with
+                            # the center of the capsule.
+                            is_shape_rectangle = true
+                            shape_position = capsule_center
+                            shape_half_width_height = \
+                                    rectangle_half_width_height
+                        else:
+                            # We can treat this as a circle-projection with the
+                            # lower-end of the capsule.
+                            is_shape_circle = true
+                            shape_position = lower_capsule_end_center
+                            shape_half_width_height = circle_half_width_height
+                    else:
+                        # -   Either is left-wall, and slopes up to the right.
+                        # -   Or is right-wall, and slopes up to the left.
+                        if upper_segment_point.y > \
+                                lower_capsule_end_center.y:
+                            # We can treat this as a circle-projection with the
+                            # lower-end of the capsule.
+                            is_shape_circle = true
+                            shape_position = lower_capsule_end_center
+                            shape_half_width_height = circle_half_width_height
+                        elif upper_segment_point.y > \
+                                upper_capsule_end_center.y:
+                            # We can treat this as a rectangle-projection with
+                            # the center of the capsule.
+                            is_shape_rectangle = true
+                            shape_position = capsule_center
+                            shape_half_width_height = \
+                                    rectangle_half_width_height
+                        else:
+                            # We can treat this as a circle-projection with the
+                            # upper-end of the capsule.
+                            is_shape_circle = true
+                            shape_position = upper_capsule_end_center
+                            shape_half_width_height = circle_half_width_height
+                    
+                _:
+                    Sc.logger.error()
+    
+    if shape is CircleShape2D:
+        # -   There are three possible contact points to consider:
+        #     -   Either end of the segment, but only if the circle extends
+        #         beyond that end.
+        #     -   The point along the circumference of the circle in the
+        #         direction of the segment-normal from the circle center.
+        # -   We use the closest valid contact point.
+        
+        var radius: float = shape.radius
+        
+        match surface_side:
+            SurfaceSide.FLOOR, \
+            SurfaceSide.CEILING:
+                if shape_max_x < leftward_segment_point.x or \
+                        shape_min_x > rightward_segment_point.x:
+                    # The shape is outside the bounds of the segment.
+                    return Vector2.INF
+                
+                var segment_cast_start := \
+                        shape_position - segment_normal * radius * 1.1
+                var segment_cast_end := shape_position
+                var shape_point_along_normal := \
+                        Sc.geometry.get_intersection_of_segment_and_circle(
+                                segment_cast_start,
+                                segment_cast_end,
+                                shape_position,
+                                radius,
+                                true)
+                
+                projection_displacement_x = 0.0
+                projection_displacement_y = INF
+                
+                if shape_min_x < leftward_segment_point.x:
+                    # The shape overlaps with the segment left side.
+                    segment_cast_start = \
+                            shape_position - surface_normal * radius * 1.1
+                    segment_cast_start.x = leftward_segment_point.x
+                    segment_cast_end = shape_position
+                    segment_cast_end.x = leftward_segment_point.x
+                    var possible_contact_point := \
+                            Sc.geometry.get_intersection_of_segment_and_circle(
+                                    segment_cast_start,
+                                    segment_cast_end,
+                                    shape_position,
+                                    radius,
+                                    true)
+                    var possible_contact_point_displacement_y := \
+                            leftward_segment_point.y - possible_contact_point.y
+                    projection_displacement_y = min(
+                            projection_displacement_y,
+                            possible_contact_point_displacement_y)
+                
+                if shape_max_x > rightward_segment_point.x:
+                    # The shape overlaps with the segment right side.
+                    segment_cast_start = \
+                            shape_position - surface_normal * radius * 1.1
+                    segment_cast_start.x = rightward_segment_point.x
+                    segment_cast_end = shape_position
+                    segment_cast_end.x = rightward_segment_point.x
+                    var possible_contact_point := \
+                            Sc.geometry.get_intersection_of_segment_and_circle(
+                                    segment_cast_start,
+                                    segment_cast_end,
+                                    shape_position,
+                                    radius,
+                                    true)
+                    var possible_contact_point_displacement_y := \
+                            rightward_segment_point.y - \
+                            possible_contact_point.y
+                    projection_displacement_y = min(
+                            projection_displacement_y,
+                            possible_contact_point_displacement_y)
+                
+                if shape_point_along_normal.x > leftward_segment_point.x and \
+                        shape_point_along_normal.x < rightward_segment_point.x:
+                    # The point along the shape that would contact the line
+                    # through the segment, lies within the the bounds of the
+                    # segment.
+                    
+                    # Slope formula:
+                    #   m = (y2-y1)/(x2-x1)
+                    #   y2 = m(x2-x1) + y1
+                    var segment_y_at_shape_point_along_normal := \
+                            segment_slope * \
+                            (shape_point_along_normal.x - \
+                                    leftward_segment_point.x) + \
+                            leftward_segment_point.y
+                    var possible_contact_point_displacement_y := \
+                            segment_y_at_shape_point_along_normal - \
+                            shape_point_along_normal.y
+                    projection_displacement_y = min(
+                            projection_displacement_y,
+                            possible_contact_point_displacement_y)
+                
+            SurfaceSide.LEFT_WALL, \
+            SurfaceSide.RIGHT_WALL:
+                if shape_max_y < upper_segment_point.y or \
+                        shape_min_y > lower_segment_point.y:
+                    # The shape is outside the bounds of the segment.
+                    return Vector2.INF
+                
+                var segment_cast_start := \
+                        shape_position - segment_normal * radius * 1.1
+                var segment_cast_end := shape_position
+                var shape_point_along_normal := \
+                        Sc.geometry.get_intersection_of_segment_and_circle(
+                                segment_cast_start,
+                                segment_cast_end,
+                                shape_position,
+                                radius,
+                                true)
+                
+                projection_displacement_x = INF
+                projection_displacement_y = 0.0
+                
+                if shape_min_y < upper_segment_point.y:
+                    # The shape overlaps with the segment top side.
+                    segment_cast_start = \
+                            shape_position - surface_normal * radius * 1.1
+                    segment_cast_start.y = upper_segment_point.y
+                    segment_cast_end = shape_position
+                    segment_cast_end.y = upper_segment_point.y
+                    var possible_contact_point := \
+                            Sc.geometry.get_intersection_of_segment_and_circle(
+                                    segment_cast_start,
+                                    segment_cast_end,
+                                    shape_position,
+                                    radius,
+                                    true)
+                    var possible_contact_point_displacement_x := \
+                            upper_segment_point.x - possible_contact_point.x
+                    projection_displacement_x = min(
+                            projection_displacement_x,
+                            possible_contact_point_displacement_x)
+                
+                if shape_max_y > lower_segment_point.y:
+                    # The shape overlaps with the segment bottom side.
+                    segment_cast_start = \
+                            shape_position - surface_normal * radius * 1.1
+                    segment_cast_start.y = lower_segment_point.y
+                    segment_cast_end = shape_position
+                    segment_cast_end.y = lower_segment_point.y
+                    var possible_contact_point := \
+                            Sc.geometry.get_intersection_of_segment_and_circle(
+                                    segment_cast_start,
+                                    segment_cast_end,
+                                    shape_position,
+                                    radius,
+                                    true)
+                    var possible_contact_point_displacement_x := \
+                            lower_segment_point.x - \
+                            possible_contact_point.x
+                    projection_displacement_x = min(
+                            projection_displacement_x,
+                            possible_contact_point_displacement_x)
+                
+                if shape_point_along_normal.y > upper_segment_point.y and \
+                        shape_point_along_normal.y < lower_segment_point.y:
+                    # The point along the shape that would contact the line
+                    # through the segment, lies within the the bounds of the
+                    # segment.
+                    
+                    # Slope formula:
+                    #   m = (y2-y1)/(x2-x1)
+                    #   x2 = (y2-y1)/m + x1
+                    var segment_x_at_shape_point_along_normal := \
+                            (shape_point_along_normal.y - \
+                                    lower_segment_point.y) / \
+                            segment_slope + \
+                            lower_segment_point.x
+                    var possible_contact_point_displacement_x := \
+                            segment_x_at_shape_point_along_normal - \
+                            shape_point_along_normal.x
+                    projection_displacement_x = min(
+                            projection_displacement_x,
+                            possible_contact_point_displacement_x)
+                
+            _:
+                Sc.logger.error()
+    
+    if shape is RectangleShape2D:
+        # -   There are four possible contact points to consider:
+        #     -   Either end of the segment, but only if the rectangle extends
+        #         beyond that end.
+        #     -   Either of the corners of the rectangle that face the surface,
+        #         but only if the segment extends beyond that corner.
+        # -   We use the closest valid contact point.
+        
+        match surface_side:
+            SurfaceSide.FLOOR, \
+            SurfaceSide.CEILING:
+                if shape_max_x < leftward_segment_point.x or \
+                        shape_min_x > rightward_segment_point.x:
+                    # The shape is outside the bounds of the segment.
+                    return Vector2.INF
+                
+                var shape_close_end_y := \
+                        shape_max_y if \
+                        surface_side == SurfaceSide.FLOOR else \
+                        shape_min_y
+                
+                projection_displacement_x = 0.0
+                projection_displacement_y = INF
+                
+                if shape_min_x < leftward_segment_point.x:
+                    # The shape overlaps with the segment left side.
+                    var possible_contact_point_displacement_y := \
+                            leftward_segment_point.y - shape_close_end_y
+                    projection_displacement_y = min(
+                            projection_displacement_y,
+                            possible_contact_point_displacement_y)
+                
+                if shape_max_x > rightward_segment_point.x:
+                    # The shape overlaps with the segment right side.
+                    var possible_contact_point_displacement_y := \
+                            rightward_segment_point.y - shape_close_end_y
+                    projection_displacement_y = min(
+                            projection_displacement_y,
+                            possible_contact_point_displacement_y)
+                
+                if shape_min_x > leftward_segment_point.x:
+                    # The segment overlaps with the shape left side.
+                    
+                    # Slope formula:
+                    #   m = (y2-y1)/(x2-x1)
+                    #   y2 = m(x2-x1) + y1
+                    var segment_y_at_shape_left_side := \
+                            segment_slope * \
+                            (shape_min_x - leftward_segment_point.x) + \
+                            leftward_segment_point.y
+                    var possible_contact_point_displacement_y := \
+                            segment_y_at_shape_left_side - \
+                            shape_close_end_y
+                    projection_displacement_y = min(
+                            projection_displacement_y,
+                            possible_contact_point_displacement_y)
+                
+                if shape_max_x < rightward_segment_point.x:
+                    # The segment overlaps with the shape right side.
+                    
+                    # Slope formula:
+                    #   m = (y2-y1)/(x2-x1)
+                    #   y2 = m(x2-x1) + y1
+                    var segment_y_at_shape_right_side := \
+                            segment_slope * \
+                            (shape_max_x - leftward_segment_point.x) + \
+                            leftward_segment_point.y
+                    var possible_contact_point_displacement_y := \
+                            segment_y_at_shape_right_side - \
+                            shape_close_end_y
+                    projection_displacement_y = min(
+                            projection_displacement_y,
+                            possible_contact_point_displacement_y)
+                
+            SurfaceSide.LEFT_WALL, \
+            SurfaceSide.RIGHT_WALL:
+                if shape_max_y < upper_segment_point.y or \
+                        shape_min_y > lower_segment_point.y:
+                    # The shape is outside the bounds of the segment.
+                    return Vector2.INF
+                
+                var shape_close_end_x := \
+                        shape_max_x if \
+                        surface_side == SurfaceSide.RIGHT_WALL else \
+                        shape_min_x
+                
+                projection_displacement_x = INF
+                projection_displacement_y = 0.0
+                
+                if shape_min_y < upper_segment_point.y:
+                    # The shape overlaps with the segment top side.
+                    var possible_contact_point_displacement_x := \
+                            upper_segment_point.x - shape_close_end_x
+                    projection_displacement_x = min(
+                            projection_displacement_x,
+                            possible_contact_point_displacement_x)
+                
+                if shape_max_y > lower_segment_point.y:
+                    # The shape overlaps with the segment bottom side.
+                    var possible_contact_point_displacement_x := \
+                            lower_segment_point.x - shape_close_end_x
+                    projection_displacement_x = min(
+                            projection_displacement_x,
+                            possible_contact_point_displacement_x)
+                
+                if shape_min_y > upper_segment_point.y:
+                    # The segment overlaps with the shape top side.
+                    
+                    # Slope formula:
+                    #   m = (y2-y1)/(x2-x1)
+                    #   x2 = (y2-y1)/m + x1
+                    var segment_x_at_shape_upper_side := \
+                            (shape_min_y - lower_segment_point.y) / \
+                            segment_slope + \
+                            lower_segment_point.x
+                    var possible_contact_point_displacement_x := \
+                            segment_x_at_shape_upper_side - \
+                            shape_close_end_x
+                    projection_displacement_x = min(
+                            projection_displacement_x,
+                            possible_contact_point_displacement_x)
+                
+                if shape_max_y < lower_segment_point.y:
+                    # The segment overlaps with the shape bottom side.
+                    
+                    # Slope formula:
+                    #   m = (y2-y1)/(x2-x1)
+                    #   x2 = (y2-y1)/m + x1
+                    var segment_x_at_shape_lower_side := \
+                            (shape_max_y - lower_segment_point.y) / \
+                            segment_slope + \
+                            lower_segment_point.x
+                    var possible_contact_point_displacement_x := \
+                            segment_x_at_shape_lower_side - \
+                            shape_close_end_x
+                    projection_displacement_x = min(
+                            projection_displacement_x,
+                            possible_contact_point_displacement_x)
+                
+            _:
+                Sc.logger.error()
+    
+    return shape_position + \
+            Vector2(projection_displacement_x, projection_displacement_y)
 
 
 # -   Finds the end points of the segment along the given surface that the
