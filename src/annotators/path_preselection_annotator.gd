@@ -21,6 +21,16 @@ var phantom_surface := Surface.new(
         SurfaceSide.NONE,
         null,
         [])
+var phantom_surface_cw_neighbor := Surface.new(
+        [Vector2.INF],
+        SurfaceSide.NONE,
+        null,
+        [])
+var phantom_surface_ccw_neighbor := Surface.new(
+        [Vector2.INF],
+        SurfaceSide.NONE,
+        null,
+        [])
 var phantom_position_along_surface := PositionAlongSurface.new()
 var preselection_path: PlatformGraphPath
 var preselection_path_beats_time_start: float
@@ -30,6 +40,11 @@ var preselection_path_beats: Array
 func _init(character: SurfacerCharacter) -> void:
     self.character = character
     self.player_nav = character.get_behavior(PlayerNavigationBehavior)
+    
+    phantom_surface.clockwise_convex_neighbor = \
+            phantom_surface_cw_neighbor
+    phantom_surface.counter_clockwise_convex_neighbor = \
+            phantom_surface_ccw_neighbor
     
     surface_color = Sc.colors.opacify(
             character.navigation_annotation_color,
@@ -272,6 +287,15 @@ func _update_phantom_surface() -> void:
         phantom_surface.vertices = preselection_destination.surface.vertices
         phantom_surface.side = preselection_destination.surface.side
         phantom_surface.normal = preselection_destination.surface.normal
+        
+        # Assign placeholder neighbor surfaces.
+        
+        var start := phantom_surface.first_point
+        var end := phantom_surface.last_point
+        var normal := phantom_surface.normal
+        
+        phantom_surface_ccw_neighbor.vertices = [start - normal, start]
+        phantom_surface_cw_neighbor.vertices = [end, end + normal]
         
         # Enlarge and offset the phantom surface, so that it stands out more.
         

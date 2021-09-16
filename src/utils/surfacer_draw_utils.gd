@@ -68,8 +68,7 @@ func draw_surface(
         following_vertices = \
                 surface.clockwise_neighbor.clockwise_neighbor.vertices
         assert(following_vertices.size() > 1)
-    var last_segment_following_point: Vector2 = \
-            following_vertices[following_vertices.size() - 2]
+    var last_segment_following_point: Vector2 = following_vertices[1]
     
     if vertex_count == 2:
         # Two points in the surface.
@@ -130,10 +129,7 @@ func draw_surface_segment(
         surface: Surface,
         color: Color,
         depth: float) -> void:
-    
-    # FIXME: LEFT OFF HERE: ------------------------------------
-    # - Calculate and use the "angle bisector" for the segment-depth parallel
-    #   offsets.
+    # Calculate the delta for both ends of the segment between depth iterations.
     
     var displacement := segment_end - segment_start
     # Displacement is clockwise around convex surfaces, so the normal is the
@@ -148,30 +144,66 @@ func draw_surface_segment(
     var half_segment_depth_division_offset := \
             segment_depth_division_offset / 2.0
     
+    var segment_direction := \
+            (segment_end - segment_start).normalized()
+    var preceding_segment_direction := \
+            (segment_start - preceding_point).normalized()
+    var following_segment_direction := \
+            (following_point - segment_end).normalized()
     
+    var preceding_angular_bisector_segment_end_offset := \
+            (-preceding_segment_direction + segment_direction) * 1000
+    var preceding_angular_bisector_segment_start := \
+            segment_start - preceding_angular_bisector_segment_end_offset
+    var preceding_angular_bisector_segment_end := \
+            segment_start + preceding_angular_bisector_segment_end_offset
     
+    var following_angular_bisector_segment_end_offset := \
+            (-segment_direction + following_segment_direction) * 1000
+    var following_angular_bisector_segment_start := \
+            segment_end - following_angular_bisector_segment_end_offset
+    var following_angular_bisector_segment_end := \
+            segment_end + following_angular_bisector_segment_end_offset
     
+    var elongated_next_depth_division_segment_start := \
+            segment_start - displacement * 1000 + \
+            segment_depth_division_offset
+    var elongated_next_depth_division_segment_end := \
+            segment_end + displacement * 1000 + \
+            segment_depth_division_offset
     
+    var next_depth_division_segment_start := \
+            Sc.geometry.get_intersection_of_segments(
+                    elongated_next_depth_division_segment_start,
+                    elongated_next_depth_division_segment_end,
+                    preceding_angular_bisector_segment_start,
+                    preceding_angular_bisector_segment_end)
+    var next_depth_division_segment_end := \
+            Sc.geometry.get_intersection_of_segments(
+                    elongated_next_depth_division_segment_start,
+                    elongated_next_depth_division_segment_end,
+                    following_angular_bisector_segment_start,
+                    following_angular_bisector_segment_end)
     
-    var surface_depth_division_parallel_start_offset = \
-            segment_depth_division_offset.rotated(-PI / 2.0)
-    var surface_depth_division_parallel_end_offset = \
-            segment_depth_division_offset.rotated(PI / 2.0)
+    var surface_depth_division_start_delta := \
+            next_depth_division_segment_start - \
+            segment_start
+    var surface_depth_division_end_delta := \
+            next_depth_division_segment_end - \
+            segment_end
+    
+    # ---
+    
     var alpha_start := color.a
     var alpha_end: float = alpha_start * Sc.ann_params.surface_alpha_end_ratio
     
     for i in Sc.ann_params.surface_depth_divisions_count:
-        var translation: Vector2 = \
-                segment_depth_division_offset * i + \
-                half_segment_depth_division_offset
-        var offset_segment_start: Vector2 = \
+        var current_depth_segment_start: Vector2 = \
                 segment_start + \
-                translation + \
-                surface_depth_division_parallel_start_offset * i
-        var offset_segment_end: Vector2 = \
+                surface_depth_division_start_delta * i
+        var current_depth_segment_end: Vector2 = \
                 segment_end + \
-                translation + \
-                surface_depth_division_parallel_end_offset * i
+                surface_depth_division_end_delta * i
         
         var progress: float = \
                 i / (Sc.ann_params.surface_depth_divisions_count - 1.0)
@@ -179,8 +211,8 @@ func draw_surface_segment(
         color.a = alpha_start + progress * (alpha_end - alpha_start)
         
         canvas.draw_line(
-                offset_segment_start,
-                offset_segment_end,
+                current_depth_segment_start,
+                current_depth_segment_end,
                 color,
                 surface_depth_division_size)
 
