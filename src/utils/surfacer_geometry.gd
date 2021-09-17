@@ -135,68 +135,131 @@ static func project_shape_onto_surface(
         is_rotated_90_degrees: bool,
         shape_half_width_height: Vector2,
         surface: Surface) -> Vector2:
-    
-    
-    
-    
-    
-    
-    
     if !is_instance_valid(surface):
         return Vector2.INF
     
     if surface.vertices.size() <= 1:
-        # FIXME: LEFT OFF HERE: --------------------------------
-        return Vector2.INF
+        return project_shape_onto_segment(
+                shape_position,
+                shape,
+                is_rotated_90_degrees,
+                shape_half_width_height,
+                surface.side,
+                surface.vertices[0],
+                surface.vertices[0])
     
+    var shape_min_x := shape_position.x - shape_half_width_height.x
+    var shape_max_x := shape_position.x + shape_half_width_height.x
+    var shape_min_y := shape_position.y - shape_half_width_height.y
+    var shape_max_y := shape_position.y + shape_half_width_height.y
     
-    
-    
-    
-    
+    var shape_min_side_point := Vector2.INF
+    var shape_max_side_point := Vector2.INF
+    match surface.side:
+        SurfaceSide.FLOOR, \
+        SurfaceSide.CEILING:
+            shape_min_side_point = Vector2(shape_min_x, 0.0)
+            shape_max_side_point = Vector2(shape_max_x, 0.0)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            shape_min_side_point = Vector2(0.0, shape_min_y)
+            shape_max_side_point = Vector2(0.0, shape_max_y)
+        _:
+            Sc.logger.error()
     
     var segment_points_result := []
     
-    # FIXME: LEFT OFF HERE: ---------------
-    # - Call this for both the min and max side of the shape.
-    # - If both segments are the same, then ignore the second.
-    # - Then, run the shape projection for both segments, and keep whichever
-    #   result is further-out from the surface.
-#    get_surface_segment_at_point(
-#            segment_points_result,
-#            surface,
-#            ,
-#            false)
+    get_surface_segment_at_point(
+            segment_points_result,
+            surface,
+            shape_min_side_point,
+            false)
+    var min_side_segment_start := Vector2.INF
+    var min_side_segment_end := Vector2.INF
+    if !segment_points_result.empty():
+        min_side_segment_start = segment_points_result[0]
+        min_side_segment_end = segment_points_result[1]
     
-    var segment_start: Vector2
-    var segment_end: Vector2
-    if segment_points_result.size() == 2:
-        segment_start = segment_points_result[0]
-        segment_end = segment_points_result[1]
-    else:
-        # This side of the shape extends beyond the bounds of the surface.
-        pass
+    get_surface_segment_at_point(
+            segment_points_result,
+            surface,
+            shape_max_side_point,
+            false)
+    var max_side_segment_start := Vector2.INF
+    var max_side_segment_end := Vector2.INF
+    if !segment_points_result.empty():
+        max_side_segment_start = segment_points_result[0]
+        max_side_segment_end = segment_points_result[1]
     
+    # Both ends of the shape project onto the same segment, so ignore one copy.
+    if min_side_segment_start == max_side_segment_start:
+        assert(min_side_segment_start != Vector2.INF)
+        max_side_segment_start = Vector2.INF
+        max_side_segment_end = Vector2.INF
     
+    # Only one of the two possible segments is valid, so ignore the other.
+    if min_side_segment_start == Vector2.INF or \
+            max_side_segment_start == Vector2.INF:
+        var segment_start: Vector2
+        var segment_end: Vector2
+        if min_side_segment_start == Vector2.INF:
+            segment_start = max_side_segment_start
+            segment_end = max_side_segment_end
+        else:
+            segment_start = min_side_segment_start
+            segment_end = min_side_segment_end
+        
+        return project_shape_onto_segment(
+                shape_position,
+                shape,
+                is_rotated_90_degrees,
+                shape_half_width_height,
+                surface.side,
+                segment_start,
+                segment_end)
     
-    
-    if shape is CircleShape2D:
-        pass
-    elif shape is CapsuleShape2D:
-        pass
-    elif shape is RectangleShape2D:
-        pass
-    else:
-        Sc.logger.error()
-        return Vector2.INF
-    
-    
-    
-    
-    
-    
-    # FIXME: LEFT OFF HERE: --------------------------------
-    return Vector2.INF
+    # Both possible segments are valid, so use whichever projects the shape
+    # further away.
+    var min_side_segment_projection := project_shape_onto_segment(
+            shape_position,
+            shape,
+            is_rotated_90_degrees,
+            shape_half_width_height,
+            surface.side,
+            min_side_segment_start,
+            min_side_segment_end)
+    var max_side_segment_projection := project_shape_onto_segment(
+            shape_position,
+            shape,
+            is_rotated_90_degrees,
+            shape_half_width_height,
+            surface.side,
+            max_side_segment_start,
+            max_side_segment_end)
+    match surface.side:
+        SurfaceSide.FLOOR:
+            if min_side_segment_projection.y < max_side_segment_projection.y:
+                return min_side_segment_projection
+            else:
+                return max_side_segment_projection
+        SurfaceSide.LEFT_WALL:
+            if min_side_segment_projection.x < max_side_segment_projection.x:
+                return max_side_segment_projection
+            else:
+                return min_side_segment_projection
+        SurfaceSide.RIGHT_WALL:
+            if min_side_segment_projection.x < max_side_segment_projection.x:
+                return min_side_segment_projection
+            else:
+                return max_side_segment_projection
+        SurfaceSide.CEILING:
+            if min_side_segment_projection.y < max_side_segment_projection.y:
+                return max_side_segment_projection
+            else:
+                return min_side_segment_projection
+        _:
+            Sc.logger.error()
+            return Vector2.INF
 
 
 # -   Calculates where the center position of the given shape would be if it
