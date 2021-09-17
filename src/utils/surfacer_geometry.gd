@@ -121,6 +121,13 @@ static func get_surface_normal_at_point(
 #   - Search for usages of project_point_onto_surface_with_offset?
 #   - Search for usages of create_position_offset_from_target_point?
 #   - Search for usages of match_surface_target_and_collider?
+# 
+#Sc.geometry.project_shape_onto_surface(
+#        character.position,
+#        movement_params.collider_shape,
+#        movement_params.collider_is_rotated_90_degrees,
+#        movement_params.collider_shape_half_width_height,
+#        surface)
 
 
 # -   Calculates where the center position of the given shape would be if it
@@ -988,11 +995,7 @@ static func calculate_displacement_x_for_vertical_distance_past_edge( \
         distance_past_edge: float,
         is_left_wall: bool,
         collider_shape: Shape2D,
-        collider_rotation: float) -> float:
-    var is_rotated_90_degrees = \
-            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Sc.geometry.FLOAT_EPSILON
-    
+        collider_is_rotated_90_degrees: bool) -> float:
     if collider_shape is CircleShape2D:
         if distance_past_edge >= collider_shape.radius:
             return 0.0
@@ -1003,7 +1006,7 @@ static func calculate_displacement_x_for_vertical_distance_past_edge( \
                     is_left_wall)
         
     elif collider_shape is CapsuleShape2D:
-        if is_rotated_90_degrees:
+        if collider_is_rotated_90_degrees:
             var half_height_offset: float = \
                     collider_shape.height / 2.0 if \
                     is_left_wall else \
@@ -1027,7 +1030,7 @@ static func calculate_displacement_x_for_vertical_distance_past_edge( \
                         is_left_wall)
         
     elif collider_shape is RectangleShape2D:
-        if is_rotated_90_degrees:
+        if collider_is_rotated_90_degrees:
             return collider_shape.extents.y if \
                     is_left_wall else \
                     -collider_shape.extents.y
@@ -1063,11 +1066,7 @@ static func calculate_displacement_y_for_horizontal_distance_past_edge( \
         distance_past_edge: float,
         is_floor: bool,
         collider_shape: Shape2D,
-        collider_rotation: float) -> float:
-    var is_rotated_90_degrees = \
-            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Sc.geometry.FLOAT_EPSILON
-    
+        collider_is_rotated_90_degrees: bool) -> float:
     if collider_shape is CircleShape2D:
         if distance_past_edge >= collider_shape.radius:
             return 0.0
@@ -1078,7 +1077,7 @@ static func calculate_displacement_y_for_horizontal_distance_past_edge( \
                     is_floor)
         
     elif collider_shape is CapsuleShape2D:
-        if is_rotated_90_degrees:
+        if collider_is_rotated_90_degrees:
             distance_past_edge -= collider_shape.height * 0.5
             if distance_past_edge <= 0:
                 # Treat the same as a rectangle.
@@ -1102,7 +1101,7 @@ static func calculate_displacement_y_for_horizontal_distance_past_edge( \
                     is_floor) + half_height_offset
         
     elif collider_shape is RectangleShape2D:
-        if is_rotated_90_degrees:
+        if collider_is_rotated_90_degrees:
             return -collider_shape.extents.x if \
                     is_floor else \
                     collider_shape.extents.x

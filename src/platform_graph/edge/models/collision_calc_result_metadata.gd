@@ -14,6 +14,7 @@ var step_end_surface_normal := Vector2.INF
 
 var collider_shape: Shape2D
 var collider_rotation: float
+var collider_is_rotated_90_degrees: bool
 var collider_half_width_height := Vector2.INF
 var margin: float
 
@@ -32,6 +33,8 @@ func _init(
         self.collider_shape = edge_calc_params.movement_params.collider_shape
         self.collider_rotation = \
                 edge_calc_params.movement_params.collider_rotation
+        self.collider_is_rotated_90_degrees = \
+                edge_calc_params.movement_params.collider_is_rotated_90_degrees
         self.collider_half_width_height = \
                 edge_calc_params.movement_params.collider_half_width_height
         self.margin = edge_calc_params.movement_params \

@@ -168,7 +168,8 @@ func _get_all_edges_from_one_side(
             edge_point,
             falls_on_left_side,
             movement_params.fall_from_floor_corner_calc_shape,
-            movement_params.fall_from_floor_corner_calc_shape_rotation)
+            movement_params \
+                    .fall_from_floor_corner_calc_shape_is_rotated_90_degrees)
     
     var position_fall_off_wrapper := PositionAlongSurfaceFactory \
             .create_position_from_unmodified_target_point(
@@ -441,7 +442,7 @@ static func _prepend_walk_to_fall_off_portion(
                         true,
                         movement_params.fall_from_floor_corner_calc_shape,
                         movement_params \
-                                .fall_from_floor_corner_calc_shape_rotation)
+                            .fall_from_floor_corner_calc_shape_is_rotated_90_degrees)
         
         current_frame_position.x = frame_position_x
         current_frame_position.y = frame_position_y
@@ -460,14 +461,7 @@ static func _calculate_character_center_at_fall_off_point(
         edge_point: Vector2,
         falls_on_left_side: bool,
         collider_shape: Shape2D,
-        collider_rotation: float) -> Vector2:
-    var is_rotated_90_degrees = \
-            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Sc.geometry.FLOAT_EPSILON
-    # Ensure that collision boundaries are only ever axially aligned.
-    assert(is_rotated_90_degrees or \
-            abs(collider_rotation) < Sc.geometry.FLOAT_EPSILON)
-    
+        collider_is_rotated_90_degrees: bool) -> Vector2:
     var right_side_fall_off_displacement_x: float
     var fall_off_displacement_y: float
     
@@ -476,7 +470,7 @@ static func _calculate_character_center_at_fall_off_point(
         fall_off_displacement_y = 0.0
         
     elif collider_shape is CapsuleShape2D:
-        if is_rotated_90_degrees:
+        if collider_is_rotated_90_degrees:
             right_side_fall_off_displacement_x = \
                     collider_shape.radius + collider_shape.height * 0.5
             fall_off_displacement_y = 0.0
@@ -485,7 +479,7 @@ static func _calculate_character_center_at_fall_off_point(
             fall_off_displacement_y = -collider_shape.height * 0.5
         
     elif collider_shape is RectangleShape2D:
-        if is_rotated_90_degrees:
+        if collider_is_rotated_90_degrees:
             right_side_fall_off_displacement_x = collider_shape.extents.y
             fall_off_displacement_y = -collider_shape.extents.x
         else:

@@ -174,7 +174,7 @@ func _draw_collision(canvas: CanvasItem) -> void:
                 canvas,
                 collision.character_position,
                 collision_result_metadata.collider_shape,
-                collision_result_metadata.collider_rotation,
+                collision_result_metadata.collider_is_rotated_90_degrees,
                 collision_color,
                 collision_character_boundary_stroke_width)
         # Draw a dot at the center of the character's collision boundary.

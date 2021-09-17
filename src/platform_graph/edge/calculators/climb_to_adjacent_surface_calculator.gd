@@ -385,7 +385,8 @@ func _calculate_trajectory(
                             distance_past_edge,
                             !is_left_side,
                             movement_params.rounding_corner_calc_shape,
-                            movement_params.rounding_corner_calc_shape_rotation)
+                            movement_params \
+                                .rounding_corner_calc_shape_is_rotated_90_degrees)
             is_character_past_end = \
                     position.y + half_height <= corner_position.y if \
                     is_top_side else \
@@ -423,7 +424,8 @@ func _calculate_trajectory(
                             distance_past_edge,
                             is_top_side,
                             movement_params.rounding_corner_calc_shape,
-                            movement_params.rounding_corner_calc_shape_rotation)
+                            movement_params \
+                                .rounding_corner_calc_shape_is_rotated_90_degrees)
             # Account for acceleration along the floor.
             velocity.x += acceleration_x * Time.PHYSICS_TIME_STEP
             velocity.x = clamp(
@@ -474,7 +476,8 @@ func _calculate_trajectory(
                             distance_past_edge,
                             is_top_side,
                             movement_params.rounding_corner_calc_shape,
-                            movement_params.rounding_corner_calc_shape_rotation)
+                            movement_params \
+                                .rounding_corner_calc_shape_is_rotated_90_degrees)
             is_character_past_end = \
                     position.x + half_width <= corner_position.x if \
                     is_left_side else \
@@ -503,7 +506,8 @@ func _calculate_trajectory(
                             distance_past_edge,
                             !is_left_side,
                             movement_params.rounding_corner_calc_shape,
-                            movement_params.rounding_corner_calc_shape_rotation)
+                            movement_params \
+                                .rounding_corner_calc_shape_is_rotated_90_degrees)
             is_rounding_corner_finished = \
                     position.y >= corner_position.y if \
                     is_top_side else \
@@ -611,7 +615,7 @@ func _get_velocity_end(
                                 is_starting_from_left_wall,
                                 movement_params.rounding_corner_calc_shape,
                                 movement_params \
-                                        .rounding_corner_calc_shape_rotation))
+                                    .rounding_corner_calc_shape_is_rotated_90_degrees))
                 var floor_component_speed_x_start := 0.0
                 
                 # From a basic equation of motion:
@@ -723,14 +727,16 @@ func _calculate_duration(
                         distance_start,
                         !is_left_side,
                         movement_params.rounding_corner_calc_shape,
-                        movement_params.rounding_corner_calc_shape_rotation))
+                        movement_params \
+                            .rounding_corner_calc_shape_is_rotated_90_degrees))
     else:
         distance_end = abs(Sc.geometry \
                 .calculate_displacement_y_for_horizontal_distance_past_edge(
                         distance_start,
                         is_top_side,
                         movement_params.rounding_corner_calc_shape,
-                        movement_params.rounding_corner_calc_shape_rotation))
+                        movement_params \
+                            .rounding_corner_calc_shape_is_rotated_90_degrees))
     
     var duration_start := distance_start / speed_start
     
