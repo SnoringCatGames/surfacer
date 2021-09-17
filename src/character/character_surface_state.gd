@@ -111,8 +111,6 @@ var previous_grabbed_surface: Surface
 var center_position_along_surface := PositionAlongSurface.new()
 var last_position_along_surface := PositionAlongSurface.new()
 
-var snap_to_surface_vector := Vector2.INF
-
 var velocity := Vector2.INF
 
 var just_changed_surface := false
@@ -1311,13 +1309,6 @@ func _update_grab_state() -> void:
         _:
             Sc.logger.error()
     var surface_normal := SurfaceSide.get_normal(surface_side)
-    
-    snap_to_surface_vector = \
-            Vector2.ZERO if \
-            !is_grabbing_surface or \
-                    character.actions.just_pressed_jump else \
-            -surface_normal * \
-                    character.movement_params.snap_to_surface_vector_length
 
 
 func _update_grab_contact() -> void:
