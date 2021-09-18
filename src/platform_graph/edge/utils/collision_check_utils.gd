@@ -447,9 +447,9 @@ static func check_frame_for_collision(
         var space_rid := crash_test_dummy.get_world_2d().space
         var params := Physics2DShapeQueryParameters.new()
         
-        params.set_shape(crash_test_dummy.movement_params.collider_shape)
+        params.set_shape(crash_test_dummy.movement_params.collider.shape)
         params.transform = Transform2D(
-                crash_test_dummy.movement_params.collider_rotation,
+                crash_test_dummy.movement_params.collider.rotation,
                 position_start)
         params.motion = displacement
         params.margin = crash_test_dummy.movement_params \

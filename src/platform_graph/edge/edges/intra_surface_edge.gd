@@ -59,14 +59,14 @@ func update_terminal(
                 .create_position_offset_from_target_point(
                         target_point,
                         start_position_along_surface.surface,
-                        movement_params.collider_half_width_height,
+                        movement_params.collider.half_width_height,
                         true)
     else:
         end_position_along_surface = PositionAlongSurfaceFactory \
                 .create_position_offset_from_target_point(
                         target_point,
                         end_position_along_surface.surface,
-                        movement_params.collider_half_width_height,
+                        movement_params.collider.half_width_height,
                         true)
     velocity_end = _calculate_velocity_end(
             start_position_along_surface,
@@ -152,7 +152,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
             return Sc.geometry.project_point_onto_surface_with_offset(
                     Vector2(position_x, 0.0),
                     surface,
-                    movement_params.collider_half_width_height)
+                    movement_params.collider.half_width_height)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var velocity_y := \
@@ -163,7 +163,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
             return Sc.geometry.project_point_onto_surface_with_offset(
                     Vector2(0.0, position_y),
                     surface,
-                    movement_params.collider_half_width_height)
+                    movement_params.collider.half_width_height)
         SurfaceSide.CEILING:
             var velocity_x := \
                     movement_params.ceiling_crawl_speed if \
@@ -173,7 +173,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
             return Sc.geometry.project_point_onto_surface_with_offset(
                     Vector2(position_x, 0.0),
                     surface,
-                    movement_params.collider_half_width_height)
+                    movement_params.collider.half_width_height)
         _:
             Sc.logger.error()
             return Vector2.INF

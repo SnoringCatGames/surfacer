@@ -105,7 +105,7 @@ func _move() -> int:
                 .create_position_offset_from_target_point(
                         destination.target_point,
                         latest_move_start_surface,
-                        character.movement_params.collider_half_width_height,
+                        character.movement_params.collider.half_width_height,
                         true)
     
     # Prevent straying too far the start position.

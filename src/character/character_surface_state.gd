@@ -242,7 +242,7 @@ func update_for_initial_surface_attachment(
                 .match_surface_target_and_collider(
                         surface,
                         start_position,
-                        character.movement_params.collider_half_width_height,
+                        character.movement_params.collider.half_width_height,
                         true,
                         true)
     
@@ -660,7 +660,7 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
     return PositionAlongSurfaceFactory.create_position_offset_from_target_point(
             contact_position,
             surface,
-            character.movement_params.collider_half_width_height,
+            character.movement_params.collider.half_width_height,
             true)
 
 
@@ -966,9 +966,9 @@ func _update_grab_trigger_state() -> void:
 
 func _update_rounding_corner_state() -> void:
     var half_width: float = \
-            character.movement_params.collider_half_width_height.x
+            character.movement_params.collider.half_width_height.x
     var half_height: float = \
-            character.movement_params.collider_half_width_height.y
+            character.movement_params.collider.half_width_height.y
     
     var are_current_and_previous_surfaces_convex_neighbors := \
             is_instance_valid(grabbed_surface) and \

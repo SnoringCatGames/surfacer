@@ -114,6 +114,7 @@ static func get_surface_normal_at_point(
 # FIXME: LEFT OFF HERE: ----------------------------------
 # - Call project_shape_onto_surface.
 # - Some of the call sites:
+#   - JumpLandPositionsUtils
 #   - IntraSurfaceEdge/call-sites
 #   - ClimbToAdjacentSurfaceCalculator/Edge
 #   - find_closest_positions_on_surfaces
@@ -124,9 +125,7 @@ static func get_surface_normal_at_point(
 # 
 #Sc.geometry.project_shape_onto_surface(
 #        character.position,
-#        movement_params.collider_shape,
-#        movement_params.collider_is_rotated_90_degrees,
-#        movement_params.collider_shape_half_width_height,
+#        movement_params.collider,
 #        surface)
 
 
@@ -138,10 +137,10 @@ static func get_surface_normal_at_point(
 #         to character sizes, that this shouldn't be a problem.
 static func project_shape_onto_surface(
         shape_position: Vector2,
-        shape: Shape2D,
-        is_rotated_90_degrees: bool,
-        shape_half_width_height: Vector2,
+        shape: RotatedShape,
         surface: Surface) -> Vector2:
+    # TODO: Should this also account for the next segment on a neighbor surface?
+    
     if !is_instance_valid(surface):
         return Vector2.INF
     
@@ -149,16 +148,14 @@ static func project_shape_onto_surface(
         return project_shape_onto_segment(
                 shape_position,
                 shape,
-                is_rotated_90_degrees,
-                shape_half_width_height,
                 surface.side,
                 surface.vertices[0],
                 surface.vertices[0])
     
-    var shape_min_x := shape_position.x - shape_half_width_height.x
-    var shape_max_x := shape_position.x + shape_half_width_height.x
-    var shape_min_y := shape_position.y - shape_half_width_height.y
-    var shape_max_y := shape_position.y + shape_half_width_height.y
+    var shape_min_x := shape_position.x - shape.half_width_height.x
+    var shape_max_x := shape_position.x + shape.half_width_height.x
+    var shape_min_y := shape_position.y - shape.half_width_height.y
+    var shape_max_y := shape_position.y + shape.half_width_height.y
     
     var shape_min_side_point := Vector2.INF
     var shape_max_side_point := Vector2.INF
@@ -219,8 +216,6 @@ static func project_shape_onto_surface(
         return project_shape_onto_segment(
                 shape_position,
                 shape,
-                is_rotated_90_degrees,
-                shape_half_width_height,
                 surface.side,
                 segment_start,
                 segment_end)
@@ -230,16 +225,12 @@ static func project_shape_onto_surface(
     var min_side_segment_projection := project_shape_onto_segment(
             shape_position,
             shape,
-            is_rotated_90_degrees,
-            shape_half_width_height,
             surface.side,
             min_side_segment_start,
             min_side_segment_end)
     var max_side_segment_projection := project_shape_onto_segment(
             shape_position,
             shape,
-            is_rotated_90_degrees,
-            shape_half_width_height,
             surface.side,
             max_side_segment_start,
             max_side_segment_end)
@@ -275,9 +266,7 @@ static func project_shape_onto_surface(
 # -   This works for whichever side of the segment the shape starts on.
 static func project_shape_onto_segment(
         shape_position: Vector2,
-        shape: Shape2D,
-        is_rotated_90_degrees: bool,
-        shape_half_width_height: Vector2,
+        shape: RotatedShape,
         surface_side: int,
         segment_start: Vector2,
         segment_end: Vector2) -> Vector2:
@@ -290,10 +279,10 @@ static func project_shape_onto_segment(
             Vector2(segment_displacement.y, -segment_displacement.x)
     var segment_normal := segment_perpendicular.normalized()
     
-    var shape_min_x := shape_position.x - shape_half_width_height.x
-    var shape_max_x := shape_position.x + shape_half_width_height.x
-    var shape_min_y := shape_position.y - shape_half_width_height.y
-    var shape_max_y := shape_position.y + shape_half_width_height.y
+    var shape_min_x := shape_position.x - shape.half_width_height.x
+    var shape_max_x := shape_position.x + shape.half_width_height.x
+    var shape_min_y := shape_position.y - shape.half_width_height.y
+    var shape_max_y := shape_position.y + shape.half_width_height.y
     
     var leftward_segment_point := Vector2.INF
     var rightward_segment_point := Vector2.INF
@@ -330,9 +319,9 @@ static func project_shape_onto_segment(
         _:
             Sc.logger.error()
     
-    var is_shape_circle := shape is CircleShape2D
-    var is_shape_capsule := shape is CapsuleShape2D
-    var is_shape_rectangle := shape is RectangleShape2D
+    var is_shape_circle := shape.shape is CircleShape2D
+    var is_shape_capsule := shape.shape is CapsuleShape2D
+    var is_shape_rectangle := shape.shape is RectangleShape2D
     
     assert(is_shape_circle or \
             is_shape_capsule or \
@@ -341,7 +330,7 @@ static func project_shape_onto_segment(
     var projection_displacement_x := INF
     var projection_displacement_y := INF
     
-    if shape is CapsuleShape2D:
+    if is_shape_capsule:
         # All of our capsule-projection cases involve modifying parameters and
         # redirecting to either the circle-handling branch or the
         # rectangle-handling branch.
@@ -360,7 +349,7 @@ static func project_shape_onto_segment(
         var rightward_capsule_end_center := Vector2.INF
         var upper_capsule_end_center := Vector2.INF
         var lower_capsule_end_center := Vector2.INF
-        if is_rotated_90_degrees:
+        if shape.is_rotated_90_degrees:
             leftward_capsule_end_center = \
                     capsule_center - Vector2(half_height, 0.0)
             rightward_capsule_end_center = \
@@ -374,15 +363,15 @@ static func project_shape_onto_segment(
         var circle_half_width_height := Vector2(radius, radius)
         var rectangle_half_width_height := \
                 Vector2(half_height, radius) if \
-                is_rotated_90_degrees else \
+                shape.is_rotated_90_degrees else \
                 Vector2(radius, half_height)
         
-        if is_rotated_90_degrees != is_horizontal_surface or \
+        if shape.is_rotated_90_degrees != is_horizontal_surface or \
                 height == 0.0:
             # If the round-end of the capsule is facing the surface, then we
             # can treat it the same as a circle.
             is_shape_circle = true
-            shape_half_width_height = circle_half_width_height
+            shape.half_width_height = circle_half_width_height
             match surface_side:
                 SurfaceSide.FLOOR:
                     shape_position = lower_capsule_end_center
@@ -419,21 +408,21 @@ static func project_shape_onto_segment(
                             # left-end of the capsule.
                             is_shape_circle = true
                             shape_position = leftward_capsule_end_center
-                            shape_half_width_height = circle_half_width_height
+                            shape.half_width_height = circle_half_width_height
                         elif rightward_segment_point.x < \
                                 rightward_capsule_end_center.x:
                             # We can treat this as a rectangle-projection with
                             # the center of the capsule.
                             is_shape_rectangle = true
                             shape_position = capsule_center
-                            shape_half_width_height = \
+                            shape.half_width_height = \
                                     rectangle_half_width_height
                         else:
                             # We can treat this as a circle-projection with the
                             # right-end of the capsule.
                             is_shape_circle = true
                             shape_position = rightward_capsule_end_center
-                            shape_half_width_height = circle_half_width_height
+                            shape.half_width_height = circle_half_width_height
                     else:
                         # -   Either is floor, and slopes up to the left.
                         # -   Or is ceiling, and slopes up to the right.
@@ -443,21 +432,21 @@ static func project_shape_onto_segment(
                             # right-end of the capsule.
                             is_shape_circle = true
                             shape_position = rightward_capsule_end_center
-                            shape_half_width_height = circle_half_width_height
+                            shape.half_width_height = circle_half_width_height
                         elif leftward_segment_point.x > \
                                 leftward_capsule_end_center.x:
                             # We can treat this as a rectangle-projection with
                             # the center of the capsule.
                             is_shape_rectangle = true
                             shape_position = capsule_center
-                            shape_half_width_height = \
+                            shape.half_width_height = \
                                     rectangle_half_width_height
                         else:
                             # We can treat this as a circle-projection with the
                             # left-end of the capsule.
                             is_shape_circle = true
                             shape_position = leftward_capsule_end_center
-                            shape_half_width_height = circle_half_width_height
+                            shape.half_width_height = circle_half_width_height
                     
                 SurfaceSide.LEFT_WALL, \
                 SurfaceSide.RIGHT_WALL:
@@ -472,21 +461,21 @@ static func project_shape_onto_segment(
                             # upper-end of the capsule.
                             is_shape_circle = true
                             shape_position = upper_capsule_end_center
-                            shape_half_width_height = circle_half_width_height
+                            shape.half_width_height = circle_half_width_height
                         elif lower_segment_point.y < \
                                 lower_capsule_end_center.y:
                             # We can treat this as a rectangle-projection with
                             # the center of the capsule.
                             is_shape_rectangle = true
                             shape_position = capsule_center
-                            shape_half_width_height = \
+                            shape.half_width_height = \
                                     rectangle_half_width_height
                         else:
                             # We can treat this as a circle-projection with the
                             # lower-end of the capsule.
                             is_shape_circle = true
                             shape_position = lower_capsule_end_center
-                            shape_half_width_height = circle_half_width_height
+                            shape.half_width_height = circle_half_width_height
                     else:
                         # -   Either is left-wall, and slopes up to the right.
                         # -   Or is right-wall, and slopes up to the left.
@@ -496,26 +485,26 @@ static func project_shape_onto_segment(
                             # lower-end of the capsule.
                             is_shape_circle = true
                             shape_position = lower_capsule_end_center
-                            shape_half_width_height = circle_half_width_height
+                            shape.half_width_height = circle_half_width_height
                         elif upper_segment_point.y > \
                                 upper_capsule_end_center.y:
                             # We can treat this as a rectangle-projection with
                             # the center of the capsule.
                             is_shape_rectangle = true
                             shape_position = capsule_center
-                            shape_half_width_height = \
+                            shape.half_width_height = \
                                     rectangle_half_width_height
                         else:
                             # We can treat this as a circle-projection with the
                             # upper-end of the capsule.
                             is_shape_circle = true
                             shape_position = upper_capsule_end_center
-                            shape_half_width_height = circle_half_width_height
+                            shape.half_width_height = circle_half_width_height
                     
                 _:
                     Sc.logger.error()
     
-    if shape is CircleShape2D:
+    if is_shape_circle:
         # -   There are three possible contact points to consider:
         #     -   Either end of the segment, but only if the circle extends
         #         beyond that end.
@@ -695,7 +684,7 @@ static func project_shape_onto_segment(
             _:
                 Sc.logger.error()
     
-    if shape is RectangleShape2D:
+    if is_shape_rectangle:
         # -   There are four possible contact points to consider:
         #     -   Either end of the segment, but only if the rectangle extends
         #         beyond that end.
@@ -994,50 +983,49 @@ static func _get_collision_for_side(
 static func calculate_displacement_x_for_vertical_distance_past_edge( \
         distance_past_edge: float,
         is_left_wall: bool,
-        collider_shape: Shape2D,
-        collider_is_rotated_90_degrees: bool) -> float:
-    if collider_shape is CircleShape2D:
-        if distance_past_edge >= collider_shape.radius:
+        collider: RotatedShape) -> float:
+    if collider.shape is CircleShape2D:
+        if distance_past_edge >= collider.shape.radius:
             return 0.0
         else:
             return calculate_circular_displacement_x_for_vertical_distance_past_edge(
                     distance_past_edge,
-                    collider_shape.radius,
+                    collider.shape.radius,
                     is_left_wall)
         
-    elif collider_shape is CapsuleShape2D:
-        if collider_is_rotated_90_degrees:
+    elif collider.shape is CapsuleShape2D:
+        if collider.is_rotated_90_degrees:
             var half_height_offset: float = \
-                    collider_shape.height / 2.0 if \
+                    collider.shape.height / 2.0 if \
                     is_left_wall else \
-                    -collider_shape.height / 2.0
+                    -collider.shape.height / 2.0
             return calculate_circular_displacement_x_for_vertical_distance_past_edge(
                     distance_past_edge,
-                    collider_shape.radius,
+                    collider.shape.radius,
                     is_left_wall) + half_height_offset
         else:
-            distance_past_edge -= collider_shape.height / 2.0
+            distance_past_edge -= collider.shape.height / 2.0
             if distance_past_edge <= 0:
                 # Treat the same as a rectangle.
-                return collider_shape.radius if \
+                return collider.shape.radius if \
                         is_left_wall else \
-                        -collider_shape.radius
+                        -collider.shape.radius
             else:
                 # Treat the same as an offset circle.
                 return calculate_circular_displacement_x_for_vertical_distance_past_edge(
                         distance_past_edge,
-                        collider_shape.radius,
+                        collider.shape.radius,
                         is_left_wall)
         
-    elif collider_shape is RectangleShape2D:
-        if collider_is_rotated_90_degrees:
-            return collider_shape.extents.y if \
+    elif collider.shape is RectangleShape2D:
+        if collider.is_rotated_90_degrees:
+            return collider.shape.extents.y if \
                     is_left_wall else \
-                    -collider_shape.extents.y
+                    -collider.shape.extents.y
         else:
-            return collider_shape.extents.x if \
+            return collider.shape.extents.x if \
                     is_left_wall else \
-                    -collider_shape.extents.x
+                    -collider.shape.extents.x
         
     else:
         Sc.logger.error((
@@ -1045,7 +1033,7 @@ static func calculate_displacement_x_for_vertical_distance_past_edge( \
                 "calculate_displacement_x_for_vertical_distance_past_edge: %s. " +
                 "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
                 "RectangleShape2D.") % \
-                collider_shape)
+                collider.shape)
         return INF
 
 
@@ -1065,50 +1053,49 @@ static func calculate_circular_displacement_x_for_vertical_distance_past_edge(
 static func calculate_displacement_y_for_horizontal_distance_past_edge( \
         distance_past_edge: float,
         is_floor: bool,
-        collider_shape: Shape2D,
-        collider_is_rotated_90_degrees: bool) -> float:
-    if collider_shape is CircleShape2D:
-        if distance_past_edge >= collider_shape.radius:
+        collider: RotatedShape) -> float:
+    if collider.shape is CircleShape2D:
+        if distance_past_edge >= collider.shape.radius:
             return 0.0
         else:
             return calculate_circular_displacement_y_for_horizontal_distance_past_edge(
                     distance_past_edge,
-                    collider_shape.radius,
+                    collider.shape.radius,
                     is_floor)
         
-    elif collider_shape is CapsuleShape2D:
-        if collider_is_rotated_90_degrees:
-            distance_past_edge -= collider_shape.height * 0.5
+    elif collider.shape is CapsuleShape2D:
+        if collider.is_rotated_90_degrees:
+            distance_past_edge -= collider.shape.height * 0.5
             if distance_past_edge <= 0:
                 # Treat the same as a rectangle.
-                return -collider_shape.radius if \
+                return -collider.shape.radius if \
                         is_floor else \
-                        collider_shape.radius
+                        collider.shape.radius
             else:
                 # Treat the same as an offset circle.
                 return calculate_circular_displacement_y_for_horizontal_distance_past_edge(
                         distance_past_edge,
-                        collider_shape.radius,
+                        collider.shape.radius,
                         is_floor)
         else:
             var half_height_offset: float = \
-                    collider_shape.height / 2.0 if \
+                    collider.shape.height / 2.0 if \
                     is_floor else \
-                    -collider_shape.height / 2.0
+                    -collider.shape.height / 2.0
             return calculate_circular_displacement_y_for_horizontal_distance_past_edge(
                     distance_past_edge,
-                    collider_shape.radius,
+                    collider.shape.radius,
                     is_floor) + half_height_offset
         
-    elif collider_shape is RectangleShape2D:
-        if collider_is_rotated_90_degrees:
-            return -collider_shape.extents.x if \
+    elif collider.shape is RectangleShape2D:
+        if collider.is_rotated_90_degrees:
+            return -collider.shape.extents.x if \
                     is_floor else \
-                    collider_shape.extents.x
+                    collider.shape.extents.x
         else:
-            return -collider_shape.extents.y if \
+            return -collider.shape.extents.y if \
                     is_floor else \
-                    collider_shape.extents.y
+                    collider.shape.extents.y
         
     else:
         Sc.logger.error((
@@ -1116,7 +1103,7 @@ static func calculate_displacement_y_for_horizontal_distance_past_edge( \
                 "calculate_displacement_y_for_horizontal_distance_past_edge: %s. " +
                 "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
                 "RectangleShape2D.") % \
-                collider_shape)
+                collider.shape)
         return INF
 
 

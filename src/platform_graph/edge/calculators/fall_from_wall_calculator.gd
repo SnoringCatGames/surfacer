@@ -207,12 +207,12 @@ static func _get_jump_positions(
             .create_position_offset_from_target_point(
                     origin_top_point,
                     origin_surface,
-                    movement_params.collider_half_width_height)
+                    movement_params.collider.half_width_height)
     var bottom_jump_position := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     origin_bottom_point,
                     origin_surface,
-                    movement_params.collider_half_width_height)
+                    movement_params.collider.half_width_height)
     
     var positions := []
     

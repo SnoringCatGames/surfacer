@@ -35,8 +35,8 @@ var fade_tween: ScaffolderTween
 func _init(navigator: SurfaceNavigator) -> void:
     self.navigator = navigator
     self.previous_path_back_end_trim_radius = min(
-            navigator.character.movement_params.collider_half_width_height.x,
-            navigator.character.movement_params.collider_half_width_height.y)
+            navigator.character.movement_params.collider.half_width_height.x,
+            navigator.character.movement_params.collider.half_width_height.y)
     
     var base_color: Color = navigator.character.navigation_annotation_color
     current_path_color = Sc.colors.opacify(

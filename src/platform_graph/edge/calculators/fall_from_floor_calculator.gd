@@ -146,7 +146,7 @@ func _get_all_edges_from_one_side(
     position_start.match_surface_target_and_collider(
             origin_surface,
             edge_point,
-            movement_params.collider_half_width_height,
+            movement_params.collider.half_width_height,
             false,
             true)
     
@@ -167,15 +167,13 @@ func _get_all_edges_from_one_side(
     var position_fall_off := _calculate_character_center_at_fall_off_point(
             edge_point,
             falls_on_left_side,
-            movement_params.fall_from_floor_corner_calc_shape,
-            movement_params \
-                    .fall_from_floor_corner_calc_shape_is_rotated_90_degrees)
+            movement_params.fall_from_floor_corner_calc_shape)
     
     var position_fall_off_wrapper := PositionAlongSurfaceFactory \
             .create_position_from_unmodified_target_point(
                     position_fall_off,
                     origin_surface,
-                    movement_params.collider_half_width_height)
+                    movement_params.collider.half_width_height)
     
     var displacement_from_start_to_fall_off := \
             position_fall_off - position_start.target_point
@@ -440,9 +438,7 @@ static func _prepend_walk_to_fall_off_portion(
                 Sc.geometry.calculate_displacement_y_for_horizontal_distance_past_edge(
                         distance_past_edge,
                         true,
-                        movement_params.fall_from_floor_corner_calc_shape,
-                        movement_params \
-                            .fall_from_floor_corner_calc_shape_is_rotated_90_degrees)
+                        movement_params.fall_from_floor_corner_calc_shape)
         
         current_frame_position.x = frame_position_x
         current_frame_position.y = frame_position_y
@@ -460,31 +456,30 @@ static func _prepend_walk_to_fall_off_portion(
 static func _calculate_character_center_at_fall_off_point(
         edge_point: Vector2,
         falls_on_left_side: bool,
-        collider_shape: Shape2D,
-        collider_is_rotated_90_degrees: bool) -> Vector2:
+        collider: RotatedShape) -> Vector2:
     var right_side_fall_off_displacement_x: float
     var fall_off_displacement_y: float
     
-    if collider_shape is CircleShape2D:
-        right_side_fall_off_displacement_x = collider_shape.radius
+    if collider.shape is CircleShape2D:
+        right_side_fall_off_displacement_x = collider.shape.radius
         fall_off_displacement_y = 0.0
         
-    elif collider_shape is CapsuleShape2D:
-        if collider_is_rotated_90_degrees:
+    elif collider.shape is CapsuleShape2D:
+        if collider.is_rotated_90_degrees:
             right_side_fall_off_displacement_x = \
-                    collider_shape.radius + collider_shape.height * 0.5
+                    collider.shape.radius + collider.shape.height * 0.5
             fall_off_displacement_y = 0.0
         else:
-            right_side_fall_off_displacement_x = collider_shape.radius
-            fall_off_displacement_y = -collider_shape.height * 0.5
+            right_side_fall_off_displacement_x = collider.shape.radius
+            fall_off_displacement_y = -collider.shape.height * 0.5
         
-    elif collider_shape is RectangleShape2D:
-        if collider_is_rotated_90_degrees:
-            right_side_fall_off_displacement_x = collider_shape.extents.y
-            fall_off_displacement_y = -collider_shape.extents.x
+    elif collider.shape is RectangleShape2D:
+        if collider.is_rotated_90_degrees:
+            right_side_fall_off_displacement_x = collider.shape.extents.y
+            fall_off_displacement_y = -collider.shape.extents.x
         else:
-            right_side_fall_off_displacement_x = collider_shape.extents.x
-            fall_off_displacement_y = -collider_shape.extents.y
+            right_side_fall_off_displacement_x = collider.shape.extents.x
+            fall_off_displacement_y = -collider.shape.extents.y
         
     else:
         Sc.logger.error((
@@ -492,7 +487,7 @@ static func _calculate_character_center_at_fall_off_point(
                 "_calculate_character_center_at_fall_off_point: %s. " +
                 "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
                 "RectangleShape2D.") % \
-                collider_shape)
+                collider.shape)
     
     right_side_fall_off_displacement_x += EXTRA_FALL_OFF_POSITION_MARGIN
     

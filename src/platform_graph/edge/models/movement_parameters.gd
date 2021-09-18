@@ -459,29 +459,23 @@ var action_handlers: Array
 # Array<EdgeCalculator>
 var edge_calculators: Array
 
+var collider := RotatedShape.new()
 var collider_shape: Shape2D \
         setget _set_collider_shape
 # In radians.
 var collider_rotation: float \
         setget _set_collider_rotation
-var collider_is_rotated_90_degrees: bool
-
-var collider_half_width_height := Vector2.INF
 
 ## -   This shape is used for calculating trajectories that approximate what
 ##     might normally happen at runtime.[br]
 ## -   These trajectories could be used both for rendering navigation paths, as
 ##     well as for updating character positions at runtime.[br]
-var fall_from_floor_corner_calc_shape: Shape2D
-var fall_from_floor_corner_calc_shape_rotation: float
-var fall_from_floor_corner_calc_shape_is_rotated_90_degrees: bool
+var fall_from_floor_corner_calc_shape := RotatedShape.new()
 ## -   This shape is used for calculating trajectories that approximate what
 ##     might normally happen at runtime.[br]
 ## -   These trajectories could be used both for rendering navigation paths, as
 ##     well as for updating character positions at runtime.[br]
-var rounding_corner_calc_shape: Shape2D
-var rounding_corner_calc_shape_rotation: float
-var rounding_corner_calc_shape_is_rotated_90_degrees: bool
+var rounding_corner_calc_shape := RotatedShape.new()
 
 var character_name := ""
 
@@ -725,8 +719,6 @@ func _validate_parameters() -> void:
                 "If bypasses_runtime_physics is true, " +
                 "then syncs_character_position_to_edge_trajectory must be " +
                 "true.")
-    
-    _update_is_rotated_90_degrees()
 
 
 func _derive_parameters() -> void:
@@ -833,33 +825,19 @@ func _derive_parameters() -> void:
     gravity_slow_rise = gravity_fast_fall * slow_rise_gravity_multiplier
     
     if is_instance_valid(collider_shape):
-        collider_half_width_height = Sc.geometry.calculate_half_width_height(
-                collider_shape,
-                collider_is_rotated_90_degrees)
+        collider.update(collider_shape, collider_rotation)
         
         var fall_from_floor_shape := RectangleShape2D.new()
-        fall_from_floor_shape.extents = collider_half_width_height
-        fall_from_floor_corner_calc_shape = fall_from_floor_shape
-        fall_from_floor_corner_calc_shape_rotation = 0.0
-        fall_from_floor_corner_calc_shape_is_rotated_90_degrees = false
+        fall_from_floor_shape.extents = collider.half_width_height
+        fall_from_floor_corner_calc_shape.update(fall_from_floor_shape, 0.0)
         
-        rounding_corner_calc_shape = collider_shape
-        rounding_corner_calc_shape_rotation = collider_rotation
-        rounding_corner_calc_shape_is_rotated_90_degrees = \
-                collider_is_rotated_90_degrees
+        rounding_corner_calc_shape.update(collider.shape, collider.rotation)
+        
+        if !collider.is_rotation_axially_aligned:
+            _set_configuration_warning("Shape2D.rotation must be 0 or 90.")
+            return
     
     Su.movement._calculate_dependent_movement_params(self)
-
-
-func _update_is_rotated_90_degrees() -> void:
-    collider_is_rotated_90_degrees = \
-            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2.0) < \
-            Sc.geometry.FLOAT_EPSILON
-    # Ensure that collision boundaries are only ever axially aligned.
-    if !collider_is_rotated_90_degrees and \
-            abs(collider_rotation) >= Sc.geometry.FLOAT_EPSILON:
-        _set_configuration_warning("Shape2D.rotation must be 0 or 90.")
-        return
 
 
 func _set_configuration_warning(value: String) -> void:
