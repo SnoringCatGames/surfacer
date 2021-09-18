@@ -189,7 +189,7 @@ func _attempt_navigation() -> int:
             .create_position_offset_from_target_point(
                     target_position.target_point,
                     surface,
-                    character.movement_params.collider_half_width_height,
+                    character.movement_params.collider.half_width_height,
                     true)
     
     if destination.target_point.distance_squared_to(
@@ -201,7 +201,7 @@ func _attempt_navigation() -> int:
                 .create_position_offset_from_target_point(
                         destination.target_point,
                         character.surface_state.grabbed_surface,
-                        character.movement_params.collider_half_width_height,
+                        character.movement_params.collider.half_width_height,
                         true)
         
         if destination.target_point.distance_squared_to(

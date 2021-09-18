@@ -70,7 +70,7 @@ func _init(
     self.needs_extra_wall_land_horizontal_speed = \
             needs_extra_wall_land_horizontal_speed
     self.waypoint_offset = \
-            movement_params.collider_half_width_height + \
+            movement_params.collider.half_width_height + \
             Vector2(movement_params.collision_margin_for_waypoint_positions,
                     movement_params.collision_margin_for_waypoint_positions)
     self._collided_surfaces = {}

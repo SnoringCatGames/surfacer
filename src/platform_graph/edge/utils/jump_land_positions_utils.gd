@@ -94,25 +94,25 @@ static func calculate_jump_land_positions_for_surface_pair(
                     .create_position_offset_from_target_point(
                             jump_surface_first_point,
                             jump_surface,
-                            movement_params.collider_half_width_height)
+                            movement_params.collider.half_width_height)
     var jump_surface_last_point_wrapper: PositionAlongSurface = \
             PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
                             jump_surface_last_point,
                             jump_surface,
-                            movement_params.collider_half_width_height)
+                            movement_params.collider.half_width_height)
     var land_surface_first_point_wrapper: PositionAlongSurface = \
             PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
                             land_surface_first_point,
                             land_surface,
-                            movement_params.collider_half_width_height)
+                            movement_params.collider.half_width_height)
     var land_surface_last_point_wrapper: PositionAlongSurface = \
             PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
                             land_surface_last_point,
                             land_surface,
-                            movement_params.collider_half_width_height)
+                            movement_params.collider.half_width_height)
     
     # Create some additional variables, so we can conveniently reference end
     # points according to near/far.
@@ -278,21 +278,21 @@ static func calculate_jump_land_positions_for_surface_pair(
             jump_surface.side != SurfaceSide.CEILING
     
     var character_half_width_horizontal_offset := \
-            movement_params.collider_half_width_height.x + \
+            movement_params.collider.half_width_height.x + \
             movement_params.collision_margin_for_waypoint_positions + \
             EXTRA_JUMP_LAND_POSITION_MARGIN
     var character_height_vertical_clearance := \
-            movement_params.collider_half_width_height.y * 2.0 * \
+            movement_params.collider.half_width_height.y * 2.0 * \
             CHARACTER_HEIGHT_VERTICAL_CLEARANCE_RATIO + \
             movement_params.collision_margin_for_waypoint_positions * 2.0
     var interior_point_min_horizontal_distance_from_end := \
-            movement_params.collider_half_width_height.x * \
+            movement_params.collider.half_width_height.x * \
             JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_CHARACTER_WIDTH_HEIGHT_RATIO
     var interior_point_min_vertical_distance_from_end := \
-            movement_params.collider_half_width_height.y * \
+            movement_params.collider.half_width_height.y * \
             JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_CHARACTER_WIDTH_HEIGHT_RATIO
     var vertical_offset_to_support_extra_movement_around_wall := \
-            movement_params.collider_half_width_height.y * \
+            movement_params.collider.half_width_height.y * \
             VERTICAL_OFFSET_TO_SUPPORT_EXTRA_MOVEMENT_AROUND_WALL_CHARACTER_HEIGHT_RATIO
             
     var all_jump_land_positions := []
@@ -381,7 +381,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             Sc.geometry.project_point_onto_surface_with_offset(
                                                     land_surface_left_end,
                                                     jump_surface,
-                                                    movement_params.collider_half_width_height)
+                                                    movement_params.collider.half_width_height)
                                     var land_basis := land_surface_left_end_wrapper.target_point
                                     var must_reach_destination_on_fall := true
                                     var must_reach_destination_on_rise := false
@@ -406,7 +406,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         jump_position = _create_surface_interior_position(
                                                 jump_x,
                                                 jump_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 jump_surface_left_end_wrapper,
                                                 jump_surface_right_end_wrapper)
                                         land_position = land_surface_left_end_wrapper
@@ -426,7 +426,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         land_position = _create_surface_interior_position(
                                                 land_x,
                                                 land_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 land_surface_left_end_wrapper,
                                                 land_surface_right_end_wrapper)
                                     else:
@@ -452,7 +452,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     jump_position = _create_surface_interior_position(
                                             jump_x,
                                             jump_surface,
-                                            movement_params.collider_half_width_height,
+                                            movement_params.collider.half_width_height,
                                             jump_surface_left_end_wrapper,
                                             jump_surface_right_end_wrapper)
                                     land_position = land_surface_left_end_wrapper
@@ -475,7 +475,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             Sc.geometry.project_point_onto_surface_with_offset(
                                                     jump_surface_left_end,
                                                     land_surface,
-                                                    movement_params.collider_half_width_height)
+                                                    movement_params.collider.half_width_height)
                                     var must_reach_destination_on_fall := true
                                     var must_reach_destination_on_rise := false
                                     var horizontal_movement_distance := \
@@ -500,7 +500,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         land_position = _create_surface_interior_position(
                                                 land_x,
                                                 land_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 land_surface_left_end_wrapper,
                                                 land_surface_right_end_wrapper)
                                     elif (jump_surface_left_bound - land_surface_left_bound) + \
@@ -518,7 +518,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         jump_position = _create_surface_interior_position(
                                                 jump_x,
                                                 jump_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 jump_surface_left_end_wrapper,
                                                 jump_surface_right_end_wrapper)
                                         land_position = land_surface_left_end_wrapper
@@ -546,7 +546,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     land_position = _create_surface_interior_position(
                                             land_x,
                                             land_surface,
-                                            movement_params.collider_half_width_height,
+                                            movement_params.collider.half_width_height,
                                             land_surface_left_end_wrapper,
                                             land_surface_right_end_wrapper)
                                     var min_movement_jump_land_positions := _record_if_distinct(
@@ -611,7 +611,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             Sc.geometry.project_point_onto_surface_with_offset(
                                                     land_surface_right_end,
                                                     jump_surface,
-                                                    movement_params.collider_half_width_height)
+                                                    movement_params.collider.half_width_height)
                                     var land_basis := land_surface_right_end_wrapper.target_point
                                     var must_reach_destination_on_fall := true
                                     var must_reach_destination_on_rise := false
@@ -636,7 +636,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         jump_position = _create_surface_interior_position(
                                                 jump_x,
                                                 jump_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 jump_surface_left_end_wrapper,
                                                 jump_surface_right_end_wrapper)
                                         land_position = land_surface_right_end_wrapper
@@ -656,7 +656,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         land_position = _create_surface_interior_position(
                                                 land_x,
                                                 land_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 land_surface_left_end_wrapper,
                                                 land_surface_right_end_wrapper)
                                     else:
@@ -682,7 +682,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     jump_position = _create_surface_interior_position(
                                             jump_x,
                                             jump_surface,
-                                            movement_params.collider_half_width_height,
+                                            movement_params.collider.half_width_height,
                                             jump_surface_left_end_wrapper,
                                             jump_surface_right_end_wrapper)
                                     land_position = land_surface_right_end_wrapper
@@ -705,7 +705,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                             Sc.geometry.project_point_onto_surface_with_offset(
                                                     jump_surface_right_end,
                                                     land_surface,
-                                                    movement_params.collider_half_width_height)
+                                                    movement_params.collider.half_width_height)
                                     var must_reach_destination_on_fall := true
                                     var must_reach_destination_on_rise := false
                                     var horizontal_movement_distance := \
@@ -730,7 +730,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         land_position = _create_surface_interior_position(
                                                 land_x,
                                                 land_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 land_surface_left_end_wrapper,
                                                 land_surface_right_end_wrapper)
                                     elif (land_surface_right_bound - jump_surface_right_bound) + \
@@ -748,7 +748,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         jump_position = _create_surface_interior_position(
                                                 jump_x,
                                                 jump_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 jump_surface_left_end_wrapper,
                                                 jump_surface_right_end_wrapper)
                                         land_position = land_surface_right_end_wrapper
@@ -776,7 +776,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     land_position = _create_surface_interior_position(
                                             land_x,
                                             land_surface,
-                                            movement_params.collider_half_width_height,
+                                            movement_params.collider.half_width_height,
                                             land_surface_left_end_wrapper,
                                             land_surface_right_end_wrapper)
                                     var min_movement_jump_land_positions := _record_if_distinct(
@@ -867,7 +867,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     jump_surface_near_end,
                                     land_surface,
-                                    movement_params.collider_half_width_height)
+                                    movement_params.collider.half_width_height)
                             var must_reach_destination_on_fall := false
                             var must_reach_destination_on_rise := false
                             var horizontal_movement_distance := \
@@ -886,7 +886,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = _create_surface_interior_position(
                                     goal_x,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_left_end_wrapper,
                                     jump_surface_right_end_wrapper)
                             jump_basis = jump_position.target_point
@@ -904,7 +904,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_position = _create_surface_interior_position(
                                     goal_y,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_top_end_wrapper,
                                     land_surface_bottom_end_wrapper,
                                     fail_if_outside_of_bounds)
@@ -937,7 +937,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                         jump_surface_near_end,
                                         land_surface,
-                                        movement_params.collider_half_width_height)
+                                        movement_params.collider.half_width_height)
                                 must_reach_destination_on_fall = false
                                 must_reach_destination_on_rise = false
                                 horizontal_movement_distance = \
@@ -956,7 +956,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 jump_position = _create_surface_interior_position(
                                         goal_x,
                                         jump_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         jump_surface_left_end_wrapper,
                                         jump_surface_right_end_wrapper)
                                 jump_basis = jump_position.target_point
@@ -974,7 +974,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_position = _create_surface_interior_position(
                                         goal_y,
                                         land_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         land_surface_top_end_wrapper,
                                         land_surface_bottom_end_wrapper,
                                         fail_if_outside_of_bounds)
@@ -1007,7 +1007,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                         jump_surface_far_end,
                                         land_surface,
-                                        movement_params.collider_half_width_height)
+                                        movement_params.collider.half_width_height)
                                 vertical_movement_displacement = \
                                         _calculate_vertical_movement_displacement(
                                                 movement_params,
@@ -1022,7 +1022,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_position = _create_surface_interior_position(
                                         goal_y,
                                         land_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         land_surface_top_end_wrapper,
                                         land_surface_bottom_end_wrapper,
                                         fail_if_outside_of_bounds)
@@ -1060,7 +1060,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     Vector2(goal_x, INF),
                                     jump_surface,
-                                    movement_params.collider_half_width_height)
+                                    movement_params.collider.half_width_height)
                             land_basis = land_surface_bottom_end_wrapper.target_point
                             var must_reach_destination_on_fall := false
                             var must_reach_destination_on_rise := false
@@ -1080,7 +1080,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = _create_surface_interior_position(
                                     goal_x,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_left_end_wrapper,
                                     jump_surface_right_end_wrapper)
                             jump_basis = jump_position.target_point
@@ -1097,7 +1097,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_position = _create_surface_interior_position(
                                     goal_y,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_top_end_wrapper,
                                     land_surface_bottom_end_wrapper)
                             jump_land_positions = _create_jump_land_positions(
@@ -1127,7 +1127,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = _create_surface_interior_position(
                                     goal_x,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_left_end_wrapper,
                                     jump_surface_right_end_wrapper)
                             jump_land_positions = _create_jump_land_positions(
@@ -1156,7 +1156,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = _create_surface_interior_position(
                                     goal_x,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_left_end_wrapper,
                                     jump_surface_right_end_wrapper)
                             land_position = land_surface_top_end_wrapper
@@ -1203,7 +1203,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_position = _create_surface_interior_position(
                                     goal_y,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_top_end_wrapper,
                                     land_surface_bottom_end_wrapper,
                                     fail_if_outside_of_bounds)
@@ -1271,7 +1271,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         land_position = _create_surface_interior_position(
                                 goal_y,
                                 land_surface,
-                                movement_params.collider_half_width_height,
+                                movement_params.collider.half_width_height,
                                 land_surface_top_end_wrapper,
                                 land_surface_bottom_end_wrapper)
                         
@@ -1310,7 +1310,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     Vector2(goal_x, INF),
                                     jump_surface,
-                                    movement_params.collider_half_width_height)
+                                    movement_params.collider.half_width_height)
                             var must_reach_destination_on_fall := true
                             var must_reach_destination_on_rise := false
                             var horizontal_movement_distance := \
@@ -1329,7 +1329,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = _create_surface_interior_position(
                                     goal_x,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_left_end_wrapper,
                                     jump_surface_right_end_wrapper)
                             var less_likely_to_be_valid := true
@@ -1361,7 +1361,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = _create_surface_interior_position(
                                     goal_x,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_left_end_wrapper,
                                     jump_surface_right_end_wrapper)
                             less_likely_to_be_valid = true
@@ -1376,7 +1376,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         
                         if land_surface_top_bound > \
                                 jump_surface_center.y + \
-                                movement_params.collider_half_width_height.y * 2.5:
+                                movement_params.collider.half_width_height.y * 2.5:
                             # The wall is far enough below the floor that the character might be able
                             # to jump around overtop it, so let's consider a secondary jump/land
                             # pair for that movement.
@@ -1411,7 +1411,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             
                         elif land_surface_bottom_bound < \
                                 jump_surface_center.y - \
-                                movement_params.collider_half_width_height.y * 2.5:
+                                movement_params.collider.half_width_height.y * 2.5:
                             # The wall is far enough above the floor that the character might be able
                             # to jump around underneath it, so let's consider a secondary jump/land
                             # pair for that movement.
@@ -1432,7 +1432,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_position = _create_surface_interior_position(
                                     goal_y,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_top_end_wrapper,
                                     land_surface_bottom_end_wrapper)
                             var less_likely_to_be_valid := true
@@ -1522,7 +1522,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 jump_position = _create_surface_interior_position(
                                         land_surface_left_bound,
                                         jump_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         jump_surface_left_end_wrapper,
                                         jump_surface_right_end_wrapper)
                                 land_position = land_surface_left_end_wrapper
@@ -1535,7 +1535,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_position = _create_surface_interior_position(
                                         jump_surface_left_bound,
                                         land_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         land_surface_left_end_wrapper,
                                         land_surface_right_end_wrapper)
                             var left_end_jump_land_positions := _create_jump_land_positions(
@@ -1555,7 +1555,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_position = _create_surface_interior_position(
                                         jump_surface_right_bound,
                                         land_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         land_surface_left_end_wrapper,
                                         land_surface_right_end_wrapper)
                             else:
@@ -1566,7 +1566,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 jump_position = _create_surface_interior_position(
                                         land_surface_right_bound,
                                         jump_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         jump_surface_left_end_wrapper,
                                         jump_surface_right_end_wrapper)
                                 land_position = land_surface_right_end_wrapper
@@ -1607,13 +1607,13 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         .create_position_offset_from_target_point(
                                                 jump_surface_closest_point,
                                                 jump_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 true)
                                 land_position = PositionAlongSurfaceFactory \
                                         .create_position_offset_from_target_point(
                                                 land_surface_closest_point,
                                                 land_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 true)
                                 var closest_point_jump_land_positions := \
                                         _create_jump_land_positions(
@@ -1692,7 +1692,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     Sc.geometry.project_point_onto_surface_with_offset(
                                             Vector2(goal_x, INF),
                                             land_surface,
-                                            movement_params.collider_half_width_height)
+                                            movement_params.collider.half_width_height)
                             var must_reach_destination_on_fall := true
                             var must_reach_destination_on_rise := false
                             var horizontal_movement_distance := \
@@ -1711,7 +1711,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_position = _create_surface_interior_position(
                                     goal_x,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_left_end_wrapper,
                                     land_surface_right_end_wrapper)
                             land_basis = land_position.target_point
@@ -1729,7 +1729,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = _create_surface_interior_position(
                                     goal_y,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_top_end_wrapper,
                                     jump_surface_bottom_end_wrapper,
                                     fail_if_outside_of_bounds)
@@ -1776,7 +1776,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_position = _create_surface_interior_position(
                                     goal_x,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_left_end_wrapper,
                                     land_surface_right_end_wrapper)
                             jump_land_positions = _create_jump_land_positions(
@@ -1815,7 +1815,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = _create_surface_interior_position(
                                     goal_y,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_top_end_wrapper,
                                     jump_surface_bottom_end_wrapper,
                                     true)
@@ -1843,7 +1843,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         var jump_basis: Vector2 = Sc.geometry.project_point_onto_surface_with_offset(
                                 land_surface_near_end,
                                 jump_surface,
-                                movement_params.collider_half_width_height)
+                                movement_params.collider.half_width_height)
                         var land_basis := land_surface_near_end_wrapper.target_point
                         var must_reach_destination_on_fall := true
                         var must_reach_destination_on_rise := false
@@ -1863,7 +1863,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         land_position = _create_surface_interior_position(
                                 goal_x,
                                 land_surface,
-                                movement_params.collider_half_width_height,
+                                movement_params.collider.half_width_height,
                                 land_surface_left_end_wrapper,
                                 land_surface_right_end_wrapper)
                         land_basis = land_position.target_point
@@ -1881,7 +1881,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         jump_position = _create_surface_interior_position(
                                 goal_y,
                                 jump_surface,
-                                movement_params.collider_half_width_height,
+                                movement_params.collider.half_width_height,
                                 jump_surface_top_end_wrapper,
                                 jump_surface_bottom_end_wrapper,
                                 fail_if_outside_of_bounds)
@@ -1955,7 +1955,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     jump_surface_top_end,
                                     land_surface,
-                                    movement_params.collider_half_width_height)
+                                    movement_params.collider.half_width_height)
                             vertical_movement_displacement = \
                                     _calculate_vertical_movement_displacement(
                                             movement_params,
@@ -1970,7 +1970,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_position = _create_surface_interior_position(
                                     goal_y,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_top_end_wrapper,
                                     land_surface_bottom_end_wrapper,
                                     true)
@@ -1994,7 +1994,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                         jump_surface_bottom_end,
                                         land_surface,
-                                        movement_params.collider_half_width_height)
+                                        movement_params.collider.half_width_height)
                                 vertical_movement_displacement = \
                                         _calculate_vertical_movement_displacement(
                                                 movement_params,
@@ -2009,7 +2009,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_position = _create_surface_interior_position(
                                         goal_y,
                                         land_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         land_surface_top_end_wrapper,
                                         land_surface_bottom_end_wrapper,
                                         true)
@@ -2033,14 +2033,14 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_position = _create_surface_interior_position(
                                     goal_y,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_top_end_wrapper,
                                     land_surface_bottom_end_wrapper,
                                     false)
                             jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     land_surface_top_end,
                                     jump_surface,
-                                    movement_params.collider_half_width_height)
+                                    movement_params.collider.half_width_height)
                             land_basis = land_surface_top_end_wrapper.target_point
                             vertical_movement_displacement = \
                                     _calculate_vertical_movement_displacement(
@@ -2055,7 +2055,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_position = _create_surface_interior_position(
                                     goal_y,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_top_end_wrapper,
                                     jump_surface_bottom_end_wrapper,
                                     true)
@@ -2081,7 +2081,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                         land_surface_bottom_end,
                                         jump_surface,
-                                        movement_params.collider_half_width_height)
+                                        movement_params.collider.half_width_height)
                                 land_basis = land_position.target_point
                                 var displacement := land_basis - jump_basis
                                 var acceleration_x := \
@@ -2109,7 +2109,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     jump_position = _create_surface_interior_position(
                                             goal_y,
                                             jump_surface,
-                                            movement_params.collider_half_width_height,
+                                            movement_params.collider.half_width_height,
                                             jump_surface_top_end_wrapper,
                                             jump_surface_bottom_end_wrapper,
                                             true)
@@ -2138,7 +2138,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     land_surface_top_end,
                                     jump_surface,
-                                    movement_params.collider_half_width_height)
+                                    movement_params.collider.half_width_height)
                             land_basis = land_surface_top_end_wrapper.target_point
                         else:
                             # Jump-surface top-end is lower than land-surface top-end.
@@ -2146,7 +2146,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     jump_surface_top_end,
                                     land_surface,
-                                    movement_params.collider_half_width_height)
+                                    movement_params.collider.half_width_height)
                         var top_end_jump_land_positions := \
                                 _calculate_jump_land_points_for_walls_facing_each_other(
                                         movement_params,
@@ -2170,13 +2170,13 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     jump_surface_bottom_end,
                                     land_surface,
-                                    movement_params.collider_half_width_height)
+                                    movement_params.collider.half_width_height)
                         else:
                             # Jump-surface bottom-end is lower than land-surface bottom-end.
                             jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                     land_surface_bottom_end,
                                     jump_surface,
-                                    movement_params.collider_half_width_height)
+                                    movement_params.collider.half_width_height)
                             land_basis = land_surface_bottom_end_wrapper.target_point
                         var bottom_end_jump_land_positions := \
                                 _calculate_jump_land_points_for_walls_facing_each_other(
@@ -2202,14 +2202,14 @@ static func calculate_jump_land_positions_for_surface_pair(
                         jump_basis = Sc.geometry.offset_point_from_surface(
                                 jump_basis,
                                 jump_surface,
-                                movement_params.collider_half_width_height)
+                                movement_params.collider.half_width_height)
                         land_basis = Sc.geometry.get_closest_point_on_polyline_to_point(
                                 land_basis,
                                 land_surface.vertices)
                         land_basis = Sc.geometry.offset_point_from_surface(
                                 land_basis,
                                 land_surface,
-                                movement_params.collider_half_width_height)
+                                movement_params.collider.half_width_height)
                         var closest_points_jump_land_positions := \
                                 _calculate_jump_land_points_for_walls_facing_each_other(
                                         movement_params,
@@ -2239,7 +2239,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_surface_top_end.y + \
                                         vertical_offset_to_support_extra_movement_around_wall,
                                 land_surface,
-                                movement_params.collider_half_width_height,
+                                movement_params.collider.half_width_height,
                                 land_surface_top_end_wrapper,
                                 land_surface_bottom_end_wrapper)
                         var top_ends_jump_land_positions := _create_jump_land_positions(
@@ -2264,7 +2264,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         land_surface_top_end.y + \
                                                 vertical_offset_to_support_extra_movement_around_wall,
                                         land_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         land_surface_top_end_wrapper,
                                         land_surface_bottom_end_wrapper)
                             var between_surfaces_jump_land_positions := \
@@ -2307,14 +2307,14 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 jump_basis = Sc.geometry.project_point_onto_surface_with_offset(
                                         Vector2(INF, land_surface_near_end_wrapper.target_point.y),
                                         jump_surface,
-                                        movement_params.collider_half_width_height)
+                                        movement_params.collider.half_width_height)
                             
                             var goal_x := jump_basis.x
                             var land_basis: Vector2 = \
                                     Sc.geometry.project_point_onto_surface_with_offset(
                                             Vector2(goal_x, INF),
                                             land_surface,
-                                            movement_params.collider_half_width_height)
+                                            movement_params.collider.half_width_height)
                             var must_reach_destination_on_fall := false
                             var must_reach_destination_on_rise := true
                             var horizontal_movement_distance := \
@@ -2333,7 +2333,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             var land_position := _create_surface_interior_position(
                                     goal_x,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_left_end_wrapper,
                                     land_surface_right_end_wrapper)
                             land_basis = land_position.target_point
@@ -2351,7 +2351,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             var jump_position := _create_surface_interior_position(
                                     goal_y,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_top_end_wrapper,
                                     jump_surface_bottom_end_wrapper,
                                     fail_if_outside_of_bounds)
@@ -2389,7 +2389,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             var jump_position := _create_surface_interior_position(
                                     goal_y,
                                     jump_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     jump_surface_top_end_wrapper,
                                     jump_surface_bottom_end_wrapper,
                                     fail_if_outside_of_bounds)
@@ -2497,7 +2497,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 jump_position = _create_surface_interior_position(
                                         land_surface_left_bound,
                                         jump_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         jump_surface_left_end_wrapper,
                                         jump_surface_right_end_wrapper)
                                 land_position = land_surface_left_end_wrapper
@@ -2510,7 +2510,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_position = _create_surface_interior_position(
                                         jump_surface_left_bound,
                                         land_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         land_surface_left_end_wrapper,
                                         land_surface_right_end_wrapper)
                             var left_end_jump_land_positions := _create_jump_land_positions(
@@ -2530,7 +2530,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 land_position = _create_surface_interior_position(
                                         jump_surface_right_bound,
                                         land_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         land_surface_left_end_wrapper,
                                         land_surface_right_end_wrapper)
                             else:
@@ -2541,7 +2541,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 jump_position = _create_surface_interior_position(
                                         land_surface_right_bound,
                                         jump_surface,
-                                        movement_params.collider_half_width_height,
+                                        movement_params.collider.half_width_height,
                                         jump_surface_left_end_wrapper,
                                         jump_surface_right_end_wrapper)
                                 land_position = land_surface_right_end_wrapper
@@ -2582,13 +2582,13 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         .create_position_offset_from_target_point(
                                                 jump_surface_closest_point,
                                                 jump_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 true)
                                 land_position = PositionAlongSurfaceFactory \
                                         .create_position_offset_from_target_point(
                                                 land_surface_closest_point,
                                                 land_surface,
-                                                movement_params.collider_half_width_height,
+                                                movement_params.collider.half_width_height,
                                                 true)
                                 var closest_point_jump_land_positions := \
                                         _create_jump_land_positions(
@@ -2655,7 +2655,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         var jump_position := _create_surface_interior_position(
                                 land_surface_bottom_end_wrapper.target_point.x,
                                 jump_surface,
-                                movement_params.collider_half_width_height,
+                                movement_params.collider.half_width_height,
                                 jump_surface_left_end_wrapper,
                                 jump_surface_right_end_wrapper)
                         var land_position := land_surface_bottom_end_wrapper
@@ -2766,7 +2766,7 @@ static func calculate_land_positions_on_surface(
                     .create_position_offset_from_target_point(
                             land_surface.first_point,
                             land_surface,
-                            movement_params.collider_half_width_height)
+                            movement_params.collider.half_width_height)
     
     if land_surface.vertices.size() == 1:
         # The land surface consists of only a single point.
@@ -2789,7 +2789,7 @@ static func calculate_land_positions_on_surface(
                     .create_position_offset_from_target_point(
                             land_surface.last_point,
                             land_surface,
-                            movement_params.collider_half_width_height)
+                            movement_params.collider.half_width_height)
     
     var land_surface_left_bound := land_surface.bounding_box.position.x
     var land_surface_right_bound := land_surface.bounding_box.end.x
@@ -2818,7 +2818,7 @@ static func calculate_land_positions_on_surface(
                         Sc.geometry.project_point_onto_surface_with_offset(
                                 origin_target_point,
                                 land_surface,
-                                movement_params.collider_half_width_height)
+                                movement_params.collider.half_width_height)
                 var must_reach_destination_on_fall := true
                 var must_reach_destination_on_rise := false
                 
@@ -2854,7 +2854,7 @@ static func calculate_land_positions_on_surface(
                             _create_surface_interior_position(
                                     land_x,
                                     land_surface,
-                                    movement_params.collider_half_width_height,
+                                    movement_params.collider.half_width_height,
                                     land_surface_left_end_wrapper,
                                     land_surface_right_end_wrapper)
                     var jump_land_positions_with_horizontal_movement_distance := \
@@ -2876,7 +2876,7 @@ static func calculate_land_positions_on_surface(
                         _create_surface_interior_position(
                                 origin_target_point.x,
                                 land_surface,
-                                movement_params.collider_half_width_height,
+                                movement_params.collider.half_width_height,
                                 land_surface_left_end_wrapper,
                                 land_surface_right_end_wrapper)
                 if land_position_without_horizontal_movement_distance != \
@@ -2922,7 +2922,7 @@ static func calculate_land_positions_on_surface(
                     land_surface_bottom_end_wrapper \
                             .target_projection_onto_surface.y
             var vertical_offset_to_support_extra_movement_around_wall := \
-                    movement_params.collider_half_width_height.y * \
+                    movement_params.collider.half_width_height.y * \
                     VERTICAL_OFFSET_TO_SUPPORT_EXTRA_MOVEMENT_AROUND_WALL_CHARACTER_HEIGHT_RATIO
             
             if (is_below_bottom_of_wall or \
@@ -2968,7 +2968,7 @@ static func calculate_land_positions_on_surface(
                 var land_position := _create_surface_interior_position(
                         land_y,
                         land_surface,
-                        movement_params.collider_half_width_height,
+                        movement_params.collider.half_width_height,
                         land_surface_top_end_wrapper,
                         land_surface_bottom_end_wrapper)
                 
@@ -3003,7 +3003,7 @@ static func calculate_land_positions_on_surface(
                         Sc.geometry.project_point_onto_surface_with_offset(
                                 origin_target_point,
                                 land_surface,
-                                movement_params.collider_half_width_height)
+                                movement_params.collider.half_width_height)
                 
                 var can_reach_vertical_displacement := VerticalMovementUtils \
                         .check_can_reach_vertical_displacement(
@@ -3027,7 +3027,7 @@ static func calculate_land_positions_on_surface(
                 var land_position := _create_surface_interior_position(
                         land_y,
                         land_surface,
-                        movement_params.collider_half_width_height,
+                        movement_params.collider.half_width_height,
                         land_surface_top_end_wrapper,
                         land_surface_bottom_end_wrapper)
                 var jump_land_positions := _create_jump_land_positions(
@@ -3055,7 +3055,7 @@ static func calculate_land_positions_on_surface(
                         Sc.geometry.project_point_onto_surface_with_offset(
                                 origin_target_point,
                                 land_surface,
-                                movement_params.collider_half_width_height)
+                                movement_params.collider.half_width_height)
                 var must_reach_destination_on_fall := false
                 var must_reach_destination_on_rise := true
                 
@@ -3088,7 +3088,7 @@ static func calculate_land_positions_on_surface(
                         _create_surface_interior_position(
                                 land_x,
                                 land_surface,
-                                movement_params.collider_half_width_height,
+                                movement_params.collider.half_width_height,
                                 land_surface_first_point_wrapper,
                                 land_surface_last_point_wrapper)
                 var jump_land_positions_with_horizontal_movement_distance := \
@@ -3370,7 +3370,7 @@ static func _calculate_horizontal_movement_distance(
                     movement_params.max_horizontal_speed_default)
     
     var character_half_width_horizontal_offset := \
-            movement_params.collider_half_width_height.x + \
+            movement_params.collider.half_width_height.x + \
             movement_params.collision_margin_for_waypoint_positions + \
             EXTRA_JUMP_LAND_POSITION_MARGIN
     
@@ -3519,18 +3519,18 @@ static func _calculate_jump_land_points_for_walls_facing_each_other(
     var jump_position := _create_surface_interior_position(
             jump_goal_y,
             jump_surface,
-            movement_params.collider_half_width_height,
+            movement_params.collider.half_width_height,
             jump_surface_top_end_wrapper,
             jump_surface_bottom_end_wrapper)
     var land_position := _create_surface_interior_position(
             land_goal_y,
             land_surface,
-            movement_params.collider_half_width_height,
+            movement_params.collider.half_width_height,
             land_surface_top_end_wrapper,
             land_surface_bottom_end_wrapper)
     
     var interior_point_min_vertical_distance_from_end := \
-            movement_params.collider_half_width_height.y * \
+            movement_params.collider.half_width_height.y * \
             JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_CHARACTER_WIDTH_HEIGHT_RATIO
     
     return _record_if_distinct(
@@ -3602,10 +3602,10 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
         return true
     
     var x_offset := \
-            movement_params.collider_half_width_height.x + \
+            movement_params.collider.half_width_height.x + \
             MARGIN_FROM_CONCAVE_NEIGHBOR
     var y_offset := \
-            movement_params.collider_half_width_height.y + \
+            movement_params.collider.half_width_height.y + \
             MARGIN_FROM_CONCAVE_NEIGHBOR
     
     # Ensure there is enough room for the character to fit on the surface.
@@ -3716,7 +3716,7 @@ static func _possibly_offset_wall_bottom_land_position(
         land_position.match_surface_target_and_collider(
                 land_position.surface,
                 Vector2(land_position.target_point.x, bottom_bound),
-                movement_params.collider_half_width_height,
+                movement_params.collider.half_width_height,
                 true,
                 true)
         return true

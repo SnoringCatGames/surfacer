@@ -425,7 +425,7 @@ static func _optimize_edge_jump_position_for_floor(
                                     JUMP_RATIOS[i],
                                     0.0),
                             previous_edge.get_start_surface(),
-                            movement_params.collider_half_width_height)
+                            movement_params.collider.half_width_height)
         
         # Calculate the start velocity to use according to the available
         # ramp-up distance and max speed.
@@ -476,7 +476,7 @@ static func _optimize_edge_jump_position_for_wall(
                                     JUMP_RATIOS[i]),
                             previous_edge.get_start_surface(),
                             collision_params.movement_params \
-                                    .collider_half_width_height)
+                                    .collider.half_width_height)
         
         var velocity_start := JumpLandPositionsUtils.get_velocity_start(
                 collision_params.movement_params,
@@ -520,7 +520,7 @@ static func _optimize_edge_jump_position_for_ceiling(
                                     0.0),
                             previous_edge.get_start_surface(),
                             collision_params.movement_params \
-                                    .collider_half_width_height)
+                                    .collider.half_width_height)
         
         var velocity_start := JumpLandPositionsUtils.get_velocity_start(
                 collision_params.movement_params,
@@ -610,7 +610,7 @@ static func _optimize_edge_land_position_for_horizontal_surface(
                                     0.0),
                             next_edge.get_start_surface(),
                             collision_params.movement_params \
-                                    .collider_half_width_height)
+                                    .collider.half_width_height)
         
         var optimized_edge := edge_calculator.calculate_edge(
                 null,
@@ -648,7 +648,7 @@ static func _optimize_edge_land_position_for_wall(
                                     LAND_RATIOS[i]),
                             next_edge.get_start_surface(),
                             collision_params.movement_params \
-                                    .collider_half_width_height)
+                                    .collider.half_width_height)
         
         if JumpLandPositionsUtils.is_land_position_close_to_wall_bottom(
                 land_position):

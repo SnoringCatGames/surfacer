@@ -173,8 +173,7 @@ func _draw_collision(canvas: CanvasItem) -> void:
         Sc.draw.draw_shape_outline(
                 canvas,
                 collision.character_position,
-                collision_result_metadata.collider_shape,
-                collision_result_metadata.collider_is_rotated_90_degrees,
+                collision_result_metadata.collider,
                 collision_color,
                 collision_character_boundary_stroke_width)
         # Draw a dot at the center of the character's collision boundary.
@@ -226,14 +225,14 @@ func _draw_bounding_box_and_margin(
     Sc.draw.draw_rectangle_outline(
             canvas,
             center,
-            collision_result_metadata.collider_half_width_height,
+            collision_result_metadata.collider.half_width_height,
             false,
             color,
             Sc.ann_params.collision_bounding_box_stroke_width)
     Sc.draw.draw_dashed_rectangle(
             canvas,
             center,
-            collision_result_metadata.collider_half_width_height + \
+            collision_result_metadata.collider.half_width_height + \
                     Vector2(collision_result_metadata.margin,
                             collision_result_metadata.margin),
             false,

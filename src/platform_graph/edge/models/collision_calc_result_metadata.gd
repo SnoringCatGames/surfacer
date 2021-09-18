@@ -12,10 +12,7 @@ var step_end_position := Vector2.INF
 var step_end_surface_position := Vector2.INF
 var step_end_surface_normal := Vector2.INF
 
-var collider_shape: Shape2D
-var collider_rotation: float
-var collider_is_rotated_90_degrees: bool
-var collider_half_width_height := Vector2.INF
+var collider: RotatedShape
 var margin: float
 
 var frame_start_position := Vector2.INF
@@ -30,13 +27,7 @@ func _init(
         step_calc_params = null,
         horizontal_step = null) -> void:
     if edge_calc_params != null:
-        self.collider_shape = edge_calc_params.movement_params.collider_shape
-        self.collider_rotation = \
-                edge_calc_params.movement_params.collider_rotation
-        self.collider_is_rotated_90_degrees = \
-                edge_calc_params.movement_params.collider_is_rotated_90_degrees
-        self.collider_half_width_height = \
-                edge_calc_params.movement_params.collider_half_width_height
+        self.collider = edge_calc_params.movement_params.collider
         self.margin = edge_calc_params.movement_params \
                 .collision_margin_for_edge_calculations
     

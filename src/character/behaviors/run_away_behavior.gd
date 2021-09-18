@@ -194,7 +194,7 @@ func _move() -> int:
                             naive_target,
                             latest_move_start_surface,
                             character.movement_params \
-                                    .collider_half_width_height,
+                                    .collider.half_width_height,
                             true)
         
         # Ensure run-away target is the right distance away.

@@ -157,7 +157,7 @@ func _attempt_intra_surface_navigation() -> int:
             .create_position_offset_from_target_point(
                     target,
                     latest_move_start_surface,
-                    character.movement_params.collider_half_width_height,
+                    character.movement_params.collider.half_width_height,
                     true)
     
     return _attempt_navigation_to_destination(destination)

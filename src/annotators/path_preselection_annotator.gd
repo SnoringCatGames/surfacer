@@ -60,8 +60,8 @@ func _init(character: SurfacerCharacter) -> void:
             Sc.ann_params.preselection_hash_opacity)
     
     self.path_front_end_trim_radius = min(
-            character.movement_params.collider_half_width_height.x,
-            character.movement_params.collider_half_width_height.y)
+            character.movement_params.collider.half_width_height.x,
+            character.movement_params.collider.half_width_height.y)
     
     self._predictions_container = Node2D.new()
     _predictions_container.visible = false

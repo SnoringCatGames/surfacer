@@ -26,8 +26,8 @@ func _init(character_name: String) -> void:
 
 func _add_collision_shape() -> void:
     var collision_shape := CollisionShape2D.new()
-    collision_shape.shape = movement_params.collider_shape
-    collision_shape.rotation = movement_params.collider_rotation
+    collision_shape.shape = movement_params.collider.shape
+    collision_shape.rotation = movement_params.collider.rotation
     add_child(collision_shape)
 
 

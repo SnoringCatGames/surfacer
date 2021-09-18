@@ -379,7 +379,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                             current_start_point,
                             surface,
                             character.movement_params \
-                                    .collider_half_width_height,
+                                    .collider.half_width_height,
                             true)
             
             var possible_displacements := \
@@ -400,7 +400,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                                 current_end_point,
                                 surface,
                                 character.movement_params \
-                                        .collider_half_width_height,
+                                        .collider.half_width_height,
                                 true)
                 jump_edge = calculator.calculate_edge(
                         null,
@@ -1024,13 +1024,13 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
             .create_position_offset_from_target_point(
                     position,
                     surface,
-                    movement_params.collider_half_width_height,
+                    movement_params.collider.half_width_height,
                     true)
     var end_position := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     end_target_point,
                     surface,
-                    movement_params.collider_half_width_height,
+                    movement_params.collider.half_width_height,
                     true)
     var backtracking_edge := IntraSurfaceEdge.new(
             start_position,
@@ -1089,7 +1089,7 @@ func _optimize_edges_for_approach(
             closest_jump_off_point.match_surface_target_and_collider(
                     jump_off_surface,
                     path.destination.target_point,
-                    movement_params.collider_half_width_height,
+                    movement_params.collider.half_width_height,
                     true,
                     true)
             
