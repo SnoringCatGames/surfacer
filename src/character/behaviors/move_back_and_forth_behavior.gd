@@ -151,7 +151,7 @@ func _calculate_inter_surface_destination(
             is_surface_horizontal else \
             Vector2(latest_activate_start_position.x, sample)
     
-    return SurfaceParser.find_closest_position_on_a_surface(
+    return SurfaceStore.find_closest_position_on_a_surface(
             target_point,
             character,
             SurfaceReachability.REVERSIBLY_REACHABLE,

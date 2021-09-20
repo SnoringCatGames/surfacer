@@ -20,6 +20,7 @@ var surface_tile_maps: Array
 # Dictionary<String, CrashTestDummy>
 var crash_test_dummies := {}
 var surface_parser := SurfaceParser.new()
+var surface_store := SurfaceStore.new()
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
 var is_loaded_from_file := false
@@ -113,7 +114,7 @@ func _on_graphs_parsed() -> void:
 
 
 func _calculate_platform_graphs() -> void:
-    surface_parser.calculate(surface_tile_maps)
+    surface_parser.parse(surface_store, surface_tile_maps)
     platform_graphs = {}
     assert(!Su.movement.character_movement_params.empty())
     _defer_calculate_next_platform_graph(-1)
@@ -215,10 +216,12 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
     for tile_map in surface_tile_maps:
         context.id_to_tile_map[tile_map.id] = tile_map
     
-    surface_parser.load_from_json_object(
+    surface_store.load_from_json_object(
             json_object.surface_parser,
-            context)
+            context,
+            surface_parser)
     
+    # FIXME: LEFT OFF HERE: --------------------- Add a separate flag for this.
     if Sc.metadata.debug or Sc.metadata.playtest:
         _validate_tile_maps(json_object)
         _validate_characters(json_object)
@@ -262,44 +265,44 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
     for tile_map in surface_tile_maps:
         expected_id_set[tile_map.id] = true
     
-    for tile_map in surface_parser._tile_map_index_to_surface_maps:
+    for tile_map in surface_store._tile_map_index_to_surface_maps:
         assert(expected_id_set.has(tile_map.id))
         expected_id_set.erase(tile_map.id)
     assert(expected_id_set.empty())
     
     if Su.are_loaded_surfaces_deeply_validated:
-        var expected_surface_parser = SurfaceParser.new()
-        expected_surface_parser.calculate(surface_tile_maps)
+        var expected_surface_store := SurfaceStore.new()
+        surface_parser.parse(expected_surface_store, surface_tile_maps)
         
-        assert(surface_parser.max_tile_map_cell_size == \
-                expected_surface_parser.max_tile_map_cell_size)
-        assert(surface_parser.combined_tile_map_rect == \
-                expected_surface_parser.combined_tile_map_rect)
+        assert(surface_store.max_tile_map_cell_size == \
+                expected_surface_store.max_tile_map_cell_size)
+        assert(surface_store.combined_tile_map_rect == \
+                expected_surface_store.combined_tile_map_rect)
         
-        assert(surface_parser.floors.size() == \
-                expected_surface_parser.floors.size())
-        assert(surface_parser.ceilings.size() == \
-                expected_surface_parser.ceilings.size())
-        assert(surface_parser.left_walls.size() == \
-                expected_surface_parser.left_walls.size())
-        assert(surface_parser.right_walls.size() == \
-                expected_surface_parser.right_walls.size())
+        assert(surface_store.floors.size() == \
+                expected_surface_store.floors.size())
+        assert(surface_store.ceilings.size() == \
+                expected_surface_store.ceilings.size())
+        assert(surface_store.left_walls.size() == \
+                expected_surface_store.left_walls.size())
+        assert(surface_store.right_walls.size() == \
+                expected_surface_store.right_walls.size())
         
-        for i in surface_parser.floors.size():
-            assert(surface_parser.floors[i].probably_equal(
-                    expected_surface_parser.floors[i]))
+        for i in surface_store.floors.size():
+            assert(surface_store.floors[i].probably_equal(
+                    expected_surface_store.floors[i]))
         
-        for i in surface_parser.ceilings.size():
-            assert(surface_parser.ceilings[i].probably_equal(
-                    expected_surface_parser.ceilings[i]))
+        for i in surface_store.ceilings.size():
+            assert(surface_store.ceilings[i].probably_equal(
+                    expected_surface_store.ceilings[i]))
         
-        for i in surface_parser.left_walls.size():
-            assert(surface_parser.left_walls[i].probably_equal(
-                    expected_surface_parser.left_walls[i]))
+        for i in surface_store.left_walls.size():
+            assert(surface_store.left_walls[i].probably_equal(
+                    expected_surface_store.left_walls[i]))
         
-        for i in surface_parser.right_walls.size():
-            assert(surface_parser.right_walls[i].probably_equal(
-                    expected_surface_parser.right_walls[i]))
+        for i in surface_store.right_walls.size():
+            assert(surface_store.right_walls[i].probably_equal(
+                    expected_surface_store.right_walls[i]))
 
 
 func _validate_platform_graphs(json_object: Dictionary) -> void:
@@ -339,7 +342,7 @@ func to_json_object(includes_debug_only_state: bool) -> Dictionary:
         level_id = level_id,
         surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
         platform_graph_character_names = _get_character_names(),
-        surface_parser = surface_parser.to_json_object(),
+        surface_parser = surface_store.to_json_object(),
         platform_graphs = \
                 _serialize_platform_graphs(includes_debug_only_state),
     }

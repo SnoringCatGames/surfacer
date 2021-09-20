@@ -34,13 +34,13 @@ func _unhandled_input(event: InputEvent) -> void:
         var click_position: Vector2 = \
                 Sc.utils.get_level_touch_position(event)
         
-        # TODO: Update SurfaceParser APIs to not need the character to be given.
+        # TODO: Update SurfaceStore APIs to not need the character to be given.
         if !is_instance_valid(Sc.level.player_character):
             first_target = null
             return
         
         var surface_position := \
-                SurfaceParser.find_closest_position_on_a_surface(
+                SurfaceStore.find_closest_position_on_a_surface(
                         click_position,
                         Sc.level.player_character,
                         SurfaceReachability.ANY)

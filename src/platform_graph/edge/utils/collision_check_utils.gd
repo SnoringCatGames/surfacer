@@ -508,7 +508,7 @@ static func check_frame_for_collision(
                 var expected_touching_right_wall := \
                         expected_surface_side_for_displacement == \
                         SurfaceSide.RIGHT_WALL
-                collision_params.surface_parser.calculate_collision_surface(
+                collision_params.surface_store.calculate_collision_surface(
                         tile_map_result,
                         most_likely_collision_point,
                         tile_map,
@@ -525,7 +525,7 @@ static func check_frame_for_collision(
         var is_touching_ceiling := surface_side == SurfaceSide.CEILING
         var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
         var is_touching_right_wall := surface_side == SurfaceSide.RIGHT_WALL
-        collision_params.surface_parser.calculate_collision_surface(
+        collision_params.surface_store.calculate_collision_surface(
                 tile_map_result,
                 kinematic_collision.position,
                 tile_map,

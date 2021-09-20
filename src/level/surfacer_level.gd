@@ -10,14 +10,14 @@ extends ScaffolderLevel
 
 
 var graph_parser: PlatformGraphParser
-var surface_parser: SurfaceParser
+var surface_store: SurfaceStore
 var camera_pan_controller: CameraPanController
 var intro_choreographer: Choreographer
 
 
 func _init() -> void:
     graph_parser = PlatformGraphParser.new()
-    surface_parser = graph_parser.surface_parser
+    surface_store = graph_parser.surface_store
     add_child(graph_parser)
 
 
