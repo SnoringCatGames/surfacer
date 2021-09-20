@@ -354,7 +354,7 @@ func _update_phantom_position_along_surface() -> void:
         phantom_position_along_surface.match_surface_target_and_collider(
                 phantom_surface,
                 preselection_destination.target_point,
-                Vector2.ZERO,
+                null,
                 true,
                 true)
     else:

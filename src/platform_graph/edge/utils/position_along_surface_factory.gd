@@ -5,13 +5,13 @@ extends Node
 static func create_position_offset_from_target_point(
         target_point: Vector2,
         surface: Surface,
-        collider_half_width_height: Vector2,
+        collider: RotatedShape,
         clips_to_surface_bounds := false) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
     position.match_surface_target_and_collider(
             surface,
             target_point,
-            collider_half_width_height,
+            collider,
             clips_to_surface_bounds,
             true)
     return position
@@ -19,14 +19,13 @@ static func create_position_offset_from_target_point(
 
 static func create_position_from_unmodified_target_point(
         target_point: Vector2,
-        surface: Surface,
-        collider_half_width_height: Vector2) -> PositionAlongSurface:
+        surface: Surface) -> PositionAlongSurface:
     assert(surface != null)
     var position := PositionAlongSurface.new()
     position.match_surface_target_and_collider(
             surface,
             target_point,
-            collider_half_width_height,
+            null,
             false,
             false)
     return position

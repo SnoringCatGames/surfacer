@@ -146,7 +146,7 @@ func _get_all_edges_from_one_side(
     position_start.match_surface_target_and_collider(
             origin_surface,
             edge_point,
-            movement_params.collider.half_width_height,
+            movement_params.collider,
             false,
             true)
     
@@ -172,8 +172,7 @@ func _get_all_edges_from_one_side(
     var position_fall_off_wrapper := PositionAlongSurfaceFactory \
             .create_position_from_unmodified_target_point(
                     position_fall_off,
-                    origin_surface,
-                    movement_params.collider.half_width_height)
+                    origin_surface)
     
     var displacement_from_start_to_fall_off := \
             position_fall_off - position_start.target_point

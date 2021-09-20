@@ -59,14 +59,14 @@ func update_terminal(
                 .create_position_offset_from_target_point(
                         target_point,
                         start_position_along_surface.surface,
-                        movement_params.collider.half_width_height,
+                        movement_params.collider,
                         true)
     else:
         end_position_along_surface = PositionAlongSurfaceFactory \
                 .create_position_offset_from_target_point(
                         target_point,
                         end_position_along_surface.surface,
-                        movement_params.collider.half_width_height,
+                        movement_params.collider,
                         true)
     velocity_end = _calculate_velocity_end(
             start_position_along_surface,
@@ -149,10 +149,10 @@ func get_position_at_time(edge_time: float) -> Vector2:
                             acceleration_x,
                             movement_params.max_horizontal_speed_default)
             var position_x := start.x + displacement_x
-            return Sc.geometry.project_point_onto_surface_with_offset(
+            return Sc.geometry.project_shape_onto_surface(
                     Vector2(position_x, 0.0),
-                    surface,
-                    movement_params.collider.half_width_height)
+                    movement_params.collider,
+                    surface)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var velocity_y := \
@@ -160,20 +160,20 @@ func get_position_at_time(edge_time: float) -> Vector2:
                     displacement.y < 0.0 else \
                     movement_params.climb_down_speed
             var position_y := start.y + velocity_y * edge_time
-            return Sc.geometry.project_point_onto_surface_with_offset(
+            return Sc.geometry.project_shape_onto_surface(
                     Vector2(0.0, position_y),
-                    surface,
-                    movement_params.collider.half_width_height)
+                    movement_params.collider,
+                    surface)
         SurfaceSide.CEILING:
             var velocity_x := \
                     movement_params.ceiling_crawl_speed if \
                     displacement.x > 0.0 else \
                     -movement_params.ceiling_crawl_speed
             var position_x := start.x + velocity_x * edge_time
-            return Sc.geometry.project_point_onto_surface_with_offset(
+            return Sc.geometry.project_shape_onto_surface(
                     Vector2(position_x, 0.0),
-                    surface,
-                    movement_params.collider.half_width_height)
+                    movement_params.collider,
+                    surface)
         _:
             Sc.logger.error()
             return Vector2.INF

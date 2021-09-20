@@ -44,14 +44,14 @@ func match_current_grab(
 func match_surface_target_and_collider(
         surface: Surface,
         target_point: Vector2,
-        collider_half_width_height: Vector2,
+        collider: RotatedShape,
         clips_to_surface_bounds := false,
         matches_target_to_character_dimensions := true) -> void:
     self.surface = surface
     self.target_point = _clip_and_project_target_point_for_center_of_collider(
             surface,
             target_point,
-            collider_half_width_height,
+            collider,
             clips_to_surface_bounds,
             matches_target_to_character_dimensions)
 
@@ -64,7 +64,7 @@ func update_target_projection_onto_surface() -> void:
 func _clip_and_project_target_point_for_center_of_collider(
         surface: Surface,
         target_point: Vector2,
-        collider_half_width_height: Vector2,
+        collider: RotatedShape,
         clips_to_surface_bounds: bool,
         matches_target_to_character_dimensions: bool) -> Vector2:
     self.target_projection_onto_surface = \
@@ -76,10 +76,13 @@ func _clip_and_project_target_point_for_center_of_collider(
     
     var target_offset_from_surface_distance: float
     if matches_target_to_character_dimensions:
-        target_offset_from_surface_distance = \
-                collider_half_width_height.y if \
-                is_surface_horizontal else \
-                collider_half_width_height.x
+        if is_instance_valid(collider):
+            target_offset_from_surface_distance = \
+                    collider.half_width_height.y if \
+                    is_surface_horizontal else \
+                    collider.half_width_height.x
+        else:
+            target_offset_from_surface_distance = 0.0
     else:
         target_offset_from_surface_distance = \
                 abs(target_point.y - target_projection_onto_surface.y) if \

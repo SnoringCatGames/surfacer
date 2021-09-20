@@ -59,31 +59,6 @@ static func project_point_onto_surface(
     return intersection
 
 
-# Projects the given point onto the given surface, then offsets the point away
-# from the surface (in the direction of the surface normal) to a distance
-# corresponding to either the x or y coordinate of the given offset magnitude
-# vector.
-static func project_point_onto_surface_with_offset(
-        point: Vector2,
-        surface: Surface,
-        offset_magnitude: Vector2) -> Vector2:
-    var projection: Vector2 = project_point_onto_surface(
-            point,
-            surface)
-    projection += offset_magnitude * surface.normal
-    return projection
-
-
-# Offsets the point away from the surface (in the direction of the surface
-# normal) to a distance corresponding to either the x or y coordinate of the
-# given offset magnitude vector.
-static func offset_point_from_surface(
-        point: Vector2,
-        surface: Surface,
-        offset_magnitude: Vector2) -> Vector2:
-    return point + offset_magnitude * surface.normal
-
-
 static func get_surface_normal_at_point(
         surface: Surface,
         point: Vector2) -> Vector2:
@@ -111,24 +86,6 @@ static func get_surface_normal_at_point(
     return normal
 
 
-# FIXME: LEFT OFF HERE: --------------------------------------
-# - Call project_shape_onto_surface.
-# - Some of the call sites:
-#   - JumpLandPositionsUtils
-#   - IntraSurfaceEdge/call-sites
-#   - ClimbToAdjacentSurfaceCalculator/Edge
-#   - find_closest_positions_on_surfaces
-#   - find_closest_position_on_a_surface
-#   - Search for usages of project_point_onto_surface_with_offset?
-#   - Search for usages of create_position_offset_from_target_point?
-#   - Search for usages of match_surface_target_and_collider?
-# 
-#Sc.geometry.project_shape_onto_surface(
-#        character.position,
-#        movement_params.collider,
-#        surface)
-
-
 # -   Calculates where the center position of the given shape would be if it
 #     were moved along the axially-aligned surface-side-normal until it just
 #     rested against the given surface.
@@ -138,7 +95,8 @@ static func get_surface_normal_at_point(
 static func project_shape_onto_surface(
         shape_position: Vector2,
         shape: RotatedShape,
-        surface: Surface) -> Vector2:
+        surface: Surface,
+        uses_end_segment_if_outside_bounds := true) -> Vector2:
     # TODO: Should this also account for the next segment on a neighbor surface?
     
     if !is_instance_valid(surface):
@@ -171,13 +129,52 @@ static func project_shape_onto_surface(
         _:
             Sc.logger.error()
     
+    if uses_end_segment_if_outside_bounds:
+        var is_horizontal_surface := \
+                surface.side == SurfaceSide.FLOOR or \
+                surface.side == SurfaceSide.CEILING
+        
+        var nudged_shape_position := shape_position
+        if is_horizontal_surface:
+            if shape_max_x < surface.bounding_box.position.x + 0.0001:
+                nudged_shape_position.x += \
+                        surface.bounding_box.position.x + 0.001 - \
+                        shape_max_x
+            elif shape_min_x > surface.bounding_box.end.x - 0.0001:
+                nudged_shape_position.x += \
+                        surface.bounding_box.end.x - 0.001 - \
+                        shape_min_x
+        else:
+            if shape_max_y < surface.bounding_box.position.y + 0.0001:
+                nudged_shape_position.y += \
+                        surface.bounding_box.position.y + 0.001 - \
+                        shape_max_y
+            elif shape_min_y > surface.bounding_box.end.y - 0.0001:
+                nudged_shape_position.y += \
+                        surface.bounding_box.end.y - 0.001 - \
+                        shape_min_y
+        
+        if nudged_shape_position != shape_position:
+            var nudged_projection := project_shape_onto_surface(
+                    nudged_shape_position,
+                    shape,
+                    surface,
+                    uses_end_segment_if_outside_bounds)
+            
+            if is_horizontal_surface:
+                nudged_projection.x = shape_position.x
+            else:
+                nudged_projection.y = shape_position.y
+            
+            return nudged_projection
+    
     var segment_points_result := []
     
     get_surface_segment_at_point(
             segment_points_result,
             surface,
             shape_min_side_point,
-            false)
+            uses_end_segment_if_outside_bounds)
     var min_side_segment_start := Vector2.INF
     var min_side_segment_end := Vector2.INF
     if !segment_points_result.empty():
@@ -188,7 +185,7 @@ static func project_shape_onto_surface(
             segment_points_result,
             surface,
             shape_max_side_point,
-            false)
+            uses_end_segment_if_outside_bounds)
     var max_side_segment_start := Vector2.INF
     var max_side_segment_end := Vector2.INF
     if !segment_points_result.empty():
@@ -308,14 +305,22 @@ static func project_shape_onto_segment(
     match surface_side:
         SurfaceSide.FLOOR, \
         SurfaceSide.CEILING:
+            var numerator := \
+                    rightward_segment_point.y - leftward_segment_point.y
+            var denominator := \
+                    rightward_segment_point.x - leftward_segment_point.x
             segment_slope = \
-                    (rightward_segment_point.y - leftward_segment_point.y) / \
-                    (rightward_segment_point.x - leftward_segment_point.x)
+                    numerator / denominator if \
+                    denominator != 0.0 else \
+                    INF
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
+            var numerator := upper_segment_point.y - lower_segment_point.y
+            var denominator := upper_segment_point.x - lower_segment_point.x
             segment_slope = \
-                    (upper_segment_point.y - lower_segment_point.y) / \
-                    (upper_segment_point.x - lower_segment_point.x)
+                    numerator / denominator if \
+                    denominator != 0.0 else \
+                    INF
         _:
             Sc.logger.error()
     
@@ -335,8 +340,8 @@ static func project_shape_onto_segment(
         # redirecting to either the circle-handling branch or the
         # rectangle-handling branch.
         
-        var radius: float = shape.radius
-        var height: float = shape.height
+        var radius: float = shape.shape.radius
+        var height: float = shape.shape.height
         var half_height := height * 0.5
         
         var is_horizontal_surface := \
@@ -512,7 +517,7 @@ static func project_shape_onto_segment(
         #         direction of the segment-normal from the circle center.
         # -   We use the closest valid contact point.
         
-        var radius: float = shape.radius
+        var radius: float = shape.shape.radius
         
         match surface_side:
             SurfaceSide.FLOOR, \
@@ -580,7 +585,7 @@ static func project_shape_onto_segment(
                 if shape_point_along_normal.x > leftward_segment_point.x and \
                         shape_point_along_normal.x < rightward_segment_point.x:
                     # The point along the shape that would contact the line
-                    # through the segment, lies within the the bounds of the
+                    # through the segment, lies within the bounds of the
                     # segment.
                     
                     # Slope formula:
@@ -663,7 +668,7 @@ static func project_shape_onto_segment(
                 if shape_point_along_normal.y > upper_segment_point.y and \
                         shape_point_along_normal.y < lower_segment_point.y:
                     # The point along the shape that would contact the line
-                    # through the segment, lies within the the bounds of the
+                    # through the segment, lies within the bounds of the
                     # segment.
                     
                     # Slope formula:
