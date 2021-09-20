@@ -833,7 +833,7 @@ func _derive_parameters() -> void:
         
         rounding_corner_calc_shape.update(collider.shape, collider.rotation)
         
-        if !collider.is_rotation_axially_aligned:
+        if !collider.is_axially_aligned:
             _set_configuration_warning("Shape2D.rotation must be 0 or 90.")
             return
     
