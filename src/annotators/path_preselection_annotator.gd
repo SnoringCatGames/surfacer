@@ -292,10 +292,28 @@ func _update_phantom_surface() -> void:
         
         var start := phantom_surface.first_point
         var end := phantom_surface.last_point
-        var normal := phantom_surface.normal
+        var enlarged_normal := phantom_surface.normal * 1000
         
-        phantom_surface_ccw_neighbor.vertices = [start - normal, start]
-        phantom_surface_cw_neighbor.vertices = [end, end + normal]
+        var preceding_neighbor_vertices := \
+                preselection_destination.surface.counter_clockwise_neighbor \
+                        .vertices if \
+                preselection_destination.surface.counter_clockwise_neighbor \
+                        .vertices.size() > 1 else \
+                preselection_destination.surface.counter_clockwise_neighbor \
+                        .counter_clockwise_neighbor.vertices
+        var following_neighbor_vertices := \
+                preselection_destination.surface.clockwise_neighbor \
+                        .vertices if \
+                preselection_destination.surface.clockwise_neighbor \
+                        .vertices.size() > 1 else \
+                preselection_destination.surface.clockwise_neighbor \
+                        .clockwise_neighbor.vertices
+        var preceding_point := preceding_neighbor_vertices[ \
+                preceding_neighbor_vertices.size() - 2]
+        var following_point := following_neighbor_vertices[1]
+        
+        phantom_surface_ccw_neighbor.vertices = [preceding_point, start]
+        phantom_surface_cw_neighbor.vertices = [end, following_point]
         
         # Enlarge and offset the phantom surface, so that it stands out more.
         
