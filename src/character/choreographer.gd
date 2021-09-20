@@ -187,7 +187,7 @@ func _execute_next_step() -> void:
                         step.destination is String else \
                         step.destination
                 var destination := \
-                        SurfaceStore.find_closest_position_on_a_surface(
+                        SurfaceFinder.find_closest_position_on_a_surface(
                                 target,
                                 character,
                                 SurfaceReachability.REACHABLE)

@@ -17,7 +17,8 @@ const _COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD := 0.5
 var _collision_surface_result := CollisionSurfaceResult.new()
 
 
-func find_closest_surface_in_direction(
+static func find_closest_surface_in_direction(
+        surface_store: SurfaceStore,
         target: Vector2,
         direction: Vector2,
         collision_surface_result: CollisionSurfaceResult = null,
@@ -25,7 +26,7 @@ func find_closest_surface_in_direction(
     collision_surface_result = \
             collision_surface_result if \
             collision_surface_result != null else \
-            _collision_surface_result
+            surface_store._collision_surface_result
     
     var collision: Dictionary = Su.space_state.intersect_ray(
             target,
@@ -43,6 +44,7 @@ func find_closest_surface_in_direction(
     
     calculate_collision_surface(
             collision_surface_result,
+            surface_store,
             contact_position,
             contacted_tile_map,
             contacted_side == SurfaceSide.FLOOR,
@@ -269,8 +271,9 @@ class _SurfaceAndDistanceComparator:
         return false
 
 
-func calculate_collision_surface(
+static func calculate_collision_surface(
         result: CollisionSurfaceResult,
+        surface_store: SurfaceStore,
         collision_position: Vector2,
         tile_map: TileMap,
         is_touching_floor: bool,
@@ -335,70 +338,70 @@ func calculate_collision_surface(
                 Sc.geometry.get_tile_map_index_from_grid_coord(
                         bottom_right_cell_coord, tile_map)
         
-        var is_there_a_floor_at_top_left := get_surface_for_tile(
+        var is_there_a_floor_at_top_left := surface_store.get_surface_for_tile(
                 tile_map,
                 top_left_cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_ceiling_at_top_left := get_surface_for_tile(
+        var is_there_a_ceiling_at_top_left := surface_store.get_surface_for_tile(
                 tile_map,
                 top_left_cell_index,
                 SurfaceSide.CEILING) != null
-        var is_there_a_left_wall_at_top_left := get_surface_for_tile(
+        var is_there_a_left_wall_at_top_left := surface_store.get_surface_for_tile(
                 tile_map,
                 top_left_cell_index,
                 SurfaceSide.LEFT_WALL) != null
-        var is_there_a_right_wall_at_top_left := get_surface_for_tile(
+        var is_there_a_right_wall_at_top_left := surface_store.get_surface_for_tile(
                 tile_map,
                 top_left_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
         
-        var is_there_a_floor_at_top_right := get_surface_for_tile(
+        var is_there_a_floor_at_top_right := surface_store.get_surface_for_tile(
                 tile_map,
                 top_right_cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_ceiling_at_top_right := get_surface_for_tile(
+        var is_there_a_ceiling_at_top_right := surface_store.get_surface_for_tile(
                 tile_map,
                 top_right_cell_index,
                 SurfaceSide.CEILING) != null
-        var is_there_a_left_wall_at_top_right := get_surface_for_tile(
+        var is_there_a_left_wall_at_top_right := surface_store.get_surface_for_tile(
                 tile_map,
                 top_right_cell_index,
                 SurfaceSide.LEFT_WALL) != null
-        var is_there_a_right_wall_at_top_right := get_surface_for_tile(
+        var is_there_a_right_wall_at_top_right := surface_store.get_surface_for_tile(
                 tile_map,
                 top_right_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
         
-        var is_there_a_floor_at_bottom_left := get_surface_for_tile(
+        var is_there_a_floor_at_bottom_left := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_left_cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_ceiling_at_bottom_left := get_surface_for_tile(
+        var is_there_a_ceiling_at_bottom_left := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_left_cell_index,
                 SurfaceSide.CEILING) != null
-        var is_there_a_left_wall_at_bottom_left := get_surface_for_tile(
+        var is_there_a_left_wall_at_bottom_left := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_left_cell_index,
                 SurfaceSide.LEFT_WALL) != null
-        var is_there_a_right_wall_at_bottom_left := get_surface_for_tile(
+        var is_there_a_right_wall_at_bottom_left := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_left_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
         
-        var is_there_a_floor_at_bottom_right := get_surface_for_tile(
+        var is_there_a_floor_at_bottom_right := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_right_cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_ceiling_at_bottom_right := get_surface_for_tile(
+        var is_there_a_ceiling_at_bottom_right := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_right_cell_index,
                 SurfaceSide.CEILING) != null
-        var is_there_a_left_wall_at_bottom_right := get_surface_for_tile(
+        var is_there_a_left_wall_at_bottom_right := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_right_cell_index,
                 SurfaceSide.LEFT_WALL) != null
-        var is_there_a_right_wall_at_bottom_right := get_surface_for_tile(
+        var is_there_a_right_wall_at_bottom_right := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_right_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
@@ -613,36 +616,36 @@ func calculate_collision_surface(
                 Sc.geometry.get_tile_map_index_from_grid_coord(
                         bottom_cell_coord, tile_map)
         
-        var is_there_a_floor_at_top := get_surface_for_tile(
+        var is_there_a_floor_at_top := surface_store.get_surface_for_tile(
                 tile_map,
                 top_cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_ceiling_at_top := get_surface_for_tile(
+        var is_there_a_ceiling_at_top := surface_store.get_surface_for_tile(
                 tile_map,
                 top_cell_index,
                 SurfaceSide.CEILING) != null
-        var is_there_a_left_wall_at_top := get_surface_for_tile(
+        var is_there_a_left_wall_at_top := surface_store.get_surface_for_tile(
                 tile_map,
                 top_cell_index,
                 SurfaceSide.LEFT_WALL) != null
-        var is_there_a_right_wall_at_top := get_surface_for_tile(
+        var is_there_a_right_wall_at_top := surface_store.get_surface_for_tile(
                 tile_map,
                 top_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
         
-        var is_there_a_floor_at_bottom := get_surface_for_tile(
+        var is_there_a_floor_at_bottom := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_ceiling_at_bottom := get_surface_for_tile(
+        var is_there_a_ceiling_at_bottom := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_cell_index,
                 SurfaceSide.CEILING) != null
-        var is_there_a_left_wall_at_bottom := get_surface_for_tile(
+        var is_there_a_left_wall_at_bottom := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_cell_index,
                 SurfaceSide.LEFT_WALL) != null
-        var is_there_a_right_wall_at_bottom := get_surface_for_tile(
+        var is_there_a_right_wall_at_bottom := surface_store.get_surface_for_tile(
                 tile_map,
                 bottom_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
@@ -719,36 +722,36 @@ func calculate_collision_surface(
                 Sc.geometry.get_tile_map_index_from_grid_coord(
                         right_cell_coord, tile_map)
         
-        var is_there_a_floor_at_left := get_surface_for_tile(
+        var is_there_a_floor_at_left := surface_store.get_surface_for_tile(
                 tile_map,
                 left_cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_ceiling_at_left := get_surface_for_tile(
+        var is_there_a_ceiling_at_left := surface_store.get_surface_for_tile(
                 tile_map,
                 left_cell_index,
                 SurfaceSide.CEILING) != null
-        var is_there_a_left_wall_at_left := get_surface_for_tile(
+        var is_there_a_left_wall_at_left := surface_store.get_surface_for_tile(
                 tile_map,
                 left_cell_index,
                 SurfaceSide.LEFT_WALL) != null
-        var is_there_a_right_wall_at_left := get_surface_for_tile(
+        var is_there_a_right_wall_at_left := surface_store.get_surface_for_tile(
                 tile_map,
                 left_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
         
-        var is_there_a_floor_at_right := get_surface_for_tile(
+        var is_there_a_floor_at_right := surface_store.get_surface_for_tile(
                 tile_map,
                 right_cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_ceiling_at_right := get_surface_for_tile(
+        var is_there_a_ceiling_at_right := surface_store.get_surface_for_tile(
                 tile_map,
                 right_cell_index,
                 SurfaceSide.CEILING) != null
-        var is_there_a_left_wall_at_right := get_surface_for_tile(
+        var is_there_a_left_wall_at_right := surface_store.get_surface_for_tile(
                 tile_map,
                 right_cell_index,
                 SurfaceSide.LEFT_WALL) != null
-        var is_there_a_right_wall_at_right := get_surface_for_tile(
+        var is_there_a_right_wall_at_right := surface_store.get_surface_for_tile(
                 tile_map,
                 right_cell_index,
                 SurfaceSide.RIGHT_WALL) != null
@@ -817,19 +820,19 @@ func calculate_collision_surface(
         var cell_index: int = Sc.geometry.get_tile_map_index_from_grid_coord(
                 cell_coord, tile_map)
         
-        var is_there_a_floor := get_surface_for_tile(
+        var is_there_a_floor := surface_store.get_surface_for_tile(
                 tile_map,
                 cell_index,
                 SurfaceSide.FLOOR) != null
-        var is_there_a_ceiling := get_surface_for_tile(
+        var is_there_a_ceiling := surface_store.get_surface_for_tile(
                 tile_map,
                 cell_index,
                 SurfaceSide.CEILING) != null
-        var is_there_a_left_wall := get_surface_for_tile(
+        var is_there_a_left_wall := surface_store.get_surface_for_tile(
                 tile_map,
                 cell_index,
                 SurfaceSide.LEFT_WALL) != null
-        var is_there_a_right_wall := get_surface_for_tile(
+        var is_there_a_right_wall := surface_store.get_surface_for_tile(
                 tile_map,
                 cell_index,
                 SurfaceSide.RIGHT_WALL) != null
@@ -881,7 +884,7 @@ func calculate_collision_surface(
     if tile_coord != Vector2.INF:
         cell_index = Sc.geometry.get_tile_map_index_from_grid_coord(
                 tile_coord, tile_map)
-        surface = get_surface_for_tile(
+        surface = surface_store.get_surface_for_tile(
                 tile_map,
                 cell_index,
                 surface_side)
@@ -903,6 +906,7 @@ func calculate_collision_surface(
         var nested_is_touching_right_wall := is_touching_left_wall
         calculate_collision_surface(
                 result,
+                surface_store,
                 collision_position,
                 tile_map,
                 nested_is_touching_floor,

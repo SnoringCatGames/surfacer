@@ -692,7 +692,7 @@ func get_intended_position(type: int) -> PositionAlongSurface:
         IntendedPositionType.CLOSEST_SURFACE_POSITION:
             return surface_state.center_position_along_surface if \
                     surface_state.is_grabbing_surface else \
-                    SurfaceStore.find_closest_position_on_a_surface(
+                    SurfaceFinder.find_closest_position_on_a_surface(
                             surface_state.center_position,
                             self,
                             SurfaceReachability.ANY)
