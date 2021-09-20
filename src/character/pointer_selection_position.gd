@@ -45,7 +45,7 @@ func update_pointer_position(pointer_position: Vector2) -> void:
     var nearby_positions_along_surface := []
     if pointer_position != Vector2.INF:
         nearby_positions_along_surface = \
-                SurfaceStore.find_closest_positions_on_surfaces(
+                SurfaceFinder.find_closest_positions_on_surfaces(
                         pointer_position,
                         _character,
                         NEARBY_POSITIONS_TO_CALCULATE_COUNT,

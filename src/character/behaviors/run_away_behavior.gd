@@ -182,7 +182,7 @@ func _move() -> int:
                     only_navigates_reversible_paths else \
                     SurfaceReachability.REACHABLE
             possible_destination = \
-                    SurfaceStore.find_closest_position_on_a_surface(
+                    SurfaceFinder.find_closest_position_on_a_surface(
                             naive_target,
                             character,
                             surface_reachability,

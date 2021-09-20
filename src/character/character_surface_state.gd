@@ -228,7 +228,8 @@ func update_for_initial_surface_attachment(
             start_attachment_surface_side_or_position.surface if \
             start_attachment_surface_side_or_position is \
                     PositionAlongSurface else \
-            character.surface_store.find_closest_surface_in_direction(
+            SurfaceFinder.find_closest_surface_in_direction(
+                    character.surface_store,
                     start_position,
                     -normal,
                     _collision_surface_result)
@@ -494,8 +495,9 @@ func _calculate_surface_contact_from_collision(
             Sc.geometry.get_surface_side_for_normal(normal)
     var contacted_tile_map: SurfacesTileMap = collision.collider
     
-    character.surface_store.calculate_collision_surface(
+    SurfaceFinder.calculate_collision_surface(
             _collision_surface_result,
+            character.surface_store,
             contact_position,
             contacted_tile_map,
             contacted_side == SurfaceSide.FLOOR,
@@ -679,8 +681,9 @@ func _update_surface_contact_for_explicit_grab(
             position_along_surface.target_projection_onto_surface
     var tile_map := surface.tile_map
     
-    character.surface_store.calculate_collision_surface(
+    SurfaceFinder.calculate_collision_surface(
             _collision_surface_result,
+            character.surface_store,
             contact_position,
             tile_map,
             side == SurfaceSide.FLOOR,

@@ -53,15 +53,15 @@ func _create_annotator(annotator_type: int) -> void:
                 ruler_layer.add_child(ruler_annotator)
         AnnotatorType.SURFACES:
             if Sc.level != null and \
-                    Sc.level.surface_parser != null:
+                    Sc.level.surface_store != null:
                 surfaces_annotator = SurfacesAnnotator.new( \
-                        Sc.level.surface_parser)
+                        Sc.level.surface_store)
                 annotation_layer.add_child(surfaces_annotator)
         AnnotatorType.GRID_INDICES:
             if Sc.level != null and \
-                    Sc.level.surface_parser != null:
+                    Sc.level.surface_store != null:
                 grid_indices_annotator = GridIndicesAnnotator.new(
-                        Sc.level.surface_parser)
+                        Sc.level.surface_store)
                 annotation_layer.add_child(grid_indices_annotator)
         AnnotatorType.PATH_PRESELECTION:
             if is_instance_valid(Sc.characters.get_player_character()):

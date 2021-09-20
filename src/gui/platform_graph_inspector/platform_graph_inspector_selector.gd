@@ -40,7 +40,7 @@ func _unhandled_input(event: InputEvent) -> void:
             return
         
         var surface_position := \
-                SurfaceStore.find_closest_position_on_a_surface(
+                SurfaceFinder.find_closest_position_on_a_surface(
                         click_position,
                         Sc.level.player_character,
                         SurfaceReachability.ANY)
