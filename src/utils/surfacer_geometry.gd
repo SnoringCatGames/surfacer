@@ -102,6 +102,9 @@ static func project_shape_onto_surface(
     if !is_instance_valid(surface):
         return Vector2.INF
     
+    if !is_instance_valid(shape):
+        return project_point_onto_surface(shape_position, surface)
+    
     var is_horizontal_surface := \
             surface.side == SurfaceSide.FLOOR or \
             surface.side == SurfaceSide.CEILING
@@ -271,8 +274,16 @@ static func project_shape_onto_segment(
         surface_side: int,
         segment_start: Vector2,
         segment_end: Vector2) -> Vector2:
-    var half_width_height := shape.half_width_height
     var surface_normal: Vector2 = SurfaceSide.get_normal(surface_side)
+    
+    if !is_instance_valid(shape):
+        return Sc.geometry.get_intersection_of_segments(
+                    shape_position - surface_normal * 100000.0,
+                    shape_position + surface_normal * 100000.0,
+                    segment_start,
+                    segment_end)
+    
+    var half_width_height := shape.half_width_height
     
     var segment_normal: Vector2
     if segment_end == segment_start:
