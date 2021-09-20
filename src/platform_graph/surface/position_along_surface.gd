@@ -48,7 +48,7 @@ func match_surface_target_and_collider(
         clips_to_surface_bounds := false,
         matches_target_to_character_dimensions := true) -> void:
     self.surface = surface
-    self.target_point = _clip_and_project_target_point_for_center_of_collider(
+    _clip_and_project_target_point_for_center_of_collider(
             surface,
             target_point,
             collider,
@@ -66,7 +66,7 @@ func _clip_and_project_target_point_for_center_of_collider(
         target_point: Vector2,
         collider: RotatedShape,
         clips_to_surface_bounds: bool,
-        matches_target_to_character_dimensions: bool) -> Vector2:
+        matches_target_to_character_dimensions: bool) -> void:
     self.target_projection_onto_surface = \
             Sc.geometry.project_point_onto_surface(target_point, surface)
     
@@ -74,36 +74,23 @@ func _clip_and_project_target_point_for_center_of_collider(
             surface.side == SurfaceSide.FLOOR or \
             surface.side == SurfaceSide.CEILING
     
-    var target_offset_from_surface_distance: float
-    if matches_target_to_character_dimensions:
-        if is_instance_valid(collider):
-            target_offset_from_surface_distance = \
-                    collider.half_width_height.y if \
-                    is_surface_horizontal else \
-                    collider.half_width_height.x
-        else:
-            target_offset_from_surface_distance = 0.0
-    else:
-        target_offset_from_surface_distance = \
-                abs(target_point.y - target_projection_onto_surface.y) if \
-                is_surface_horizontal else \
-                abs(target_point.x - target_projection_onto_surface.x)
-    var target_offset_from_surface := \
-            target_offset_from_surface_distance * surface.normal
-    
     if clips_to_surface_bounds:
-        return target_projection_onto_surface + target_offset_from_surface
-    else:
         if is_surface_horizontal:
-            return Vector2(
-                        target_point.x,
-                        target_projection_onto_surface.y) + \
-                    target_offset_from_surface
+            target_point.x = self.target_projection_onto_surface.x
         else:
-            return Vector2(
-                        target_projection_onto_surface.x, 
-                        target_point.y) + \
-                    target_offset_from_surface
+            target_point.y = self.target_projection_onto_surface.y
+    
+    if matches_target_to_character_dimensions:
+        target_point = Sc.geometry.project_shape_onto_surface(
+                target_point,
+                collider,
+                surface,
+                true)
+    else:
+        # Use the given target point as-is.
+        pass
+    
+    self.target_point = target_point
 
 
 func to_string(verbose := true) -> String:

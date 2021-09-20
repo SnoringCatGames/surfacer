@@ -108,7 +108,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _update_preselection_path() -> void:
     _is_preselection_path_update_pending = false
-    _player_nav.pre_selection.update_pointer_position(_last_pointer_drag_position)
+    _player_nav.pre_selection.update_pointer_position(
+            _last_pointer_drag_position)
 
 
 func _update_preselection_beats() -> void:
