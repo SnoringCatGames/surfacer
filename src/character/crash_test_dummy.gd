@@ -8,7 +8,7 @@ const COLLISION_MASK_FOR_ONLY_SURFACES_TILE_MAP = 1
 var character_name: String
 var movement_params: MovementParameters
 var graph
-var surface_parser: SurfaceParser
+var surface_store: SurfaceStore
 # Dictionary<Surface, Surface>
 var possible_surfaces_set: Dictionary
 
@@ -33,5 +33,5 @@ func _add_collision_shape() -> void:
 
 func set_platform_graph(graph) -> void:
     self.graph = graph
-    self.surface_parser = graph.surface_parser
+    self.surface_store = graph.surface_store
     self.possible_surfaces_set = graph.surfaces_set

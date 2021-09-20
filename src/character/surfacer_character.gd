@@ -50,7 +50,7 @@ var navigation_state: CharacterNavigationState
 var collisions := []
 
 var graph: PlatformGraph
-var surface_parser: SurfaceParser
+var surface_store: SurfaceStore
 var navigator: SurfaceNavigator
 var prediction: CharacterPrediction
 var pointer_listener: PlayerPointerListener
@@ -231,7 +231,7 @@ func _init_platform_graph() -> void:
             self,
             "_on_surface_exclusion_changed")
     self.graph = graph
-    self.surface_parser = Sc.level.surface_parser
+    self.surface_store = Sc.level.surface_store
     self.possible_surfaces_set = graph.surfaces_set
 
 
@@ -692,7 +692,7 @@ func get_intended_position(type: int) -> PositionAlongSurface:
         IntendedPositionType.CLOSEST_SURFACE_POSITION:
             return surface_state.center_position_along_surface if \
                     surface_state.is_grabbing_surface else \
-                    SurfaceParser.find_closest_position_on_a_surface(
+                    SurfaceStore.find_closest_position_on_a_surface(
                             surface_state.center_position,
                             self,
                             SurfaceReachability.ANY)

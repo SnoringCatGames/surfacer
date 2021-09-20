@@ -2,7 +2,7 @@ class_name SurfacesAnnotator
 extends Node2D
 
 
-var surface_parser: SurfaceParser
+var surface_store: SurfaceStore
 var color_params: ColorParams = Sc.ann_params.surface_color_params
 var alpha_with_inspector_closed := 0.9
 var alpha_with_inspector_open: float = \
@@ -20,10 +20,10 @@ var _exclusion_surface_to_character := {}
 var _exclusion_character_to_surface := {}
 
 
-func _init(surface_parser: SurfaceParser) -> void:
-    self.surface_parser = surface_parser
+func _init(surface_store: SurfaceStore) -> void:
+    self.surface_store = surface_store
     
-    for surface in surface_parser.all_surfaces:
+    for surface in surface_store.all_surfaces:
         _surface_to_color[surface] = color_params.get_color()
 
 
@@ -35,7 +35,7 @@ func _process(_delta: float) -> void:
 
 
 func _draw() -> void:
-    for surface in surface_parser.all_surfaces:
+    for surface in surface_store.all_surfaces:
         if _exclusion_surface_to_character.has(surface):
             continue
         _draw_surface(surface)

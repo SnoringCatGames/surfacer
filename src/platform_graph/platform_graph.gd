@@ -22,7 +22,7 @@ const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 var character_name: String
 var collision_params: CollisionCalcParams
 var movement_params: MovementParameters
-var surface_parser: SurfaceParser
+var surface_store: SurfaceStore
 
 # Dictionary<Surface, Surface>
 var surfaces_set := {}
@@ -59,18 +59,18 @@ func calculate(character_name: String) -> void:
     self.movement_params = \
             Su.movement.character_movement_params[character_name]
     self.debug_params = Su.debug_params
-    self.surface_parser = Sc.level.surface_parser
+    self.surface_store = Sc.level.surface_store
     
     var crash_test_dummy: CrashTestDummy = \
             Sc.level.graph_parser.crash_test_dummies[character_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
-            self.surface_parser,
+            self.surface_store,
             crash_test_dummy)
     
     # Store the subset of surfaces that this character type can interact with.
-    var surfaces_array := surface_parser.get_subset_of_surfaces(
+    var surfaces_array: Array = surface_store.get_subset_of_surfaces(
             movement_params.can_grab_walls,
             movement_params.can_grab_ceilings,
             movement_params.can_grab_floors)
@@ -818,18 +818,18 @@ func load_from_json_object(
     self.movement_params = \
             Su.movement.character_movement_params[character_name]
     self.debug_params = Su.debug_params
-    self.surface_parser = Sc.level.surface_parser
+    self.surface_store = Sc.level.surface_store
     
     var crash_test_dummy: CrashTestDummy = \
             Sc.level.graph_parser.crash_test_dummies[character_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
-            self.surface_parser,
+            self.surface_store,
             crash_test_dummy)
     
     # Store the subset of surfaces that this character type can interact with.
-    var surfaces_array := surface_parser.get_subset_of_surfaces(
+    var surfaces_array: Array = surface_store.get_subset_of_surfaces(
             movement_params.can_grab_walls,
             movement_params.can_grab_ceilings,
             movement_params.can_grab_floors)

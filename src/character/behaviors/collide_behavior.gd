@@ -131,7 +131,7 @@ func _move() -> int:
         var target: Vector2 = \
                 latest_move_start_position + \
                 direction * ratio * original_distance
-        destination = SurfaceParser.find_closest_position_on_a_surface(
+        destination = SurfaceStore.find_closest_position_on_a_surface(
                 target,
                 character,
                 surface_reachability)
@@ -182,7 +182,7 @@ func _get_collide_target_position() -> PositionAlongSurface:
         var max_distance_squared_from_start_position := \
                 max_distance_from_start_position * \
                 max_distance_from_start_position
-        return SurfaceParser.find_closest_position_on_a_surface(
+        return SurfaceStore.find_closest_position_on_a_surface(
                 move_target.position,
                 character,
                 surface_reachability,
