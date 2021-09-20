@@ -1,27 +1,27 @@
 class_name Waypoint
 extends Reference
-# A start/end position for movement step calculation.
-# 
-# This is used internally to make edge calculation easier.
-# 
-# -   For the overall origin/destination points of movement, a waypoint could
-#     be any point along a surface or any point not along a surface.
-# -   For all other, intermediate points within a movement, a waypoint
-#     represents the edge of a surface that the movement must pass through in
-#     order to not collide with the surface.
-# -   Early-on during movement calculation, each waypoint is assigned a
-#     horizontal direction that the movement must travel along when passing
-#     through the waypoint:
-#     -   For waypoints on left-wall surfaces: The direction of movement must
-#         be leftward.
-#     -   For waypoints on right-wall surfaces: The direction of movement must
-#         be rightward.
-#     -   For waypoints on floor/ceiling surfaces, we instead look at whether
-#         the waypoint is on the left or right side of the surface.
-#       -   For waypoints on the left-side: The direction of movement must be
-#           leftward.
-#       -   For waypoints on the right-side: The direction of movement must be
-#           rightward.
+## A start/end position for movement step calculation.[br]
+## [br]
+## This is used internally to make edge calculation easier.[br]
+## [br]
+## -   For the overall origin/destination points of movement, a waypoint could
+##     be any point along a surface or any point not along a surface.[br]
+## -   For all other, intermediate points within a movement, a waypoint
+##     represents the edge of a surface that the movement must pass through in
+##     order to not collide with the surface.[br]
+## -   Early-on during movement calculation, each waypoint is assigned a
+##     horizontal direction that the movement must travel along when passing
+##     through the waypoint:[br]
+##     -   For waypoints on left-wall surfaces: The direction of movement must
+##         be leftward.[br]
+##     -   For waypoints on right-wall surfaces: The direction of movement must
+##         be rightward.[br]
+##     -   For waypoints on floor/ceiling surfaces, we instead look at whether
+##         the waypoint is on the left or right side of the surface.[br]
+##       -   For waypoints on the left-side: The direction of movement must be
+##           leftward.[br]
+##       -   For waypoints on the right-side: The direction of movement must be
+##           rightward.[br]
 
 
 # The surface that was collided with.
