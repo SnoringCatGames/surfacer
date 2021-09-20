@@ -115,14 +115,6 @@ static func project_shape_onto_surface(
             !is_horizontal_surface:
         shape_position.x = 0.0
     
-    if surface.vertices.size() <= 1:
-        return project_shape_onto_segment(
-                shape_position,
-                shape,
-                surface.side,
-                surface.vertices[0],
-                surface.vertices[0])
-    
     var shape_min_x := shape_position.x - shape.half_width_height.x
     var shape_max_x := shape_position.x + shape.half_width_height.x
     var shape_min_y := shape_position.y - shape.half_width_height.y
@@ -171,6 +163,14 @@ static func project_shape_onto_surface(
                 nudged_projection.y = shape_position.y
             
             return nudged_projection
+    
+    if surface.vertices.size() <= 1:
+        return project_shape_onto_segment(
+                shape_position,
+                shape,
+                surface.side,
+                surface.vertices[0],
+                surface.vertices[0])
     
     var segment_points_result := []
     
@@ -274,17 +274,17 @@ static func project_shape_onto_segment(
     var half_width_height := shape.half_width_height
     var surface_normal: Vector2 = SurfaceSide.get_normal(surface_side)
     
-    var segment_displacement := segment_end - segment_start
-    # Segment displacement is clockwise around convex surfaces, so the normal
-    # is the counter-clockwise perpendicular direction from the displacement.
-    var segment_perpendicular := \
-            Vector2(segment_displacement.y, -segment_displacement.x)
-    var segment_normal := segment_perpendicular.normalized()
-    
-    var shape_min_x := shape_position.x - half_width_height.x
-    var shape_max_x := shape_position.x + half_width_height.x
-    var shape_min_y := shape_position.y - half_width_height.y
-    var shape_max_y := shape_position.y + half_width_height.y
+    var segment_normal: Vector2
+    if segment_end == segment_start:
+        segment_normal = surface_normal
+    else:
+        var segment_displacement := segment_end - segment_start
+        # Segment displacement is clockwise around convex surfaces, so the
+        # normal is the counter-clockwise perpendicular direction from the
+        # displacement.
+        var segment_perpendicular := \
+                Vector2(segment_displacement.y, -segment_displacement.x)
+        segment_normal = segment_perpendicular.normalized()
     
     var leftward_segment_point := Vector2.INF
     var rightward_segment_point := Vector2.INF
@@ -306,28 +306,11 @@ static func project_shape_onto_segment(
         _:
             Sc.logger.error()
     
-    var segment_slope: float
-    match surface_side:
-        SurfaceSide.FLOOR, \
-        SurfaceSide.CEILING:
-            var numerator := \
-                    rightward_segment_point.y - leftward_segment_point.y
-            var denominator := \
-                    rightward_segment_point.x - leftward_segment_point.x
-            segment_slope = \
-                    numerator / denominator if \
-                    denominator != 0.0 else \
-                    INF
-        SurfaceSide.LEFT_WALL, \
-        SurfaceSide.RIGHT_WALL:
-            var numerator := upper_segment_point.y - lower_segment_point.y
-            var denominator := upper_segment_point.x - lower_segment_point.x
-            segment_slope = \
-                    numerator / denominator if \
-                    denominator != 0.0 else \
-                    INF
-        _:
-            Sc.logger.error()
+    var segment_tangent := segment_normal.tangent()
+    var segment_slope := \
+            segment_tangent.y / segment_tangent.x if \
+            segment_tangent.x != 0.0 else \
+            INF
     
     var is_shape_circle := shape.shape is CircleShape2D
     var is_shape_capsule := shape.shape is CapsuleShape2D
@@ -509,6 +492,11 @@ static func project_shape_onto_segment(
                     
                 _:
                     Sc.logger.error()
+    
+    var shape_min_x := shape_position.x - half_width_height.x
+    var shape_max_x := shape_position.x + half_width_height.x
+    var shape_min_y := shape_position.y - half_width_height.y
+    var shape_max_y := shape_position.y + half_width_height.y
     
     if is_shape_circle:
         # -   There are three possible contact points to consider:
