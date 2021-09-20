@@ -107,80 +107,80 @@ static func calculate_waypoints_around_surface(
             collision_params.thread_id)
     
     var passing_vertically: bool
-    var should_stay_on_min_side_a: bool
-    var should_stay_on_min_side_b: bool
-    var position_a := Vector2.INF
-    var position_b := Vector2.INF
+    var should_stay_on_min_side_ccw: bool
+    var should_stay_on_min_side_cw: bool
+    var position_ccw := Vector2.INF
+    var position_cw := Vector2.INF
     
     # Calculate the positions of each waypoint.
     match colliding_surface.side:
         SurfaceSide.FLOOR:
             passing_vertically = true
-            should_stay_on_min_side_a = true
-            should_stay_on_min_side_b = false
+            should_stay_on_min_side_ccw = true
+            should_stay_on_min_side_cw = false
             # Left end (counter-clockwise end).
-            position_a = colliding_surface.first_point + \
+            position_ccw = colliding_surface.first_point + \
                     Vector2(-waypoint_offset.x, -waypoint_offset.y)
             # Right end (clockwise end).
-            position_b = colliding_surface.last_point + \
+            position_cw = colliding_surface.last_point + \
                     Vector2(waypoint_offset.x, -waypoint_offset.y)
         SurfaceSide.CEILING:
             passing_vertically = true
-            should_stay_on_min_side_a = false
-            should_stay_on_min_side_b = true
+            should_stay_on_min_side_ccw = false
+            should_stay_on_min_side_cw = true
             # Right end (counter-clockwise end).
-            position_a = colliding_surface.first_point + \
+            position_ccw = colliding_surface.first_point + \
                     Vector2(waypoint_offset.x, waypoint_offset.y)
             # Left end (clockwise end).
-            position_b = colliding_surface.last_point + \
+            position_cw = colliding_surface.last_point + \
                     Vector2(-waypoint_offset.x, waypoint_offset.y)
         SurfaceSide.LEFT_WALL:
             passing_vertically = false
-            should_stay_on_min_side_a = true
-            should_stay_on_min_side_b = false
+            should_stay_on_min_side_ccw = true
+            should_stay_on_min_side_cw = false
             # Top end (counter-clockwise end).
-            position_a = colliding_surface.first_point + \
+            position_ccw = colliding_surface.first_point + \
                     Vector2(waypoint_offset.x, -waypoint_offset.y)
             # Bottom end (clockwise end).
-            position_b = colliding_surface.last_point + \
+            position_cw = colliding_surface.last_point + \
                     Vector2(waypoint_offset.x, waypoint_offset.y)
         SurfaceSide.RIGHT_WALL:
             passing_vertically = false
-            should_stay_on_min_side_a = false
-            should_stay_on_min_side_b = true
+            should_stay_on_min_side_ccw = false
+            should_stay_on_min_side_cw = true
             # Bottom end (counter-clockwise end).
-            position_a = colliding_surface.first_point + \
+            position_ccw = colliding_surface.first_point + \
                     Vector2(-waypoint_offset.x, waypoint_offset.y)
             # Top end (clockwise end).
-            position_b = colliding_surface.last_point + \
+            position_cw = colliding_surface.last_point + \
                     Vector2(-waypoint_offset.x, -waypoint_offset.y)
     
-    var should_skip_a := false
-    var should_skip_b := false
+    var should_skip_ccw := false
+    var should_skip_cw := false
     
     # We ignore waypoints that would correspond to moving back the way we came.
     if previous_waypoint.surface != null and \
             previous_waypoint.surface == \
             colliding_surface.counter_clockwise_convex_neighbor:
-        should_skip_a = true
+        should_skip_ccw = true
     if previous_waypoint.surface != null and \
             previous_waypoint.surface == \
             colliding_surface.clockwise_convex_neighbor:
-        should_skip_b = true
+        should_skip_cw = true
     
     # We ignore waypoints that are redundant with the constraint we were
     # already using with the previous step attempt.
     # 
     # These indicate a problem with our step logic somewhere though, so we log
     # an error.
-    if position_a == next_waypoint.position:
-        should_skip_a = true
+    if position_ccw == next_waypoint.position:
+        should_skip_ccw = true
         Sc.logger.error(
                 "Calculated a rendundant waypoint (same position as the " +
                 "next waypoint)",
                 false)
-    if position_b == next_waypoint.position:
-        should_skip_b = true
+    if position_cw == next_waypoint.position:
+        should_skip_cw = true
         Sc.logger.error(
                 "Calculated a rendundant waypoint (same position as the " +
                 "next waypoint)",
@@ -191,12 +191,12 @@ static func calculate_waypoints_around_surface(
     var waypoint_b_original: Waypoint
     var waypoint_b_final: Waypoint
     
-    if !should_skip_a:
+    if !should_skip_ccw:
         waypoint_a_original = Waypoint.new(
                 colliding_surface,
-                position_a,
+                position_ccw,
                 passing_vertically,
-                should_stay_on_min_side_a,
+                should_stay_on_min_side_ccw,
                 previous_waypoint,
                 next_waypoint)
         # Calculate and record state for the waypoint.
@@ -226,12 +226,12 @@ static func calculate_waypoints_around_surface(
         else:
             waypoint_a_final = waypoint_a_original
     
-    if !should_skip_b:
+    if !should_skip_cw:
         waypoint_b_original = Waypoint.new(
                 colliding_surface,
-                position_b,
+                position_cw,
                 passing_vertically,
-                should_stay_on_min_side_b,
+                should_stay_on_min_side_cw,
                 previous_waypoint,
                 next_waypoint)
         # Calculate and record state for the waypoint.
@@ -262,8 +262,8 @@ static func calculate_waypoints_around_surface(
             waypoint_b_final = waypoint_b_original
     
     var waypoints: Array
-    if !should_skip_a and \
-            !should_skip_b and \
+    if !should_skip_ccw and \
+            !should_skip_cw and \
             waypoint_a_final != null and \
             waypoint_b_final != null:
         # Return the waypoints in sorted order according to which is more
@@ -278,12 +278,12 @@ static func calculate_waypoints_around_surface(
             waypoints = [waypoint_a_final, waypoint_b_final]
         else:
             waypoints = [waypoint_b_final, waypoint_a_final]
-    elif !should_skip_a and waypoint_a_final != null:
+    elif !should_skip_ccw and waypoint_a_final != null:
         waypoints = [waypoint_a_final]
-    elif !should_skip_b and waypoint_b_final != null:
+    elif !should_skip_cw and waypoint_b_final != null:
         waypoints = [waypoint_b_final]
     else:
-        if should_skip_a and should_skip_b:
+        if should_skip_ccw and should_skip_cw:
             Sc.logger.error()
         waypoints = []
     
