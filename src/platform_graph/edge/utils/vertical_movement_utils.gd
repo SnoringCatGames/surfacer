@@ -256,7 +256,7 @@ static func calculate_time_to_jump_to_waypoint(
             horizontal_acceleration_sign = 1
         else:
             horizontal_acceleration_sign = 0
-    
+        
         ### Calculate the time needed to move horizontally.
         
         var duration_to_reach_horizontal_displacement := \

@@ -102,6 +102,19 @@ static func project_shape_onto_surface(
     if !is_instance_valid(surface):
         return Vector2.INF
     
+    var is_horizontal_surface := \
+            surface.side == SurfaceSide.FLOOR or \
+            surface.side == SurfaceSide.CEILING
+    
+    # Allow callers to provide an infinite coordinate for the axis that we're
+    # projecting along.
+    if is_inf(shape_position.y) and \
+            is_horizontal_surface:
+        shape_position.y = 0.0
+    if is_inf(shape_position.x) and \
+            !is_horizontal_surface:
+        shape_position.x = 0.0
+    
     if surface.vertices.size() <= 1:
         return project_shape_onto_segment(
                 shape_position,
@@ -117,23 +130,14 @@ static func project_shape_onto_surface(
     
     var shape_min_side_point := Vector2.INF
     var shape_max_side_point := Vector2.INF
-    match surface.side:
-        SurfaceSide.FLOOR, \
-        SurfaceSide.CEILING:
-            shape_min_side_point = Vector2(shape_min_x, 0.0)
-            shape_max_side_point = Vector2(shape_max_x, 0.0)
-        SurfaceSide.LEFT_WALL, \
-        SurfaceSide.RIGHT_WALL:
-            shape_min_side_point = Vector2(0.0, shape_min_y)
-            shape_max_side_point = Vector2(0.0, shape_max_y)
-        _:
-            Sc.logger.error()
+    if is_horizontal_surface:
+        shape_min_side_point = Vector2(shape_min_x, 0.0)
+        shape_max_side_point = Vector2(shape_max_x, 0.0)
+    else:
+        shape_min_side_point = Vector2(0.0, shape_min_y)
+        shape_max_side_point = Vector2(0.0, shape_max_y)
     
     if uses_end_segment_if_outside_bounds:
-        var is_horizontal_surface := \
-                surface.side == SurfaceSide.FLOOR or \
-                surface.side == SurfaceSide.CEILING
-        
         var nudged_shape_position := shape_position
         if is_horizontal_surface:
             if shape_max_x < surface.bounding_box.position.x + 0.0001:
