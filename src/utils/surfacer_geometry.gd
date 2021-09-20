@@ -267,6 +267,7 @@ static func project_shape_onto_segment(
         surface_side: int,
         segment_start: Vector2,
         segment_end: Vector2) -> Vector2:
+    var half_width_height := shape.half_width_height
     var surface_normal: Vector2 = SurfaceSide.get_normal(surface_side)
     
     var segment_displacement := segment_end - segment_start
@@ -276,10 +277,10 @@ static func project_shape_onto_segment(
             Vector2(segment_displacement.y, -segment_displacement.x)
     var segment_normal := segment_perpendicular.normalized()
     
-    var shape_min_x := shape_position.x - shape.half_width_height.x
-    var shape_max_x := shape_position.x + shape.half_width_height.x
-    var shape_min_y := shape_position.y - shape.half_width_height.y
-    var shape_max_y := shape_position.y + shape.half_width_height.y
+    var shape_min_x := shape_position.x - half_width_height.x
+    var shape_max_x := shape_position.x + half_width_height.x
+    var shape_min_y := shape_position.y - half_width_height.y
+    var shape_max_y := shape_position.y + half_width_height.y
     
     var leftward_segment_point := Vector2.INF
     var rightward_segment_point := Vector2.INF
@@ -376,7 +377,7 @@ static func project_shape_onto_segment(
             # If the round-end of the capsule is facing the surface, then we
             # can treat it the same as a circle.
             is_shape_circle = true
-            shape.half_width_height = circle_half_width_height
+            half_width_height = circle_half_width_height
             match surface_side:
                 SurfaceSide.FLOOR:
                     shape_position = lower_capsule_end_center
@@ -413,21 +414,20 @@ static func project_shape_onto_segment(
                             # left-end of the capsule.
                             is_shape_circle = true
                             shape_position = leftward_capsule_end_center
-                            shape.half_width_height = circle_half_width_height
+                            half_width_height = circle_half_width_height
                         elif rightward_segment_point.x < \
                                 rightward_capsule_end_center.x:
                             # We can treat this as a rectangle-projection with
                             # the center of the capsule.
                             is_shape_rectangle = true
                             shape_position = capsule_center
-                            shape.half_width_height = \
-                                    rectangle_half_width_height
+                            half_width_height = rectangle_half_width_height
                         else:
                             # We can treat this as a circle-projection with the
                             # right-end of the capsule.
                             is_shape_circle = true
                             shape_position = rightward_capsule_end_center
-                            shape.half_width_height = circle_half_width_height
+                            half_width_height = circle_half_width_height
                     else:
                         # -   Either is floor, and slopes up to the left.
                         # -   Or is ceiling, and slopes up to the right.
@@ -437,21 +437,20 @@ static func project_shape_onto_segment(
                             # right-end of the capsule.
                             is_shape_circle = true
                             shape_position = rightward_capsule_end_center
-                            shape.half_width_height = circle_half_width_height
+                            half_width_height = circle_half_width_height
                         elif leftward_segment_point.x > \
                                 leftward_capsule_end_center.x:
                             # We can treat this as a rectangle-projection with
                             # the center of the capsule.
                             is_shape_rectangle = true
                             shape_position = capsule_center
-                            shape.half_width_height = \
-                                    rectangle_half_width_height
+                            half_width_height = rectangle_half_width_height
                         else:
                             # We can treat this as a circle-projection with the
                             # left-end of the capsule.
                             is_shape_circle = true
                             shape_position = leftward_capsule_end_center
-                            shape.half_width_height = circle_half_width_height
+                            half_width_height = circle_half_width_height
                     
                 SurfaceSide.LEFT_WALL, \
                 SurfaceSide.RIGHT_WALL:
@@ -466,21 +465,20 @@ static func project_shape_onto_segment(
                             # upper-end of the capsule.
                             is_shape_circle = true
                             shape_position = upper_capsule_end_center
-                            shape.half_width_height = circle_half_width_height
+                            half_width_height = circle_half_width_height
                         elif lower_segment_point.y < \
                                 lower_capsule_end_center.y:
                             # We can treat this as a rectangle-projection with
                             # the center of the capsule.
                             is_shape_rectangle = true
                             shape_position = capsule_center
-                            shape.half_width_height = \
-                                    rectangle_half_width_height
+                            half_width_height = rectangle_half_width_height
                         else:
                             # We can treat this as a circle-projection with the
                             # lower-end of the capsule.
                             is_shape_circle = true
                             shape_position = lower_capsule_end_center
-                            shape.half_width_height = circle_half_width_height
+                            half_width_height = circle_half_width_height
                     else:
                         # -   Either is left-wall, and slopes up to the right.
                         # -   Or is right-wall, and slopes up to the left.
@@ -490,21 +488,20 @@ static func project_shape_onto_segment(
                             # lower-end of the capsule.
                             is_shape_circle = true
                             shape_position = lower_capsule_end_center
-                            shape.half_width_height = circle_half_width_height
+                            half_width_height = circle_half_width_height
                         elif upper_segment_point.y > \
                                 upper_capsule_end_center.y:
                             # We can treat this as a rectangle-projection with
                             # the center of the capsule.
                             is_shape_rectangle = true
                             shape_position = capsule_center
-                            shape.half_width_height = \
-                                    rectangle_half_width_height
+                            half_width_height = rectangle_half_width_height
                         else:
                             # We can treat this as a circle-projection with the
                             # upper-end of the capsule.
                             is_shape_circle = true
                             shape_position = upper_capsule_end_center
-                            shape.half_width_height = circle_half_width_height
+                            half_width_height = circle_half_width_height
                     
                 _:
                     Sc.logger.error()
