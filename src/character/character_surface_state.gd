@@ -243,7 +243,7 @@ func update_for_initial_surface_attachment(
                 .match_surface_target_and_collider(
                         surface,
                         start_position,
-                        character.movement_params.collider.half_width_height,
+                        character.movement_params.collider,
                         true,
                         true)
     
@@ -662,7 +662,7 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
     return PositionAlongSurfaceFactory.create_position_offset_from_target_point(
             contact_position,
             surface,
-            character.movement_params.collider.half_width_height,
+            character.movement_params.collider,
             true)
 
 

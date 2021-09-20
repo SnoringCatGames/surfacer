@@ -378,8 +378,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                     .create_position_offset_from_target_point(
                             current_start_point,
                             surface,
-                            character.movement_params \
-                                    .collider.half_width_height,
+                            character.movement_params.collider,
                             true)
             
             var possible_displacements := \
@@ -399,8 +398,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                         .create_position_offset_from_target_point(
                                 current_end_point,
                                 surface,
-                                character.movement_params \
-                                        .collider.half_width_height,
+                                character.movement_params.collider,
                                 true)
                 jump_edge = calculator.calculate_edge(
                         null,
@@ -1024,13 +1022,13 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
             .create_position_offset_from_target_point(
                     position,
                     surface,
-                    movement_params.collider.half_width_height,
+                    movement_params.collider,
                     true)
     var end_position := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     end_target_point,
                     surface,
-                    movement_params.collider.half_width_height,
+                    movement_params.collider,
                     true)
     var backtracking_edge := IntraSurfaceEdge.new(
             start_position,
@@ -1089,7 +1087,7 @@ func _optimize_edges_for_approach(
             closest_jump_off_point.match_surface_target_and_collider(
                     jump_off_surface,
                     path.destination.target_point,
-                    movement_params.collider.half_width_height,
+                    movement_params.collider,
                     true,
                     true)
             

@@ -172,7 +172,7 @@ func _get_intra_surface_destination() -> PositionAlongSurface:
             .create_position_offset_from_target_point(
                     intra_surface_destination_target,
                     latest_move_start_surface,
-                    character.movement_params.collider.half_width_height,
+                    character.movement_params.collider,
                     true)
 
 

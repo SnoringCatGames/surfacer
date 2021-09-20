@@ -176,12 +176,12 @@ func _calculate_jump_land_positions(
             .create_position_offset_from_target_point(
                     start_target_point,
                     origin_surface,
-                    movement_params.collider.half_width_height)
+                    movement_params.collider)
     var end_position := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     end_target_point,
                     neighbor,
-                    movement_params.collider.half_width_height)
+                    movement_params.collider)
     
     var velocity_start := _get_velocity_start(
             start_position,

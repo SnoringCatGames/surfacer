@@ -193,8 +193,7 @@ func _move() -> int:
                     .create_position_offset_from_target_point(
                             naive_target,
                             latest_move_start_surface,
-                            character.movement_params \
-                                    .collider.half_width_height,
+                            character.movement_params.collider,
                             true)
         
         # Ensure run-away target is the right distance away.

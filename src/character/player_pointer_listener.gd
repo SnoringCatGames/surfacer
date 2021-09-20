@@ -112,7 +112,7 @@ func _update_preselection_path() -> void:
 
 
 func _update_preselection_beats() -> void:
-    # Skip the beat update if we're already going to the the whole path update.
+    # Skip the beat update if we're already going to the whole path update.
     if !_is_preselection_path_update_pending:
         _player_nav.pre_selection.update_beats()
 
