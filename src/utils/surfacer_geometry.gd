@@ -283,6 +283,7 @@ static func project_shape_onto_segment(
                     segment_start,
                     segment_end)
     
+    var original_shape_position := shape_position
     var half_width_height := shape.half_width_height
     
     var segment_normal: Vector2
@@ -539,7 +540,10 @@ static func project_shape_onto_segment(
                                 true)
                 
                 projection_displacement_x = 0.0
-                projection_displacement_y = INF
+                projection_displacement_y = \
+                        -INF if \
+                        surface_side == SurfaceSide.FLOOR else \
+                        INF
                 
                 if shape_min_x < leftward_segment_point.x:
                     # The shape overlaps with the segment left side.
@@ -557,9 +561,14 @@ static func project_shape_onto_segment(
                                     true)
                     var possible_contact_point_displacement_y := \
                             leftward_segment_point.y - possible_contact_point.y
-                    projection_displacement_y = min(
-                            projection_displacement_y,
-                            possible_contact_point_displacement_y)
+                    if surface_side == SurfaceSide.FLOOR:
+                        projection_displacement_y = max(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
+                    else:
+                        projection_displacement_y = min(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
                 
                 if shape_max_x > rightward_segment_point.x:
                     # The shape overlaps with the segment right side.
@@ -578,9 +587,14 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_y := \
                             rightward_segment_point.y - \
                             possible_contact_point.y
-                    projection_displacement_y = min(
-                            projection_displacement_y,
-                            possible_contact_point_displacement_y)
+                    if surface_side == SurfaceSide.FLOOR:
+                        projection_displacement_y = max(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
+                    else:
+                        projection_displacement_y = min(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
                 
                 if shape_point_along_normal.x > leftward_segment_point.x and \
                         shape_point_along_normal.x < rightward_segment_point.x:
@@ -599,9 +613,14 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_y := \
                             segment_y_at_shape_point_along_normal - \
                             shape_point_along_normal.y
-                    projection_displacement_y = min(
-                            projection_displacement_y,
-                            possible_contact_point_displacement_y)
+                    if surface_side == SurfaceSide.FLOOR:
+                        projection_displacement_y = max(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
+                    else:
+                        projection_displacement_y = min(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
                 
             SurfaceSide.LEFT_WALL, \
             SurfaceSide.RIGHT_WALL:
@@ -621,7 +640,10 @@ static func project_shape_onto_segment(
                                 radius,
                                 true)
                 
-                projection_displacement_x = INF
+                projection_displacement_x = \
+                        -INF if \
+                        surface_side == SurfaceSide.LEFT_WALL else \
+                        INF
                 projection_displacement_y = 0.0
                 
                 if shape_min_y < upper_segment_point.y:
@@ -640,9 +662,14 @@ static func project_shape_onto_segment(
                                     true)
                     var possible_contact_point_displacement_x := \
                             upper_segment_point.x - possible_contact_point.x
-                    projection_displacement_x = min(
-                            projection_displacement_x,
-                            possible_contact_point_displacement_x)
+                    if surface_side == SurfaceSide.LEFT_WALL:
+                        projection_displacement_x = max(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
+                    else:
+                        projection_displacement_x = min(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
                 
                 if shape_max_y > lower_segment_point.y:
                     # The shape overlaps with the segment bottom side.
@@ -661,9 +688,14 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_x := \
                             lower_segment_point.x - \
                             possible_contact_point.x
-                    projection_displacement_x = min(
-                            projection_displacement_x,
-                            possible_contact_point_displacement_x)
+                    if surface_side == SurfaceSide.LEFT_WALL:
+                        projection_displacement_x = max(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
+                    else:
+                        projection_displacement_x = min(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
                 
                 if shape_point_along_normal.y > upper_segment_point.y and \
                         shape_point_along_normal.y < lower_segment_point.y:
@@ -682,9 +714,14 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_x := \
                             segment_x_at_shape_point_along_normal - \
                             shape_point_along_normal.x
-                    projection_displacement_x = min(
-                            projection_displacement_x,
-                            possible_contact_point_displacement_x)
+                    if surface_side == SurfaceSide.LEFT_WALL:
+                        projection_displacement_x = max(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
+                    else:
+                        projection_displacement_x = min(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
                 
             _:
                 Sc.logger.error()
@@ -711,23 +748,36 @@ static func project_shape_onto_segment(
                         shape_min_y
                 
                 projection_displacement_x = 0.0
-                projection_displacement_y = INF
+                projection_displacement_y = \
+                        -INF if \
+                        surface_side == SurfaceSide.FLOOR else \
+                        INF
                 
                 if shape_min_x < leftward_segment_point.x:
                     # The shape overlaps with the segment left side.
                     var possible_contact_point_displacement_y := \
                             leftward_segment_point.y - shape_close_end_y
-                    projection_displacement_y = min(
-                            projection_displacement_y,
-                            possible_contact_point_displacement_y)
+                    if surface_side == SurfaceSide.FLOOR:
+                        projection_displacement_y = max(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
+                    else:
+                        projection_displacement_y = min(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
                 
                 if shape_max_x > rightward_segment_point.x:
                     # The shape overlaps with the segment right side.
                     var possible_contact_point_displacement_y := \
                             rightward_segment_point.y - shape_close_end_y
-                    projection_displacement_y = min(
-                            projection_displacement_y,
-                            possible_contact_point_displacement_y)
+                    if surface_side == SurfaceSide.FLOOR:
+                        projection_displacement_y = max(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
+                    else:
+                        projection_displacement_y = min(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
                 
                 if shape_min_x > leftward_segment_point.x:
                     # The segment overlaps with the shape left side.
@@ -742,9 +792,14 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_y := \
                             segment_y_at_shape_left_side - \
                             shape_close_end_y
-                    projection_displacement_y = min(
-                            projection_displacement_y,
-                            possible_contact_point_displacement_y)
+                    if surface_side == SurfaceSide.FLOOR:
+                        projection_displacement_y = max(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
+                    else:
+                        projection_displacement_y = min(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
                 
                 if shape_max_x < rightward_segment_point.x:
                     # The segment overlaps with the shape right side.
@@ -759,9 +814,14 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_y := \
                             segment_y_at_shape_right_side - \
                             shape_close_end_y
-                    projection_displacement_y = min(
-                            projection_displacement_y,
-                            possible_contact_point_displacement_y)
+                    if surface_side == SurfaceSide.FLOOR:
+                        projection_displacement_y = max(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
+                    else:
+                        projection_displacement_y = min(
+                                projection_displacement_y,
+                                possible_contact_point_displacement_y)
                 
             SurfaceSide.LEFT_WALL, \
             SurfaceSide.RIGHT_WALL:
@@ -775,24 +835,37 @@ static func project_shape_onto_segment(
                         surface_side == SurfaceSide.RIGHT_WALL else \
                         shape_min_x
                 
-                projection_displacement_x = INF
+                projection_displacement_x = \
+                        -INF if \
+                        surface_side == SurfaceSide.LEFT_WALL else \
+                        INF
                 projection_displacement_y = 0.0
                 
                 if shape_min_y < upper_segment_point.y:
                     # The shape overlaps with the segment top side.
                     var possible_contact_point_displacement_x := \
                             upper_segment_point.x - shape_close_end_x
-                    projection_displacement_x = min(
-                            projection_displacement_x,
-                            possible_contact_point_displacement_x)
+                    if surface_side == SurfaceSide.LEFT_WALL:
+                        projection_displacement_x = max(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
+                    else:
+                        projection_displacement_x = min(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
                 
                 if shape_max_y > lower_segment_point.y:
                     # The shape overlaps with the segment bottom side.
                     var possible_contact_point_displacement_x := \
                             lower_segment_point.x - shape_close_end_x
-                    projection_displacement_x = min(
-                            projection_displacement_x,
-                            possible_contact_point_displacement_x)
+                    if surface_side == SurfaceSide.LEFT_WALL:
+                        projection_displacement_x = max(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
+                    else:
+                        projection_displacement_x = min(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
                 
                 if shape_min_y > upper_segment_point.y:
                     # The segment overlaps with the shape top side.
@@ -807,9 +880,14 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_x := \
                             segment_x_at_shape_upper_side - \
                             shape_close_end_x
-                    projection_displacement_x = min(
-                            projection_displacement_x,
-                            possible_contact_point_displacement_x)
+                    if surface_side == SurfaceSide.LEFT_WALL:
+                        projection_displacement_x = max(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
+                    else:
+                        projection_displacement_x = min(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
                 
                 if shape_max_y < lower_segment_point.y:
                     # The segment overlaps with the shape bottom side.
@@ -824,14 +902,19 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_x := \
                             segment_x_at_shape_lower_side - \
                             shape_close_end_x
-                    projection_displacement_x = min(
-                            projection_displacement_x,
-                            possible_contact_point_displacement_x)
+                    if surface_side == SurfaceSide.LEFT_WALL:
+                        projection_displacement_x = max(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
+                    else:
+                        projection_displacement_x = min(
+                                projection_displacement_x,
+                                possible_contact_point_displacement_x)
                 
             _:
                 Sc.logger.error()
     
-    return shape_position + \
+    return original_shape_position + \
             Vector2(projection_displacement_x, projection_displacement_y)
 
 
