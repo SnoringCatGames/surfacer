@@ -175,93 +175,65 @@ static func project_shape_onto_surface(
                 surface.vertices[0],
                 surface.vertices[0])
     
-    var segment_points_result := []
-    
-    get_surface_segment_at_point(
-            segment_points_result,
+    var vertices_to_check := get_vertices_around_range(
             surface,
-            shape_min_side_point,
-            uses_end_segment_if_outside_bounds)
-    var min_side_segment_start := Vector2.INF
-    var min_side_segment_end := Vector2.INF
-    if !segment_points_result.empty():
-        min_side_segment_start = segment_points_result[0]
-        min_side_segment_end = segment_points_result[1]
+            shape_min_x,
+            shape_max_x,
+            shape_min_y,
+            shape_max_y)
     
-    get_surface_segment_at_point(
-            segment_points_result,
-            surface,
-            shape_max_side_point,
-            uses_end_segment_if_outside_bounds)
-    var max_side_segment_start := Vector2.INF
-    var max_side_segment_end := Vector2.INF
-    if !segment_points_result.empty():
-        max_side_segment_start = segment_points_result[0]
-        max_side_segment_end = segment_points_result[1]
-    
-    # Both ends of the shape project onto the same segment, so ignore one copy.
-    if min_side_segment_start == max_side_segment_start:
-        assert(min_side_segment_start != Vector2.INF)
-        max_side_segment_start = Vector2.INF
-        max_side_segment_end = Vector2.INF
-    
-    # Only one of the two possible segments is valid, so ignore the other.
-    if min_side_segment_start == Vector2.INF or \
-            max_side_segment_start == Vector2.INF:
-        var segment_start: Vector2
-        var segment_end: Vector2
-        if min_side_segment_start == Vector2.INF:
-            segment_start = max_side_segment_start
-            segment_end = max_side_segment_end
-        else:
-            segment_start = min_side_segment_start
-            segment_end = min_side_segment_end
-        
-        return project_shape_onto_segment(
-                shape_position,
-                shape,
-                surface.side,
-                segment_start,
-                segment_end)
-    
-    # Both possible segments are valid, so use whichever projects the shape
-    # further away.
-    var min_side_segment_projection := project_shape_onto_segment(
-            shape_position,
-            shape,
-            surface.side,
-            min_side_segment_start,
-            min_side_segment_end)
-    var max_side_segment_projection := project_shape_onto_segment(
-            shape_position,
-            shape,
-            surface.side,
-            max_side_segment_start,
-            max_side_segment_end)
+    # Use whichever segment-projection places the shape further away from the
+    # surface.
+    var furthest_projection := Vector2.INF
     match surface.side:
         SurfaceSide.FLOOR:
-            if min_side_segment_projection.y < max_side_segment_projection.y:
-                return min_side_segment_projection
-            else:
-                return max_side_segment_projection
+            furthest_projection = Vector2.INF
+            for i in vertices_to_check.size() - 1:
+                var projection := project_shape_onto_segment(
+                        shape_position,
+                        shape,
+                        surface.side,
+                        vertices_to_check[i],
+                        vertices_to_check[i + 1])
+                if projection.y < furthest_projection.y:
+                    furthest_projection = projection
         SurfaceSide.LEFT_WALL:
-            if min_side_segment_projection.x < max_side_segment_projection.x:
-                return max_side_segment_projection
-            else:
-                return min_side_segment_projection
+            furthest_projection = -Vector2.INF
+            for i in vertices_to_check.size() - 1:
+                var projection := project_shape_onto_segment(
+                        shape_position,
+                        shape,
+                        surface.side,
+                        vertices_to_check[i],
+                        vertices_to_check[i + 1])
+                if projection.x > furthest_projection.x:
+                    furthest_projection = projection
         SurfaceSide.RIGHT_WALL:
-            if min_side_segment_projection.x < max_side_segment_projection.x:
-                return min_side_segment_projection
-            else:
-                return max_side_segment_projection
+            furthest_projection = Vector2.INF
+            for i in vertices_to_check.size() - 1:
+                var projection := project_shape_onto_segment(
+                        shape_position,
+                        shape,
+                        surface.side,
+                        vertices_to_check[i],
+                        vertices_to_check[i + 1])
+                if projection.x < furthest_projection.x:
+                    furthest_projection = projection
         SurfaceSide.CEILING:
-            if min_side_segment_projection.y < max_side_segment_projection.y:
-                return max_side_segment_projection
-            else:
-                return min_side_segment_projection
+            furthest_projection = -Vector2.INF
+            for i in vertices_to_check.size() - 1:
+                var projection := project_shape_onto_segment(
+                        shape_position,
+                        shape,
+                        surface.side,
+                        vertices_to_check[i],
+                        vertices_to_check[i + 1])
+                if projection.y > furthest_projection.y:
+                    furthest_projection = projection
         _:
             Sc.logger.error()
-            return Vector2.INF
+    
+    return furthest_projection
 
 
 # -   Calculates where the center position of the given shape would be if it
@@ -407,7 +379,7 @@ static func project_shape_onto_segment(
                         #     right.
                         # -   Or is ceiling, and is level or slopes up to the
                         #     left.
-                        if rightward_segment_point.x < \
+                        if rightward_segment_point.x <= \
                                 leftward_capsule_end_center.x:
                             # We can treat this as a circle-projection with the
                             # left-end of the capsule.
@@ -430,7 +402,7 @@ static func project_shape_onto_segment(
                     else:
                         # -   Either is floor, and slopes up to the left.
                         # -   Or is ceiling, and slopes up to the right.
-                        if leftward_segment_point.x > \
+                        if leftward_segment_point.x >= \
                                 rightward_capsule_end_center.x:
                             # We can treat this as a circle-projection with the
                             # right-end of the capsule.
@@ -458,7 +430,7 @@ static func project_shape_onto_segment(
                         #     the left.
                         # -   Or is right-wall, and is level or slopes up to
                         #     the right.
-                        if lower_segment_point.y < \
+                        if lower_segment_point.y <= \
                                 upper_capsule_end_center.y:
                             # We can treat this as a circle-projection with the
                             # upper-end of the capsule.
@@ -481,7 +453,7 @@ static func project_shape_onto_segment(
                     else:
                         # -   Either is left-wall, and slopes up to the right.
                         # -   Or is right-wall, and slopes up to the left.
-                        if upper_segment_point.y > \
+                        if upper_segment_point.y >= \
                                 lower_capsule_end_center.y:
                             # We can treat this as a circle-projection with the
                             # lower-end of the capsule.
@@ -541,9 +513,9 @@ static func project_shape_onto_segment(
                 
                 projection_displacement_x = 0.0
                 projection_displacement_y = \
-                        -INF if \
+                        INF if \
                         surface_side == SurfaceSide.FLOOR else \
-                        INF
+                        -INF
                 
                 if shape_min_x < leftward_segment_point.x:
                     # The shape overlaps with the segment left side.
@@ -562,11 +534,11 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_y := \
                             leftward_segment_point.y - possible_contact_point.y
                     if surface_side == SurfaceSide.FLOOR:
-                        projection_displacement_y = max(
+                        projection_displacement_y = min(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                     else:
-                        projection_displacement_y = min(
+                        projection_displacement_y = max(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
@@ -588,11 +560,11 @@ static func project_shape_onto_segment(
                             rightward_segment_point.y - \
                             possible_contact_point.y
                     if surface_side == SurfaceSide.FLOOR:
-                        projection_displacement_y = max(
+                        projection_displacement_y = min(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                     else:
-                        projection_displacement_y = min(
+                        projection_displacement_y = max(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
@@ -614,11 +586,11 @@ static func project_shape_onto_segment(
                             segment_y_at_shape_point_along_normal - \
                             shape_point_along_normal.y
                     if surface_side == SurfaceSide.FLOOR:
-                        projection_displacement_y = max(
+                        projection_displacement_y = min(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                     else:
-                        projection_displacement_y = min(
+                        projection_displacement_y = max(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
@@ -749,20 +721,20 @@ static func project_shape_onto_segment(
                 
                 projection_displacement_x = 0.0
                 projection_displacement_y = \
-                        -INF if \
+                        INF if \
                         surface_side == SurfaceSide.FLOOR else \
-                        INF
+                        -INF
                 
                 if shape_min_x < leftward_segment_point.x:
                     # The shape overlaps with the segment left side.
                     var possible_contact_point_displacement_y := \
                             leftward_segment_point.y - shape_close_end_y
                     if surface_side == SurfaceSide.FLOOR:
-                        projection_displacement_y = max(
+                        projection_displacement_y = min(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                     else:
-                        projection_displacement_y = min(
+                        projection_displacement_y = max(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
@@ -771,11 +743,11 @@ static func project_shape_onto_segment(
                     var possible_contact_point_displacement_y := \
                             rightward_segment_point.y - shape_close_end_y
                     if surface_side == SurfaceSide.FLOOR:
-                        projection_displacement_y = max(
+                        projection_displacement_y = min(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                     else:
-                        projection_displacement_y = min(
+                        projection_displacement_y = max(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
@@ -793,11 +765,11 @@ static func project_shape_onto_segment(
                             segment_y_at_shape_left_side - \
                             shape_close_end_y
                     if surface_side == SurfaceSide.FLOOR:
-                        projection_displacement_y = max(
+                        projection_displacement_y = min(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                     else:
-                        projection_displacement_y = min(
+                        projection_displacement_y = max(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
@@ -815,11 +787,11 @@ static func project_shape_onto_segment(
                             segment_y_at_shape_right_side - \
                             shape_close_end_y
                     if surface_side == SurfaceSide.FLOOR:
-                        projection_displacement_y = max(
+                        projection_displacement_y = min(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                     else:
-                        projection_displacement_y = min(
+                        projection_displacement_y = max(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
@@ -1018,6 +990,91 @@ static func get_surface_segment_at_point(
         segment_points_result[1] = segment_end
     else:
         segment_points_result.resize(0)
+
+
+static func get_vertices_around_range(
+        surface: Surface,
+        range_min_x: float,
+        range_max_x: float,
+        range_min_y: float,
+        range_max_y: float) -> Array:
+    if !is_instance_valid(surface):
+        return []
+    
+    var epsilon := 0.01
+    
+    var vertices := surface.vertices
+    var count := vertices.size()
+    
+    if count <= 1:
+        return [surface.vertices[0]]
+    
+    var start_index: int
+    var end_index: int
+    
+    match surface.side:
+        SurfaceSide.FLOOR:
+            start_index = 0
+            for i in count:
+                if vertices[i].x > range_min_x:
+                    start_index = i - 1
+                    break
+            start_index = max(start_index, 0)
+            
+            end_index = start_index + 1
+            for i in range(end_index, count):
+                end_index = i
+                if vertices[i].x > range_max_x:
+                    break
+        SurfaceSide.LEFT_WALL:
+            start_index = 0
+            for i in count:
+                if vertices[i].y > range_min_y:
+                    start_index = i - 1
+                    break
+            start_index = max(start_index, 0)
+            
+            end_index = start_index + 1
+            for i in range(end_index, count):
+                end_index = i
+                if vertices[i].y > range_max_y:
+                    break
+        SurfaceSide.RIGHT_WALL:
+            start_index = 0
+            for i in count:
+                if vertices[i].y < range_max_y:
+                    start_index = i - 1
+                    break
+            start_index = max(start_index, 0)
+            
+            end_index = start_index + 1
+            for i in range(end_index, count):
+                end_index = i
+                if vertices[i].y < range_min_y:
+                    break
+        SurfaceSide.CEILING:
+            start_index = 0
+            for i in count:
+                if vertices[i].x < range_max_x:
+                    start_index = i - 1
+                    break
+            start_index = max(start_index, 0)
+            
+            end_index = start_index + 1
+            for i in range(end_index, count):
+                end_index = i
+                if vertices[i].x < range_min_x:
+                    break
+        _:
+            Sc.logger.error()
+    
+    var result_size := end_index - start_index + 1
+    var result := []
+    result.resize(result_size)
+    for i in result_size:
+        result[i] = vertices[start_index + i]
+    
+    return result
 
 
 static func are_position_wrappers_equal_with_epsilon(
