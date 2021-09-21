@@ -368,8 +368,7 @@ static func _prepend_walk_to_fall_off_portion(
     # Insert frame state for the walk-to-fall-off portion of the trajectory.
     
     if !movement_params.includes_discrete_trajectory_state and \
-            !movement_params \
-                    .includes_continuous_trajectory_positions and \
+            !movement_params.includes_continuous_trajectory_positions and \
             !movement_params.includes_continuous_trajectory_velocities:
         return
     
@@ -425,22 +424,16 @@ static func _prepend_walk_to_fall_off_portion(
             trajectory.frame_continuous_velocities_from_steps[frame_index] = \
                     current_frame_velocity
         
-        var frame_position_x := \
+        current_frame_position.x = \
                 current_frame_position.x + \
                 current_frame_velocity.x * Time.PHYSICS_TIME_STEP
-        var distance_past_edge := \
-                start.target_point.x - frame_position_x if \
-                falls_on_left_side else \
-                frame_position_x - start.target_point.x
-        var frame_position_y: float = \
-                edge_point.y + \
-                Sc.geometry.calculate_displacement_y_for_horizontal_distance_past_edge(
-                        distance_past_edge,
-                        true,
-                        movement_params.fall_from_floor_corner_calc_shape)
+        current_frame_position = Sc.geometry \
+                .project_shape_onto_convex_corner_preserving_tangent_position( \
+                        current_frame_position,
+                        movement_params.fall_from_floor_corner_calc_shape,
+                        start.surface,
+                        null)
         
-        current_frame_position.x = frame_position_x
-        current_frame_position.y = frame_position_y
         current_frame_velocity += acceleration * Time.PHYSICS_TIME_STEP
         current_frame_velocity.x = clamp(current_frame_velocity.x,
                 -movement_params.max_horizontal_speed_default,

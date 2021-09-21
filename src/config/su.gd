@@ -173,6 +173,7 @@ var _surfacer_sounds := [
 # --- Surfacer global state ---
 
 var manifest: Dictionary
+var are_oddly_shaped_surfaces_used: bool
 var is_inspector_enabled: bool
 var are_loaded_surfaces_deeply_validated: bool
 var uses_threads_for_platform_graph_calculation: bool
@@ -332,6 +333,8 @@ func _amend_app_manifest(app_manifest: Dictionary) -> void:
 func _register_app_manifest(app_manifest: Dictionary) -> void:
     self.manifest = app_manifest.surfacer_manifest
     
+    self.are_oddly_shaped_surfaces_used = \
+            manifest.are_oddly_shaped_surfaces_used
     self.are_loaded_surfaces_deeply_validated = \
             manifest.are_loaded_surfaces_deeply_validated
     self.uses_threads_for_platform_graph_calculation = \

@@ -141,34 +141,50 @@ func _calculate_jump_land_positions(
             origin_surface.side == SurfaceSide.FLOOR or \
             neighbor.side == SurfaceSide.FLOOR
     
-    var target_x_offset := \
-            -movement_params.collider.half_width_height.x if \
-            is_left_side else \
-            movement_params.collider.half_width_height.x
-    var target_y_offset := \
-            -movement_params.collider.half_width_height.y if \
-            is_top_side else \
-            movement_params.collider.half_width_height.y
+    # FIXME: --------------------------- Use new project_shape_onto_concave_corner
+    
     
     var start_target_point: Vector2
     var end_target_point: Vector2
     if is_convex:
-        var is_wall := \
-                origin_surface.side == SurfaceSide.LEFT_WALL or \
-                origin_surface.side == SurfaceSide.RIGHT_WALL
-        var start_target_offset := \
-                Vector2(target_x_offset, 0.0) if \
-                is_wall else \
-                Vector2(0.0, target_y_offset)
-        var end_target_offset := \
-                Vector2(0.0, target_y_offset) if \
-                is_wall else \
-                Vector2(target_x_offset, 0.0)
-        start_target_point = corner_point + start_target_offset
-        end_target_point = corner_point + end_target_offset
+        start_target_point = corner_point
+        end_target_point = corner_point
     else:
+        var target_x_offset := \
+                -movement_params.collider.half_width_height.x if \
+                is_left_side else \
+                movement_params.collider.half_width_height.x
+        var target_y_offset := \
+                -movement_params.collider.half_width_height.y if \
+                is_top_side else \
+                movement_params.collider.half_width_height.y
         var target_point := \
                 corner_point + Vector2(target_x_offset, target_y_offset)
+        target_point = Sc.geometry.project_shape_onto_surface(
+                target_point,
+                movement_params.collider,
+                neighbor,
+                true)
+        target_point = Sc.geometry.project_shape_onto_surface(
+                target_point,
+                movement_params.collider,
+                origin_surface,
+                true)
+        
+        if !(movement_params.collider.shape is RectangleShape2D):
+            # Round shapes get closer to the correct target with each pair of
+            # axially-aligned projections.
+            target_point = Sc.geometry.project_shape_onto_surface(
+                    target_point,
+                    movement_params.collider,
+                    neighbor,
+                    true)
+            target_point = Sc.geometry.project_shape_onto_surface(
+                    target_point,
+                    movement_params.collider,
+                    origin_surface,
+                    true)
+        
         start_target_point = target_point
         end_target_point = target_point
     
@@ -357,11 +373,12 @@ func _calculate_trajectory(
     if is_wall:
         # Rounding a corner from a wall.
         
-        position.x = \
-                corner_position.x - half_width if \
-                is_left_side else \
-                corner_position.x + half_width
-        position.y = corner_position.y
+        position = Vector2(INF, corner_position.y)
+        position = Sc.geometry.project_shape_onto_surface(
+                position,
+                movement_params.rounding_corner_calc_shape,
+                position_start.surface,
+                true)
         
         velocity.x = 0.0
         velocity.y = \
@@ -376,15 +393,12 @@ func _calculate_trajectory(
             
             frame_index += 1
             position.y += velocity.y * Time.PHYSICS_TIME_STEP
-            var distance_past_edge := \
-                    corner_position.y - position.y if \
-                    is_top_side else \
-                    position.y - corner_position.y
-            position.x = corner_position.x + Sc.geometry \
-                    .calculate_displacement_x_for_vertical_distance_past_edge(
-                            distance_past_edge,
-                            !is_left_side,
-                            movement_params.rounding_corner_calc_shape)
+            position = Sc.geometry \
+                    .project_shape_onto_convex_corner_preserving_tangent_position( \
+                            position,
+                            movement_params.rounding_corner_calc_shape,
+                            position_start.surface,
+                            position_end.surface)
             is_character_past_end = \
                     position.y + half_height <= corner_position.y if \
                     is_top_side else \
@@ -413,15 +427,12 @@ func _calculate_trajectory(
             
             frame_index += 1
             position.x += velocity.x * Time.PHYSICS_TIME_STEP
-            var distance_past_edge := \
-                    corner_position.x - position.x if \
-                    is_left_side else \
-                    position.x - corner_position.x
-            position.y = corner_position.y + Sc.geometry \
-                    .calculate_displacement_y_for_horizontal_distance_past_edge(
-                            distance_past_edge,
-                            is_top_side,
-                            movement_params.rounding_corner_calc_shape)
+            position = Sc.geometry \
+                    .project_shape_onto_convex_corner_preserving_tangent_position( \
+                            position,
+                            movement_params.rounding_corner_calc_shape,
+                            position_end.surface,
+                            position_start.surface)
             # Account for acceleration along the floor.
             velocity.x += acceleration_x * Time.PHYSICS_TIME_STEP
             velocity.x = clamp(
@@ -434,13 +445,14 @@ func _calculate_trajectory(
                     position.x <= corner_position.x
         
     else:
-        # Rounding a from a floor or ceiling.
+        # Rounding from a floor or ceiling.
         
-        position.x = corner_position.x
-        position.y = \
-                corner_position.y - half_height if \
-                is_top_side else \
-                corner_position.y + half_height
+        position = Vector2(corner_position.x, INF)
+        position = Sc.geometry.project_shape_onto_surface(
+                position,
+                movement_params.rounding_corner_calc_shape,
+                position_start.surface,
+                true)
         
         if is_top_side:
             # Assume that the character will have reached max speed by the time
@@ -463,15 +475,12 @@ func _calculate_trajectory(
             
             frame_index += 1
             position.x += velocity.x * Time.PHYSICS_TIME_STEP
-            var distance_past_edge := \
-                    corner_position.x - position.x if \
-                    is_left_side else \
-                    position.x - corner_position.x
-            position.y = corner_position.y + Sc.geometry \
-                    .calculate_displacement_y_for_horizontal_distance_past_edge(
-                            distance_past_edge,
-                            is_top_side,
-                            movement_params.rounding_corner_calc_shape)
+            position = Sc.geometry \
+                    .project_shape_onto_convex_corner_preserving_tangent_position( \
+                            position,
+                            movement_params.rounding_corner_calc_shape,
+                            position_start.surface,
+                            position_end.surface)
             is_character_past_end = \
                     position.x + half_width <= corner_position.x if \
                     is_left_side else \
@@ -491,15 +500,12 @@ func _calculate_trajectory(
             
             frame_index += 1
             position.y += velocity.y * Time.PHYSICS_TIME_STEP
-            var distance_past_edge := \
-                    corner_position.y - position.y if \
-                    is_top_side else \
-                    position.y - corner_position.y
-            position.x = corner_position.x + Sc.geometry \
-                    .calculate_displacement_x_for_vertical_distance_past_edge(
-                            distance_past_edge,
-                            !is_left_side,
-                            movement_params.rounding_corner_calc_shape)
+            position = Sc.geometry \
+                    .project_shape_onto_convex_corner_preserving_tangent_position( \
+                            position,
+                            movement_params.rounding_corner_calc_shape,
+                            position_end.surface,
+                            position_start.surface)
             is_rounding_corner_finished = \
                     position.y >= corner_position.y if \
                     is_top_side else \

@@ -7,12 +7,17 @@ extends ScaffolderGeometry
 # the given point would intersect with the surface.
 static func project_point_onto_surface(
         point: Vector2,
-        surface: Surface) -> Vector2:
+        surface: Surface,
+        side_override := SurfaceSide.NONE) -> Vector2:
+    var surface_side := \
+            surface.side if \
+            side_override != SurfaceSide.NONE else \
+            side_override
     var start_vertex = surface.first_point
     var end_vertex = surface.last_point
     
     # Check whether the point lies outside the surface boundaries.
-    match surface.side:
+    match surface_side:
         SurfaceSide.FLOOR:
             if point.x <= start_vertex.x:
                 return start_vertex
@@ -42,8 +47,8 @@ static func project_point_onto_surface(
     # surface-side-normal.
     var segment_a: Vector2
     var segment_b: Vector2
-    if surface.side == SurfaceSide.FLOOR or \
-            surface.side == SurfaceSide.CEILING:
+    if surface_side == SurfaceSide.FLOOR or \
+            surface_side == SurfaceSide.CEILING:
         segment_a = Vector2(point.x, surface.bounding_box.position.y)
         segment_b = Vector2(point.x, surface.bounding_box.end.y)
     else:
@@ -96,18 +101,27 @@ static func project_shape_onto_surface(
         shape_position: Vector2,
         shape: RotatedShape,
         surface: Surface,
-        uses_end_segment_if_outside_bounds := true) -> Vector2:
+        uses_end_segment_if_outside_bounds := true,
+        side_override := SurfaceSide.NONE) -> Vector2:
     # TODO: Should this also account for the next segment on a neighbor surface?
+    
+    var surface_side := \
+            surface.side if \
+            side_override == SurfaceSide.NONE else \
+            side_override
     
     if !is_instance_valid(surface):
         return Vector2.INF
     
     if !is_instance_valid(shape):
-        return project_point_onto_surface(shape_position, surface)
+        return project_point_onto_surface(
+                shape_position,
+                surface,
+                surface_side)
     
     var is_horizontal_surface := \
-            surface.side == SurfaceSide.FLOOR or \
-            surface.side == SurfaceSide.CEILING
+            surface_side == SurfaceSide.FLOOR or \
+            surface_side == SurfaceSide.CEILING
     
     # Allow callers to provide an infinite coordinate for the axis that we're
     # projecting along.
@@ -158,7 +172,8 @@ static func project_shape_onto_surface(
                     nudged_shape_position,
                     shape,
                     surface,
-                    uses_end_segment_if_outside_bounds)
+                    uses_end_segment_if_outside_bounds,
+                    side_override)
             
             if is_horizontal_surface:
                 nudged_projection.x = shape_position.x
@@ -171,7 +186,7 @@ static func project_shape_onto_surface(
         return project_shape_onto_segment(
                 shape_position,
                 shape,
-                surface.side,
+                surface_side,
                 surface.vertices[0],
                 surface.vertices[0])
     
@@ -185,14 +200,14 @@ static func project_shape_onto_surface(
     # Use whichever segment-projection places the shape further away from the
     # surface.
     var furthest_projection := Vector2.INF
-    match surface.side:
+    match surface_side:
         SurfaceSide.FLOOR:
             furthest_projection = Vector2.INF
             for i in vertices_to_check.size() - 1:
                 var projection := project_shape_onto_segment(
                         shape_position,
                         shape,
-                        surface.side,
+                        surface_side,
                         vertices_to_check[i],
                         vertices_to_check[i + 1])
                 if projection.y < furthest_projection.y:
@@ -203,7 +218,7 @@ static func project_shape_onto_surface(
                 var projection := project_shape_onto_segment(
                         shape_position,
                         shape,
-                        surface.side,
+                        surface_side,
                         vertices_to_check[i],
                         vertices_to_check[i + 1])
                 if projection.x > furthest_projection.x:
@@ -214,7 +229,7 @@ static func project_shape_onto_surface(
                 var projection := project_shape_onto_segment(
                         shape_position,
                         shape,
-                        surface.side,
+                        surface_side,
                         vertices_to_check[i],
                         vertices_to_check[i + 1])
                 if projection.x < furthest_projection.x:
@@ -225,7 +240,7 @@ static func project_shape_onto_surface(
                 var projection := project_shape_onto_segment(
                         shape_position,
                         shape,
-                        surface.side,
+                        surface_side,
                         vertices_to_check[i],
                         vertices_to_check[i + 1])
                 if projection.y > furthest_projection.y:
@@ -1123,6 +1138,88 @@ static func _get_collision_for_side(
             if get_surface_side_for_normal(collision.normal) == side:
                 return collision
     return null
+
+
+static func project_shape_onto_convex_corner_preserving_tangent_position( \
+        shape_position: Vector2,
+        shape: RotatedShape,
+        origin_surface: Surface,
+        destination_surface: Surface) -> Vector2:
+    var projection := Vector2.INF
+    
+    if Su.are_oddly_shaped_surfaces_used and \
+            (is_instance_valid(origin_surface) or \
+            is_instance_valid(destination_surface)):
+        
+        var destination_projection := Vector2.INF
+        if is_instance_valid(destination_surface):
+            destination_projection = project_shape_onto_surface(
+                    shape_position,
+                    shape,
+                    destination_surface,
+                    true,
+                    origin_surface.side)
+        
+        var origin_projection := Vector2.INF
+        if is_instance_valid(origin_surface):
+            origin_projection = project_shape_onto_surface(
+                    shape_position,
+                    shape,
+                    origin_surface,
+                    true,
+                    origin_surface.side)
+        
+        var is_destination_projection_valid := \
+                !is_inf(destination_projection.x) and \
+                !is_inf(destination_projection.y)
+        
+        match origin_surface.side:
+            SurfaceSide.FLOOR:
+                if is_destination_projection_valid and \
+                        destination_projection.y < origin_projection.y:
+                    return destination_projection
+                else:
+                    return origin_projection
+            SurfaceSide.LEFT_WALL:
+                if is_destination_projection_valid and \
+                        destination_projection.x > origin_projection.x:
+                    return destination_projection
+                else:
+                    return origin_projection
+            SurfaceSide.RIGHT_WALL:
+                if is_destination_projection_valid and \
+                        destination_projection.x < origin_projection.x:
+                    return destination_projection
+                else:
+                    return origin_projection
+            SurfaceSide.CEILING:
+                if is_destination_projection_valid and \
+                        destination_projection.y > origin_projection.y:
+                    return destination_projection
+                else:
+                    return origin_projection
+            _:
+                Sc.logger.error()
+        
+    else:
+        # FIXME: LEFT OFF HERE: --------------------------------------
+        pass
+    
+    
+    
+    return projection
+
+
+static func project_shape_onto_concave_corner( \
+        shape_position: Vector2,
+        shape: RotatedShape,
+        origin_surface: Surface,
+        destination_surface: Surface) -> Vector2:
+    # FIXME: LEFT OFF HERE: --------------------------------------
+    # - Su.are_oddly_shaped_surfaces_used
+    pass
+    
+    return Vector2.INF
 
 
 static func calculate_displacement_x_for_vertical_distance_past_edge( \
