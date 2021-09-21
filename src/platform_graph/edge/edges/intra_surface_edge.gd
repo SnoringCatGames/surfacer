@@ -178,10 +178,8 @@ func get_position_at_time(edge_time: float) -> Vector2:
             Sc.logger.error()
             return Vector2.INF
 
-# FIXME: ---------------- REMOVE surface_state param?
-func get_velocity_at_time(
-            edge_time: float,
-            surface_state) -> Vector2:
+
+func get_velocity_at_time(edge_time: float) -> Vector2:
     if edge_time > duration:
         return Vector2.INF
     var start := get_start()

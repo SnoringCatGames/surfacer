@@ -280,9 +280,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
         return start_position_along_surface.target_point
 
 
-func get_velocity_at_time(
-        edge_time: float,
-        surface_state) -> Vector2:
+func get_velocity_at_time(edge_time: float) -> Vector2:
     if is_instance_valid(trajectory):
         var index := int(edge_time / Time.PHYSICS_TIME_STEP)
         if index >= trajectory.frame_continuous_velocities_from_steps.size():
