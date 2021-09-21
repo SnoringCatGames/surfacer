@@ -291,6 +291,21 @@ static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
                         "TileSet collision-shape vertices must align with " +
                         "whole-pixel coordinates (this is important for " +
                         "merging adjacent-tile surfaces).")
+            
+            if !Su.are_oddly_shaped_surfaces_used:
+                var cell_size := tile_map.cell_size
+                for i in points.size():
+                    var point: Vector2 = points[i]
+                    assert(Sc.geometry.are_points_equal_with_epsilon(
+                                    point, Vector2(0.0, 0.0)) or \
+                            Sc.geometry.are_points_equal_with_epsilon(
+                                    point, Vector2(0.0, cell_size.y)) or \
+                            Sc.geometry.are_points_equal_with_epsilon(
+                                    point, Vector2(cell_size.x, 0.0)) or \
+                            Sc.geometry.are_points_equal_with_epsilon(
+                                    point, Vector2(cell_size.x, cell_size.y)),
+                            "Oddly-shaped tiles aren't enabled " + 
+                            "(Su.are_oddly_shaped_surfaces_used).")
 
 
 # Parses the tiles of given TileMap into their constituent top-sides,
