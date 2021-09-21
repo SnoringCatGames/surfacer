@@ -351,8 +351,7 @@ func _match_expected_edge_trajectory() -> void:
     
     if movement_params.syncs_character_velocity_to_edge_trajectory:
         var expected_velocity := navigator.edge.get_velocity_at_time(
-                playback_elapsed_time,
-                surface_state)
+                playback_elapsed_time)
         var is_movement_beyond_expected_trajectory := \
                 expected_velocity == Vector2.INF
         if !is_movement_beyond_expected_trajectory:
