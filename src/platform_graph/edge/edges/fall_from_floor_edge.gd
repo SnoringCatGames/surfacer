@@ -14,7 +14,6 @@ const TYPE := EdgeType.FALL_FROM_FLOOR_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
-const INCLUDES_TRAJECTORY := true
 
 var falls_on_left_side: bool
 var fall_off_position: PositionAlongSurface
@@ -39,7 +38,6 @@ func _init(
         IS_TIME_BASED,
         SURFACE_TYPE,
         ENTERS_AIR,
-        INCLUDES_TRAJECTORY,
         calculator,
         start,
         end,

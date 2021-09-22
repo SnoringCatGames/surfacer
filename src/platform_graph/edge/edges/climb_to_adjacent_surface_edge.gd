@@ -49,8 +49,7 @@ func _init(
         trajectory,
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
         0.0) -> void:
-    if is_instance_valid(start):
-        includes_trajectory = get_is_convex()
+    pass
 
 
 func _calculate_distance(
@@ -158,7 +157,6 @@ func load_from_json_object(
     .load_from_json_object(json_object, context)
     edge_type = SurfaceType.get_type_from_side(
             start_position_along_surface.side)
-    includes_trajectory = get_is_convex()
 
 
 func get_is_clockwise() -> bool:

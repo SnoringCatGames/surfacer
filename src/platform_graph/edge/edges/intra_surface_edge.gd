@@ -9,9 +9,11 @@ extends Edge
 const TYPE := EdgeType.INTRA_SURFACE_EDGE
 const IS_TIME_BASED := false
 const ENTERS_AIR := false
-const INCLUDES_TRAJECTORY := false
 
 const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
+
+# If true, then this edge starts and ends at the same position.
+var is_degenerate: bool
 
 var stopping_distance := INF
 var is_backtracking_to_not_protrude_past_surface_end := false
@@ -19,36 +21,52 @@ var is_moving_clockwise := false
 
 
 func _init(
-        start: PositionAlongSurface = null,
-        end: PositionAlongSurface = null,
+        start_position_along_surface: PositionAlongSurface = null,
+        end_position_along_surface: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
-        movement_params: MovementParameters = null) \
+        velocity_end := Vector2.INF,
+        distance := INF,
+        duration := INF,
+        is_moving_clockwise := false,
+        movement_params: MovementParameters = null,
+        instructions: EdgeInstructions = null,
+        trajectory: EdgeTrajectory = null) \
         .(TYPE,
         IS_TIME_BASED,
-        SurfaceType.get_type_from_side(start.side),
+        SurfaceType.get_type_from_side(start_position_along_surface.side),
         ENTERS_AIR,
-        INCLUDES_TRAJECTORY,
         null,
-        start,
-        end,
+        start_position_along_surface,
+        end_position_along_surface,
         velocity_start,
-        _calculate_velocity_end(
-                start,
-                end,
-                velocity_start,
-                movement_params),
+        velocity_end,
+        distance,
+        duration,
         false,
         false,
         movement_params,
-        null,
-        null,
+        instructions,
+        trajectory,
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
         0.0) -> void:
     # Intra-surface edges are never calculated and stored ahead of time;
     # they're only calculated at run time when navigating a specific path.
     self.is_optimized_for_path = true
-    self.is_moving_clockwise = _calculate_is_moving_clockwise(
-            instructions, start.surface)
+    
+    self.is_moving_clockwise = is_moving_clockwise
+    
+    self.is_degenerate = Sc.geometry.are_points_equal_with_epsilon(
+            start_position_along_surface.target_point,
+            end_position_along_surface.target_point,
+            0.00001)
+    self.distance = \
+            self.distance if \
+            !self.is_degenerate else \
+            0.00001
+    self.duration = \
+            self.duration if \
+            !self.is_degenerate else \
+            0.00001
 
 
 func update_terminal(
@@ -103,31 +121,6 @@ func update_for_surface_state(
                 displacement_to_end)
     else:
         stopping_distance = 0.0
-
-
-func _calculate_distance(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        trajectory: EdgeTrajectory) -> float:
-    if is_degenerate:
-        return 0.00001
-    else:
-        return start.target_point.distance_to(end.target_point)
-
-
-func _calculate_duration(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        instructions: EdgeInstructions,
-        distance: float) -> float:
-    if is_degenerate:
-        return 0.00001
-    else:
-        return calculate_duration_to_move_along_surface(
-                movement_params,
-                start,
-                end,
-                distance)
 
 
 func get_position_at_time(edge_time: float) -> Vector2:
@@ -338,168 +331,3 @@ func _update_navigation_state_edge_specific_helper(
             # Interrupted the edge.
             navigation_state.just_interrupted_by_unexpected_collision = true
             break
-
-
-static func _calculate_instructions(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        duration: float) -> EdgeInstructions:
-    if start == null or end == null:
-        return null
-    
-    var input_key: String
-    var is_wall_surface := end.surface.normal.y == 0.0
-    if is_wall_surface:
-        if start.target_point.y < end.target_point.y:
-            input_key = "md"
-        else:
-            input_key = "mu"
-    else:
-        if start.target_point.x < end.target_point.x:
-            input_key = "mr"
-        else:
-            input_key = "ml"
-    
-    var instruction := EdgeInstruction.new(
-            input_key,
-            0.0,
-            true)
-    
-    return EdgeInstructions.new(
-            [instruction],
-            duration,
-            false)
-
-
-static func _calculate_is_moving_clockwise(
-        instructions: EdgeInstructions,
-        surface: Surface) -> bool:
-    var input_key: String = instructions.instructions[0].input_key
-    match surface.side:
-        SurfaceSide.FLOOR:
-            return input_key == "mr"
-        SurfaceSide.LEFT_WALL:
-            return input_key == "md"
-        SurfaceSide.RIGHT_WALL:
-            return input_key == "mu"
-        SurfaceSide.CEILING:
-            return input_key == "ml"
-        _:
-            Sc.logger.error()
-            return false
-
-
-static func _calculate_velocity_end(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        velocity_start: Vector2,
-        movement_params: MovementParameters) -> Vector2:
-    var displacement := end.target_point - start.target_point
-    
-    match start.side:
-        SurfaceSide.FLOOR:
-            # We need to calculate the end velocity, taking into account whether
-            # we will have had enough distance to reach max horizontal speed.
-            var acceleration := \
-                    movement_params.walk_acceleration if \
-                    displacement.x > 0.0 else \
-                    -movement_params.walk_acceleration
-            var velocity_end_x: float = \
-                    MovementUtils.calculate_velocity_end_for_displacement(
-                            displacement.x,
-                            velocity_start.x,
-                            acceleration,
-                            movement_params.max_horizontal_speed_default)
-            return Vector2(velocity_end_x, 0.0)
-        SurfaceSide.LEFT_WALL, \
-        SurfaceSide.RIGHT_WALL:
-            # We use a constant speed (no acceleration) when climbing.
-            var velocity_end_y := \
-                    movement_params.climb_up_speed if \
-                    displacement.y < 0.0 else \
-                    movement_params.climb_down_speed
-            return Vector2(0.0, velocity_end_y)
-        SurfaceSide.CEILING:
-            # We use a constant speed (no acceleration) when crawling on the
-            # ceiling.
-            var velocity_end_x := \
-                    movement_params.ceiling_crawl_speed if \
-                    displacement.x > 0.0 else \
-                    -movement_params.ceiling_crawl_speed
-            return Vector2(velocity_end_x, 0.0)
-        _:
-            Sc.logger.error()
-            return Vector2.INF
-
-
-# Calculate the distance from the end position at which the move button should
-# be released, so that the character comes to rest at the desired end position
-# after decelerating due to friction (and with accelerating, or coasting at
-# max-speed, until starting deceleration).
-static func _calculate_stopping_distance(
-        movement_params: MovementParameters,
-        edge: IntraSurfaceEdge,
-        velocity_start: Vector2,
-        displacement_to_end: Vector2) -> float:
-    if movement_params.forces_character_position_to_match_path_at_end:
-        return 0.0
-    
-    # TODO: Add support for acceleration and friction alongs walls and
-    #       ceilings.
-    match edge.get_end_surface().side:
-        SurfaceSide.FLOOR:
-            var friction_coefficient: float = \
-                    movement_params.friction_coefficient * \
-                    edge.get_end_surface().tile_map.collision_friction
-            var stopping_distance := MovementUtils \
-                    .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
-                            movement_params,
-                            velocity_start.x,
-                            displacement_to_end.x,
-                            movement_params.gravity_fast_fall,
-                            friction_coefficient)
-            return stopping_distance if \
-                    abs(displacement_to_end.x) - stopping_distance > \
-                            REACHED_DESTINATION_DISTANCE_THRESHOLD else \
-                    max(abs(displacement_to_end.x) - \
-                            REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0, 0.0)
-        SurfaceSide.LEFT_WALL, \
-        SurfaceSide.RIGHT_WALL:
-            var climb_speed := \
-                    abs(movement_params.climb_up_speed) if \
-                    displacement_to_end.y < 0 else \
-                    abs(movement_params.climb_down_speed)
-            return climb_speed * Time.PHYSICS_TIME_STEP + 0.01
-        SurfaceSide.CEILING:
-            var climb_speed := abs(movement_params.ceiling_crawl_speed)
-            return climb_speed * Time.PHYSICS_TIME_STEP + 0.01
-        _:
-            Sc.logger.error()
-            return INF
-
-
-static func calculate_duration_to_move_along_surface(
-        movement_params: MovementParameters,
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        distance: float) -> float:
-    match start.side:
-        SurfaceSide.FLOOR:
-            return MovementUtils.calculate_time_to_walk(
-                    distance,
-                    0.0,
-                    movement_params)
-        SurfaceSide.LEFT_WALL, \
-        SurfaceSide.RIGHT_WALL:
-            var is_climbing_upward := end.target_point.y < start.target_point.y
-            return MovementUtils.calculate_time_to_climb(
-                    distance,
-                    is_climbing_upward,
-                    movement_params)
-        SurfaceSide.CEILING:
-            return MovementUtils.calculate_time_to_crawl_on_ceiling(
-                    distance,
-                    movement_params)
-        _:
-            Sc.logger.error()
-            return INF

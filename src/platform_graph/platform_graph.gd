@@ -366,12 +366,15 @@ static func _calculate_intra_surface_edge_weight(
         movement_params: MovementParameters,
         node_a: PositionAlongSurface,
         node_b: PositionAlongSurface) -> float:
-    var distance := node_a.target_point.distance_to(node_b.target_point)
+    var distance := IntraSurfaceEdgeFactory.calculate_duration(
+            movement_params,
+            node_a,
+            node_b)
     
     # Use either the distance or the duration as the weight for the edge.
     var weight: float
     if movement_params.uses_duration_instead_of_distance_for_edge_weight:
-        weight = IntraSurfaceEdge.calculate_duration_to_move_along_surface(
+        weight = IntraSurfaceEdgeFactory.calculate_duration(
                 movement_params,
                 node_a,
                 node_b,
