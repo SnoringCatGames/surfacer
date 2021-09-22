@@ -7,7 +7,6 @@ const TYPE := EdgeType.FROM_AIR_EDGE
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := false
-const INCLUDES_TRAJECTORY := true
 
 
 func _init(
@@ -26,7 +25,6 @@ func _init(
         IS_TIME_BASED,
         SURFACE_TYPE,
         ENTERS_AIR,
-        INCLUDES_TRAJECTORY,
         calculator,
         start,
         end,

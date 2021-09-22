@@ -15,8 +15,6 @@ var surface_type: int
 # being airborne.
 var enters_air: bool
 
-var includes_trajectory: bool
-
 var movement_params: MovementParameters
 
 # Whether this edge was created by the navigator for a specific path at
@@ -32,9 +30,6 @@ var velocity_end := Vector2.INF
 
 var time_peak_height := 0.0
 
-# If true, then this edge starts and ends at the same position.
-var is_degenerate: bool
-
 # In pixels.
 var distance: float
 # In seconds.
@@ -46,12 +41,13 @@ func _init(
         is_time_based: bool,
         surface_type: int,
         enters_air: bool,
-        includes_trajectory: bool,
         calculator,
         start_position_along_surface: PositionAlongSurface,
         end_position_along_surface: PositionAlongSurface,
         velocity_start: Vector2,
         velocity_end: Vector2,
+        distance: float,
+        duration: float,
         includes_extra_jump_duration: bool,
         includes_extra_wall_land_horizontal_speed: bool,
         movement_params: MovementParameters,
@@ -72,9 +68,10 @@ func _init(
     self.is_time_based = is_time_based
     self.surface_type = surface_type
     self.enters_air = enters_air
-    self.includes_trajectory = includes_trajectory
     self.movement_params = movement_params
     self.velocity_end = velocity_end
+    self.distance = distance
+    self.duration = duration
     self.instructions = instructions
     self.trajectory = trajectory
     self.time_peak_height = time_peak_height
@@ -84,10 +81,6 @@ func _init(
             !movement_params.includes_continuous_trajectory_positions))
     
     if start_position_along_surface != null:
-        self.is_degenerate = Sc.geometry.are_points_equal_with_epsilon(
-                start_position_along_surface.target_point,
-                end_position_along_surface.target_point,
-                0.00001)
         self.distance = _calculate_distance(
                 start_position_along_surface,
                 end_position_along_surface,

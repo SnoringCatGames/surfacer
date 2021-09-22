@@ -710,78 +710,10 @@ func draw_edge(
         includes_instruction_indicators := false,
         includes_continuous_positions := true,
         includes_discrete_positions := false) -> void:
-    if base_color == Color.white:
-        base_color = Sc.ann_params \
+    if discrete_trajectory_color == Color.white:
+        discrete_trajectory_color = Sc.ann_params \
                 .edge_discrete_trajectory_color_params.get_color()
     
-    if edge.includes_trajectory:
-        _draw_edge_from_instructions_positions(
-                canvas,
-                edge,
-                stroke_width,
-                base_color,
-                includes_waypoints,
-                includes_instruction_indicators,
-                includes_continuous_positions,
-                includes_discrete_positions)
-    else:
-        _draw_edge_from_end_points(
-                canvas,
-                edge,
-                stroke_width,
-                base_color,
-                includes_waypoints,
-                includes_instruction_indicators)
-
-
-func _draw_edge_from_end_points(
-        canvas: CanvasItem,
-        edge: Edge,
-        stroke_width: float,
-        base_color: Color,
-        includes_waypoints: bool,
-        includes_instruction_indicators: bool) -> void:
-    canvas.draw_line(
-            edge.get_start(),
-            edge.get_end(),
-            base_color,
-            stroke_width)
-    
-    if includes_waypoints:
-        var waypoint_color: Color = Sc.ann_params \
-                .waypoint_color_params.get_color()
-        waypoint_color.h = base_color.h
-        waypoint_color.a = base_color.a
-        
-        draw_destination_marker(
-                canvas,
-                edge.end_position_along_surface,
-                true,
-                waypoint_color)
-        draw_origin_marker(
-                canvas,
-                edge.get_start(),
-                waypoint_color)
-    
-    if includes_instruction_indicators:
-        var instruction_color: Color = Sc.ann_params \
-                .instruction_color_params.get_color()
-        instruction_color.h = base_color.h
-        instruction_color.a = base_color.a
-        
-        # TODO: Draw instruction indicators.
-
-
-func _draw_edge_from_instructions_positions(
-        canvas: CanvasItem,
-        edge: Edge,
-        stroke_width: float,
-        discrete_trajectory_color: Color,
-        includes_waypoints: bool,
-        includes_instruction_indicators: bool,
-        includes_continuous_positions: bool,
-        includes_discrete_positions: bool,
-        origin_position_override := Vector2.INF) -> void:
     # Set up colors.
     var continuous_trajectory_color: Color = Sc.ann_params \
             .edge_continuous_trajectory_color_params.get_color()
