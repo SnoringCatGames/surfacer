@@ -221,7 +221,6 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
             context,
             surface_parser)
     
-    # FIXME: LEFT OFF HERE: --------------------- Add a separate flag for this.
     if Sc.metadata.debug or Sc.metadata.playtest:
         _validate_tile_maps(json_object)
         _validate_characters(json_object)
