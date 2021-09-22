@@ -109,9 +109,8 @@ func _attempt_navigation(just_turned_around: bool) -> int:
                 _create_climb_to_neighbor_surface_edge()
         edges.push_back(climb_to_neighbor_surface_edge)
         
-        var intra_surface_edge: IntraSurfaceEdge = \
-                Su.movement.intra_surface_calculator.create(
-                    climb_to_neighbor_surface_edge.end_position_along_surface,
+        var intra_surface_edge: IntraSurfaceEdge = Su.movement \
+                .intra_surface_calculator.create_correction_interstitial(
                     climb_to_neighbor_surface_edge.end_position_along_surface,
                     Vector2.ZERO,
                     character.movement_params)
