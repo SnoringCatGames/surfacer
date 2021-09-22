@@ -366,9 +366,8 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                 path.edges[i - 1].velocity_end.x if \
                 i > 0 else \
                 0.0
-        var intra_surface_edge: IntraSurfaceEdge = \
-                Su.movement.intra_surface_calculator.create(
-                        original_edge.start_position_along_surface,
+        var intra_surface_edge: IntraSurfaceEdge = Su.movement \
+                .intra_surface_calculator.create_correction_interstitial(
                         original_edge.start_position_along_surface,
                         Vector2(previous_velocity_end_x, 0.0),
                         character.movement_params)
@@ -415,9 +414,8 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                 
                 # Add an in-between IntraSurface edge.
                 previous_velocity_end_x = jump_edge.velocity_end.x
-                intra_surface_edge = \
-                        Su.movement.intra_surface_calculator.create(
-                                jump_edge.end_position_along_surface,
+                intra_surface_edge = Su.movement.intra_surface_calculator \
+                        .create_correction_interstitial(
                                 jump_edge.end_position_along_surface,
                                 Vector2(previous_velocity_end_x, 0.0),
                                 character.movement_params)
@@ -578,9 +576,8 @@ func try_to_end_path_with_a_jump(path: PlatformGraphPath) -> bool:
                     previous_velocity_end_x,
                     previous_edge,
                     jump_edge)
-            var intra_surface_edge: IntraSurfaceEdge = \
-                    Su.movement.intra_surface_calculator.create(
-                            jump_edge.end_position_along_surface,
+            var intra_surface_edge: IntraSurfaceEdge = Su.movement \
+                    .intra_surface_calculator.create_correction_interstitial(
                             jump_edge.end_position_along_surface,
                             Vector2(jump_edge.velocity_end.x, 0.0),
                             movement_params)
@@ -1363,8 +1360,8 @@ static func _interleave_intra_surface_edges(
             if i + 1 < count and \
                     !(path.edges[i + 1] is IntraSurfaceEdge):
                 path.edges.insert(i + 1,
-                        Su.movement.intra_surface_calculator.create(
-                                edge.end_position_along_surface,
+                        Su.movement.intra_surface_calculator \
+                            .create_correction_interstitial(
                                 edge.end_position_along_surface,
                                 # TODO: Calculate a more accurate
                                 #       surface-aligned value.

@@ -85,9 +85,15 @@ func create(
             trajectory)
 
 
-func create_correction_interstitial() -> IntraSurfaceEdge:
-    pass
-    return null
+func create_correction_interstitial(
+        position: PositionAlongSurface,
+        velocity: Vector2,
+        movement_params: MovementParameters) -> IntraSurfaceEdge:
+    return create(
+            position,
+            position,
+            velocity,
+            movement_params)
 
 
 func update_terminal(
@@ -285,6 +291,7 @@ func _calculate_instructions(
 func _calculate_trajectory(
         start: PositionAlongSurface,
         end: PositionAlongSurface) -> EdgeTrajectory:
+    # FIXME: LEFT OFF HERE: ----------------------------------------------------
     pass
     return null
 

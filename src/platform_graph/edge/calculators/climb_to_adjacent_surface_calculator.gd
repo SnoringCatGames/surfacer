@@ -314,10 +314,6 @@ func _calculate_trajectory(
             position_start.surface.counter_clockwise_convex_neighbor == \
                     position_end.surface
     
-    if !is_convex:
-        # FIXME: LEFT OFF HERE: ----------------------------------------
-        return null
-    
     var trajectory := EdgeTrajectory.new()
     
     trajectory.waypoint_positions = [
@@ -331,6 +327,55 @@ func _calculate_trajectory(
             !movement_params.includes_continuous_trajectory_velocities:
         return trajectory
     
+    if !is_convex:
+        _populate_concave_trajectory(
+                trajectory,
+                position_start,
+                position_end,
+                movement_params,
+                duration)
+    else:
+        _populate_convex_trajectory(
+                trajectory,
+                position_start,
+                position_end,
+                movement_params,
+                duration)
+    
+    return trajectory
+
+
+func _populate_concave_trajectory(
+        trajectory: EdgeTrajectory,
+        position_start: PositionAlongSurface,
+        position_end: PositionAlongSurface,
+        movement_params: MovementParameters,
+        duration: float) -> void:
+    var position := position_start.target_point
+    var velocity := Vector2.ZERO
+    
+    var positions := [position]
+    var velocities := [velocity]
+    
+    if movement_params.includes_discrete_trajectory_state:
+        trajectory.frame_discrete_positions_from_test = \
+                PoolVector2Array(positions)
+    if movement_params.includes_continuous_trajectory_positions:
+        trajectory.frame_continuous_positions_from_steps = \
+                PoolVector2Array(positions)
+    if movement_params.includes_continuous_trajectory_velocities:
+        trajectory.frame_continuous_velocities_from_steps = \
+                PoolVector2Array(velocities)
+    
+    trajectory.distance_from_continuous_trajectory = 0.0
+
+
+func _populate_convex_trajectory(
+        trajectory: EdgeTrajectory,
+        position_start: PositionAlongSurface,
+        position_end: PositionAlongSurface,
+        movement_params: MovementParameters,
+        duration: float) -> void:
     var start_side := position_start.side
     var end_side := position_end.side
     var is_clockwise := \
@@ -531,8 +576,6 @@ func _calculate_trajectory(
     # Update the trajectory distance.
     trajectory.distance_from_continuous_trajectory = \
             EdgeTrajectoryUtils.sum_distance_between_frames(positions)
-    
-    return trajectory
 
 
 func _get_velocity_start(
