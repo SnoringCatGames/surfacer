@@ -1202,24 +1202,12 @@ static func project_shape_onto_convex_corner_preserving_tangent_position( \
                 Sc.logger.error()
         
     else:
-        # FIXME: LEFT OFF HERE: --------------------------------------
-        pass
-    
-    
+        # TODO: Implement this case. Redirect to
+        #       calculate_displacement_x_for_vertical_distance_past_edge and
+        #       calculate_displacement_y_for_horizontal_distance_past_edge.
+        Sc.logger.error("Not implemented yet.")
     
     return projection
-
-
-static func project_shape_onto_concave_corner( \
-        shape_position: Vector2,
-        shape: RotatedShape,
-        origin_surface: Surface,
-        destination_surface: Surface) -> Vector2:
-    # FIXME: LEFT OFF HERE: --------------------------------------
-    # - Su.are_oddly_shaped_surfaces_used
-    pass
-    
-    return Vector2.INF
 
 
 static func calculate_displacement_x_for_vertical_distance_past_edge( \

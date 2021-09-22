@@ -141,9 +141,6 @@ func _calculate_jump_land_positions(
             origin_surface.side == SurfaceSide.FLOOR or \
             neighbor.side == SurfaceSide.FLOOR
     
-    # FIXME: --------------------------- Use new project_shape_onto_concave_corner
-    
-    
     var start_target_point: Vector2
     var end_target_point: Vector2
     if is_convex:
