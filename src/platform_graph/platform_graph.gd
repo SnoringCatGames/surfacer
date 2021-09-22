@@ -104,7 +104,7 @@ func find_path(
     if origin_surface == destination_surface:
         # If the we are simply trying to get to a different position on the
         # same surface, then we don't need A*.
-        var edges := [IntraSurfaceEdge.new(
+        var edges := [Su.movement.intra_surface_calculator.create(
                 origin,
                 destination,
                 Vector2.ZERO,
@@ -229,7 +229,7 @@ func find_path(
             # 
             # The previous node is on the same surface as the current node, so
             # we create an intra-surface edge.
-            next_edge = IntraSurfaceEdge.new(
+            next_edge = Su.movement.intra_surface_calculator.create(
                     previous_node,
                     current_node,
                     Vector2.ZERO,

@@ -366,11 +366,12 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                 path.edges[i - 1].velocity_end.x if \
                 i > 0 else \
                 0.0
-        var intra_surface_edge := IntraSurfaceEdge.new(
-                original_edge.start_position_along_surface,
-                original_edge.start_position_along_surface,
-                Vector2(previous_velocity_end_x, 0.0),
-                character.movement_params)
+        var intra_surface_edge: IntraSurfaceEdge = \
+                Su.movement.intra_surface_calculator.create(
+                        original_edge.start_position_along_surface,
+                        original_edge.start_position_along_surface,
+                        Vector2(previous_velocity_end_x, 0.0),
+                        character.movement_params)
         new_edges.push_back(intra_surface_edge)
         
         while remaining_distance > close_enough_to_end_distance:
@@ -414,21 +415,23 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                 
                 # Add an in-between IntraSurface edge.
                 previous_velocity_end_x = jump_edge.velocity_end.x
-                intra_surface_edge = IntraSurfaceEdge.new(
-                        jump_edge.end_position_along_surface,
-                        jump_edge.end_position_along_surface,
-                        Vector2(previous_velocity_end_x, 0.0),
-                        character.movement_params)
+                intra_surface_edge = \
+                        Su.movement.intra_surface_calculator.create(
+                                jump_edge.end_position_along_surface,
+                                jump_edge.end_position_along_surface,
+                                Vector2(previous_velocity_end_x, 0.0),
+                                character.movement_params)
                 new_edges.push_back(intra_surface_edge)
             else:
                 # We weren't able to calculate a jump edge for this span, so
                 # just use an intra-surface edge.
                 previous_velocity_end_x = intra_surface_edge.velocity_end.x
-                intra_surface_edge = IntraSurfaceEdge.new(
-                        jump_origin,
-                        jump_destination,
-                        Vector2(previous_velocity_end_x, 0.0),
-                        character.movement_params)
+                intra_surface_edge = \
+                        Su.movement.intra_surface_calculator.create(
+                                jump_origin,
+                                jump_destination,
+                                Vector2(previous_velocity_end_x, 0.0),
+                                character.movement_params)
                 new_edges.push_back(intra_surface_edge)
             
             remaining_distance = abs(end_point.x - current_end_point.x)
@@ -439,7 +442,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
             # in-between intra-surface edge with one that will get us to the
             # original edge end point.
             intra_surface_edge = new_edges.back()
-            intra_surface_edge = IntraSurfaceEdge.new(
+            intra_surface_edge = Su.movement.intra_surface_calculator.create(
                     intra_surface_edge.start_position_along_surface,
                     original_edge.end_position_along_surface,
                     intra_surface_edge.velocity_start,
@@ -453,7 +456,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
             var next: Edge = new_edges[j + 1]
             if previous is IntraSurfaceEdge and \
                     next is IntraSurfaceEdge:
-                new_edges[j] = IntraSurfaceEdge.new(
+                new_edges[j] = Su.movement.intra_surface_calculator.create(
                         previous.start_position_along_surface,
                         next.end_position_along_surface,
                         previous.velocity_start,
@@ -575,11 +578,12 @@ func try_to_end_path_with_a_jump(path: PlatformGraphPath) -> bool:
                     previous_velocity_end_x,
                     previous_edge,
                     jump_edge)
-            var intra_surface_edge := IntraSurfaceEdge.new(
-                    jump_edge.end_position_along_surface,
-                    jump_edge.end_position_along_surface,
-                    Vector2(jump_edge.velocity_end.x, 0.0),
-                    movement_params)
+            var intra_surface_edge: IntraSurfaceEdge = \
+                    Su.movement.intra_surface_calculator.create(
+                            jump_edge.end_position_along_surface,
+                            jump_edge.end_position_along_surface,
+                            Vector2(jump_edge.velocity_end.x, 0.0),
+                            movement_params)
             path.edges.push_back(intra_surface_edge)
             path.update_distance_and_duration()
             return true
@@ -1033,11 +1037,12 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                     surface,
                     movement_params.collider,
                     true)
-    var backtracking_edge := IntraSurfaceEdge.new(
-            start_position,
-            end_position,
-            velocity,
-            movement_params)
+    var backtracking_edge: IntraSurfaceEdge = \
+            Su.movement.intra_surface_calculator.create(
+                    start_position,
+                    end_position,
+                    velocity,
+                    movement_params)
     backtracking_edge.is_backtracking_to_not_protrude_past_surface_end = true
     return backtracking_edge
 
@@ -1358,7 +1363,7 @@ static func _interleave_intra_surface_edges(
             if i + 1 < count and \
                     !(path.edges[i + 1] is IntraSurfaceEdge):
                 path.edges.insert(i + 1,
-                        IntraSurfaceEdge.new(
+                        Su.movement.intra_surface_calculator.create(
                                 edge.end_position_along_surface,
                                 edge.end_position_along_surface,
                                 # TODO: Calculate a more accurate

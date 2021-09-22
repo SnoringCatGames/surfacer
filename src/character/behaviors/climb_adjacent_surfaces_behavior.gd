@@ -95,11 +95,12 @@ func _attempt_navigation(just_turned_around: bool) -> int:
     var edges := []
     
     if !is_already_at_surface_end:
-        var intra_surface_edge := IntraSurfaceEdge.new(
-                latest_move_start_position_along_surface,
-                intra_surface_destination,
-                Vector2.ZERO,
-                character.movement_params)
+        var intra_surface_edge: IntraSurfaceEdge = \
+                Su.movement.intra_surface_calculator.create(
+                        latest_move_start_position_along_surface,
+                        intra_surface_destination,
+                        Vector2.ZERO,
+                        character.movement_params)
         edges.push_back(intra_surface_edge)
     
     if can_grab_next_surface and \
@@ -108,11 +109,12 @@ func _attempt_navigation(just_turned_around: bool) -> int:
                 _create_climb_to_neighbor_surface_edge()
         edges.push_back(climb_to_neighbor_surface_edge)
         
-        var intra_surface_edge := IntraSurfaceEdge.new(
-                climb_to_neighbor_surface_edge.end_position_along_surface,
-                climb_to_neighbor_surface_edge.end_position_along_surface,
-                Vector2.ZERO,
-                character.movement_params)
+        var intra_surface_edge: IntraSurfaceEdge = \
+                Su.movement.intra_surface_calculator.create(
+                    climb_to_neighbor_surface_edge.end_position_along_surface,
+                    climb_to_neighbor_surface_edge.end_position_along_surface,
+                    Vector2.ZERO,
+                    character.movement_params)
         edges.push_back(intra_surface_edge)
     
     var path := PlatformGraphPath.new(edges)

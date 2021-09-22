@@ -5,12 +5,14 @@ extends EdgeCalculator
 const NAME := "JumpFromSurfaceCalculator"
 const EDGE_TYPE := EdgeType.JUMP_FROM_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := true
+const IS_GRAPHABLE := false
 
 
 func _init().(
         NAME,
         EDGE_TYPE,
-        IS_A_JUMP_CALCULATOR) -> void:
+        IS_A_JUMP_CALCULATOR,
+        IS_GRAPHABLE) -> void:
     pass
 
 
@@ -267,6 +269,8 @@ func create_edge_from_edge_calc_params(
             edge_calc_params.destination_position,
             edge_calc_params.velocity_start,
             velocity_end,
+            trajectory.distance_from_continuous_trajectory,
+            instructions.duration,
             edge_calc_params.needs_extra_jump_duration,
             edge_calc_params.needs_extra_wall_land_horizontal_speed,
             edge_calc_params.movement_params,

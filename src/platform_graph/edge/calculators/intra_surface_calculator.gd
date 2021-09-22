@@ -50,9 +50,6 @@ func calculate_edge(
             collision_params.movement_params)
 
 
-# FIXME: LEFT OFF HERE: ----------------------------- Call this.
-
-
 func create(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
@@ -61,9 +58,9 @@ func create(
     var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
             start.target_point, end.target_point, 0.00001)
     var distance := calculate_distance(
-            movement_params, start, end, is_degenerate)
+            movement_params, start, end)
     var duration := calculate_duration(
-            movement_params, start, end, distance, is_degenerate)
+            movement_params, start, end, distance)
     var velocity_end := _calculate_velocity_end(
             start, end, velocity_start, movement_params)
     var is_moving_clockwise := _calculate_is_moving_clockwise(start, end)
@@ -129,9 +126,9 @@ func _update(edge: IntraSurfaceEdge) -> void:
     var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
             start.target_point, end.target_point, 0.00001)
     var distance := calculate_distance(
-            movement_params, start, end, is_degenerate)
+            movement_params, start, end)
     var duration := calculate_duration(
-            movement_params, start, end, distance, is_degenerate)
+            movement_params, start, end, distance)
     var velocity_end := _calculate_velocity_end(
             start, end, velocity_start, movement_params)
     var is_moving_clockwise := _calculate_is_moving_clockwise(start, end)
@@ -153,8 +150,9 @@ func _update(edge: IntraSurfaceEdge) -> void:
 func calculate_distance(
         movement_params: MovementParameters,
         start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        is_degenerate: bool) -> float:
+        end: PositionAlongSurface) -> float:
+    var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
+            start.target_point, end.target_point, 0.00001)
     return start.target_point.distance_to(end.target_point) if \
             !is_degenerate else \
             0.00001
@@ -164,8 +162,9 @@ func calculate_duration(
         movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface,
-        distance: float,
-        is_degenerate) -> float:
+        distance: float) -> float:
+    var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
+            start.target_point, end.target_point, 0.00001)
     if is_degenerate:
         return 0.00001
     
