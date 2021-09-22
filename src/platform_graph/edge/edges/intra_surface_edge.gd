@@ -12,15 +12,15 @@ const ENTERS_AIR := false
 
 const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
 
+var is_moving_clockwise := false
+var stopping_distance := INF
+var is_backtracking_to_not_protrude_past_surface_end := false
 # If true, then this edge starts and ends at the same position.
 var is_degenerate: bool
 
-var stopping_distance := INF
-var is_backtracking_to_not_protrude_past_surface_end := false
-var is_moving_clockwise := false
-
 
 func _init(
+        calculator = null,
         start_position_along_surface: PositionAlongSurface = null,
         end_position_along_surface: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
@@ -28,6 +28,8 @@ func _init(
         distance := INF,
         duration := INF,
         is_moving_clockwise := false,
+        stopping_distance := INF,
+        is_degenerate := false,
         movement_params: MovementParameters = null,
         instructions: EdgeInstructions = null,
         trajectory: EdgeTrajectory = null) \
@@ -35,7 +37,7 @@ func _init(
         IS_TIME_BASED,
         SurfaceType.get_type_from_side(start_position_along_surface.side),
         ENTERS_AIR,
-        null,
+        calculator,
         start_position_along_surface,
         end_position_along_surface,
         velocity_start,
@@ -52,75 +54,9 @@ func _init(
     # Intra-surface edges are never calculated and stored ahead of time;
     # they're only calculated at run time when navigating a specific path.
     self.is_optimized_for_path = true
-    
     self.is_moving_clockwise = is_moving_clockwise
-    
-    self.is_degenerate = Sc.geometry.are_points_equal_with_epsilon(
-            start_position_along_surface.target_point,
-            end_position_along_surface.target_point,
-            0.00001)
-    self.distance = \
-            self.distance if \
-            !self.is_degenerate else \
-            0.00001
-    self.duration = \
-            self.duration if \
-            !self.is_degenerate else \
-            0.00001
-
-
-func update_terminal(
-        is_start: bool,
-        target_point: Vector2) -> void:
-    if is_start:
-        start_position_along_surface = PositionAlongSurfaceFactory \
-                .create_position_offset_from_target_point(
-                        target_point,
-                        start_position_along_surface.surface,
-                        movement_params.collider,
-                        true)
-    else:
-        end_position_along_surface = PositionAlongSurfaceFactory \
-                .create_position_offset_from_target_point(
-                        target_point,
-                        end_position_along_surface.surface,
-                        movement_params.collider,
-                        true)
-    velocity_end = _calculate_velocity_end(
-            start_position_along_surface,
-            end_position_along_surface,
-            velocity_start,
-            movement_params)
-    distance = _calculate_distance(
-            start_position_along_surface,
-            end_position_along_surface,
-            null)
-    duration = _calculate_duration(
-            start_position_along_surface,
-            end_position_along_surface,
-            instructions,
-            distance)
-
-
-func update_for_surface_state(
-        surface_state: CharacterSurfaceState,
-        is_final_edge: bool) -> void:
-    instructions = _calculate_instructions(
-            surface_state.center_position_along_surface,
-            end_position_along_surface,
-            duration)
-    
-    if is_final_edge:
-        var displacement_to_end := \
-                end_position_along_surface.target_point - \
-                surface_state.center_position
-        stopping_distance = _calculate_stopping_distance(
-                movement_params,
-                self,
-                surface_state.velocity,
-                displacement_to_end)
-    else:
-        stopping_distance = 0.0
+    self.stopping_distance = stopping_distance
+    self.is_degenerate = is_degenerate
 
 
 func get_position_at_time(edge_time: float) -> Vector2:

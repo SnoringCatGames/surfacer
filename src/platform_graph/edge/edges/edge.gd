@@ -81,22 +81,8 @@ func _init(
             !movement_params.includes_continuous_trajectory_positions))
     
     if start_position_along_surface != null:
-        self.distance = _calculate_distance(
-                start_position_along_surface,
-                end_position_along_surface,
-                trajectory)
         assert(!is_inf(distance))
-        self.duration = _calculate_duration(
-                start_position_along_surface,
-                end_position_along_surface,
-                instructions,
-                distance)
         assert(!is_inf(duration))
-        if self.instructions == null:
-            self.instructions = _calculate_instructions(
-                    start_position_along_surface,
-                    end_position_along_surface,
-                    duration)
         assert(!is_inf(self.instructions.duration))
     
     # -   Too few frames probably means that a collision was detected much
@@ -110,13 +96,6 @@ func _init(
                     expected_frame_count_for_duration - 10 and \
             trajectory.frame_continuous_positions_from_steps.size() <= \
                     expected_frame_count_for_duration + 4))
-
-
-func update_for_surface_state(
-        surface_state: CharacterSurfaceState,
-        is_final_edge: bool) -> void:
-    # Do nothing unless the sub-class implements this.
-    pass
 
 
 func update_navigation_state(
@@ -207,6 +186,7 @@ func _update_navigation_state_edge_specific_helper(
     pass
 
 
+# FIXME: ----------------------
 func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
@@ -215,6 +195,7 @@ func _calculate_distance(
     return INF
 
 
+# FIXME: ----------------------
 func _calculate_duration(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
@@ -222,14 +203,6 @@ func _calculate_duration(
         distance: float) -> float:
     Sc.logger.error("Abstract Edge._calculate_duration is not implemented")
     return INF
-
-
-static func _calculate_instructions(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        duration: float) -> EdgeInstructions:
-    Sc.logger.error("Abstract Edge._calculate_instructions is not implemented")
-    return null
 
 
 # This should probably only be used during debugging. Otherwise, local memory

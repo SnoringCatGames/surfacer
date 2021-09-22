@@ -84,6 +84,8 @@ var action_handlers := {}
 # Dictionary<String, EdgeCalculator>
 var edge_calculators := {}
 
+var intra_surface_calculator: IntraSurfaceCalculator
+
 var _action_handler_classes: Array
 var _edge_calculator_classes: Array
 
@@ -243,6 +245,10 @@ func _register_edge_calculators(edge_calculator_classes: Array) -> void:
     for edge_calculator_class in edge_calculator_classes:
         Su.movement.edge_calculators[edge_calculator_class.NAME] = \
                 edge_calculator_class.new()
+    
+    assert(Su.movement.edge_calculators.has("IntraSurfaceCalculator"))
+    intra_surface_calculator = \
+            Su.movement.edge_calculators("IntraSurfaceCalculator")
 
 
 func _parse_movement_params_from_character_scenes(
@@ -333,7 +339,7 @@ func get_default_action_handler_names(
 
 func get_default_edge_calculator_names(
         movement_params: MovementParameters) -> Array:
-    var edge_calculators := []
+    var edge_calculators := ["IntraSurfaceCalculator"]
     if movement_params.can_grab_walls:
         edge_calculators.push_back("ClimbToAdjacentSurfaceCalculator")
         if movement_params.can_jump:
