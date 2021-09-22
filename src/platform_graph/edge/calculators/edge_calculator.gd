@@ -32,14 +32,18 @@ var edge_type: int
 
 var is_a_jump_calculator: bool
 
+var is_graphable: bool
+
 
 func _init(
         name: String,
         edge_type: int,
-        is_a_jump_calculator: bool) -> void:
+        is_a_jump_calculator: bool,
+        is_graphable: bool) -> void:
     self.name = name
     self.edge_type = edge_type
     self.is_a_jump_calculator = is_a_jump_calculator
+    self.is_graphable = is_graphable
 
 
 func get_can_traverse_from_surface(

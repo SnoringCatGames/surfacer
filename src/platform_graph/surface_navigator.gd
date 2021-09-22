@@ -671,9 +671,12 @@ func _start_edge(
     edge_index = index
     edge = path.edges[index]
     
-    edge.update_for_surface_state(
-            surface_state,
-            edge == path.edges.back())
+    if edge is IntraSurfaceEdge:
+        edge.calculator.update_for_surface_state(
+                edge,
+                surface_state,
+                edge == path.edges.back())
+    
     navigation_state.is_expecting_to_enter_air = edge.enters_air
     
     playback = instructions_action_source.start_instructions(
@@ -1101,7 +1104,8 @@ func _optimize_edges_for_approach(
             # -   Update the end position of the IntraSurfaceEdge.
             # -   Record the new surface-to-air edge.
             # -   Remove the old following edges.
-            edge.update_terminal(
+            edge.calculator.update_terminal(
+                    edge,
                     false,
                     closest_jump_off_point.target_point)
             path.edges.resize(i + 2)
@@ -1241,7 +1245,8 @@ func _optimize_edges_for_approach(
                     Sc.logger.error("Invalid SurfaceSide")
             
             if target_point != Vector2.INF:
-                last_edge.update_terminal(
+                last_edge.calculator.update_terminal(
+                        last_edge,
                         false,
                         target_point)
     

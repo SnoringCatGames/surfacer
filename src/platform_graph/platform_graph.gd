@@ -366,15 +366,16 @@ static func _calculate_intra_surface_edge_weight(
         movement_params: MovementParameters,
         node_a: PositionAlongSurface,
         node_b: PositionAlongSurface) -> float:
-    var distance := IntraSurfaceEdgeFactory.calculate_duration(
-            movement_params,
-            node_a,
-            node_b)
+    var distance: float = \
+            Su.movement.intra_surface_calculator.calculate_distance(
+                    movement_params,
+                    node_a,
+                    node_b)
     
     # Use either the distance or the duration as the weight for the edge.
     var weight: float
     if movement_params.uses_duration_instead_of_distance_for_edge_weight:
-        weight = IntraSurfaceEdgeFactory.calculate_duration(
+        weight = Su.movement.intra_surface_calculator.calculate_duration(
                 movement_params,
                 node_a,
                 node_b,
@@ -568,6 +569,9 @@ func _calculate_inter_surface_edges_for_origin(
             origin_surface)
     
     for edge_calculator in movement_params.edge_calculators:
+        if !edge_calculator.is_graphable:
+            continue
+        
         #######################################################################
         # Allow for debug mode to limit the scope of what's calculated.
         if debug_params.has("limit_parsing") and \
