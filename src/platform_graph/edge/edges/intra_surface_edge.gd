@@ -60,6 +60,20 @@ func _init(
 
 
 func get_position_at_time(edge_time: float) -> Vector2:
+    if is_instance_valid(trajectory):
+        return .get_position_at_time(edge_time)
+    else:
+        return _get_position_at_time_without_trajectory(edge_time)
+
+
+func get_velocity_at_time(edge_time: float) -> Vector2:
+    if is_instance_valid(trajectory):
+        return .get_velocity_at_time(edge_time)
+    else:
+        return _get_velocity_at_time_without_trajectory(edge_time)
+
+
+func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
     if edge_time > duration:
         return Vector2.INF
     var start := get_start()
@@ -108,7 +122,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
             return Vector2.INF
 
 
-func get_velocity_at_time(edge_time: float) -> Vector2:
+func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
     if edge_time > duration:
         return Vector2.INF
     var start := get_start()

@@ -56,18 +56,42 @@ func create(
         velocity_start: Vector2,
         movement_params: MovementParameters) -> IntraSurfaceEdge:
     var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
-            start.target_point, end.target_point, 0.00001)
+            start.target_point,
+            end.target_point,
+            0.00001)
     var distance := calculate_distance(
-            movement_params, start, end)
+            movement_params,
+            start,
+            end)
     var duration := calculate_duration(
-            movement_params, start, end, distance)
+            movement_params,
+            start,
+            end,
+            distance)
     var velocity_end := _calculate_velocity_end(
-            start, end, velocity_start, movement_params)
-    var is_moving_clockwise := _calculate_is_moving_clockwise(start, end)
+            start,
+            end,
+            velocity_start,
+            movement_params)
+    var is_moving_clockwise := _calculate_is_moving_clockwise(
+            start,
+            end)
     var stopping_distance := _calculate_stopping_distance(
-            start, end, velocity_start, movement_params)
-    var instructions := _calculate_instructions(start, end, duration)
-    var trajectory := _calculate_trajectory(start, end)
+            start,
+            end,
+            velocity_start,
+            movement_params)
+    var instructions := _calculate_instructions(
+            start,
+            end,
+            duration)
+    var trajectory := _calculate_trajectory(
+            start,
+            end,
+            velocity_start,
+            duration,
+            is_degenerate,
+            movement_params)
     
     return IntraSurfaceEdge.new(
             self,
@@ -130,18 +154,42 @@ func _update(edge: IntraSurfaceEdge) -> void:
     var movement_params := edge.movement_params
     
     var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
-            start.target_point, end.target_point, 0.00001)
+            start.target_point,
+            end.target_point,
+            0.00001)
     var distance := calculate_distance(
-            movement_params, start, end)
+            movement_params,
+            start,
+            end)
     var duration := calculate_duration(
-            movement_params, start, end, distance)
+            movement_params,
+            start,
+            end,
+            distance)
     var velocity_end := _calculate_velocity_end(
-            start, end, velocity_start, movement_params)
-    var is_moving_clockwise := _calculate_is_moving_clockwise(start, end)
+            start,
+            end,
+            velocity_start,
+            movement_params)
+    var is_moving_clockwise := _calculate_is_moving_clockwise(
+            start,
+            end)
     var stopping_distance := _calculate_stopping_distance(
-            start, end, velocity_start, movement_params)
-    var instructions := _calculate_instructions(start, end, duration)
-    var trajectory := _calculate_trajectory(start, end)
+            start,
+            end,
+            velocity_start,
+            movement_params)
+    var instructions := _calculate_instructions(
+            start,
+            end,
+            duration)
+    var trajectory := _calculate_trajectory(
+            start,
+            end,
+            velocity_start,
+            duration,
+            is_degenerate,
+            movement_params)
     
     edge.start_position_along_surface = start
     edge.end_position_along_surface = end
@@ -290,10 +338,106 @@ func _calculate_instructions(
 
 func _calculate_trajectory(
         start: PositionAlongSurface,
-        end: PositionAlongSurface) -> EdgeTrajectory:
-    # FIXME: LEFT OFF HERE: ----------------------------------------------------
-    pass
-    return null
+        end: PositionAlongSurface,
+        velocity_start: Vector2,
+        duration: float,
+        is_degenerate: bool,
+        movement_params: MovementParameters) -> EdgeTrajectory:
+    var trajectory := EdgeTrajectory.new()
+    
+    trajectory.waypoint_positions = [
+        start.target_point,
+        end.target_point,
+    ]
+    
+    if !movement_params.includes_discrete_trajectory_state and \
+            !movement_params \
+                    .includes_continuous_trajectory_positions and \
+            !movement_params.includes_continuous_trajectory_velocities:
+        return trajectory
+    
+    if is_degenerate:
+        var positions := [start.target_point]
+        var velocities := [velocity_start]
+        if movement_params.includes_discrete_trajectory_state:
+            trajectory.frame_discrete_positions_from_test = \
+                    PoolVector2Array(positions)
+        if movement_params.includes_continuous_trajectory_positions:
+            trajectory.frame_continuous_positions_from_steps = \
+                    PoolVector2Array(positions)
+        if movement_params.includes_continuous_trajectory_velocities:
+            trajectory.frame_continuous_velocities_from_steps = \
+                    PoolVector2Array(velocities)
+        trajectory.distance_from_continuous_trajectory = 0.00001
+        return trajectory
+    
+    var displacement := end.target_point - start.target_point
+    
+    var frame_count := int(ceil(duration / Time.PHYSICS_TIME_STEP))
+    var frame_index := 0
+    var position := start.target_point
+    var velocity := velocity_start
+    var acceleration := Vector2.ZERO
+    
+    var positions := []
+    positions.resize(frame_count)
+    var velocities := []
+    velocities.resize(frame_count)
+    
+    match start.surface.side:
+        SurfaceSide.FLOOR:
+            velocity.x = velocity_start.x
+            velocity.y = 0.0
+            acceleration.x = \
+                    movement_params.walk_acceleration if \
+                    displacement.x > 0 else \
+                    -movement_params.walk_acceleration
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            velocity.x = 0.0
+            velocity.y = \
+                    movement_params.climb_down_speed if \
+                    displacement.y > 0 else \
+                    movement_params.climb_up_speed
+        SurfaceSide.CEILING:
+            velocity.x = \
+                    movement_params.ceiling_crawl_speed if \
+                    displacement.x > 0 else \
+                    -movement_params.ceiling_crawl_speed
+            velocity.y = 0.0
+        _:
+            Sc.logger.error()
+    
+    for i in frame_count:
+        position += velocity * Time.PHYSICS_TIME_STEP
+        position = Sc.geometry.project_shape_onto_surface(
+                position,
+                movement_params.collider,
+                start.surface,
+                true)
+        velocity += acceleration * Time.PHYSICS_TIME_STEP
+        velocity.x = clamp(
+                velocity.x,
+                -movement_params.max_horizontal_speed_default,
+                movement_params.max_horizontal_speed_default)
+        positions[i] = position
+        velocities[i] = velocity
+    
+    if movement_params.includes_discrete_trajectory_state:
+        trajectory.frame_discrete_positions_from_test = \
+                PoolVector2Array(positions)
+    if movement_params.includes_continuous_trajectory_positions:
+        trajectory.frame_continuous_positions_from_steps = \
+                PoolVector2Array(positions)
+    if movement_params.includes_continuous_trajectory_velocities:
+        trajectory.frame_continuous_velocities_from_steps = \
+                PoolVector2Array(velocities)
+    
+    # Update the trajectory distance.
+    trajectory.distance_from_continuous_trajectory = \
+            EdgeTrajectoryUtils.sum_distance_between_frames(positions)
+    
+    return trajectory
 
 
 # Calculate the distance from the end position at which the move button should
