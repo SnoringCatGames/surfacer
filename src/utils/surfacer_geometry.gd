@@ -11,7 +11,7 @@ static func project_point_onto_surface(
         side_override := SurfaceSide.NONE) -> Vector2:
     var surface_side := \
             surface.side if \
-            side_override != SurfaceSide.NONE else \
+            side_override == SurfaceSide.NONE else \
             side_override
     var start_vertex = surface.first_point
     var end_vertex = surface.last_point
