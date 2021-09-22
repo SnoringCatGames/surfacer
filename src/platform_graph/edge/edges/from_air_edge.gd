@@ -15,6 +15,8 @@ func _init(
         end: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
         velocity_end := Vector2.INF,
+        distance := INF,
+        duration := INF,
         includes_extra_wall_land_horizontal_speed := false,
         movement_params: MovementParameters = null,
         instructions: EdgeInstructions = null,
@@ -30,6 +32,8 @@ func _init(
         end,
         velocity_start,
         velocity_end,
+        distance,
+        duration,
         false,
         includes_extra_wall_land_horizontal_speed,
         movement_params,
@@ -38,21 +42,6 @@ func _init(
         edge_calc_result_type,
         time_peak_height) -> void:
     pass
-
-
-func _calculate_distance(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        trajectory: EdgeTrajectory) -> float:
-    return trajectory.distance_from_continuous_trajectory
-
-
-func _calculate_duration(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        instructions: EdgeInstructions,
-        distance: float) -> float:
-    return instructions.duration
 
 
 func get_animation_state_at_time(

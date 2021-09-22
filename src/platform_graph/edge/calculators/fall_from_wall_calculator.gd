@@ -5,12 +5,14 @@ extends EdgeCalculator
 const NAME := "FallFromWallCalculator"
 const EDGE_TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_A_JUMP_CALCULATOR := false
+const IS_GRAPHABLE := false
 
 
 func _init().(
         NAME,
         EDGE_TYPE,
-        IS_A_JUMP_CALCULATOR) -> void:
+        IS_A_JUMP_CALCULATOR,
+        IS_GRAPHABLE) -> void:
     pass
 
 
@@ -173,6 +175,8 @@ func _create_edge_from_calc_results(
             jump_position,
             land_position,
             velocity_end,
+            trajectory.distance_from_continuous_trajectory,
+            instructions.duration,
             calc_result.edge_calc_params \
                     .needs_extra_wall_land_horizontal_speed,
             calc_result.edge_calc_params.movement_params,

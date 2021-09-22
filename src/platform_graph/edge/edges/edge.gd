@@ -186,25 +186,6 @@ func _update_navigation_state_edge_specific_helper(
     pass
 
 
-# FIXME: ----------------------
-func _calculate_distance(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        trajectory: EdgeTrajectory) -> float:
-    Sc.logger.error("Abstract Edge._calculate_distance is not implemented")
-    return INF
-
-
-# FIXME: ----------------------
-func _calculate_duration(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        instructions: EdgeInstructions,
-        distance: float) -> float:
-    Sc.logger.error("Abstract Edge._calculate_duration is not implemented")
-    return INF
-
-
 # This should probably only be used during debugging. Otherwise, local memory
 # usage could potentially grow quite large.
 func populate_trajectory(collision_params: CollisionCalcParams) -> void:

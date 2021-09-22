@@ -33,6 +33,7 @@ const DEFAULT_EDGE_CALCULATOR_CLASSES := [
     preload("res://addons/surfacer/src/platform_graph/edge/calculators/climb_to_adjacent_surface_calculator.gd"),
     preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_floor_calculator.gd"),
     preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_wall_calculator.gd"),
+    preload("res://addons/surfacer/src/platform_graph/edge/calculators/intra_surface_calculator.gd"),
     preload("res://addons/surfacer/src/platform_graph/edge/calculators/jump_from_surface_calculator.gd"),
 ]
 
@@ -248,7 +249,7 @@ func _register_edge_calculators(edge_calculator_classes: Array) -> void:
     
     assert(Su.movement.edge_calculators.has("IntraSurfaceCalculator"))
     intra_surface_calculator = \
-            Su.movement.edge_calculators("IntraSurfaceCalculator")
+            Su.movement.edge_calculators["IntraSurfaceCalculator"]
 
 
 func _parse_movement_params_from_character_scenes(

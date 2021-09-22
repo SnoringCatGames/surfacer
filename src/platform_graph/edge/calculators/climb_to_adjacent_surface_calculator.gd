@@ -5,12 +5,14 @@ extends EdgeCalculator
 const NAME := "ClimbToAdjacentSurfaceCalculator"
 const EDGE_TYPE := EdgeType.CLIMB_TO_ADJACENT_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := false
+const IS_GRAPHABLE := false
 
 
 func _init().(
         NAME,
         EDGE_TYPE,
-        IS_A_JUMP_CALCULATOR) -> void:
+        IS_A_JUMP_CALCULATOR,
+        IS_GRAPHABLE) -> void:
     pass
 
 
@@ -114,6 +116,8 @@ func calculate_edge(
             position_end,
             velocity_start,
             velocity_end,
+            trajectory.distance_from_continuous_trajectory,
+            instructions.duration,
             collision_params.movement_params,
             instructions,
             trajectory)
@@ -311,6 +315,7 @@ func _calculate_trajectory(
                     position_end.surface
     
     if !is_convex:
+        # FIXME: LEFT OFF HERE: ----------------------------------------
         return null
     
     var trajectory := EdgeTrajectory.new()

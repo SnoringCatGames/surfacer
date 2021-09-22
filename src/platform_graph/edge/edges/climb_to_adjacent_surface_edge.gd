@@ -26,6 +26,8 @@ func _init(
         end: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
         velocity_end := Vector2.INF,
+        distance := INF,
+        duration := INF,
         movement_params: MovementParameters = null,
         instructions: EdgeInstructions = null,
         trajectory: EdgeTrajectory = null) \
@@ -36,12 +38,13 @@ func _init(
                 is_instance_valid(start) else \
                 SurfaceSide.NONE),
         ENTERS_AIR,
-        false,
         calculator,
         start,
         end,
         velocity_start,
         velocity_end,
+        distance,
+        duration,
         false,
         false,
         movement_params,
@@ -50,25 +53,6 @@ func _init(
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
         0.0) -> void:
     pass
-
-
-func _calculate_distance(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        trajectory: EdgeTrajectory) -> float:
-    return trajectory.distance_from_continuous_trajectory if \
-            is_instance_valid(trajectory) else \
-            0.0
-
-
-func _calculate_duration(
-        start: PositionAlongSurface,
-        end: PositionAlongSurface,
-        instructions: EdgeInstructions,
-        distance: float) -> float:
-    return instructions.duration if \
-            is_instance_valid(instructions) else \
-            0.0
 
 
 func _get_weight_multiplier() -> float:

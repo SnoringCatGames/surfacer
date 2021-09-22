@@ -5,6 +5,7 @@ extends EdgeCalculator
 const NAME := "FallFromFloorCalculator"
 const EDGE_TYPE := EdgeType.FALL_FROM_FLOOR_EDGE
 const IS_A_JUMP_CALCULATOR := false
+const IS_GRAPHABLE := false
 
 const EXTRA_FALL_OFF_POSITION_MARGIN := 2.0
 
@@ -12,7 +13,8 @@ const EXTRA_FALL_OFF_POSITION_MARGIN := 2.0
 func _init().(
         NAME,
         EDGE_TYPE,
-        IS_A_JUMP_CALCULATOR) -> void:
+        IS_A_JUMP_CALCULATOR,
+        IS_GRAPHABLE) -> void:
     pass
 
 
@@ -313,6 +315,8 @@ func _get_all_edges_from_one_side(
                     position_end,
                     surface_end_velocity_start,
                     velocity_end,
+                    trajectory.distance_from_continuous_trajectory,
+                    instructions.duration,
                     calc_result.edge_calc_params \
                             .needs_extra_wall_land_horizontal_speed,
                     movement_params,

@@ -5,12 +5,14 @@ extends EdgeCalculator
 const NAME := "FromAirCalculator"
 const EDGE_TYPE := EdgeType.FROM_AIR_EDGE
 const IS_A_JUMP_CALCULATOR := false
+const IS_GRAPHABLE := false
 
 
 func _init().(
         NAME,
         EDGE_TYPE,
-        IS_A_JUMP_CALCULATOR) -> void:
+        IS_A_JUMP_CALCULATOR,
+        IS_GRAPHABLE) -> void:
     pass
 
 
@@ -166,6 +168,8 @@ func find_a_landing_trajectory(
             land_position,
             velocity_start,
             velocity_end,
+            trajectory.distance_from_continuous_trajectory,
+            instructions.duration,
             calc_result.edge_calc_params \
                     .needs_extra_wall_land_horizontal_speed,
             collision_params.movement_params,
@@ -201,6 +205,8 @@ func create_edge_from_part_of_other_edge(
             other_edge.end_position_along_surface,
             character.velocity,
             other_edge.velocity_end,
+            trajectory.distance_from_continuous_trajectory,
+            instructions.duration,
             other_edge.includes_extra_wall_land_horizontal_speed,
             other_edge.movement_params,
             instructions,

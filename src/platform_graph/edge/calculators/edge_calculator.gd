@@ -389,7 +389,7 @@ static func optimize_edge_jump_position_for_path_helper(
                 jump_side == SurfaceSide.FLOOR else \
                 Vector2.ZERO
         
-        previous_edge = IntraSurfaceEdge.new(
+        previous_edge = Su.movement.intra_surface_calculator.create(
                 previous_edge.start_position_along_surface,
                 optimized_edge.start_position_along_surface,
                 previous_edge_velocity_start,
@@ -582,7 +582,7 @@ static func optimize_edge_land_position_for_path_helper(
                 land_side == SurfaceSide.FLOOR else \
                 Vector2.ZERO
         
-        next_edge = IntraSurfaceEdge.new(
+        next_edge = Su.movement.intra_surface_calculator.create(
                 optimized_edge.end_position_along_surface,
                 next_edge.end_position_along_surface,
                 next_edge_velocity_start,

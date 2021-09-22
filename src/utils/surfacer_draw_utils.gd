@@ -705,7 +705,7 @@ func draw_edge(
         canvas: CanvasItem,
         edge: Edge,
         stroke_width: float = Sc.ann_params.edge_trajectory_width,
-        base_color := Color.white,
+        discrete_trajectory_color := Color.white,
         includes_waypoints := false,
         includes_instruction_indicators := false,
         includes_continuous_positions := true,
@@ -773,8 +773,6 @@ func draw_edge(
                 waypoint_color)
         
         var origin_position := \
-                origin_position_override if \
-                origin_position_override != Vector2.INF else \
                 edge.get_start()
         draw_origin_marker(
                 canvas,
