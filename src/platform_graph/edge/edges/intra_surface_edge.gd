@@ -252,32 +252,3 @@ func _check_did_just_reach_surface_destination(
     return moved_across_destination or \
             is_close_to_destination or \
             is_moving_away_from_destination
-
-
-func _update_navigation_state_edge_specific_helper(
-        navigation_state: CharacterNavigationState,
-        surface_state: CharacterSurfaceState,
-        is_starting_navigation_retry: bool) -> void:
-    # -   We only need special navigation-state updates when colliding with
-    #     multiple surfaces,
-    # -   and we don't need special updates if we already know the edge is
-    #     done.
-    if surface_state.contact_count < 2 or \
-            navigation_state.just_interrupted:
-        return
-    
-    var surface := get_start_surface()
-    
-    for contact_surface in surface_state.surfaces_to_contacts:
-        if contact_surface == surface or \
-                contact_surface == surface.clockwise_concave_neighbor or \
-                contact_surface == \
-                        surface.counter_clockwise_concave_neighbor or \
-                contact_surface == surface.clockwise_convex_neighbor or \
-                contact_surface == surface.counter_clockwise_convex_neighbor:
-            continue
-        else:
-            # Colliding with an unconnected surface.
-            # Interrupted the edge.
-            navigation_state.just_interrupted_by_unexpected_collision = true
-            break

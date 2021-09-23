@@ -144,6 +144,11 @@ func update_navigation_state(
     if surface_state.just_entered_air:
         navigation_state.is_expecting_to_enter_air = false
     
+    _check_for_unexpected_collision(
+            navigation_state,
+            surface_state,
+            is_starting_navigation_retry)
+    
     _update_navigation_state_edge_specific_helper(
             navigation_state,
             surface_state,
@@ -184,6 +189,41 @@ func _update_navigation_state_edge_specific_helper(
         surface_state: CharacterSurfaceState,
         is_starting_navigation_retry: bool) -> void:
     pass
+
+
+func _check_for_unexpected_collision(
+        navigation_state: CharacterNavigationState,
+        surface_state: CharacterSurfaceState,
+        is_starting_navigation_retry: bool) -> void:
+    # -   We only need special navigation-state updates when colliding with
+    #     multiple surfaces,
+    # -   and we don't need special updates if we already know the edge is
+    #     done.
+    if surface_state.contact_count < 2 or \
+            navigation_state.just_interrupted:
+        return
+    
+    var start_surface := get_start_surface()
+    var end_surface := get_end_surface()
+    var is_still_colliding_with_start_surface := \
+            surface_state.grabbed_surface == start_surface
+    
+    if is_still_colliding_with_start_surface:
+        for contact_surface in surface_state.surfaces_to_contacts:
+            if contact_surface == start_surface or \
+                    contact_surface == start_surface.clockwise_neighbor or \
+                    contact_surface == start_surface.counter_clockwise_neighbor:
+                continue
+            else:
+                # Colliding with an unconnected surface.
+                # Interrupted the edge.
+                navigation_state.just_interrupted_by_unexpected_collision = true
+                return
+    
+    if surface_state.is_grabbing_surface and \
+            surface_state.grabbed_surface != start_surface and \
+            surface_state.grabbed_surface != end_surface:
+        navigation_state.just_interrupted_by_unexpected_collision = true
 
 
 # This should probably only be used during debugging. Otherwise, local memory
