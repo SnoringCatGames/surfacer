@@ -143,6 +143,8 @@ func _populate_debug_only_state() -> void:
             surfaces_in_jump_range,
             graph.collision_params)
     
+    destination_surfaces_to_edge_types_to_edges_results.clear()
+    
     for inter_surface_edges_result in inter_surface_edges_results:
         var destination_surface: Surface = \
                 inter_surface_edges_result.destination_surface
