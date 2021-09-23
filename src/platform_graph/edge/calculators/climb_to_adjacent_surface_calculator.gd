@@ -367,7 +367,7 @@ func _populate_concave_trajectory(
         trajectory.frame_continuous_velocities_from_steps = \
                 PoolVector2Array(velocities)
     
-    trajectory.distance_from_continuous_trajectory = 0.0
+    trajectory.distance_from_continuous_trajectory = 0.00001
 
 
 func _populate_convex_trajectory(
