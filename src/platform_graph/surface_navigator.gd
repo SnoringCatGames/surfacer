@@ -235,16 +235,44 @@ func find_path(
             #       been able to find a valid land trajectory above.
             
             var elapsed_edge_time := playback.get_elapsed_time_scaled()
-            if elapsed_edge_time < edge.duration:
-                from_air_edge = from_air_calculator \
-                        .create_edge_from_part_of_other_edge(
-                                edge,
-                                elapsed_edge_time,
-                                character)
-            else:
-                Sc.logger.error(
-                        "Unable to re-use current edge as air-to-surface " +
-                        "edge: edge playback time exceeds edge duration")
+            from_air_edge = from_air_calculator \
+                    .create_edge_from_part_of_other_edge(
+                            edge,
+                            elapsed_edge_time,
+                            character)
+            
+            if from_air_edge == null:
+                # Edge playback has already exceeded the expected duration.
+                # -   The expected edge duration is recorded according to a
+                #     single calculation up-front, whereas the edge trajectory
+                #     and edge playback are calculated according to incremental
+                #     frame-by-frame motion updates.
+                # -   This means that the expected edge duration is often less
+                #     than reality.
+                # -   So, in this case, we can just force the character position
+                #     to match the end of the edge.
+                
+                graph_origin = edge.end_position_along_surface
+                
+                var sync_position := \
+                        movement_params \
+                            .syncs_character_position_to_edge_trajectory or \
+                        movement_params \
+                            .forces_character_position_to_match_path_at_end or \
+                        movement_params \
+                            .forces_character_position_to_match_edge_at_start
+                if sync_position:
+                    character.position = edge.get_end()
+                
+                var sync_velocity := \
+                        movement_params \
+                            .syncs_character_velocity_to_edge_trajectory or \
+                        movement_params \
+                            .forces_character_velocity_to_zero_at_path_end or \
+                        movement_params \
+                            .forces_character_velocity_to_match_edge_at_start
+                if sync_velocity:
+                    character.velocity = edge.velocity_end
         
         if from_air_edge != null:
             # We were able to calculate a valid air-to-surface edge.

@@ -50,15 +50,25 @@ func calculate_edge(
             collision_params.movement_params)
 
 
+func _calculate_is_degenerate(
+        start: PositionAlongSurface,
+        end: PositionAlongSurface) -> bool:
+    var displacement := end.target_point - start.target_point
+    if start.surface.side == SurfaceSide.FLOOR or \
+            start.surface.side == SurfaceSide.CEILING:
+        return displacement.x < 0.00001 and displacement.x > -0.00001
+    else:
+        return displacement.y < 0.00001 and displacement.y > -0.00001
+
+
 func create(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
         movement_params: MovementParameters) -> IntraSurfaceEdge:
-    var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
-            start.target_point,
-            end.target_point,
-            0.00001)
+    var is_degenerate: bool = _calculate_is_degenerate(
+            start,
+            end)
     var distance := calculate_distance(
             movement_params,
             start,
@@ -153,10 +163,9 @@ func _update(edge: IntraSurfaceEdge) -> void:
     var velocity_start := edge.velocity_start
     var movement_params := edge.movement_params
     
-    var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
-            start.target_point,
-            end.target_point,
-            0.00001)
+    var is_degenerate: bool = _calculate_is_degenerate(
+            start,
+            end)
     var distance := calculate_distance(
             movement_params,
             start,
@@ -205,10 +214,7 @@ func calculate_distance(
         movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface) -> float:
-    var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
-            start.target_point,
-            end.target_point,
-            0.00001)
+    var is_degenerate: bool = _calculate_is_degenerate(start, end)
     if is_degenerate:
         return 0.00001
     var displacement := end.target_point - start.target_point
@@ -225,8 +231,7 @@ func calculate_duration(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start := Vector2.ZERO) -> float:
-    var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
-            start.target_point, end.target_point, 0.00001)
+    var is_degenerate: bool = _calculate_is_degenerate(start, end)
     if is_degenerate:
         return 0.00001
     
@@ -393,7 +398,7 @@ func _calculate_trajectory(
     
     var displacement := end.target_point - start.target_point
     
-    var frame_count := int(ceil(duration / Time.PHYSICS_TIME_STEP))
+    var frame_count := int(max(ceil(duration / Time.PHYSICS_TIME_STEP), 1))
     var frame_index := 0
     var position := start.target_point
     var velocity := velocity_start
@@ -429,6 +434,9 @@ func _calculate_trajectory(
             Sc.logger.error()
     
     for i in frame_count:
+        positions[i] = position
+        velocities[i] = velocity
+        
         position += velocity * Time.PHYSICS_TIME_STEP
         position = Sc.geometry.project_shape_onto_surface(
                 position,
@@ -440,8 +448,6 @@ func _calculate_trajectory(
                 velocity.x,
                 -movement_params.max_horizontal_speed_default,
                 movement_params.max_horizontal_speed_default)
-        positions[i] = position
-        velocities[i] = velocity
     
     if movement_params.includes_discrete_trajectory_state:
         trajectory.frame_discrete_positions_from_test = \
