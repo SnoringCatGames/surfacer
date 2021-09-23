@@ -219,7 +219,7 @@ static func sub_instructions(
             instructions,
             remaining_instructions)
     
-    var duration := base_instructions.duration - start_time
+    var duration := max(base_instructions.duration - start_time, 0.00001)
     
     return EdgeInstructions.new(
             instructions,

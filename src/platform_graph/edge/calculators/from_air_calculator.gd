@@ -183,7 +183,12 @@ func create_edge_from_part_of_other_edge(
         other_edge: Edge,
         start_time: float,
         character) -> FromAirEdge:
-    if other_edge.trajectory == null:
+    var trajectory_start_index := int(start_time / Time.PHYSICS_TIME_STEP)
+    var trajectory_frame_count := \
+            other_edge.trajectory.frame_continuous_positions_from_steps.size()
+    
+    if other_edge.trajectory == null or \
+            trajectory_start_index >= trajectory_frame_count:
         # Some edges can enter the air but also don't have explicit
         # trajectories.
         return null

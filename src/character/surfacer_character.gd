@@ -533,17 +533,8 @@ func _update_surface_state() -> void:
             surface_state.is_grabbing_surface:
         _update_reachable_surfaces(surface_state.grabbed_surface)
     
-    if surface_state.just_left_air:
-        _log("Landed",
-                "grab_p=%s, %s" % [
-                    Sc.utils.get_vector_string(surface_state.grab_position, 1),
-                    surface_state.grabbed_surface.to_string(false),
-                ],
-                CharacterLogType.SURFACE,
-                false)
-        
     elif surface_state.just_entered_air:
-        _log("Launched",
+        _log("Released",
                 "grab_p=%s, %s" % [
                     Sc.utils.get_vector_string(surface_state.grab_position, 1),
                     surface_state.previous_grabbed_surface.to_string(false),
