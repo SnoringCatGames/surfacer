@@ -7,6 +7,8 @@ extends Node2D
 ## -   You can adjust these parameters within the editor's inspector panel.[br]
 
 
+const STRONG_SPEED_TO_MAINTAIN_COLLISION := 900.0
+
 # --- Movement abilities ---
 
 const _MOVEMENT_ABILITIES_GROUP := {

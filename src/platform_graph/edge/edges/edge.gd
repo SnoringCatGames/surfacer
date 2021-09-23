@@ -231,10 +231,26 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
     if is_instance_valid(trajectory):
         var index := int(edge_time / Time.PHYSICS_TIME_STEP)
         if index >= trajectory.frame_continuous_velocities_from_steps.size():
-            return velocity_end
+            return _get_post_trajectory_velocity_for_triggering_grab()
         return trajectory.frame_continuous_velocities_from_steps[index]
     else:
         return velocity_start
+
+
+func _get_post_trajectory_velocity_for_triggering_grab() -> Vector2:
+    var velocity := velocity_end
+    match end_position_along_surface.side:
+        SurfaceSide.FLOOR:
+            velocity.y = MovementParameters.STRONG_SPEED_TO_MAINTAIN_COLLISION
+        SurfaceSide.LEFT_WALL:
+            velocity.x = -MovementParameters.STRONG_SPEED_TO_MAINTAIN_COLLISION
+        SurfaceSide.RIGHT_WALL:
+            velocity.x = MovementParameters.STRONG_SPEED_TO_MAINTAIN_COLLISION
+        SurfaceSide.CEILING:
+            velocity.y = MovementParameters.STRONG_SPEED_TO_MAINTAIN_COLLISION
+        _:
+            Sc.logger.error()
+    return velocity
 
 
 func get_animation_state_at_time(
