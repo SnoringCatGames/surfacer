@@ -247,9 +247,10 @@ func _get_post_trajectory_velocity_for_triggering_grab() -> Vector2:
         SurfaceSide.RIGHT_WALL:
             velocity.x = MovementParameters.STRONG_SPEED_TO_MAINTAIN_COLLISION
         SurfaceSide.CEILING:
-            velocity.y = MovementParameters.STRONG_SPEED_TO_MAINTAIN_COLLISION
+            velocity.y = -MovementParameters.STRONG_SPEED_TO_MAINTAIN_COLLISION
         _:
-            Sc.logger.error()
+            # Do nothing. Just use velocity_end.
+            pass
     return velocity
 
 
