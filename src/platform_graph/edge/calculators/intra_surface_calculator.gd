@@ -67,7 +67,7 @@ func create(
             movement_params,
             start,
             end,
-            distance)
+            velocity_start)
     var velocity_end := _calculate_velocity_end(
             start,
             end,
@@ -165,7 +165,7 @@ func _update(edge: IntraSurfaceEdge) -> void:
             movement_params,
             start,
             end,
-            distance)
+            velocity_start)
     var velocity_end := _calculate_velocity_end(
             start,
             end,
@@ -206,38 +206,58 @@ func calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface) -> float:
     var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
-            start.target_point, end.target_point, 0.00001)
-    return start.target_point.distance_to(end.target_point) if \
-            !is_degenerate else \
-            0.00001
+            start.target_point,
+            end.target_point,
+            0.00001)
+    if is_degenerate:
+        return 0.00001
+    var displacement := end.target_point - start.target_point
+    var is_horizontal := \
+            start.surface.side == SurfaceSide.FLOOR or \
+            start.surface.side == SurfaceSide.CEILING
+    return abs(displacement.x) if \
+            is_horizontal else \
+            abs(displacement.y)
 
 
 func calculate_duration(
         movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface,
-        distance: float) -> float:
+        velocity_start := Vector2.ZERO) -> float:
     var is_degenerate: bool = Sc.geometry.are_points_equal_with_epsilon(
             start.target_point, end.target_point, 0.00001)
     if is_degenerate:
         return 0.00001
     
+    var displacement := end.target_point - start.target_point
+    
     match start.side:
         SurfaceSide.FLOOR:
-            return MovementUtils.calculate_time_to_walk(
-                    distance,
-                    0.0,
+            var displacement_x := displacement.x
+            var velocity_start_x := velocity_start.x
+            # Our calculations currently assume that acceleration is in the
+            # positive direction, so let's make sure our velocity/displacement
+            # align with that.
+            if displacement_x < 0.0:
+                velocity_start_x = -velocity_start_x
+                displacement_x = -displacement_x
+            var duration := MovementUtils.calculate_time_to_walk(
+                    displacement_x,
+                    velocity_start_x,
                     movement_params)
+            assert(!is_inf(duration))
+            return duration
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
-            var is_climbing_upward := end.target_point.y < start.target_point.y
+            var is_climbing_upward := displacement.y < 0
             return MovementUtils.calculate_time_to_climb(
-                    distance,
+                    abs(displacement.y),
                     is_climbing_upward,
                     movement_params)
         SurfaceSide.CEILING:
             return MovementUtils.calculate_time_to_crawl_on_ceiling(
-                    distance,
+                    abs(displacement.x),
                     movement_params)
         _:
             Sc.logger.error()

@@ -366,22 +366,18 @@ static func _calculate_intra_surface_edge_weight(
         movement_params: MovementParameters,
         node_a: PositionAlongSurface,
         node_b: PositionAlongSurface) -> float:
-    var distance: float = \
-            Su.movement.intra_surface_calculator.calculate_distance(
-                    movement_params,
-                    node_a,
-                    node_b)
-    
     # Use either the distance or the duration as the weight for the edge.
     var weight: float
     if movement_params.uses_duration_instead_of_distance_for_edge_weight:
         weight = Su.movement.intra_surface_calculator.calculate_duration(
                 movement_params,
                 node_a,
-                node_b,
-                distance)
+                node_b)
     else:
-        weight = distance
+        weight = Su.movement.intra_surface_calculator.calculate_distance(
+                movement_params,
+                node_a,
+                node_b)
     
     # Apply a multiplier to the weight according to the type of edge.
     match node_a.side:
@@ -421,6 +417,7 @@ static func _record_frontier(
         # Record this node's weight.
         nodes_to_weights[next] = new_actual_weight
         
+        # Use Euclidian distance as our heuristic cost.
         var heuristic_weight := \
                 next.target_point.distance_to(destination.target_point)
         
