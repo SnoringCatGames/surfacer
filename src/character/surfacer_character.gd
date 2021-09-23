@@ -363,9 +363,12 @@ func _match_expected_edge_trajectory() -> void:
 func _maintain_collisions() -> void:
     if movement_params.bypasses_runtime_physics or \
             !surface_state.is_grabbing_surface or \
-            surface_state.is_triggering_wall_release or \
-            surface_state.is_triggering_ceiling_release or \
-            surface_state.is_triggering_fall_through or \
+            (surface_state.is_triggering_wall_release and \
+            surface_state.is_grabbing_wall) or \
+            (surface_state.is_triggering_ceiling_release and \
+            surface_state.is_grabbing_ceiling) or \
+            (surface_state.is_triggering_fall_through and \
+            surface_state.is_grabbing_floor) or \
             actions.just_pressed_jump:
         return
     
@@ -531,7 +534,7 @@ func _update_surface_state() -> void:
         _update_reachable_surfaces(surface_state.grabbed_surface)
     
     if surface_state.just_left_air:
-        _log("Grabbed",
+        _log("Landed",
                 "grab_p=%s, %s" % [
                     Sc.utils.get_vector_string(surface_state.grab_position, 1),
                     surface_state.grabbed_surface.to_string(false),
@@ -544,6 +547,15 @@ func _update_surface_state() -> void:
                 "grab_p=%s, %s" % [
                     Sc.utils.get_vector_string(surface_state.grab_position, 1),
                     surface_state.previous_grabbed_surface.to_string(false),
+                ],
+                CharacterLogType.SURFACE,
+                false)
+    
+    elif surface_state.just_changed_surface:
+        _log("Grabbed",
+                "grab_p=%s, %s" % [
+                    Sc.utils.get_vector_string(surface_state.grab_position, 1),
+                    surface_state.grabbed_surface.to_string(false),
                 ],
                 CharacterLogType.SURFACE,
                 false)
