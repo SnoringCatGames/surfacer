@@ -460,11 +460,11 @@ func _update_physics_contacts() -> void:
         if !surface_contact._is_still_touching:
             var details := (
                         "_update_physics_contacts(); " +
-                        "is_rounding_corner=%s; " +
-                        "surface=%s"
+                        "surface=%s; " +
+                        "is_rounding_corner=%s"
                     ) % [
-                        is_rounding_corner,
                         surface_contact.surface.to_string(false),
+                        is_rounding_corner,
                     ]
             character._log(
                     "Rem contact",
@@ -524,6 +524,17 @@ func _calculate_surface_contact_from_collision(
     var just_started := !surfaces_to_contacts.has(contacted_surface)
     
     if just_started:
+        var details := (
+                    "_calculate_surface_contact_from_collision(); " +
+                    "surface=%s"
+                ) % [
+                    contacted_surface.to_string(false),
+                ]
+        character._log(
+                "Add contact",
+                details,
+                CharacterLogType.SURFACE,
+                true)
         surfaces_to_contacts[contacted_surface] = SurfaceContact.new()
     
     var surface_contact: SurfaceContact = \
@@ -736,11 +747,11 @@ func _update_surface_contact_for_explicit_grab(
                 surface_strings.push_back(s.to_string(false))
             var details := (
                         "_update_surface_contact_for_explicit_grab(); " +
-                        "is_rounding_corner=%s; " +
-                        "surfaces=[%s]"
+                        "surfaces=[%s]; " +
+                        "is_rounding_corner=%s"
                     ) % [
-                        is_rounding_corner,
                         Sc.utils.join(surface_strings),
+                        is_rounding_corner,
                     ]
             character._log(
                     "Rem contacts",
@@ -750,11 +761,11 @@ func _update_surface_contact_for_explicit_grab(
         
         var details := (
                     "_update_surface_contact_for_explicit_grab(); " +
-                    "is_rounding_corner=%s; " +
-                    "surface=%s"
+                    "surface=%s; " +
+                    "is_rounding_corner=%s"
                 ) % [
-                    is_rounding_corner,
                     surface_contact.surface.to_string(false),
+                    is_rounding_corner,
                 ]
         character._log(
                 "Add contact",
