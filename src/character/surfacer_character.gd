@@ -389,6 +389,8 @@ func _maintain_collisions() -> void:
                 surface_state.toward_wall_sign
         max_slides = 2
     
+    var position_before_move := position
+    
     # Trigger another move_and_slide.
     # -   This will maintain collision state within Godot's collision system.
     # -   This will also ensure the character snaps to the surface.
@@ -399,6 +401,13 @@ func _maintain_collisions() -> void:
             max_slides,
             Sc.geometry.FLOOR_MAX_ANGLE + \
                     Sc.geometry.WALL_ANGLE_EPSILON)
+    
+    if navigator.edge is FallFromFloorEdge:
+        # Fall-from-floor edge trajectories assume that the character doesn't
+        # start descending until after entirely clearing the edge of the
+        # surface, so we need to undo any potential downward displacement from
+        # the curve of the character collider.
+        position = position_before_move
     
     _record_collisions()
 
