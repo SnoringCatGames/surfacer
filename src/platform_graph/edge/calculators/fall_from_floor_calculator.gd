@@ -5,7 +5,7 @@ extends EdgeCalculator
 const NAME := "FallFromFloorCalculator"
 const EDGE_TYPE := EdgeType.FALL_FROM_FLOOR_EDGE
 const IS_A_JUMP_CALCULATOR := false
-const IS_GRAPHABLE := false
+const IS_GRAPHABLE := true
 
 const EXTRA_FALL_OFF_POSITION_MARGIN := 2.0
 

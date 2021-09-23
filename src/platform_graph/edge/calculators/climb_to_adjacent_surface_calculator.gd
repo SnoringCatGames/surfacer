@@ -5,7 +5,7 @@ extends EdgeCalculator
 const NAME := "ClimbToAdjacentSurfaceCalculator"
 const EDGE_TYPE := EdgeType.CLIMB_TO_ADJACENT_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := false
-const IS_GRAPHABLE := false
+const IS_GRAPHABLE := true
 
 
 func _init().(
