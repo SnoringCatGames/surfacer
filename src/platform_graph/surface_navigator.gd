@@ -732,29 +732,6 @@ func _update(
         navigation_state.just_reached_end_of_edge = false
         return
     
-    var is_character_stuck: bool = \
-            !character.surface_state.did_move_last_frame and \
-            !character.surface_state.did_move_frame_before_last and \
-            navigation_state.edge_start_time <= \
-                    Sc.time.get_scaled_play_time() - \
-                    Sc.time.PHYSICS_TIME_STEP * 2.0
-    
-    if is_character_stuck:
-        # FIXME: ------------
-        # - This work-around shouldn't be needed. What's the underlying
-        #   problem?
-        Sc.logger.error(
-                "SurfaceNavigator.is_currently_navigating and " +
-                "!CharacterSurfaceState.did_move_last_frame")
-#        var destination := path.destination
-#        var graph_destination_for_in_air_destination := \
-#                path.graph_destination_for_in_air_destination
-#        stop()
-#        navigate_to_position(
-#                destination,
-#                graph_destination_for_in_air_destination)
-#        return
-    
     edge.update_navigation_state(
             navigation_state,
             surface_state,
@@ -811,6 +788,29 @@ func _update(
                     edge.get_name(),
                     false)
     else:
+        var is_character_stuck: bool = \
+                !character.surface_state.did_move_last_frame and \
+                !character.surface_state.did_move_frame_before_last and \
+                navigation_state.edge_start_time <= \
+                        Sc.time.get_scaled_play_time() - \
+                        Sc.time.PHYSICS_TIME_STEP * 2.0
+        
+        if is_character_stuck:
+            # FIXME: ------------
+            # - This work-around shouldn't be needed. What's the underlying
+            #   problem?
+            Sc.logger.error(
+                    "SurfaceNavigator.is_currently_navigating and " +
+                    "!CharacterSurfaceState.did_move_last_frame")
+#            var destination := path.destination
+#            var graph_destination_for_in_air_destination := \
+#                    path.graph_destination_for_in_air_destination
+#            stop()
+#            navigate_to_position(
+#                    destination,
+#                    graph_destination_for_in_air_destination)
+#            return
+        
         # Continuing along an edge.
         if surface_state.is_grabbing_surface:
             pass
