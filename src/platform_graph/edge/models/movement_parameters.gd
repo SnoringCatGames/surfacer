@@ -433,6 +433,7 @@ var wall_fall_horizontal_boost: float
 
 var max_horizontal_speed_default: float
 var max_vertical_speed: float
+var max_possible_speed: float
 
 var dash_speed_multiplier: float
 var dash_vertical_boost: float
@@ -767,6 +768,8 @@ func _derive_parameters() -> void:
     max_vertical_speed = \
             max_vertical_speed_multiplier * \
             Su.movement.max_vertical_speed_default
+    max_possible_speed = \
+            max(max_horizontal_speed_default, max_vertical_speed)
     
     dash_speed_multiplier = \
             dash_speed_multiplier_multiplier * \
