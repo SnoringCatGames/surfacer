@@ -533,7 +533,7 @@ func _update_surface_state() -> void:
             surface_state.is_grabbing_surface:
         _update_reachable_surfaces(surface_state.grabbed_surface)
     
-    elif surface_state.just_entered_air:
+    if surface_state.just_entered_air:
         _log("Released",
                 "grab_p=%s, %s" % [
                     Sc.utils.get_vector_string(surface_state.grab_position, 1),
@@ -541,7 +541,7 @@ func _update_surface_state() -> void:
                 ],
                 CharacterLogType.SURFACE,
                 false)
-    
+        
     elif surface_state.just_changed_surface:
         _log("Grabbed",
                 "grab_p=%s, %s" % [

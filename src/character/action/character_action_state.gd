@@ -163,20 +163,49 @@ func log_new_presses_and_releases(character) -> void:
             false)
 
 
-static func _log_new_press_or_release(
+func _log_new_press_or_release(
         character,
         action_name: String,
         just_pressed: bool,
         just_released: bool) -> void:
+    var current_presses_strs := []
+    if pressed_jump:
+        current_presses_strs.push_back("J")
+    if pressed_up:
+        current_presses_strs.push_back("U")
+    if pressed_down:
+        current_presses_strs.push_back("D")
+    if pressed_left:
+        current_presses_strs.push_back("L")
+    if pressed_right:
+        current_presses_strs.push_back("R")
+    if pressed_grab:
+        current_presses_strs.push_back("G")
+    if pressed_face_left:
+        current_presses_strs.push_back("FL")
+    if pressed_face_right:
+        current_presses_strs.push_back("FR")
+    if start_dash:
+        current_presses_strs.push_back("DA")
+    var current_presses_str: String = Sc.utils.join(current_presses_strs)
+    
+    var velocity_string: String = \
+            "%17s" % Sc.utils.get_vector_string(character.velocity, 1)
+    
+    var details := "v=%s; [%s]" % [
+        velocity_string,
+        current_presses_str,
+    ]
+    
     if just_pressed:
         character._log(
                 "START %5s" % action_name,
-                "",
+                details,
                 CharacterLogType.ACTION,
                 false)
     if just_released:
         character._log(
                 "STOP  %5s" % action_name,
-                "",
+                details,
                 CharacterLogType.ACTION,
                 false)

@@ -1132,6 +1132,7 @@ func _update_grab_state() -> void:
             (is_grabbing_ceiling or \
                     is_triggering_explicit_ceiling_grab or \
                     is_triggering_implicit_ceiling_grab) and \
+            !is_triggering_ceiling_release and \
             (is_triggering_explicit_ceiling_grab or \
                     !is_triggering_explicit_wall_grab)
     var next_is_grabbing_ceiling := \
@@ -1147,6 +1148,7 @@ func _update_grab_state() -> void:
             (is_grabbing_wall or \
                     is_triggering_explicit_wall_grab or \
                     is_triggering_implicit_wall_grab) and \
+            !is_triggering_wall_release and \
             !is_triggering_explicit_floor_grab and \
             !is_triggering_explicit_ceiling_grab
     var next_is_grabbing_wall := \
@@ -1163,6 +1165,7 @@ func _update_grab_state() -> void:
             (is_grabbing_floor or \
                     is_triggering_explicit_floor_grab or \
                     is_triggering_implicit_floor_grab) and \
+            !is_triggering_fall_through and \
             (is_triggering_explicit_floor_grab or \
                     !is_triggering_explicit_wall_grab)
     var next_is_grabbing_floor := \

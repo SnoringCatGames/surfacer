@@ -28,6 +28,9 @@ var is_stalling_one_frame_before_reaching_end := false
 var path_start_time := -1.0
 var edge_start_time := -1.0
 
+var edge_start_frame := -1
+var edge_frame_count := 0
+
 var expected_position_along_surface := PositionAlongSurface.new()
 
 
@@ -52,5 +55,8 @@ func reset() -> void:
     
     self.path_start_time = -1.0
     self.edge_start_time = -1.0
+    
+    self.edge_start_frame = -1
+    self.edge_frame_count = 0
     
     self.expected_position_along_surface.reset()

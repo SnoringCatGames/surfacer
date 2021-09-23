@@ -744,8 +744,13 @@ func _update(
     if just_started_new_edge:
         navigation_state.just_started_edge = true
         navigation_state.edge_start_time = Sc.time.get_scaled_play_time()
+        navigation_state.edge_start_frame = Sc.time.get_play_physics_frame_count()
     else:
         navigation_state.just_started_edge = false
+    
+    navigation_state.edge_frame_count = \
+            Sc.time.get_play_physics_frame_count() - \
+            navigation_state.edge_start_frame
     
     if !navigation_state.is_currently_navigating:
         navigation_state.just_ended = false
