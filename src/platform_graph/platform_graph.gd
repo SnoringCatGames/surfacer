@@ -141,6 +141,7 @@ func find_path(
                             current_node,
                             next_node)
             _record_frontier(
+                    movement_params,
                     current_node,
                     next_node,
                     destination,
@@ -161,7 +162,9 @@ func find_path(
             
             # Record temporary intra-surface edges from the current node to
             # each other node on the same surface.
-            for next_node in surfaces_to_outbound_nodes[current_node.surface]:
+            var outbound_nodes_from_current_surface: Array = \
+                    surfaces_to_outbound_nodes[current_node.surface]
+            for next_node in outbound_nodes_from_current_surface:
                 var new_actual_weight := \
                         current_weight + \
                         _calculate_intra_surface_edge_weight(
@@ -169,6 +172,7 @@ func find_path(
                                 current_node,
                                 next_node)
                 _record_frontier(
+                        movement_params,
                         current_node,
                         next_node,
                         destination,
@@ -199,10 +203,13 @@ func find_path(
                     is_surface_bidirectionally_invalid:
                 continue
             
-            for next_edge in nodes_to_edges_for_current_node[next_node]:
+            var edges_from_current_node: Array = \
+                    nodes_to_edges_for_current_node[next_node]
+            for next_edge in edges_from_current_node:
                 var new_actual_weight: float = \
                         current_weight + next_edge.get_weight()
                 _record_frontier(
+                        movement_params,
                         current_node,
                         next_node,
                         destination,
@@ -400,6 +407,7 @@ static func _calculate_intra_surface_edge_weight(
 # Helper function for find_path. This records new neighbor nodes for the given
 # node.
 static func _record_frontier(
+        movement_params: MovementParameters,
         current: PositionAlongSurface,
         next: PositionAlongSurface,
         destination: PositionAlongSurface,
@@ -417,9 +425,13 @@ static func _record_frontier(
         # Record this node's weight.
         nodes_to_weights[next] = new_actual_weight
         
-        # Use Euclidian distance as our heuristic cost.
+        # Use Euclidian distance for our heuristic cost.
+        var distance := next.target_point.distance_to(destination.target_point)
         var heuristic_weight := \
-                next.target_point.distance_to(destination.target_point)
+                distance / movement_params.max_possible_speed if \
+                movement_params \
+                    .uses_duration_instead_of_distance_for_edge_weight else \
+                distance
         
         # Add this node to the frontier with a priority.
         var priority := new_actual_weight + heuristic_weight

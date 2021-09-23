@@ -320,7 +320,8 @@ func _check_did_just_reach_in_air_destination(
 
 func get_weight() -> float:
     # Use either the distance or the duration as the weight for the edge.
-    var weight := duration if \
+    var weight := \
+            duration if \
             movement_params \
                     .uses_duration_instead_of_distance_for_edge_weight else \
             distance
