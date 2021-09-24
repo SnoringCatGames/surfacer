@@ -3649,7 +3649,6 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
                 if new_coordinate < boundary_coordinate:
                     new_coordinate = boundary_coordinate
             position.target_point.x = new_coordinate
-            position.target_projection_onto_surface.x = new_coordinate
             
         SurfaceSide.LEFT_WALL:
             var new_coordinate := position.target_projection_onto_surface.y
@@ -3664,7 +3663,6 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
                 if new_coordinate < boundary_coordinate:
                     new_coordinate = boundary_coordinate
             position.target_point.y = new_coordinate
-            position.target_projection_onto_surface.y = new_coordinate
             
         SurfaceSide.RIGHT_WALL:
             var new_coordinate := position.target_projection_onto_surface.y
@@ -3679,7 +3677,6 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
                 if new_coordinate < boundary_coordinate:
                     new_coordinate = boundary_coordinate
             position.target_point.y = new_coordinate
-            position.target_projection_onto_surface.y = new_coordinate
             
         SurfaceSide.CEILING:
             var new_coordinate := position.target_projection_onto_surface.x
@@ -3694,7 +3691,6 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
                 if new_coordinate < boundary_coordinate:
                     new_coordinate = boundary_coordinate
             position.target_point.x = new_coordinate
-            position.target_projection_onto_surface.x = new_coordinate
             
         SurfaceSide.NONE:
             pass
@@ -3702,6 +3698,19 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
         _:
             Sc.logger.error()
             return false
+    
+    # Make sure the target point is still the right distance out from the
+    # surface, according to the surface and character shape.
+    var target_point: Vector2 = Sc.geometry.project_shape_onto_surface(
+            position.target_point,
+            movement_params.collider,
+            position.surface)
+    position.match_surface_target_and_collider(
+            position.surface,
+            target_point,
+            movement_params.collider,
+            true,
+            true)
     
     return true
 
@@ -3715,9 +3724,14 @@ static func _possibly_offset_wall_bottom_land_position(
         var bottom_bound := \
                 land_position.surface.bounding_box.end.y - \
                 MIN_LAND_DISTANCE_FROM_WALL_BOTTOM
+        var target_point := Vector2(land_position.target_point.x, bottom_bound)
+        target_point = Sc.geometry.project_shape_onto_surface(
+                target_point,
+                movement_params.collider,
+                land_position.surface)
         land_position.match_surface_target_and_collider(
                 land_position.surface,
-                Vector2(land_position.target_point.x, bottom_bound),
+                target_point,
                 movement_params.collider,
                 true,
                 true)
