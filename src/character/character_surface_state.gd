@@ -66,6 +66,8 @@ var is_rounding_corner := false
 var is_rounding_corner_from_previous_surface := false
 var is_rounding_left_corner := false
 
+var just_started_rounding_corner := false
+var just_stopped_rounding_corner := false
 var just_changed_to_lower_wall_while_rounding_floor_corner := false
 var just_changed_to_upper_wall_while_rounding_ceiling_corner := false
 var just_changed_to_lower_ceiling_while_rounding_wall_corner := false
@@ -282,12 +284,54 @@ func update_for_initial_surface_attachment(
 
 
 func _update_contacts() -> void:
+    floor_contact = null
+    wall_contact = null
+    ceiling_contact = null
+    
+    for surface_contact in surfaces_to_contacts.values():
+        surface_contact._is_still_touching = false
+    
     if character.movement_params.bypasses_runtime_physics:
         _update_surface_contact_from_expected_navigation()
-    elif is_rounding_corner:
-        _update_surface_contact_from_rounded_corner()
+        
     else:
         _update_physics_contacts()
+        
+        if is_rounding_corner:
+            _update_surface_contact_from_rounded_corner()
+    
+    # Remove any surfaces that are no longer touching.
+    for surface_contact in surfaces_to_contacts.values():
+        if !surface_contact._is_still_touching:
+            var details := (
+                        "_update_physics_contacts(); " +
+                        "surface=%s; " +
+                        "is_rounding_corner=%s"
+                    ) % [
+                        surface_contact.surface.to_string(false),
+                        is_rounding_corner,
+                    ]
+            character._log(
+                    "Rem contact",
+                    details,
+                    CharacterLogType.SURFACE,
+                    true)
+            surfaces_to_contacts.erase(surface_contact.surface)
+            if surface_grab == surface_contact:
+                surface_grab = null
+    
+    # FIXME: ---- REMOVE? Does this ever trigger? Even if it did, we
+    #             probably want to just ignore the collision this frame.
+    if !character.movement_params.bypasses_runtime_physics and \
+            !character.collisions.empty() and \
+            surfaces_to_contacts.empty():
+        var collisions_str := ""
+        for collision in character.collisions:
+            collisions_str += \
+                    "{p=%s, n=%s}, " % \
+                    [collision.position, collision.normal]
+        Sc.logger.error(
+                "There are only invalid collisions: %s" % collisions_str)
 
 
 func _update_touch_state() -> void:
@@ -385,13 +429,6 @@ func _update_touch_state() -> void:
 
 
 func _update_physics_contacts() -> void:
-    floor_contact = null
-    wall_contact = null
-    ceiling_contact = null
-    
-    for surface_contact in surfaces_to_contacts.values():
-        surface_contact._is_still_touching = false
-    
     var was_a_valid_contact_found := false
     
     for collision in character.collisions:
@@ -443,37 +480,6 @@ func _update_physics_contacts() -> void:
                     ceiling_contact = surface_contact
                 _:
                     Sc.logger.error()
-        
-        # FIXME: ---- REMOVE? Does this ever trigger? Even if it did, we
-        #             probably want to just ignore the collision this frame.
-        if !was_a_valid_contact_found:
-            var collisions_str := ""
-            for collision in character.collisions:
-                collisions_str += \
-                        "{p=%s, n=%s}, " % \
-                        [collision.position, collision.normal]
-            Sc.logger.error(
-                    "There are only invalid collisions: %s" % collisions_str)
-    
-    # Remove any surfaces that are no longer touching.
-    for surface_contact in surfaces_to_contacts.values():
-        if !surface_contact._is_still_touching:
-            var details := (
-                        "_update_physics_contacts(); " +
-                        "surface=%s; " +
-                        "is_rounding_corner=%s"
-                    ) % [
-                        surface_contact.surface.to_string(false),
-                        is_rounding_corner,
-                    ]
-            character._log(
-                    "Rem contact",
-                    details,
-                    CharacterLogType.SURFACE,
-                    true)
-            surfaces_to_contacts.erase(surface_contact.surface)
-            if surface_grab == surface_contact:
-                surface_grab = null
 
 
 func _calculate_surface_contact_from_collision(
@@ -708,14 +714,12 @@ func _update_surface_contact_for_explicit_grab(
     var contact_normal: Vector2 = Sc.geometry.get_surface_normal_at_point(
             surface, contact_position)
     
-    var just_started := \
-            !is_instance_valid(surface_grab) or \
-            surface_grab.surface != surface
+    var just_started := !surfaces_to_contacts.has(surface)
     
     # Don't create a new instance each frame if we can re-use the old one.
-    var surface_contact := \
-            surface_grab if \
-            is_instance_valid(surface_grab) else \
+    var surface_contact: SurfaceContact = \
+            surfaces_to_contacts[surface] if \
+            surfaces_to_contacts.has(surface) else \
             SurfaceContact.new()
     surface_contact.surface = surface
     surface_contact.contact_position = contact_position
@@ -726,9 +730,6 @@ func _update_surface_contact_for_explicit_grab(
     surface_contact.just_started = just_started
     surface_contact._is_still_touching = true
     
-    floor_contact = null
-    wall_contact = null
-    ceiling_contact = null
     match side:
         SurfaceSide.FLOOR:
             floor_contact = surface_contact
@@ -741,24 +742,6 @@ func _update_surface_contact_for_explicit_grab(
             Sc.logger.error()
     
     if just_started:
-        if !surfaces_to_contacts.empty():
-            var surface_strings := []
-            for s in surfaces_to_contacts:
-                surface_strings.push_back(s.to_string(false))
-            var details := (
-                        "_update_surface_contact_for_explicit_grab(); " +
-                        "surfaces=[%s]; " +
-                        "is_rounding_corner=%s"
-                    ) % [
-                        Sc.utils.join(surface_strings),
-                        is_rounding_corner,
-                    ]
-            character._log(
-                    "Rem contacts",
-                    details,
-                    CharacterLogType.SURFACE,
-                    true)
-        
         var details := (
                     "_update_surface_contact_for_explicit_grab(); " +
                     "surface=%s; " +
@@ -773,7 +756,6 @@ func _update_surface_contact_for_explicit_grab(
                 CharacterLogType.SURFACE,
                 true)
         
-        surfaces_to_contacts.clear()
         surfaces_to_contacts[surface_contact.surface] = surface_contact
 
 
@@ -783,7 +765,8 @@ func _update_action_state() -> void:
     _update_rounding_corner_state()
     _update_grab_state()
     
-    if is_rounding_corner:
+    if just_started_rounding_corner or \
+            just_changed_surface_while_rounding_corner:
         _update_surface_contact_from_rounded_corner()
         _update_touch_state()
     
@@ -964,12 +947,12 @@ func _update_grab_trigger_state() -> void:
             character.movement_params.can_grab_walls
     
     is_triggering_ceiling_release = \
-            is_touching_ceiling and \
+            is_grabbing_ceiling and \
             is_pressing_ceiling_release_input and \
             !is_triggering_explicit_ceiling_grab and \
             !is_triggering_implicit_ceiling_grab
     is_triggering_wall_release = \
-            is_touching_wall and \
+            is_grabbing_wall and \
             is_pressing_wall_release_input and \
             !is_triggering_explicit_wall_grab and \
             !is_triggering_implicit_wall_grab
@@ -1103,11 +1086,19 @@ func _update_rounding_corner_state() -> void:
             center_position.y + half_height <= \
                     grabbed_surface.bounding_box.position.y
     
-    is_rounding_corner = \
+    var next_is_rounding_corner := \
             is_rounding_floor_corner_to_lower_wall or \
             is_rounding_ceiling_corner_to_upper_wall or \
             is_rounding_wall_corner_to_lower_ceiling or \
             is_rounding_wall_corner_to_upper_floor
+    
+    just_started_rounding_corner = \
+            next_is_rounding_corner and \
+            !is_rounding_corner
+    just_stopped_rounding_corner = \
+            !next_is_rounding_corner and \
+            is_rounding_corner
+    is_rounding_corner = next_is_rounding_corner
     just_changed_surface_while_rounding_corner = \
             just_changed_to_lower_wall_while_rounding_floor_corner or \
             just_changed_to_upper_wall_while_rounding_ceiling_corner or \

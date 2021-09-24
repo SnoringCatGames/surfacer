@@ -361,6 +361,66 @@ func _match_expected_edge_trajectory() -> void:
 # -   If we just zero this out, move_and_slide will produce false-negatives for
 #     collisions.
 func _maintain_collisions() -> void:
+    if movement_params.syncs_character_position_to_edge_trajectory and \
+            navigation_state.is_currently_navigating and \
+            is_instance_valid(navigator.edge.trajectory):
+        var playback_elapsed_time: float = \
+                navigator.playback.get_elapsed_time_scaled()
+        var trajectory_index := \
+                int(playback_elapsed_time / Time.PHYSICS_TIME_STEP)
+        var is_at_end_of_edge := \
+                trajectory_index > \
+                navigator.edge.trajectory \
+                        .frame_continuous_positions_from_steps.size()
+        if is_at_end_of_edge and \
+                is_instance_valid(navigator.edge.get_end_surface()) and \
+                !(navigator.edge is IntraSurfaceEdge):
+            _trigger_collision_at_end_of_edge(navigator.edge)
+            return
+    
+    _maintain_preexisting_collisions()
+
+
+func _trigger_collision_at_end_of_edge(edge: Edge) -> void:
+    var surface := edge.get_end_surface()
+    var normal := surface.normal
+    var maintain_collision_velocity: Vector2 = \
+            MovementParameters.STRONG_SPEED_TO_MAINTAIN_COLLISION * \
+            -normal
+    var max_slides := 1
+    var position_before_move := position
+    var collision_count_before_move := collisions.size()
+    
+    # Trigger another move_and_slide.
+    # -   This will maintain collision state within Godot's collision system.
+    # -   This will also ensure the character snaps to the surface.
+    move_and_slide(
+            maintain_collision_velocity,
+            Sc.geometry.UP,
+            movement_params.stops_on_slope,
+            max_slides,
+            Sc.geometry.FLOOR_MAX_ANGLE + \
+                    Sc.geometry.WALL_ANGLE_EPSILON)
+    
+    _record_collisions()
+    
+    var details := (
+        "new_collisions=%d; " +
+        "previous_p=%s; " +
+        "ending_edge=%s; " +
+        "_trigger_collision_at_end_of_edge"
+    ) % [
+        collisions.size() - collision_count_before_move,
+        Sc.utils.get_vector_string(position_before_move, 1),
+        EdgeType.get_prefix(navigator.edge.edge_type),
+    ]
+    _log("Trigger col.",
+            details,
+            CharacterLogType.SURFACE,
+            false)
+
+
+func _maintain_preexisting_collisions() -> void:
     if movement_params.bypasses_runtime_physics or \
             !surface_state.is_grabbing_surface or \
             (surface_state.is_triggering_wall_release and \
