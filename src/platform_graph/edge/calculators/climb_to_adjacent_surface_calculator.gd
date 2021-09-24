@@ -101,6 +101,10 @@ func calculate_edge(
             position_start,
             position_end,
             collision_params.movement_params)
+    # FIXME: --------------------
+    if Sc.geometry.are_points_equal_with_epsilon(
+            position_end.target_point, Vector2(416, 317.58), 0.1):
+        pass
     var trajectory := _calculate_trajectory(
             position_start,
             position_end,
@@ -396,12 +400,49 @@ func _populate_convex_trajectory(
     var half_width := movement_params.collider.half_width_height.x
     var half_height := movement_params.collider.half_width_height.y
     
+    var next_neighbor := \
+            position_end.surface.clockwise_neighbor if \
+            is_clockwise else \
+            position_end.surface.counter_clockwise_neighbor
+    var is_next_neighbor_concave := \
+            next_neighbor == \
+                    position_end.surface.clockwise_concave_neighbor or \
+            next_neighbor == \
+                    position_end.surface.counter_clockwise_concave_neighbor
+    var next_neighbor_normal_side_override := SurfaceSide.NONE
+    if is_next_neighbor_concave:
+        match position_end.surface.side:
+            SurfaceSide.FLOOR:
+                next_neighbor_normal_side_override = \
+                        SurfaceSide.RIGHT_WALL if \
+                        is_clockwise else \
+                        SurfaceSide.LEFT_WALL
+            SurfaceSide.LEFT_WALL:
+                next_neighbor_normal_side_override = \
+                        SurfaceSide.FLOOR if \
+                        is_clockwise else \
+                        SurfaceSide.CEILING
+            SurfaceSide.RIGHT_WALL:
+                next_neighbor_normal_side_override = \
+                        SurfaceSide.CEILING if \
+                        is_clockwise else \
+                        SurfaceSide.FLOOR
+            SurfaceSide.CEILING:
+                next_neighbor_normal_side_override = \
+                        SurfaceSide.LEFT_WALL if \
+                        is_clockwise else \
+                        SurfaceSide.RIGHT_WALL
+            _:
+                Sc.logger.error()
+    
     var frame_count := int(ceil(duration / Time.PHYSICS_TIME_STEP))
     
     var positions := []
     positions.resize(frame_count)
     var velocities := []
     velocities.resize(frame_count)
+    
+    var ran_into_concave_next_neighbor := false
     
     var frame_index := 0
     var position: Vector2
@@ -426,70 +467,113 @@ func _populate_convex_trajectory(
                 movement_params.rounding_corner_calc_shape,
                 position_start.surface,
                 true)
-        
-        velocity.x = 0.0
-        velocity.y = \
-                movement_params.climb_up_speed if \
-                is_top_side else \
-                movement_params.climb_down_speed
-        
-        var is_character_past_end := false
-        while !is_character_past_end:
-            positions[frame_index] = position
-            velocities[frame_index] = velocity
-            
-            frame_index += 1
-            position.y += velocity.y * Time.PHYSICS_TIME_STEP
-            position = Sc.geometry \
-                    .project_shape_onto_convex_corner_preserving_tangent_position( \
+        if is_next_neighbor_concave:
+            # This prevents collisions with concave next neighbors
+            # (which can form tight cusps).
+            ran_into_concave_next_neighbor = \
+                    _handle_collision_with_concave_next_neighbor(
                             position,
-                            movement_params.rounding_corner_calc_shape,
-                            position_start.surface,
-                            position_end.surface)
-            is_character_past_end = \
-                    position.y + half_height <= corner_position.y if \
+                            next_neighbor,
+                            next_neighbor_normal_side_override,
+                            movement_params)
+        
+        if !ran_into_concave_next_neighbor:
+            velocity.x = 0.0
+            velocity.y = \
+                    movement_params.climb_up_speed if \
                     is_top_side else \
-                    position.y - half_height >= corner_position.y
-        
-        var acceleration_x: float
-        if !is_top_side:
-            velocity.x = \
-                    movement_params.ceiling_crawl_speed if \
-                    is_left_side else \
-                    -movement_params.ceiling_crawl_speed
-            acceleration_x = 0.0
-        else:
-            acceleration_x = \
-                    movement_params.walk_acceleration if \
-                    is_left_side else \
-                    -movement_params.walk_acceleration
-        
-        velocity.y = 0.0
-        
-        var is_rounding_corner_finished := false
-        while !is_rounding_corner_finished and \
-                frame_index < frame_count:
-            positions[frame_index] = position
-            velocities[frame_index] = velocity
+                    movement_params.climb_down_speed
             
-            frame_index += 1
-            position.x += velocity.x * Time.PHYSICS_TIME_STEP
-            position = Sc.geometry \
-                    .project_shape_onto_convex_corner_preserving_tangent_position( \
-                            position,
-                            movement_params.rounding_corner_calc_shape,
-                            position_end.surface,
-                            position_start.surface)
-            # Account for acceleration along the floor.
-            velocity.x += acceleration_x * Time.PHYSICS_TIME_STEP
-            velocity.x = clamp(
-                    velocity.x,
-                    -movement_params.max_horizontal_speed_default,
-                    movement_params.max_horizontal_speed_default)
-            is_rounding_corner_finished = \
-                    position.x >= corner_position.x if \
-                    is_left_side else \
-                    position.x <= corner_position.x
+            var is_character_past_end := false
+            while !is_character_past_end:
+                positions[frame_index] = position
+                velocities[frame_index] = velocity
+                
+                frame_index += 1
+                position.y += velocity.y * Time.PHYSICS_TIME_STEP
+                position = Sc.geometry \
+                        .project_shape_onto_convex_corner_preserving_tangent_position( \
+                                position,
+                                movement_params.rounding_corner_calc_shape,
+                                position_start.surface,
+                                position_end.surface)
+                
+                is_character_past_end = \
+                        position.y + half_height <= corner_position.y if \
+                        is_top_side else \
+                        position.y - half_height >= corner_position.y
+                
+                if is_next_neighbor_concave:
+                    # This prevents collisions with concave next neighbors
+                    # (which can form tight cusps).
+                    ran_into_concave_next_neighbor = \
+                            _handle_collision_with_concave_next_neighbor(
+                                    position,
+                                    next_neighbor,
+                                    next_neighbor_normal_side_override,
+                                    movement_params)
+                    if ran_into_concave_next_neighbor:
+                        if !is_character_past_end:
+                            positions[frame_index] = position
+                            velocities[frame_index] = velocity
+                        break
+        
+        if !ran_into_concave_next_neighbor:
+            var acceleration_x: float
+            if !is_top_side:
+                velocity.x = \
+                        movement_params.ceiling_crawl_speed if \
+                        is_left_side else \
+                        -movement_params.ceiling_crawl_speed
+                acceleration_x = 0.0
+            else:
+                acceleration_x = \
+                        movement_params.walk_acceleration if \
+                        is_left_side else \
+                        -movement_params.walk_acceleration
+            
+            velocity.y = 0.0
+            
+            var is_rounding_corner_finished := false
+            while !is_rounding_corner_finished and \
+                    frame_index < frame_count:
+                positions[frame_index] = position
+                velocities[frame_index] = velocity
+                
+                frame_index += 1
+                position.x += velocity.x * Time.PHYSICS_TIME_STEP
+                position = Sc.geometry \
+                        .project_shape_onto_convex_corner_preserving_tangent_position( \
+                                position,
+                                movement_params.rounding_corner_calc_shape,
+                                position_end.surface,
+                                position_start.surface)
+                
+                # Account for acceleration along the floor.
+                velocity.x += acceleration_x * Time.PHYSICS_TIME_STEP
+                velocity.x = clamp(
+                        velocity.x,
+                        -movement_params.max_horizontal_speed_default,
+                        movement_params.max_horizontal_speed_default)
+                is_rounding_corner_finished = \
+                        position.x >= corner_position.x if \
+                        is_left_side else \
+                        position.x <= corner_position.x
+                
+                if is_next_neighbor_concave:
+                    # This prevents collisions with concave next neighbors
+                    # (which can form tight cusps).
+                    ran_into_concave_next_neighbor = \
+                            _handle_collision_with_concave_next_neighbor(
+                                    position,
+                                    next_neighbor,
+                                    next_neighbor_normal_side_override,
+                                    movement_params)
+                    if ran_into_concave_next_neighbor:
+                        if !is_rounding_corner_finished:
+                            positions[frame_index] = position
+                            velocities[frame_index] = velocity
+                        break
         
     else:
         # Rounding from a floor or ceiling.
@@ -500,63 +584,106 @@ func _populate_convex_trajectory(
                 movement_params.rounding_corner_calc_shape,
                 position_start.surface,
                 true)
-        
-        if is_top_side:
-            # Assume that the character will have reached max speed by the time
-            # they've walked to the end of a floor surface.
-            velocity.x = \
-                    -movement_params.max_horizontal_speed_default if \
-                    is_left_side else \
-                    movement_params.max_horizontal_speed_default
-        else:
-            velocity.x = \
-                    -movement_params.ceiling_crawl_speed if \
-                    is_left_side else \
-                    movement_params.ceiling_crawl_speed
-        velocity.y = 0.0
-        
-        var is_character_past_end := false
-        while !is_character_past_end:
-            positions[frame_index] = position
-            velocities[frame_index] = velocity
-            
-            frame_index += 1
-            position.x += velocity.x * Time.PHYSICS_TIME_STEP
-            position = Sc.geometry \
-                    .project_shape_onto_convex_corner_preserving_tangent_position( \
+        if is_next_neighbor_concave:
+            # This prevents collisions with concave next neighbors
+            # (which can form tight cusps).
+            ran_into_concave_next_neighbor = \
+                    _handle_collision_with_concave_next_neighbor(
                             position,
-                            movement_params.rounding_corner_calc_shape,
-                            position_start.surface,
-                            position_end.surface)
-            is_character_past_end = \
-                    position.x + half_width <= corner_position.x if \
-                    is_left_side else \
-                    position.x - half_width >= corner_position.x
+                            next_neighbor,
+                            next_neighbor_normal_side_override,
+                            movement_params)
         
-        velocity.x = 0.0
-        velocity.y = \
-                movement_params.climb_down_speed if \
-                is_top_side else \
-                movement_params.climb_up_speed
-        
-        var is_rounding_corner_finished := false
-        while !is_rounding_corner_finished and \
-                frame_index < frame_count:
-            positions[frame_index] = position
-            velocities[frame_index] = velocity
+        if !ran_into_concave_next_neighbor:
+            if is_top_side:
+                # Assume that the character will have reached max speed by the time
+                # they've walked to the end of a floor surface.
+                velocity.x = \
+                        -movement_params.max_horizontal_speed_default if \
+                        is_left_side else \
+                        movement_params.max_horizontal_speed_default
+            else:
+                velocity.x = \
+                        -movement_params.ceiling_crawl_speed if \
+                        is_left_side else \
+                        movement_params.ceiling_crawl_speed
+            velocity.y = 0.0
             
-            frame_index += 1
-            position.y += velocity.y * Time.PHYSICS_TIME_STEP
-            position = Sc.geometry \
-                    .project_shape_onto_convex_corner_preserving_tangent_position( \
-                            position,
-                            movement_params.rounding_corner_calc_shape,
-                            position_end.surface,
-                            position_start.surface)
-            is_rounding_corner_finished = \
-                    position.y >= corner_position.y if \
+            var is_character_past_end := false
+            while !is_character_past_end:
+                positions[frame_index] = position
+                velocities[frame_index] = velocity
+                
+                frame_index += 1
+                position.x += velocity.x * Time.PHYSICS_TIME_STEP
+                position = Sc.geometry \
+                        .project_shape_onto_convex_corner_preserving_tangent_position( \
+                                position,
+                                movement_params.rounding_corner_calc_shape,
+                                position_start.surface,
+                                position_end.surface)
+                
+                is_character_past_end = \
+                        position.x + half_width <= corner_position.x if \
+                        is_left_side else \
+                        position.x - half_width >= corner_position.x
+                
+                if is_next_neighbor_concave:
+                    # This prevents collisions with concave next neighbors
+                    # (which can form tight cusps).
+                    ran_into_concave_next_neighbor = \
+                            _handle_collision_with_concave_next_neighbor(
+                                    position,
+                                    next_neighbor,
+                                    next_neighbor_normal_side_override,
+                                    movement_params)
+                    if ran_into_concave_next_neighbor:
+                        if !is_character_past_end:
+                            positions[frame_index] = position
+                            velocities[frame_index] = velocity
+                        break
+        
+        if !ran_into_concave_next_neighbor:
+            velocity.x = 0.0
+            velocity.y = \
+                    movement_params.climb_down_speed if \
                     is_top_side else \
-                    position.y <= corner_position.y
+                    movement_params.climb_up_speed
+            
+            var is_rounding_corner_finished := false
+            while !is_rounding_corner_finished and \
+                    frame_index < frame_count:
+                positions[frame_index] = position
+                velocities[frame_index] = velocity
+                
+                frame_index += 1
+                position.y += velocity.y * Time.PHYSICS_TIME_STEP
+                position = Sc.geometry \
+                        .project_shape_onto_convex_corner_preserving_tangent_position( \
+                                position,
+                                movement_params.rounding_corner_calc_shape,
+                                position_end.surface,
+                                position_start.surface)
+                
+                is_rounding_corner_finished = \
+                        position.y >= corner_position.y if \
+                        is_top_side else \
+                        position.y <= corner_position.y
+                
+                if is_next_neighbor_concave:
+                    # This prevents collisions with concave next neighbors
+                    # (which can form tight cusps).
+                    ran_into_concave_next_neighbor = \
+                            _handle_collision_with_concave_next_neighbor(
+                                    position,
+                                    next_neighbor,
+                                    next_neighbor_normal_side_override,
+                                    movement_params)
+                    if ran_into_concave_next_neighbor:
+                        if !is_rounding_corner_finished:
+                            positions[frame_index] = position
+                            velocities[frame_index] = velocity
+                        break
     
     # In case the movement reached the destination before the expected number
     # of frames, we remove any trailing frames.
@@ -576,6 +703,43 @@ func _populate_convex_trajectory(
     # Update the trajectory distance.
     trajectory.distance_from_continuous_trajectory = \
             EdgeTrajectoryUtils.sum_distance_between_frames(positions)
+
+
+# FIXME: LEFT OFF HERE: -------------- Return updated position; then update end-position-along-surface, et al
+func _handle_collision_with_concave_next_neighbor(
+        position: Vector2,
+        next_neighbor: Surface,
+        next_neighbor_normal_side_override: int,
+        movement_params: MovementParameters) -> bool:
+    var concave_neighbor_projection: Vector2 = \
+            Sc.geometry.project_shape_onto_surface(
+                    position,
+                    movement_params.rounding_corner_calc_shape,
+                    next_neighbor,
+                    true,
+                    next_neighbor_normal_side_override)
+    
+    match next_neighbor_normal_side_override:
+        SurfaceSide.FLOOR:
+            if concave_neighbor_projection.y < position.y:
+                position.y = concave_neighbor_projection.y
+                return true
+        SurfaceSide.LEFT_WALL:
+            if concave_neighbor_projection.x > position.x:
+                position.x = concave_neighbor_projection.x
+                return true
+        SurfaceSide.RIGHT_WALL:
+            if concave_neighbor_projection.x < position.x:
+                position.x = concave_neighbor_projection.x
+                return true
+        SurfaceSide.CEILING:
+            if concave_neighbor_projection.y > position.y:
+                position.y = concave_neighbor_projection.y
+                return true
+        _:
+            Sc.logger.error()
+    
+    return false
 
 
 func _get_velocity_start(
