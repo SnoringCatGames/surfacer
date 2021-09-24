@@ -252,3 +252,18 @@ func _check_did_just_reach_surface_destination(
     return moved_across_destination or \
             is_close_to_destination or \
             is_moving_away_from_destination
+
+
+func _get_is_surface_expected_for_touch_contact(
+        contact_surface: Surface,
+        navigation_state: CharacterNavigationState) -> bool:
+    return ._get_is_surface_expected_for_touch_contact(
+            contact_surface,
+            navigation_state) or \
+            contact_surface == get_next_neighbor()
+
+
+func get_next_neighbor() -> Surface:
+    return end_position_along_surface.surface.clockwise_neighbor if \
+            is_moving_clockwise else \
+            end_position_along_surface.surface.counter_clockwise_neighbor
