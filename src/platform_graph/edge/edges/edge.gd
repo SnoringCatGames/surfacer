@@ -210,12 +210,9 @@ func _check_for_unexpected_collision(
     
     if is_still_colliding_with_start_surface:
         for contact_surface in surface_state.surfaces_to_contacts:
-            if contact_surface == start_surface or \
-                    contact_surface == end_surface or \
-                    (navigation_state.edge_frame_count == 0 and \
-                    (contact_surface == start_surface.clockwise_neighbor or \
-                    contact_surface == \
-                            start_surface.counter_clockwise_neighbor)):
+            if _get_is_surface_expected_for_touch_contact(
+                    contact_surface,
+                    navigation_state):
                 continue
             else:
                 # Colliding with an unconnected surface.
@@ -228,6 +225,18 @@ func _check_for_unexpected_collision(
             surface_state.grabbed_surface != start_surface and \
             surface_state.grabbed_surface != end_surface:
         navigation_state.just_interrupted_by_unexpected_collision = true
+
+
+func _get_is_surface_expected_for_touch_contact(
+        contact_surface: Surface,
+        navigation_state: CharacterNavigationState) -> bool:
+    var start_surface := get_start_surface()
+    var end_surface := get_end_surface()
+    return contact_surface == start_surface or \
+            contact_surface == end_surface or \
+            (navigation_state.edge_frame_count == 0 and \
+            (contact_surface == start_surface.clockwise_neighbor or \
+            contact_surface == start_surface.counter_clockwise_neighbor))
 
 
 # This should probably only be used during debugging. Otherwise, local memory
