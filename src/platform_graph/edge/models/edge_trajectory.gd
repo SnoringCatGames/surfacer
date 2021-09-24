@@ -34,6 +34,8 @@ var jump_instruction_end: EdgeInstruction
 
 var distance_from_continuous_trajectory: float
 
+var collided_early: bool
+
 
 func _init(frame_continuous_positions_from_steps := PoolVector2Array(),
             frame_continuous_velocities_from_steps := PoolVector2Array(),
@@ -46,6 +48,7 @@ func _init(frame_continuous_positions_from_steps := PoolVector2Array(),
     self.waypoint_positions = waypoint_positions
     self.distance_from_continuous_trajectory = \
             distance_from_continuous_trajectory
+    self.collided_early = false
 
 
 func load_from_json_object(
@@ -68,6 +71,8 @@ func load_from_json_object(
     if json_object.has("j"):
         jump_instruction_end = EdgeInstruction.new()
         jump_instruction_end.load_from_json_object(json_object.j, context)
+    if json_object.has("c"):
+        collided_early = json_object.c
     distance_from_continuous_trajectory = json_object.f
 
 
@@ -86,6 +91,7 @@ func _load_horizontal_instructions_json_array(
 func to_json_object() -> Dictionary:
     var json_object := {
         f = distance_from_continuous_trajectory,
+        c = collided_early,
     }
     if !frame_discrete_positions_from_test.empty():
         json_object.d = Sc.json.encode_vector2_array(

@@ -97,23 +97,52 @@ func calculate_edge(
                 EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP
         edge_result_metadata.waypoint_validity = \
                 WaypointValidity.WAYPOINT_VALID
+    
     var instructions := _calculate_instructions(
             position_start,
             position_end,
             collision_params.movement_params)
-    # FIXME: --------------------
+    
+    # FIXME: LEFT OFF HERE: --------------------
+    # - Debug recent logic for trajectory early-end.
     if Sc.geometry.are_points_equal_with_epsilon(
             position_end.target_point, Vector2(416, 317.58), 0.1):
         pass
+    
     var trajectory := _calculate_trajectory(
             position_start,
             position_end,
             collision_params.movement_params,
             instructions.duration)
+    
+    if trajectory.collided_early:
+        var early_end := \
+                trajectory.frame_continuous_positions_from_steps[ \
+                    trajectory \
+                        .frame_continuous_positions_from_steps.size() - 1] if \
+                !trajectory.frame_continuous_positions_from_steps.empty() else \
+                trajectory.frame_discrete_positions_from_test[ \
+                    trajectory \
+                        .frame_discrete_positions_from_test.size() - 1] if \
+                !trajectory.frame_discrete_positions_from_test.empty() else \
+                Vector2.INF
+        if early_end != Vector2.INF:
+            position_end = PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
+                            early_end,
+                            position_end.surface,
+                            collision_params.movement_params.collider,
+                            false)
+            instructions.duration = _calculate_duration(
+                    position_start,
+                    position_end,
+                    collision_params.movement_params)
+    
     var velocity_end := _get_velocity_end(
             position_start,
             position_end,
             collision_params.movement_params)
+    
     return ClimbToAdjacentSurfaceEdge.new(
             self,
             position_start,
@@ -470,12 +499,14 @@ func _populate_convex_trajectory(
         if is_next_neighbor_concave:
             # This prevents collisions with concave next neighbors
             # (which can form tight cusps).
-            ran_into_concave_next_neighbor = \
-                    _handle_collision_with_concave_next_neighbor(
-                            position,
-                            next_neighbor,
-                            next_neighbor_normal_side_override,
-                            movement_params)
+            var override := _check_for_collision_with_concave_next_neighbor(
+                    position,
+                    next_neighbor,
+                    next_neighbor_normal_side_override,
+                    movement_params)
+            if override != Vector2.INF:
+                ran_into_concave_next_neighbor = true
+                position = override
         
         if !ran_into_concave_next_neighbor:
             velocity.x = 0.0
@@ -506,14 +537,16 @@ func _populate_convex_trajectory(
                 if is_next_neighbor_concave:
                     # This prevents collisions with concave next neighbors
                     # (which can form tight cusps).
-                    ran_into_concave_next_neighbor = \
-                            _handle_collision_with_concave_next_neighbor(
+                    var override := \
+                            _check_for_collision_with_concave_next_neighbor(
                                     position,
                                     next_neighbor,
                                     next_neighbor_normal_side_override,
                                     movement_params)
-                    if ran_into_concave_next_neighbor:
-                        if !is_character_past_end:
+                    if override != Vector2.INF:
+                        ran_into_concave_next_neighbor = true
+                        position = override
+                        if frame_index < frame_count:
                             positions[frame_index] = position
                             velocities[frame_index] = velocity
                         break
@@ -563,14 +596,16 @@ func _populate_convex_trajectory(
                 if is_next_neighbor_concave:
                     # This prevents collisions with concave next neighbors
                     # (which can form tight cusps).
-                    ran_into_concave_next_neighbor = \
-                            _handle_collision_with_concave_next_neighbor(
+                    var override := \
+                            _check_for_collision_with_concave_next_neighbor(
                                     position,
                                     next_neighbor,
                                     next_neighbor_normal_side_override,
                                     movement_params)
-                    if ran_into_concave_next_neighbor:
-                        if !is_rounding_corner_finished:
+                    if override != Vector2.INF:
+                        ran_into_concave_next_neighbor = true
+                        position = override
+                        if frame_index < frame_count:
                             positions[frame_index] = position
                             velocities[frame_index] = velocity
                         break
@@ -587,12 +622,14 @@ func _populate_convex_trajectory(
         if is_next_neighbor_concave:
             # This prevents collisions with concave next neighbors
             # (which can form tight cusps).
-            ran_into_concave_next_neighbor = \
-                    _handle_collision_with_concave_next_neighbor(
-                            position,
-                            next_neighbor,
-                            next_neighbor_normal_side_override,
-                            movement_params)
+            var override := _check_for_collision_with_concave_next_neighbor(
+                    position,
+                    next_neighbor,
+                    next_neighbor_normal_side_override,
+                    movement_params)
+            if override != Vector2.INF:
+                ran_into_concave_next_neighbor = true
+                position = override
         
         if !ran_into_concave_next_neighbor:
             if is_top_side:
@@ -631,14 +668,16 @@ func _populate_convex_trajectory(
                 if is_next_neighbor_concave:
                     # This prevents collisions with concave next neighbors
                     # (which can form tight cusps).
-                    ran_into_concave_next_neighbor = \
-                            _handle_collision_with_concave_next_neighbor(
+                    var override := \
+                            _check_for_collision_with_concave_next_neighbor(
                                     position,
                                     next_neighbor,
                                     next_neighbor_normal_side_override,
                                     movement_params)
-                    if ran_into_concave_next_neighbor:
-                        if !is_character_past_end:
+                    if override != Vector2.INF:
+                        ran_into_concave_next_neighbor = true
+                        position = override
+                        if frame_index < frame_count:
                             positions[frame_index] = position
                             velocities[frame_index] = velocity
                         break
@@ -673,14 +712,16 @@ func _populate_convex_trajectory(
                 if is_next_neighbor_concave:
                     # This prevents collisions with concave next neighbors
                     # (which can form tight cusps).
-                    ran_into_concave_next_neighbor = \
-                            _handle_collision_with_concave_next_neighbor(
+                    var override := \
+                            _check_for_collision_with_concave_next_neighbor(
                                     position,
                                     next_neighbor,
                                     next_neighbor_normal_side_override,
                                     movement_params)
-                    if ran_into_concave_next_neighbor:
-                        if !is_rounding_corner_finished:
+                    if override != Vector2.INF:
+                        ran_into_concave_next_neighbor = true
+                        position = override
+                        if frame_index < frame_count:
                             positions[frame_index] = position
                             velocities[frame_index] = velocity
                         break
@@ -703,14 +744,15 @@ func _populate_convex_trajectory(
     # Update the trajectory distance.
     trajectory.distance_from_continuous_trajectory = \
             EdgeTrajectoryUtils.sum_distance_between_frames(positions)
+    
+    trajectory.collided_early = ran_into_concave_next_neighbor
 
 
-# FIXME: LEFT OFF HERE: -------------- Return updated position; then update end-position-along-surface, et al
-func _handle_collision_with_concave_next_neighbor(
+func _check_for_collision_with_concave_next_neighbor(
         position: Vector2,
         next_neighbor: Surface,
         next_neighbor_normal_side_override: int,
-        movement_params: MovementParameters) -> bool:
+        movement_params: MovementParameters) -> Vector2:
     var concave_neighbor_projection: Vector2 = \
             Sc.geometry.project_shape_onto_surface(
                     position,
@@ -723,23 +765,23 @@ func _handle_collision_with_concave_next_neighbor(
         SurfaceSide.FLOOR:
             if concave_neighbor_projection.y < position.y:
                 position.y = concave_neighbor_projection.y
-                return true
+                return position
         SurfaceSide.LEFT_WALL:
             if concave_neighbor_projection.x > position.x:
                 position.x = concave_neighbor_projection.x
-                return true
+                return position
         SurfaceSide.RIGHT_WALL:
             if concave_neighbor_projection.x < position.x:
                 position.x = concave_neighbor_projection.x
-                return true
+                return position
         SurfaceSide.CEILING:
             if concave_neighbor_projection.y > position.y:
                 position.y = concave_neighbor_projection.y
-                return true
+                return position
         _:
             Sc.logger.error()
     
-    return false
+    return Vector2.INF
 
 
 func _get_velocity_start(
