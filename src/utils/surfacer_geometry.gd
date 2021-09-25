@@ -905,6 +905,123 @@ static func project_shape_onto_segment(
             Vector2(projection_displacement_x, projection_displacement_y)
 
 
+static func project_shape_onto_segment_and_away_from_concave_neighbors(
+        shape_position: Vector2,
+        shape: RotatedShape,
+        surface: Surface,
+        uses_end_segment_if_outside_bounds := true,
+        side_override := SurfaceSide.NONE) -> Vector2:
+    var projection := project_shape_onto_surface(
+            shape_position,
+            shape,
+            surface,
+            uses_end_segment_if_outside_bounds,
+            side_override)
+    
+    var cw_neighbor := surface.clockwise_neighbor
+    var is_cw_neighbor_concave := \
+            cw_neighbor == surface.clockwise_concave_neighbor
+    if is_cw_neighbor_concave:
+        var cw_neighbor_normal_side_override := \
+                get_concave_neighbor_projection_side_override(surface, true)
+        projection = project_away_from_concave_neighbor(
+                projection,
+                cw_neighbor,
+                cw_neighbor_normal_side_override,
+                shape)
+    
+    var ccw_neighbor := surface.clockwise_neighbor
+    var is_ccw_neighbor_concave := \
+            ccw_neighbor == surface.clockwise_concave_neighbor
+    if is_ccw_neighbor_concave:
+        var ccw_neighbor_normal_side_override := \
+                get_concave_neighbor_projection_side_override(surface, false)
+        projection = project_away_from_concave_neighbor(
+                projection,
+                ccw_neighbor,
+                ccw_neighbor_normal_side_override,
+                shape)
+    
+    return projection
+
+
+static func get_concave_neighbor_projection_side_override(
+        surface: Surface,
+        is_clockwise: bool) -> int:
+    match surface.side:
+        SurfaceSide.FLOOR:
+            return SurfaceSide.RIGHT_WALL if \
+                    is_clockwise else \
+                    SurfaceSide.LEFT_WALL
+        SurfaceSide.LEFT_WALL:
+            return SurfaceSide.FLOOR if \
+                    is_clockwise else \
+                    SurfaceSide.CEILING
+        SurfaceSide.RIGHT_WALL:
+            return SurfaceSide.CEILING if \
+                    is_clockwise else \
+                    SurfaceSide.FLOOR
+        SurfaceSide.CEILING:
+            return SurfaceSide.LEFT_WALL if \
+                    is_clockwise else \
+                    SurfaceSide.RIGHT_WALL
+        _:
+            Sc.logger.error()
+            return SurfaceSide.NONE
+
+
+static func project_away_from_concave_neighbor(
+        position: Vector2,
+        neighbor: Surface,
+        neighbor_normal_side_override: int,
+        shape: RotatedShape) -> Vector2:
+    # Broad-phase check: Can these be intersecting?
+    if !check_for_shape_to_rect_intersection(
+            position,
+            shape,
+            neighbor.bounding_box):
+        return Vector2.INF
+    
+    var concave_neighbor_projection := project_shape_onto_surface(
+            position,
+            shape,
+            neighbor,
+            true,
+            neighbor_normal_side_override)
+    
+    match neighbor_normal_side_override:
+        SurfaceSide.FLOOR:
+            if concave_neighbor_projection.y < position.y:
+                position.y = concave_neighbor_projection.y
+                return position
+        SurfaceSide.LEFT_WALL:
+            if concave_neighbor_projection.x > position.x:
+                position.x = concave_neighbor_projection.x
+                return position
+        SurfaceSide.RIGHT_WALL:
+            if concave_neighbor_projection.x < position.x:
+                position.x = concave_neighbor_projection.x
+                return position
+        SurfaceSide.CEILING:
+            if concave_neighbor_projection.y > position.y:
+                position.y = concave_neighbor_projection.y
+                return position
+        _:
+            Sc.logger.error()
+    
+    return Vector2.INF
+
+
+static func check_for_shape_to_rect_intersection(
+        shape_position: Vector2,
+        shape: RotatedShape,
+        rect: Rect2) -> bool:
+    return rect.position.x < shape_position.x + shape.half_width_height.x and \
+            rect.end.x > shape_position.x - shape.half_width_height.x and \
+            rect.position.y < shape_position.y + shape.half_width_height.y and \
+            rect.end.y > shape_position.y - shape.half_width_height.y
+
+
 # -   Finds the end points of the segment along the given surface that the
 #     axially-aligned projection of the given point onto the surface would
 #     intersect.
