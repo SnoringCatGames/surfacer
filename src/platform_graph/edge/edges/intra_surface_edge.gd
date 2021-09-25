@@ -35,7 +35,10 @@ func _init(
         trajectory: EdgeTrajectory = null) \
         .(TYPE,
         IS_TIME_BASED,
-        SurfaceType.get_type_from_side(start_position_along_surface.side),
+        SurfaceType.get_type_from_side(
+                start_position_along_surface.side if \
+                is_instance_valid(start_position_along_surface) else \
+                SurfaceSide.NONE),
         ENTERS_AIR,
         calculator,
         start_position_along_surface,

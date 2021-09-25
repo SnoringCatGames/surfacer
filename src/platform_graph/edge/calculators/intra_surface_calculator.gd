@@ -66,57 +66,15 @@ func create(
         end: PositionAlongSurface,
         velocity_start: Vector2,
         movement_params: MovementParameters) -> IntraSurfaceEdge:
-    var is_degenerate: bool = _calculate_is_degenerate(
-            start,
-            end)
-    var distance := calculate_distance(
-            movement_params,
-            start,
-            end)
-    var duration := calculate_duration(
-            movement_params,
-            start,
-            end,
-            velocity_start)
-    var velocity_end := _calculate_velocity_end(
-            start,
-            end,
-            velocity_start,
-            movement_params)
-    var is_moving_clockwise := _calculate_is_moving_clockwise(
-            start,
-            end)
-    var stopping_distance := _calculate_stopping_distance(
-            start,
-            end,
-            velocity_start,
-            movement_params)
-    var instructions := _calculate_instructions(
-            start,
-            end,
-            duration)
-    var trajectory := _calculate_trajectory(
-            start,
-            end,
-            velocity_start,
-            duration,
-            is_degenerate,
-            movement_params)
-    
-    return IntraSurfaceEdge.new(
-            self,
-            start,
-            end,
-            velocity_start,
-            velocity_end,
-            distance,
-            duration,
-            is_moving_clockwise,
-            stopping_distance,
-            is_degenerate,
-            movement_params,
-            instructions,
-            trajectory)
+    var edge := IntraSurfaceEdge.new()
+    edge.edge_type = SurfaceType.get_type_from_side(start.side)
+    edge.calculator = self
+    edge.start_position_along_surface = start
+    edge.end_position_along_surface = end
+    edge.velocity_start = velocity_start
+    edge.movement_params = movement_params
+    _update(edge)
+    return edge
 
 
 func create_correction_interstitial(
@@ -166,28 +124,14 @@ func _update(edge: IntraSurfaceEdge) -> void:
     var is_degenerate: bool = _calculate_is_degenerate(
             start,
             end)
-    var distance := calculate_distance(
-            movement_params,
-            start,
-            end)
     var duration := calculate_duration(
             movement_params,
             start,
             end,
             velocity_start)
-    var velocity_end := _calculate_velocity_end(
-            start,
-            end,
-            velocity_start,
-            movement_params)
     var is_moving_clockwise := _calculate_is_moving_clockwise(
             start,
             end)
-    var stopping_distance := _calculate_stopping_distance(
-            start,
-            end,
-            velocity_start,
-            movement_params)
     var instructions := _calculate_instructions(
             start,
             end,
@@ -197,7 +141,56 @@ func _update(edge: IntraSurfaceEdge) -> void:
             end,
             velocity_start,
             duration,
+            is_moving_clockwise,
             is_degenerate,
+            movement_params)
+    
+    # We might need to shorten our expected movement for a concave next neighbor
+    # (which can form a tight cusp).
+    if trajectory.collided_early:
+        var early_end := \
+                trajectory.frame_continuous_positions_from_steps[ \
+                    trajectory \
+                        .frame_continuous_positions_from_steps.size() - 1] if \
+                !trajectory.frame_continuous_positions_from_steps.empty() else \
+                trajectory.frame_discrete_positions_from_test[ \
+                    trajectory \
+                        .frame_discrete_positions_from_test.size() - 1] if \
+                !trajectory.frame_discrete_positions_from_test.empty() else \
+                Vector2.INF
+        if early_end != Vector2.INF:
+            end = PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
+                            early_end,
+                            end.surface,
+                            movement_params.collider,
+                            false)
+            duration = calculate_duration(
+                    movement_params,
+                    start,
+                    end,
+                    velocity_start)
+            is_moving_clockwise = _calculate_is_moving_clockwise(
+                    start,
+                    end)
+            instructions = _calculate_instructions(
+                    start,
+                    end,
+                    duration)
+    
+    var distance := calculate_distance(
+            movement_params,
+            start,
+            end)
+    var velocity_end := _calculate_velocity_end(
+            start,
+            end,
+            velocity_start,
+            movement_params)
+    var stopping_distance := _calculate_stopping_distance(
+            start,
+            end,
+            velocity_start,
             movement_params)
     
     edge.start_position_along_surface = start
@@ -206,6 +199,8 @@ func _update(edge: IntraSurfaceEdge) -> void:
     edge.duration = duration
     edge.velocity_end = velocity_end
     edge.is_moving_clockwise = is_moving_clockwise
+    edge.stopping_distance = stopping_distance
+    edge.is_degenerate = is_degenerate
     edge.instructions = instructions
     edge.trajectory = trajectory
 
@@ -366,6 +361,7 @@ func _calculate_trajectory(
         end: PositionAlongSurface,
         velocity_start: Vector2,
         duration: float,
+        is_moving_clockwise: bool,
         is_degenerate: bool,
         movement_params: MovementParameters) -> EdgeTrajectory:
     var trajectory := EdgeTrajectory.new()
@@ -395,6 +391,40 @@ func _calculate_trajectory(
                     PoolVector2Array(velocities)
         trajectory.distance_from_continuous_trajectory = 0.00001
         return trajectory
+    
+    var next_neighbor := \
+            end.surface.clockwise_neighbor if \
+            is_moving_clockwise else \
+            end.surface.counter_clockwise_neighbor
+    var is_next_neighbor_concave := \
+            next_neighbor == end.surface.clockwise_concave_neighbor or \
+            next_neighbor == end.surface.counter_clockwise_concave_neighbor
+    var next_neighbor_normal_side_override := SurfaceSide.NONE
+    if is_next_neighbor_concave:
+        match end.surface.side:
+            SurfaceSide.FLOOR:
+                next_neighbor_normal_side_override = \
+                        SurfaceSide.RIGHT_WALL if \
+                        is_moving_clockwise else \
+                        SurfaceSide.LEFT_WALL
+            SurfaceSide.LEFT_WALL:
+                next_neighbor_normal_side_override = \
+                        SurfaceSide.FLOOR if \
+                        is_moving_clockwise else \
+                        SurfaceSide.CEILING
+            SurfaceSide.RIGHT_WALL:
+                next_neighbor_normal_side_override = \
+                        SurfaceSide.CEILING if \
+                        is_moving_clockwise else \
+                        SurfaceSide.FLOOR
+            SurfaceSide.CEILING:
+                next_neighbor_normal_side_override = \
+                        SurfaceSide.LEFT_WALL if \
+                        is_moving_clockwise else \
+                        SurfaceSide.RIGHT_WALL
+            _:
+                Sc.logger.error()
+    var ran_into_concave_next_neighbor := false
     
     var displacement := end.target_point - start.target_point
     
@@ -433,10 +463,11 @@ func _calculate_trajectory(
         _:
             Sc.logger.error()
     
-    for i in frame_count:
-        positions[i] = position
-        velocities[i] = velocity
+    while frame_index < frame_count:
+        positions[frame_index] = position
+        velocities[frame_index] = velocity
         
+        frame_index += 1
         position += velocity * Time.PHYSICS_TIME_STEP
         position = Sc.geometry.project_shape_onto_surface(
                 position,
@@ -448,6 +479,27 @@ func _calculate_trajectory(
                 velocity.x,
                 -movement_params.max_horizontal_speed_default,
                 movement_params.max_horizontal_speed_default)
+        
+        if is_next_neighbor_concave:
+            # This prevents collisions with concave next neighbors
+            # (which can form tight cusps).
+            var override := _check_for_collision_with_concave_next_neighbor(
+                    position,
+                    next_neighbor,
+                    next_neighbor_normal_side_override,
+                    movement_params)
+            if override != Vector2.INF:
+                ran_into_concave_next_neighbor = true
+                position = override
+                if frame_index < frame_count:
+                    positions[frame_index] = position
+                    velocities[frame_index] = velocity
+                break
+    
+    # In case the movement reached the destination before the expected number
+    # of frames, we remove any trailing frames.
+    positions.resize(frame_index)
+    velocities.resize(frame_index)
     
     if movement_params.includes_discrete_trajectory_state:
         trajectory.frame_discrete_positions_from_test = \
@@ -463,7 +515,45 @@ func _calculate_trajectory(
     trajectory.distance_from_continuous_trajectory = \
             EdgeTrajectoryUtils.sum_distance_between_frames(positions)
     
+    trajectory.collided_early = ran_into_concave_next_neighbor
+    
     return trajectory
+
+
+func _check_for_collision_with_concave_next_neighbor(
+        position: Vector2,
+        next_neighbor: Surface,
+        next_neighbor_normal_side_override: int,
+        movement_params: MovementParameters) -> Vector2:
+    var concave_neighbor_projection: Vector2 = \
+            Sc.geometry.project_shape_onto_surface(
+                    position,
+                    movement_params.rounding_corner_calc_shape,
+                    next_neighbor,
+                    true,
+                    next_neighbor_normal_side_override)
+    
+    match next_neighbor_normal_side_override:
+        SurfaceSide.FLOOR:
+            if concave_neighbor_projection.y < position.y:
+                position.y = concave_neighbor_projection.y
+                return position
+        SurfaceSide.LEFT_WALL:
+            if concave_neighbor_projection.x > position.x:
+                position.x = concave_neighbor_projection.x
+                return position
+        SurfaceSide.RIGHT_WALL:
+            if concave_neighbor_projection.x < position.x:
+                position.x = concave_neighbor_projection.x
+                return position
+        SurfaceSide.CEILING:
+            if concave_neighbor_projection.y > position.y:
+                position.y = concave_neighbor_projection.y
+                return position
+        _:
+            Sc.logger.error()
+    
+    return Vector2.INF
 
 
 # Calculate the distance from the end position at which the move button should
