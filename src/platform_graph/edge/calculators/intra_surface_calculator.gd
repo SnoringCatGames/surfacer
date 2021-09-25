@@ -483,11 +483,12 @@ func _calculate_trajectory(
         if is_next_neighbor_concave:
             # This prevents collisions with concave next neighbors
             # (which can form tight cusps).
-            var override := _check_for_collision_with_concave_next_neighbor(
-                    position,
-                    next_neighbor,
-                    next_neighbor_normal_side_override,
-                    movement_params)
+            var override: Vector2 = \
+                    Sc.geometry.project_away_from_concave_neighbor(
+                            position,
+                            next_neighbor,
+                            next_neighbor_normal_side_override,
+                            movement_params.collider)
             if override != Vector2.INF:
                 ran_into_concave_next_neighbor = true
                 position = override
@@ -518,59 +519,6 @@ func _calculate_trajectory(
     trajectory.collided_early = ran_into_concave_next_neighbor
     
     return trajectory
-
-
-func _check_for_collision_with_concave_next_neighbor(
-        position: Vector2,
-        next_neighbor: Surface,
-        next_neighbor_normal_side_override: int,
-        movement_params: MovementParameters) -> Vector2:
-    # Broad-phase check: Can these be intersecting?
-    if !_check_for_shape_to_rect_intersection(
-            position,
-            movement_params.rounding_corner_calc_shape,
-            next_neighbor.bounding_box):
-        return Vector2.INF
-    
-    var concave_neighbor_projection: Vector2 = \
-            Sc.geometry.project_shape_onto_surface(
-                    position,
-                    movement_params.rounding_corner_calc_shape,
-                    next_neighbor,
-                    true,
-                    next_neighbor_normal_side_override)
-    
-    match next_neighbor_normal_side_override:
-        SurfaceSide.FLOOR:
-            if concave_neighbor_projection.y < position.y:
-                position.y = concave_neighbor_projection.y
-                return position
-        SurfaceSide.LEFT_WALL:
-            if concave_neighbor_projection.x > position.x:
-                position.x = concave_neighbor_projection.x
-                return position
-        SurfaceSide.RIGHT_WALL:
-            if concave_neighbor_projection.x < position.x:
-                position.x = concave_neighbor_projection.x
-                return position
-        SurfaceSide.CEILING:
-            if concave_neighbor_projection.y > position.y:
-                position.y = concave_neighbor_projection.y
-                return position
-        _:
-            Sc.logger.error()
-    
-    return Vector2.INF
-
-
-func _check_for_shape_to_rect_intersection(
-        shape_position: Vector2,
-        shape: RotatedShape,
-        rect: Rect2) -> bool:
-    return rect.position.x < shape_position.x + shape.half_width_height.x and \
-            rect.end.x > shape_position.x - shape.half_width_height.x and \
-            rect.position.y < shape_position.y + shape.half_width_height.y and \
-            rect.end.y > shape_position.y - shape.half_width_height.y
 
 
 # Calculate the distance from the end position at which the move button should
