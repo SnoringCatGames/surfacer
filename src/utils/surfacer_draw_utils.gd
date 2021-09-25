@@ -878,7 +878,7 @@ func draw_tile_map_indices( \
                 position,
                 tile_map)
         canvas.draw_string(
-                Sc.gui.fonts.main_xs,
+                Sc.gui.fonts.main_xxs,
                 cell_center,
                 str(tile_map_index),
                 color)

@@ -134,19 +134,19 @@ func _parse_tile_map(
             surface_store.right_walls)
     Sc.profiler.stop("assign_neighbor_surfaces_duration")
     
+    Sc.profiler.start("_assert_surfaces_have_neighbors")
+    _assert_surfaces_have_neighbors(surface_store.floors)
+    _assert_surfaces_have_neighbors(surface_store.ceilings)
+    _assert_surfaces_have_neighbors(surface_store.left_walls)
+    _assert_surfaces_have_neighbors(surface_store.right_walls)
+    Sc.profiler.stop("_assert_surfaces_have_neighbors")
+    
     Sc.profiler.start("calculate_shape_bounding_boxes_for_surfaces_duration")
     # Since this calculation will loop around transitive neigbors, and since
     # every surface should be connected transitively to a floor, it should also
     # end up recording the bounding box for all other surface sides too.
     _calculate_shape_bounding_boxes_for_surfaces(surface_store.floors)
     Sc.profiler.stop("calculate_shape_bounding_boxes_for_surfaces_duration")
-    
-    Sc.profiler.start("assert_surfaces_fully_calculated_duration")
-    _assert_surfaces_fully_calculated(surface_store.floors)
-    _assert_surfaces_fully_calculated(surface_store.ceilings)
-    _assert_surfaces_fully_calculated(surface_store.left_walls)
-    _assert_surfaces_fully_calculated(surface_store.right_walls)
-    Sc.profiler.stop("assert_surfaces_fully_calculated_duration")
 
 
 func _store_surfaces(
@@ -1009,8 +1009,7 @@ static func _assign_neighbor_surfaces(
                         ceiling.clockwise_convex_neighbor != null:
                     break
     
-    # -   If surfaces align with the FLOOR_MAX_ANGLE, then it is possible for a
-    #     floor to be adjacent to a ceiling.
+    # -   It is possible for a floor to be adjacent to a ceiling.
     # -   So check for any corresponding unassigned neighbor references.
     for floor_surface in floors:
         # There can only be one clockwise and one counter-clockwise neighbor.
@@ -1044,6 +1043,42 @@ static func _assign_neighbor_surfaces(
                         diff_y > -_EQUAL_POINT_EPSILON:
                     floor_surface.clockwise_concave_neighbor = ceiling
                     ceiling.counter_clockwise_concave_neighbor = floor_surface
+    
+    # -   It is possible for a left-wall to be adjacent to a right-wall.
+    # -   So check for any corresponding unassigned neighbor references.
+    for right_wall in right_walls:
+        # There can only be one clockwise and one counter-clockwise neighbor.
+        if right_wall.counter_clockwise_neighbor == null:
+            # The bottom edge of the right_wall.
+            surface1_end1 = right_wall.first_point
+            for left_wall in left_walls:
+                # Check for a concave neighbor at the bottom edge of the
+                # left_wall.
+                surface2_end = left_wall.last_point
+                diff_x = surface1_end1.x - surface2_end.x
+                diff_y = surface1_end1.y - surface2_end.y
+                if diff_x < _EQUAL_POINT_EPSILON and \
+                        diff_x > -_EQUAL_POINT_EPSILON and \
+                        diff_y < _EQUAL_POINT_EPSILON and \
+                        diff_y > -_EQUAL_POINT_EPSILON:
+                    right_wall.counter_clockwise_concave_neighbor = left_wall
+                    left_wall.clockwise_concave_neighbor = right_wall
+        
+        # There can only be one clockwise and one counter-clockwise neighbor.
+        if right_wall.clockwise_neighbor == null:
+            # The top edge of the right_wall.
+            surface1_end2 = right_wall.last_point
+            for left_wall in left_walls:
+                # Check for a concave neighbor at the top edge of the left_wall.
+                surface2_end = left_wall.first_point
+                diff_x = surface1_end2.x - surface2_end.x
+                diff_y = surface1_end2.y - surface2_end.y
+                if diff_x < _EQUAL_POINT_EPSILON and \
+                        diff_x > -_EQUAL_POINT_EPSILON and \
+                        diff_y < _EQUAL_POINT_EPSILON and \
+                        diff_y > -_EQUAL_POINT_EPSILON:
+                    right_wall.clockwise_concave_neighbor = left_wall
+                    left_wall.counter_clockwise_concave_neighbor = right_wall
 
 
 static func _calculate_shape_bounding_boxes_for_surfaces(
@@ -1068,13 +1103,10 @@ static func _calculate_shape_bounding_boxes_for_surfaces(
             connected_surface = connected_surface.clockwise_neighbor
 
 
-static func _assert_surfaces_fully_calculated(surfaces: Array) -> void:
+static func _assert_surfaces_have_neighbors(surfaces: Array) -> void:
     for surface in surfaces:
         assert(surface.clockwise_neighbor != null)
         assert(surface.counter_clockwise_neighbor != null)
-        assert(surface.connected_region_bounding_box.position != \
-                Vector2.INF and \
-                surface.connected_region_bounding_box.size != Vector2.INF)
 
 
 static func _populate_surface_objects(

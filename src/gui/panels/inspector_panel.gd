@@ -157,7 +157,7 @@ func _initialize_annotator_checkboxes() -> void:
         row.rect_min_size.x = item_width
         
         for label in Sc.utils.get_children_by_type(row, Label, true):
-            label.add_font_override("font", Sc.gui.fonts.main_xs)
+            label.add_font_override("font", Sc.gui.fonts.main_xxs)
         
         if item.type == ControlRow.CHECKBOX:
             item.set_check_box_scale(CHECK_BOX_SCALE)

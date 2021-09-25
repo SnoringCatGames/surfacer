@@ -142,6 +142,12 @@ const BACKGROUND_COLOR_TO_EMPHASIZE_ANNOTATIONS := Color("20222A")
 
 var _default_fonts_manifest_normal := {
     fonts = {
+        main_xxs = preload( \
+                "res://addons/scaffolder/assets/fonts/roboto_font_xxs.tres"),
+        main_xxs_bold = preload( \
+                "res://addons/scaffolder/assets/fonts/roboto_font_xxs.tres"),
+        main_xxs_italic = preload( \
+                "res://addons/scaffolder/assets/fonts/roboto_font_xxs.tres"),
         main_xs = preload( \
                 "res://addons/scaffolder/assets/fonts/roboto_font_xs.tres"),
         main_xs_bold = preload( \
@@ -184,6 +190,7 @@ var _default_fonts_manifest_normal := {
     },
     sizes = {
         pc = {
+            main_xxs = 10,
             main_xs = 15,
             main_s = 18,
             main_m = 30,
@@ -197,6 +204,7 @@ var _default_fonts_manifest_normal := {
 #            header_xl = ,
         },
         mobile = {
+            main_xxs = 12,
             main_xs = 16,
             main_s = 18,
             main_m = 28,
@@ -208,6 +216,12 @@ var _default_fonts_manifest_normal := {
 
 var _default_fonts_manifest_pixel := {
     fonts = {
+        main_xxs = preload( \
+                "res://addons/scaffolder/assets/fonts/pxlzr_font_xxs.tres"),
+        main_xxs_bold = preload( \
+                "res://addons/scaffolder/assets/fonts/pxlzr_font_xxs.tres"),
+        main_xxs_italic = preload( \
+                "res://addons/scaffolder/assets/fonts/pxlzr_font_xxs.tres"),
         main_xs = preload( \
                 "res://addons/scaffolder/assets/fonts/pxlzr_font_xs.tres"),
         main_xs_bold = preload( \
@@ -250,6 +264,7 @@ var _default_fonts_manifest_pixel := {
     },
     sizes = {
         pc = {
+            main_xxs = 10,
             main_xs = 15,
             main_s = 18,
             main_m = 30,
@@ -263,6 +278,7 @@ var _default_fonts_manifest_pixel := {
 #            header_xl = ,
         },
         mobile = {
+            main_xxs = 12,
             main_xs = 16,
             main_s = 18,
             main_m = 28,

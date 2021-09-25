@@ -680,7 +680,7 @@ static func calculate_collision_surface(
             if is_there_a_left_wall_at_top:
                 tile_coord = top_cell_coord
                 surface_side = SurfaceSide.LEFT_WALL
-            if is_there_a_left_wall_at_bottom:
+            elif is_there_a_left_wall_at_bottom:
                 tile_coord = bottom_cell_coord
                 surface_side = SurfaceSide.LEFT_WALL
             else:
@@ -692,7 +692,7 @@ static func calculate_collision_surface(
             if is_there_a_right_wall_at_top:
                 tile_coord = top_cell_coord
                 surface_side = SurfaceSide.RIGHT_WALL
-            if is_there_a_right_wall_at_bottom:
+            elif is_there_a_right_wall_at_bottom:
                 tile_coord = bottom_cell_coord
                 surface_side = SurfaceSide.RIGHT_WALL
             else:
@@ -786,7 +786,7 @@ static func calculate_collision_surface(
             if is_there_a_floor_at_left:
                 tile_coord = left_cell_coord
                 surface_side = SurfaceSide.FLOOR
-            if is_there_a_floor_at_right:
+            elif is_there_a_floor_at_right:
                 tile_coord = right_cell_coord
                 surface_side = SurfaceSide.FLOOR
             else:
@@ -798,7 +798,7 @@ static func calculate_collision_surface(
             if is_there_a_ceiling_at_left:
                 tile_coord = left_cell_coord
                 surface_side = SurfaceSide.CEILING
-            if is_there_a_ceiling_at_right:
+            elif is_there_a_ceiling_at_right:
                 tile_coord = right_cell_coord
                 surface_side = SurfaceSide.CEILING
             else:
