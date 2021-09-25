@@ -110,15 +110,13 @@ func calculate_edge(
             instructions.duration)
     
     if trajectory.collided_early:
-        var early_end := \
-                trajectory.frame_continuous_positions_from_steps[ \
-                    trajectory \
-                        .frame_continuous_positions_from_steps.size() - 1] if \
+        var positions: PoolVector2Array = \
+                trajectory.frame_continuous_positions_from_steps if \
                 !trajectory.frame_continuous_positions_from_steps.empty() else \
-                trajectory.frame_discrete_positions_from_test[ \
-                    trajectory \
-                        .frame_discrete_positions_from_test.size() - 1] if \
-                !trajectory.frame_discrete_positions_from_test.empty() else \
+                trajectory.frame_discrete_positions_from_test.empty()
+        var early_end := \
+                positions[positions.size() - 1] if \
+                !positions.empty() else \
                 Vector2.INF
         if early_end != Vector2.INF:
             position_end = PositionAlongSurfaceFactory \
@@ -127,10 +125,8 @@ func calculate_edge(
                             position_end.surface,
                             collision_params.movement_params.collider,
                             false)
-            instructions.duration = _calculate_duration(
-                    position_start,
-                    position_end,
-                    collision_params.movement_params)
+            var duration := (positions.size() - 1) * Time.PHYSICS_TIME_STEP
+            instructions.duration = duration
     
     var velocity_end := _get_velocity_end(
             position_start,
