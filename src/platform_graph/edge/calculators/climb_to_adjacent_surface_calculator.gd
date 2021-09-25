@@ -103,12 +103,6 @@ func calculate_edge(
             position_end,
             collision_params.movement_params)
     
-    # FIXME: LEFT OFF HERE: --------------------
-    # - Debug recent logic for trajectory early-end.
-    if Sc.geometry.are_points_equal_with_epsilon(
-            position_end.target_point, Vector2(416, 317.58), 0.1):
-        pass
-    
     var trajectory := _calculate_trajectory(
             position_start,
             position_end,
