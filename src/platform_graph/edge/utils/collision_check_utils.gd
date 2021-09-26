@@ -496,45 +496,26 @@ static func check_frame_for_collision(
                             most_likely_collision_point = current_point
             
             if expected_surface_side_for_displacement != SurfaceSide.NONE:
-                var expected_touching_floor := \
-                        expected_surface_side_for_displacement == \
-                        SurfaceSide.FLOOR
-                var expected_touching_ceiling := \
-                        expected_surface_side_for_displacement == \
-                        SurfaceSide.CEILING
-                var expected_touching_left_wall := \
-                        expected_surface_side_for_displacement == \
-                        SurfaceSide.LEFT_WALL
-                var expected_touching_right_wall := \
-                        expected_surface_side_for_displacement == \
-                        SurfaceSide.RIGHT_WALL
                 SurfaceFinder.calculate_collision_surface(
                         tile_map_result,
                         collision_params.surface_store,
                         most_likely_collision_point,
+                        expected_surface_side_for_displacement,
                         tile_map,
-                        expected_touching_floor,
-                        expected_touching_ceiling,
-                        expected_touching_left_wall,
-                        expected_touching_right_wall,
+                        false,
                         true)
     
     if tile_map_result.surface == null:
         # Consider the default collision point returned from move_and_collide.
         tile_map_result.reset()
-        var is_touching_floor := surface_side == SurfaceSide.FLOOR
-        var is_touching_ceiling := surface_side == SurfaceSide.CEILING
-        var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
-        var is_touching_right_wall := surface_side == SurfaceSide.RIGHT_WALL
         SurfaceFinder.calculate_collision_surface(
                 tile_map_result,
                 collision_params.surface_store,
                 kinematic_collision.position,
+                kinematic_collision.normal,
                 tile_map,
-                is_touching_floor,
-                is_touching_ceiling,
-                is_touching_left_wall,
-                is_touching_right_wall)
+                true,
+                false)
     
     if tile_map_result.surface == null:
         # Invalid collision state.

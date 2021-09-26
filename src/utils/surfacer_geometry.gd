@@ -924,23 +924,27 @@ static func project_shape_onto_segment_and_away_from_concave_neighbors(
     if is_cw_neighbor_concave:
         var cw_neighbor_normal_side_override := \
                 get_concave_neighbor_projection_side_override(surface, true)
-        projection = project_away_from_concave_neighbor(
+        var neighbor_projection := project_away_from_concave_neighbor(
                 projection,
                 cw_neighbor,
                 cw_neighbor_normal_side_override,
                 shape)
+        if neighbor_projection != Vector2.INF:
+            projection = neighbor_projection
     
-    var ccw_neighbor := surface.clockwise_neighbor
+    var ccw_neighbor := surface.counter_clockwise_neighbor
     var is_ccw_neighbor_concave := \
-            ccw_neighbor == surface.clockwise_concave_neighbor
+            ccw_neighbor == surface.counter_clockwise_concave_neighbor
     if is_ccw_neighbor_concave:
         var ccw_neighbor_normal_side_override := \
                 get_concave_neighbor_projection_side_override(surface, false)
-        projection = project_away_from_concave_neighbor(
+        var neighbor_projection := project_away_from_concave_neighbor(
                 projection,
                 ccw_neighbor,
                 ccw_neighbor_normal_side_override,
                 shape)
+        if neighbor_projection != Vector2.INF:
+            projection = neighbor_projection
     
     return projection
 
@@ -988,6 +992,9 @@ static func project_away_from_concave_neighbor(
             neighbor,
             true,
             neighbor_normal_side_override)
+    
+    if concave_neighbor_projection == Vector2.INF:
+        return Vector2.INF
     
     match neighbor_normal_side_override:
         SurfaceSide.FLOOR:

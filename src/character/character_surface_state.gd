@@ -433,7 +433,7 @@ func _update_physics_contacts() -> void:
     
     for collision in character.collisions:
         var surface_contact := \
-                _calculate_surface_contact_from_collision(collision, false)
+                _calculate_surface_contact_from_collision(collision)
         
         if !is_instance_valid(surface_contact):
             continue
@@ -450,66 +450,21 @@ func _update_physics_contacts() -> void:
                 ceiling_contact = surface_contact
             _:
                 Sc.logger.error()
-    
-    if !was_a_valid_contact_found and \
-            !character.collisions.empty():
-        # -   Sometimes Godot's move_and_slide API can produce invalid
-        #     collisions or collisions with invalid normals.
-        # -   This seems to happen mostly near corners and sloped surfaces.
-        # -   This isn't a problem as long as one of the other reported
-        #     collisions is valid.
-        # -   But, if we only have invalid collisions to work with, then let's
-        #     try considering them with adjusting their normals for the next
-        #     most likely surface side.
-        for collision in character.collisions:
-            var surface_contact := \
-                    _calculate_surface_contact_from_collision(collision, true)
-            
-            if !is_instance_valid(surface_contact):
-                continue
-            
-            was_a_valid_contact_found = true
-            
-            match surface_contact.surface.side:
-                SurfaceSide.FLOOR:
-                    floor_contact = surface_contact
-                SurfaceSide.LEFT_WALL, \
-                SurfaceSide.RIGHT_WALL:
-                    wall_contact = surface_contact
-                SurfaceSide.CEILING:
-                    ceiling_contact = surface_contact
-                _:
-                    Sc.logger.error()
 
 
 func _calculate_surface_contact_from_collision(
-        collision: KinematicCollision2DCopy,
-        adjusts_collision_normal := false) -> SurfaceContact:
-    var normal := collision.normal
-    if adjusts_collision_normal:
-        # -   Flip the normal around the diagonal within the same quadrant.
-        # -   For example:
-        #     -   (1,4) => (4,1)
-        #     -   (-1,4) => (-4,1)
-        if (normal.x < 0.0) == (normal.y < 0.0):
-            normal = Vector2(normal.y, normal.x)
-        else:
-            normal = Vector2(-normal.y, -normal.x)
-    
+        collision: KinematicCollision2DCopy) -> SurfaceContact:
     var contact_position := collision.position
-    var contacted_side: int = \
-            Sc.geometry.get_surface_side_for_normal(normal)
+    var collision_normal := collision.normal
     var contacted_tile_map: SurfacesTileMap = collision.collider
     
     SurfaceFinder.calculate_collision_surface(
             _collision_surface_result,
             character.surface_store,
             contact_position,
+            collision_normal,
             contacted_tile_map,
-            contacted_side == SurfaceSide.FLOOR,
-            contacted_side == SurfaceSide.CEILING,
-            contacted_side == SurfaceSide.LEFT_WALL,
-            contacted_side == SurfaceSide.RIGHT_WALL,
+            true,
             true)
     
     var contacted_surface := _collision_surface_result.surface
@@ -702,11 +657,10 @@ func _update_surface_contact_for_explicit_grab(
             _collision_surface_result,
             character.surface_store,
             contact_position,
+            side,
             tile_map,
-            side == SurfaceSide.FLOOR,
-            side == SurfaceSide.CEILING,
-            side == SurfaceSide.LEFT_WALL,
-            side == SurfaceSide.RIGHT_WALL)
+            false,
+            false)
     
     assert(_collision_surface_result.surface == surface)
     var tile_map_coord := _collision_surface_result.tile_map_coord

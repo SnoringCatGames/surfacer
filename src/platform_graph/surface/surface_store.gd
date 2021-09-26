@@ -31,7 +31,7 @@ var max_tile_map_cell_size: Vector2
 var combined_tile_map_rect: Rect2
 
 # This supports mapping a cell in a TileMap to its corresponding surface.
-# Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
+# Dictionary<SurfacesTileMap, Dictionary<int, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
 var _collision_surface_result := CollisionSurfaceResult.new()

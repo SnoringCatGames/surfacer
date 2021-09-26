@@ -14,8 +14,6 @@ const _CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01
 #       higher during graph calculations).
 const _COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD := 0.5
 
-var _collision_surface_result := CollisionSurfaceResult.new()
-
 
 static func find_closest_surface_in_direction(
         surface_store: SurfaceStore,
@@ -35,22 +33,16 @@ static func find_closest_surface_in_direction(
             SURFACES_TILE_MAPS_COLLISION_LAYER,
             true,
             false)
-    
-    var contact_position: Vector2 = collision.position
-    var contacted_side: int = \
-            Sc.geometry.get_surface_side_for_normal(collision.normal)
     assert(collision.collider is SurfacesTileMap)
-    var contacted_tile_map: SurfacesTileMap = collision.collider
     
     calculate_collision_surface(
             collision_surface_result,
             surface_store,
-            contact_position,
-            contacted_tile_map,
-            contacted_side == SurfaceSide.FLOOR,
-            contacted_side == SurfaceSide.CEILING,
-            contacted_side == SurfaceSide.LEFT_WALL,
-            contacted_side == SurfaceSide.RIGHT_WALL)
+            collision.position,
+            collision.normal,
+            collision.collider,
+            true,
+            false)
     
     return collision_surface_result.surface
 
@@ -271,16 +263,22 @@ class _SurfaceAndDistanceComparator:
         return false
 
 
+# -   Sometimes Godot's move_and_slide API can produce invalid
+#     collisions or collisions with invalid normals.
+# -   Invalid normals seem to happen mostly near corners and sloped surfaces.
+#     -   Often, normals are just slightly off for sloped surfaces.
+#     -   Sometimes, normals are reversed when moving around a corner.
+# -   Pass-in tries_adjusted_collision_normal as true if we should correct for
+#     slightly-off normals around sloped surfaces.
+# -   Reversed normals around corners will be corrected automatically.
 static func calculate_collision_surface(
         result: CollisionSurfaceResult,
         surface_store: SurfaceStore,
         collision_position: Vector2,
+        collision_normal_or_side,
         tile_map: TileMap,
-        is_touching_floor: bool,
-        is_touching_ceiling: bool,
-        is_touching_left_wall: bool,
-        is_touching_right_wall: bool,
-        allows_errors := false,
+        tries_adjusted_collision_normal: bool,
+        allows_errors: bool,
         is_nested_call := false) -> void:
     var half_cell_size := tile_map.cell_size / 2.0
     var used_rect := tile_map.get_used_rect()
@@ -304,6 +302,28 @@ static func calculate_collision_surface(
             cell_height_mod < _COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD or \
             tile_map.cell_size.y - cell_height_mod < \
                     _COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD
+    
+    assert(!tries_adjusted_collision_normal or \
+            collision_normal_or_side is Vector2)
+    var collision_side: int = \
+            collision_normal_or_side if \
+            collision_normal_or_side is int else \
+            Sc.geometry.get_surface_side_for_normal(collision_normal_or_side)
+    var is_touching_floor := false
+    var is_touching_ceiling := false
+    var is_touching_left_wall := false
+    var is_touching_right_wall := false
+    match collision_side:
+        SurfaceSide.FLOOR:
+            is_touching_floor = true
+        SurfaceSide.LEFT_WALL:
+            is_touching_left_wall = true
+        SurfaceSide.RIGHT_WALL:
+            is_touching_right_wall = true
+        SurfaceSide.CEILING:
+            is_touching_ceiling = true
+        _:
+            Sc.logger.error()
     
     var surface_side := SurfaceSide.NONE
     var tile_coord := Vector2.INF
@@ -898,32 +918,72 @@ static func calculate_collision_surface(
     
     if !error_message.empty() and \
             !is_nested_call:
-        # TODO: Will this always work? Or should we instead/also try just
-        #       flipping one direction at a time?
-        var nested_is_touching_floor := is_touching_ceiling
-        var nested_is_touching_ceiling := is_touching_floor
-        var nested_is_touching_left_wall := is_touching_right_wall
-        var nested_is_touching_right_wall := is_touching_left_wall
+        var reversed_collision_normal_or_side
+        if collision_normal_or_side is int:
+            match collision_normal_or_side:
+                SurfaceSide.FLOOR:
+                    reversed_collision_normal_or_side = SurfaceSide.CEILING
+                SurfaceSide.LEFT_WALL:
+                    reversed_collision_normal_or_side = SurfaceSide.RIGHT_WALL
+                SurfaceSide.RIGHT_WALL:
+                    reversed_collision_normal_or_side = SurfaceSide.LEFT_WALL
+                SurfaceSide.CEILING:
+                    reversed_collision_normal_or_side = SurfaceSide.FLOOR
+                _:
+                    Sc.logger.error()
+        else:
+            reversed_collision_normal_or_side = -collision_normal_or_side
         calculate_collision_surface(
                 result,
                 surface_store,
                 collision_position,
+                reversed_collision_normal_or_side,
                 tile_map,
-                nested_is_touching_floor,
-                nested_is_touching_ceiling,
-                nested_is_touching_left_wall,
-                nested_is_touching_right_wall,
+                false,
                 allows_errors,
                 true)
         if result.error_message.empty():
             return
+        
+        if tries_adjusted_collision_normal:
+            # -   Flip the normal around the diagonal within the same
+            #     quadrant.
+            # -   For example:
+            #     -   (1,4) => (4,1)
+            #     -   (-1,4) => (-4,1)
+            var adjusted_collision_normal: Vector2
+            if (collision_normal_or_side.x < 0.0) == \
+                    (collision_normal_or_side.y < 0.0):
+                adjusted_collision_normal = Vector2(
+                        collision_normal_or_side.y,
+                        collision_normal_or_side.x)
+            else:
+                adjusted_collision_normal = Vector2(
+                        -collision_normal_or_side.y,
+                        -collision_normal_or_side.x)
+            calculate_collision_surface(
+                    result,
+                    surface_store,
+                    collision_position,
+                    adjusted_collision_normal,
+                    tile_map,
+                    false,
+                    allows_errors,
+                    false)
+            if result.error_message.empty():
+                return
     
     if !allows_errors and \
             !error_message.empty() and \
             !is_nested_call:
+        var collision_normal_or_side_str := \
+                SurfaceSide.get_string(collision_normal_or_side) if \
+                collision_normal_or_side is int else \
+                Sc.utils.get_vector_string(collision_normal_or_side, 3)
         var print_message := """ERROR: INVALID COLLISION TILEMAP STATE: 
             %s; 
             collision_position=%s 
+            collision_normal_or_side=%s 
             is_touching_floor=%s 
             is_touching_ceiling=%s 
             is_touching_left_wall=%s 
@@ -934,6 +994,7 @@ static func calculate_collision_surface(
             """ % [
                 error_message,
                 collision_position,
+                collision_normal_or_side_str,
                 is_touching_floor,
                 is_touching_ceiling,
                 is_touching_left_wall,
