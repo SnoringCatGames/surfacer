@@ -81,11 +81,14 @@ func _clip_and_project_target_point_for_center_of_collider(
             target_point.y = self.target_projection_onto_surface.y
     
     if matches_target_to_character_dimensions:
-        target_point = Sc.geometry.project_shape_onto_surface(
-                target_point,
-                collider,
-                surface,
-                true)
+        target_point = Sc.geometry \
+                .project_shape_onto_segment_and_away_from_concave_neighbors(
+                        target_point,
+                        collider,
+                        surface,
+                        true)
+        self.target_projection_onto_surface = \
+                Sc.geometry.project_point_onto_surface(target_point, surface)
     else:
         # Use the given target point as-is.
         pass

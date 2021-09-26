@@ -378,7 +378,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     # velocity, with the corresponding
                                     # horizontal displacement from movement.
                                     var jump_basis: Vector2 = \
-                                            Sc.geometry.project_shape_onto_surface(
+                                            Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                                     land_surface_left_end,
                                                     movement_params.collider,
                                                     jump_surface)
@@ -472,7 +472,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     # corresponding horizontal displacement from movement.
                                     var jump_basis := jump_surface_left_end_wrapper.target_point
                                     var land_basis: Vector2 = \
-                                            Sc.geometry.project_shape_onto_surface(
+                                            Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                                     jump_surface_left_end,
                                                     movement_params.collider,
                                                     land_surface)
@@ -608,7 +608,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     # Consider max-speed horizontal start velocity, with the
                                     # corresponding horizontal displacement from movement.
                                     var jump_basis: Vector2 = \
-                                            Sc.geometry.project_shape_onto_surface(
+                                            Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                                     land_surface_right_end,
                                                     movement_params.collider,
                                                     jump_surface)
@@ -702,7 +702,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     # corresponding horizontal displacement from movement.
                                     var jump_basis := jump_surface_right_end_wrapper.target_point
                                     var land_basis: Vector2 = \
-                                            Sc.geometry.project_shape_onto_surface(
+                                            Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                                     jump_surface_right_end,
                                                     movement_params.collider,
                                                     land_surface)
@@ -864,7 +864,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     does_velocity_start_moving_leftward,
                                     prefer_velocity_start_zero_horizontal_speed)
                             jump_basis = jump_surface_near_end_wrapper.target_point
-                            land_basis = Sc.geometry.project_shape_onto_surface(
+                            land_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                     jump_surface_near_end,
                                     movement_params.collider,
                                     land_surface)
@@ -934,7 +934,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         does_velocity_start_moving_leftward,
                                         prefer_velocity_start_zero_horizontal_speed)
                                 jump_basis = jump_surface_near_end_wrapper.target_point
-                                land_basis = Sc.geometry.project_shape_onto_surface(
+                                land_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                         jump_surface_near_end,
                                         movement_params.collider,
                                         land_surface)
@@ -1004,7 +1004,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                         prefer_velocity_start_zero_horizontal_speed)
                                 jump_position = jump_surface_far_end_wrapper
                                 jump_basis = jump_surface_far_end_wrapper.target_point
-                                land_basis = Sc.geometry.project_shape_onto_surface(
+                                land_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                         jump_surface_far_end,
                                         movement_params.collider,
                                         land_surface)
@@ -1057,7 +1057,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     is_landing_on_left_wall else \
                                     land_surface_bottom_end.x - \
                                     character_half_width_horizontal_offset
-                            jump_basis = Sc.geometry.project_shape_onto_surface(
+                            jump_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                     Vector2(goal_x, INF),
                                     movement_params.collider,
                                     jump_surface)
@@ -1307,7 +1307,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             land_basis = Vector2(
                                     goal_x,
                                     land_connected_region_top_bound)
-                            jump_basis = Sc.geometry.project_shape_onto_surface(
+                            jump_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                     Vector2(goal_x, INF),
                                     movement_params.collider,
                                     jump_surface)
@@ -1689,7 +1689,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     jump_surface_bottom_end.x - \
                                     character_half_width_horizontal_offset
                             var land_basis: Vector2 = \
-                                    Sc.geometry.project_shape_onto_surface(
+                                    Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                             Vector2(goal_x, INF),
                                             movement_params.collider,
                                             land_surface)
@@ -1840,7 +1840,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         
                     elif is_floor_fully_in_front_of_wall:
                         # The floor is fully in front of the wall.
-                        var jump_basis: Vector2 = Sc.geometry.project_shape_onto_surface(
+                        var jump_basis: Vector2 = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                 land_surface_near_end,
                                 movement_params.collider,
                                 jump_surface)
@@ -1952,7 +1952,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                             # Jump surface is in front.
                             jump_position = jump_surface_top_end_wrapper
                             jump_basis = jump_position.target_point
-                            land_basis = Sc.geometry.project_shape_onto_surface(
+                            land_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                     jump_surface_top_end,
                                     movement_params.collider,
                                     land_surface)
@@ -1991,7 +1991,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 # extra jump/land pair here.
                                 jump_position = jump_surface_bottom_end_wrapper
                                 jump_basis = jump_surface_bottom_end_wrapper.target_point
-                                land_basis = Sc.geometry.project_shape_onto_surface(
+                                land_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                         jump_surface_bottom_end,
                                         movement_params.collider,
                                         land_surface)
@@ -2037,7 +2037,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                     land_surface_top_end_wrapper,
                                     land_surface_bottom_end_wrapper,
                                     false)
-                            jump_basis = Sc.geometry.project_shape_onto_surface(
+                            jump_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                     land_surface_top_end,
                                     movement_params.collider,
                                     jump_surface)
@@ -2078,7 +2078,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                 # extra jump/land pair here.
                                 needs_extra_jump_duration = false
                                 land_position = land_surface_bottom_end_wrapper
-                                jump_basis = Sc.geometry.project_shape_onto_surface(
+                                jump_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                         land_surface_bottom_end,
                                         movement_params.collider,
                                         jump_surface)
@@ -2135,7 +2135,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         
                         if top_end_displacement_y > 0.0:
                             # Jump-surface top-end is higher than land-surface top-end.
-                            jump_basis = Sc.geometry.project_shape_onto_surface(
+                            jump_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                     land_surface_top_end,
                                     movement_params.collider,
                                     jump_surface)
@@ -2143,7 +2143,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         else:
                             # Jump-surface top-end is lower than land-surface top-end.
                             jump_basis = jump_surface_top_end_wrapper.target_point
-                            land_basis = Sc.geometry.project_shape_onto_surface(
+                            land_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                     jump_surface_top_end,
                                     movement_params.collider,
                                     land_surface)
@@ -2167,13 +2167,13 @@ static func calculate_jump_land_positions_for_surface_pair(
                         if bottom_end_displacement_y > 0.0:
                             # Jump-surface bottom-end is higher than land-surface bottom-end.
                             jump_basis = jump_surface_bottom_end_wrapper.target_point
-                            land_basis = Sc.geometry.project_shape_onto_surface(
+                            land_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                     jump_surface_bottom_end,
                                     movement_params.collider,
                                     land_surface)
                         else:
                             # Jump-surface bottom-end is lower than land-surface bottom-end.
-                            jump_basis = Sc.geometry.project_shape_onto_surface(
+                            jump_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                     land_surface_bottom_end,
                                     movement_params.collider,
                                     jump_surface)
@@ -2199,14 +2199,14 @@ static func calculate_jump_land_positions_for_surface_pair(
                         jump_basis = Sc.geometry.get_closest_point_on_polyline_to_polyline(
                                 jump_surface.vertices,
                                 land_surface.vertices)
-                        jump_basis = Sc.geometry.project_shape_onto_surface(
+                        jump_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                 jump_basis,
                                 movement_params.collider,
                                 jump_surface)
                         land_basis = Sc.geometry.get_closest_point_on_polyline_to_point(
                                 land_basis,
                                 land_surface.vertices)
-                        land_basis = Sc.geometry.project_shape_onto_surface(
+                        land_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                 land_basis,
                                 movement_params.collider,
                                 land_surface)
@@ -2304,14 +2304,14 @@ static func calculate_jump_land_positions_for_surface_pair(
                             if is_wall_fully_lower_than_ceiling:
                                 jump_basis = jump_surface_top_end_wrapper.target_point
                             else:
-                                jump_basis = Sc.geometry.project_shape_onto_surface(
+                                jump_basis = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                         Vector2(INF, land_surface_near_end_wrapper.target_point.y),
                                         movement_params.collider,
                                         jump_surface)
                             
                             var goal_x := jump_basis.x
                             var land_basis: Vector2 = \
-                                    Sc.geometry.project_shape_onto_surface(
+                                    Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                             Vector2(goal_x, INF),
                                             movement_params.collider,
                                             land_surface)
@@ -2815,7 +2815,7 @@ static func calculate_land_positions_on_surface(
                 # We may be able to reach the floor.
                 var result := []
                 var land_basis: Vector2 = \
-                        Sc.geometry.project_shape_onto_surface(
+                        Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                 origin_target_point,
                                 movement_params.collider,
                                 land_surface)
@@ -3000,7 +3000,7 @@ static func calculate_land_positions_on_surface(
                 # We are in front of the wall and high enough, and we may be
                 # able to move horizontally directly into the wall.
                 var land_basis: Vector2 = \
-                        Sc.geometry.project_shape_onto_surface(
+                        Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                 origin_target_point,
                                 movement_params.collider,
                                 land_surface)
@@ -3052,7 +3052,7 @@ static func calculate_land_positions_on_surface(
                 # We may be able to reach the ceiling.
                 
                 var land_basis: Vector2 = \
-                        Sc.geometry.project_shape_onto_surface(
+                        Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                                 origin_target_point,
                                 movement_params.collider,
                                 land_surface)
@@ -3206,7 +3206,7 @@ static func _create_surface_interior_position(
         fail_if_outside_of_bounds := false) -> PositionAlongSurface:
     var is_considering_x_axis := surface.normal.x == 0.0
     # TODO: Update this to use a more precise spacing according to collider
-    #       shape and neighbor segment angle (using project_shape_onto_surface)?
+    #       shape and neighbor segment angle (using project_shape_onto_segment_and_away_from_concave_neighbors)?
     var interior_point_min_horizontal_distance_from_end := \
             collider.half_width_height.x * \
             JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_CHARACTER_WIDTH_HEIGHT_RATIO
@@ -3701,7 +3701,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
     
     # Make sure the target point is still the right distance out from the
     # surface, according to the surface and character shape.
-    var target_point: Vector2 = Sc.geometry.project_shape_onto_surface(
+    var target_point: Vector2 = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
             position.target_point,
             movement_params.collider,
             position.surface)
@@ -3725,7 +3725,7 @@ static func _possibly_offset_wall_bottom_land_position(
                 land_position.surface.bounding_box.end.y - \
                 MIN_LAND_DISTANCE_FROM_WALL_BOTTOM
         var target_point := Vector2(land_position.target_point.x, bottom_bound)
-        target_point = Sc.geometry.project_shape_onto_surface(
+        target_point = Sc.geometry.project_shape_onto_segment_and_away_from_concave_neighbors(
                 target_point,
                 movement_params.collider,
                 land_position.surface)
