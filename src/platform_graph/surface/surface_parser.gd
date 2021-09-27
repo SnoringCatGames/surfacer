@@ -797,7 +797,7 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                     surface1 = surface2
                     surface1_front = surface1.vertices_array.front()
                     surface1_back = surface1.vertices_array.back()
-                                        
+                    
                     j -= 1
                     count -= 1
                     merge_count += 1
