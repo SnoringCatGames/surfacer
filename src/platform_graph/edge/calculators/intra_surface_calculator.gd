@@ -7,6 +7,8 @@ const EDGE_TYPE := EdgeType.INTRA_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := false
 const IS_GRAPHABLE := false
 
+const _UNEXPECTED_EARLY_COLLISION_DISTANCE_SQUARED_THRESHOLD := 16.0 * 16.0
+
 
 func _init().(
         NAME,
@@ -65,15 +67,38 @@ func create(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
-        movement_params: MovementParameters) -> IntraSurfaceEdge:
+        movement_params: MovementParameters,
+        allows_unexpected_collisions_with_concave_neighbors := false \
+        ) -> IntraSurfaceEdge:
     var edge := IntraSurfaceEdge.new()
+    
     edge.edge_type = SurfaceType.get_type_from_side(start.side)
     edge.calculator = self
     edge.start_position_along_surface = start
     edge.end_position_along_surface = end
     edge.velocity_start = velocity_start
     edge.movement_params = movement_params
+    
     _update(edge)
+    
+    if !allows_unexpected_collisions_with_concave_neighbors and \
+            edge.trajectory.collided_early:
+        var early_collision_position: Vector2 = \
+                edge.trajectory.frame_continuous_positions_from_steps[ \
+                        edge.trajectory.frame_continuous_positions_from_steps \
+                                .size() - 1] if \
+                !edge.trajectory.frame_continuous_positions_from_steps \
+                        .empty() else \
+                edge.trajectory.frame_discrete_positions_from_test[ \
+                        edge.trajectory.frame_discrete_positions_from_test \
+                                .size() - 1] if \
+                !edge.trajectory.frame_discrete_positions_from_test \
+                        .empty() else \
+                Vector2.INF
+        if early_collision_position.distance_squared_to(end.target_point) > \
+                _UNEXPECTED_EARLY_COLLISION_DISTANCE_SQUARED_THRESHOLD:
+            Sc.logger.error()
+    
     return edge
 
 
