@@ -98,7 +98,8 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
             return Sc.geometry.project_shape_onto_surface(
                     Vector2(position_x, 0.0),
                     movement_params.collider,
-                    surface)
+                    surface,
+                    true)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var velocity_y := \
@@ -109,7 +110,8 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
             return Sc.geometry.project_shape_onto_surface(
                     Vector2(0.0, position_y),
                     movement_params.collider,
-                    surface)
+                    surface,
+                    true)
         SurfaceSide.CEILING:
             var velocity_x := \
                     movement_params.ceiling_crawl_speed if \
@@ -119,7 +121,8 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
             return Sc.geometry.project_shape_onto_surface(
                     Vector2(position_x, 0.0),
                     movement_params.collider,
-                    surface)
+                    surface,
+                    true)
         _:
             Sc.logger.error()
             return Vector2.INF
