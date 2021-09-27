@@ -298,7 +298,10 @@ func _update_contacts() -> void:
         _update_physics_contacts()
         
         if is_rounding_corner:
-            _update_surface_contact_from_rounded_corner()
+            var is_rounding_successful := \
+                    _update_surface_contact_from_rounded_corner()
+            if !is_rounding_successful:
+                _cancel_rounding_corner()
     
     # Remove any surfaces that are no longer touching.
     for surface_contact in surfaces_to_contacts.values():
@@ -513,10 +516,13 @@ func _calculate_surface_contact_from_collision(
     return surface_contact
 
 
-func _update_surface_contact_from_rounded_corner() -> void:
+func _update_surface_contact_from_rounded_corner() -> bool:
     var position_along_surface := \
             _get_position_along_surface_from_rounded_corner()
+    if !is_instance_valid(position_along_surface):
+        return false
     _update_surface_contact_for_explicit_grab(position_along_surface)
+    return true
 
 
 func _update_surface_contact_from_expected_navigation() -> void:
@@ -538,8 +544,10 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                     surface = grabbed_surface.clockwise_convex_neighbor
             else:
                 surface = grabbed_surface
-            assert(surface.side == SurfaceSide.LEFT_WALL or \
-                    surface.side == SurfaceSide.RIGHT_WALL)
+            if surface.side != SurfaceSide.LEFT_WALL and \
+                    surface.side != SurfaceSide.RIGHT_WALL:
+                # We collided with another surface while rounding the corner.
+                return null
             
             if surface.side == SurfaceSide.LEFT_WALL:
                 contact_position = surface.first_point
@@ -547,7 +555,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 contact_position = surface.last_point
         else:
             surface = grabbed_surface
-            assert(surface.side == SurfaceSide.FLOOR)
+            if surface.side != SurfaceSide.FLOOR:
+                # We collided with another surface while rounding the corner.
+                return null
             
             if center_position.x < surface.center.x:
                 contact_position = surface.first_point
@@ -563,8 +573,10 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                     surface = grabbed_surface.counter_clockwise_convex_neighbor
             else:
                 surface = grabbed_surface
-            assert(surface.side == SurfaceSide.LEFT_WALL or \
-                    surface.side == SurfaceSide.RIGHT_WALL)
+            if surface.side != SurfaceSide.LEFT_WALL and \
+                    surface.side != SurfaceSide.RIGHT_WALL:
+                # We collided with another surface while rounding the corner.
+                return null
             
             if surface.side == SurfaceSide.LEFT_WALL:
                 contact_position = surface.last_point
@@ -572,7 +584,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 contact_position = surface.first_point
         else:
             surface = grabbed_surface
-            assert(surface.side == SurfaceSide.CEILING)
+            if surface.side != SurfaceSide.CEILING:
+                # We collided with another surface while rounding the corner.
+                return null
             
             if center_position.x < surface.center.x:
                 contact_position = surface.last_point
@@ -587,7 +601,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 surface = grabbed_surface.counter_clockwise_convex_neighbor
             else:
                 surface = grabbed_surface
-            assert(surface.side == SurfaceSide.CEILING)
+            if surface.side != SurfaceSide.CEILING:
+                # We collided with another surface while rounding the corner.
+                return null
             
             if center_position.x < surface.center.x:
                 contact_position = surface.last_point
@@ -595,8 +611,10 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 contact_position = surface.first_point
         else:
             surface = grabbed_surface
-            assert(surface.side == SurfaceSide.LEFT_WALL or \
-                    surface.side == SurfaceSide.RIGHT_WALL)
+            if surface.side != SurfaceSide.LEFT_WALL and \
+                    surface.side != SurfaceSide.RIGHT_WALL:
+                # We collided with another surface while rounding the corner.
+                return null
             
             if surface.side == SurfaceSide.LEFT_WALL:
                 contact_position = surface.last_point
@@ -611,7 +629,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 surface = grabbed_surface.clockwise_convex_neighbor
             else:
                 surface = grabbed_surface
-            assert(surface.side == SurfaceSide.FLOOR)
+            if surface.side != SurfaceSide.FLOOR:
+                # We collided with another surface while rounding the corner.
+                return null
             
             if center_position.x < surface.center.x:
                 contact_position = surface.first_point
@@ -619,8 +639,10 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 contact_position = surface.last_point
         else:
             surface = grabbed_surface
-            assert(surface.side == SurfaceSide.LEFT_WALL or \
-                    surface.side == SurfaceSide.RIGHT_WALL)
+            if surface.side != SurfaceSide.LEFT_WALL and \
+                    surface.side != SurfaceSide.RIGHT_WALL:
+                # We collided with another surface while rounding the corner.
+                return null
             
             if surface.side == SurfaceSide.LEFT_WALL:
                 contact_position = surface.first_point
@@ -636,6 +658,43 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
             surface,
             character.movement_params.collider,
             true)
+
+
+func _cancel_rounding_corner() -> void:
+    var details := (
+                "Unexpected collision while rounding corner; " +
+                "surface=%s; " +
+                "f_to_low_w=%s; " +
+                "c_to_up_w=%s; " +
+                "w_to_low_c=%s; " +
+                "w_to_u_f=%s"
+            ) % [
+                grabbed_surface.to_string(false),
+                is_rounding_floor_corner_to_lower_wall,
+                is_rounding_ceiling_corner_to_upper_wall,
+                is_rounding_wall_corner_to_lower_ceiling,
+                is_rounding_wall_corner_to_upper_floor,
+            ]
+    character._log(
+            "Corner coll",
+            details,
+            CharacterLogType.SURFACE,
+            true)
+    
+    is_rounding_floor_corner_to_lower_wall = false
+    just_changed_to_lower_wall_while_rounding_floor_corner = false
+    is_rounding_ceiling_corner_to_upper_wall = false
+    just_changed_to_upper_wall_while_rounding_ceiling_corner = false
+    is_rounding_wall_corner_to_lower_ceiling = false
+    just_changed_to_lower_ceiling_while_rounding_wall_corner = false
+    is_rounding_wall_corner_to_upper_floor = false
+    just_changed_to_upper_floor_while_rounding_wall_corner = false
+    just_started_rounding_corner = false
+    just_stopped_rounding_corner = false
+    is_rounding_corner = false
+    just_changed_surface_while_rounding_corner = false
+    is_rounding_corner_from_previous_surface = false
+    is_rounding_left_corner = false
 
 
 func _get_expected_position_for_bypassing_runtime_physics() -> \
@@ -721,8 +780,12 @@ func _update_action_state() -> void:
     
     if just_started_rounding_corner or \
             just_changed_surface_while_rounding_corner:
-        _update_surface_contact_from_rounded_corner()
-        _update_touch_state()
+        var is_rounding_successful := \
+                _update_surface_contact_from_rounded_corner()
+        if !is_rounding_successful:
+            _cancel_rounding_corner()
+        else:
+            _update_touch_state()
     
     assert(!is_grabbing_surface or is_touching_surface)
     

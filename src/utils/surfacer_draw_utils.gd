@@ -21,18 +21,20 @@ func draw_single_vertex_surface(
     var color_start := color
     color_start.a = alpha_start
     var color_overlay := color
-    color_overlay.a = alpha_delta
+    # TODO: This is a quick hack to make the gradient more exponential.
+    color_overlay.a = alpha_delta * 0.3
     
     var radius := depth
     var delta_radius: float = \
             depth / Sc.ann_params.surface_depth_divisions_count
     
     canvas.draw_circle(point, radius, color_start)
-    radius -= delta_radius
     
     for i in range(1, Sc.ann_params.surface_depth_divisions_count):
         radius -= delta_radius
         canvas.draw_circle(point, radius, color_overlay)
+        # TODO: This is a quick hack to make the gradient more exponential.
+        color_overlay.a *= 1.8
 
 
 func draw_surface(
