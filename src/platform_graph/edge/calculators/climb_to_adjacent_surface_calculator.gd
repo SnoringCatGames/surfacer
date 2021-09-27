@@ -161,12 +161,6 @@ func _calculate_jump_land_positions(
             origin_surface.last_point if \
             is_clockwise else \
             origin_surface.first_point
-    var is_left_side := \
-            origin_surface.side == SurfaceSide.RIGHT_WALL or \
-            neighbor.side == SurfaceSide.RIGHT_WALL
-    var is_top_side := \
-            origin_surface.side == SurfaceSide.FLOOR or \
-            neighbor.side == SurfaceSide.FLOOR
     
     var start_target_point: Vector2
     var end_target_point: Vector2
@@ -174,16 +168,53 @@ func _calculate_jump_land_positions(
         start_target_point = corner_point
         end_target_point = corner_point
     else:
-        var target_x_offset := \
-                -movement_params.collider.half_width_height.x if \
-                is_left_side else \
-                movement_params.collider.half_width_height.x
-        var target_y_offset := \
-                -movement_params.collider.half_width_height.y if \
-                is_top_side else \
-                movement_params.collider.half_width_height.y
+        var is_origin_surface_horizontal := \
+                origin_surface.side == SurfaceSide.FLOOR or \
+                origin_surface.side == SurfaceSide.CEILING
+        var is_destination_surface_horizontal := \
+                neighbor.side == SurfaceSide.FLOOR or \
+                neighbor.side == SurfaceSide.CEILING
+        var is_corner_between_opposite_facing_surfaces := \
+                (is_origin_surface_horizontal == \
+                is_destination_surface_horizontal)
+        
+        var target_x_offset: float
+        var target_y_offset: float
+        if is_corner_between_opposite_facing_surfaces:
+            if is_origin_surface_horizontal:
+                var is_left_side := corner_point.x < origin_surface.center.x
+                target_x_offset = \
+                        movement_params.collider.half_width_height.x if \
+                        is_left_side else \
+                        -movement_params.collider.half_width_height.x
+                target_y_offset = 0.0
+            else:
+                var is_top_side := corner_point.y < origin_surface.center.y
+                target_x_offset = 0.0
+                target_y_offset = \
+                        movement_params.collider.half_width_height.x if \
+                        is_top_side else \
+                        -movement_params.collider.half_width_height.x
+            
+        else:
+            var is_left_side := \
+                    origin_surface.side == SurfaceSide.RIGHT_WALL or \
+                    neighbor.side == SurfaceSide.RIGHT_WALL
+            var is_top_side := \
+                    origin_surface.side == SurfaceSide.FLOOR or \
+                    neighbor.side == SurfaceSide.FLOOR
+            target_x_offset = \
+                    -movement_params.collider.half_width_height.x if \
+                    is_left_side else \
+                    movement_params.collider.half_width_height.x
+            target_y_offset = \
+                    -movement_params.collider.half_width_height.y if \
+                    is_top_side else \
+                    movement_params.collider.half_width_height.y
+        
         var target_point := \
                 corner_point + Vector2(target_x_offset, target_y_offset)
+        
         target_point = Sc.geometry.project_shape_onto_surface(
                 target_point,
                 movement_params.collider,
