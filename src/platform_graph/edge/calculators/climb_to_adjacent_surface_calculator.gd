@@ -7,6 +7,8 @@ const EDGE_TYPE := EdgeType.CLIMB_TO_ADJACENT_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := false
 const IS_GRAPHABLE := true
 
+const _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD := 2.0
+
 
 func _init().(
         NAME,
@@ -56,6 +58,8 @@ func get_all_inter_surface_edges_from_surface(
                 origin_surface,
                 is_clockwise,
                 collision_params.movement_params)
+        if !is_instance_valid(jump_land_positions):
+            continue
         
         ########################################################################
         # Allow for debug mode to limit the scope of what's calculated.
@@ -80,7 +84,15 @@ func get_all_inter_surface_edges_from_surface(
                 jump_land_positions.jump_position,
                 jump_land_positions.land_position,
                 jump_land_positions.velocity_start)
-        inter_surface_edges_result.valid_edges.push_back(edge)
+        if is_instance_valid(edge):
+            inter_surface_edges_result.valid_edges.push_back(edge)
+        else:
+            var failed_attempt := FailedEdgeAttempt.new(
+                    jump_land_positions,
+                    null,
+                    self)
+            inter_surface_edges_result.failed_edge_attempts.push_back(
+                    failed_attempt)
 
 
 func calculate_edge(
@@ -118,7 +130,33 @@ func calculate_edge(
                 positions[positions.size() - 1] if \
                 !positions.empty() else \
                 Vector2.INF
+        
         if early_end != Vector2.INF:
+            var expected_displacement := \
+                    position_end.target_point - position_start.target_point
+            var early_end_displacement := \
+                    early_end - position_start.target_point
+            
+            if expected_displacement.x > 0 and \
+                    early_end_displacement.x < \
+                        _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD or \
+                    expected_displacement.x < 0 and \
+                    early_end_displacement.x > \
+                        -_EARLY_END_INVALID_DISPLACEMENT_THRESHOLD:
+                # We aren't able to move enough around the corner, so
+                # abandon this edge.
+                return null
+            
+            if expected_displacement.y > 0 and \
+                    early_end_displacement.y < \
+                        _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD or \
+                    expected_displacement.y < 0 and \
+                    early_end_displacement.y > \
+                        -_EARLY_END_INVALID_DISPLACEMENT_THRESHOLD:
+                # We aren't able to move enough around the corner, so
+                # abandon this edge.
+                return null
+            
             position_end = PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
                             early_end,
@@ -127,6 +165,9 @@ func calculate_edge(
                             false)
             var duration := (positions.size() - 1) * Time.PHYSICS_TIME_STEP
             instructions.duration = duration
+        else:
+            # The collision was too early, so there is no valid edge.
+            return null
     
     var velocity_end := _get_velocity_end(
             position_start,
@@ -168,77 +209,29 @@ func _calculate_jump_land_positions(
         start_target_point = corner_point
         end_target_point = corner_point
     else:
-        var is_origin_surface_horizontal := \
-                origin_surface.side == SurfaceSide.FLOOR or \
-                origin_surface.side == SurfaceSide.CEILING
-        var is_destination_surface_horizontal := \
-                neighbor.side == SurfaceSide.FLOOR or \
-                neighbor.side == SurfaceSide.CEILING
-        var is_corner_between_opposite_facing_surfaces := \
-                (is_origin_surface_horizontal == \
-                is_destination_surface_horizontal)
-        
-        var target_x_offset: float
-        var target_y_offset: float
-        if is_corner_between_opposite_facing_surfaces:
-            if is_origin_surface_horizontal:
-                var is_left_side := corner_point.x < origin_surface.center.x
-                target_x_offset = \
-                        movement_params.collider.half_width_height.x if \
-                        is_left_side else \
-                        -movement_params.collider.half_width_height.x
-                target_y_offset = 0.0
-            else:
-                var is_top_side := corner_point.y < origin_surface.center.y
-                target_x_offset = 0.0
-                target_y_offset = \
-                        movement_params.collider.half_width_height.x if \
-                        is_top_side else \
-                        -movement_params.collider.half_width_height.x
-            
-        else:
-            var is_left_side := \
-                    origin_surface.side == SurfaceSide.RIGHT_WALL or \
-                    neighbor.side == SurfaceSide.RIGHT_WALL
-            var is_top_side := \
-                    origin_surface.side == SurfaceSide.FLOOR or \
-                    neighbor.side == SurfaceSide.FLOOR
-            target_x_offset = \
-                    -movement_params.collider.half_width_height.x if \
-                    is_left_side else \
-                    movement_params.collider.half_width_height.x
-            target_y_offset = \
-                    -movement_params.collider.half_width_height.y if \
-                    is_top_side else \
-                    movement_params.collider.half_width_height.y
-        
-        var target_point := \
-                corner_point + Vector2(target_x_offset, target_y_offset)
-        
-        target_point = Sc.geometry.project_shape_onto_surface(
-                target_point,
-                movement_params.collider,
-                neighbor,
-                true)
-        target_point = Sc.geometry.project_shape_onto_surface(
-                target_point,
-                movement_params.collider,
-                origin_surface,
-                true)
-        
+        var target_point := corner_point
         if !(movement_params.collider.shape is RectangleShape2D):
             # Round shapes get closer to the correct target with each pair of
             # axially-aligned projections.
-            target_point = Sc.geometry.project_shape_onto_surface(
-                    target_point,
-                    movement_params.collider,
-                    neighbor,
-                    true)
-            target_point = Sc.geometry.project_shape_onto_surface(
-                    target_point,
-                    movement_params.collider,
-                    origin_surface,
-                    true)
+            target_point = Sc.geometry \
+                    .project_shape_onto_segment_and_away_from_concave_neighbors(
+                            target_point,
+                            movement_params.collider,
+                            neighbor,
+                            true)
+            target_point = Sc.geometry \
+                    .project_shape_onto_segment_and_away_from_concave_neighbors(
+                            target_point,
+                            movement_params.collider,
+                            origin_surface,
+                            true)
+        else:
+            target_point = Sc.geometry \
+                    .project_shape_onto_segment_and_away_from_concave_neighbors(
+                            target_point,
+                            movement_params.collider,
+                            origin_surface,
+                            true)
         
         start_target_point = target_point
         end_target_point = target_point
@@ -253,6 +246,32 @@ func _calculate_jump_land_positions(
                     end_target_point,
                     neighbor,
                     movement_params.collider)
+    var displacement := end_position.target_point - start_position.target_point
+    
+    if is_convex and (
+            Sc.geometry.are_floats_equal_with_epsilon(
+                    displacement.x,
+                    0.0,
+                    _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD) or \
+            Sc.geometry.are_floats_equal_with_epsilon(
+                    displacement.y,
+                    0.0,
+                    _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD)):
+        # We are't able to move enough around the corner, so
+        # abandon this edge.
+        return null
+    else:
+        if !Sc.geometry.check_for_shape_to_surface_overlap(
+                    start_position.target_point,
+                    movement_params.collider,
+                    start_position.surface) or \
+                !Sc.geometry.check_for_shape_to_surface_overlap(
+                    end_position.target_point,
+                    movement_params.collider,
+                    end_position.surface):
+            # The climb-around would leave the character not overlapping the
+            # required surface on one end or the other.
+            return null
     
     var velocity_start := _get_velocity_start(
             start_position,

@@ -3,6 +3,9 @@ class_name SurfacerGeometry
 extends ScaffolderGeometry
 
 
+const SHAPE_OVERLAP_WITH_CONCAVE_SURFACE_EPSILON := 4.0
+
+
 # Calculates where the axially-aligned surface-side-normal that goes through
 # the given point would intersect with the surface.
 static func project_point_onto_surface(
@@ -917,13 +920,16 @@ static func project_shape_onto_segment_and_away_from_concave_neighbors(
             surface,
             uses_end_segment_if_outside_bounds,
             side_override)
+    if projection == Vector2.INF:
+        return Vector2.INF
     
     var cw_neighbor := surface.clockwise_neighbor
     var is_cw_neighbor_concave := \
             cw_neighbor == surface.clockwise_concave_neighbor
     if is_cw_neighbor_concave:
         var cw_neighbor_normal_side_override := \
-                get_concave_neighbor_projection_side_override(surface, true)
+                get_concave_neighbor_projection_side_override(
+                    surface, true)
         var neighbor_projection := project_away_from_concave_neighbor(
                 projection,
                 cw_neighbor,
@@ -1022,11 +1028,45 @@ static func project_away_from_concave_neighbor(
 static func check_for_shape_to_rect_intersection(
         shape_position: Vector2,
         shape: RotatedShape,
-        rect: Rect2) -> bool:
-    return rect.position.x < shape_position.x + shape.half_width_height.x and \
-            rect.end.x > shape_position.x - shape.half_width_height.x and \
-            rect.position.y < shape_position.y + shape.half_width_height.y and \
-            rect.end.y > shape_position.y - shape.half_width_height.y
+        rect: Rect2,
+        epsilon := 0.0) -> bool:
+    return rect.position.x < \
+                    shape_position.x + shape.half_width_height.x + epsilon and \
+            rect.end.x > \
+                    shape_position.x - shape.half_width_height.x - epsilon and \
+            rect.position.y < \
+                    shape_position.y + shape.half_width_height.y + epsilon and \
+            rect.end.y > \
+                    shape_position.y - shape.half_width_height.y - epsilon
+
+
+static func check_for_shape_to_surface_overlap(
+        shape_position: Vector2,
+        shape: RotatedShape,
+        surface: Surface,
+        epsilon := SHAPE_OVERLAP_WITH_CONCAVE_SURFACE_EPSILON) -> bool:
+    var shape_min_x := shape_position.x - shape.half_width_height.x
+    var shape_max_x := shape_position.x + shape.half_width_height.x
+    var shape_min_y := shape_position.y - shape.half_width_height.y
+    var shape_max_y := shape_position.y + shape.half_width_height.y
+    
+    var surface_bb_pos := surface.bounding_box.position
+    var surface_bb_end := surface.bounding_box.end
+    
+    var is_surface_horizontal := \
+            surface.side == SurfaceSide.FLOOR or \
+            surface.side == SurfaceSide.CEILING
+    
+    if is_surface_horizontal and \
+            (shape_min_x > surface_bb_end.x - epsilon or \
+            shape_max_x < surface_bb_pos.x + epsilon):
+        return false
+    elif !is_surface_horizontal and \
+            (shape_min_y > surface_bb_end.y - epsilon or \
+            shape_max_y < surface_bb_pos.y + epsilon):
+        return false
+    else:
+        return true
 
 
 # -   Finds the end points of the segment along the given surface that the
@@ -1036,7 +1076,7 @@ static func get_surface_segment_at_point(
         segment_points_result: Array,
         surface: Surface,
         point: Vector2,
-        uses_end_segment_if_outside_bounds := true) -> void:
+        uses_end_segment_if_outside_bounds: bool) -> void:
     if !is_instance_valid(surface):
         segment_points_result.resize(0)
         return
