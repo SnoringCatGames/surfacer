@@ -162,7 +162,7 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     .load_from_json_object(json_object, context)
-    edge_type = SurfaceType.get_type_from_side(
+    surface_type = SurfaceType.get_type_from_side(
             start_position_along_surface.side)
 
 
