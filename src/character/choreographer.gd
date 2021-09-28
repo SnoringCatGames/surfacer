@@ -191,6 +191,7 @@ func _execute_next_step() -> void:
                                 target,
                                 character,
                                 SurfaceReachability.REACHABLE)
+                assert(is_instance_valid(destination))
                 var is_navigation_valid := \
                         character.navigate_as_choreographed(destination)
                 assert(is_navigation_valid)

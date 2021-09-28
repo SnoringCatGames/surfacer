@@ -407,7 +407,8 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                             current_start_point,
                             surface,
                             character.movement_params.collider,
-                            true)
+                            true,
+                            false)
             
             var possible_displacements := \
                     [main_jump_displacement, fallback_jump_displacement] if \
@@ -427,7 +428,8 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                                 current_end_point,
                                 surface,
                                 character.movement_params.collider,
-                                true)
+                                true,
+                                false)
                 jump_edge = calculator.calculate_edge(
                         null,
                         graph.collision_params,
@@ -1061,13 +1063,15 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                     position,
                     surface,
                     movement_params.collider,
-                    true)
+                    true,
+                    false)
     var end_position := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     end_target_point,
                     surface,
                     movement_params.collider,
-                    true)
+                    true,
+                    false)
     var backtracking_edge: IntraSurfaceEdge = \
             Su.movement.intra_surface_calculator.create(
                     start_position,
@@ -1128,7 +1132,10 @@ func _optimize_edges_for_approach(
                     path.destination.target_point,
                     movement_params.collider,
                     true,
+                    true,
                     true)
+            if !closest_jump_off_point.is_valid:
+                continue
             
             var surface_to_air_edge := _calculate_surface_to_air_edge(
                     closest_jump_off_point, path.destination)

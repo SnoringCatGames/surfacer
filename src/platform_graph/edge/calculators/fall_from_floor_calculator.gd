@@ -150,7 +150,14 @@ func _get_all_edges_from_one_side(
             edge_point,
             movement_params.collider,
             false,
+            true,
             true)
+    if !position_start.is_valid:
+        Sc.profiler.stop(
+                "fall_from_floor_walk_to_fall_off_point_calculation",
+                collision_params.thread_id,
+                records_profile)
+        return
     
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.

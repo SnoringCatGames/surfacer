@@ -247,7 +247,8 @@ func _calculate_intra_surface_destination(
             target_point,
             latest_activate_start_surface,
             character.movement_params.collider,
-            true)
+            true,
+            false)
 
 
 func _update_parameters() -> void:

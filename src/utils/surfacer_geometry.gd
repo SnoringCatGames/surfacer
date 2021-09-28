@@ -116,6 +116,9 @@ static func project_shape_onto_surface(
     if !is_instance_valid(surface):
         return Vector2.INF
     
+    if shape_position == Vector2.INF:
+        return Vector2.INF
+    
     if !is_instance_valid(shape):
         return project_point_onto_surface(
                 shape_position,
@@ -913,6 +916,7 @@ static func project_shape_onto_segment_and_away_from_concave_neighbors(
         shape: RotatedShape,
         surface: Surface,
         uses_end_segment_if_outside_bounds := true,
+        rejects_non_overlapping_results := true,
         side_override := SurfaceSide.NONE) -> Vector2:
     var projection := project_shape_onto_surface(
             shape_position,
@@ -937,6 +941,15 @@ static func project_shape_onto_segment_and_away_from_concave_neighbors(
                 shape)
         if neighbor_projection != Vector2.INF:
             projection = neighbor_projection
+            
+            if rejects_non_overlapping_results and \
+                    !check_for_shape_to_surface_overlap(
+                        projection,
+                        shape,
+                        surface):
+                # The projection would leave the character not overlapping
+                # the required surface on one end or the other.
+                return Vector2.INF
     
     var ccw_neighbor := surface.counter_clockwise_neighbor
     var is_ccw_neighbor_concave := \
@@ -951,6 +964,15 @@ static func project_shape_onto_segment_and_away_from_concave_neighbors(
                 shape)
         if neighbor_projection != Vector2.INF:
             projection = neighbor_projection
+            
+            if rejects_non_overlapping_results and \
+                    !check_for_shape_to_surface_overlap(
+                        projection,
+                        shape,
+                        surface):
+                # The projection would leave the character not overlapping
+                # the required surface on one end or the other.
+                return Vector2.INF
     
     return projection
 

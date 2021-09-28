@@ -33,6 +33,8 @@ static func find_closest_surface_in_direction(
             SURFACES_TILE_MAPS_COLLISION_LAYER,
             true,
             false)
+    if collision.empty():
+        return null
     assert(collision.collider is SurfacesTileMap)
     
     calculate_collision_surface(
@@ -69,7 +71,7 @@ static func find_closest_position_on_a_surface(
     var positions := find_closest_positions_on_surfaces(
             target,
             character,
-            1,
+            7,
             max_distance_squared_threshold,
             max_distance_basis_point,
             surfaces)
@@ -100,6 +102,8 @@ static func find_closest_positions_on_surfaces(
     var closest_positions := []
     closest_positions.resize(closest_surfaces.size())
     
+    var valid_position_count := 0
+    
     for i in closest_surfaces.size():
         var position := PositionAlongSurface.new()
         position.match_surface_target_and_collider(
@@ -107,8 +111,13 @@ static func find_closest_positions_on_surfaces(
                 target,
                 character.movement_params.collider,
                 true,
+                true,
                 true)
-        closest_positions[i] = position
+        if position.target_point != Vector2.INF:
+            closest_positions[valid_position_count] = position
+            valid_position_count += 1
+    
+    closest_positions.resize(valid_position_count)
     
     return closest_positions
 

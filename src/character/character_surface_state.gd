@@ -235,6 +235,8 @@ func update_for_initial_surface_attachment(
                     start_position,
                     -normal,
                     _collision_surface_result)
+    assert(is_instance_valid(surface),
+            "start_attachment_surface_side_or_position is invalid")
     
     if start_attachment_surface_side_or_position is PositionAlongSurface:
         PositionAlongSurface.copy(
@@ -247,7 +249,10 @@ func update_for_initial_surface_attachment(
                         start_position,
                         character.movement_params.collider,
                         true,
+                        true,
                         true)
+        assert(center_position_along_surface.is_valid,
+                "start_attachment_surface_side_or_position is invalid")
     
     _update_surface_contact_for_explicit_grab(center_position_along_surface)
     _update_touch_state()
@@ -657,7 +662,8 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
             contact_position,
             surface,
             character.movement_params.collider,
-            true)
+            true,
+            false)
 
 
 func _cancel_rounding_corner() -> void:
