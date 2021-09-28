@@ -72,7 +72,7 @@ func create(
         ) -> IntraSurfaceEdge:
     var edge := IntraSurfaceEdge.new()
     
-    edge.edge_type = SurfaceType.get_type_from_side(start.side)
+    edge.surface_type = SurfaceType.get_type_from_side(start.side)
     edge.calculator = self
     edge.start_position_along_surface = start
     edge.end_position_along_surface = end

@@ -414,7 +414,7 @@ func _trigger_collision_at_end_of_edge(edge: Edge) -> void:
         Sc.utils.get_vector_string(position_before_move, 1),
         EdgeType.get_prefix(navigator.edge.edge_type),
     ]
-    _log("Trigger col.",
+    _log("End trig col",
             details,
             CharacterLogType.SURFACE,
             false)
