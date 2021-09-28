@@ -1147,56 +1147,65 @@ func _update_rounding_corner_state() -> void:
 
 
 func _update_grab_state() -> void:
-    # Whether we are grabbing a ceiling.
     var standard_is_grabbing_ceiling: bool = \
             (is_touching_ceiling or \
                     is_rounding_ceiling_corner_to_upper_wall) and \
             (is_grabbing_ceiling or \
                     is_triggering_explicit_ceiling_grab or \
-                    is_triggering_implicit_ceiling_grab) and \
+                    (is_triggering_implicit_ceiling_grab and \
+                    !is_grabbing_floor and \
+                    !is_grabbing_wall)) and \
             !is_triggering_ceiling_release and \
             (is_triggering_explicit_ceiling_grab or \
                     !is_triggering_explicit_wall_grab)
-    var next_is_grabbing_ceiling := \
-            (standard_is_grabbing_ceiling or \
-            just_changed_to_lower_ceiling_while_rounding_wall_corner) and \
-            !just_changed_to_upper_wall_while_rounding_ceiling_corner and \
-            !is_triggering_ceiling_release
     
-    # Whether we are grabbing a wall.
     var standard_is_grabbing_wall: bool = \
             (is_touching_wall or \
                     is_rounding_wall_corner_to_lower_ceiling or \
                     is_rounding_wall_corner_to_upper_floor) and \
             (is_grabbing_wall or \
                     is_triggering_explicit_wall_grab or \
-                    is_triggering_implicit_wall_grab) and \
+                    (is_triggering_implicit_wall_grab and \
+                    !is_grabbing_floor and \
+                    !is_grabbing_ceiling)) and \
             !is_triggering_wall_release and \
             !is_triggering_explicit_floor_grab and \
             !is_triggering_explicit_ceiling_grab
+    
+    var standard_is_grabbing_floor: bool = \
+            (is_touching_floor or \
+                    is_rounding_floor_corner_to_lower_wall) and \
+            (is_grabbing_floor or \
+                    is_triggering_explicit_floor_grab or \
+                    (is_triggering_implicit_floor_grab and \
+                    !is_grabbing_ceiling and \
+                    !is_grabbing_wall)) and \
+            !is_triggering_fall_through and \
+            (is_triggering_explicit_floor_grab or \
+                    !is_triggering_explicit_wall_grab)
+    
+    var next_is_grabbing_ceiling := \
+            (standard_is_grabbing_ceiling or \
+            just_changed_to_lower_ceiling_while_rounding_wall_corner) and \
+            !just_changed_to_upper_wall_while_rounding_ceiling_corner and \
+            !is_triggering_ceiling_release
+    
+    var next_is_grabbing_floor := \
+            (standard_is_grabbing_floor or \
+            just_changed_to_upper_floor_while_rounding_wall_corner) and \
+            !just_changed_to_lower_wall_while_rounding_floor_corner and \
+            !is_triggering_fall_through and \
+            !next_is_grabbing_ceiling
+    
     var next_is_grabbing_wall := \
             (standard_is_grabbing_wall or \
             just_changed_to_lower_wall_while_rounding_floor_corner or \
             just_changed_to_upper_wall_while_rounding_ceiling_corner) and \
             !just_changed_to_upper_floor_while_rounding_wall_corner and \
             !just_changed_to_lower_ceiling_while_rounding_wall_corner and \
-            !is_triggering_wall_release
-    
-    # Whether we are grabbing a floor.
-    var standard_is_grabbing_floor: bool = \
-            (is_touching_floor or \
-                    is_rounding_floor_corner_to_lower_wall) and \
-            (is_grabbing_floor or \
-                    is_triggering_explicit_floor_grab or \
-                    is_triggering_implicit_floor_grab) and \
-            !is_triggering_fall_through and \
-            (is_triggering_explicit_floor_grab or \
-                    !is_triggering_explicit_wall_grab)
-    var next_is_grabbing_floor := \
-            (standard_is_grabbing_floor or \
-            just_changed_to_upper_floor_while_rounding_wall_corner) and \
-            !just_changed_to_lower_wall_while_rounding_floor_corner and \
-            !is_triggering_fall_through
+            !is_triggering_wall_release and \
+            !next_is_grabbing_floor and \
+            !next_is_grabbing_ceiling
     
     var next_is_grabbing_left_wall := \
             next_is_grabbing_wall and \
