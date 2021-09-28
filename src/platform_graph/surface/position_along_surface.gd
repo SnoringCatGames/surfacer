@@ -7,8 +7,6 @@ extends Reference
 ##     box.[br]
 
 
-const _SHAPE_OVERLAP_WITH_CONCAVE_SURFACE_EPSILON := 4.0
-
 var surface: Surface
 
 # An approximation for the center of the character's collision boundary
