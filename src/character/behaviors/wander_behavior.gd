@@ -158,7 +158,8 @@ func _attempt_intra_surface_navigation() -> int:
                     target,
                     latest_move_start_surface,
                     character.movement_params.collider,
-                    true)
+                    true,
+                    false)
     
     return _attempt_navigation_to_destination(destination)
 

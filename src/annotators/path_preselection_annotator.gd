@@ -356,7 +356,8 @@ func _update_phantom_position_along_surface() -> void:
                 preselection_destination.target_point,
                 null,
                 true,
-                true)
+                true,
+                false)
     else:
         phantom_position_along_surface.surface = null
         phantom_position_along_surface.target_point = \

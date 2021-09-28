@@ -188,13 +188,14 @@ func _move() -> int:
                             surface_reachability,
                             max_distance_squared_from_start_position,
                             start_position_for_max_distance_checks)
-        else:
+        if !is_instance_valid(possible_destination):
             possible_destination = PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
                             naive_target,
                             latest_move_start_surface,
                             character.movement_params.collider,
-                            true)
+                            true,
+                            false)
         
         # Ensure run-away target is the right distance away.
         var actual_distance_squared := \

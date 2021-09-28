@@ -190,10 +190,12 @@ func _attempt_navigation() -> int:
                     target_position.target_point,
                     surface,
                     character.movement_params.collider,
+                    true,
                     true)
     
-    if destination.target_point.distance_squared_to(
-            start_position_for_max_distance_checks) > \
+    if !destination.is_valid or \
+            destination.target_point.distance_squared_to(
+                    start_position_for_max_distance_checks) > \
             max_distance_squared_from_start_position:
         # The intended destination is too far away, so try a destination along
         # the current surface.
@@ -202,7 +204,8 @@ func _attempt_navigation() -> int:
                         destination.target_point,
                         character.surface_state.grabbed_surface,
                         character.movement_params.collider,
-                        true)
+                        true,
+                        false)
         
         if destination.target_point.distance_squared_to(
                 start_position_for_max_distance_checks) > \

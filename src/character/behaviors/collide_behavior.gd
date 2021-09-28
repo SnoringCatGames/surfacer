@@ -106,7 +106,8 @@ func _move() -> int:
                         destination.target_point,
                         latest_move_start_surface,
                         character.movement_params.collider,
-                        true)
+                        true,
+                        false)
     
     # Prevent straying too far the start position.
     if start_position_for_max_distance_checks.distance_squared_to(
@@ -182,12 +183,16 @@ func _get_collide_target_position() -> PositionAlongSurface:
         var max_distance_squared_from_start_position := \
                 max_distance_from_start_position * \
                 max_distance_from_start_position
-        return SurfaceFinder.find_closest_position_on_a_surface(
+        var result := SurfaceFinder.find_closest_position_on_a_surface(
                 move_target.position,
                 character,
                 surface_reachability,
                 max_distance_squared_from_start_position,
                 start_position_for_max_distance_checks)
+        if result != null:
+            return result
+        else:
+            return move_target.surface_state.last_position_along_surface
 
 
 func _set_anticipates_target_edge(value: bool) -> void:

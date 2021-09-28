@@ -163,6 +163,8 @@ func calculate_edge(
                             position_end.surface,
                             collision_params.movement_params.collider,
                             false)
+            if !position_end.is_valid:
+                return null
             var duration := (positions.size() - 1) * Time.PHYSICS_TIME_STEP
             instructions.duration = duration
         else:
@@ -233,6 +235,11 @@ func _calculate_jump_land_positions(
                             origin_surface,
                             true)
         
+        if target_point == Vector2.INF:
+            # The climb-around would leave the character not overlapping the
+            # required surface on one end or the other.
+            return null
+        
         start_target_point = target_point
         end_target_point = target_point
     
@@ -240,38 +247,34 @@ func _calculate_jump_land_positions(
             .create_position_offset_from_target_point(
                     start_target_point,
                     origin_surface,
-                    movement_params.collider)
+                    movement_params.collider,
+                    false,
+                    true)
+    if !start_position.is_valid:
+        return null
     var end_position := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
                     end_target_point,
                     neighbor,
-                    movement_params.collider)
-    var displacement := end_position.target_point - start_position.target_point
+                    movement_params.collider,
+                    false,
+                    true)
+    if !end_position.is_valid:
+        return null
     
-    if is_convex and (
+    var displacement := end_position.target_point - start_position.target_point
+    if is_convex and \
+            (Sc.geometry.are_floats_equal_with_epsilon(
+                displacement.x,
+                0.0,
+                _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD) or \
             Sc.geometry.are_floats_equal_with_epsilon(
-                    displacement.x,
-                    0.0,
-                    _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD) or \
-            Sc.geometry.are_floats_equal_with_epsilon(
-                    displacement.y,
-                    0.0,
-                    _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD)):
+                displacement.y,
+                0.0,
+                _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD)):
         # We are't able to move enough around the corner, so
         # abandon this edge.
         return null
-    else:
-        if !Sc.geometry.check_for_shape_to_surface_overlap(
-                    start_position.target_point,
-                    movement_params.collider,
-                    start_position.surface) or \
-                !Sc.geometry.check_for_shape_to_surface_overlap(
-                    end_position.target_point,
-                    movement_params.collider,
-                    end_position.surface):
-            # The climb-around would leave the character not overlapping the
-            # required surface on one end or the other.
-            return null
     
     var velocity_start := _get_velocity_start(
             start_position,

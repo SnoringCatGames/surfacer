@@ -4,7 +4,7 @@ extends Reference
 
 const SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO := 0.85
 const POINTER_TO_SURFACE_SELECTION_THRESHOLD := 84.0
-const NEARBY_POSITIONS_TO_CALCULATE_COUNT := 6
+const NEARBY_POSITIONS_TO_CALCULATE_COUNT := 7
 
 var _character
 var _surface_to_air_jump_distance_squared_threshold: float

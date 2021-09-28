@@ -44,6 +44,9 @@ func _unhandled_input(event: InputEvent) -> void:
                         click_position,
                         Sc.level.player_character,
                         SurfaceReachability.ANY)
+        if !is_instance_valid(surface_position):
+            first_target = null
+            return
         
         if first_target == null:
             # Selecting the jump position.

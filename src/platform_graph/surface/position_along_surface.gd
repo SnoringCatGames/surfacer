@@ -7,6 +7,8 @@ extends Reference
 ##     box.[br]
 
 
+const _SHAPE_OVERLAP_WITH_CONCAVE_SURFACE_EPSILON := 4.0
+
 var surface: Surface
 
 # An approximation for the center of the character's collision boundary
@@ -17,6 +19,8 @@ var target_point := Vector2.INF
 var target_projection_onto_surface := Vector2.INF
 
 var side: int setget ,_get_side
+
+var is_valid: bool setget ,_get_is_valid
 
 
 func _init(position_to_copy = null) -> void:
@@ -46,14 +50,16 @@ func match_surface_target_and_collider(
         target_point: Vector2,
         collider: RotatedShape,
         clips_to_surface_bounds := false,
-        matches_target_to_character_dimensions := true) -> void:
+        matches_target_to_character_dimensions := true,
+        rejects_non_overlapping_results := true) -> void:
     self.surface = surface
     _clip_and_project_target_point_for_center_of_collider(
             surface,
             target_point,
             collider,
             clips_to_surface_bounds,
-            matches_target_to_character_dimensions)
+            matches_target_to_character_dimensions,
+            rejects_non_overlapping_results)
 
 
 func update_target_projection_onto_surface() -> void:
@@ -66,7 +72,8 @@ func _clip_and_project_target_point_for_center_of_collider(
         target_point: Vector2,
         collider: RotatedShape,
         clips_to_surface_bounds: bool,
-        matches_target_to_character_dimensions: bool) -> void:
+        matches_target_to_character_dimensions: bool,
+        rejects_non_overlapping_results: bool) -> void:
     self.target_projection_onto_surface = \
             Sc.geometry.project_point_onto_surface(target_point, surface)
     
@@ -86,7 +93,8 @@ func _clip_and_project_target_point_for_center_of_collider(
                         target_point,
                         collider,
                         surface,
-                        true)
+                        true,
+                        rejects_non_overlapping_results)
         self.target_projection_onto_surface = \
                 Sc.geometry.project_point_onto_surface(target_point, surface)
     else:
@@ -119,6 +127,10 @@ func _get_side() -> int:
     return surface.side if \
             surface != null else \
             SurfaceSide.NONE
+
+
+func _get_is_valid() -> bool:
+    return !is_inf(target_point.x) and !is_inf(target_point.y)
 
 
 static func copy(
