@@ -792,8 +792,8 @@ func _update(
         _log("Edge interru",
                 "%s; to=%s; from=%s" % [
                     interruption_type_label,
-                    Sc.utils.get_vector_string(path.destination.target_point),
-                    Sc.utils.get_vector_string(path.origin.target_point),
+                    Sc.utils.get_vector_string(edge.get_end()),
+                    Sc.utils.get_vector_string(edge.get_start()),
                 ],
                 false)
         
