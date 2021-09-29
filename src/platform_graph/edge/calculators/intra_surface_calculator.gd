@@ -70,6 +70,8 @@ func create(
         movement_params: MovementParameters,
         allows_unexpected_collisions_with_concave_neighbors := false \
         ) -> IntraSurfaceEdge:
+    assert(start.surface == end.surface)
+    
     var edge := IntraSurfaceEdge.new()
     
     edge.surface_type = SurfaceType.get_type_from_side(start.side)
@@ -134,6 +136,7 @@ func update_for_surface_state(
         edge: IntraSurfaceEdge,
         surface_state: CharacterSurfaceState,
         is_final_edge: bool) -> void:
+    assert(surface_state.grabbed_surface == edge.get_start_surface())
     edge.start_position_along_surface = \
             surface_state.center_position_along_surface
     edge.velocity_start = surface_state.velocity
