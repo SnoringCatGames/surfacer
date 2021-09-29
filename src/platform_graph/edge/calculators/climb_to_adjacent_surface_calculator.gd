@@ -7,7 +7,15 @@ const EDGE_TYPE := EdgeType.CLIMB_TO_ADJACENT_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := false
 const IS_GRAPHABLE := true
 
+# -   This is important for ensuring that we can move far enough around the
+#     corner without hitting a concave next-neighbor surface.
+# -   Otherwise, there probably isn't enough room to grab the target surface.
 const _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD := 2.0
+
+# For concave corners, this is important for ensuring that the next collision
+# after this edge finishes is on the destination surface rather than back on
+# the origin surface.
+const _END_POSITION_EXTRA_DISTANCE_FROM_CONCAVE_ORIGIN := 6.0
 
 
 func _init().(
@@ -211,37 +219,46 @@ func _calculate_jump_land_positions(
         start_target_point = corner_point
         end_target_point = corner_point
     else:
-        var target_point := corner_point
         if !(movement_params.collider.shape is RectangleShape2D):
             # Round shapes get closer to the correct target with each pair of
             # axially-aligned projections.
-            target_point = Sc.geometry \
+            end_target_point = Sc.geometry \
                     .project_shape_onto_segment_and_away_from_concave_neighbors(
-                            target_point,
+                            corner_point,
                             movement_params.collider,
                             neighbor,
                             true)
-            target_point = Sc.geometry \
+            start_target_point = Sc.geometry \
                     .project_shape_onto_segment_and_away_from_concave_neighbors(
-                            target_point,
+                            end_target_point,
                             movement_params.collider,
                             origin_surface,
+                            true)
+            end_target_point = Sc.geometry \
+                    .project_shape_onto_segment_and_away_from_concave_neighbors(
+                            start_target_point,
+                            movement_params.collider,
+                            neighbor,
                             true)
         else:
-            target_point = Sc.geometry \
+            var target_point: Vector2 = Sc.geometry \
                     .project_shape_onto_segment_and_away_from_concave_neighbors(
-                            target_point,
+                            corner_point,
                             movement_params.collider,
                             origin_surface,
                             true)
+            
+            if target_point == Vector2.INF:
+                # The climb-around would leave the character not overlapping the
+                # required surface on one end or the other.
+                return null
+            
+            start_target_point = target_point
+            end_target_point = target_point
         
-        if target_point == Vector2.INF:
-            # The climb-around would leave the character not overlapping the
-            # required surface on one end or the other.
-            return null
-        
-        start_target_point = target_point
-        end_target_point = target_point
+        end_target_point += \
+                origin_surface.normal * \
+                _END_POSITION_EXTRA_DISTANCE_FROM_CONCAVE_ORIGIN
     
     var start_position := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
@@ -427,7 +444,12 @@ func _populate_concave_trajectory(
         position_end: PositionAlongSurface,
         movement_params: MovementParameters,
         duration: float) -> void:
-    var position := position_start.target_point
+    # -   Use the end-point rather than the start-point, since, for curved
+    #     shapes, this might be slightly closer to the end surface.
+    # -   Also, the end-point includes slight displacement away from the origin
+    #     surface, to help ensure that the move_and_slide system will detect a
+    #     collision with the new surface rather than the old surface.
+    var position := position_end.target_point
     var velocity := Vector2.ZERO
     
     var positions := [position]
