@@ -184,6 +184,11 @@ func calculate_edge(
             position_end,
             collision_params.movement_params)
     
+    var time_at_surface_switch := _calculate_duration_along_start_surface(
+            position_start,
+            position_end,
+            collision_params.movement_params)
+    
     return ClimbToAdjacentSurfaceEdge.new(
             self,
             position_start,
@@ -194,7 +199,8 @@ func calculate_edge(
             instructions.duration,
             collision_params.movement_params,
             instructions,
-            trajectory)
+            trajectory,
+            time_at_surface_switch)
 
 
 func _calculate_jump_land_positions(
@@ -1069,6 +1075,53 @@ func _calculate_duration(
                     (end_speed_x_end - end_speed_x_start) / acceleration_x
     
     return duration_start + duration_end
+
+
+func _calculate_duration_along_start_surface(
+        position_start: PositionAlongSurface,
+        position_end: PositionAlongSurface,
+        movement_params: MovementParameters) -> float:
+    var is_convex := \
+            position_start.surface.clockwise_convex_neighbor == \
+                    position_end.surface or \
+            position_start.surface.counter_clockwise_convex_neighbor == \
+                    position_end.surface
+    if !is_convex:
+        return 0.0
+    
+    # -   Movement around a convex corner is comprised of two parts:
+    #     -   a part based on the start surface,
+    #     -   and a part based on the end surface.
+    # -   The transition between these two parts happens when the character's
+    #     bounding box is completely past the end of the start surface.
+    # -   The overall rounding-the-corner-edge-movement starts when the
+    #     character's center is past the end of the start surface, and ends
+    #     when the character's center is no longer past the end of the end
+    #     surface.
+    
+    var start_side := position_start.side
+    var end_side := position_end.side
+    var is_top_side := \
+            start_side == SurfaceSide.FLOOR or \
+            end_side == SurfaceSide.FLOOR
+    var is_wall := \
+            start_side == SurfaceSide.LEFT_WALL or \
+            start_side == SurfaceSide.RIGHT_WALL
+    
+    var speed_start := abs(
+            movement_params.max_horizontal_speed_default if \
+            start_side == SurfaceSide.FLOOR else \
+            movement_params.ceiling_crawl_speed if \
+            start_side == SurfaceSide.CEILING else \
+            movement_params.climb_up_speed if \
+            is_top_side else \
+            movement_params.climb_down_speed)
+    var distance_start := \
+            movement_params.collider.half_width_height.y if \
+            is_wall else \
+            movement_params.collider.half_width_height.x
+    var duration_start := distance_start / speed_start
+    return duration_start
 
 
 func _get_can_grab_neighbor(

@@ -19,6 +19,8 @@ const TYPE := EdgeType.CLIMB_TO_ADJACENT_SURFACE_EDGE
 const IS_TIME_BASED := false
 const ENTERS_AIR := false
 
+var time_at_surface_switch: float
+
 
 func _init(
         calculator = null,
@@ -30,7 +32,8 @@ func _init(
         duration := INF,
         movement_params: MovementParameters = null,
         instructions: EdgeInstructions = null,
-        trajectory: EdgeTrajectory = null) \
+        trajectory: EdgeTrajectory = null,
+        time_at_surface_switch := INF) \
         .(TYPE,
         IS_TIME_BASED,
         SurfaceType.get_type_from_side(
@@ -52,7 +55,7 @@ func _init(
         trajectory,
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
         0.0) -> void:
-    pass
+    self.time_at_surface_switch = time_at_surface_switch
 
 
 func _get_weight_multiplier() -> float:
@@ -90,6 +93,33 @@ func get_animation_state_at_time(
             result.facing_left = false
         _:
             Sc.logger.error()
+
+
+func _sync_expected_middle_surface_state(
+        surface_state: CharacterSurfaceState,
+        edge_time: float) -> void:
+    var edge_frame_index := int(edge_time / Time.PHYSICS_TIME_STEP)
+    var surface_switch_index := \
+            int(time_at_surface_switch / Time.PHYSICS_TIME_STEP)
+    var did_just_switch := edge_frame_index == surface_switch_index
+    var surface := \
+            get_start_surface() if \
+            edge_frame_index <= surface_switch_index else \
+            get_end_surface()
+    var position := get_position_at_time(edge_time)
+    var velocity := get_velocity_at_time(edge_time)
+    
+    surface_state.clear_current_state()
+    surface_state.center_position = position
+    surface_state.velocity = velocity
+    if did_just_switch:
+        surface_state.sync_state_for_surface_release(
+                get_start_surface(),
+                position)
+    surface_state.sync_state_for_surface_grab(
+            surface,
+            position,
+            did_just_switch)
 
 
 func _get_is_surface_expected_for_touch_contact(
@@ -178,12 +208,18 @@ func _check_did_just_reach_surface_destination(
             is_past_end_point
 
 
-func load_from_json_object(
+func _load_edge_state_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
-    .load_from_json_object(json_object, context)
+    ._load_edge_state_from_json_object(json_object, context)
     surface_type = SurfaceType.get_type_from_side(
             start_position_along_surface.side)
+    time_at_surface_switch = json_object.ts
+
+
+func _edge_state_to_json_object(json_object: Dictionary) -> void:
+    ._edge_state_to_json_object(json_object)
+    json_object.ts = time_at_surface_switch
 
 
 func get_is_clockwise() -> bool:

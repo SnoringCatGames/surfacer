@@ -1505,3 +1505,241 @@ func _update_grab_contact() -> void:
 
 func _get_contact_count() -> int:
     return surfaces_to_contacts.size()
+
+
+func clear_current_state() -> void:
+    # Let these properties be updated in the normal way:
+    # -   previous_center_position
+    # -   did_move_frame_before_last
+    # -   previous_grab_position
+    # -   previous_grab_normal
+    # -   previous_grabbed_surface
+    # -   last_position_along_surface
+    
+    is_touching_floor = false
+    is_touching_ceiling = false
+    is_touching_left_wall = false
+    is_touching_right_wall = false
+    is_touching_wall = false
+    is_touching_surface = false
+    
+    is_grabbing_floor = false
+    is_grabbing_ceiling = false
+    is_grabbing_left_wall = false
+    is_grabbing_right_wall = false
+    is_grabbing_wall = false
+    is_grabbing_surface = false
+    
+    just_touched_floor = false
+    just_touched_ceiling = false
+    just_touched_wall = false
+    just_touched_surface = false
+    
+    just_stopped_touching_floor = false
+    just_stopped_touching_ceiling = false
+    just_stopped_touching_wall = false
+    just_stopped_touching_surface = false
+    
+    just_grabbed_floor = false
+    just_grabbed_ceiling = false
+    just_grabbed_left_wall = false
+    just_grabbed_right_wall = false
+    just_grabbed_surface = false
+    
+    just_stopped_grabbing_floor = false
+    just_stopped_grabbing_ceiling = false
+    just_stopped_grabbing_left_wall = false
+    just_stopped_grabbing_right_wall = false
+    
+    is_facing_wall = false
+    is_pressing_into_wall = false
+    is_pressing_away_from_wall = false
+    
+    is_triggering_explicit_wall_grab = false
+    is_triggering_explicit_ceiling_grab = false
+    is_triggering_explicit_floor_grab = false
+    
+    is_triggering_implicit_wall_grab = false
+    is_triggering_implicit_ceiling_grab = false
+    is_triggering_implicit_floor_grab = false
+    
+    is_triggering_wall_release = false
+    is_triggering_ceiling_release = false
+    is_triggering_fall_through = false
+    is_triggering_jump = false
+    
+    is_still_triggering_previous_surface_grab_since_rounding_corner = false
+    
+    is_rounding_floor_corner_to_lower_wall = false
+    is_rounding_ceiling_corner_to_upper_wall = false
+    is_rounding_wall_corner_to_lower_ceiling = false
+    is_rounding_wall_corner_to_upper_floor = false
+    is_rounding_corner = false
+    is_rounding_corner_from_previous_surface = false
+    is_rounding_left_corner = false
+    
+    just_started_rounding_corner = false
+    just_stopped_rounding_corner = false
+    just_changed_to_lower_wall_while_rounding_floor_corner = false
+    just_changed_to_upper_wall_while_rounding_ceiling_corner = false
+    just_changed_to_lower_ceiling_while_rounding_wall_corner = false
+    just_changed_to_upper_floor_while_rounding_wall_corner = false
+    just_changed_surface_while_rounding_corner = false
+    
+    is_descending_through_floors = false
+    is_ascending_through_ceilings = false
+    is_grabbing_walk_through_walls = false
+    
+    which_wall = SurfaceSide.NONE
+    surface_type = SurfaceType.AIR
+    
+    did_move_last_frame = !Sc.geometry.are_points_equal_with_epsilon(
+            previous_center_position,
+            center_position,
+            0.00001)
+    grab_position = Vector2.INF
+    grab_normal = Vector2.INF
+    grab_position_tile_map_coord = Vector2.INF
+    grabbed_tile_map = null
+    grabbed_surface = null
+    center_position_along_surface.reset()
+    
+    just_changed_surface = false
+    just_changed_tile_map = false
+    just_changed_tile_map_coord = false
+    just_changed_grab_position = false
+    just_entered_air = false
+    just_left_air = false
+    
+    horizontal_facing_sign = -1
+    horizontal_acceleration_sign = 0
+    toward_wall_sign = 0
+    
+    surfaces_to_contacts.clear()
+    surface_grab = null
+    floor_contact = null
+    ceiling_contact = null
+    wall_contact = null
+    
+    contact_count = 0
+
+
+func sync_state_for_surface_grab(
+        surface: Surface,
+        center_position: Vector2,
+        did_just_grab: bool) -> void:
+    is_touching_surface = true
+    is_grabbing_surface = true
+    grabbed_surface = surface
+    contact_count = 1
+    
+    # TODO: This won't be accurate for non-axially-aligned surfaces, but that's
+    #       probably ok.
+    grab_position = Sc.geometry.project_point_onto_surface(
+            center_position,
+            surface)
+    grab_normal = Sc.geometry.get_surface_normal_at_point(
+            surface,
+            grab_position)
+    grab_position_tile_map_coord = Sc.geometry.world_to_tile_map(
+            grab_position,
+            surface.tile_map)
+    var grab_position_tile_map_index: int = \
+            Sc.geometry.get_tile_map_index_from_grid_coord(
+                grab_position_tile_map_coord,
+                grabbed_tile_map)
+    grabbed_tile_map = surface.tile_map
+    center_position_along_surface.match_current_grab(surface, center_position)
+    surface_grab = SurfaceContact.new()
+    surfaces_to_contacts[surface] = surface_grab
+    
+    surface_grab.surface = surface
+    surface_grab.contact_position = grab_position
+    surface_grab.contact_normal = grab_normal
+    surface_grab.tile_map_coord = grab_position_tile_map_coord
+    surface_grab.tile_map_index = grab_position_tile_map_index
+    surface_grab.position_along_surface.match_current_grab(
+            surface,
+            center_position)
+    surface_grab.just_started = did_just_grab
+    surface_grab._is_still_touching = true
+    
+    match surface.side:
+        SurfaceSide.FLOOR:
+            is_touching_floor = true
+            is_grabbing_floor = true
+            is_triggering_implicit_floor_grab = false
+            surface_type = SurfaceType.FLOOR
+            floor_contact = surface_grab
+        SurfaceSide.LEFT_WALL:
+            is_touching_left_wall = true
+            is_grabbing_left_wall = true
+            is_touching_wall = true
+            is_grabbing_wall = true
+            is_facing_wall = true
+            is_triggering_implicit_wall_grab = false
+            which_wall = SurfaceSide.LEFT_WALL
+            surface_type = SurfaceType.WALL
+            horizontal_facing_sign = -1
+            toward_wall_sign = -1
+            wall_contact = surface_grab
+        SurfaceSide.RIGHT_WALL:
+            is_touching_right_wall = true
+            is_grabbing_right_wall = true
+            is_touching_wall = true
+            is_grabbing_wall = true
+            is_facing_wall = true
+            is_triggering_implicit_wall_grab = false
+            which_wall = SurfaceSide.RIGHT_WALL
+            surface_type = SurfaceType.WALL
+            horizontal_facing_sign = -1
+            toward_wall_sign = -1
+            wall_contact = surface_grab
+        SurfaceSide.CEILING:
+            is_touching_ceiling = true
+            is_grabbing_ceiling = true
+            is_triggering_implicit_ceiling_grab = false
+            surface_type = SurfaceType.CEILING
+            ceiling_contact = surface_grab
+        _:
+            Sc.logger.error()
+    
+    if did_just_grab:
+        just_touched_surface = true
+        just_grabbed_surface = true
+        
+        match surface.side:
+            SurfaceSide.FLOOR:
+                just_touched_floor = true
+                just_grabbed_floor = true
+            SurfaceSide.LEFT_WALL:
+                just_touched_wall = true
+                just_grabbed_left_wall = true
+            SurfaceSide.RIGHT_WALL:
+                just_touched_wall = true
+                just_grabbed_right_wall = true
+            SurfaceSide.CEILING:
+                just_touched_ceiling = true
+                just_grabbed_ceiling = true
+            _:
+                Sc.logger.error()
+
+
+func sync_state_for_surface_release(
+        surface: Surface,
+        center_position: Vector2) -> void:
+    match surface.side:
+        SurfaceSide.FLOOR:
+            just_stopped_touching_floor = true
+            just_stopped_grabbing_floor = true
+        SurfaceSide.LEFT_WALL:
+            just_stopped_touching_wall = true
+            just_stopped_grabbing_left_wall = true
+        SurfaceSide.RIGHT_WALL:
+            just_stopped_touching_wall = true
+            just_stopped_grabbing_right_wall = true
+        SurfaceSide.CEILING:
+            just_stopped_touching_ceiling = true
+            just_stopped_grabbing_ceiling = true
+        _:
+            Sc.logger.error()

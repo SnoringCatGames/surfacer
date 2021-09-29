@@ -141,6 +141,10 @@ func update_navigation_state(
             navigation_state.just_interrupted_by_unexpected_collision or \
             navigation_state.just_interrupted_by_player_action
     
+    # FIXME: LEFT OFF HERE: --------------------------
+    if navigation_state.just_interrupted:
+        pass
+    
     if surface_state.just_entered_air:
         navigation_state.is_expecting_to_enter_air = false
     
@@ -159,6 +163,10 @@ func update_navigation_state(
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_unexpected_collision or \
             navigation_state.just_interrupted_by_player_action
+    
+    # FIXME: LEFT OFF HERE: --------------------------
+    if navigation_state.just_interrupted:
+        pass
     
     if movement_params.bypasses_runtime_physics:
         navigation_state.just_reached_end_of_edge = \
@@ -311,6 +319,76 @@ func get_animation_state_at_time(
         edge_time: float) -> void:
     Sc.logger.error(
             "Abstract Edge.get_animation_state_at_time is not implemented")
+
+
+func sync_expected_surface_state(
+        surface_state: CharacterSurfaceState,
+        edge_time: float) -> void:
+    var edge_frame_index := int(edge_time / Time.PHYSICS_TIME_STEP)
+    var is_at_start_of_edge := edge_frame_index == 0
+    var is_at_end_of_edge := \
+            !is_instance_valid(trajectory) or \
+            edge_frame_index >= \
+                    trajectory.frame_continuous_positions_from_steps.size() - 1
+    
+    if is_at_end_of_edge:
+        _sync_expected_end_surface_state(surface_state)
+    if is_at_start_of_edge:
+        _sync_expected_start_surface_state(surface_state)
+    else:
+        _sync_expected_middle_surface_state(surface_state, edge_time)
+
+
+func _sync_expected_start_surface_state(
+        surface_state: CharacterSurfaceState) -> void:
+    var position := start_position_along_surface.target_point
+    var velocity := velocity_start
+    var surface := get_start_surface()
+    
+    surface_state.clear_current_state()
+    surface_state.center_position = position
+    surface_state.velocity = velocity
+    
+    if is_instance_valid(surface):
+        surface_state.sync_state_for_surface_grab(surface, position, false)
+
+
+func _sync_expected_end_surface_state(
+        surface_state: CharacterSurfaceState) -> void:
+    var position := end_position_along_surface.target_point
+    var velocity := velocity_end
+    var surface := get_end_surface()
+    
+    surface_state.clear_current_state()
+    surface_state.center_position = position
+    surface_state.velocity = velocity
+    
+    if is_instance_valid(surface):
+        surface_state.sync_state_for_surface_grab(surface, position, true)
+
+
+func _sync_expected_middle_surface_state(
+        surface_state: CharacterSurfaceState,
+        edge_time: float) -> void:
+    assert(enters_air,
+            "Surface-bound edges must override " +
+            "_sync_expected_middle_surface_state")
+    
+    var edge_frame_index := int(edge_time / Time.PHYSICS_TIME_STEP)
+    var did_just_release := edge_frame_index == 1
+    var position := get_position_at_time(edge_time)
+    var velocity := get_velocity_at_time(edge_time)
+    
+    surface_state.clear_current_state()
+    surface_state.center_position = position
+    surface_state.velocity = velocity
+    
+    if did_just_release:
+        var start_surface := get_start_surface()
+        if is_instance_valid(start_surface):
+            surface_state.sync_state_for_surface_release(
+                    start_surface,
+                    position)
 
 
 func _update_expected_position_along_surface(

@@ -356,6 +356,11 @@ func _match_expected_edge_trajectory() -> void:
             velocity = expected_velocity
 
 
+# FIXME: LEFT OFF HERE: --------------------------
+#func _match_expected_navigation_surface_state() -> void:
+#    navigator.edge.sync_expected_surface_state()
+
+
 # -   The move_and_slide system depends on some velocity always pushing the
 #     character into the floor (or other touched surface).
 # -   If we just zero this out, move_and_slide will produce false-negatives for
@@ -369,7 +374,7 @@ func _maintain_collisions() -> void:
         var trajectory_index := \
                 int(playback_elapsed_time / Time.PHYSICS_TIME_STEP)
         var is_at_end_of_edge := \
-                trajectory_index > \
+                trajectory_index >= \
                 navigator.edge.trajectory \
                         .frame_continuous_positions_from_steps.size()
         if is_at_end_of_edge and \
@@ -589,6 +594,11 @@ func processed_action(name: String) -> bool:
 
 func _update_surface_state() -> void:
     surface_state.update()
+    
+    # FIXME: LEFT OFF HERE: --------------------------
+    if surface_state.surfaces_to_contacts.size() > 0 and \
+            collisions.size() == 0:
+        surface_state.update()
     
     if surface_state.just_changed_surface and \
             surface_state.is_grabbing_surface:
