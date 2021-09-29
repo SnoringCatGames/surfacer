@@ -101,6 +101,13 @@ func _get_is_surface_expected_for_touch_contact(
             contact_surface == get_next_neighbor()
 
 
+func _get_is_surface_expected_for_grab(grabbed_surface: Surface) -> bool:
+    return grabbed_surface == start_position_along_surface.surface or \
+            grabbed_surface == end_position_along_surface.surface or \
+            grabbed_surface == get_next_neighbor()
+
+
+# In order to "reach" our destination, we need to leave the origin surface.
 func _check_did_just_reach_surface_destination(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,
@@ -110,23 +117,37 @@ func _check_did_just_reach_surface_destination(
         return playback.get_elapsed_time_scaled() >= duration
     
     var is_clockwise := get_is_clockwise()
+    var start_surface := start_position_along_surface.surface
+    var end_surface := end_position_along_surface.surface
     var current_point := surface_state.center_position
     var target_point := end_position_along_surface.target_point
     
     if surface_state.contact_count > 1:
-        var end_surface := end_position_along_surface.surface
         var concave_neighbor_approaching := \
                 end_surface.clockwise_concave_neighbor if \
                 is_clockwise else \
                 end_surface.counter_clockwise_concave_neighbor
+        
+        # If we collide with the "next neighbor", then we must be done.
         for contact_surface in surface_state.surfaces_to_contacts:
             if contact_surface == concave_neighbor_approaching:
                 # Colliding with the neighbor that we're approaching at the
                 # end of the edge.
                 return true
-            else:
-                continue
+        
+        # In order to "reach" our destination, we need to leave the origin
+        # surface.
+        for contact_surface in surface_state.surfaces_to_contacts:
+            if contact_surface == start_surface:
+                return false
     
+    if !get_is_convex() and \
+            surface_state.grabbed_surface == end_surface:
+        # For a concave corner, as soon as we are no longer touching the origin
+        # surface, we have reached the destination.
+        return true
+    
+    # For a convex corner, we must pass the target coordinate.
     var is_past_end_point: bool
     match end_position_along_surface.side:
         SurfaceSide.FLOOR:
@@ -152,7 +173,6 @@ func _check_did_just_reach_surface_destination(
         _:
             Sc.logger.error()
             is_past_end_point = false
-    
     return surface_state.grabbed_surface == \
             end_position_along_surface.surface and \
             is_past_end_point
