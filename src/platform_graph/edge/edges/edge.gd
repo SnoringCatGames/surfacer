@@ -234,7 +234,7 @@ func _get_is_surface_expected_for_touch_contact(
     var end_surface := get_end_surface()
     return contact_surface == start_surface or \
             contact_surface == end_surface or \
-            (navigation_state.edge_frame_count == 0 and \
+            (navigation_state.edge_frame_count <= 1 and \
             (contact_surface == start_surface.clockwise_neighbor or \
             contact_surface == start_surface.counter_clockwise_neighbor))
 
