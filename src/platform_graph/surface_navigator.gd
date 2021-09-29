@@ -702,6 +702,13 @@ func _start_edge(
     edge_index = index
     edge = path.edges[index]
     
+    # FIXME: LEFT OFF HERE: -------------
+    # - Check on this.... Is this where the cancelled navs are happening?
+    
+    # TODO: If we see this triggering a lot, we could change it to a warning,
+    #       and add some logic to force an update to the surface state.
+    assert(surface_state.grabbed_surface == edge.get_start_surface())
+    
     if edge is IntraSurfaceEdge:
         edge.calculator.update_for_surface_state(
                 edge,
