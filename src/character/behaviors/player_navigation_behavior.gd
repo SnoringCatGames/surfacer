@@ -62,7 +62,8 @@ func _unhandled_input(event: InputEvent) -> void:
             Sc.gui.is_player_interaction_enabled and \
             character.navigation_state.is_currently_navigating and \
             cancels_navigation_on_key_press and \
-            event is InputEventKey:
+            event is InputEventKey and \
+            Sc.project_settings.movement_action_key_set.has(event.scancode):
         _was_last_input_a_touch = false
         character.navigator.stop()
         trigger(false)
