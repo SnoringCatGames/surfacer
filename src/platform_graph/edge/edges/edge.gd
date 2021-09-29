@@ -203,27 +203,21 @@ func _check_for_unexpected_collision(
             navigation_state.just_interrupted:
         return
     
-    var start_surface := get_start_surface()
-    var end_surface := get_end_surface()
     var is_still_colliding_with_start_surface := \
-            surface_state.grabbed_surface == start_surface
+            surface_state.grabbed_surface == get_start_surface()
     
     if is_still_colliding_with_start_surface:
         for contact_surface in surface_state.surfaces_to_contacts:
-            if _get_is_surface_expected_for_touch_contact(
+            if !_get_is_surface_expected_for_touch_contact(
                     contact_surface,
                     navigation_state):
-                continue
-            else:
                 # Colliding with an unconnected surface.
                 # Interrupted the edge.
                 navigation_state \
                         .just_interrupted_by_unexpected_collision = true
                 return
     
-    if surface_state.is_grabbing_surface and \
-            surface_state.grabbed_surface != start_surface and \
-            surface_state.grabbed_surface != end_surface:
+    if !_get_is_surface_expected_for_grab(surface_state.grabbed_surface):
         navigation_state.just_interrupted_by_unexpected_collision = true
 
 
@@ -237,6 +231,11 @@ func _get_is_surface_expected_for_touch_contact(
             (navigation_state.edge_frame_count <= 1 and \
             (contact_surface == start_surface.clockwise_neighbor or \
             contact_surface == start_surface.counter_clockwise_neighbor))
+
+
+func _get_is_surface_expected_for_grab(grabbed_surface: Surface) -> bool:
+    return grabbed_surface == start_position_along_surface.surface or \
+            grabbed_surface == end_position_along_surface.surface
 
 
 # This should probably only be used during debugging. Otherwise, local memory

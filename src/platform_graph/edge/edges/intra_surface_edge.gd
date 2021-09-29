@@ -210,8 +210,6 @@ func _check_did_just_reach_surface_destination(
                 # Colliding with the neighbor that we're approaching at the
                 # end of the edge.
                 return true
-            else:
-                continue
     
     # Check whether we were on the other side of the destination in the
     # previous frame.
