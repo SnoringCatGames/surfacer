@@ -191,6 +191,22 @@ func get_animation_state_at_time(
             Sc.logger.error()
 
 
+func _sync_expected_middle_surface_state(
+        surface_state: CharacterSurfaceState,
+        edge_time: float) -> void:
+    var position := get_position_at_time(edge_time)
+    var velocity := get_velocity_at_time(edge_time)
+    var surface := get_start_surface()
+    
+    surface_state.clear_current_state()
+    surface_state.center_position = position
+    surface_state.velocity = velocity
+    surface_state.sync_state_for_surface_grab(
+            surface,
+            position,
+            false)
+
+
 func _check_did_just_reach_surface_destination(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,
