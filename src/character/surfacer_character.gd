@@ -408,16 +408,17 @@ func _trigger_collision_at_end_of_edge(edge: Edge) -> void:
         "new_collisions=%d; " +
         "previous_p=%s; " +
         "ending_edge=%s; " +
-        "_trigger_collision_at_end_of_edge"
+        "v=%s"
     ) % [
         collisions.size() - collision_count_before_move,
         Sc.utils.get_vector_string(position_before_move, 1),
         EdgeType.get_prefix(navigator.edge.edge_type),
+        Sc.utils.get_vector_string(maintain_collision_velocity, 1),
     ]
-    _log("End trig col",
+    _log("E end trig c",
             details,
             CharacterLogType.SURFACE,
-            false)
+            true)
 
 
 func _maintain_preexisting_collisions() -> void:

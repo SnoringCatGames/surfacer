@@ -102,19 +102,32 @@ func _clip_and_project_target_point_for_center_of_collider(
     self.target_point = target_point
 
 
-func to_string(verbose := true) -> String:
+func to_string(
+        verbose := true,
+        includes_projection := false) -> String:
     if verbose:
+        var projection_str: String = \
+                ", %s" % target_projection_onto_surface if \
+                includes_projection else \
+                ""
         return (
-            "PositionAlongSurface{ %s, %s }"
+            "PositionAlongSurface{ %s%s, %s }"
         ) % [
             target_point,
+            projection_str,
             surface.to_string(verbose) if \
                     is_instance_valid(surface) else \
                     "NULL SURFACE",
         ]
     else:
-        return "P{%s, %s}" % [
+        var projection_str: String = \
+                ", %s" % Sc.utils.get_vector_string(
+                        target_projection_onto_surface, 1) if \
+                includes_projection else \
+                ""
+        return "P{%s%s, %s}" % [
             Sc.utils.get_vector_string(target_point, 1),
+            projection_str,
             surface.to_string(verbose) if \
                     is_instance_valid(surface) else \
                     "NULL",

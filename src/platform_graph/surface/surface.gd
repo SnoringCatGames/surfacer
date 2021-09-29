@@ -65,7 +65,7 @@ func to_string(verbose := true) -> String:
     else:
         return "%s%s" % [
                 SurfaceSide.get_prefix(side),
-                Sc.utils.get_vector_string(vertices[0]),
+                Sc.utils.get_vector_string(vertices[0], 1),
             ]
 
 
