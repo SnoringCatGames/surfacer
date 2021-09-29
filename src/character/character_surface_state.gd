@@ -309,24 +309,29 @@ func _update_contacts() -> void:
                 _cancel_rounding_corner()
     
     # Remove any surfaces that are no longer touching.
-    for surface_contact in surfaces_to_contacts.values():
-        if !surface_contact._is_still_touching:
-            var details := (
-                        "_update_physics_contacts(); " +
-                        "surface=%s; " +
-                        "is_rounding_corner=%s"
-                    ) % [
-                        surface_contact.surface.to_string(false),
-                        is_rounding_corner,
-                    ]
-            character._log(
-                    "Rem contact",
-                    details,
-                    CharacterLogType.SURFACE,
-                    true)
-            surfaces_to_contacts.erase(surface_contact.surface)
-            if surface_grab == surface_contact:
-                surface_grab = null
+    var contacts_to_remove := []
+    for contact in surfaces_to_contacts.values():
+        if !contact._is_still_touching:
+            contacts_to_remove.push_back(contact)
+    for contact in contacts_to_remove:
+        surfaces_to_contacts.erase(contact.surface)
+        if surface_grab == contact:
+            surface_grab = null
+        var details := (
+                    "%s; " +
+                    "v=%s; " +
+                    "is_rounding_corner=%s"
+                ) % [
+                    contact.position_along_surface.to_string(
+                            false, true),
+                    Sc.utils.get_vector_string(velocity, 1),
+                    is_rounding_corner,
+                ]
+        character._log(
+                "Rem contact",
+                details,
+                CharacterLogType.SURFACE,
+                true)
     
     # FIXME: ---- REMOVE? Does this ever trigger? Even if it did, we
     #             probably want to just ignore the collision this frame.
@@ -493,17 +498,6 @@ func _calculate_surface_contact_from_collision(
     var just_started := !surfaces_to_contacts.has(contacted_surface)
     
     if just_started:
-        var details := (
-                    "_calculate_surface_contact_from_collision(); " +
-                    "surface=%s"
-                ) % [
-                    contacted_surface.to_string(false),
-                ]
-        character._log(
-                "Add contact",
-                details,
-                CharacterLogType.SURFACE,
-                true)
         surfaces_to_contacts[contacted_surface] = SurfaceContact.new()
     
     var surface_contact: SurfaceContact = \
@@ -517,6 +511,22 @@ func _calculate_surface_contact_from_collision(
             contacted_surface, center_position)
     surface_contact.just_started = just_started
     surface_contact._is_still_touching = true
+    
+    if just_started:
+        var details := (
+                    "%s; " +
+                    "v=%s; " +
+                    "_calculate_surface_contact_from_collision()"
+                ) % [
+                    surface_contact.position_along_surface.to_string(
+                            false, true),
+                    Sc.utils.get_vector_string(velocity, 1),
+                ]
+        character._log(
+                "Add contact",
+                details,
+                CharacterLogType.SURFACE,
+                true)
     
     return surface_contact
 
@@ -740,12 +750,14 @@ func _update_surface_contact_for_explicit_grab(
             surfaces_to_contacts[surface] if \
             surfaces_to_contacts.has(surface) else \
             SurfaceContact.new()
+    PositionAlongSurface.copy(
+            surface_contact.position_along_surface,
+            position_along_surface)
     surface_contact.surface = surface
     surface_contact.contact_position = contact_position
     surface_contact.contact_normal = contact_normal
     surface_contact.tile_map_coord = tile_map_coord
     surface_contact.tile_map_index = tile_map_index
-    surface_contact.position_along_surface = position_along_surface
     surface_contact.just_started = just_started
     surface_contact._is_still_touching = true
     
@@ -762,11 +774,14 @@ func _update_surface_contact_for_explicit_grab(
     
     if just_started:
         var details := (
-                    "_update_surface_contact_for_explicit_grab(); " +
-                    "surface=%s; " +
-                    "is_rounding_corner=%s"
+                    "%s; " +
+                    "v=%s; " +
+                    "is_rounding_corner=%s; " +
+                    "_update_surface_contact_for_explicit_grab()"
                 ) % [
-                    surface_contact.surface.to_string(false),
+                    surface_contact.position_along_surface.to_string(
+                            false, true),
+                    Sc.utils.get_vector_string(velocity, 1),
                     is_rounding_corner,
                 ]
         character._log(
