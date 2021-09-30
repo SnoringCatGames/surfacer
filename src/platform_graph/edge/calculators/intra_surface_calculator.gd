@@ -76,8 +76,8 @@ func create(
     
     edge.surface_type = SurfaceType.get_type_from_side(start.side)
     edge.calculator = self
-    edge.start_position_along_surface = start
-    edge.end_position_along_surface = end
+    edge.start_position_along_surface = PositionAlongSurface.new(start)
+    edge.end_position_along_surface = PositionAlongSurface.new(end)
     edge.velocity_start = velocity_start
     edge.movement_params = movement_params
     
@@ -126,9 +126,13 @@ func update_terminal(
                     edge.movement_params.collider,
                     true)
     if is_start:
-        edge.start_position_along_surface = position_along_surface
+        PositionAlongSurface.copy(
+                edge.start_position_along_surface,
+                position_along_surface)
     else:
-        edge.end_position_along_surface = position_along_surface
+        PositionAlongSurface.copy(
+                edge.end_position_along_surface,
+                position_along_surface)
     _update(edge)
 
 
@@ -137,8 +141,9 @@ func update_for_surface_state(
         surface_state: CharacterSurfaceState,
         is_final_edge: bool) -> void:
     assert(surface_state.grabbed_surface == edge.get_start_surface())
-    edge.start_position_along_surface = \
-            surface_state.center_position_along_surface
+    PositionAlongSurface.copy(
+            edge.start_position_along_surface,
+            surface_state.center_position_along_surface)
     edge.velocity_start = surface_state.velocity
     _update(edge)
 
@@ -221,8 +226,12 @@ func _update(edge: IntraSurfaceEdge) -> void:
             velocity_start,
             movement_params)
     
-    edge.start_position_along_surface = start
-    edge.end_position_along_surface = end
+    PositionAlongSurface.copy(
+            edge.start_position_along_surface,
+            start)
+    PositionAlongSurface.copy(
+            edge.end_position_along_surface,
+            end)
     edge.distance = distance
     edge.duration = duration
     edge.velocity_end = velocity_end
