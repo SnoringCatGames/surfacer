@@ -284,8 +284,15 @@ func _attempt_move() -> void:
             "and behavior are both ready.")
     var last_surface: Surface = \
             character.surface_state.last_position_along_surface.surface
-    assert(last_surface == character.reachable_basis_surface or \
-            last_surface == null)
+    # FIXME: ----------------- 
+    # - This should just be an assertion.
+    # - Debug why this ever occurs.
+    if last_surface != character.reachable_basis_surface and \
+            last_surface != null:
+        Sc.logger.warning(
+                "Behavior._attempt_move: character.reachable_basis_surface " +
+                "is not updated correctly")
+        character._update_reachable_surfaces(last_surface)
     
     _update_start_positions(false)
     
