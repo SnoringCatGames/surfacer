@@ -38,6 +38,12 @@ func _calculate_max_tile_map_cell_size(
         tile_maps: Array) -> void:
     var max_tile_map_cell_size := Vector2.ZERO
     for tile_map in tile_maps:
+        # FIXME: ------------- Add this assert back in?
+#        assert(tile_map.cell_size == Sc.gui.cell_size,
+#                "SurfaceParser currently needs all CollidableTileMaps to " +
+#                "use the same cell size, and this should match " +
+#                "Sc.gui.cell_size.")
+        
         if tile_map.cell_size.x + tile_map.cell_size.y > \
                 max_tile_map_cell_size.x + max_tile_map_cell_size.y:
             max_tile_map_cell_size = tile_map.cell_size

@@ -772,12 +772,16 @@ func get_intended_position(type: int) -> PositionAlongSurface:
         IntendedPositionType.LAST_POSITION_ALONG_SURFACE:
             return surface_state.last_position_along_surface
         IntendedPositionType.CLOSEST_SURFACE_POSITION:
-            return surface_state.center_position_along_surface if \
+            var result := \
+                    surface_state.center_position_along_surface if \
                     surface_state.is_grabbing_surface else \
                     SurfaceFinder.find_closest_position_on_a_surface(
                             surface_state.center_position,
                             self,
                             SurfaceReachability.ANY)
+            return result if \
+                    is_instance_valid(result) else \
+                    surface_state.last_position_along_surface
         IntendedPositionType.EDGE_ORIGIN:
             return navigator.edge.start_position_along_surface if \
                     navigation_state.is_currently_navigating else \

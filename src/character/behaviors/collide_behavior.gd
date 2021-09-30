@@ -136,6 +136,8 @@ func _move() -> int:
                 target,
                 character,
                 surface_reachability)
+        if !is_instance_valid(destination):
+            continue
         
         # Prevent straying too far the start position.
         if start_position_for_max_distance_checks.distance_squared_to(

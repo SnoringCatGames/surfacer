@@ -43,10 +43,15 @@ func _derive_overrides_according_to_debug_or_playtest(
             metadata.logs_bootstrap_events or !is_debug
     metadata.logs_device_settings = \
             metadata.logs_device_settings or !is_debug
+    metadata.also_prints_to_stdout = \
+            metadata.also_prints_to_stdout and \
+            is_debug and \
+            !is_playtest
     
     manifest.gui_manifest.hud_manifest.is_inspector_enabled_default = \
             manifest.gui_manifest.hud_manifest.is_inspector_enabled_default or \
-            is_debug or is_playtest
+            is_debug or \
+            is_playtest
 
 
 func _update_to_emphasize_annotations(manifest: Dictionary) -> void:
