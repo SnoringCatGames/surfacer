@@ -277,6 +277,13 @@ func update_for_initial_surface_attachment(
     
     _update_action_state()
     
+    PositionAlongSurface.copy(
+            last_position_along_surface,
+            center_position_along_surface)
+    previous_grabbed_surface = grabbed_surface
+    previous_grab_position = grab_position
+    previous_grab_normal = grab_normal
+    
     center_position = center_position_along_surface.target_point
     previous_center_position = center_position
     
@@ -1644,11 +1651,11 @@ func sync_state_for_surface_grab(
     grab_position_tile_map_coord = Sc.geometry.world_to_tile_map(
             grab_position,
             surface.tile_map)
+    grabbed_tile_map = surface.tile_map
     var grab_position_tile_map_index: int = \
             Sc.geometry.get_tile_map_index_from_grid_coord(
                 grab_position_tile_map_coord,
                 grabbed_tile_map)
-    grabbed_tile_map = surface.tile_map
     center_position_along_surface.match_current_grab(surface, center_position)
     surface_grab = SurfaceContact.new()
     surfaces_to_contacts[surface] = surface_grab
