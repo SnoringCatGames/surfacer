@@ -3,7 +3,8 @@ class_name SurfacerGeometry
 extends ScaffolderGeometry
 
 
-# FIXME: LEFT OFF HERE: ------------ Adjust this. Try lowering it.
+# FIXME: LEFT OFF HERE: ----------------------------
+# - Adjust this. Try lowering it. Debug on level 10.
 const SHAPE_OVERLAP_WITH_CONCAVE_SURFACE_EPSILON := 4.0
 
 
