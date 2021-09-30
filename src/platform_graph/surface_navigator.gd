@@ -708,14 +708,32 @@ func _start_edge(
     edge_index = index
     edge = path.edges[index]
     
-    # TODO: If we see this triggering a lot, we could change it to a warning,
-    #       and add some logic to force an update to the surface state.
     if surface_state.grabbed_surface != edge.get_start_surface():
-        # FIXME: LEFT OFF HERE: -------------------
-        # - This happens in the little floor divots in the lower-left clover
-        #   shape.
-        assert(false)
-        _handle_interruption(true)
+        # -   This can sometimes happen when the edge was detected as
+        #     successfully completing because the character was grabbing the
+        #     next-neighbor surface.
+        # -   In that case, we update the surface state to match what is
+        #     expected for the start of the next edge.
+        var actual_str := \
+                surface_state.grabbed_surface.to_string(false) if \
+                is_instance_valid(surface_state.grabbed_surface) else \
+                "-"
+        var expected_str := \
+                edge.get_start_surface().to_string(false) if \
+                is_instance_valid(edge.get_start_surface()) else \
+                "-"
+        var details := (
+                "actual=%s; " +
+                "expected=%s; " +
+                "_start_edge: Grabbed surface was not expected"
+            ) % [
+                actual_str,
+                expected_str,
+            ]
+        _log("Sync edge st",
+                details)
+        
+        character._match_expected_navigation_surface_state(edge, 0.0)
     
     if edge is IntraSurfaceEdge:
         edge.calculator.update_for_surface_state(
@@ -930,10 +948,9 @@ func _handle_interruption(
 
 
 func _handle_reached_end_of_edge() -> void:
-    if character.logs_verbose_navigator_events:
-        _log("Edge end",
-                edge.get_name(),
-                false)
+    _log("Edge end",
+            edge.get_name(),
+            false)
     
     # Cancel the current intra-surface instructions (in case it didn't
     # clear itself).
@@ -1010,7 +1027,7 @@ func get_previous_destination() -> PositionAlongSurface:
 func _log(
         message: String,
         details: String,
-        is_verbose = false) -> void:
+        is_verbose := false) -> void:
     character._log(
             message,
             details,
