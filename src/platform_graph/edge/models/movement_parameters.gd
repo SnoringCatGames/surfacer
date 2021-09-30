@@ -237,8 +237,9 @@ var is_trajectory_state_stored_at_build_time := false \
 var bypasses_runtime_physics := false \
         setget _set_bypasses_runtime_physics
 
-var retries_navigation_when_interrupted := false \
-        setget _set_retries_navigation_when_interrupted
+var default_nav_interrupt_resolution_mode := \
+        NavigationInterruptionResolution.FORCE_EXPECTED_STATE \
+        setget _set_default_nav_interrupt_resolution_mode
 var min_intra_surface_distance_to_optimize_jump_for := 16.0 \
         setget _set_min_intra_surface_distance_to_optimize_jump_for
 ## -   When calculating possible edges between a given pair of surfaces, we
@@ -1120,8 +1121,8 @@ func _set_bypasses_runtime_physics(value: bool) -> void:
     _update_parameters()
 
 
-func _set_retries_navigation_when_interrupted(value: bool) -> void:
-    retries_navigation_when_interrupted = value
+func _set_default_nav_interrupt_resolution_mode(value: int) -> void:
+    default_nav_interrupt_resolution_mode = value
     _update_parameters()
 
 

@@ -282,10 +282,10 @@ func _attempt_move() -> void:
     assert(_is_ready_to_move,
             "Behavior._attempt_move must not be called before the character " +
             "and behavior are both ready.")
-    assert(character.surface_state.last_position_along_surface.surface == \
-                    character.reachable_basis_surface or \
-            character.surface_state.last_position_along_surface.surface == \
-                    null)
+    var last_surface: Surface = \
+            character.surface_state.last_position_along_surface.surface
+    assert(last_surface == character.reachable_basis_surface or \
+            last_surface == null)
     
     _update_start_positions(false)
     

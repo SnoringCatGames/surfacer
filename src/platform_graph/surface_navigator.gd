@@ -6,7 +6,7 @@ extends Reference
 
 signal navigation_started(is_retry)
 signal destination_reached
-signal navigation_interrupted(is_retrying)
+signal navigation_interrupted(interruption_resolution_mode)
 signal navigation_canceled
 signal navigation_ended(did_reach_destination)
 
@@ -18,6 +18,9 @@ const BOUNCIFY_FALLBACK_JUMP_DISTANCE_RATIO_OF_MAX := 0.5
 const BOUNCIFY_CLOSE_ENOUGH_TO_END_DISTANCE_RATIO_OF_JUMP := 0.2
 
 const IGNORE_SHORT_EDGE_BEFORE_INITIAL_JUMP_DISTANCE_THRESHOLD := 4.0
+
+const CANCEL_FROM_REPEAT_INTERRUPTIONS_DISTANCE_SQUARED_THRESHOLD := \
+        12.0 * 12.0
 
 var character: ScaffolderCharacter
 var graph: PlatformGraph
@@ -42,6 +45,8 @@ var playback: InstructionsPlayback
 var current_navigation_attempt_count := 0
 
 var navigation_state := CharacterNavigationState.new()
+
+var interruption_resolution_mode := NavigationInterruptionResolution.CANCEL_NAV
 
 
 func _init(
@@ -110,6 +115,7 @@ func navigate_path(
     navigation_state.is_currently_navigating = true
     navigation_state.has_reached_destination = false
     navigation_state.path_start_time = Sc.time.get_scaled_play_time()
+    navigation_state.last_interruption_position = Vector2.INF
     current_navigation_attempt_count += 1
     
     var duration_navigate_to_position: float = \
@@ -702,12 +708,14 @@ func _start_edge(
     edge_index = index
     edge = path.edges[index]
     
-    # FIXME: LEFT OFF HERE: -------------
-    # - Check on this.... Is this where the cancelled navs are happening?
-    
     # TODO: If we see this triggering a lot, we could change it to a warning,
     #       and add some logic to force an update to the surface state.
-    assert(surface_state.grabbed_surface == edge.get_start_surface())
+    if surface_state.grabbed_surface != edge.get_start_surface():
+        # FIXME: LEFT OFF HERE: -------------------
+        # - This happens in the little floor divots in the lower-left clover
+        #   shape.
+        assert(false)
+        _handle_interruption(true)
     
     if edge is IntraSurfaceEdge:
         edge.calculator.update_for_surface_state(
@@ -742,8 +750,7 @@ func _start_edge(
     
     # Some instructions could be immediately skipped, depending on runtime
     # state, so this gives us a chance to move straight to the next edge.
-    _update(
-            true,
+    _update(true,
             is_starting_navigation_retry)
 
 
@@ -771,128 +778,193 @@ func _update(
         navigation_state.just_entered_air_unexpectedly = false
         navigation_state.just_interrupted_by_unexpected_collision = false
         navigation_state.just_interrupted_by_player_action = false
+        navigation_state.just_interrupted_by_being_stuck = false
         navigation_state.just_started_edge = false
         navigation_state.just_reached_end_of_edge = false
         return
     
-    edge.update_navigation_state(
-            navigation_state,
-            surface_state,
-            playback,
-            just_started_new_edge,
-            is_starting_navigation_retry)
+    if _check_if_character_is_stuck():
+        # FIXME: ----------------
+        # - This probably should never happen.
+        # - What is the underlying problem?
+#        Sc.logger.error()
+        navigation_state.just_interrupted_by_being_stuck = true
+        navigation_state.has_interrupted = true
+        navigation_state.just_interrupted = true
+    else:
+        edge.update_navigation_state(
+                navigation_state,
+                surface_state,
+                playback,
+                just_started_new_edge,
+                is_starting_navigation_retry)
     
     if navigation_state.just_interrupted:
-        navigation_state.has_interrupted = true
-        
-        var interruption_type_label: String
-        if navigation_state.just_left_air_unexpectedly:
-            interruption_type_label = "just_left_air_unexpectedly"
-        elif navigation_state.just_entered_air_unexpectedly:
-            interruption_type_label = "just_entered_air_unexpectedly"
-        elif navigation_state.just_interrupted_by_unexpected_collision:
-            interruption_type_label = \
-                    "just_interrupted_by_unexpected_collision"
-        else: # navigation_state.just_interrupted_by_player_action
-            interruption_type_label = "just_interrupted_by_player_action"
-        
-        _log("Edge interru",
-                "%s; to=%s; from=%s" % [
-                    interruption_type_label,
-                    Sc.utils.get_vector_string(edge.get_end()),
-                    Sc.utils.get_vector_string(edge.get_start()),
-                ],
-                false)
-        
-        # FIXME: ---- Think of how to handle interruptions differently...
-        
-        var is_retrying := movement_params.retries_navigation_when_interrupted
-        
-        if is_retrying:
-            navigate_to_position(
-                    path.destination,
-                    false,
-                    path.graph_destination_for_in_air_destination,
-                    true)
-        
-        emit_signal("navigation_interrupted", is_retrying)
-        if !is_retrying:
+        if is_starting_navigation_retry:
+            # FIXME: -----------------
+            # - This probably should never happen.
+            # - What's the underlying problem?
+#            Sc.logger.error()
+            Sc.logger.warning(
+                    "Unable to fix navigation interruption by forcing " +
+                    "state to match what's expected.")
+            var resolution_override := \
+                    NavigationInterruptionResolution.SKIP_NAV if \
+                    interruption_resolution_mode == \
+                        NavigationInterruptionResolution \
+                            .FORCE_EXPECTED_STATE else \
+                    NavigationInterruptionResolution.CANCEL_NAV
+            _handle_interruption(
+                    just_started_new_edge,
+                    resolution_override)
+        else:
+            Sc.logger.warning("The character navigation is stuck!")
+            _handle_interruption(just_started_new_edge)
+        return
+    
+    if navigation_state.just_reached_end_of_edge:
+        _handle_reached_end_of_edge()
+
+
+func _check_if_character_is_stuck() -> bool:
+    return !character.surface_state.did_move_last_frame and \
+            !character.surface_state.did_move_frame_before_last and \
+            navigation_state.edge_start_time <= \
+                    Sc.time.get_scaled_play_time() - \
+                    Sc.time.PHYSICS_TIME_STEP * 2.0
+
+
+func _handle_interruption(
+        just_started_new_edge := false,
+        interruption_resolution_mode := \
+                NavigationInterruptionResolution.UNKNOWN) -> void:
+    if interruption_resolution_mode == \
+            NavigationInterruptionResolution.UNKNOWN:
+        interruption_resolution_mode = self.interruption_resolution_mode
+    
+    navigation_state.has_interrupted = true
+    var previous_interruption_position := \
+            navigation_state.last_interruption_position
+    navigation_state.last_interruption_position = character.position
+    
+    # If the character is interrupted repeatedly in the same spot, then skip
+    # this edge.
+    if interruption_resolution_mode == \
+                NavigationInterruptionResolution.FORCE_EXPECTED_STATE and \
+            previous_interruption_position != Vector2.INF and \
+            previous_interruption_position \
+                .distance_squared_to(character.position) <= \
+                CANCEL_FROM_REPEAT_INTERRUPTIONS_DISTANCE_SQUARED_THRESHOLD:
+        interruption_resolution_mode = \
+                NavigationInterruptionResolution.SKIP_NAV
+    
+    var interruption_type_label: String
+    if navigation_state.just_left_air_unexpectedly:
+        interruption_type_label = "just_left_air_unexpectedly"
+    elif navigation_state.just_entered_air_unexpectedly:
+        interruption_type_label = "just_entered_air_unexpectedly"
+    elif navigation_state.just_interrupted_by_unexpected_collision:
+        interruption_type_label = \
+                "just_interrupted_by_unexpected_collision"
+    elif navigation_state.just_interrupted_by_player_action:
+        interruption_type_label = "just_interrupted_by_player_action"
+    elif navigation_state.just_interrupted_by_being_stuck:
+        interruption_type_label = "just_interrupted_by_being_stuck"
+    else:
+        interruption_type_label = "UNKNOWN_INTERRUPTION_TYPE"
+    _log("Edge interru",
+            "%s; %s; to=%s; from=%s" % [
+                interruption_type_label,
+                NavigationInterruptionResolution.get_string(
+                        interruption_resolution_mode),
+                Sc.utils.get_vector_string(edge.get_end()),
+                Sc.utils.get_vector_string(edge.get_start()),
+            ],
+            false)
+    
+    match interruption_resolution_mode:
+        NavigationInterruptionResolution.CANCEL_NAV:
             _reset()
             navigation_state.has_interrupted = true
             navigation_state.just_interrupted = true
             navigation_state.just_ended = true
             emit_signal("navigation_ended", false)
-        
-        return
-        
-    elif navigation_state.just_reached_end_of_edge:
-        if character.logs_verbose_navigator_events:
-            _log("Edge end",
-                    edge.get_name(),
-                    false)
-    else:
-        var is_character_stuck: bool = \
-                !character.surface_state.did_move_last_frame and \
-                !character.surface_state.did_move_frame_before_last and \
-                navigation_state.edge_start_time <= \
-                        Sc.time.get_scaled_play_time() - \
-                        Sc.time.PHYSICS_TIME_STEP * 2.0
-        
-        if is_character_stuck:
-            # FIXME: ------------
-            # - This work-around shouldn't be needed. What's the underlying
-            #   problem?
-            Sc.logger.error(
-                    "SurfaceNavigator.is_currently_navigating and " +
-                    "!CharacterSurfaceState.did_move_last_frame")
-#            var destination := path.destination
-#            var graph_destination_for_in_air_destination := \
-#                    path.graph_destination_for_in_air_destination
-#            stop()
-#            navigate_to_position(
-#                    destination,
-#                    graph_destination_for_in_air_destination)
-#            return
-        
-        # Continuing along an edge.
-        if surface_state.is_grabbing_surface:
-            pass
-        else:
-            # TODO: Detect when position is too far from expected. Then maybe
-            #       auto-correct it?
-            pass
+            
+        NavigationInterruptionResolution.RETRY_NAV:
+            navigate_to_position(
+                    path.destination,
+                    false,
+                    path.graph_destination_for_in_air_destination,
+                    true)
+            
+        NavigationInterruptionResolution.SKIP_NAV:
+            navigation_state.has_interrupted = false
+            navigation_state.just_interrupted = false
+            navigation_state.just_left_air_unexpectedly = false
+            navigation_state.just_entered_air_unexpectedly = false
+            navigation_state.just_interrupted_by_unexpected_collision = false
+            navigation_state.just_interrupted_by_player_action = false
+            navigation_state.just_interrupted_by_being_stuck = false
+            navigation_state.just_reached_end_of_edge = true
+            
+            character._match_expected_navigation_surface_state(
+                    edge,
+                    edge.duration)
+            _handle_reached_end_of_edge()
+            
+        NavigationInterruptionResolution.FORCE_EXPECTED_STATE:
+            navigation_state.has_interrupted = false
+            navigation_state.just_interrupted = false
+            navigation_state.just_left_air_unexpectedly = false
+            navigation_state.just_entered_air_unexpectedly = false
+            navigation_state.just_interrupted_by_unexpected_collision = false
+            navigation_state.just_interrupted_by_player_action = false
+            navigation_state.just_interrupted_by_being_stuck = false
+            character._match_expected_navigation_surface_state()
+            _update(just_started_new_edge, true)
+            
+        _:
+            Sc.logger.error()
     
-    if navigation_state.just_reached_end_of_edge:
-        # Cancel the current intra-surface instructions (in case it didn't
-        # clear itself).
-        instructions_action_source.cancel_playback(
-                playback,
-                Sc.time.get_scaled_play_time())
-        playback = null
-        
-        # Check for the next edge to navigate.
-        var next_edge_index := edge_index + 1
-        var was_last_edge := path.edges.size() == next_edge_index
-        if was_last_edge:
-            var backtracking_edge := \
-                    _possibly_backtrack_to_not_protrude_past_surface_end(
-                            movement_params,
-                            edge,
-                            character.position,
-                            character.velocity)
-            if backtracking_edge == null:
-                _set_reached_destination()
-            else:
-                if character.logs_verbose_navigator_events:
-                    _log("Bcktrck edge",
-                            backtracking_edge.to_string(true),
-                            true)
-                
-                path.edges.push_back(backtracking_edge)
-                
-                _start_edge(next_edge_index)
+    emit_signal("navigation_interrupted", interruption_resolution_mode)
+
+
+func _handle_reached_end_of_edge() -> void:
+    if character.logs_verbose_navigator_events:
+        _log("Edge end",
+                edge.get_name(),
+                false)
+    
+    # Cancel the current intra-surface instructions (in case it didn't
+    # clear itself).
+    instructions_action_source.cancel_playback(
+            playback,
+            Sc.time.get_scaled_play_time())
+    playback = null
+    
+    # Check for the next edge to navigate.
+    var next_edge_index := edge_index + 1
+    var was_last_edge := path.edges.size() == next_edge_index
+    if was_last_edge:
+        var backtracking_edge := \
+                _possibly_backtrack_to_not_protrude_past_surface_end(
+                        movement_params,
+                        edge,
+                        character.position,
+                        character.velocity)
+        if backtracking_edge == null:
+            _set_reached_destination()
         else:
+            if character.logs_verbose_navigator_events:
+                _log("Bcktrck edge",
+                        backtracking_edge.to_string(true),
+                        true)
+            
+            path.edges.push_back(backtracking_edge)
+            
             _start_edge(next_edge_index)
+    else:
+        _start_edge(next_edge_index)
 
 
 func predict_animation_state(

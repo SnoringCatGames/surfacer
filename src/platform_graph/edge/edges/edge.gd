@@ -111,6 +111,7 @@ func update_navigation_state(
         navigation_state.just_entered_air_unexpectedly = false
         navigation_state.just_interrupted_by_unexpected_collision = false
         navigation_state.just_interrupted_by_player_action = false
+        navigation_state.just_interrupted_by_being_stuck = false
         navigation_state.just_interrupted = false
         navigation_state.just_reached_end_of_edge = false
         navigation_state.is_stalling_one_frame_before_reaching_end = false
@@ -139,11 +140,8 @@ func update_navigation_state(
             navigation_state.just_left_air_unexpectedly or \
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_unexpected_collision or \
-            navigation_state.just_interrupted_by_player_action
-    
-    # FIXME: LEFT OFF HERE: --------------------------
-    if navigation_state.just_interrupted:
-        pass
+            navigation_state.just_interrupted_by_player_action or \
+            navigation_state.just_interrupted_by_being_stuck
     
     if surface_state.just_entered_air:
         navigation_state.is_expecting_to_enter_air = false
@@ -162,11 +160,8 @@ func update_navigation_state(
             navigation_state.just_left_air_unexpectedly or \
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_unexpected_collision or \
-            navigation_state.just_interrupted_by_player_action
-    
-    # FIXME: LEFT OFF HERE: --------------------------
-    if navigation_state.just_interrupted:
-        pass
+            navigation_state.just_interrupted_by_player_action or \
+            navigation_state.just_interrupted_by_being_stuck
     
     if movement_params.bypasses_runtime_physics:
         navigation_state.just_reached_end_of_edge = \
@@ -333,7 +328,7 @@ func sync_expected_surface_state(
     
     if is_at_end_of_edge:
         _sync_expected_end_surface_state(surface_state)
-    if is_at_start_of_edge:
+    elif is_at_start_of_edge:
         _sync_expected_start_surface_state(surface_state)
     else:
         _sync_expected_middle_surface_state(surface_state, edge_time)

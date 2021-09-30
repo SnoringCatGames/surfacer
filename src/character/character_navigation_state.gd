@@ -21,6 +21,7 @@ var just_left_air_unexpectedly := false
 var just_entered_air_unexpectedly := false
 var just_interrupted_by_unexpected_collision := false
 var just_interrupted_by_player_action := false
+var just_interrupted_by_being_stuck := false
 var just_started_edge := false
 var just_reached_end_of_edge := false
 var is_stalling_one_frame_before_reaching_end := false
@@ -30,6 +31,8 @@ var edge_start_time := -1.0
 
 var edge_start_frame := -1
 var edge_frame_count := 0
+
+var last_interruption_position := Vector2.INF
 
 var expected_position_along_surface := PositionAlongSurface.new()
 
@@ -49,6 +52,7 @@ func reset() -> void:
     self.just_entered_air_unexpectedly = false
     self.just_interrupted_by_unexpected_collision = false
     self.just_interrupted_by_player_action = false
+    self.just_interrupted_by_being_stuck = false
     self.just_started_edge = false
     self.just_reached_end_of_edge = false
     self.is_stalling_one_frame_before_reaching_end = false
@@ -58,5 +62,7 @@ func reset() -> void:
     
     self.edge_start_frame = -1
     self.edge_frame_count = 0
+    
+    self.last_interruption_position = Vector2.INF
     
     self.expected_position_along_surface.reset()

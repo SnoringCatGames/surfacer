@@ -235,6 +235,8 @@ func _init_platform_graph() -> void:
 
 func _init_navigator() -> void:
     navigator = SurfaceNavigator.new(self, graph)
+    navigator.interruption_resolution_mode = \
+            movement_params.default_nav_interrupt_resolution_mode
     navigation_state = navigator.navigation_state
     navigator.connect(
             "navigation_ended",
@@ -356,9 +358,14 @@ func _match_expected_edge_trajectory() -> void:
             velocity = expected_velocity
 
 
-# FIXME: LEFT OFF HERE: --------------------------
-#func _match_expected_navigation_surface_state() -> void:
-#    navigator.edge.sync_expected_surface_state()
+func _match_expected_navigation_surface_state(
+        edge: Edge = null,
+        edge_time := INF) -> void:
+    if !is_instance_valid(edge):
+        edge = navigator.edge
+    if is_inf(edge_time):
+        edge_time = navigator.playback.get_elapsed_time_scaled()
+    edge.sync_expected_surface_state(surface_state, edge_time)
 
 
 # -   The move_and_slide system depends on some velocity always pushing the
@@ -594,11 +601,6 @@ func processed_action(name: String) -> bool:
 
 func _update_surface_state() -> void:
     surface_state.update()
-    
-    # FIXME: LEFT OFF HERE: --------------------------
-    if surface_state.surfaces_to_contacts.size() > 0 and \
-            collisions.size() == 0:
-        surface_state.update()
     
     if surface_state.just_changed_surface and \
             surface_state.is_grabbing_surface:
