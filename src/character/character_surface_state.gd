@@ -100,6 +100,7 @@ var surface_type := SurfaceType.AIR
 
 var center_position := Vector2.INF
 var previous_center_position := Vector2.INF
+var rounding_corner_position := Vector2.INF
 var did_move_last_frame := false
 var did_move_frame_before_last := false
 var grab_position := Vector2.INF
@@ -560,7 +561,7 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
     if is_rounding_floor_corner_to_lower_wall:
         if just_changed_surface_while_rounding_corner:
             if grabbed_surface.side == SurfaceSide.FLOOR:
-                if center_position.x < grabbed_surface.center.x:
+                if center_position.x <= grabbed_surface.center.x:
                     surface = grabbed_surface.counter_clockwise_convex_neighbor
                 else:
                     surface = grabbed_surface.clockwise_convex_neighbor
@@ -589,7 +590,7 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
     elif is_rounding_ceiling_corner_to_upper_wall:
         if just_changed_surface_while_rounding_corner:
             if grabbed_surface.side == SurfaceSide.CEILING:
-                if center_position.x < grabbed_surface.center.x:
+                if center_position.x <= grabbed_surface.center.x:
                     surface = grabbed_surface.clockwise_convex_neighbor
                 else:
                     surface = grabbed_surface.counter_clockwise_convex_neighbor
@@ -1186,6 +1187,33 @@ func _update_rounding_corner_state() -> void:
             is_rounding_wall_corner_from_previous_lower_ceiling or \
             is_rounding_wall_corner_from_previous_upper_floor
     
+    if next_is_rounding_corner:
+        if is_rounding_floor_corner_to_lower_wall:
+            if center_position.x <= grabbed_surface.center.x:
+                rounding_corner_position = grabbed_surface.first_point
+            else:
+                rounding_corner_position = grabbed_surface.last_point
+        elif is_rounding_wall_corner_to_upper_floor:
+            if grabbed_surface.side == SurfaceSide.LEFT_WALL:
+                rounding_corner_position = grabbed_surface.first_point
+            else:
+                rounding_corner_position = grabbed_surface.last_point
+        elif is_rounding_wall_corner_to_lower_ceiling:
+            if grabbed_surface.side == SurfaceSide.LEFT_WALL:
+                rounding_corner_position = grabbed_surface.last_point
+            else:
+                rounding_corner_position = grabbed_surface.first_point
+        elif is_rounding_ceiling_corner_to_upper_wall:
+            if center_position.x <= grabbed_surface.center.x:
+                rounding_corner_position = grabbed_surface.last_point
+            else:
+                rounding_corner_position = grabbed_surface.first_point
+        else:
+            Sc.logger.error()
+            rounding_corner_position = Vector2.INF
+    else:
+        rounding_corner_position = Vector2.INF
+    
     var is_rounding_right_wall_corner := \
             (is_rounding_wall_corner_to_lower_ceiling or \
             is_rounding_wall_corner_to_upper_floor) and \
@@ -1193,7 +1221,7 @@ func _update_rounding_corner_state() -> void:
     var is_rounding_left_corner_of_horizontal_surface := \
             (is_rounding_floor_corner_to_lower_wall or \
             is_rounding_ceiling_corner_to_upper_wall) and \
-            center_position.x <= grabbed_surface.center.x
+            center_position.x <= rounding_corner_position.x
     is_rounding_left_corner = \
             is_rounding_right_wall_corner or \
             is_rounding_left_corner_of_horizontal_surface
@@ -1266,13 +1294,13 @@ func _update_grab_state() -> void:
     var next_is_grabbing_left_wall := \
             next_is_grabbing_wall and \
             ((is_rounding_corner and \
-                    center_position.x > grabbed_surface.center.x) or \
+                    center_position.x >= rounding_corner_position.x) or \
             (!is_rounding_corner and \
                     is_touching_left_wall))
     var next_is_grabbing_right_wall := \
             next_is_grabbing_wall and \
             ((is_rounding_corner and \
-                    center_position.x < grabbed_surface.center.x) or \
+                    center_position.x <= rounding_corner_position.x) or \
             (!is_rounding_corner and \
                     is_touching_right_wall))
     
