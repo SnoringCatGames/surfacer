@@ -279,6 +279,9 @@ func trigger(shows_exclamation_mark: bool) -> void:
 
 
 func _attempt_move() -> void:
+    if character._is_destroyed:
+        return
+    
     assert(_is_ready_to_move,
             "Behavior._attempt_move must not be called before the character " +
             "and behavior are both ready.")
@@ -398,10 +401,14 @@ func _pause_post_movement() -> void:
 
 
 func _on_mid_movement_pause_finished() -> void:
+    if character._is_destroyed:
+        return
     _attempt_move()
 
 
 func _on_post_movement_pause_finished() -> void:
+    if character._is_destroyed:
+        return
     _on_finished()
 
 
