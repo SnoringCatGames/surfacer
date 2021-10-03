@@ -353,7 +353,8 @@ func _sync_expected_end_surface_state(
 func _sync_expected_middle_surface_state(
         surface_state: CharacterSurfaceState,
         edge_time: float) -> void:
-    assert(enters_air,
+    assert(enters_air or \
+            edge_type == SurfaceType.AIR,
             "Surface-bound edges must override " +
             "_sync_expected_middle_surface_state")
     
