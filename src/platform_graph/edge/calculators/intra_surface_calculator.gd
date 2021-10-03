@@ -145,6 +145,10 @@ func update_for_surface_state(
             edge.start_position_along_surface,
             surface_state.center_position_along_surface)
     edge.velocity_start = surface_state.velocity
+    edge.velocity_start.x = clamp(
+            edge.velocity_start.x,
+            -edge.movement_params.max_horizontal_speed_default,
+            edge.movement_params.max_horizontal_speed_default)
     _update(edge)
 
 
@@ -521,10 +525,9 @@ func _calculate_trajectory(
                 start.surface,
                 true)
         velocity += acceleration * Time.PHYSICS_TIME_STEP
-        velocity.x = clamp(
-                velocity.x,
-                -movement_params.max_horizontal_speed_default,
-                movement_params.max_horizontal_speed_default)
+        velocity = MovementUtils.clamp_horizontal_velocity_to_max_default(
+                movement_params,
+                velocity)
         scaled_velocity = \
                 velocity * \
                 movement_params.intra_surface_edge_speed_multiplier

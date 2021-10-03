@@ -542,3 +542,13 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
         
         return movement_params \
                 .stopping_distance_on_default_floor_from_max_speed
+
+
+static func clamp_horizontal_velocity_to_max_default(
+        movement_params: MovementParameters,
+        velocity: Vector2) -> Vector2:
+    velocity.x = clamp(
+            velocity.x,
+            -movement_params.max_horizontal_speed_default,
+            movement_params.max_horizontal_speed_default)
+    return velocity
