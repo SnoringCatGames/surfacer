@@ -27,8 +27,13 @@ var can_double_jump := false setget _set_can_double_jump
 
 const _PHYSICS_MOVEMENT_GROUP := {
     group_name = "physics_movement",
-    first_property_name = "gravity_multiplier",
+    first_property_name = "intra_surface_edge_speed_multiplier",
 }
+
+## -   This only affects the speed of intra-surface edges.[br]
+## -   This does not affect jump start/end velocities.[br]
+var intra_surface_edge_speed_multiplier := 1.0 \
+        setget _set_intra_surface_edge_speed_multiplier
 
 ## Each character can use a different gravity value.
 var gravity_multiplier := 1.0 \
@@ -613,7 +618,10 @@ func _update_parameters_debounced() -> void:
 
 
 func _validate_parameters() -> void:
-    if gravity_fast_fall < 0:
+    if intra_surface_edge_speed_multiplier <= 0.0:
+        _set_configuration_warning(
+                "intra_surface_edge_speed_multiplier must be greater than 0.")
+    elif gravity_fast_fall < 0:
         _set_configuration_warning(
                 "gravity_fast_fall must be non-negative.")
     elif slow_rise_gravity_multiplier < 0:
@@ -899,6 +907,11 @@ func _set_can_dash(value: bool) -> void:
 
 func _set_can_double_jump(value: bool) -> void:
     can_double_jump = value
+    _update_parameters()
+
+
+func _set_intra_surface_edge_speed_multiplier(value: float) -> void:
+    intra_surface_edge_speed_multiplier = value
     _update_parameters()
 
 

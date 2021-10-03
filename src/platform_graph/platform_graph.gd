@@ -379,7 +379,8 @@ static func _calculate_intra_surface_edge_weight(
         weight = Su.movement.intra_surface_calculator.calculate_duration(
                 movement_params,
                 node_a,
-                node_b)
+                node_b) / \
+                movement_params.intra_surface_edge_speed_multiplier
     else:
         weight = Su.movement.intra_surface_calculator.calculate_distance(
                 movement_params,
