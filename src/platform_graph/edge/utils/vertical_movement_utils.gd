@@ -181,7 +181,10 @@ static func calculate_time_to_jump_to_waypoint(
             if distance_to_release_button_for_shorter_jump < displacement.y:
                 # We cannot jump high enough for the displacement. This should
                 # have been caught earlier.
-                Sc.logger.error()
+                # FIXME: ---------------------
+                # - Fix the undelying problem, and put this error back in.
+                Sc.logger.warning()
+#                Sc.logger.error()
                 return INF
             
             if distance_to_release_button_for_shorter_jump < 0:
