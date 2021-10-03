@@ -446,9 +446,10 @@ static func _prepend_walk_to_fall_off_portion(
                         null)
         
         current_frame_velocity += acceleration * Time.PHYSICS_TIME_STEP
-        current_frame_velocity.x = clamp(current_frame_velocity.x,
-                -movement_params.max_horizontal_speed_default,
-                movement_params.max_horizontal_speed_default)
+        current_frame_velocity = \
+                MovementUtils.clamp_horizontal_velocity_to_max_default(
+                        movement_params,
+                        current_frame_velocity)
     
     # Update the trajectory distance.
     trajectory.distance_from_continuous_trajectory = \

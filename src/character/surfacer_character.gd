@@ -665,6 +665,12 @@ func _on_surfacer_character_navigation_ended(
 # "Finished" means that the behavior ended itself, so there shouldn't be
 # another behavior being triggered somewhere.
 func _on_behavior_finished(behavior: Behavior) -> void:
+    # FIXME: LEFT OFF HERE: ------------------------
+    # - Not sure why behavior.next_behavior could be null, but let's fix it
+    #   later.
+    if !is_instance_valid(behavior.next_behavior):
+        behavior.next_behavior = get_behavior(DefaultBehavior)
+    
     if behavior != behavior.next_behavior:
         behavior.next_behavior.trigger(false)
     else:
@@ -742,6 +748,23 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
         animator.face_left()
     
     _can_dash = false
+
+
+func force_boost(boost: Vector2) -> void:
+    assert(abs(boost.x) <= current_max_horizontal_speed,
+            "Boost cannot exceed current horizontal speed limit.")
+    
+    surface_state.clear_current_state()
+    
+    velocity = boost
+    surface_state.velocity = velocity
+    
+    position += Vector2(0.0, -1.0)
+    surface_state.center_position = position
+    surface_state.center_position_along_surface \
+            .match_current_grab(null, position)
+    
+    navigator.stop()
 
 
 func navigate_as_choreographed(destination: PositionAlongSurface) -> bool:

@@ -656,10 +656,10 @@ func _populate_convex_trajectory(
                 
                 # Account for acceleration along the floor.
                 velocity.x += acceleration_x * Time.PHYSICS_TIME_STEP
-                velocity.x = clamp(
-                        velocity.x,
-                        -movement_params.max_horizontal_speed_default,
-                        movement_params.max_horizontal_speed_default)
+                velocity = \
+                        MovementUtils.clamp_horizontal_velocity_to_max_default(
+                                movement_params,
+                                velocity)
                 is_rounding_corner_finished = \
                         position.x >= corner_position.x if \
                         is_left_side else \
