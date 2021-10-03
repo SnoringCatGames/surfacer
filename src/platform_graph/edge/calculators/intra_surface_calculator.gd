@@ -284,18 +284,21 @@ func calculate_duration(
                     velocity_start_x,
                     movement_params)
             assert(!is_inf(duration))
-            return duration
+            return duration / \
+                    movement_params.intra_surface_edge_speed_multiplier
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var is_climbing_upward := displacement.y < 0
             return MovementUtils.calculate_time_to_climb(
                     abs(displacement.y),
                     is_climbing_upward,
-                    movement_params)
+                    movement_params) / \
+                    movement_params.intra_surface_edge_speed_multiplier
         SurfaceSide.CEILING:
             return MovementUtils.calculate_time_to_crawl_on_ceiling(
                     abs(displacement.x),
-                    movement_params)
+                    movement_params) / \
+                    movement_params.intra_surface_edge_speed_multiplier
         _:
             Sc.logger.error()
             return INF
@@ -469,6 +472,9 @@ func _calculate_trajectory(
     var frame_index := 0
     var position := start.target_point
     var velocity := velocity_start
+    var scaled_velocity := \
+            velocity * \
+            movement_params.intra_surface_edge_speed_multiplier
     var acceleration := Vector2.ZERO
     
     var positions := []
@@ -499,13 +505,16 @@ func _calculate_trajectory(
             velocity.y = 0.0
         _:
             Sc.logger.error()
+    scaled_velocity = \
+            velocity * \
+            movement_params.intra_surface_edge_speed_multiplier
     
     while frame_index < frame_count:
         positions[frame_index] = position
-        velocities[frame_index] = velocity
+        velocities[frame_index] = scaled_velocity
         
         frame_index += 1
-        position += velocity * Time.PHYSICS_TIME_STEP
+        position += scaled_velocity * Time.PHYSICS_TIME_STEP
         position = Sc.geometry.project_shape_onto_surface(
                 position,
                 movement_params.collider,
@@ -516,6 +525,9 @@ func _calculate_trajectory(
                 velocity.x,
                 -movement_params.max_horizontal_speed_default,
                 movement_params.max_horizontal_speed_default)
+        scaled_velocity = \
+                velocity * \
+                movement_params.intra_surface_edge_speed_multiplier
         
         if is_next_neighbor_concave:
             # This prevents collisions with concave next neighbors
@@ -586,24 +598,32 @@ func _calculate_stopping_distance(
                             displacement.x,
                             movement_params.gravity_fast_fall,
                             friction_coefficient)
-            return stopping_distance if \
+            return stopping_distance * \
+                        movement_params.intra_surface_edge_speed_multiplier if \
                     abs(displacement.x) - stopping_distance > \
                         IntraSurfaceEdge \
                                 .REACHED_DESTINATION_DISTANCE_THRESHOLD else \
                     max(abs(displacement.x) - \
                         IntraSurfaceEdge \
                                 .REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0,
-                        0.0)
+                        0.0) * \
+                        movement_params.intra_surface_edge_speed_multiplier
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var climb_speed := \
                     abs(movement_params.climb_up_speed) if \
                     displacement.y < 0 else \
                     abs(movement_params.climb_down_speed)
-            return climb_speed * Time.PHYSICS_TIME_STEP + 0.01
+            return climb_speed * \
+                    Time.PHYSICS_TIME_STEP * \
+                    movement_params.intra_surface_edge_speed_multiplier + \
+                    0.01
         SurfaceSide.CEILING:
             var climb_speed := abs(movement_params.ceiling_crawl_speed)
-            return climb_speed * Time.PHYSICS_TIME_STEP + 0.01
+            return climb_speed * \
+                    Time.PHYSICS_TIME_STEP * \
+                    movement_params.intra_surface_edge_speed_multiplier + \
+                    0.01
         _:
             Sc.logger.error()
             return INF
