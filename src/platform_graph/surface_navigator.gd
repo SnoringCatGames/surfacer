@@ -1454,11 +1454,11 @@ func _ensure_edges_have_trajectory_state(
                     Sc.geometry.are_floats_equal_with_epsilon(
                             edge_with_trajectory.duration,
                             edge.duration,
-                            0.001) and \
+                            0.004) and \
                     Sc.geometry.are_floats_equal_with_epsilon(
                             edge_with_trajectory.distance,
                             edge.distance,
-                            1.0)
+                            1.2)
             # FIXME:
             # - Remove.
             # - Another reason this has happened in the past is that
