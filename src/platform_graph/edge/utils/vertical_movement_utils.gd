@@ -197,8 +197,18 @@ static func calculate_time_to_jump_to_waypoint(
                                 movement_params.gravity_slow_rise,
                                 true,
                                 0.0,
-                                false)
-                assert(!is_inf(time_to_release_jump_button))
+                                false,
+                                true)
+                # We cannot jump high enough for the displacement. This should
+                # have been caught earlier.
+                # FIXME: ---------------------
+                # - Fix the undelying problem, and put this error back in.
+                # - Also, specify that the above calculate_movement_duration
+                #   call, expects a non-negative result.
+                if is_inf(time_to_release_jump_button):
+                    Sc.logger.warning()
+                    return INF
+#                assert(!is_inf(time_to_release_jump_button))
             
                 # From a basic equation of motion:
                 #     v = v_0 + a*t
