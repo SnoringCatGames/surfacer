@@ -8,32 +8,32 @@
 [ext_resource path="res://addons/scaffolder/src/gui/style_box_texture_scalable.gd" type="Script" id=6]
 [ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_m.tres" type="DynamicFont" id=7]
 [ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_xs.tres" type="DynamicFont" id=8]
-[ext_resource path="res://assets/images/gui/nine_patch/button_pressed.png" type="Texture" id=9]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/focus_border.png" type="Texture" id=9]
 [ext_resource path="res://addons/surfacer/src/gui/selection_description.tscn" type="PackedScene" id=10]
 [ext_resource path="res://addons/surfacer/src/gui/legend/legend.tscn" type="PackedScene" id=11]
-[ext_resource path="res://assets/images/gui/nine_patch/button_normal.png" type="Texture" id=12]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/scroll_grabber_hover.png" type="Texture" id=12]
 [ext_resource path="res://addons/surfacer/src/gui/platform_graph_inspector/platform_graph_inspector.tscn" type="PackedScene" id=13]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_texture_button.tscn" type="PackedScene" id=14]
-[ext_resource path="res://assets/images/gui/nine_patch/scroll_grabber_pressed.png" type="Texture" id=15]
-[ext_resource path="res://assets/images/gui/nine_patch/slider_track.png" type="Texture" id=16]
-[ext_resource path="res://assets/images/gui/nine_patch/overlay_panel.png" type="Texture" id=17]
-[ext_resource path="res://assets/images/gui/nine_patch/button_hover.png" type="Texture" id=18]
-[ext_resource path="res://assets/images/gui/nine_patch/dropdown_hover.png" type="Texture" id=19]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/button_hover.png" type="Texture" id=15]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/scroll_grabber_normal.png" type="Texture" id=16]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/overlay_panel.png" type="Texture" id=17]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/button_pressed.png" type="Texture" id=18]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/button_normal.png" type="Texture" id=19]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_label.tscn" type="PackedScene" id=20]
-[ext_resource path="res://assets/images/gui/nine_patch/scroll_grabber_hover.png" type="Texture" id=21]
-[ext_resource path="res://assets/images/gui/nine_patch/scroll_grabber_normal.png" type="Texture" id=22]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_pressed.png" type="Texture" id=21]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/scroll_track.png" type="Texture" id=22]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_h_separator.tscn" type="PackedScene" id=23]
-[ext_resource path="res://assets/images/gui/nine_patch/focus_border.png" type="Texture" id=24]
-[ext_resource path="res://assets/images/gui/nine_patch/dropdown_pressed.png" type="Texture" id=25]
-[ext_resource path="res://assets/images/gui/nine_patch/dropdown_normal.png" type="Texture" id=26]
-[ext_resource path="res://assets/images/gui/nine_patch/scroll_track.png" type="Texture" id=27]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_normal.png" type="Texture" id=24]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/scroll_grabber_pressed.png" type="Texture" id=25]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_hover.png" type="Texture" id=26]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/slider_track.png" type="Texture" id=27]
 
 [sub_resource type="StyleBoxTexture" id=1]
 content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 18 )
+texture = ExtResource( 15 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -46,7 +46,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 24 )
+texture = ExtResource( 9 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -63,7 +63,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 18 )
+texture = ExtResource( 15 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -76,7 +76,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 12 )
+texture = ExtResource( 19 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -89,7 +89,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 9 )
+texture = ExtResource( 18 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -126,7 +126,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 22 )
+texture = ExtResource( 16 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -139,7 +139,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 21 )
+texture = ExtResource( 12 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -152,7 +152,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 15 )
+texture = ExtResource( 25 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -165,7 +165,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 27 )
+texture = ExtResource( 22 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -186,7 +186,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 16 )
+texture = ExtResource( 27 )
 region_rect = Rect2( 0, 0, 4, 4 )
 margin_left = 1.5
 margin_right = 1.5
@@ -199,7 +199,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 19 )
+texture = ExtResource( 26 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -212,7 +212,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 24 )
+texture = ExtResource( 9 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -229,7 +229,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 19 )
+texture = ExtResource( 26 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -242,7 +242,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 26 )
+texture = ExtResource( 24 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -255,7 +255,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 25 )
+texture = ExtResource( 21 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -264,11 +264,11 @@ margin_bottom = 3.5
 script = ExtResource( 6 )
 
 [sub_resource type="StyleBoxFlat" id=24]
-bg_color = Color( 0.270588, 0.239216, 0.188235, 1 )
+bg_color = Color( 0.12549, 0.133333, 0.164706, 1 )
 script = ExtResource( 5 )
 
 [sub_resource type="StyleBoxFlat" id=25]
-bg_color = Color( 0.270588, 0.239216, 0.188235, 1 )
+bg_color = Color( 0.12549, 0.133333, 0.164706, 1 )
 script = ExtResource( 5 )
 
 [sub_resource type="StyleBoxTexture" id=26]
@@ -297,7 +297,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 22 )
+texture = ExtResource( 16 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -310,7 +310,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 21 )
+texture = ExtResource( 12 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -323,7 +323,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 15 )
+texture = ExtResource( 25 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -336,7 +336,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 27 )
+texture = ExtResource( 22 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -357,7 +357,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 16 )
+texture = ExtResource( 27 )
 region_rect = Rect2( 0, 0, 4, 4 )
 margin_left = 1.5
 margin_right = 1.5
