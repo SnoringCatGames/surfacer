@@ -5,6 +5,12 @@
        alt="The Surfacer icon, showing a path between surfaces.">
 </p>
 
+--------
+
+> **NOTE:** _Consider this a **pre-alpha** release. This framework still has many rough edges, is still changing a lot, and is possibly a lot more inflexible than you would need (it makes a lot of assumptions about how you've structured your app)._
+
+--------
+
 > _**[Live demo](https://snoringcat.games/play/squirrel-away)**_
 > 
 > _**[Demo source](https://github.com/snoringcatgames/squirrel_away)**_
@@ -20,10 +26,6 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 --------
 
 > **NOTE:** _This framework depends the separate [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library. You'll need to add both of these libraries to your `addons/` folder._
-
---------
-
-> **NOTE:** _Consider this a **pre-alpha** release. This framework still has many rough edges and is still changing a lot._
 
 --------
 
