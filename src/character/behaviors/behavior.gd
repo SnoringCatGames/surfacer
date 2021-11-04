@@ -412,6 +412,12 @@ func _on_post_movement_pause_finished() -> void:
     _on_finished()
 
 
+func _on_move_target_changed(
+        move_target: Node2D,
+        previous_move_target: Node2D) -> void:
+    pass
+
+
 func _clear_timeouts() -> void:
     Sc.time.clear_timeout(_mid_movement_pause_timeout_id)
     _mid_movement_pause_timeout_id = -1
@@ -705,5 +711,7 @@ func _get_post_movement_pause_time() -> float:
 
 
 func _set_move_target(value: Node2D) -> void:
+    var previous_move_target := move_target
     move_target = value
-    assert(move_target is ScaffolderCharacter)
+    if previous_move_target != move_target:
+        _on_move_target_changed(move_target, previous_move_target)

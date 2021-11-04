@@ -137,9 +137,13 @@ func _on_physics_process(delta: float) -> void:
 
 
 func on_detached() -> void:
+    var move_target_str: String = \
+            move_target.character_name if \
+            move_target is ScaffolderCharacter else \
+            str(move_target)
     character._log(
             "Fol detached",
-            "from=%s" % move_target.character_name,
+            "from=%s" % move_target_str,
             CharacterLogType.BEHAVIOR,
             false)
     
@@ -161,37 +165,51 @@ func _attempt_navigation() -> int:
     var max_distance_squared_from_start_position := \
             max_distance_from_start_position * max_distance_from_start_position
     
-    var position_type: int
-    if move_target.surface_state.is_grabbing_surface:
-        position_type = IntendedPositionType.CENTER_POSITION_ALONG_SURFACE
-    elif move_target.navigation_state.is_currently_navigating:
-        if move_target.navigator.edge.get_end_surface() != null:
-            position_type = IntendedPositionType.EDGE_DESTINATION
-        elif move_target.navigator.edge.get_start_surface() != null:
-            position_type = IntendedPositionType.EDGE_ORIGIN
-        else:
+    var destination: PositionAlongSurface
+    if move_target is ScaffolderCharacter:
+        var position_type: int
+        if move_target.surface_state.is_grabbing_surface:
+            position_type = IntendedPositionType.CENTER_POSITION_ALONG_SURFACE
+        elif move_target.navigation_state.is_currently_navigating:
+            if move_target.navigator.edge.get_end_surface() != null:
+                position_type = IntendedPositionType.EDGE_DESTINATION
+            elif move_target.navigator.edge.get_start_surface() != null:
+                position_type = IntendedPositionType.EDGE_ORIGIN
+            else:
+                position_type = IntendedPositionType.LAST_POSITION_ALONG_SURFACE
+        elif move_target.surface_state.last_position_along_surface.surface != \
+                null:
             position_type = IntendedPositionType.LAST_POSITION_ALONG_SURFACE
-    elif move_target.surface_state.last_position_along_surface.surface != \
-            null:
-        position_type = IntendedPositionType.LAST_POSITION_ALONG_SURFACE
+        else:
+            return BehaviorMoveResult.ERROR
+        
+        var target_position: PositionAlongSurface = \
+                move_target.get_intended_position(position_type)
+        
+        var surface := \
+                target_position.surface if \
+                can_leave_start_surface else \
+                latest_activate_start_surface
+        
+        destination = PositionAlongSurfaceFactory \
+                .create_position_offset_from_target_point(
+                        target_position.target_point,
+                        surface,
+                        character.movement_params.collider,
+                        true,
+                        true)
+        
     else:
-        return BehaviorMoveResult.ERROR
-    
-    var target_position: PositionAlongSurface = \
-            move_target.get_intended_position(position_type)
-    
-    var surface := \
-            target_position.surface if \
-            can_leave_start_surface else \
-            latest_activate_start_surface
-    
-    var destination := PositionAlongSurfaceFactory \
-            .create_position_offset_from_target_point(
-                    target_position.target_point,
-                    surface,
-                    character.movement_params.collider,
-                    true,
-                    true)
+        var surface_reachability := \
+                SurfaceReachability.REVERSIBLY_REACHABLE if \
+                only_navigates_reversible_paths else \
+                SurfaceReachability.REACHABLE
+        destination = SurfaceFinder.find_closest_position_on_a_surface(
+                move_target.position,
+                character,
+                surface_reachability)
+        if !is_instance_valid(destination):
+            return BehaviorMoveResult.INVALID_MOVE
     
     if !destination.is_valid or \
             destination.target_point.distance_squared_to(
