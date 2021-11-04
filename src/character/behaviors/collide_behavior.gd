@@ -59,7 +59,8 @@ func _on_physics_process(delta: float) -> void:
     ._on_physics_process(delta)
     if !is_instance_valid(move_target):
         return
-    _update_target_edge()
+    if move_target is ScaffolderCharacter:
+        _update_target_edge()
 
 
 func _on_target_edge_change(
@@ -75,9 +76,13 @@ func _on_target_edge_change(
 
 
 func on_collided() -> void:
+    var move_target_str: String = \
+            move_target.character_name if \
+            move_target is ScaffolderCharacter else \
+            str(move_target)
     character._log(
             "Col collided",
-            "with=%s" % move_target.character_name,
+            "with=%s" % move_target_str,
             CharacterLogType.BEHAVIOR,
             false)
     
@@ -98,6 +103,9 @@ func _move() -> int:
             SurfaceReachability.REACHABLE
     
     var destination := _get_collide_target_position()
+    
+    if !is_instance_valid(destination):
+        return BehaviorMoveResult.INVALID_MOVE
     
     if !can_leave_start_surface and \
             destination.surface != latest_move_start_surface:
@@ -169,32 +177,35 @@ func _update_target_edge() -> void:
 
 
 func _get_collide_target_position() -> PositionAlongSurface:
-    if move_target.navigation_state.is_currently_navigating:
-        if anticipates_target_path:
-            return move_target.navigator.path.destination
-        elif anticipates_target_edge:
-            return move_target.navigator.edge.end_position_along_surface
+    if move_target is ScaffolderCharacter:
+        if move_target.navigation_state.is_currently_navigating:
+            if anticipates_target_path:
+                return move_target.navigator.path.destination
+            elif anticipates_target_edge:
+                return move_target.navigator.edge.end_position_along_surface
+        
+        if move_target.surface_state.is_grabbing_surface:
+            return move_target.surface_state.center_position_along_surface
     
-    if move_target.surface_state.is_grabbing_surface:
-        return move_target.surface_state.center_position_along_surface
+    var surface_reachability := \
+            SurfaceReachability.REVERSIBLY_REACHABLE if \
+            only_navigates_reversible_paths else \
+            SurfaceReachability.REACHABLE
+    var max_distance_squared_from_start_position := \
+            max_distance_from_start_position * \
+            max_distance_from_start_position
+    var result := SurfaceFinder.find_closest_position_on_a_surface(
+            move_target.position,
+            character,
+            surface_reachability,
+            max_distance_squared_from_start_position,
+            start_position_for_max_distance_checks)
+    if result != null:
+        return result
+    elif move_target is ScaffolderCharacter:
+        return move_target.surface_state.last_position_along_surface
     else:
-        var surface_reachability := \
-                SurfaceReachability.REVERSIBLY_REACHABLE if \
-                only_navigates_reversible_paths else \
-                SurfaceReachability.REACHABLE
-        var max_distance_squared_from_start_position := \
-                max_distance_from_start_position * \
-                max_distance_from_start_position
-        var result := SurfaceFinder.find_closest_position_on_a_surface(
-                move_target.position,
-                character,
-                surface_reachability,
-                max_distance_squared_from_start_position,
-                start_position_for_max_distance_checks)
-        if result != null:
-            return result
-        else:
-            return move_target.surface_state.last_position_along_surface
+        return null
 
 
 func _set_anticipates_target_edge(value: bool) -> void:
@@ -209,6 +220,11 @@ func _set_anticipates_target_path(value: bool) -> void:
         anticipates_target_edge = false
 
 
-func _set_move_target(value: Node2D) -> void:
-    ._set_move_target(value)
-    _update_target_edge()
+func _on_move_target_changed(
+        move_target: Node2D,
+        previous_move_target: Node2D) -> void:
+    ._on_move_target_changed(move_target, previous_move_target)
+    if move_target is ScaffolderCharacter:
+        _update_target_edge()
+    else:
+        trigger(false)
