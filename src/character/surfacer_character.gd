@@ -18,6 +18,10 @@ extends ScaffolderCharacter
 ##     walking, when possible.
 export var is_bouncy := false
 
+## If true, then the character sprite rotation will be updated to match the
+## current surface-contact normal.
+export var rotates_to_match_surface_normal := true
+
 var movement_params: MovementParameters
 # Dictionary<Surface, Surface>
 var possible_surfaces_set: Dictionary
@@ -561,6 +565,9 @@ func _process_actions() -> void:
 
 
 func _process_animation() -> void:
+    if rotates_to_match_surface_normal:
+        surface_state.sync_animator_for_contact_normal()
+    
     match surface_state.surface_type:
         SurfaceType.FLOOR:
             if actions.pressed_left or actions.pressed_right:
