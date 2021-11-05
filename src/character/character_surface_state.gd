@@ -1542,6 +1542,54 @@ func _get_contact_count() -> int:
     return surfaces_to_contacts.size()
 
 
+func sync_animator_for_contact_normal() -> void:
+    var animator_rotation := 0.0
+    var animator_position := Vector2.ZERO
+    
+    if is_grabbing_surface:
+        animator_rotation = \
+                grab_normal.angle() - \
+                grabbed_surface.normal.angle()
+        
+        # FIXME: LEFT OFF HERE: -----------------------
+        
+        var side_offset := \
+                -grabbed_surface.normal * \
+                character.collider.half_width_height
+        var grab_offset := grab_position - center_position
+        
+#        animator_position = grab_offset
+        
+        var offset_from_side_to_grab := grab_offset - side_offset
+        
+        animator_position = side_offset + offset_from_side_to_grab * 0.5
+        
+        var is_surface_horizontal := \
+                grabbed_surface.side == SurfaceSide.FLOOR or \
+                grabbed_surface.side == SurfaceSide.CEILING
+        if is_surface_horizontal:
+            animator_position.y += \
+                    -tan(animator_rotation) * (grab_offset.x * 0.5)
+        else:
+            pass
+        
+#        if character.collider.shape is RectangleShape2D:
+#            pass
+#        elif character.collider.shape is CircleShape2D:
+#            pass
+#        elif character.collider.shape is CapsuleShape2D:
+#            pass
+#        else:
+#            Sc.logger.error()
+        
+    else:
+        animator_rotation = 0.0
+        animator_position = Vector2.ZERO
+    
+    character.animator.rotation = animator_rotation
+    character.animator.position = animator_position
+
+
 func clear_current_state() -> void:
     # Let these properties be updated in the normal way:
     # -   previous_center_position
