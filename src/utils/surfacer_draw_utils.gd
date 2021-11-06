@@ -134,10 +134,8 @@ func draw_surface_segment(
     # Calculate the delta for both ends of the segment between depth iterations.
     
     var displacement := segment_end - segment_start
-    # Displacement is clockwise around convex surfaces, so the normal is the
-    # counter-clockwise perpendicular direction from the displacement.
-    var perpendicular := Vector2(displacement.y, -displacement.x)
-    var segment_normal := perpendicular.normalized()
+    var segment_normal: Vector2 = \
+            Sc.geometry.get_segment_normal(segment_start, segment_end)
     
     var surface_depth_division_size: float = \
             depth / Sc.ann_params.surface_depth_divisions_count

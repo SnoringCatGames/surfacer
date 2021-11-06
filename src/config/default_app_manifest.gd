@@ -45,8 +45,7 @@ func _derive_overrides_according_to_debug_or_playtest(
             metadata.logs_device_settings or !is_debug
     metadata.also_prints_to_stdout = \
             metadata.also_prints_to_stdout and \
-            is_debug and \
-            !is_playtest
+            is_debug
     
     manifest.gui_manifest.hud_manifest.is_inspector_enabled_default = \
             manifest.gui_manifest.hud_manifest.is_inspector_enabled_default or \

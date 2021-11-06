@@ -1552,35 +1552,166 @@ func sync_animator_for_contact_normal() -> void:
                 grabbed_surface.normal.angle()
         
         # FIXME: LEFT OFF HERE: -----------------------
+        # - Double-check all this logic for all edge cases.
+        #   - Different shapes?
         
         var side_offset := \
                 -grabbed_surface.normal * \
                 character.collider.half_width_height
         var grab_offset := grab_position - center_position
         
-#        animator_position = grab_offset
         
-        var offset_from_side_to_grab := grab_offset - side_offset
         
-        animator_position = side_offset + offset_from_side_to_grab * 0.5
+        var grabbed_vertex_index := -1
+        for i in grabbed_surface.vertices.size():
+            if Sc.geometry.are_points_equal_with_epsilon(
+                    grab_position,
+                    grabbed_surface.vertices[i],
+                    0.01):
+                grabbed_vertex_index = i
+                break
+        
+        var is_grabbing_vertex := grabbed_vertex_index >= 0
+        if is_grabbing_vertex:
+            var is_single_vertex_surface := \
+                    grabbed_surface.vertices.size() == 1
+            
+            var normal_before_vertex := Vector2.INF
+            var normal_after_vertex := Vector2.INF
+            
+            if grabbed_vertex_index == 0 or \
+                    is_single_vertex_surface:
+                # The preceding normal is derived from the preceding surface.
+                var previous_surface_vertices := \
+                        grabbed_surface.counter_clockwise_neighbor.vertices
+                if previous_surface_vertices.size() == 1:
+                    normal_before_vertex = \
+                            grabbed_surface.counter_clockwise_neighbor.normal
+                else:
+                    normal_before_vertex = Sc.geometry.get_segment_normal(
+                            previous_surface_vertices[
+                                    previous_surface_vertices.size() - 2],
+                            previous_surface_vertices[
+                                    previous_surface_vertices.size() - 1])
+            else:
+                normal_before_vertex = Sc.geometry.get_segment_normal(
+                        grabbed_surface.vertices[grabbed_vertex_index - 1],
+                        grabbed_surface.vertices[grabbed_vertex_index])
+            
+            if grabbed_vertex_index == grabbed_surface.vertices.size() - 1 or \
+                    is_single_vertex_surface:
+                # The following normal is derived from the following surface.
+                var next_surface_vertices := \
+                        grabbed_surface.clockwise_neighbor.vertices
+                if next_surface_vertices.size() == 1:
+                    normal_after_vertex = \
+                            grabbed_surface.clockwise_neighbor.normal
+                else:
+                    normal_after_vertex = Sc.geometry.get_segment_normal(
+                            next_surface_vertices[0],
+                            next_surface_vertices[1])
+            else:
+                normal_after_vertex = Sc.geometry.get_segment_normal(
+                        grabbed_surface.vertices[grabbed_vertex_index],
+                        grabbed_surface.vertices[grabbed_vertex_index + 1])
+            
+            var inter_segment_progress: float
+            match grabbed_surface.side:
+                SurfaceSide.FLOOR:
+                    inter_segment_progress = \
+                            (-grab_offset.x + \
+                                character.collider.half_width_height.x) / \
+                            character.collider.half_width_height.x / 2.0
+                SurfaceSide.LEFT_WALL:
+                    inter_segment_progress = \
+                            (-grab_offset.y + \
+                                character.collider.half_width_height.y) / \
+                            character.collider.half_width_height.y / 2.0
+                SurfaceSide.RIGHT_WALL:
+                    inter_segment_progress = \
+                            1 - \
+                            (-grab_offset.y + \
+                                character.collider.half_width_height.y) / \
+                            character.collider.half_width_height.y / 2.0
+                SurfaceSide.CEILING:
+                    inter_segment_progress = \
+                            1 - \
+                            (-grab_offset.x + \
+                                character.collider.half_width_height.x) / \
+                            character.collider.half_width_height.x / 2.0
+                _:
+                    Sc.logger.error()
+            inter_segment_progress = clamp(inter_segment_progress, 0.0, 1.0)
+            
+            var grab_angle: float = lerp(
+                    normal_before_vertex.angle(),
+                    normal_after_vertex.angle(),
+                    inter_segment_progress)
+            animator_rotation = grab_angle - grabbed_surface.normal.angle()
+            
+            
+            
+            
+            
+            
+            animator_position = grab_offset
+            
+            
+            # FIXME: ---------------------------
+#            var offset_from_side_to_grab := grab_offset - side_offset
+#
+#            animator_position = side_offset + offset_from_side_to_grab * inter_segment_progress
+#
+#            var is_surface_horizontal := \
+#                    grabbed_surface.side == SurfaceSide.FLOOR or \
+#                    grabbed_surface.side == SurfaceSide.CEILING
+#
+#            if is_surface_horizontal:
+#                animator_position.y += \
+#                        -tan(animator_rotation) * (grab_offset.x * (1 - inter_segment_progress))
+#            else:
+#                animator_position.x += \
+#                        -tan(animator_rotation) * (grab_offset.y * (1 - inter_segment_progress))
+            
+        else:
+            animator_position = grab_offset
+        
+        
+        
+        
+        
+        var grab_offset_progress: float
+        match grabbed_surface.side:
+            SurfaceSide.FLOOR, \
+            SurfaceSide.CEILING:
+                grab_offset_progress = \
+                        abs(animator_rotation) / Sc.geometry.FLOOR_MAX_ANGLE
+            SurfaceSide.LEFT_WALL, \
+            SurfaceSide.RIGHT_WALL:
+                grab_offset_progress = \
+                        abs(animator_rotation) / \
+                        (PI / 2.0 - Sc.geometry.FLOOR_MAX_ANGLE)
+            _:
+                Sc.logger.error()
         
         var is_surface_horizontal := \
                 grabbed_surface.side == SurfaceSide.FLOOR or \
                 grabbed_surface.side == SurfaceSide.CEILING
-        if is_surface_horizontal:
-            animator_position.y += \
-                    -tan(animator_rotation) * (grab_offset.x * 0.5)
-        else:
-            pass
         
-#        if character.collider.shape is RectangleShape2D:
-#            pass
-#        elif character.collider.shape is CircleShape2D:
-#            pass
-#        elif character.collider.shape is CapsuleShape2D:
-#            pass
-#        else:
-#            Sc.logger.error()
+        if is_surface_horizontal:
+            animator_position.x = \
+                    lerp(0.0, grab_offset.x, grab_offset_progress)
+            animator_position.y += \
+                    -tan(animator_rotation) * (grab_offset.x * (1 - grab_offset_progress))
+        else:
+            animator_position.y = \
+                    lerp(0.0, grab_offset.y, grab_offset_progress)
+            animator_position.x += \
+                    -tan(animator_rotation) * (grab_offset.y * (1 - grab_offset_progress))
+        
+        
+        
+        
         
     else:
         animator_rotation = 0.0

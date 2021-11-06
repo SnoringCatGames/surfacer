@@ -87,13 +87,18 @@ static func get_surface_normal_at_point(
     var segment_start: Vector2 = segment_points_result[0]
     var segment_end: Vector2 = segment_points_result[1]
     
+    return get_segment_normal(segment_start, segment_end)
+
+
+# -   This assumes that the segment is clockwise.
+static func get_segment_normal(
+        segment_start: Vector2,
+        segment_end: Vector2) -> Vector2:
     var displacement := segment_end - segment_start
     # Displacement is clockwise around convex surfaces, so the normal is the
     # counter-clockwise perpendicular direction from the displacement.
     var perpendicular := Vector2(displacement.y, -displacement.x)
-    var normal := perpendicular.normalized()
-    
-    return normal
+    return perpendicular.normalized()
 
 
 # -   Calculates where the center position of the given shape would be if it
@@ -285,13 +290,7 @@ static func project_shape_onto_segment(
     if segment_end == segment_start:
         segment_normal = surface_normal
     else:
-        var segment_displacement := segment_end - segment_start
-        # Segment displacement is clockwise around convex surfaces, so the
-        # normal is the counter-clockwise perpendicular direction from the
-        # displacement.
-        var segment_perpendicular := \
-                Vector2(segment_displacement.y, -segment_displacement.x)
-        segment_normal = segment_perpendicular.normalized()
+        segment_normal = get_segment_normal(segment_start, segment_end)
     
     var leftward_segment_point := Vector2.INF
     var rightward_segment_point := Vector2.INF
