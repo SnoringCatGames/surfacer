@@ -569,6 +569,26 @@ func _process_animation() -> void:
     if rotates_to_match_surface_normal:
         surface_state.sync_animator_for_contact_normal()
     
+    var just_moved_to_adjacent_surface := \
+            surface_state.just_changed_surface and \
+            is_instance_valid(surface_state.grabbed_surface) and \
+            is_instance_valid(surface_state.previous_grabbed_surface) and \
+            (surface_state.grabbed_surface.clockwise_neighbor == \
+                surface_state.previous_grabbed_surface or \
+            surface_state.grabbed_surface.counter_clockwise_neighbor == \
+                surface_state.previous_grabbed_surface)
+    if just_moved_to_adjacent_surface:
+        # FIXME: ------------------- Improve on this.
+        # -   Right now, this skip is prevents an issue with the next animation
+        #     starting its blend with the previous animation at a what is now a
+        #     non-sense rotation.
+        # -   However, it would be nice to still have a blend!
+        # -   TODO:
+        #     -   Update animator to track current blend duration.
+        #     -   Then, add a Tween for updating the position and rotation in
+        #         this case.
+        animator.skip_current_blend()
+    
     match surface_state.surface_type:
         SurfaceType.FLOOR:
             if actions.pressed_left or actions.pressed_right:

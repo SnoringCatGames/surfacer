@@ -1617,7 +1617,7 @@ func sync_animator_for_contact_normal() -> void:
                 grab_normal.angle() - \
                 grabbed_surface.normal.angle()
         
-        # FIXME: LEFT OFF HERE: -----------------------
+        # FIXME: LEFT OFF HERE: ------------------------
         # - Double-check all this logic for all edge cases.
         #   - Different shapes?
         
@@ -1719,7 +1719,7 @@ func sync_animator_for_contact_normal() -> void:
             
             
             
-            # FIXME: ------------------------
+            # FIXME: ----------------------
             
             
             
