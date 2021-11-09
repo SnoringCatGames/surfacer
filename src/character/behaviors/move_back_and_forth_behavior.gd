@@ -246,7 +246,7 @@ func _calculate_intra_surface_destination(
     return PositionAlongSurfaceFactory.create_position_offset_from_target_point(
             target_point,
             latest_activate_start_surface,
-            character.movement_params.collider,
+            character.collider,
             true,
             false)
 
