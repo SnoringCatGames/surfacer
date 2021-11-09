@@ -109,7 +109,7 @@ static func find_closest_positions_on_surfaces(
         position.match_surface_target_and_collider(
                 closest_surfaces[i],
                 target,
-                character.movement_params.collider,
+                character.collider,
                 true,
                 true,
                 true)

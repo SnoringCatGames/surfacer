@@ -194,7 +194,7 @@ func _move() -> int:
                     .create_position_offset_from_target_point(
                             naive_target,
                             latest_move_start_surface,
-                            character.movement_params.collider,
+                            character.collider,
                             true,
                             false)
         

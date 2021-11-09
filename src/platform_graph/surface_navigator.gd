@@ -424,7 +424,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                     .create_position_offset_from_target_point(
                             current_start_point,
                             surface,
-                            character.movement_params.collider,
+                            character.collider,
                             true,
                             false)
             
@@ -445,7 +445,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                         .create_position_offset_from_target_point(
                                 current_end_point,
                                 surface,
-                                character.movement_params.collider,
+                                character.collider,
                                 true,
                                 false)
                 jump_edge = calculator.calculate_edge(
