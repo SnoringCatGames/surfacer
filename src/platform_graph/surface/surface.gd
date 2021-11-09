@@ -39,6 +39,9 @@ var center: Vector2 setget ,_get_center
 var clockwise_neighbor: Surface setget ,_get_clockwise_neighbor
 var counter_clockwise_neighbor: Surface setget ,_get_counter_clockwise_neighbor
 
+var is_single_vertex: bool setget ,_get_is_single_vertex
+var is_axially_aligned: bool setget ,_get_is_axially_aligned
+
 
 func _init(
         vertices := [],
@@ -92,6 +95,15 @@ func _get_counter_clockwise_neighbor() -> Surface:
     return counter_clockwise_convex_neighbor if \
             counter_clockwise_convex_neighbor != null else \
             counter_clockwise_concave_neighbor
+
+
+func _get_is_single_vertex() -> bool:
+    return vertices.size() == 1
+
+
+func _get_is_axially_aligned() -> bool:
+    return vertices.size() <= 2 and \
+            (normal.x == 0.0 or normal.y == 0.0)
 
 
 func probably_equal(other: Surface) -> bool:
