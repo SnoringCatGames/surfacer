@@ -267,7 +267,6 @@ func _on_physics_process(delta: float) -> void:
     
     _update_navigator(delta_scaled)
     
-    actions.delta_scaled = delta_scaled
     actions.log_new_presses_and_releases(self)
     
     # Flip the horizontal direction of the animation according to which way the
@@ -511,6 +510,8 @@ func _update_actions(delta_scaled: float) -> void:
     _actions_from_previous_frame.copy(actions)
     # Clear actions for the current frame.
     actions.clear()
+    
+    actions.delta_scaled = delta_scaled
     
     # Update actions for the current frame.
     for action_source in _action_sources:

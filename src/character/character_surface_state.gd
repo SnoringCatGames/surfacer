@@ -255,7 +255,9 @@ func update_for_initial_surface_attachment(
         assert(center_position_along_surface.is_valid,
                 "start_attachment_surface_side_or_position is invalid")
     
-    _update_surface_contact_for_explicit_grab(center_position_along_surface)
+    _update_surface_contact_for_explicit_grab(
+            center_position_along_surface,
+            SurfaceContact.INITIAL_ATTACHMENT)
     _update_touch_state()
     
     match side:
@@ -510,6 +512,7 @@ func _calculate_surface_contact_from_collision(
     
     var surface_contact: SurfaceContact = \
             surfaces_to_contacts[contacted_surface]
+    surface_contact.type = SurfaceContact.PHYSICS
     surface_contact.surface = contacted_surface
     surface_contact.contact_position = contact_position
     surface_contact.contact_normal = contact_normal
@@ -540,23 +543,35 @@ func _calculate_surface_contact_from_collision(
 
 
 func _update_surface_contact_from_rounded_corner() -> bool:
+    var previous_grab_contact := _get_grab_contact()
+    if is_instance_valid(previous_grab_contact):
+        # If we are still tracking a valid contact for whichever surface we
+        # think should match the current rounding-corner state, then let's just
+        # keep that contact and mark it as still valid.
+        previous_grab_contact._is_still_touching = true
+        return true
+    
     var position_along_surface := \
             _get_position_along_surface_from_rounded_corner()
     if !is_instance_valid(position_along_surface):
         return false
-    _update_surface_contact_for_explicit_grab(position_along_surface)
+    _update_surface_contact_for_explicit_grab(
+            position_along_surface,
+            SurfaceContact.MATCH_ROUNDING_CORNER)
     return true
 
 
 func _update_surface_contact_from_expected_navigation() -> void:
     var position_along_surface := \
             _get_expected_position_for_bypassing_runtime_physics()
-    _update_surface_contact_for_explicit_grab(position_along_surface)
+    _update_surface_contact_for_explicit_grab(
+            position_along_surface,
+            SurfaceContact.MATCH_TRAJECTORY)
 
 
 func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
     var surface: Surface
-    var contact_position: Vector2
+    var corner_position: Vector2
     
     if is_rounding_floor_corner_to_lower_wall:
         if just_changed_surface_while_rounding_corner:
@@ -573,9 +588,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 return null
             
             if surface.side == SurfaceSide.LEFT_WALL:
-                contact_position = surface.first_point
+                corner_position = surface.first_point
             else:
-                contact_position = surface.last_point
+                corner_position = surface.last_point
         else:
             surface = grabbed_surface
             if surface.side != SurfaceSide.FLOOR:
@@ -583,9 +598,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 return null
             
             if center_position.x < surface.center.x:
-                contact_position = surface.first_point
+                corner_position = surface.first_point
             else:
-                contact_position = surface.last_point
+                corner_position = surface.last_point
         
     elif is_rounding_ceiling_corner_to_upper_wall:
         if just_changed_surface_while_rounding_corner:
@@ -602,9 +617,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 return null
             
             if surface.side == SurfaceSide.LEFT_WALL:
-                contact_position = surface.last_point
+                corner_position = surface.last_point
             else:
-                contact_position = surface.first_point
+                corner_position = surface.first_point
         else:
             surface = grabbed_surface
             if surface.side != SurfaceSide.CEILING:
@@ -612,9 +627,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 return null
             
             if center_position.x < surface.center.x:
-                contact_position = surface.last_point
+                corner_position = surface.last_point
             else:
-                contact_position = surface.first_point
+                corner_position = surface.first_point
         
     elif is_rounding_wall_corner_to_lower_ceiling:
         if just_changed_surface_while_rounding_corner:
@@ -629,9 +644,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 return null
             
             if center_position.x < surface.center.x:
-                contact_position = surface.last_point
+                corner_position = surface.last_point
             else:
-                contact_position = surface.first_point
+                corner_position = surface.first_point
         else:
             surface = grabbed_surface
             if surface.side != SurfaceSide.LEFT_WALL and \
@@ -640,9 +655,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 return null
             
             if surface.side == SurfaceSide.LEFT_WALL:
-                contact_position = surface.last_point
+                corner_position = surface.last_point
             else:
-                contact_position = surface.first_point
+                corner_position = surface.first_point
         
     elif is_rounding_wall_corner_to_upper_floor:
         if just_changed_surface_while_rounding_corner:
@@ -657,9 +672,9 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 return null
             
             if center_position.x < surface.center.x:
-                contact_position = surface.first_point
+                corner_position = surface.first_point
             else:
-                contact_position = surface.last_point
+                corner_position = surface.last_point
         else:
             surface = grabbed_surface
             if surface.side != SurfaceSide.LEFT_WALL and \
@@ -668,16 +683,16 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 return null
             
             if surface.side == SurfaceSide.LEFT_WALL:
-                contact_position = surface.first_point
+                corner_position = surface.first_point
             else:
-                contact_position = surface.last_point
+                corner_position = surface.last_point
         
     else:
         Sc.logger.error()
         return null
     
     return PositionAlongSurfaceFactory.create_position_offset_from_target_point(
-            contact_position,
+            corner_position,
             surface,
             character.movement_params.collider,
             true,
@@ -729,7 +744,8 @@ func _get_expected_position_for_bypassing_runtime_physics() -> \
 
 
 func _update_surface_contact_for_explicit_grab(
-        position_along_surface: PositionAlongSurface) -> void:
+        position_along_surface: PositionAlongSurface,
+        contact_type: int) -> void:
     var surface := position_along_surface.surface
     var side := surface.side
     var contact_position := \
@@ -761,6 +777,7 @@ func _update_surface_contact_for_explicit_grab(
     PositionAlongSurface.copy(
             surface_contact.position_along_surface,
             position_along_surface)
+    surface_contact.type = contact_type
     surface_contact.surface = surface
     surface_contact.contact_position = contact_position
     surface_contact.contact_normal = contact_normal
@@ -1225,6 +1242,51 @@ func _update_rounding_corner_state() -> void:
     is_rounding_left_corner = \
             is_rounding_right_wall_corner or \
             is_rounding_left_corner_of_horizontal_surface
+    
+    if just_started_rounding_corner:
+        var details: String = \
+                "corner_p=%s; " % \
+                Sc.utils.get_vector_string(rounding_corner_position, 1)
+        if is_rounding_floor_corner_to_lower_wall:
+            details += "to_lower_wall; "
+        if is_rounding_ceiling_corner_to_upper_wall:
+            details += "to_upper_wall; "
+        if is_rounding_wall_corner_to_upper_floor:
+            details += "to_upper_floor; "
+        if is_rounding_wall_corner_to_lower_ceiling:
+            details += "to_lower_ceiling; "
+        details += "left=%s" % is_rounding_left_corner
+        character._log(
+                "Start roundi",
+                details,
+                CharacterLogType.SURFACE,
+                true)
+    
+    if just_changed_surface_while_rounding_corner:
+        var details: String = \
+                "corner_p=%s; " % \
+                Sc.utils.get_vector_string(rounding_corner_position, 1)
+        if just_changed_to_lower_wall_while_rounding_floor_corner:
+            details += "to_lower_wall; "
+        if just_changed_to_upper_wall_while_rounding_ceiling_corner:
+            details += "to_upper_wall; "
+        if just_changed_to_lower_ceiling_while_rounding_wall_corner:
+            details += "to_lower_ceiling; "
+        if just_changed_to_upper_floor_while_rounding_wall_corner:
+            details += "to_upper_floor; "
+        details += "left=%s" % is_rounding_left_corner
+        character._log(
+                "Sur chng rou",
+                details,
+                CharacterLogType.SURFACE,
+                true)
+    
+    if just_stopped_rounding_corner:
+        character._log(
+                "Stop roundin",
+                "",
+                CharacterLogType.SURFACE,
+                true)
 
 
 func _update_grab_state() -> void:
@@ -1453,17 +1515,7 @@ func _update_grab_contact() -> void:
     surface_grab = null
     
     if is_grabbing_surface:
-        for surface in surfaces_to_contacts:
-            if surface.side == SurfaceSide.FLOOR and \
-                            is_grabbing_floor or \
-                    surface.side == SurfaceSide.LEFT_WALL and \
-                            is_grabbing_left_wall or \
-                    surface.side == SurfaceSide.RIGHT_WALL and \
-                            is_grabbing_right_wall or \
-                    surface.side == SurfaceSide.CEILING and \
-                            is_grabbing_ceiling:
-                surface_grab = surfaces_to_contacts[surface]
-                break
+        surface_grab = _get_grab_contact()
         assert(is_instance_valid(surface_grab))
         
         var next_grabbed_surface := surface_grab.surface
@@ -1536,6 +1588,20 @@ func _update_grab_contact() -> void:
         grab_position_tile_map_coord = Vector2.INF
         grabbed_surface = null
         center_position_along_surface.reset()
+
+
+func _get_grab_contact() -> SurfaceContact:
+    for surface in surfaces_to_contacts:
+        if surface.side == SurfaceSide.FLOOR and \
+                        is_grabbing_floor or \
+                surface.side == SurfaceSide.LEFT_WALL and \
+                        is_grabbing_left_wall or \
+                surface.side == SurfaceSide.RIGHT_WALL and \
+                        is_grabbing_right_wall or \
+                surface.side == SurfaceSide.CEILING and \
+                        is_grabbing_ceiling:
+            return surfaces_to_contacts[surface]
+    return null
 
 
 func _get_contact_count() -> int:
@@ -1653,11 +1719,13 @@ func sync_animator_for_contact_normal() -> void:
             
             
             
+            # FIXME: ----------------------
+            
+            
             
             animator_position = grab_offset
             
             
-            # FIXME: ---------------------------
 #            var offset_from_side_to_grab := grab_offset - side_offset
 #
 #            animator_position = side_offset + offset_from_side_to_grab * inter_segment_progress
@@ -1867,6 +1935,7 @@ func sync_state_for_surface_grab(
     surface_grab = SurfaceContact.new()
     surfaces_to_contacts[surface] = surface_grab
     
+    surface_grab.type = SurfaceContact.MATCH_TRAJECTORY
     surface_grab.surface = surface
     surface_grab.contact_position = grab_position
     surface_grab.contact_normal = grab_normal
