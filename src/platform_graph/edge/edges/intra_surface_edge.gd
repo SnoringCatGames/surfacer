@@ -170,6 +170,11 @@ func get_animation_state_at_time(
     var displacement := get_end() - get_start()
     
     result.character_position = get_position_at_time(edge_time)
+    result.grabbed_surface = start_position_along_surface.surface
+    result.grab_position = Sc.geometry.get_closest_point_on_surface_to_shape(
+            start_position_along_surface.surface,
+            result.character_position,
+            movement_params.collider)
     result.animation_position = edge_time
     
     var side := get_start_surface().side
