@@ -32,14 +32,11 @@ func sync_position_rotation_for_contact_normal(
         var is_grabbing_vertex := grabbed_vertex_index >= 0
         
         if is_grabbing_vertex:
-            var is_single_vertex_surface := \
-                    grabbed_surface.vertices.size() == 1
-            
             var normal_before_vertex := Vector2.INF
             var normal_after_vertex := Vector2.INF
             
             if grabbed_vertex_index == 0 or \
-                    is_single_vertex_surface:
+                    grabbed_surface.is_single_vertex:
                 # The preceding normal is derived from the preceding grabbed_surface.
                 var previous_surface_vertices := \
                         grabbed_surface.counter_clockwise_neighbor.vertices
@@ -58,7 +55,7 @@ func sync_position_rotation_for_contact_normal(
                         grabbed_surface.vertices[grabbed_vertex_index])
             
             if grabbed_vertex_index == grabbed_surface.vertices.size() - 1 or \
-                    is_single_vertex_surface:
+                    grabbed_surface.is_single_vertex:
                 # The following normal is derived from the following surface.
                 var next_surface_vertices := \
                         grabbed_surface.clockwise_neighbor.vertices
