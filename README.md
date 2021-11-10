@@ -11,15 +11,15 @@
 
 --------
 
-> _**[Live demo](https://snoringcat.games/play/squirrel-away)**_
-> 
-> _**[Demo source](https://github.com/snoringcatgames/squirrel_away)**_
+> _**[Live demo](https://snoringcat.games/play/squirrel-away) ([source code](https://github.com/snoringcatgames/squirrel_away))**_
 > 
 > _**[Godot Asset Library](https://godotengine.org/asset-library/asset/968)**_
-
-_Point-and-click platformers!_
+>
+> _**[Extended tutorial on how this AI works](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html)**_
 
 _An **AI and pathfinding** 2D-platformer framework for [Godot](https://godotengine.org/)._
+
+_Enables point-and-click platformers!_
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 
@@ -75,7 +75,7 @@ But there are use-cases for which we really benefit from an AI that can accurate
 -   [Notable limitations](./docs/limitations.md)
 -   [Other features](./docs/other_features.md)
 
-You can also read more about how Surfacer's AI and movement works in [this series of devlog posts on devlog.levi.dev](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html).
+You can also read more about how Surfacer's AI and movement works in [this **tutorial series**](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html).
 
 <p align="center">
   <img src="docs/demo.gif"
