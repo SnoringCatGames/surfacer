@@ -79,8 +79,8 @@ static func calculate_jump_land_positions_for_surface_pair(
     var jump_surface_center := jump_surface.center
     var land_surface_center := land_surface.center
     
-    var jump_surface_has_only_one_point := jump_surface.vertices.size() == 1
-    var land_surface_has_only_one_point := land_surface.vertices.size() == 1
+    var jump_surface_has_only_one_point := jump_surface.is_single_vertex
+    var land_surface_has_only_one_point := land_surface.is_single_vertex
     
     var jump_surface_first_point := jump_surface.first_point
     var jump_surface_last_point := jump_surface.last_point
@@ -2935,7 +2935,7 @@ static func calculate_land_positions_on_surface(
     if !land_surface_first_point_wrapper.is_valid:
         return []
     
-    if land_surface.vertices.size() == 1:
+    if land_surface.is_single_vertex:
         # The land surface consists of only a single point.
         var jump_land_positions := _create_jump_land_positions(
                 movement_params,
