@@ -578,12 +578,12 @@ func _process_animation() -> void:
             surface_state.grabbed_surface.counter_clockwise_neighbor == \
                 surface_state.previous_grabbed_surface)
     if just_moved_to_adjacent_surface:
-        # FIXME: ------------------- Improve on this.
+        # TODO: Improve on this.
         # -   Right now, this skip is prevents an issue with the next animation
         #     starting its blend with the previous animation at a what is now a
         #     non-sense rotation.
         # -   However, it would be nice to still have a blend!
-        # -   TODO:
+        # -   Maybe this is the answer?
         #     -   Update animator to track current blend duration.
         #     -   Then, add a Tween for updating the position and rotation in
         #         this case.

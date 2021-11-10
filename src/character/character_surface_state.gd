@@ -1613,20 +1613,12 @@ func sync_animator_for_contact_normal() -> void:
     var animator_position := Vector2.ZERO
     
     if is_grabbing_surface:
-        animator_rotation = \
-                grab_normal.angle() - \
-                grabbed_surface.normal.angle()
-        
-        # FIXME: LEFT OFF HERE: ------------------------
-        # - Double-check all this logic for all edge cases.
-        #   - Different shapes?
+        animator_rotation = grabbed_surface.normal.angle_to(grab_normal)
         
         var side_offset := \
                 -grabbed_surface.normal * \
                 character.collider.half_width_height
         var grab_offset := grab_position - center_position
-        
-        
         
         var grabbed_vertex_index := -1
         for i in grabbed_surface.vertices.size():
@@ -1636,8 +1628,8 @@ func sync_animator_for_contact_normal() -> void:
                     0.01):
                 grabbed_vertex_index = i
                 break
-        
         var is_grabbing_vertex := grabbed_vertex_index >= 0
+        
         if is_grabbing_vertex:
             var is_single_vertex_surface := \
                     grabbed_surface.vertices.size() == 1
@@ -1709,44 +1701,22 @@ func sync_animator_for_contact_normal() -> void:
                     Sc.logger.error()
             inter_segment_progress = clamp(inter_segment_progress, 0.0, 1.0)
             
-            var grab_angle: float = lerp(
+            var grab_angle: float = lerp_angle(
                     normal_before_vertex.angle(),
                     normal_after_vertex.angle(),
                     inter_segment_progress)
-            animator_rotation = grab_angle - grabbed_surface.normal.angle()
-            
-            
-            
-            
-            
-            # FIXME: ----------------------
-            
-            
+            animator_rotation = fposmod(
+                    grab_angle - grabbed_surface.normal.angle(),
+                    TAU)
             
             animator_position = grab_offset
-            
-            
-#            var offset_from_side_to_grab := grab_offset - side_offset
-#
-#            animator_position = side_offset + offset_from_side_to_grab * inter_segment_progress
-#
-#            var is_surface_horizontal := \
-#                    grabbed_surface.side == SurfaceSide.FLOOR or \
-#                    grabbed_surface.side == SurfaceSide.CEILING
-#
-#            if is_surface_horizontal:
-#                animator_position.y += \
-#                        -tan(animator_rotation) * (grab_offset.x * (1 - inter_segment_progress))
-#            else:
-#                animator_position.x += \
-#                        -tan(animator_rotation) * (grab_offset.y * (1 - inter_segment_progress))
             
         else:
             animator_position = grab_offset
         
-        
-        
-        
+        # Convert the rotation to be between -PI and PI.
+        if animator_rotation > PI:
+            animator_rotation -= TAU
         
         var grab_offset_progress: float
         match grabbed_surface.side:
@@ -1761,6 +1731,7 @@ func sync_animator_for_contact_normal() -> void:
                         (PI / 2.0 - Sc.geometry.FLOOR_MAX_ANGLE)
             _:
                 Sc.logger.error()
+        grab_offset_progress = clamp(grab_offset_progress, 0.0, 1.0)
         
         var is_surface_horizontal := \
                 grabbed_surface.side == SurfaceSide.FLOOR or \
@@ -1776,10 +1747,6 @@ func sync_animator_for_contact_normal() -> void:
                     lerp(0.0, grab_offset.y, grab_offset_progress)
             animator_position.x += \
                     -tan(animator_rotation) * (grab_offset.y * (1 - grab_offset_progress))
-        
-        
-        
-        
         
     else:
         animator_rotation = 0.0
