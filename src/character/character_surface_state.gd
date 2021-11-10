@@ -1882,11 +1882,10 @@ func sync_state_for_surface_grab(
     grabbed_surface = surface
     contact_count = 1
     
-    # TODO: This won't be accurate for non-axially-aligned surfaces, but that's
-    #       probably ok.
-    grab_position = Sc.geometry.project_point_onto_surface(
+    grab_position = Sc.geometry.get_closest_point_on_surface_to_shape(
+            surface,
             center_position,
-            surface)
+            character.collider)
     grab_normal = Sc.geometry.get_surface_normal_at_point(
             surface,
             grab_position)
