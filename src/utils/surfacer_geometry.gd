@@ -1048,6 +1048,112 @@ static func project_away_from_concave_neighbor(
     return Vector2.INF
 
 
+static func get_closest_point_on_surface_to_shape(
+        surface: Surface,
+        shape_position: Vector2,
+        shape: RotatedShape) -> Vector2:
+    if surface.is_single_vertex:
+        return surface.first_point
+    
+    var closest_distance_squared := INF
+    var closest_point_on_surface := Vector2.INF
+    
+    for i in surface.vertices.size() - 1:
+        var segment_start := surface.vertices[i]
+        var segment_end := surface.vertices[i + 1]
+        var segment_normal := get_segment_normal(
+                segment_start,
+                segment_end)
+        var closest_point_on_shape_to_segment := \
+                get_furthest_shape_boundary_point_in_direction(
+                    shape_position,
+                    shape,
+                    -segment_normal)
+        var closest_point_on_segment_to_point := \
+                get_closest_point_on_segment_to_point(
+                    closest_point_on_shape_to_segment,
+                    segment_start,
+                    segment_end)
+        var current_distance_squared := \
+                closest_point_on_shape_to_segment.distance_squared_to(
+                    closest_point_on_segment_to_point)
+        if current_distance_squared < closest_distance_squared:
+            closest_distance_squared = current_distance_squared
+            closest_point_on_surface = closest_point_on_segment_to_point
+    
+    return closest_point_on_surface
+
+
+static func get_furthest_shape_boundary_point_in_direction(
+        shape_position: Vector2,
+        shape: RotatedShape,
+        direction: Vector2) -> Vector2:
+    if shape.shape is CircleShape2D:
+        return shape_position + shape.shape.radius * direction
+        
+    elif shape.shape is RectangleShape2D:
+        if direction.x == 0.0:
+            return shape_position + Vector2(
+                    0.0,
+                    shape.shape.extents.y * direction.y)
+        elif direction.y == 0.0:
+            return shape_position + Vector2(
+                    shape.shape.extents.x * direction.x,
+                    0.0)
+        elif direction.x < 0.0 and direction.y < 0.0:
+            return shape_position + Vector2(
+                    -shape.shape.extents.x,
+                    -shape.shape.extents.y)
+        elif direction.x < 0.0 and direction.y > 0.0:
+            return shape_position + Vector2(
+                    -shape.shape.extents.x,
+                    shape.shape.extents.y)
+        elif direction.x > 0.0 and direction.y < 0.0:
+            return shape_position + Vector2(
+                    shape.shape.extents.x,
+                    -shape.shape.extents.y)
+        else: # direction.x > 0.0 and direction.y > 0.0:
+            return shape_position + Vector2(
+                    shape.shape.extents.x,
+                    shape.shape.extents.y)
+        
+    elif shape.shape is CapsuleShape2D:
+        if shape.is_rotated_90_degrees:
+            if direction.x == 0.0:
+                return shape_position + Vector2(
+                        0.0,
+                        shape.shape.radius * direction.y)
+            elif direction.x < 0.0:
+                var capsule_end_center := shape_position + Vector2(
+                        -shape.shape.height * 0.5,
+                        0.0)
+                return capsule_end_center + shape.shape.radius * direction
+            else: # direction.x > 0.0
+                var capsule_end_center := shape_position + Vector2(
+                        shape.shape.height * 0.5,
+                        0.0)
+                return capsule_end_center + shape.shape.radius * direction
+        else:
+            if direction.y == 0.0:
+                return shape_position + Vector2(
+                        shape.shape.radius * direction.x,
+                        0.0)
+            elif direction.y < 0.0:
+                var capsule_end_center := shape_position + Vector2(
+                        0.0,
+                        -shape.shape.height * 0.5)
+                return capsule_end_center + shape.shape.radius * direction
+            else: # direction.y > 0.0
+                var capsule_end_center := shape_position + Vector2(
+                        0.0,
+                        shape.shape.height * 0.5)
+                return capsule_end_center + shape.shape.radius * direction
+        
+    else:
+        Sc.logger.error()
+        return Vector2.INF
+
+
 static func check_for_shape_to_rect_intersection(
         shape_position: Vector2,
         shape: RotatedShape,
