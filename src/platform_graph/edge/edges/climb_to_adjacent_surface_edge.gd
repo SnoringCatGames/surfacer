@@ -65,7 +65,17 @@ func _get_weight_multiplier() -> float:
 func get_animation_state_at_time(
         result: CharacterAnimationState,
         edge_time: float) -> void:
+    var surface := \
+            start_position_along_surface.surface if \
+            edge_time < time_at_surface_switch else \
+            end_position_along_surface.surface
+    
     result.character_position = get_position_at_time(edge_time)
+    result.grabbed_surface = surface
+    result.grab_position = Sc.geometry.get_closest_point_on_surface_to_shape(
+            surface,
+            result.character_position,
+            movement_params.collider)
     result.animation_position = edge_time
     
     var displacement := \

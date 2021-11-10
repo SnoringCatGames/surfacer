@@ -4,12 +4,14 @@ extends Node2D
 
 var animation_state := CharacterAnimationState.new()
 var animator: ScaffolderCharacterAnimator
+var character: ScaffolderCharacter
 
 var _tween: ScaffolderTween
 var _tween_animation_state := CharacterAnimationState.new()
 
 
 func set_up(character) -> void:
+    self.character = character
     animator = Sc.utils.add_scene(
             self,
             character.animator.filename)
@@ -39,6 +41,19 @@ func _update(
     
     _tween_animation_state.animation_name = animation_state.animation_name
     _tween_animation_state.facing_left = animation_state.facing_left
+    
+    var grab_normal: Vector2 = \
+            Sc.geometry.get_surface_normal_at_point(
+                    animation_state.grabbed_surface,
+                    animation_state.grab_position) if \
+            is_instance_valid(animation_state.grabbed_surface) else \
+            Vector2.INF
+    animator.sync_position_rotation_for_contact_normal(
+            animation_state.character_position,
+            character.collider,
+            animation_state.grabbed_surface,
+            animation_state.grab_position,
+            grab_normal)
     
     if tweens_character_position:
         _tween.interpolate_method(

@@ -48,6 +48,8 @@ func get_animation_state_at_time(
         result: CharacterAnimationState,
         edge_time: float) -> void:
     result.character_position = get_position_at_time(edge_time)
+    result.grabbed_surface = null
+    result.grab_position = Vector2.INF
     if edge_time < time_peak_height:
         result.animation_name = "JumpRise"
         result.animation_position = edge_time

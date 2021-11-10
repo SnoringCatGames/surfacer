@@ -567,7 +567,12 @@ func _process_actions() -> void:
 
 func _process_animation() -> void:
     if rotates_to_match_surface_normal:
-        surface_state.sync_animator_for_contact_normal()
+        animator.sync_position_rotation_for_contact_normal(
+                position,
+                collider,
+                surface_state.grabbed_surface,
+                surface_state.grab_position,
+                surface_state.grab_normal)
     
     var just_moved_to_adjacent_surface := \
             surface_state.just_changed_surface and \
