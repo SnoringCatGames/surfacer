@@ -5,6 +5,7 @@ enum {
     MOVEMENT_VALID,
     TARGET_OUT_OF_REACH,
     ALREADY_BACKTRACKED_FOR_SURFACE,
+    REDUNDANT_RECURSIVE_COLLISION,
     RECURSION_VALID,
     UNABLE_TO_BACKTRACK,
     BACKTRACKING_VALID,
@@ -25,6 +26,8 @@ static func get_string(result: int) -> String:
             return "TARGET_OUT_OF_REACH"
         ALREADY_BACKTRACKED_FOR_SURFACE:
             return "ALREADY_BACKTRACKED_FOR_SURFACE"
+        REDUNDANT_RECURSIVE_COLLISION:
+            return "REDUNDANT_RECURSIVE_COLLISION"
         RECURSION_VALID:
             return "RECURSION_VALID"
         UNABLE_TO_BACKTRACK:
@@ -63,6 +66,12 @@ static func to_description_list(result: int) -> Array:
                 "Hit an intermediate surface.",
                 ("We considered this surface when backtracking to consider" +
                 "\n                a new max jump height after colliding."),
+            ]
+        REDUNDANT_RECURSIVE_COLLISION:
+            return [
+                "Hit an intermediate surface.",
+                ("We already considered waypoints around this surface in " +
+                "\n                the parent step."),
             ]
         RECURSION_VALID:
             return [

@@ -35,6 +35,8 @@ var passing_vertically: bool
 
 var should_stay_on_min_side: bool
 
+var is_at_end_of_surface: bool
+
 var previous_waypoint: Waypoint
 
 var next_waypoint: Waypoint
@@ -106,12 +108,14 @@ func _init(
         position: Vector2,
         passing_vertically: bool,
         should_stay_on_min_side: bool,
+        is_at_end_of_surface: bool,
         previous_waypoint: Waypoint,
         next_waypoint: Waypoint) -> void:
     self.surface = surface
     self.position = position
     self.passing_vertically = passing_vertically
     self.should_stay_on_min_side = should_stay_on_min_side
+    self.is_at_end_of_surface = is_at_end_of_surface
     self.previous_waypoint = previous_waypoint
     self.next_waypoint = next_waypoint
 
@@ -122,12 +126,14 @@ func to_string() -> String:
         "%s, " +
         "passing_vertically: %s, " +
         "should_stay_on_min_side: %s, " +
+        "is_at_end_of_surface: %s, " +
         "surface: %s " +
         "}"
     ) % [
         str(position),
         passing_vertically,
         should_stay_on_min_side,
+        is_at_end_of_surface,
         surface.to_string(),
     ]
 

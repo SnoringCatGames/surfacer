@@ -38,12 +38,14 @@ static func create_terminal_waypoints(
             origin_position.target_point,
             origin_passing_vertically,
             false,
+            false,
             null,
             null)
     var destination := Waypoint.new(
             destination_position.surface,
             destination_position.target_point,
             destination_passing_vertically,
+            false,
             false,
             null,
             null)
@@ -173,25 +175,17 @@ static func calculate_waypoints_around_surface(
     # 
     # -   That is, the calculated waypoint is at the same position as the next
     #     waypoint.
-    # -   This usually means that the edge-calculation is trying to move around
-    #     the end of a surface that has more than two vertices, and a middle
-    #     vertex sticks out further, in the normal direction, than the end
-    #     vertices, so, even though we are trying to navigate around the ends
-    #     of the surface, we still collide with the center.
-    # -   Consider re-designing the level if this causes too many failed edges.
-    # 
-    # TODO: We could update the edge-calculation logic handle this case.
-    # -   However, this support might be complex to implement, and expensive to
-    #     run.
-    # -   And we probably don't particularly need these edges.
-    # -   And if we did need them, it would probably be easy enough to re-shape
-    #     the level to enable them.
+    # -   This should never happen!
     if position_ccw == next_waypoint.position:
         should_skip_ccw = true
-        Sc.logger.warning("Calculated a redundant waypoint (see comment).")
+        Sc.logger.error(
+                "Calculated a redundant waypoint (the calculated waypoint " +
+                "is at the same position as the next waypoint).")
     if position_cw == next_waypoint.position:
         should_skip_cw = true
-        Sc.logger.warning("Calculated a redundant waypoint (see comment).")
+        Sc.logger.error(
+                "Calculated a redundant waypoint (the calculated waypoint " +
+                "is at the same position as the next waypoint).")
     
     var waypoint_a_original: Waypoint
     var waypoint_a_final: Waypoint
@@ -204,6 +198,7 @@ static func calculate_waypoints_around_surface(
                 position_ccw,
                 passing_vertically,
                 should_stay_on_min_side_ccw,
+                true,
                 previous_waypoint,
                 next_waypoint)
         # Calculate and record state for the waypoint.
@@ -239,6 +234,7 @@ static func calculate_waypoints_around_surface(
                 position_cw,
                 passing_vertically,
                 should_stay_on_min_side_cw,
+                true,
                 previous_waypoint,
                 next_waypoint)
         # Calculate and record state for the waypoint.
@@ -294,11 +290,136 @@ static func calculate_waypoints_around_surface(
             Sc.logger.error()
         waypoints = []
     
+    _calculate_protrusion_waypoint(
+            waypoints,
+            edge_result_metadata,
+            collision_params,
+            movement_params,
+            vertical_step,
+            previous_waypoint,
+            next_waypoint,
+            origin_waypoint,
+            destination_waypoint,
+            colliding_surface,
+            waypoint_offset)
+    
     Sc.profiler.stop_with_optional_metadata(
             "calculate_waypoints_around_surface",
             collision_params.thread_id,
             edge_result_metadata)
     return waypoints
+
+
+static func _calculate_protrusion_waypoint(
+        result: Array,
+        edge_result_metadata: EdgeCalcResultMetadata,
+        collision_params: CollisionCalcParams,
+        movement_params: MovementParameters,
+        vertical_step: VerticalEdgeStep,
+        previous_waypoint: Waypoint,
+        next_waypoint: Waypoint,
+        origin_waypoint: Waypoint,
+        destination_waypoint: Waypoint,
+        colliding_surface: Surface,
+        waypoint_offset: Vector2) -> void:
+    var protrusion_waypoint: Waypoint
+    if colliding_surface.vertices.size() > 2:
+        var protrusion_position := Vector2.INF
+        var passing_protrusion_vertically: bool
+        var should_stay_on_protrusion_min_side: bool
+        match colliding_surface.side:
+            SurfaceSide.FLOOR:
+                var min_y := colliding_surface.bounding_box.position.y
+                var does_middle_vertex_protrude := \
+                        colliding_surface.first_point.y > min_y + 0.1 and \
+                        colliding_surface.last_point.y > min_y + 0.1
+                if does_middle_vertex_protrude:
+                    var protruding_vertex := Vector2.INF
+                    for vertex in colliding_surface.vertices:
+                        if vertex.y < protruding_vertex.y:
+                            protruding_vertex = vertex
+                    protrusion_position = \
+                            protruding_vertex + \
+                            Vector2(0.0, -waypoint_offset.y)
+                    passing_protrusion_vertically = false
+                    should_stay_on_protrusion_min_side = true
+            SurfaceSide.LEFT_WALL:
+                var max_x := colliding_surface.bounding_box.end.x
+                var does_middle_vertex_protrude := \
+                        colliding_surface.first_point.x < max_x - 0.1 and \
+                        colliding_surface.last_point.x < max_x - 0.1
+                if does_middle_vertex_protrude:
+                    var protruding_vertex := -Vector2.INF
+                    for vertex in colliding_surface.vertices:
+                        if vertex.x > protruding_vertex.x:
+                            protruding_vertex = vertex
+                    protrusion_position = \
+                            protruding_vertex + \
+                            Vector2(waypoint_offset.x, 0.0)
+                    passing_protrusion_vertically = true
+                    should_stay_on_protrusion_min_side = false
+            SurfaceSide.RIGHT_WALL:
+                var min_x := colliding_surface.bounding_box.position.x
+                var does_middle_vertex_protrude := \
+                        colliding_surface.first_point.x > min_x + 0.1 and \
+                        colliding_surface.last_point.x > min_x + 0.1
+                if does_middle_vertex_protrude:
+                    var protruding_vertex := Vector2.INF
+                    for vertex in colliding_surface.vertices:
+                        if vertex.x < protruding_vertex.x:
+                            protruding_vertex = vertex
+                    protrusion_position = \
+                            protruding_vertex + \
+                            Vector2(-waypoint_offset.x, 0.0)
+                    passing_protrusion_vertically = true
+                    should_stay_on_protrusion_min_side = true
+            SurfaceSide.CEILING:
+                var max_y := colliding_surface.bounding_box.end.y
+                var does_middle_vertex_protrude := \
+                        colliding_surface.first_point.y < max_y - 0.1 and \
+                        colliding_surface.last_point.y < max_y - 0.1
+                if does_middle_vertex_protrude:
+                    var protruding_vertex := -Vector2.INF
+                    for vertex in colliding_surface.vertices:
+                        if vertex.y > protruding_vertex.y:
+                            protruding_vertex = vertex
+                    protrusion_position = \
+                            protruding_vertex + \
+                            Vector2(0.0, waypoint_offset.y)
+                    passing_protrusion_vertically = false
+                    should_stay_on_protrusion_min_side = false
+            _:
+                Sc.logger.error()
+        
+        if protrusion_position != Vector2.INF:
+            protrusion_waypoint = Waypoint.new(
+                    colliding_surface,
+                    protrusion_position,
+                    passing_protrusion_vertically,
+                    should_stay_on_protrusion_min_side,
+                    false,
+                    previous_waypoint,
+                    next_waypoint)
+            # Calculate and record state for the waypoint.
+            update_waypoint(
+                    protrusion_waypoint,
+                    origin_waypoint,
+                    movement_params,
+                    vertical_step.velocity_step_start,
+                    vertical_step.can_hold_jump_button,
+                    vertical_step,
+                    Vector2.INF)
+    
+    # Include the result, in sorted order.
+    if is_instance_valid(protrusion_waypoint):
+        if result.size() >= 1 and \
+                !result[0].is_valid:
+            result.insert(0, protrusion_waypoint)
+        elif result.size() == 2 and \
+                !result[1].is_valid:
+            result.insert(1, protrusion_waypoint)
+        else:
+            result.append(protrusion_waypoint)
 
 
 # Use some basic heuristics to sort the waypoints. We try to attempt
@@ -400,6 +521,7 @@ static func update_waypoint(
     var is_a_fake_waypoint := \
             !waypoint.is_origin and \
             !waypoint.is_destination and \
+            waypoint.is_at_end_of_surface and \
             waypoint.surface != null and \
             waypoint.horizontal_movement_sign != \
                     waypoint.horizontal_movement_sign_from_displacement and \
@@ -2016,6 +2138,7 @@ static func _calculate_replacement_for_fake_waypoint(
             replacement_position,
             false,
             should_stay_on_min_side,
+            true,
             fake_waypoint.previous_waypoint,
             fake_waypoint.next_waypoint)
     replacement.replaced_a_fake = true
@@ -2028,6 +2151,7 @@ static func clone_waypoint(original: Waypoint) -> Waypoint:
             original.position,
             original.passing_vertically,
             original.should_stay_on_min_side,
+            original.is_at_end_of_surface,
             original.previous_waypoint,
             original.next_waypoint)
     copy_waypoint(clone, original)
