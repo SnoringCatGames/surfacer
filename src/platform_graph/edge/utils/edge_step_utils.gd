@@ -157,6 +157,24 @@ static func calculate_steps_between_waypoints(
                         collision.time_from_start_of_frame
             return result
     
+    if collision.surface == step_calc_params.end_waypoint.surface:
+        # -   We are in a recursive step and colliding with the same surface as
+        #     the parent step.
+        # -   This should only happen when the edge-calculation is trying to
+        #     move around a surface that has more than two vertices, and a
+        #     middle vertex sticks out further, in the normal direction, than
+        #     the end vertices, so, even though we are trying to navigate
+        #     around the ends of the surface, we still collide with the center.
+        # -   In that case, the parent step should have actually calculated
+        #     three waypoints, and one of the other recursive child step calls
+        #     may be able to successfully move around the surface.
+        # -   Regardless, we don't want to redundantly consider waypoints
+        #     around the same surface again here.
+        if step_result_metadata != null:
+            step_result_metadata.edge_step_calc_result_type = \
+                    EdgeStepCalcResultType.REDUNDANT_RECURSIVE_COLLISION
+        return null
+    
     Sc.profiler.increment_count(
             "collision_in_calculate_steps_between_waypoints",
             edge_calc_params.collision_params.thread_id,
