@@ -171,20 +171,27 @@ static func calculate_waypoints_around_surface(
     # We ignore waypoints that are redundant with the constraint we were
     # already using with the previous step attempt.
     # 
-    # These indicate a problem with our step logic somewhere though, so we log
-    # an error.
+    # -   That is, the calculated waypoint is at the same position as the next
+    #     waypoint.
+    # -   This usually means that the edge-calculation is trying to move around
+    #     the end of a surface that has more than two vertices, and a middle
+    #     vertex sticks out further, in the normal direction, than the end
+    #     vertices, so, even though we are trying to navigate around the ends
+    #     of the surface, we still collide with the center.
+    # -   Consider re-designing the level if this causes too many failed edges.
+    # 
+    # TODO: We could update the edge-calculation logic handle this case.
+    # -   However, this support might be complex to implement, and expensive to
+    #     run.
+    # -   And we probably don't particularly need these edges.
+    # -   And if we did need them, it would probably be easy enough to re-shape
+    #     the level to enable them.
     if position_ccw == next_waypoint.position:
         should_skip_ccw = true
-        Sc.logger.error(
-                "Calculated a rendundant waypoint (same position as the " +
-                "next waypoint)",
-                false)
+        Sc.logger.warning("Calculated a redundant waypoint (see comment).")
     if position_cw == next_waypoint.position:
         should_skip_cw = true
-        Sc.logger.error(
-                "Calculated a rendundant waypoint (same position as the " +
-                "next waypoint)",
-                false)
+        Sc.logger.warning("Calculated a redundant waypoint (see comment).")
     
     var waypoint_a_original: Waypoint
     var waypoint_a_final: Waypoint
