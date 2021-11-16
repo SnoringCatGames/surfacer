@@ -351,6 +351,17 @@ var _default_styles_manifest_normal := {
     overlay_panel_shadow_size = 8,
     overlay_panel_shadow_offset = Vector2(-4.0, 4.0),
     
+    notification_panel_border_width = 2,
+    
+    notification_panel_corner_radius = 4,
+    notification_panel_corner_detail = 3,
+    notification_panel_content_margin_left = 0.0,
+    notification_panel_content_margin_top = 0.0,
+    notification_panel_content_margin_right = 0.0,
+    notification_panel_content_margin_bottom = 0.0,
+    notification_panel_shadow_size = 8,
+    notification_panel_shadow_offset = Vector2(-4.0, 4.0),
+    
     header_panel_content_margin_left = 0.0,
     header_panel_content_margin_top = 0.0,
     header_panel_content_margin_right = 0.0,
@@ -465,6 +476,20 @@ var _default_styles_manifest_pixel := {
     overlay_panel_content_margin_top = 3.0,
     overlay_panel_content_margin_right = 3.0,
     overlay_panel_content_margin_bottom = 3.0,
+    
+    notification_panel_border_width = 2,
+    
+    notification_panel_nine_patch = \
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/overlay_panel.png"),
+    notification_panel_nine_patch_margin_left = 3.5,
+    notification_panel_nine_patch_margin_top = 3.5,
+    notification_panel_nine_patch_margin_right = 3.5,
+    notification_panel_nine_patch_margin_bottom = 3.5,
+    notification_panel_nine_patch_scale = 3.0,
+    notification_panel_content_margin_left = 3.0,
+    notification_panel_content_margin_top = 3.0,
+    notification_panel_content_margin_right = 3.0,
+    notification_panel_content_margin_bottom = 3.0,
     
     header_panel_content_margin_left = 0.0,
     header_panel_content_margin_top = 0.0,
