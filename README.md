@@ -69,13 +69,12 @@ But there are use-cases for which we really benefit from an AI that can accurate
 
 ## Learn more!
 
+-   **[Extended tutorial on how this AI works](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html)**
 -   [Getting set up](./docs/getting_set_up.md)
 -   [The platform-graph AI](./docs/platform_ai.md)
 -   [The platform-graph inspector](./docs/inspector.md)
 -   [Notable limitations](./docs/limitations.md)
 -   [Other features](./docs/other_features.md)
-
-You can also read more about how Surfacer's AI and movement works in [this **tutorial series**](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html).
 
 <p align="center">
   <img src="docs/demo.gif"
