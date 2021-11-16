@@ -480,7 +480,7 @@ var _default_styles_manifest_pixel := {
     notification_panel_border_width = 2,
     
     notification_panel_nine_patch = \
-            preload("res://addons/scaffolder/assets/images/gui/nine_patch/overlay_panel.png"),
+            preload("res://addons/scaffolder/assets/images/gui/nine_patch/notification_panel.png"),
     notification_panel_nine_patch_margin_left = 3.5,
     notification_panel_nine_patch_margin_top = 3.5,
     notification_panel_nine_patch_margin_right = 3.5,
