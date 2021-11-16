@@ -1,6 +1,6 @@
 # Platformer AI
 
-> _You can also read more about how Surfacer's AI and movement works in [this series of devlog posts on devlog.levi.dev](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html)._
+> _You can also read more about how Surfacer's AI and movement works in [this **extended tutorial**](https://levi.dev/platformer-ai)._
 
 ## The platform graph: Pre-parsing the world
 

@@ -15,7 +15,7 @@
 > 
 > _**[Godot Asset Library](https://godotengine.org/asset-library/asset/968)**_
 >
-> _**[Extended tutorial on how this AI works](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html)**_
+> _**[Extended tutorial on how this AI works](https://levi.dev/platformer-ai)**_
 
 _An **AI and pathfinding** 2D-platformer framework for [Godot](https://godotengine.org/)._
 
@@ -69,7 +69,7 @@ But there are use-cases for which we really benefit from an AI that can accurate
 
 ## Learn more!
 
--   **[Extended tutorial on how this AI works](https://devlog.levi.dev/2021/09/building-platformer-ai-from-low-level.html)**
+-   **[Extended tutorial on how this AI works](https://levi.dev/platformer-ai)**
 -   [Getting set up](./docs/getting_set_up.md)
 -   [The platform-graph AI](./docs/platform_ai.md)
 -   [The platform-graph inspector](./docs/inspector.md)
