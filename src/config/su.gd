@@ -267,10 +267,12 @@ var non_surface_parser_metric_keys := [
 ]
 
 var surface_parser_metric_keys := [
-    "validate_tile_set_duration",
-    "parse_tile_map_into_sides_duration",
-    "remove_internal_surfaces_duration",
-    "merge_continuous_surfaces_duration",
+    "validate_tile_set",
+    "parse_tile_set",
+    "parse_tile_map_cells_into_surfaces",
+    "remove_internal_surfaces",
+    "merge_continuous_surfaces",
+    "get_surface_list_from_map",
     "remove_internal_collinear_vertices_duration",
     "store_surfaces_duration",
     "populate_derivative_collections",
