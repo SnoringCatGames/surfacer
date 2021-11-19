@@ -55,7 +55,7 @@ var is_npc_navigation_destination_shown := false
 var is_npc_nav_pulse_shown := true
 
 const PLACEHOLDER_SURFACES_TILE_SET_PATH := \
-        "res://addons/surfacer/src/level/placeholder_surfaces_tile_set.tres"
+        "res://addons/surfacer/src/tiles/tile_set_with_many_angles.tres"
 
 var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
     groups = {

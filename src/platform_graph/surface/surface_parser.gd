@@ -407,6 +407,8 @@ static func _parse_tile_shape(
     if shapes.empty():
         # This is a non-collidable tile (usually a background tile).
         return null
+    # FIXME: LEFT OFF HERE: --------------------------------
+    # - This old logic assumed only single-tile types--no auto-tiles.
     var info: Dictionary = shapes[0]
     
     # Transform tile shapes into world coordinates.
