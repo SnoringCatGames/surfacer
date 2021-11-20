@@ -96,10 +96,7 @@ func _parse_tile_map(
     Sc.profiler.stop("validate_tile_set")
     
     Sc.profiler.start("parse_tile_set")
-    var tile_id_to_shape_data := {}
-    _parse_tile_set(
-            tile_map,
-            tile_id_to_shape_data)
+    var tile_id_to_coord_to_shape_data := _parse_tile_set(tile_map)
     Sc.profiler.stop("parse_tile_set")
     
     Sc.profiler.start("parse_tile_map_cells_into_surfaces")
@@ -112,7 +109,7 @@ func _parse_tile_map(
             tile_map_index_to_left_wall,
             tile_map_index_to_right_wall,
             tile_map_index_to_ceiling,
-            tile_id_to_shape_data,
+            tile_id_to_coord_to_shape_data,
             tile_map)
     Sc.profiler.stop("parse_tile_map_cells_into_surfaces")
     
@@ -122,7 +119,7 @@ func _parse_tile_map(
             tile_map_index_to_left_wall,
             tile_map_index_to_right_wall,
             tile_map_index_to_ceiling,
-            tile_id_to_shape_data,
+            tile_id_to_coord_to_shape_data,
             tile_map)
     Sc.profiler.stop("remove_internal_surfaces")
     
@@ -305,19 +302,14 @@ static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
     
     for id in ids:
         var shapes := tile_set.tile_get_shapes(id)
-        
-        if shapes.size() == 0:
-            continue
-        
-        for info in shapes:
-            var shape: Shape2D = info.shape
-            var shape_transform: Transform2D = info.shape_transform
+        for shape_data in shapes:
+            var shape: Shape2D = shape_data.shape
+            var shape_transform: Transform2D = shape_data.shape_transform
+            var points: PoolVector2Array = shape.points
             
             assert(shape is ConvexPolygonShape2D,
                     "TileSet collision shapes must be of type " +
                     "ConvexPolygonShape2D.")
-            
-            var points: PoolVector2Array = shape.points
             
             for i in points.size() - 1:
                 assert(points[i] != points[i + 1],
@@ -375,46 +367,50 @@ static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
                         "the cell-size of the corresponding TileMap.")
 
 
-static func _parse_tile_set(
-        tile_map: SurfacesTileMap,
-        tile_id_to_shape_data: Dictionary) -> void:
+static func _parse_tile_set(tile_map: SurfacesTileMap) -> Dictionary:
     var tile_set := tile_map.tile_set
     var cell_size := tile_map.cell_size
-    
+    var tile_id_to_coord_to_shape_data := {}
     for tile_id in tile_set.get_tiles_ids():
-        # Calculate and store the polylines from this shape that correspond to
-        # the shape's top-side, right-side, left-side, and bottom-side.
-        var tile_shape_data := _parse_tile_shape(
+        var tile_coord_to_shape := _parse_tile(
                 tile_id,
                 tile_set,
                 cell_size)
-        if !is_instance_valid(tile_shape_data):
-            # This is a non-collidable tile (usually a background tile).
-            continue
-        tile_id_to_shape_data[tile_id] = tile_shape_data
+        tile_id_to_coord_to_shape_data[tile_id] = tile_coord_to_shape
+    return tile_id_to_coord_to_shape_data
 
 
 # Parses the given tile.
+# -   Each shape in the tile will be mapped by its coordinates within the tile.
+static func _parse_tile(
+        tile_id: int,
+        tile_set: TileSet,
+        cell_size: Vector2) -> Dictionary:
+    var tile_coord_to_shape := {}
+    var shapes := tile_set.tile_get_shapes(tile_id)
+    for shape_data in shapes:
+        tile_coord_to_shape[shape_data.autotile_coord] = _parse_tile_shape(
+                shape_data.shape,
+                shape_data.shape_transform,
+                shape_data.one_way,
+                cell_size)
+    return tile_coord_to_shape
+
+
+# Parses the given tile shape.
 # -   The tile shape will be split into separate polylines corresponding to the
 #     top-side, left-side, and right-side of the shape.
 # -   Each of these polylines will be stored with their vertices in clockwise
 #     order.
 static func _parse_tile_shape(
-        tile_id: int,
-        tile_set: TileSet,
+        shape: Shape2D,
+        shape_transform: Transform2D,
+        is_one_way: bool,
         cell_size: Vector2) -> TileShapeData:
-    var shapes := tile_set.tile_get_shapes(tile_id)
-    if shapes.empty():
-        # This is a non-collidable tile (usually a background tile).
-        return null
-    # FIXME: LEFT OFF HERE: --------------------------------
-    # - This old logic assumed only single-tile types--no auto-tiles.
-    var info: Dictionary = shapes[0]
     
     # Transform tile shapes into world coordinates.
     # ConvexPolygonShape2D
-    var shape: Shape2D = info.shape
-    var shape_transform: Transform2D = info.shape_transform
+    
     var vertex_count: int = shape.points.size()
     var vertices := Array()
     vertices.resize(vertex_count)
@@ -593,7 +589,6 @@ static func _parse_tile_shape(
     right_side_vertices.push_back(vertices[i])
     
     var tile_shape_data := TileShapeData.new()
-    tile_shape_data.tile_set_index = tile_id
     tile_shape_data.top_vertices = top_side_vertices
     tile_shape_data.right_vertices = right_side_vertices
     tile_shape_data.bottom_vertices = bottom_side_vertices
@@ -661,7 +656,7 @@ static func _parse_tile_map_cells_into_surfaces(
         tile_map_index_to_left_wall: Dictionary,
         tile_map_index_to_right_wall: Dictionary,
         tile_map_index_to_ceiling: Dictionary,
-        tile_id_to_shape_data: Dictionary,
+        tile_id_to_coord_to_shape_data: Dictionary,
         tile_map: TileMap) -> void:
     var cell_size := tile_map.cell_size
     var used_cells := tile_map.get_used_cells()
@@ -673,10 +668,10 @@ static func _parse_tile_map_cells_into_surfaces(
                         tile_map_position,
                         tile_map)
         var tile_id := tile_map.get_cellv(tile_map_position)
-        if !tile_id_to_shape_data.has(tile_id):
-            # This is a non-collidable tile (usually a background tile).
-            continue
-        var tile_shape_data: TileShapeData = tile_id_to_shape_data[tile_id]
+        var tile_coord := tile_map.get_cell_autotile_coord(
+                tile_map_position.x, tile_map_position.y)
+        var tile_shape_data: TileShapeData = \
+                tile_id_to_coord_to_shape_data[tile_id][tile_coord]
         
         # Transform tile shapes into world coordinates.
         var floor_vertices_world_coords := \
@@ -737,21 +732,21 @@ static func _remove_internal_surfaces(
         tile_map_index_to_left_wall: Dictionary,
         tile_map_index_to_right_wall: Dictionary,
         tile_map_index_to_ceiling: Dictionary,
-        tile_id_to_shape_data: Dictionary,
+        tile_id_to_coord_to_shape_data: Dictionary,
         tile_map: TileMap) -> void:
     _remove_internal_single_vertex_surfaces(
             tile_map_index_to_floor,
             tile_map_index_to_left_wall,
             tile_map_index_to_right_wall,
             tile_map_index_to_ceiling,
-            tile_id_to_shape_data,
+            tile_id_to_coord_to_shape_data,
             tile_map)
     _remove_internal_multi_vertex_surfaces(
             tile_map_index_to_floor,
             tile_map_index_to_left_wall,
             tile_map_index_to_right_wall,
             tile_map_index_to_ceiling,
-            tile_id_to_shape_data,
+            tile_id_to_coord_to_shape_data,
             tile_map)
 
 
@@ -760,7 +755,7 @@ static func _remove_internal_single_vertex_surfaces(
         tile_map_index_to_left_wall: Dictionary,
         tile_map_index_to_right_wall: Dictionary,
         tile_map_index_to_ceiling: Dictionary,
-        tile_id_to_shape_data: Dictionary,
+        tile_id_to_coord_to_shape_data: Dictionary,
         tile_map: TileMap) -> void:
     var used_rect := tile_map.get_used_rect()
     var tile_map_row_count := used_rect.size.y
@@ -1075,7 +1070,7 @@ static func _remove_internal_multi_vertex_surfaces(
         tile_map_index_to_left_wall: Dictionary,
         tile_map_index_to_right_wall: Dictionary,
         tile_map_index_to_ceiling: Dictionary,
-        tile_id_to_shape_data: Dictionary,
+        tile_id_to_coord_to_shape_data: Dictionary,
         tile_map: TileMap) -> void:
     var used_rect := tile_map.get_used_rect()
     var grid_offset := Sc.geometry.snap_vector2_to_integers(used_rect.position)
@@ -1110,25 +1105,40 @@ static func _remove_internal_multi_vertex_surfaces(
                     tile_map.get_cellv(top_neighbor_grid_coord)
             var bottom_neighbor_tile_id := \
                     tile_map.get_cellv(bottom_neighbor_grid_coord)
+            var current_tile_coord := tile_map.get_cell_autotile_coord(
+                    current_grid_coord.x, current_grid_coord.y)
+            var left_neighbor_tile_coord := tile_map.get_cell_autotile_coord(
+                    left_neighbor_grid_coord.x, left_neighbor_grid_coord.y)
+            var right_neighbor_tile_coord := tile_map.get_cell_autotile_coord(
+                    right_neighbor_grid_coord.x, right_neighbor_grid_coord.y)
+            var top_neighbor_tile_coord := tile_map.get_cell_autotile_coord(
+                    top_neighbor_grid_coord.x, top_neighbor_grid_coord.y)
+            var bottom_neighbor_tile_coord := tile_map.get_cell_autotile_coord(
+                    bottom_neighbor_grid_coord.x, bottom_neighbor_grid_coord.y)
             
             var current_tile_shape_data: TileShapeData = \
-                    tile_id_to_shape_data[current_tile_id] if \
+                    tile_id_to_coord_to_shape_data[current_tile_id][ \
+                        current_tile_coord] if \
                     current_tile_id != TileMap.INVALID_CELL else \
                     null
             var left_neighbor_tile_shape_data: TileShapeData = \
-                    tile_id_to_shape_data[left_neighbor_tile_id] if \
+                    tile_id_to_coord_to_shape_data[left_neighbor_tile_id][ \
+                        left_neighbor_tile_coord] if \
                     left_neighbor_tile_id != TileMap.INVALID_CELL else \
                     null
             var right_neighbor_tile_shape_data: TileShapeData = \
-                    tile_id_to_shape_data[right_neighbor_tile_id] if \
+                    tile_id_to_coord_to_shape_data[right_neighbor_tile_id][ \
+                        right_neighbor_tile_coord] if \
                     right_neighbor_tile_id != TileMap.INVALID_CELL else \
                     null
             var top_neighbor_tile_shape_data: TileShapeData = \
-                    tile_id_to_shape_data[top_neighbor_tile_id] if \
+                    tile_id_to_coord_to_shape_data[top_neighbor_tile_id][ \
+                        top_neighbor_tile_coord] if \
                     top_neighbor_tile_id != TileMap.INVALID_CELL else \
                     null
             var bottom_neighbor_tile_shape_data: TileShapeData = \
-                    tile_id_to_shape_data[bottom_neighbor_tile_id] if \
+                    tile_id_to_coord_to_shape_data[bottom_neighbor_tile_id][ \
+                        bottom_neighbor_tile_coord] if \
                     bottom_neighbor_tile_id != TileMap.INVALID_CELL else \
                     null
             
@@ -1557,6 +1567,15 @@ static func _remove_internal_multi_vertex_surfaces(
                                     right_wall_last_point
 
 
+# FIXME: LEFT OFF HERE: ----------------------------
+static func _hack_free(foo: _TmpSurface, collection: Dictionary) -> void:
+    for tile_map_index in collection:
+        if collection[tile_map_index] == foo:
+            print("break")
+            assert(false)
+    foo.free()
+
+
 # Merges adjacent continuous surfaces.
 static func _merge_continuous_surfaces(
         tile_map_index_to_floor: Dictionary,
@@ -1572,10 +1591,12 @@ static func _merge_continuous_surfaces(
         for column in tile_map_column_count:
             var tile_map_index: int = row * tile_map_column_count + column
             
-            # The left and right neighbors will wrap-around, but that's not a
+            # The left and right neighbors can wrap-around, but that's not a
             # problem, since they won't produce false positives.
             var right_neighbor_index := tile_map_index + 1
             var bottom_neighbor_index := tile_map_index + tile_map_column_count
+            var bottom_left_neighbor_index := bottom_neighbor_index - 1
+            var bottom_right_neighbor_index := bottom_neighbor_index + 1
             
             if tile_map_index_to_floor.has(tile_map_index) and \
                     tile_map_index_to_floor.has(right_neighbor_index):
@@ -1596,7 +1617,51 @@ static func _merge_continuous_surfaces(
                             right_surface.tile_map_indices)
                     tile_map_index_to_floor[right_neighbor_index] = \
                             current_surface
-                    right_surface.free()
+                    _hack_free(right_surface, tile_map_index_to_floor)#right_surface.free()
+            
+            if tile_map_index_to_floor.has(tile_map_index) and \
+                    tile_map_index_to_floor.has(bottom_left_neighbor_index):
+                var current_surface: _TmpSurface = \
+                        tile_map_index_to_floor[tile_map_index]
+                var bottom_left_surface: _TmpSurface = \
+                        tile_map_index_to_floor[bottom_left_neighbor_index]
+                if Sc.geometry.are_points_equal_with_epsilon(
+                        bottom_left_surface.vertices_array.back(),
+                        current_surface.vertices_array.front(),
+                        _EQUAL_POINT_EPSILON):
+                    bottom_left_surface.vertices_array.pop_back()
+                    Sc.utils.concat(
+                            bottom_left_surface.vertices_array,
+                            current_surface.vertices_array)
+                    current_surface.vertices_array = \
+                            bottom_left_surface.vertices_array
+                    Sc.utils.concat(
+                            current_surface.tile_map_indices,
+                            bottom_left_surface.tile_map_indices)
+                    tile_map_index_to_floor[bottom_left_neighbor_index] = \
+                            current_surface
+                    _hack_free(bottom_left_surface, tile_map_index_to_floor)#bottom_left_surface.free()
+            
+            if tile_map_index_to_floor.has(tile_map_index) and \
+                    tile_map_index_to_floor.has(bottom_right_neighbor_index):
+                var current_surface: _TmpSurface = \
+                        tile_map_index_to_floor[tile_map_index]
+                var bottom_right_surface: _TmpSurface = \
+                        tile_map_index_to_floor[bottom_right_neighbor_index]
+                if Sc.geometry.are_points_equal_with_epsilon(
+                        current_surface.vertices_array.back(),
+                        bottom_right_surface.vertices_array.front(),
+                        _EQUAL_POINT_EPSILON):
+                    current_surface.vertices_array.pop_back()
+                    Sc.utils.concat(
+                            current_surface.vertices_array,
+                            bottom_right_surface.vertices_array)
+                    Sc.utils.concat(
+                            current_surface.tile_map_indices,
+                            bottom_right_surface.tile_map_indices)
+                    tile_map_index_to_floor[bottom_right_neighbor_index] = \
+                            current_surface
+                    _hack_free(bottom_right_surface, tile_map_index_to_floor)#bottom_right_surface.free()
             
             if tile_map_index_to_ceiling.has(tile_map_index) and \
                     tile_map_index_to_ceiling.has(right_neighbor_index):
@@ -1619,7 +1684,51 @@ static func _merge_continuous_surfaces(
                             right_surface.tile_map_indices)
                     tile_map_index_to_ceiling[right_neighbor_index] = \
                             current_surface
-                    right_surface.free()
+                    _hack_free(right_surface, tile_map_index_to_ceiling)#right_surface.free()
+            
+            if tile_map_index_to_ceiling.has(tile_map_index) and \
+                    tile_map_index_to_ceiling.has(bottom_left_neighbor_index):
+                var current_surface: _TmpSurface = \
+                        tile_map_index_to_ceiling[tile_map_index]
+                var bottom_left_surface: _TmpSurface = \
+                        tile_map_index_to_ceiling[bottom_left_neighbor_index]
+                if Sc.geometry.are_points_equal_with_epsilon(
+                        current_surface.vertices_array.back(),
+                        bottom_left_surface.vertices_array.front(),
+                        _EQUAL_POINT_EPSILON):
+                    current_surface.vertices_array.pop_back()
+                    Sc.utils.concat(
+                            current_surface.vertices_array,
+                            bottom_left_surface.vertices_array)
+                    Sc.utils.concat(
+                            current_surface.tile_map_indices,
+                            bottom_left_surface.tile_map_indices)
+                    tile_map_index_to_ceiling[bottom_left_neighbor_index] = \
+                            current_surface
+                    _hack_free(bottom_left_surface, tile_map_index_to_ceiling)#bottom_left_surface.free()
+            
+            if tile_map_index_to_ceiling.has(tile_map_index) and \
+                    tile_map_index_to_ceiling.has(bottom_right_neighbor_index):
+                var current_surface: _TmpSurface = \
+                        tile_map_index_to_ceiling[tile_map_index]
+                var bottom_right_surface: _TmpSurface = \
+                        tile_map_index_to_ceiling[bottom_right_neighbor_index]
+                if Sc.geometry.are_points_equal_with_epsilon(
+                        bottom_right_surface.vertices_array.back(),
+                        current_surface.vertices_array.front(),
+                        _EQUAL_POINT_EPSILON):
+                    bottom_right_surface.vertices_array.pop_back()
+                    Sc.utils.concat(
+                            bottom_right_surface.vertices_array,
+                            current_surface.vertices_array)
+                    current_surface.vertices_array = \
+                            bottom_right_surface.vertices_array
+                    Sc.utils.concat(
+                            current_surface.tile_map_indices,
+                            bottom_right_surface.tile_map_indices)
+                    tile_map_index_to_ceiling[bottom_right_neighbor_index] = \
+                            current_surface
+                    _hack_free(bottom_right_surface, tile_map_index_to_ceiling)#bottom_right_surface.free()
             
             if tile_map_index_to_left_wall.has(tile_map_index) and \
                     tile_map_index_to_left_wall.has(bottom_neighbor_index):
@@ -1640,7 +1749,51 @@ static func _merge_continuous_surfaces(
                             bottom_surface.tile_map_indices)
                     tile_map_index_to_left_wall[bottom_neighbor_index] = \
                             current_surface
-                    bottom_surface.free()
+                    _hack_free(bottom_surface, tile_map_index_to_left_wall)#bottom_surface.free()
+            
+            if tile_map_index_to_left_wall.has(tile_map_index) and \
+                    tile_map_index_to_left_wall.has(bottom_left_neighbor_index):
+                var current_surface: _TmpSurface = \
+                        tile_map_index_to_left_wall[tile_map_index]
+                var bottom_left_surface: _TmpSurface = \
+                        tile_map_index_to_left_wall[bottom_left_neighbor_index]
+                if Sc.geometry.are_points_equal_with_epsilon(
+                        current_surface.vertices_array.back(),
+                        bottom_left_surface.vertices_array.front(),
+                        _EQUAL_POINT_EPSILON):
+                    current_surface.vertices_array.pop_back()
+                    Sc.utils.concat(
+                            current_surface.vertices_array,
+                            bottom_left_surface.vertices_array)
+                    Sc.utils.concat(
+                            current_surface.tile_map_indices,
+                            bottom_left_surface.tile_map_indices)
+                    tile_map_index_to_left_wall[bottom_left_neighbor_index] = \
+                            current_surface
+                    _hack_free(bottom_left_surface, tile_map_index_to_left_wall)#bottom_left_surface.free()
+            
+            if tile_map_index_to_left_wall.has(tile_map_index) and \
+                    tile_map_index_to_left_wall \
+                        .has(bottom_right_neighbor_index):
+                var current_surface: _TmpSurface = \
+                        tile_map_index_to_left_wall[tile_map_index]
+                var bottom_right_surface: _TmpSurface = \
+                        tile_map_index_to_left_wall[ \
+                            bottom_right_neighbor_index]
+                if Sc.geometry.are_points_equal_with_epsilon(
+                        current_surface.vertices_array.back(),
+                        bottom_right_surface.vertices_array.front(),
+                        _EQUAL_POINT_EPSILON):
+                    current_surface.vertices_array.pop_back()
+                    Sc.utils.concat(
+                            current_surface.vertices_array,
+                            bottom_right_surface.vertices_array)
+                    Sc.utils.concat(
+                            current_surface.tile_map_indices,
+                            bottom_right_surface.tile_map_indices)
+                    tile_map_index_to_left_wall[bottom_right_neighbor_index] = \
+                            current_surface
+                    _hack_free(bottom_right_surface, tile_map_index_to_left_wall)#bottom_right_surface.free()
             
             if tile_map_index_to_right_wall.has(tile_map_index) and \
                     tile_map_index_to_right_wall.has(bottom_neighbor_index):
@@ -1663,7 +1816,57 @@ static func _merge_continuous_surfaces(
                             bottom_surface.tile_map_indices)
                     tile_map_index_to_right_wall[bottom_neighbor_index] = \
                             current_surface
-                    bottom_surface.free()
+                    _hack_free(bottom_surface, tile_map_index_to_right_wall)#bottom_surface.free()
+            
+            if tile_map_index_to_right_wall.has(tile_map_index) and \
+                    tile_map_index_to_right_wall \
+                        .has(bottom_left_neighbor_index):
+                var current_surface: _TmpSurface = \
+                        tile_map_index_to_right_wall[tile_map_index]
+                var bottom_left_surface: _TmpSurface = \
+                        tile_map_index_to_right_wall[ \
+                            bottom_left_neighbor_index]
+                if Sc.geometry.are_points_equal_with_epsilon(
+                        bottom_left_surface.vertices_array.back(),
+                        current_surface.vertices_array.front(),
+                        _EQUAL_POINT_EPSILON):
+                    bottom_left_surface.vertices_array.pop_back()
+                    Sc.utils.concat(
+                            bottom_left_surface.vertices_array,
+                            current_surface.vertices_array)
+                    current_surface.vertices_array = \
+                            bottom_left_surface.vertices_array
+                    Sc.utils.concat(
+                            current_surface.tile_map_indices,
+                            bottom_left_surface.tile_map_indices)
+                    tile_map_index_to_right_wall[ \
+                            bottom_left_neighbor_index] = current_surface
+                    _hack_free(bottom_left_surface, tile_map_index_to_right_wall)#bottom_left_surface.free()
+            
+            if tile_map_index_to_right_wall.has(tile_map_index) and \
+                    tile_map_index_to_right_wall \
+                        .has(bottom_right_neighbor_index):
+                var current_surface: _TmpSurface = \
+                        tile_map_index_to_right_wall[tile_map_index]
+                var bottom_right_surface: _TmpSurface = \
+                        tile_map_index_to_right_wall[ \
+                            bottom_right_neighbor_index]
+                if Sc.geometry.are_points_equal_with_epsilon(
+                        bottom_right_surface.vertices_array.back(),
+                        current_surface.vertices_array.front(),
+                        _EQUAL_POINT_EPSILON):
+                    bottom_right_surface.vertices_array.pop_back()
+                    Sc.utils.concat(
+                            bottom_right_surface.vertices_array,
+                            current_surface.vertices_array)
+                    current_surface.vertices_array = \
+                            bottom_right_surface.vertices_array
+                    Sc.utils.concat(
+                            current_surface.tile_map_indices,
+                            bottom_right_surface.tile_map_indices)
+                    tile_map_index_to_right_wall[ \
+                            bottom_right_neighbor_index] = current_surface
+                    _hack_free(bottom_right_surface, tile_map_index_to_right_wall)#bottom_right_surface.free()
 
 
 static func _get_surface_list_from_map(
