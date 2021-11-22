@@ -522,12 +522,12 @@ static func check_frame_for_collision(
         # -   This probably means that there was a pre-existing collision at
         #     the start of the frame.
         # -   One reason this might happen is if your level topography has
-        #     too-close surfaces that the character can't fit between.
+        #     too-close-together surfaces that the character can't fit between.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
             Sc.logger.error()
         surface_collision.is_valid_collision_state = false
-        return null
+        return surface_collision
     
     var surface := tile_map_result.surface
     surface_side = tile_map_result.surface_side
@@ -563,7 +563,7 @@ static func check_frame_for_collision(
                     .asserts_no_preexisting_collisions_during_edge_calculations:
                 Sc.logger.error()
             surface_collision.is_valid_collision_state = false
-            return null
+            return surface_collision
         
         var surface_normal: Vector2
         match surface_side:
