@@ -457,7 +457,7 @@ static func calculate_time_for_passing_through_waypoint(
         position_instruction_end_y: float,
         velocity_instruction_end_y: float) -> float:
     var position := waypoint.position
-
+    
     var target_height := position.y
     
     var duration_of_slow_rise: float
@@ -489,41 +489,61 @@ static func calculate_time_for_passing_through_waypoint(
                 # Jump reaches the position after releasing the jump button
                 # (but before the peak).
                 is_position_before_instruction_end = false
-        _: # A wall.
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL: # A wall.
             if !waypoint.is_destination:
                 # We are considering an intermediate waypoint.
-                if waypoint.should_stay_on_min_side:
-                    # Passing over the top of the wall (jump reaches the
-                    # position before the peak).
-                    is_position_before_peak = true
-                    
-                    # FIXME: Double-check whether the vertical_step
-                    #        calculations will have actually supported upward
-                    #        velocity at this point, or whether it will be
-                    #        forcing downward?
-                    
-                    # We assume that we will always use upward velocity when
-                    # passing over a wall.
-                    if target_height > position_instruction_end_y:
-                        # Jump reaches the position before releasing the jump
-                        # button.
-                        is_position_before_instruction_end = true
+                if waypoint.is_at_end_of_surface:
+                    if waypoint.should_stay_on_min_side:
+                        # Passing over the top of the wall (jump reaches the
+                        # position before the peak).
+                        is_position_before_peak = true
+                        
+                        # FIXME: Double-check whether the vertical_step
+                        #        calculations will have actually supported
+                        #        upward velocity at this point, or whether it
+                        #        will be forcing downward?
+                        
+                        # We assume that we will always use upward velocity when
+                        # passing over a wall.
+                        if target_height > position_instruction_end_y:
+                            # Jump reaches the position before releasing the
+                            # jump button.
+                            is_position_before_instruction_end = true
+                        else:
+                            # Jump reaches the position after releasing the jump
+                            # button.
+                            is_position_before_instruction_end = false
                     else:
-                        # Jump reaches the position after releasing the jump
-                        # button.
+                        # Passing under the bottom of the wall (jump reaches the
+                        # position after releasing the jump button and after the
+                        # peak).
                         is_position_before_instruction_end = false
-                else:
-                    # Passing under the bottom of the wall (jump reaches the
-                    # position after releasing the jump button and after the
-                    # peak).
-                    is_position_before_instruction_end = false
-                    is_position_before_peak = false
+                        is_position_before_peak = false
+                    
+                else: # waypoint.is_at_end_of_surface
+                    # Passing a protrusion in the middle of the wall.
+                    
+                    # TODO: Make this smarter. This heuristic is very loose.
+                    var is_next_waypoint_higher := \
+                            waypoint.next_waypoint.position.y < target_height
+                    if is_next_waypoint_higher:
+                        is_position_before_peak = true
+                        if target_height > position_instruction_end_y:
+                            is_position_before_instruction_end = true
+                        else:
+                            is_position_before_instruction_end = false
+                    else:
+                        is_position_before_peak = false
+                
             else:
                 # We are considering a destination surface.
                 # We assume destination walls will always use downward velocity
                 # at the end.
                 is_position_before_instruction_end = false
                 is_position_before_peak = false
+        _:
+            ScaffolderLog.static_error()
     
     if is_position_before_instruction_end:
         var displacement := target_height - position_start_y
