@@ -22,8 +22,10 @@ func parse(
         tile_maps: Array) -> void:
     assert(!tile_maps.empty())
     
-    # FIXME: --------------- Add support for more than one collidable TileMap.
-    assert(tile_maps.size() == 1)
+    # TODO: Add support for more than one collidable TileMap.
+    assert(tile_maps.size() == 1,
+            "Surfacer currently does not support multiple collidable " +
+            "TileMaps per level.")
     
     _validate_tile_map_collection(tile_maps)
     
@@ -39,6 +41,9 @@ func _validate_tile_map_collection(tile_maps: Array) -> void:
     assert(!tile_maps.empty(),
             "Collidable TileMap collection must not be empty.")
     var cell_size: Vector2 = tile_maps[0].cell_size
+    assert(cell_size == Sc.gui.cell_size,
+            "TileMap.cell_size does not match Sc.gui.cell_size " +
+            "(update this in your app manifest).")
     for tile_map in tile_maps:
         assert(tile_map.cell_size == cell_size,
                 "All collidable TileMaps must use the same cell size.")
@@ -52,12 +57,6 @@ func _calculate_max_tile_map_cell_size(
         tile_maps: Array) -> void:
     var max_tile_map_cell_size := Vector2.ZERO
     for tile_map in tile_maps:
-        # FIXME: ------------- Add this assert back in?
-#        assert(tile_map.cell_size == Sc.gui.cell_size,
-#                "SurfaceParser currently needs all CollidableTileMaps to " +
-#                "use the same cell size, and this should match " +
-#                "Sc.gui.cell_size.")
-        
         if tile_map.cell_size.x + tile_map.cell_size.y > \
                 max_tile_map_cell_size.x + max_tile_map_cell_size.y:
             max_tile_map_cell_size = tile_map.cell_size
