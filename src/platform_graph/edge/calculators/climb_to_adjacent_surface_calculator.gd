@@ -511,7 +511,7 @@ func _populate_convex_trajectory(
                     position_end.surface.counter_clockwise_concave_neighbor
     var next_neighbor_normal_side_override := SurfaceSide.NONE
     if is_next_neighbor_concave:
-        match position_end.surface.side:
+        match end_side:
             SurfaceSide.FLOOR:
                 next_neighbor_normal_side_override = \
                         SurfaceSide.RIGHT_WALL if \

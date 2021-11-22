@@ -77,7 +77,8 @@ static func check_instructions_discrete_trajectory_state(
 #            collision = check_frame_for_collision(
 #                    collision_params,
 #                    position,
-#                    displacement)
+#                    displacement,
+#                    iteration_count)
             if collision != null:
                 trajectory.frame_discrete_positions_from_test = \
                         PoolVector2Array(frame_discrete_positions)
@@ -195,7 +196,8 @@ static func check_instructions_discrete_trajectory_state(
 #    collision = check_frame_for_collision(
 #            collision_params,
 #            position,
-#            displacement)
+#            displacement,
+#            iteration_count)
     if collision != null:
         trajectory.frame_discrete_positions_from_test = \
                 PoolVector2Array(frame_discrete_positions)
@@ -235,6 +237,7 @@ static func check_continuous_horizontal_step_for_collision(
     var current_velocity := horizontal_step.velocity_step_start
     var displacement: Vector2
     var collision: SurfaceCollision
+    var iteration_count := 0
     
     ###########################################################################
     # Record some extra collision state when debugging an edge calculation.
@@ -278,7 +281,8 @@ static func check_continuous_horizontal_step_for_collision(
             collision = check_frame_for_collision(
                     collision_params,
                     previous_position,
-                    displacement)
+                    displacement,
+                    iteration_count)
             if collision != null:
                 break
         
@@ -286,6 +290,7 @@ static func check_continuous_horizontal_step_for_collision(
         previous_position = current_position
         previous_time = current_time
         current_time += delta
+        iteration_count += 1
         
         # Record the positions and velocities for edge annotation debugging.
         frame_positions.push_back(current_position)
@@ -319,7 +324,8 @@ static func check_continuous_horizontal_step_for_collision(
             collision = check_frame_for_collision(
                     collision_params,
                     previous_position,
-                    displacement)
+                    displacement,
+                    iteration_count)
             
             if collision == null:
                 # Record the positions and velocities for edge annotation
@@ -366,6 +372,7 @@ static func check_frame_for_collision(
         collision_params: CollisionCalcParams,
         position_start: Vector2,
         displacement: Vector2,
+        iteration_count: int,
         is_recursing := false) -> SurfaceCollision:
     var crash_test_dummy: KinematicBody2D = collision_params.crash_test_dummy
     
@@ -389,6 +396,7 @@ static func check_frame_for_collision(
             abs(displacement.y) > abs(displacement.x) else \
             kinematic_collision.travel.x / displacement.x) * \
             Time.PHYSICS_TIME_STEP
+    
     if surface_collision.time_from_start_of_frame < 0.0:
         # -   This happens frequently.
         # -   It's unclear why Godot's collision engine produces negative
@@ -416,6 +424,9 @@ static func check_frame_for_collision(
             is_moving_away_from_surface = displacement.y > 0.0
         _:
             Sc.logger.error()
+    var is_collision_probably_preexisting := \
+            is_moving_away_from_surface and \
+            iteration_count == 0
     
     # Are we likely to be looking at the wrong intersection point, according to
     # how oblique movement is relative to the surface tangent?
@@ -432,15 +443,15 @@ static func check_frame_for_collision(
             .oblique_collison_normal_aspect_ratio_threshold_threshold
     var inverse_threshold := 1.0 / threshold
     var is_collision_normal_expected: bool = \
-            !crash_test_dummy.movement_params \
-            .checks_for_alt_intersection_points_for_oblique_collisions or \
             !(displacement_aspect_ratio > threshold and \
             collision_normal_aspect_ratio < inverse_threshold or \
             displacement_aspect_ratio < inverse_threshold and \
             collision_normal_aspect_ratio > threshold)
     
     if !is_moving_away_from_surface and \
-            !is_collision_normal_expected:
+            !is_collision_normal_expected and \
+            crash_test_dummy.movement_params \
+                .checks_for_alt_intersection_points_for_oblique_collisions:
         # Consider an alternate intersection point that might correspond to an
         # adjacent surface around a corner, and a less oblique collision.
         
@@ -547,15 +558,18 @@ static func check_frame_for_collision(
             is_moving_away_from_surface = displacement.y > 0.0
         _:
             Sc.logger.error()
+    is_collision_probably_preexisting = \
+            is_moving_away_from_surface and \
+            iteration_count == 0
     
     if is_moving_away_from_surface:
         # The character is moving away from the collision point.
-        # This means one of two things:
-        # -   There was a pre-existing collision (happens infrequently).
-        # -   The extra "safe_margin" used in calculating the collision extends
-        #     into a surface the character is departing, even though the
-        #     character wasn't directly colliding with the surface (happens
-        #     frequently).
+        # -   This means one of two things:
+        #     -   There was a pre-existing collision (happens infrequently).
+        #     -   The extra "safe_margin" used in calculating the collision
+        #         extends into a surface the character is departing, even
+        #         though the character wasn't directly colliding with the
+        #         surface (happens frequently).
         
         if is_recursing:
             # Invalid collision state: Happens infrequently.
@@ -587,6 +601,7 @@ static func check_frame_for_collision(
                 collision_params,
                 position_start,
                 displacement,
+                iteration_count,
                 true)
         crash_test_dummy.set_safe_margin(old_margin)
     
