@@ -758,8 +758,8 @@ static func _remove_internal_single_vertex_surfaces(
         tile_id_to_coord_to_shape_data: Dictionary,
         tile_map: TileMap) -> void:
     var used_rect := tile_map.get_used_rect()
-    var tile_map_row_count := used_rect.size.y
-    var tile_map_column_count := used_rect.size.x
+    var tile_map_row_count: int = used_rect.size.y
+    var tile_map_column_count: int = used_rect.size.x
     
     for row in tile_map_row_count:
         for column in tile_map_column_count:
@@ -1567,13 +1567,13 @@ static func _remove_internal_multi_vertex_surfaces(
                                     right_wall_last_point
 
 
-# FIXME: LEFT OFF HERE: ----------------------------
-static func _hack_free(foo: _TmpSurface, collection: Dictionary) -> void:
-    for tile_map_index in collection:
-        if collection[tile_map_index] == foo:
-            print("break")
-            assert(false)
-    foo.free()
+static func _replace_surface(
+        old_surface: _TmpSurface,
+        new_surface: _TmpSurface,
+        collection: Dictionary) -> void:
+    for index in old_surface.tile_map_indices:
+        collection[index] = new_surface
+    old_surface.free()
 
 
 # Merges adjacent continuous surfaces.
@@ -1617,7 +1617,10 @@ static func _merge_continuous_surfaces(
                             right_surface.tile_map_indices)
                     tile_map_index_to_floor[right_neighbor_index] = \
                             current_surface
-                    _hack_free(right_surface, tile_map_index_to_floor)#right_surface.free()
+                    _replace_surface(
+                            right_surface,
+                            current_surface,
+                            tile_map_index_to_floor)
             
             if tile_map_index_to_floor.has(tile_map_index) and \
                     tile_map_index_to_floor.has(bottom_left_neighbor_index):
@@ -1640,7 +1643,10 @@ static func _merge_continuous_surfaces(
                             bottom_left_surface.tile_map_indices)
                     tile_map_index_to_floor[bottom_left_neighbor_index] = \
                             current_surface
-                    _hack_free(bottom_left_surface, tile_map_index_to_floor)#bottom_left_surface.free()
+                    _replace_surface(
+                            bottom_left_surface,
+                            current_surface,
+                            tile_map_index_to_floor)
             
             if tile_map_index_to_floor.has(tile_map_index) and \
                     tile_map_index_to_floor.has(bottom_right_neighbor_index):
@@ -1661,7 +1667,10 @@ static func _merge_continuous_surfaces(
                             bottom_right_surface.tile_map_indices)
                     tile_map_index_to_floor[bottom_right_neighbor_index] = \
                             current_surface
-                    _hack_free(bottom_right_surface, tile_map_index_to_floor)#bottom_right_surface.free()
+                    _replace_surface(
+                            bottom_right_surface,
+                            current_surface,
+                            tile_map_index_to_floor)
             
             if tile_map_index_to_ceiling.has(tile_map_index) and \
                     tile_map_index_to_ceiling.has(right_neighbor_index):
@@ -1684,7 +1693,10 @@ static func _merge_continuous_surfaces(
                             right_surface.tile_map_indices)
                     tile_map_index_to_ceiling[right_neighbor_index] = \
                             current_surface
-                    _hack_free(right_surface, tile_map_index_to_ceiling)#right_surface.free()
+                    _replace_surface(
+                            right_surface,
+                            current_surface,
+                            tile_map_index_to_ceiling)
             
             if tile_map_index_to_ceiling.has(tile_map_index) and \
                     tile_map_index_to_ceiling.has(bottom_left_neighbor_index):
@@ -1705,7 +1717,10 @@ static func _merge_continuous_surfaces(
                             bottom_left_surface.tile_map_indices)
                     tile_map_index_to_ceiling[bottom_left_neighbor_index] = \
                             current_surface
-                    _hack_free(bottom_left_surface, tile_map_index_to_ceiling)#bottom_left_surface.free()
+                    _replace_surface(
+                            bottom_left_surface,
+                            current_surface,
+                            tile_map_index_to_ceiling)
             
             if tile_map_index_to_ceiling.has(tile_map_index) and \
                     tile_map_index_to_ceiling.has(bottom_right_neighbor_index):
@@ -1728,7 +1743,10 @@ static func _merge_continuous_surfaces(
                             bottom_right_surface.tile_map_indices)
                     tile_map_index_to_ceiling[bottom_right_neighbor_index] = \
                             current_surface
-                    _hack_free(bottom_right_surface, tile_map_index_to_ceiling)#bottom_right_surface.free()
+                    _replace_surface(
+                            bottom_right_surface,
+                            current_surface,
+                            tile_map_index_to_ceiling)
             
             if tile_map_index_to_left_wall.has(tile_map_index) and \
                     tile_map_index_to_left_wall.has(bottom_neighbor_index):
@@ -1749,7 +1767,10 @@ static func _merge_continuous_surfaces(
                             bottom_surface.tile_map_indices)
                     tile_map_index_to_left_wall[bottom_neighbor_index] = \
                             current_surface
-                    _hack_free(bottom_surface, tile_map_index_to_left_wall)#bottom_surface.free()
+                    _replace_surface(
+                            bottom_surface,
+                            current_surface,
+                            tile_map_index_to_left_wall)
             
             if tile_map_index_to_left_wall.has(tile_map_index) and \
                     tile_map_index_to_left_wall.has(bottom_left_neighbor_index):
@@ -1770,7 +1791,10 @@ static func _merge_continuous_surfaces(
                             bottom_left_surface.tile_map_indices)
                     tile_map_index_to_left_wall[bottom_left_neighbor_index] = \
                             current_surface
-                    _hack_free(bottom_left_surface, tile_map_index_to_left_wall)#bottom_left_surface.free()
+                    _replace_surface(
+                            bottom_left_surface,
+                            current_surface,
+                            tile_map_index_to_left_wall)
             
             if tile_map_index_to_left_wall.has(tile_map_index) and \
                     tile_map_index_to_left_wall \
@@ -1793,7 +1817,10 @@ static func _merge_continuous_surfaces(
                             bottom_right_surface.tile_map_indices)
                     tile_map_index_to_left_wall[bottom_right_neighbor_index] = \
                             current_surface
-                    _hack_free(bottom_right_surface, tile_map_index_to_left_wall)#bottom_right_surface.free()
+                    _replace_surface(
+                            bottom_right_surface,
+                            current_surface,
+                            tile_map_index_to_left_wall)
             
             if tile_map_index_to_right_wall.has(tile_map_index) and \
                     tile_map_index_to_right_wall.has(bottom_neighbor_index):
@@ -1816,7 +1843,10 @@ static func _merge_continuous_surfaces(
                             bottom_surface.tile_map_indices)
                     tile_map_index_to_right_wall[bottom_neighbor_index] = \
                             current_surface
-                    _hack_free(bottom_surface, tile_map_index_to_right_wall)#bottom_surface.free()
+                    _replace_surface(
+                            bottom_surface,
+                            current_surface,
+                            tile_map_index_to_right_wall)
             
             if tile_map_index_to_right_wall.has(tile_map_index) and \
                     tile_map_index_to_right_wall \
@@ -1841,7 +1871,10 @@ static func _merge_continuous_surfaces(
                             bottom_left_surface.tile_map_indices)
                     tile_map_index_to_right_wall[ \
                             bottom_left_neighbor_index] = current_surface
-                    _hack_free(bottom_left_surface, tile_map_index_to_right_wall)#bottom_left_surface.free()
+                    _replace_surface(
+                            bottom_left_surface,
+                            current_surface,
+                            tile_map_index_to_right_wall)
             
             if tile_map_index_to_right_wall.has(tile_map_index) and \
                     tile_map_index_to_right_wall \
@@ -1866,7 +1899,10 @@ static func _merge_continuous_surfaces(
                             bottom_right_surface.tile_map_indices)
                     tile_map_index_to_right_wall[ \
                             bottom_right_neighbor_index] = current_surface
-                    _hack_free(bottom_right_surface, tile_map_index_to_right_wall)#bottom_right_surface.free()
+                    _replace_surface(
+                            bottom_right_surface,
+                            current_surface,
+                            tile_map_index_to_right_wall)
 
 
 static func _get_surface_list_from_map(

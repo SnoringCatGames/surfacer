@@ -515,10 +515,14 @@ static func check_frame_for_collision(
                 kinematic_collision.normal,
                 tile_map,
                 true,
-                false)
+                true)
     
     if tile_map_result.surface == null:
         # Invalid collision state.
+        # -   This probably means that there was a pre-existing collision at
+        #     the start of the frame.
+        # -   One reason this might happen is if your level topography has
+        #     too-close surfaces that the character can't fit between.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
             Sc.logger.error()
