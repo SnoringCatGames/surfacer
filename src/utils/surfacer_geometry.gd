@@ -1154,6 +1154,23 @@ static func get_furthest_shape_boundary_point_in_direction(
         return Vector2.INF
 
 
+static func do_surface_and_rectangle_intersect(
+        surface: Surface,
+        rectangle_min: Vector2,
+        rectangle_max: Vector2) -> bool:
+    # Broad-phase pass: Check whether the surface bounding box intersects.
+    if surface.bounding_box.position.x > rectangle_max.x or \
+            surface.bounding_box.position.y > rectangle_max.y or \
+            surface.bounding_box.end.x < rectangle_min.x or \
+            surface.bounding_box.end.y < rectangle_min.y:
+        return false
+    
+    return do_polyline_and_rectangle_intersect(
+            surface.vertices,
+            rectangle_min,
+            rectangle_max)
+
+
 static func check_for_shape_to_rect_intersection(
         shape_position: Vector2,
         shape: RotatedShape,
