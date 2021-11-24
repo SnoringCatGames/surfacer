@@ -19,14 +19,8 @@ const _EQUAL_POINT_EPSILON := 0.1
 
 func parse(
         surface_store: SurfaceStore,
-        tile_maps: Array) -> void:
-    assert(!tile_maps.empty())
-    
-    # TODO: Add support for more than one collidable TileMap.
-    assert(tile_maps.size() == 1,
-            "Surfacer currently does not support multiple collidable " +
-            "TileMaps per level.")
-    
+        tile_maps: Array,
+        surface_marks: Array) -> void:
     _validate_tile_map_collection(tile_maps)
     
     # Record the maximum cell size and combined region from all tile maps.
@@ -35,15 +29,22 @@ func parse(
     
     for tile_map in tile_maps:
         _parse_tile_map(surface_store, tile_map)
+    
+    for mark in surface_marks:
+        _parse_surface_mark(surface_store, mark, tile_maps[0])
+    surface_store.marks = surface_marks
 
 
 func _validate_tile_map_collection(tile_maps: Array) -> void:
     assert(!tile_maps.empty(),
             "Collidable TileMap collection must not be empty.")
+    # TODO: Add support for more than one collidable TileMap.
+    assert(tile_maps.size() == 1,
+            "Surfacer currently does not support multiple collidable " +
+            "TileMaps per level.")
     var cell_size: Vector2 = tile_maps[0].cell_size
-    assert(cell_size == Sc.gui.cell_size,
-            "TileMap.cell_size does not match Sc.gui.cell_size " +
-            "(update this in your app manifest).")
+    assert(cell_size == Sc.level_session.config.cell_size,
+            "TileMap.cell_size does not match level config.")
     for tile_map in tile_maps:
         assert(tile_map.cell_size == cell_size,
                 "All collidable TileMaps must use the same cell size.")
@@ -295,12 +296,20 @@ static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
     
     var tile_set := tile_map.tile_set
     assert(is_instance_valid(tile_set))
+    assert(tile_set is SurfacesTileSet,
+            "TileSets attached to a collidable TileMap must be assigned " +
+            "a script that extends SurfacesTileSet.")
     
     var ids := tile_set.get_tiles_ids()
     assert(ids.size() > 0)
     
-    for id in ids:
-        var shapes := tile_set.tile_get_shapes(id)
+    for tile_id in ids:
+        var tile_name := tile_set.tile_get_name(tile_id)
+        assert(is_instance_valid(tile_set.get_tile_properties(tile_name)),
+                ("Tile ID is not recognized by " +
+                "SurfacesTileSet.get_tile_properties: %s") % tile_name)
+        
+        var shapes := tile_set.tile_get_shapes(tile_id)
         for shape_data in shapes:
             var shape: Shape2D = shape_data.shape
             var shape_transform: Transform2D = shape_data.shape_transform
@@ -2231,3 +2240,96 @@ class _TmpSurface extends Object:
     # Array<int>
     var tile_map_indices: Array
     var surface: Surface
+
+
+func _parse_surface_mark(
+        surface_store: SurfaceStore,
+        surface_mark: SurfaceMark,
+        tile_map: TileMap) -> void:
+    var mark_cell_size := surface_mark.cell_size
+    var tile_map_cell_size := mark_cell_size * 2.0
+    
+    for mark_position in surface_mark.get_used_cells():
+        var mark_position_x := int(mark_position.x)
+        var mark_position_y := int(mark_position.y)
+        var tile_map_position_x := int(floor((mark_position_x - 1) / 2.0))
+        var tile_map_position_y := int(floor((mark_position_y - 1) / 2.0))
+        var is_between_tile_map_cells_horizontally := \
+                mark_position_x % 2 == 0
+        var is_between_tile_map_cells_vertically := \
+                mark_position_y % 2 == 0
+        
+        var tile_map_positions: Array
+        if is_between_tile_map_cells_horizontally and \
+                is_between_tile_map_cells_vertically:
+            tile_map_positions = [
+                Vector2(tile_map_position_x, tile_map_position_y),
+                Vector2(tile_map_position_x + 1, tile_map_position_y),
+                Vector2(tile_map_position_x, tile_map_position_y + 1),
+                Vector2(tile_map_position_x + 1, tile_map_position_y + 1),
+            ]
+        elif is_between_tile_map_cells_horizontally:
+            tile_map_positions = [
+                Vector2(tile_map_position_x, tile_map_position_y),
+                Vector2(tile_map_position_x + 1, tile_map_position_y),
+            ]
+        elif is_between_tile_map_cells_vertically:
+            tile_map_positions = [
+                Vector2(tile_map_position_x, tile_map_position_y),
+                Vector2(tile_map_position_x, tile_map_position_y + 1),
+            ]
+        else:
+            tile_map_positions = [
+                Vector2(tile_map_position_x, tile_map_position_y),
+            ]
+        
+        var mark_cell_min_world_coords: Vector2 = \
+                mark_position * mark_cell_size
+        var mark_cell_max_world_coords := \
+                mark_cell_min_world_coords + mark_cell_size
+        for tile_map_position in tile_map_positions:
+            var tile_map_index := \
+                    Sc.geometry.get_tile_map_index_from_grid_coord(
+                        tile_map_position,
+                        tile_map)
+            var floor_surface := surface_store.get_surface_for_tile(
+                    tile_map,
+                    tile_map_index,
+                    SurfaceSide.FLOOR)
+            var ceiling_surface := surface_store.get_surface_for_tile(
+                    tile_map,
+                    tile_map_index,
+                    SurfaceSide.CEILING)
+            var left_wall_surface := surface_store.get_surface_for_tile(
+                    tile_map,
+                    tile_map_index,
+                    SurfaceSide.LEFT_WALL)
+            var right_wall_surface := surface_store.get_surface_for_tile(
+                    tile_map,
+                    tile_map_index,
+                    SurfaceSide.RIGHT_WALL)
+            
+            if is_instance_valid(floor_surface) and \
+                    Sc.geometry.do_surface_and_rectangle_intersect(
+                        floor_surface,
+                        mark_cell_min_world_coords,
+                        mark_cell_max_world_coords):
+                surface_mark.add_surface(floor_surface)
+            if is_instance_valid(ceiling_surface) and \
+                    Sc.geometry.do_surface_and_rectangle_intersect(
+                        ceiling_surface,
+                        mark_cell_min_world_coords,
+                        mark_cell_max_world_coords):
+                surface_mark.add_surface(ceiling_surface)
+            if is_instance_valid(left_wall_surface) and \
+                    Sc.geometry.do_surface_and_rectangle_intersect(
+                        left_wall_surface,
+                        mark_cell_min_world_coords,
+                        mark_cell_max_world_coords):
+                surface_mark.add_surface(left_wall_surface)
+            if is_instance_valid(right_wall_surface) and \
+                    Sc.geometry.do_surface_and_rectangle_intersect(
+                        right_wall_surface,
+                        mark_cell_min_world_coords,
+                        mark_cell_max_world_coords):
+                surface_mark.add_surface(right_wall_surface)

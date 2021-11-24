@@ -35,6 +35,7 @@ func get_can_traverse_from_surface(
     var movement_params := collision_params.movement_params
     
     var can_grab_surface := \
+            collision_params.surfaces_set.has(surface) and \
             surface.side == SurfaceSide.FLOOR and \
             movement_params.can_grab_floors or \
             surface.side == SurfaceSide.CEILING and \
@@ -44,8 +45,8 @@ func get_can_traverse_from_surface(
             movement_params.can_grab_walls
     
     return can_grab_surface and \
-            (_get_can_grab_neighbor(surface, true, movement_params) or \
-            _get_can_grab_neighbor(surface, false, movement_params))
+            (_get_can_grab_neighbor(surface, true, collision_params) or \
+            _get_can_grab_neighbor(surface, false, collision_params))
 
 
 func get_all_inter_surface_edges_from_surface(
@@ -58,7 +59,7 @@ func get_all_inter_surface_edges_from_surface(
         var can_grab_neighbor := _get_can_grab_neighbor(
                 origin_surface,
                 is_clockwise,
-                collision_params.movement_params)
+                collision_params)
         if !can_grab_neighbor:
             continue
         
@@ -1127,18 +1128,22 @@ func _calculate_duration_along_start_surface(
 func _get_can_grab_neighbor(
         surface: Surface,
         is_clockwise: bool,
-        movement_params: MovementParameters) -> bool:
+        collision_params: CollisionCalcParams) -> bool:
+    var movement_params := collision_params.movement_params
     var neighbor := \
             surface.clockwise_neighbor if \
             is_clockwise else \
             surface.counter_clockwise_neighbor
-    return neighbor.side == SurfaceSide.FLOOR and \
-            movement_params.can_grab_floors or \
-            neighbor.side == SurfaceSide.CEILING and \
-            movement_params.can_grab_ceilings or \
-            (neighbor.side == SurfaceSide.LEFT_WALL or \
-            neighbor.side == SurfaceSide.RIGHT_WALL) and \
-            movement_params.can_grab_walls
+    return collision_params.surfaces_set.has(neighbor) and \
+            (
+                neighbor.side == SurfaceSide.FLOOR and \
+                    movement_params.can_grab_floors or \
+                neighbor.side == SurfaceSide.CEILING and \
+                    movement_params.can_grab_ceilings or \
+                (neighbor.side == SurfaceSide.LEFT_WALL or \
+                    neighbor.side == SurfaceSide.RIGHT_WALL) and \
+                movement_params.can_grab_walls
+            )
 
 
 func _get_is_neighbor_convex(

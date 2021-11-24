@@ -94,6 +94,22 @@ func _on_initial_input() -> void:
 #    .on_unpause()
 
 
+func _update_editor_configuration() -> void:
+    ._update_editor_configuration()
+    
+    if !_is_ready or \
+            _configuration_warning != "":
+        return
+    
+    if Sc.utils.get_children_by_type(self, SurfacesTileMap).empty():
+        _set_configuration_warning(
+                "Subclasses of SurfacerLevel must include a " +
+                "SurfacesTileMap child.")
+        return
+    
+    _set_configuration_warning("")
+
+
 # Execute any intro cut-scene or initial navigation.
 func _execute_intro_choreography() -> void:
     if !is_instance_valid(Sc.level.player_character):
@@ -159,3 +175,19 @@ func set_background_visibility(is_visible: bool) -> void:
 
 func get_is_intro_choreography_running() -> bool:
     return intro_choreographer != null
+
+
+func _update_session_in_editor() -> void:
+    # Override parent behavior.
+    #._update_session_in_editor()
+    
+    if !Engine.editor_hint:
+        return
+    
+    Sc.level_session.reset(level_id)
+    
+    var tile_maps: Array = Sc.utils.get_children_by_type(self, SurfacesTileMap)
+    Sc.level_session.config.cell_size = \
+            Vector2.INF if \
+            tile_maps.empty() else \
+            tile_maps[0].cell_size

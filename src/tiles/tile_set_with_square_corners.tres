@@ -1,6 +1,7 @@
-[gd_resource type="TileSet" load_steps=96 format=2]
+[gd_resource type="TileSet" load_steps=97 format=2]
 
 [ext_resource path="res://addons/surfacer/assets/images/tile_template.png" type="Texture" id=1]
+[ext_resource path="res://addons/surfacer/src/tiles/tile_set_with_square_corners.gd" type="Script" id=2]
 
 [sub_resource type="OccluderPolygon2D" id=1]
 polygon = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
@@ -591,3 +592,4 @@ points = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
 "shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
 } ]
 0/z_index = 0
+script = ExtResource( 2 )
