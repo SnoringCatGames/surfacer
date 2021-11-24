@@ -17,6 +17,8 @@ var level_id: String
 # The TileMaps that define the collision boundaries of this level.
 # Array<SurfacesTileMap>
 var surface_tile_maps: Array
+# Array<SurfaceMark>
+var surface_marks: Array
 # Dictionary<String, CrashTestDummy>
 var crash_test_dummies := {}
 var surface_parser := SurfaceParser.new()
@@ -47,6 +49,8 @@ func parse(
 func _record_tile_maps() -> void:
     surface_tile_maps = Sc.utils.get_all_nodes_in_group(
             SurfacesTileMap.GROUP_NAME_SURFACES)
+    surface_marks = Sc.utils.get_all_nodes_in_group(
+            SurfaceMark.GROUP_NAME_SURFACE_MARKS)
     
     # Validate the TileMaps.
     if Sc.metadata.debug or Sc.metadata.playtest:
@@ -114,7 +118,10 @@ func _on_graphs_parsed() -> void:
 
 
 func _calculate_platform_graphs() -> void:
-    surface_parser.parse(surface_store, surface_tile_maps)
+    surface_parser.parse(
+            surface_store,
+            surface_tile_maps,
+            surface_marks)
     platform_graphs = {}
     assert(!Su.movement.character_movement_params.empty())
     _defer_calculate_next_platform_graph(-1)
@@ -221,6 +228,11 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
             context,
             surface_parser)
     
+    surface_marks = _deserialize_surface_marks(
+            json_object.surface_marks,
+            context)
+    surface_store.marks = surface_marks
+    
     if Sc.metadata.debug or Sc.metadata.playtest:
         _validate_tile_maps(json_object)
         _validate_characters(json_object)
@@ -271,7 +283,10 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
     
     if Su.are_loaded_surfaces_deeply_validated:
         var expected_surface_store := SurfaceStore.new()
-        surface_parser.parse(expected_surface_store, surface_tile_maps)
+        surface_parser.parse(
+                expected_surface_store,
+                surface_tile_maps,
+                surface_marks)
         
         assert(surface_store.max_tile_map_cell_size == \
                 expected_surface_store.max_tile_map_cell_size)
@@ -302,6 +317,9 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
         for i in surface_store.right_walls.size():
             assert(surface_store.right_walls[i].probably_equal(
                     expected_surface_store.right_walls[i]))
+        
+        for surface_mark in surface_marks:
+            surface_mark.queue_free()
 
 
 func _validate_platform_graphs(json_object: Dictionary) -> void:
@@ -340,6 +358,7 @@ func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     return {
         level_id = level_id,
         surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
+        surface_marks = _serialize_surface_marks(),
         platform_graph_character_names = _get_character_names(),
         surface_parser = surface_store.to_json_object(),
         platform_graphs = \
@@ -365,6 +384,24 @@ func _serialize_platform_graphs(includes_debug_only_state: bool) -> Array:
     for character_name in platform_graphs:
         result.push_back(platform_graphs[character_name] \
                 .to_json_object(includes_debug_only_state))
+    return result
+
+
+func _serialize_surface_marks() -> Array:
+    var result := surface_marks.duplicate()
+    for i in result.size():
+        result[i] = result[i].to_json_object()
+    return result
+
+
+func _deserialize_surface_marks(
+        json_object: Array,
+        context: Dictionary) -> Array:
+    var result := json_object.duplicate()
+    for i in result.size():
+        var surface_mark := SurfaceMark.new()
+        surface_mark.load_from_json_object(result[i], context)
+        result[i] = surface_mark
     return result
 
 

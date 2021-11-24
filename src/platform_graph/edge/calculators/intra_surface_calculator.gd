@@ -21,7 +21,7 @@ func _init().(
 func get_can_traverse_from_surface(
         surface: Surface,
         collision_params: CollisionCalcParams) -> bool:
-    # This should never be called
+    # This should never be called.
     Sc.logger.error()
     return false
 

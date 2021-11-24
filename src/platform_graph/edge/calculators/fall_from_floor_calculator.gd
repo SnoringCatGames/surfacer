@@ -22,6 +22,7 @@ func get_can_traverse_from_surface(
         surface: Surface,
         collision_params: CollisionCalcParams) -> bool:
     return surface != null and \
+            collision_params.surfaces_set.has(surface) and \
             surface.side == SurfaceSide.FLOOR and \
             (surface.counter_clockwise_concave_neighbor == null or \
             surface.clockwise_concave_neighbor == null)

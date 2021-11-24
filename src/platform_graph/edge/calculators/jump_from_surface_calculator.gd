@@ -19,7 +19,8 @@ func _init().(
 func get_can_traverse_from_surface(
         surface: Surface,
         collision_params: CollisionCalcParams) -> bool:
-    return surface != null
+    return surface != null and \
+            collision_params.surfaces_set.has(surface)
 
 
 func get_all_inter_surface_edges_from_surface(

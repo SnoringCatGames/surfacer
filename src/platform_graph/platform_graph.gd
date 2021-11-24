@@ -61,20 +61,17 @@ func calculate(character_name: String) -> void:
     self.debug_params = Su.debug_params
     self.surface_store = Sc.level.surface_store
     
+    # Store the subset of surfaces that this character type can interact with.
+    self.surfaces_set = surface_store.get_surface_set(movement_params)
+    
     var crash_test_dummy: CrashTestDummy = \
             Sc.level.graph_parser.crash_test_dummies[character_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
             self.surface_store,
+            self.surfaces_set,
             crash_test_dummy)
-    
-    # Store the subset of surfaces that this character type can interact with.
-    var surfaces_array: Array = surface_store.get_subset_of_surfaces(
-            movement_params.can_grab_walls,
-            movement_params.can_grab_ceilings,
-            movement_params.can_grab_floors)
-    self.surfaces_set = Sc.utils.array_to_set(surfaces_array)
     
     _calculate_nodes_and_edges()
 
@@ -94,6 +91,11 @@ func find_path(
     if origin_surface == null or \
             destination_surface == null:
         # The graph only handles nodes along surfaces.
+        return null
+    
+    if !surfaces_set.has(origin_surface) or \
+            !surfaces_set.has(destination_surface):
+        # One of the surfaces isn't grabbable.
         return null
     
     if _surface_exclusion_list.has(origin_surface) or \
@@ -260,6 +262,9 @@ func find_path(
 func get_all_reachable_surfaces(
         origin_surface: Surface,
         max_distance: float) -> Array:
+    if !surfaces_set.has(origin_surface):
+        return []
+    
     var max_distance_squared := max_distance * max_distance
     
     var frontier := [origin_surface]
@@ -273,6 +278,7 @@ func get_all_reachable_surfaces(
         for origin in surfaces_to_outbound_nodes[next_surface]:
             for destination in nodes_to_nodes_to_edges[origin]:
                 var destination_surface: Surface = destination.surface
+                
                 if all_surfaces_considered.has(destination_surface):
                     continue
                 
@@ -299,6 +305,9 @@ func get_all_reachable_surfaces(
 func get_all_reversibly_reachable_surfaces(
         origin_surface: Surface,
         max_distance: float) -> Array:
+    if !surfaces_set.has(origin_surface):
+        return []
+    
     var max_distance_squared := max_distance * max_distance
     
     var frontier := [origin_surface]
@@ -506,6 +515,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
             {},
             null,
             null,
+            {},
             null)
     collision_params_for_thread.copy(collision_params)
     collision_params_for_thread.thread_id = thread_id
@@ -666,6 +676,11 @@ func _derive_surfaces_to_outbound_nodes() -> void:
                 nodes_set[cell_id] = edge.start_position_along_surface
         
         surfaces_to_outbound_nodes[surface] = nodes_set.values()
+    
+    # Store empty arrays for any surface that doesn't have any outbound nodes.
+    for surface in surfaces_set:
+        if !surfaces_to_outbound_nodes.has(surface):
+            surfaces_to_outbound_nodes[surface] = []
 
 
 func _derive_nodes_to_nodes_to_edges() -> void:
@@ -839,20 +854,17 @@ func load_from_json_object(
     self.debug_params = Su.debug_params
     self.surface_store = Sc.level.surface_store
     
+    # Store the subset of surfaces that this character type can interact with.
+    self.surfaces_set = surface_store.get_surface_set(movement_params)
+    
     var crash_test_dummy: CrashTestDummy = \
             Sc.level.graph_parser.crash_test_dummies[character_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
             self.surface_store,
+            self.surfaces_set,
             crash_test_dummy)
-    
-    # Store the subset of surfaces that this character type can interact with.
-    var surfaces_array: Array = surface_store.get_subset_of_surfaces(
-            movement_params.can_grab_walls,
-            movement_params.can_grab_ceilings,
-            movement_params.can_grab_floors)
-    self.surfaces_set = Sc.utils.array_to_set(surfaces_array)
     
     _load_position_along_surfaces_from_json_object(json_object, context)
     _load_jump_land_positions_from_json_object(json_object, context)

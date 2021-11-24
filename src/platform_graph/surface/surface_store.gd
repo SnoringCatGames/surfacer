@@ -27,6 +27,9 @@ var non_floor_surfaces := []
 var non_wall_surfaces := []
 var all_walls := []
 
+# Array<SurfaceMark>
+var marks: Array
+
 var max_tile_map_cell_size: Vector2
 var combined_tile_map_rect: Rect2
 
@@ -51,32 +54,39 @@ func get_surface_for_tile(
         return null
 
 
-func get_subset_of_surfaces(
-        include_walls: bool,
-        include_ceilings: bool,
-        include_floors: bool) -> Array:
-    if include_walls:
-        if include_ceilings:
-            if include_floors:
-                return all_surfaces
-            else:
-                return non_floor_surfaces
-        else:
-            if include_floors:
-                return non_ceiling_surfaces
-            else:
-                return all_walls
-    else:
-        if include_ceilings:
-            if include_floors:
-                return non_wall_surfaces
-            else:
-                return ceilings
-        else:
-            if include_floors:
-                return floors
-            else:
-                return []
+func get_surface_set(movement_params: MovementParameters) -> Dictionary:
+    var set := {}
+    
+    # Collect all surfaces for each surface-side the character could grab.
+    var surface_collections := []
+    if movement_params.can_grab_floors:
+        surface_collections.push_back(floors)
+    if movement_params.can_grab_walls:
+        surface_collections.push_back(all_walls)
+    if movement_params.can_grab_ceilings:
+        surface_collections.push_back(ceilings)
+    for surface_collection in surface_collections:
+        for surface in surface_collection:
+            set[surface] = true
+    
+    # Filter-out surfaces according to SurfaceMarks.
+    for mark in marks:
+        var does_mark_match_character: bool = \
+                mark.get_character_names().has(movement_params.character_name)
+        if does_mark_match_character:
+            if mark.include_exclusively:
+                # Remove any surface that isn't marked.
+                for surface in set.keys():
+                    if !mark.get_is_surface_marked(surface):
+                        set.erase(surface)
+            elif mark.exclude:
+                # Remove any surface that is marked.
+                for surface in mark._marked_surfaces:
+                    if surface.first_point == Vector2(-352, 256):
+                        print("break")
+                    set.erase(surface)
+    
+    return set
 
 
 func load_from_json_object(

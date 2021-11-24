@@ -20,6 +20,7 @@ func get_can_traverse_from_surface(
         surface: Surface,
         collision_params: CollisionCalcParams) -> bool:
     return surface != null and \
+            collision_params.surfaces_set.has(surface) and \
             (surface.side == SurfaceSide.LEFT_WALL or \
             surface.side == SurfaceSide.RIGHT_WALL)
 
