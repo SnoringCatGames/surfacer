@@ -88,3 +88,15 @@ func record_backtracked_surface(
         time_jump_release: float) -> void:
     var key := surface.to_string() + str(time_jump_release)
     _collided_surfaces[key] = true
+    
+    # Also record any collinear neighbors (transitively).
+    var neighbor_surface := surface
+    while neighbor_surface.clockwise_collinear_neighbor != null:
+        neighbor_surface = neighbor_surface.clockwise_collinear_neighbor
+        key = neighbor_surface.to_string() + str(time_jump_release)
+        _collided_surfaces[key] = true
+    neighbor_surface = surface
+    while neighbor_surface.counter_clockwise_collinear_neighbor != null:
+        neighbor_surface = neighbor_surface.counter_clockwise_collinear_neighbor
+        key = neighbor_surface.to_string() + str(time_jump_release)
+        _collided_surfaces[key] = true

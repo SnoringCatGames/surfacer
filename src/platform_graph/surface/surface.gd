@@ -53,7 +53,7 @@ func _init(
         side := SurfaceSide.NONE,
         tile_map = null,
         tile_map_indices := [],
-        properties := null) -> void:
+        properties: SurfaceProperties = null) -> void:
     self.vertices = PoolVector2Array(vertices)
     self.side = side
     self.tile_map = tile_map
@@ -97,13 +97,17 @@ func _get_center() -> Vector2:
 func _get_clockwise_neighbor() -> Surface:
     return clockwise_convex_neighbor if \
             clockwise_convex_neighbor != null else \
-            clockwise_concave_neighbor
+            clockwise_concave_neighbor if \
+            clockwise_concave_neighbor != null else \
+            clockwise_collinear_neighbor
 
 
 func _get_counter_clockwise_neighbor() -> Surface:
     return counter_clockwise_convex_neighbor if \
             counter_clockwise_convex_neighbor != null else \
-            counter_clockwise_concave_neighbor
+            counter_clockwise_concave_neighbor if \
+            counter_clockwise_concave_neighbor != null else \
+            counter_clockwise_collinear_neighbor
 
 
 func _get_is_single_vertex() -> bool:
@@ -165,6 +169,14 @@ func probably_equal(other: Surface) -> bool:
             (other.counter_clockwise_concave_neighbor == null):
         return false
     
+    if (self.clockwise_collinear_neighbor == null) != \
+            (other.clockwise_collinear_neighbor == null):
+        return false
+    
+    if (self.counter_clockwise_collinear_neighbor == null) != \
+            (other.counter_clockwise_collinear_neighbor == null):
+        return false
+    
     return true
 
 
@@ -175,6 +187,7 @@ func load_from_json_object(
     vertices = PoolVector2Array(Sc.json.decode_vector2_array(json_object.v))
     side = json_object.s
     tile_map_indices = to_int_array(json_object.i)
+    properties = Su.surface_properties.properties[json_object.p]
     bounding_box = Sc.geometry.get_bounding_box_for_points(vertices)
     normal = SurfaceSide.get_normal(side)
 
@@ -205,6 +218,7 @@ func to_json_object() -> Dictionary:
         s = side,
         t = tile_map.id,
         i = tile_map_indices,
+        p = properties.name,
         crbb = Sc.json.encode_rect2(connected_region_bounding_box),
         cwv = Sc.utils.get_instance_id_or_not(clockwise_convex_neighbor),
         cwc = Sc.utils.get_instance_id_or_not(clockwise_concave_neighbor),
