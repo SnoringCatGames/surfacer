@@ -1067,7 +1067,8 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                         movement_params,
                         abs(velocity.x),
                         movement_params.gravity_fast_fall,
-                        movement_params.friction_coefficient)
+                        movement_params.friction_coefficient,
+                        surface.properties.friction_multiplier)
         var stopping_displacement := \
                 stopping_distance if \
                 velocity.x > 0.0 else \

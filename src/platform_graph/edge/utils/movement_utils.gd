@@ -464,7 +464,8 @@ static func calculate_distance_to_stop_from_friction(
         movement_params: MovementParameters,
         velocity_x_start: float,
         gravity: float,
-        friction_coefficient: float) -> float:
+        friction_coefficient: float,
+        friction_multiplier: float) -> float:
     # TODO: This stopping-distance formula doesn't work for us (generates
     #       results that are way too big). But we should adapt some sort of
     #       continuous analytic formula instead of this discrete loop-based
@@ -474,7 +475,8 @@ static func calculate_distance_to_stop_from_friction(
 #    #     distance = speed_start^2 / 2 / friction_coefficient / gravity
 #    return speed_start * speed_start / 2.0 / friction_coefficient / gravity
     
-    var friction_deceleration_per_frame := friction_coefficient * gravity
+    var friction_deceleration_per_frame := \
+            friction_coefficient * friction_multiplier * gravity
     var distance := 0.0
     var speed := abs(velocity_x_start)
     while speed > Su.movement.min_horizontal_speed:
@@ -488,7 +490,8 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
         velocity_x_start: float,
         displacement_x_from_end: float,
         gravity: float,
-        friction_coefficient: float) -> float:
+        friction_coefficient: float,
+        friction_multiplier: float) -> float:
     var distance_from_end := abs(displacement_x_from_end)
     
     # From a basic equation of motion:
@@ -501,20 +504,28 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
             velocity_x_start * velocity_x_start) / \
             2.0 / movement_params.walk_acceleration
     
+    var stopping_distance_from_max_speed := \
+            calculate_distance_to_stop_from_friction(
+                movement_params,
+                movement_params.max_horizontal_speed_default,
+                gravity,
+                friction_coefficient,
+                friction_multiplier)
+    
     if distance_from_end > \
             distance_to_max_horizontal_speed + \
-            movement_params.stopping_distance_on_default_floor_from_max_speed:
+            stopping_distance_from_max_speed:
         # There is enough distance to both get to max speed and then slow to a
         # stop from max speed.
-        return movement_params \
-                .stopping_distance_on_default_floor_from_max_speed
+        return stopping_distance_from_max_speed
         
     else:
         # We need to calculate stopping distance from a speed that's less than
         # the max.
         
         var speed_start := abs(velocity_x_start)
-        var friction_deceleration := -friction_coefficient * gravity
+        var friction_deceleration := \
+                -friction_coefficient * friction_multiplier * gravity
         
         # TODO: This math isn't generating the correct results. Debug it and
         #       use it to replace the hand-wavy approximation we're now using
@@ -540,8 +551,7 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
 #                (movement_params.walk_acceleration - friction_deceleration)
 #        return distance_from_end - distance_to_instruction_end
         
-        return movement_params \
-                .stopping_distance_on_default_floor_from_max_speed
+        return stopping_distance_from_max_speed
 
 
 static func clamp_horizontal_velocity_to_max_default(

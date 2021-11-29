@@ -19,8 +19,13 @@ func _init().(
 func process(character) -> bool:
     if !character.processed_action(FloorJumpAction.NAME):
         # Friction.
+        var friction_multiplier: float = \
+                character.surface_state.grabbed_surface.properties \
+                    .friction_multiplier if \
+                character.surface_state.is_grabbing_surface else \
+                1.0
         var friction_offset: float = \
-                Sc.geometry.get_floor_friction_multiplier(character) * \
+                friction_multiplier * \
                 character.movement_params.friction_coefficient * \
                 character.movement_params.gravity_fast_fall * \
                 character.actions.delta_scaled
