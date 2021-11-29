@@ -1431,15 +1431,6 @@ static func get_surface_side_for_normal(normal: Vector2) -> int:
         return SurfaceSide.RIGHT_WALL
 
 
-static func get_floor_friction_multiplier(character) -> float:
-    var collision := _get_collision_for_side(character, SurfaceSide.FLOOR)
-    # Collision friction is a property of the TileMap node.
-    if collision != null and \
-            collision.collider.collision_friction != null:
-        return collision.collider.collision_friction
-    return 0.0
-
-
 static func _get_collision_for_side(
         character,
         side: int) -> KinematicCollision2DCopy:

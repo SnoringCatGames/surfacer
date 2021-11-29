@@ -26,9 +26,11 @@ func _get_tile_manifest() -> Dictionary:
         # TODO: Use separate inclusion/exclusion lists for assigning non-default
         #       properties for certain tile IDs.
         if _DISABLED_SURFACES_TILE_IDS.has(tile_id):
-            tile_config.surface_properties = Su.surface_properties["disabled"]
+            tile_config.surface_properties = \
+                    Su.surface_properties.properties["disabled"]
         else:
-            tile_config.surface_properties = Su.surface_properties["default"]
+            tile_config.surface_properties = \
+                    Su.surface_properties.properties["default"]
         manifest[tile_id] = tile_config
     return manifest
 

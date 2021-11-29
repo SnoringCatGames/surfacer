@@ -600,7 +600,8 @@ func _calculate_stopping_distance(
                             velocity_start.x,
                             displacement.x,
                             movement_params.gravity_fast_fall,
-                            friction_coefficient)
+                            friction_coefficient,
+                            end.surface.properties.friction_multiplier)
             return stopping_distance * \
                         movement_params.intra_surface_edge_speed_multiplier if \
                     abs(displacement.x) - stopping_distance > \

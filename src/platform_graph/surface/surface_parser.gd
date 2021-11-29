@@ -362,8 +362,7 @@ static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
                             "Oddly-shaped tiles aren't enabled " + 
                             "(Su.are_oddly_shaped_surfaces_used).")
             
-            # FIXME: --------------------- Check that this function is correct.
-            assert(Sc.geometry.is_polygon_convex(points, 0.001),
+            assert(Sc.geometry.is_polygon_convex(points, 0.01),
                     "TileSet collision shapes must be convex.")
             
             for point in points:

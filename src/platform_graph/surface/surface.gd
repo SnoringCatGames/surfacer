@@ -14,6 +14,8 @@ var vertices: PoolVector2Array
 
 var side := SurfaceSide.NONE
 
+var properties: SurfaceProperties
+
 var tile_map: SurfacesTileMap
 
 # Array<int>
@@ -27,9 +29,12 @@ var connected_region_bounding_box := Rect2(Vector2.INF, Vector2.INF)
 var normal := Vector2.INF
 
 var clockwise_convex_neighbor: Surface
-var counter_clockwise_convex_neighbor: Surface
 var clockwise_concave_neighbor: Surface
+var clockwise_collinear_neighbor: Surface
+
+var counter_clockwise_convex_neighbor: Surface
 var counter_clockwise_concave_neighbor: Surface
+var counter_clockwise_collinear_neighbor: Surface
 
 var first_point: Vector2 setget ,_get_first_point
 var last_point: Vector2 setget ,_get_last_point
@@ -47,15 +52,19 @@ func _init(
         vertices := [],
         side := SurfaceSide.NONE,
         tile_map = null,
-        tile_map_indices := []) -> void:
+        tile_map_indices := [],
+        properties := null) -> void:
     self.vertices = PoolVector2Array(vertices)
     self.side = side
     self.tile_map = tile_map
     self.tile_map_indices = tile_map_indices
+    self.properties = properties
     if !vertices.empty():
         self.bounding_box = Sc.geometry.get_bounding_box_for_points(vertices)
     if side != SurfaceSide.NONE:
         self.normal = SurfaceSide.get_normal(side)
+    if !is_instance_valid(properties):
+        self.properties = Su.surface_properties.properties["default"]
 
 
 func to_string(verbose := true) -> String:
@@ -177,12 +186,16 @@ func load_references_from_json_context(
     connected_region_bounding_box = Sc.json.decode_rect2(json_object.crbb)
     clockwise_convex_neighbor = \
             _get_surface_from_id(json_object.cwv, context.id_to_surface)
-    counter_clockwise_convex_neighbor = \
-            _get_surface_from_id(json_object.ccwv, context.id_to_surface)
     clockwise_concave_neighbor = \
             _get_surface_from_id(json_object.cwc, context.id_to_surface)
+    clockwise_collinear_neighbor = \
+            _get_surface_from_id(json_object.cwl, context.id_to_surface)
+    counter_clockwise_convex_neighbor = \
+            _get_surface_from_id(json_object.ccwv, context.id_to_surface)
     counter_clockwise_concave_neighbor = \
             _get_surface_from_id(json_object.ccwc, context.id_to_surface)
+    counter_clockwise_collinear_neighbor = \
+            _get_surface_from_id(json_object.ccwl, context.id_to_surface)
 
 
 func to_json_object() -> Dictionary:
@@ -194,11 +207,14 @@ func to_json_object() -> Dictionary:
         i = tile_map_indices,
         crbb = Sc.json.encode_rect2(connected_region_bounding_box),
         cwv = Sc.utils.get_instance_id_or_not(clockwise_convex_neighbor),
+        cwc = Sc.utils.get_instance_id_or_not(clockwise_concave_neighbor),
+        cwl = Sc.utils.get_instance_id_or_not(clockwise_collinear_neighbor),
         ccwv = Sc.utils.get_instance_id_or_not(
                 counter_clockwise_convex_neighbor),
-        cwc = Sc.utils.get_instance_id_or_not(clockwise_concave_neighbor),
         ccwc = Sc.utils.get_instance_id_or_not(
                 counter_clockwise_concave_neighbor),
+        ccwl = Sc.utils.get_instance_id_or_not(
+                counter_clockwise_collinear_neighbor),
     }
 
 

@@ -189,9 +189,6 @@ var is_intro_choreography_shown: bool
 # Dictionary<String, Script>
 var behaviors: Dictionary
 
-# Dictionary<String, SurfaceProperty>
-var surface_properties: Dictionary
-
 var default_tile_set: TileSet
 
 var path_drag_update_throttle_interval := 0.2
@@ -289,6 +286,7 @@ var legend: Legend
 var selection_description: SelectionDescription
 var ann_manifest: SurfacerAnnotationsManifest
 var movement: SurfacerMovementManifest
+var surface_properties: SurfacerSurfaceProperties
 var edge_from_json_factory := EdgeFromJsonFactory.new()
 
 var space_state: Physics2DDirectSpaceState
@@ -404,8 +402,6 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
                 manifest.skip_choreography_framerate_multiplier
     
     self.behaviors = _parse_behaviors(manifest)
-    self.surface_properties = \
-            _parse_surface_properties(manifest.surface_properties_manifest)
     
     assert(Sc._manifest.metadata.must_restart_level_to_change_settings)
 
@@ -432,11 +428,20 @@ func _instantiate_sub_modules() -> void:
     else:
         self.movement = SurfacerMovementManifest.new()
     add_child(self.movement)
+    
+    if manifest.has("surface_properties_class"):
+        self.surface_properties = manifest.surface_properties_class.new()
+        assert(self.surface_properties is SurfacerSurfaceProperties)
+    else:
+        self.surface_properties = SurfacerSurfaceProperties.new()
+    add_child(self.surface_properties)
 
 
 func _configure_sub_modules() -> void:
     Su.ann_manifest._register_manifest(Su.manifest.annotations_manifest)
     Su.movement._register_manifest(Su.manifest.movement_manifest)
+    Su.surface_properties.register_manifest(
+            Su.manifest.surface_properties_manifest)
     
     Su.movement._validate_configuration()
     
@@ -495,37 +500,3 @@ func _parse_behaviors(manifest: Dictionary) -> Dictionary:
     for behavior_class in behavior_classes:
         behavior_name_to_script[behavior_class.NAME] = behavior_class
     return behavior_name_to_script
-
-
-# FIXME: LEFT OFF HERE: --------------------
-# - Move this out into a separate top-level config file.
-# - Add a max-speed modifier.
-# - Add some way of checking fall-through/walk-through state.
-#   - And add a way to validate that this matches the normal TileSet encoding.
-const _SURFACE_PROPERTY_KEYS := [
-    "can_grab",
-    "friction_multiplier",
-]
-func _parse_surface_properties(manifest: Dictionary) -> Dictionary:
-    var id_to_properties := {}
-    for id in manifest:
-        var config: Dictionary = manifest[id]
-        var properties := SurfaceProperties.new()
-        for property_key in _SURFACE_PROPERTY_KEYS:
-            if config.has(property_key):
-                properties.set(property_key, config[property_key])
-        id_to_properties[id] = properties
-    return id_to_properties
-
-
-# FIXME: Make this more extensible.
-func get_combined_surface_properties(
-        a: SurfaceProperties,
-        b: SurfaceProperties) -> SurfaceProperties:
-    if !a.can_grab:
-        return a
-    elif !b.can_grab:
-        return b
-    else:
-        # FIXME: LEFT OFF HERE: -------------------
-        return a
