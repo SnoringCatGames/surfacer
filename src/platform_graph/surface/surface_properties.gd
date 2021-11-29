@@ -2,7 +2,7 @@ class_name SurfaceProperties
 extends Reference
 
 
-# FIXME: LEFT OFF HERE: ----------------------
+# FIXME: LEFT OFF HERE: -----------------------
 # - Add a can-grab flag.
 # - Add friction.
 # - Add a max-speed modifier.

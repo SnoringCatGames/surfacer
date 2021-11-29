@@ -460,6 +460,8 @@ static func calculate_time_to_crawl_on_ceiling(
     return abs(distance / movement_params.ceiling_crawl_speed)
 
 
+# FIXME: LEFT OFF HERE: ------------------------
+# - Update friction logic according to recent changes in FloorFrictionAction.
 static func calculate_distance_to_stop_from_friction(
         movement_params: MovementParameters,
         velocity_x_start: float,
@@ -485,6 +487,8 @@ static func calculate_distance_to_stop_from_friction(
     return distance
 
 
+# FIXME: LEFT OFF HERE: ------------------------
+# - Update friction logic according to recent changes in FloorFrictionAction.
 static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
         movement_params: MovementParameters,
         velocity_x_start: float,

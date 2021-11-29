@@ -31,5 +31,5 @@ func get_combined_surface_properties(
     elif !b.can_grab:
         return b
     else:
-        # FIXME: LEFT OFF HERE: ---------------------
+        # FIXME: LEFT OFF HERE: ----------------------
         return a

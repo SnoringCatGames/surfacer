@@ -591,16 +591,13 @@ func _calculate_stopping_distance(
     #       ceilings.
     match end.surface.side:
         SurfaceSide.FLOOR:
-            var friction_coefficient: float = \
-                    movement_params.friction_coefficient * \
-                    end.surface.tile_map.collision_friction
             var stopping_distance := MovementUtils \
                     .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
                             movement_params,
                             velocity_start.x,
                             displacement.x,
                             movement_params.gravity_fast_fall,
-                            friction_coefficient,
+                            movement_params.friction_coefficient_constant_speed,
                             end.surface.properties.friction_multiplier)
             return stopping_distance * \
                         movement_params.intra_surface_edge_speed_multiplier if \
