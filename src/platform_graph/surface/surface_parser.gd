@@ -675,10 +675,13 @@ static func _parse_tile_map_cells_into_surfaces(
                         tile_map_position,
                         tile_map)
         var tile_id := tile_map.get_cellv(tile_map_position)
+        var tile_name := tile_map.tile_set.tile_get_name(tile_id)
         var tile_coord := tile_map.get_cell_autotile_coord(
                 tile_map_position.x, tile_map_position.y)
         var tile_shape_data: TileShapeData = \
                 tile_id_to_coord_to_shape_data[tile_id][tile_coord]
+        var surface_properties: SurfaceProperties = \
+                tile_map.tile_set.get_tile_properties(tile_name)
         
         # Transform tile shapes into world coordinates.
         var floor_vertices_world_coords := \
@@ -703,18 +706,22 @@ static func _parse_tile_map_cells_into_surfaces(
         floor_surface.vertices_array = floor_vertices_world_coords
         floor_surface.tile_map = tile_map
         floor_surface.tile_map_indices = [tile_map_index]
+        floor_surface.properties = surface_properties
         var ceiling_surface = _TmpSurface.new()
         ceiling_surface.vertices_array = ceiling_vertices_world_coords
         ceiling_surface.tile_map = tile_map
         ceiling_surface.tile_map_indices = [tile_map_index]
+        ceiling_surface.properties = surface_properties
         var left_wall_surface = _TmpSurface.new()
         left_wall_surface.vertices_array = left_wall_vertices_world_coords
         left_wall_surface.tile_map = tile_map
         left_wall_surface.tile_map_indices = [tile_map_index]
+        left_wall_surface.properties = surface_properties
         var right_wall_surface = _TmpSurface.new()
         right_wall_surface.vertices_array = right_wall_vertices_world_coords
         right_wall_surface.tile_map = tile_map
         right_wall_surface.tile_map_indices = [tile_map_index]
+        right_wall_surface.properties = surface_properties
         
         tile_map_index_to_floor[tile_map_index] = floor_surface
         tile_map_index_to_ceiling[tile_map_index] = ceiling_surface
@@ -1614,7 +1621,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         right_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            right_surface.properties:
                     current_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             current_surface.vertices_array,
@@ -1638,7 +1647,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_left_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_left_surface.properties:
                     bottom_left_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             bottom_left_surface.vertices_array,
@@ -1664,7 +1675,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_right_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_right_surface.properties:
                     current_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             current_surface.vertices_array,
@@ -1688,7 +1701,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         right_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            right_surface.properties:
                     right_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             right_surface.vertices_array,
@@ -1714,7 +1729,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_left_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_left_surface.properties:
                     current_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             current_surface.vertices_array,
@@ -1738,7 +1755,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_right_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_right_surface.properties:
                     bottom_right_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             bottom_right_surface.vertices_array,
@@ -1764,7 +1783,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_surface.properties:
                     current_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             current_surface.vertices_array,
@@ -1788,7 +1809,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_left_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_left_surface.properties:
                     current_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             current_surface.vertices_array,
@@ -1814,7 +1837,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_right_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_right_surface.properties:
                     current_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             current_surface.vertices_array,
@@ -1838,7 +1863,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_surface.properties:
                     bottom_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             bottom_surface.vertices_array,
@@ -1866,7 +1893,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_left_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_left_surface.properties:
                     bottom_left_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             bottom_left_surface.vertices_array,
@@ -1894,7 +1923,9 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_right_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON):
+                        _EQUAL_POINT_EPSILON) and \
+                        current_surface.properties == \
+                            bottom_right_surface.properties:
                     bottom_right_surface.vertices_array.pop_back()
                     Sc.utils.concat(
                             bottom_right_surface.vertices_array,
@@ -1966,9 +1997,7 @@ static func _assign_neighbor_surfaces(
                 right_wall.clockwise_convex_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
                 # neighbor.
-                if floor_surface.counter_clockwise_convex_neighbor != \
-                                null and \
-                        floor_surface.clockwise_concave_neighbor != null:
+                if floor_surface.clockwise_neighbor != null:
                     break
             
             # Check for a concave neighbor at the bottom edge of the right
@@ -1984,9 +2013,7 @@ static func _assign_neighbor_surfaces(
                 right_wall.counter_clockwise_concave_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
                 # neighbor.
-                if floor_surface.counter_clockwise_convex_neighbor != \
-                                null and \
-                        floor_surface.clockwise_concave_neighbor != null:
+                if floor_surface.counter_clockwise_neighbor != null:
                     break
         
         for left_wall in left_walls:
@@ -2002,9 +2029,7 @@ static func _assign_neighbor_surfaces(
                 left_wall.counter_clockwise_convex_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
                 # neighbor.
-                if floor_surface.counter_clockwise_concave_neighbor != \
-                                null and \
-                        floor_surface.clockwise_convex_neighbor != null:
+                if floor_surface.counter_clockwise_neighbor != null:
                     break
             
             # Check for a concave neighbor at the bottom edge of the left wall.
@@ -2019,9 +2044,7 @@ static func _assign_neighbor_surfaces(
                 left_wall.clockwise_concave_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
                 # neighbor.
-                if floor_surface.counter_clockwise_concave_neighbor != \
-                                null and \
-                        floor_surface.clockwise_convex_neighbor != null:
+                if floor_surface.clockwise_neighbor != null:
                     break
     
     for ceiling in ceilings:
@@ -2043,9 +2066,7 @@ static func _assign_neighbor_surfaces(
                 left_wall.clockwise_convex_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
                 # neighbor.
-                if ceiling.counter_clockwise_convex_neighbor != \
-                                null and \
-                        ceiling.clockwise_concave_neighbor != null:
+                if ceiling.clockwise_neighbor != null:
                     break
             
             # Check for a concave neighbor at the top edge of the left wall.
@@ -2060,9 +2081,7 @@ static func _assign_neighbor_surfaces(
                 left_wall.counter_clockwise_concave_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
                 # neighbor.
-                if ceiling.counter_clockwise_convex_neighbor != \
-                                null and \
-                        ceiling.clockwise_concave_neighbor != null:
+                if ceiling.counter_clockwise_neighbor != null:
                     break
         
         for right_wall in right_walls:
@@ -2078,9 +2097,7 @@ static func _assign_neighbor_surfaces(
                 right_wall.counter_clockwise_convex_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
                 # neighbor.
-                if ceiling.counter_clockwise_concave_neighbor != \
-                                null and \
-                        ceiling.clockwise_convex_neighbor != null:
+                if ceiling.counter_clockwise_neighbor != null:
                     break
             
             # Check for a concave neighbor at the top edge of the right wall.
@@ -2095,9 +2112,187 @@ static func _assign_neighbor_surfaces(
                 right_wall.clockwise_concave_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
                 # neighbor.
-                if ceiling.counter_clockwise_concave_neighbor != \
-                                null and \
-                        ceiling.clockwise_convex_neighbor != null:
+                if ceiling.clockwise_neighbor != null:
+                    break
+    
+    # Check for collinear neighbors.
+    for floor_surface in floors:
+        if floor_surface.counter_clockwise_neighbor != null and \
+                floor_surface.clockwise_neighbor != null:
+            continue
+        
+        # The left edge of the floor.
+        surface1_end1 = floor_surface.first_point
+        # The right edge of the floor.
+        surface1_end2 = floor_surface.last_point
+        
+        for other_floor in floors:
+            if floor_surface == other_floor:
+                continue
+            
+            # Check for a collinear neighbor on the right side.
+            surface2_end = other_floor.first_point
+            diff_x = surface1_end2.x - surface2_end.x
+            diff_y = surface1_end2.y - surface2_end.y
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
+                floor_surface.clockwise_collinear_neighbor = other_floor
+                other_floor.counter_clockwise_collinear_neighbor = floor_surface
+                # There can only be one clockwise and one counter-clockwise
+                # neighbor.
+                if floor_surface.counter_clockwise_neighbor != null:
+                    break
+            
+            # Check for a collinear neighbor on the left side.
+            surface2_end = other_floor.last_point
+            diff_x = surface1_end1.x - surface2_end.x
+            diff_y = surface1_end1.y - surface2_end.y
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
+                floor_surface.counter_clockwise_collinear_neighbor = other_floor
+                other_floor.clockwise_collinear_neighbor = floor_surface
+                # There can only be one clockwise and one counter-clockwise
+                # neighbor.
+                if floor_surface.clockwise_neighbor != null:
+                    break
+    
+    # Check for collinear neighbors.
+    for ceiling in ceilings:
+        if ceiling.counter_clockwise_neighbor != null and \
+                ceiling.clockwise_neighbor != null:
+            continue
+        
+        # The right edge of the ceiling.
+        surface1_end1 = ceiling.first_point
+        # The left edge of the ceiling.
+        surface1_end2 = ceiling.last_point
+        
+        for other_ceiling in ceilings:
+            if ceiling == other_ceiling:
+                continue
+            
+            # Check for a collinear neighbor on the left side.
+            surface2_end = other_ceiling.first_point
+            diff_x = surface1_end2.x - surface2_end.x
+            diff_y = surface1_end2.y - surface2_end.y
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
+                ceiling.clockwise_collinear_neighbor = other_ceiling
+                other_ceiling.counter_clockwise_collinear_neighbor = ceiling
+                # There can only be one clockwise and one counter-clockwise
+                # neighbor.
+                if ceiling.counter_clockwise_neighbor != null:
+                    break
+            
+            # Check for a collinear neighbor on the right side.
+            surface2_end = other_ceiling.last_point
+            diff_x = surface1_end1.x - surface2_end.x
+            diff_y = surface1_end1.y - surface2_end.y
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
+                ceiling.counter_clockwise_collinear_neighbor = other_ceiling
+                other_ceiling.clockwise_collinear_neighbor = ceiling
+                # There can only be one clockwise and one counter-clockwise
+                # neighbor.
+                if ceiling.clockwise_neighbor != null:
+                    break
+    
+    # Check for collinear neighbors.
+    for left_wall in left_walls:
+        if left_wall.counter_clockwise_neighbor != null and \
+                left_wall.clockwise_neighbor != null:
+            continue
+        
+        # The left edge of the wall.
+        surface1_end1 = left_wall.first_point
+        # The right edge of the wall.
+        surface1_end2 = left_wall.last_point
+        
+        for other_wall in left_walls:
+            if left_wall == other_wall:
+                continue
+            
+            # Check for a collinear neighbor on the bottom side.
+            surface2_end = other_wall.first_point
+            diff_x = surface1_end2.x - surface2_end.x
+            diff_y = surface1_end2.y - surface2_end.y
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
+                left_wall.clockwise_collinear_neighbor = other_wall
+                other_wall.counter_clockwise_collinear_neighbor = left_wall
+                # There can only be one clockwise and one counter-clockwise
+                # neighbor.
+                if left_wall.counter_clockwise_neighbor != null:
+                    break
+            
+            # Check for a collinear neighbor on the top side.
+            surface2_end = other_wall.last_point
+            diff_x = surface1_end1.x - surface2_end.x
+            diff_y = surface1_end1.y - surface2_end.y
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
+                left_wall.counter_clockwise_collinear_neighbor = other_wall
+                other_wall.clockwise_collinear_neighbor = left_wall
+                # There can only be one clockwise and one counter-clockwise
+                # neighbor.
+                if left_wall.clockwise_neighbor != null:
+                    break
+    
+    # Check for collinear neighbors.
+    for right_wall in right_walls:
+        if right_wall.counter_clockwise_neighbor != null and \
+                right_wall.clockwise_neighbor != null:
+            continue
+        
+        # The left edge of the wall.
+        surface1_end1 = right_wall.first_point
+        # The right edge of the wall.
+        surface1_end2 = right_wall.last_point
+        
+        for other_wall in right_walls:
+            if right_wall == other_wall:
+                continue
+            
+            # Check for a collinear neighbor on the top side.
+            surface2_end = other_wall.first_point
+            diff_x = surface1_end2.x - surface2_end.x
+            diff_y = surface1_end2.y - surface2_end.y
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
+                right_wall.clockwise_collinear_neighbor = other_wall
+                other_wall.counter_clockwise_collinear_neighbor = right_wall
+                # There can only be one clockwise and one counter-clockwise
+                # neighbor.
+                if right_wall.counter_clockwise_neighbor != null:
+                    break
+            
+            # Check for a collinear neighbor on the bottom side.
+            surface2_end = other_wall.last_point
+            diff_x = surface1_end1.x - surface2_end.x
+            diff_y = surface1_end1.y - surface2_end.y
+            if diff_x < _EQUAL_POINT_EPSILON and \
+                    diff_x > -_EQUAL_POINT_EPSILON and \
+                    diff_y < _EQUAL_POINT_EPSILON and \
+                    diff_y > -_EQUAL_POINT_EPSILON:
+                right_wall.counter_clockwise_collinear_neighbor = other_wall
+                other_wall.clockwise_collinear_neighbor = right_wall
+                # There can only be one clockwise and one counter-clockwise
+                # neighbor.
+                if right_wall.clockwise_neighbor != null:
                     break
     
     # -   It is possible for a floor to be adjacent to a ceiling.
@@ -2208,7 +2403,8 @@ static func _populate_surface_objects(
                 tmp_surface.vertices_array,
                 side,
                 tmp_surface.tile_map,
-                tmp_surface.tile_map_indices)
+                tmp_surface.tile_map_indices,
+                tmp_surface.properties)
 
 
 static func _copy_surfaces_to_main_collection(
@@ -2238,6 +2434,7 @@ class _TmpSurface extends Object:
     var tile_map: SurfacesTileMap
     # Array<int>
     var tile_map_indices: Array
+    var properties: SurfaceProperties
     var surface: Surface
 
 
