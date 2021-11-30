@@ -38,8 +38,10 @@ func process(character) -> bool:
             # -   This is what makes slippery ice difficult to build speed on.
             # -   Force a minimum speed value, in order to prevent early
             #     acceleration from being cancelled-out by the min-speed cutoff.
-            # TODO: Keep this logic in-sync with
-            #       MovementUtils.calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed.
+            # NOTE: Keep this logic in-sync with:
+            #       MovementUtils.calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed,
+            #       IntraSurfaceEdge,
+            #       IntraSurfaceCalculator.
             var default_move_offset: float = \
                     character.movement_params.walk_acceleration * \
                     character.actions.delta_scaled
@@ -63,7 +65,7 @@ func process(character) -> bool:
             # -   Apply a friction offset that counters the character's speed.
             # -   This friction offset will be proportional to the coefficient
             #     of friction.
-            # TODO: Keep this logic in-sync with
+            # NOTE: Keep this logic in-sync with
             #       MovementUtils.calculate_distance_to_stop_from_friction.
             var friction_factor: float = \
                     character.movement_params \
