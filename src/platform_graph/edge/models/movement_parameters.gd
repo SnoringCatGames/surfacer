@@ -32,6 +32,7 @@ const _PHYSICS_MOVEMENT_GROUP := {
 
 ## -   This only affects the speed of intra-surface edges.[br]
 ## -   This does not affect jump start/end velocities.[br]
+## -   This will modify both acceleration and max-speed.[br]
 var intra_surface_edge_speed_multiplier := 1.0 \
         setget _set_intra_surface_edge_speed_multiplier
 
@@ -745,19 +746,23 @@ func _derive_parameters() -> void:
             Su.movement.gravity_double_jump_slow_rise_multiplier_default
     walk_acceleration = \
             walk_acceleration_multiplier * \
-            Su.movement.walk_acceleration_default
+            Su.movement.walk_acceleration_default * \
+            intra_surface_edge_speed_multiplier
     in_air_horizontal_acceleration = \
             in_air_horizontal_acceleration_multiplier * \
             Su.movement.in_air_horizontal_acceleration_default
     climb_up_speed = \
             climb_up_speed_multiplier * \
-            Su.movement.climb_up_speed_default
+            Su.movement.climb_up_speed_default * \
+            intra_surface_edge_speed_multiplier
     climb_down_speed = \
             climb_down_speed_multiplier * \
-            Su.movement.climb_down_speed_default
+            Su.movement.climb_down_speed_default * \
+            intra_surface_edge_speed_multiplier
     ceiling_crawl_speed = \
             ceiling_crawl_speed_multiplier * \
-            Su.movement.ceiling_crawl_speed_default
+            Su.movement.ceiling_crawl_speed_default * \
+            intra_surface_edge_speed_multiplier
     friction_coefficient_accelerating = \
             friction_coefficient_multiplier * \
             Su.movement.friction_coefficient_accelerating_default

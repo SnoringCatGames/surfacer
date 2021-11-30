@@ -200,20 +200,23 @@ func _get_all_edges_from_one_side(
                     falls_on_left_side)
     
     var velocity_x_start := surface_end_velocity_start.x
+    var max_horizontal_speed := \
+            movement_params.max_horizontal_speed_default * \
+            movement_params.intra_surface_edge_speed_multiplier
     
     var velocity_x_fall_off: float = \
             MovementUtils.calculate_velocity_end_for_displacement(
-                    displacement_from_start_to_fall_off.x,
-                    velocity_x_start,
-                    acceleration,
-                    movement_params.max_horizontal_speed_default)
+                displacement_from_start_to_fall_off.x,
+                velocity_x_start,
+                acceleration,
+                max_horizontal_speed)
     
     var time_fall_off: float = \
             MovementUtils.calculate_duration_for_displacement(
-                    displacement_from_start_to_fall_off.x,
-                    velocity_x_start,
-                    acceleration,
-                    movement_params.max_horizontal_speed_default)
+                displacement_from_start_to_fall_off.x,
+                velocity_x_start,
+                acceleration,
+                max_horizontal_speed)
     
     var fall_off_point_velocity_start := Vector2(velocity_x_fall_off, 0.0)
     

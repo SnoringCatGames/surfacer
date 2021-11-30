@@ -145,10 +145,13 @@ func update_for_surface_state(
             edge.start_position_along_surface,
             surface_state.center_position_along_surface)
     edge.velocity_start = surface_state.velocity
+    var max_horizontal_speed := \
+            edge.movement_params.max_horizontal_speed_default * \
+            edge.movement_params.intra_surface_edge_speed_multiplier
     edge.velocity_start.x = clamp(
             edge.velocity_start.x,
-            -edge.movement_params.max_horizontal_speed_default,
-            edge.movement_params.max_horizontal_speed_default)
+            -max_horizontal_speed,
+            max_horizontal_speed)
     _update(edge)
 
 
@@ -275,6 +278,7 @@ func calculate_duration(
     
     match start.side:
         SurfaceSide.FLOOR:
+# FIXME: LEFT OFF HERE: -------------
             var displacement_x := displacement.x
             var velocity_start_x := velocity_start.x
             # Our calculations currently assume that acceleration is in the
@@ -288,21 +292,18 @@ func calculate_duration(
                     velocity_start_x,
                     movement_params)
             assert(!is_inf(duration))
-            return duration / \
-                    movement_params.intra_surface_edge_speed_multiplier
+            return duration
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var is_climbing_upward := displacement.y < 0
             return MovementUtils.calculate_time_to_climb(
                     abs(displacement.y),
                     is_climbing_upward,
-                    movement_params) / \
-                    movement_params.intra_surface_edge_speed_multiplier
+                    movement_params)
         SurfaceSide.CEILING:
             return MovementUtils.calculate_time_to_crawl_on_ceiling(
                     abs(displacement.x),
-                    movement_params) / \
-                    movement_params.intra_surface_edge_speed_multiplier
+                    movement_params)
         _:
             Sc.logger.error()
             return INF
@@ -317,18 +318,22 @@ func _calculate_velocity_end(
     
     match start.side:
         SurfaceSide.FLOOR:
+# FIXME: LEFT OFF HERE: -------------
             # We need to calculate the end velocity, taking into account whether
             # we will have had enough distance to reach max horizontal speed.
             var acceleration := \
                     movement_params.walk_acceleration if \
                     displacement.x > 0.0 else \
                     -movement_params.walk_acceleration
+            var max_horizontal_speed := \
+                    movement_params.max_horizontal_speed_default * \
+                    movement_params.intra_surface_edge_speed_multiplier
             var velocity_end_x: float = \
                     MovementUtils.calculate_velocity_end_for_displacement(
-                            displacement.x,
-                            velocity_start.x,
-                            acceleration,
-                            movement_params.max_horizontal_speed_default)
+                        displacement.x,
+                        velocity_start.x,
+                        acceleration,
+                        max_horizontal_speed)
             return Vector2(velocity_end_x, 0.0)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
@@ -471,14 +476,14 @@ func _calculate_trajectory(
     var ran_into_concave_next_neighbor := false
     
     var displacement := end.target_point - start.target_point
+    var max_horizontal_speed := \
+            movement_params.max_horizontal_speed_default * \
+            movement_params.intra_surface_edge_speed_multiplier
     
     var frame_count := int(max(ceil(duration / Time.PHYSICS_TIME_STEP), 1))
     var frame_index := 0
     var position := start.target_point
     var velocity := velocity_start
-    var scaled_velocity := \
-            velocity * \
-            movement_params.intra_surface_edge_speed_multiplier
     var acceleration := Vector2.ZERO
     
     var positions := []
@@ -488,6 +493,7 @@ func _calculate_trajectory(
     
     match start.surface.side:
         SurfaceSide.FLOOR:
+# FIXME: LEFT OFF HERE: -------------
             velocity.x = velocity_start.x
             velocity.y = 0.0
             acceleration.x = \
@@ -509,38 +515,33 @@ func _calculate_trajectory(
             velocity.y = 0.0
         _:
             Sc.logger.error()
-    scaled_velocity = \
-            velocity * \
-            movement_params.intra_surface_edge_speed_multiplier
     
     while frame_index < frame_count:
         positions[frame_index] = position
-        velocities[frame_index] = scaled_velocity
+        velocities[frame_index] = velocity
         
         frame_index += 1
-        position += scaled_velocity * Time.PHYSICS_TIME_STEP
+        position += velocity * Time.PHYSICS_TIME_STEP
         position = Sc.geometry.project_shape_onto_surface(
                 position,
                 movement_params.collider,
                 start.surface,
                 true)
         velocity += acceleration * Time.PHYSICS_TIME_STEP
-        velocity = MovementUtils.clamp_horizontal_velocity_to_max_default(
-                movement_params,
-                velocity)
-        scaled_velocity = \
-                velocity * \
-                movement_params.intra_surface_edge_speed_multiplier
+        velocity.x = clamp(
+                velocity.x,
+                -max_horizontal_speed,
+                max_horizontal_speed)
         
         if is_next_neighbor_concave:
             # This prevents collisions with concave next neighbors
             # (which can form tight cusps).
             var override: Vector2 = \
                     Sc.geometry.project_away_from_concave_neighbor(
-                            position,
-                            next_neighbor,
-                            next_neighbor_normal_side_override,
-                            movement_params.collider)
+                        position,
+                        next_neighbor,
+                        next_neighbor_normal_side_override,
+                        movement_params.collider)
             if override != Vector2.INF:
                 ran_into_concave_next_neighbor = true
                 position = override
@@ -599,16 +600,14 @@ func _calculate_stopping_distance(
                             movement_params.gravity_fast_fall,
                             movement_params.friction_coefficient_constant_speed,
                             end.surface.properties.friction_multiplier)
-            return stopping_distance * \
-                        movement_params.intra_surface_edge_speed_multiplier if \
+            return stopping_distance if \
                     abs(displacement.x) - stopping_distance > \
                         IntraSurfaceEdge \
                                 .REACHED_DESTINATION_DISTANCE_THRESHOLD else \
                     max(abs(displacement.x) - \
                         IntraSurfaceEdge \
                                 .REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0,
-                        0.0) * \
-                        movement_params.intra_surface_edge_speed_multiplier
+                        0.0)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var climb_speed := \
@@ -616,14 +615,12 @@ func _calculate_stopping_distance(
                     displacement.y < 0 else \
                     abs(movement_params.climb_down_speed)
             return climb_speed * \
-                    Time.PHYSICS_TIME_STEP * \
-                    movement_params.intra_surface_edge_speed_multiplier + \
+                    Time.PHYSICS_TIME_STEP + \
                     0.01
         SurfaceSide.CEILING:
             var climb_speed := abs(movement_params.ceiling_crawl_speed)
             return climb_speed * \
-                    Time.PHYSICS_TIME_STEP * \
-                    movement_params.intra_surface_edge_speed_multiplier + \
+                    Time.PHYSICS_TIME_STEP + \
                     0.01
         _:
             Sc.logger.error()

@@ -447,7 +447,8 @@ static func calculate_time_to_walk(
             distance,
             v_0,
             movement_params.walk_acceleration,
-            movement_params.max_horizontal_speed_default)
+            movement_params.max_horizontal_speed_default * \
+                movement_params.intra_surface_edge_speed_multiplier)
 
 
 static func calculate_time_to_crawl_on_ceiling(
@@ -489,8 +490,13 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
         friction_multiplier: float) -> float:
     var distance_from_end := abs(displacement_x_from_end)
     
+    var max_horizontal_speed := \
+            movement_params.max_horizontal_speed_default * \
+            movement_params.intra_surface_edge_speed_multiplier
+    
     # TODO: Keep this logic in-sync with FloorFrictionAction.
     var walk_acceleration_with_friction := \
+            movement_params.walk_acceleration - \
             movement_params.walk_acceleration / \
             (friction_coefficient * friction_multiplier + 1.0)
     walk_acceleration_with_friction = clamp(
@@ -503,15 +509,14 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
     # Algebra...:
     #     (s - s_0) = (v^2 - v_0^2) / 2 / a
     var distance_to_max_horizontal_speed := \
-            (movement_params.max_horizontal_speed_default * \
-            movement_params.max_horizontal_speed_default - \
+            (max_horizontal_speed * max_horizontal_speed - \
             velocity_x_start * velocity_x_start) / \
             2.0 / walk_acceleration_with_friction
     
     var stopping_distance_from_max_speed := \
             calculate_distance_to_stop_from_friction(
                 movement_params,
-                movement_params.max_horizontal_speed_default,
+                max_horizontal_speed,
                 gravity,
                 friction_coefficient,
                 friction_multiplier)
@@ -558,6 +563,11 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
         return stopping_distance_from_max_speed
 
 
+# FIXME: LEFT OFF HERE: ----------------
+# - Search for usages.
+# - Update stuff to support dynamic max speeds.
+# - Apply movement_params.intra_surface_edge_speed_multiplier to max-speed when needed.
+#   - (Is this ever called for intra-surface edges?)
 static func clamp_horizontal_velocity_to_max_default(
         movement_params: MovementParameters,
         velocity: Vector2) -> Vector2:

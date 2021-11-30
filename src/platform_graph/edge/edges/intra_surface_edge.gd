@@ -76,6 +76,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
         return _get_velocity_at_time_without_trajectory(edge_time)
 
 
+# FIXME: LEFT OFF HERE: -------------
 func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
     if edge_time > duration:
         return Vector2.INF
@@ -88,12 +89,15 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
                     movement_params.walk_acceleration if \
                     displacement.x > 0 else \
                     -movement_params.walk_acceleration
+            var max_horizontal_speed := \
+                    movement_params.max_horizontal_speed_default * \
+                    movement_params.intra_surface_edge_speed_multiplier
             var displacement_x := \
                     MovementUtils.calculate_displacement_for_duration(
                             edge_time,
                             velocity_start.x,
                             acceleration_x,
-                            movement_params.max_horizontal_speed_default)
+                            max_horizontal_speed)
             var position_x := start.x + displacement_x
             return Sc.geometry.project_shape_onto_surface(
                     Vector2(position_x, 0.0),
@@ -128,6 +132,7 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
             return Vector2.INF
 
 
+# FIXME: LEFT OFF HERE: -------------
 func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
     if edge_time > duration:
         return Vector2.INF
@@ -140,11 +145,14 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
                     movement_params.walk_acceleration if \
                     displacement.x > 0 else \
                     -movement_params.walk_acceleration
+            var max_horizontal_speed := \
+                    movement_params.max_horizontal_speed_default * \
+                    movement_params.intra_surface_edge_speed_multiplier
             var velocity_x := velocity_start.x + acceleration_x * edge_time
             velocity_x = clamp(
                     velocity_x,
-                    -movement_params.max_horizontal_speed_default,
-                    movement_params.max_horizontal_speed_default)
+                    -max_horizontal_speed,
+                    max_horizontal_speed)
             return Vector2(velocity_x, 0.0)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:

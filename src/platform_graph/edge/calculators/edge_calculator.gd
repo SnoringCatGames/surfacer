@@ -439,7 +439,8 @@ static func _optimize_edge_jump_position_for_floor(
                                 previous_edge.get_start().x,
                         previous_velocity_end_x,
                         acceleration_x,
-                        movement_params.max_horizontal_speed_default)
+                        movement_params.max_horizontal_speed_default * \
+                            movement_params.intra_surface_edge_speed_multiplier)
         var velocity_start_y := movement_params.jump_boost
         var velocity_start = Vector2(velocity_start_x, velocity_start_y)
         
