@@ -573,10 +573,10 @@ func _populate_convex_trajectory(
             # (which can form tight cusps).
             var override: Vector2 = \
                     Sc.geometry.project_away_from_concave_neighbor(
-                            position,
-                            next_neighbor,
-                            next_neighbor_normal_side_override,
-                            movement_params.rounding_corner_calc_shape)
+                        position,
+                        next_neighbor,
+                        next_neighbor_normal_side_override,
+                        movement_params.rounding_corner_calc_shape)
             if override != Vector2.INF:
                 ran_into_concave_next_neighbor = true
                 position = override
@@ -597,10 +597,10 @@ func _populate_convex_trajectory(
                 position.y += velocity.y * Time.PHYSICS_TIME_STEP
                 position = Sc.geometry \
                         .project_shape_onto_convex_corner_preserving_tangent_position( \
-                                position,
-                                movement_params.rounding_corner_calc_shape,
-                                position_start.surface,
-                                position_end.surface)
+                            position,
+                            movement_params.rounding_corner_calc_shape,
+                            position_start.surface,
+                            position_end.surface)
                 
                 is_character_past_end = \
                         position.y + half_height <= corner_position.y if \
@@ -612,10 +612,10 @@ func _populate_convex_trajectory(
                     # (which can form tight cusps).
                     var override: Vector2 = \
                             Sc.geometry.project_away_from_concave_neighbor(
-                                    position,
-                                    next_neighbor,
-                                    next_neighbor_normal_side_override,
-                                    movement_params.rounding_corner_calc_shape)
+                                position,
+                                next_neighbor,
+                                next_neighbor_normal_side_override,
+                                movement_params.rounding_corner_calc_shape)
                     if override != Vector2.INF:
                         ran_into_concave_next_neighbor = true
                         position = override
@@ -650,17 +650,17 @@ func _populate_convex_trajectory(
                 position.x += velocity.x * Time.PHYSICS_TIME_STEP
                 position = Sc.geometry \
                         .project_shape_onto_convex_corner_preserving_tangent_position( \
-                                position,
-                                movement_params.rounding_corner_calc_shape,
-                                position_end.surface,
-                                position_start.surface)
+                            position,
+                            movement_params.rounding_corner_calc_shape,
+                            position_end.surface,
+                            position_start.surface)
                 
                 # Account for acceleration along the floor.
                 velocity.x += acceleration_x * Time.PHYSICS_TIME_STEP
                 velocity = \
                         MovementUtils.clamp_horizontal_velocity_to_max_default(
-                                movement_params,
-                                velocity)
+                            movement_params,
+                            velocity)
                 is_rounding_corner_finished = \
                         position.x >= corner_position.x if \
                         is_left_side else \
@@ -671,10 +671,10 @@ func _populate_convex_trajectory(
                     # (which can form tight cusps).
                     var override: Vector2 = \
                             Sc.geometry.project_away_from_concave_neighbor(
-                                    position,
-                                    next_neighbor,
-                                    next_neighbor_normal_side_override,
-                                    movement_params.rounding_corner_calc_shape)
+                                position,
+                                next_neighbor,
+                                next_neighbor_normal_side_override,
+                                movement_params.rounding_corner_calc_shape)
                     if override != Vector2.INF:
                         ran_into_concave_next_neighbor = true
                         position = override
@@ -697,22 +697,24 @@ func _populate_convex_trajectory(
             # (which can form tight cusps).
             var override: Vector2 = \
                     Sc.geometry.project_away_from_concave_neighbor(
-                            position,
-                            next_neighbor,
-                            next_neighbor_normal_side_override,
-                            movement_params.rounding_corner_calc_shape)
+                        position,
+                        next_neighbor,
+                        next_neighbor_normal_side_override,
+                        movement_params.rounding_corner_calc_shape)
             if override != Vector2.INF:
                 ran_into_concave_next_neighbor = true
                 position = override
         
         if !ran_into_concave_next_neighbor:
             if is_top_side:
-                # Assume that the character will have reached max speed by the time
-                # they've walked to the end of a floor surface.
+                # Assume that the character will have reached max speed by the
+                # time they've walked to the end of a floor surface.
                 velocity.x = \
                         -movement_params.max_horizontal_speed_default if \
                         is_left_side else \
                         movement_params.max_horizontal_speed_default
+                velocity.x *= \
+                        movement_params.intra_surface_edge_speed_multiplier
             else:
                 velocity.x = \
                         -movement_params.ceiling_crawl_speed if \
@@ -729,10 +731,10 @@ func _populate_convex_trajectory(
                 position.x += velocity.x * Time.PHYSICS_TIME_STEP
                 position = Sc.geometry \
                         .project_shape_onto_convex_corner_preserving_tangent_position( \
-                                position,
-                                movement_params.rounding_corner_calc_shape,
-                                position_start.surface,
-                                position_end.surface)
+                            position,
+                            movement_params.rounding_corner_calc_shape,
+                            position_start.surface,
+                            position_end.surface)
                 
                 is_character_past_end = \
                         position.x + half_width <= corner_position.x if \
@@ -744,10 +746,10 @@ func _populate_convex_trajectory(
                     # (which can form tight cusps).
                     var override: Vector2 = \
                             Sc.geometry.project_away_from_concave_neighbor(
-                                    position,
-                                    next_neighbor,
-                                    next_neighbor_normal_side_override,
-                                    movement_params.rounding_corner_calc_shape)
+                                position,
+                                next_neighbor,
+                                next_neighbor_normal_side_override,
+                                movement_params.rounding_corner_calc_shape)
                     if override != Vector2.INF:
                         ran_into_concave_next_neighbor = true
                         position = override
@@ -773,10 +775,10 @@ func _populate_convex_trajectory(
                 position.y += velocity.y * Time.PHYSICS_TIME_STEP
                 position = Sc.geometry \
                         .project_shape_onto_convex_corner_preserving_tangent_position( \
-                                position,
-                                movement_params.rounding_corner_calc_shape,
-                                position_end.surface,
-                                position_start.surface)
+                            position,
+                            movement_params.rounding_corner_calc_shape,
+                            position_end.surface,
+                            position_start.surface)
                 
                 is_rounding_corner_finished = \
                         position.y >= corner_position.y if \
@@ -788,10 +790,10 @@ func _populate_convex_trajectory(
                     # (which can form tight cusps).
                     var override: Vector2 = \
                             Sc.geometry.project_away_from_concave_neighbor(
-                                    position,
-                                    next_neighbor,
-                                    next_neighbor_normal_side_override,
-                                    movement_params.rounding_corner_calc_shape)
+                                position,
+                                next_neighbor,
+                                next_neighbor_normal_side_override,
+                                movement_params.rounding_corner_calc_shape)
                     if override != Vector2.INF:
                         ran_into_concave_next_neighbor = true
                         position = override
@@ -858,6 +860,7 @@ func _get_velocity_start(
                     -movement_params.max_horizontal_speed_default if \
                     is_moving_left else \
                     movement_params.max_horizontal_speed_default
+            velocity_x *= movement_params.intra_surface_edge_speed_multiplier
             velocity_y = 0.0
         SurfaceSide.CEILING:
             velocity_x = \
@@ -912,9 +915,13 @@ func _get_velocity_end(
                         2 * acceleration_x * floor_component_distance)
                 if is_starting_from_left_wall:
                     velocity_x = -velocity_x
-                velocity_x = clamp(velocity_x,
-                        -movement_params.max_horizontal_speed_default,
-                        movement_params.max_horizontal_speed_default)
+                var max_horizontal_speed := \
+                        movement_params.max_horizontal_speed_default * \
+                        movement_params.intra_surface_edge_speed_multiplier
+                velocity_x = clamp(
+                        velocity_x,
+                        -max_horizontal_speed,
+                        max_horizontal_speed)
             else:
                 velocity_x = 0.0
             
@@ -980,6 +987,9 @@ func _calculate_duration(
             position_start.surface.last_point if \
             is_clockwise else \
             position_start.surface.first_point
+    var max_horizontal_speed := \
+            movement_params.max_horizontal_speed_default * \
+            movement_params.intra_surface_edge_speed_multiplier
     
     # -   Movement around a convex corner is comprised of two parts:
     #     -   a part based on the start surface,
@@ -992,7 +1002,7 @@ func _calculate_duration(
     #     surface.
     
     var speed_start := abs(
-            movement_params.max_horizontal_speed_default if \
+            max_horizontal_speed if \
             start_side == SurfaceSide.FLOOR else \
             movement_params.ceiling_crawl_speed if \
             start_side == SurfaceSide.CEILING else \
@@ -1024,7 +1034,7 @@ func _calculate_duration(
     var duration_end: float
     if end_side != SurfaceSide.FLOOR:
         var speed_end := abs(
-                movement_params.max_horizontal_speed_default if \
+                max_horizontal_speed if \
                 end_side == SurfaceSide.FLOOR else \
                 movement_params.ceiling_crawl_speed if \
                 end_side == SurfaceSide.CEILING else \
@@ -1043,12 +1053,12 @@ func _calculate_duration(
                 end_speed_x_start * end_speed_x_start + \
                 2 * acceleration_x * distance_end)
         
-        if end_speed_x_end > movement_params.max_horizontal_speed_default:
+        if end_speed_x_end > max_horizontal_speed:
             # We hit max speed before reaching the end, so we need to account
             # separately for the duration while acceleration and the duration
             # at max speed.
             
-            end_speed_x_end = movement_params.max_horizontal_speed_default
+            end_speed_x_end = max_horizontal_speed
             # From a basic equation of motion:
             #     v = v_0 + at
             #     t = (v - v_0) / a
@@ -1110,7 +1120,8 @@ func _calculate_duration_along_start_surface(
             start_side == SurfaceSide.RIGHT_WALL
     
     var speed_start := abs(
-            movement_params.max_horizontal_speed_default if \
+            movement_params.max_horizontal_speed_default * \
+                movement_params.intra_surface_edge_speed_multiplier if \
             start_side == SurfaceSide.FLOOR else \
             movement_params.ceiling_crawl_speed if \
             start_side == SurfaceSide.CEILING else \
