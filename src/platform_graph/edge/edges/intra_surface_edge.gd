@@ -76,7 +76,6 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
         return _get_velocity_at_time_without_trajectory(edge_time)
 
 
-# FIXME: LEFT OFF HERE: -------------
 func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
     if edge_time > duration:
         return Vector2.INF
@@ -85,19 +84,31 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
     var surface := get_start_surface()
     match surface.side:
         SurfaceSide.FLOOR:
+            # NOTE: Keep this logic in-sync with FloorFrictionAction.
+            var friction_factor := \
+                    movement_params.friction_coefficient_accelerating * \
+                    surface.properties.friction_multiplier
+            var walk_acceleration_with_friction := \
+                    movement_params.walk_acceleration - \
+                    movement_params.walk_acceleration / \
+                    (friction_factor + 1.0)
+            walk_acceleration_with_friction = clamp(
+                    walk_acceleration_with_friction,
+                    0.0,
+                    movement_params.walk_acceleration)
             var acceleration_x := \
-                    movement_params.walk_acceleration if \
+                    walk_acceleration_with_friction if \
                     displacement.x > 0 else \
-                    -movement_params.walk_acceleration
+                    -walk_acceleration_with_friction
             var max_horizontal_speed := \
                     movement_params.max_horizontal_speed_default * \
                     movement_params.intra_surface_edge_speed_multiplier
             var displacement_x := \
                     MovementUtils.calculate_displacement_for_duration(
-                            edge_time,
-                            velocity_start.x,
-                            acceleration_x,
-                            max_horizontal_speed)
+                        edge_time,
+                        velocity_start.x,
+                        acceleration_x,
+                        max_horizontal_speed)
             var position_x := start.x + displacement_x
             return Sc.geometry.project_shape_onto_surface(
                     Vector2(position_x, 0.0),
@@ -132,7 +143,6 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
             return Vector2.INF
 
 
-# FIXME: LEFT OFF HERE: -------------
 func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
     if edge_time > duration:
         return Vector2.INF
@@ -141,10 +151,22 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
     var surface := get_start_surface()
     match surface.side:
         SurfaceSide.FLOOR:
+            # NOTE: Keep this logic in-sync with FloorFrictionAction.
+            var friction_factor := \
+                    movement_params.friction_coefficient_accelerating * \
+                    surface.properties.friction_multiplier
+            var walk_acceleration_with_friction := \
+                    movement_params.walk_acceleration - \
+                    movement_params.walk_acceleration / \
+                    (friction_factor + 1.0)
+            walk_acceleration_with_friction = clamp(
+                    walk_acceleration_with_friction,
+                    0.0,
+                    movement_params.walk_acceleration)
             var acceleration_x := \
-                    movement_params.walk_acceleration if \
+                    walk_acceleration_with_friction if \
                     displacement.x > 0 else \
-                    -movement_params.walk_acceleration
+                    -walk_acceleration_with_friction
             var max_horizontal_speed := \
                     movement_params.max_horizontal_speed_default * \
                     movement_params.intra_surface_edge_speed_multiplier

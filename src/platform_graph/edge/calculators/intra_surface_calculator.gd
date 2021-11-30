@@ -278,7 +278,6 @@ func calculate_duration(
     
     match start.side:
         SurfaceSide.FLOOR:
-# FIXME: LEFT OFF HERE: -------------
             var displacement_x := displacement.x
             var velocity_start_x := velocity_start.x
             # Our calculations currently assume that acceleration is in the
@@ -287,12 +286,29 @@ func calculate_duration(
             if displacement_x < 0.0:
                 velocity_start_x = -velocity_start_x
                 displacement_x = -displacement_x
-            var duration := MovementUtils.calculate_time_to_walk(
+            
+            # NOTE: Keep this logic in-sync with FloorFrictionAction.
+            var friction_factor := \
+                    movement_params.friction_coefficient_accelerating * \
+                    start.surface.properties.friction_multiplier
+            var walk_acceleration_with_friction := \
+                    movement_params.walk_acceleration - \
+                    movement_params.walk_acceleration / \
+                    (friction_factor + 1.0)
+            walk_acceleration_with_friction = clamp(
+                    walk_acceleration_with_friction,
+                    0.0,
+                    movement_params.walk_acceleration)
+            
+            var duration := MovementUtils.calculate_duration_for_displacement(
                     displacement_x,
                     velocity_start_x,
-                    movement_params)
+                    walk_acceleration_with_friction,
+                    movement_params.max_horizontal_speed_default * \
+                        movement_params.intra_surface_edge_speed_multiplier)
             assert(!is_inf(duration))
             return duration
+            
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var is_climbing_upward := displacement.y < 0
@@ -318,13 +334,26 @@ func _calculate_velocity_end(
     
     match start.side:
         SurfaceSide.FLOOR:
-# FIXME: LEFT OFF HERE: -------------
             # We need to calculate the end velocity, taking into account whether
             # we will have had enough distance to reach max horizontal speed.
+            
+            # NOTE: Keep this logic in-sync with FloorFrictionAction.
+            var friction_factor := \
+                    movement_params.friction_coefficient_accelerating * \
+                    start.surface.properties.friction_multiplier
+            var walk_acceleration_with_friction := \
+                    movement_params.walk_acceleration - \
+                    movement_params.walk_acceleration / \
+                    (friction_factor + 1.0)
+            walk_acceleration_with_friction = clamp(
+                    walk_acceleration_with_friction,
+                    0.0,
+                    movement_params.walk_acceleration)
+            
             var acceleration := \
-                    movement_params.walk_acceleration if \
+                    walk_acceleration_with_friction if \
                     displacement.x > 0.0 else \
-                    -movement_params.walk_acceleration
+                    -walk_acceleration_with_friction
             var max_horizontal_speed := \
                     movement_params.max_horizontal_speed_default * \
                     movement_params.intra_surface_edge_speed_multiplier
@@ -335,6 +364,7 @@ func _calculate_velocity_end(
                         acceleration,
                         max_horizontal_speed)
             return Vector2(velocity_end_x, 0.0)
+            
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             # We use a constant speed (no acceleration) when climbing.
@@ -493,13 +523,26 @@ func _calculate_trajectory(
     
     match start.surface.side:
         SurfaceSide.FLOOR:
-# FIXME: LEFT OFF HERE: -------------
             velocity.x = velocity_start.x
             velocity.y = 0.0
+            
+            # NOTE: Keep this logic in-sync with FloorFrictionAction.
+            var friction_factor := \
+                    movement_params.friction_coefficient_accelerating * \
+                    start.surface.properties.friction_multiplier
+            var walk_acceleration_with_friction := \
+                    movement_params.walk_acceleration - \
+                    movement_params.walk_acceleration / \
+                    (friction_factor + 1.0)
+            walk_acceleration_with_friction = clamp(
+                    walk_acceleration_with_friction,
+                    0.0,
+                    movement_params.walk_acceleration)
+            
             acceleration.x = \
-                    movement_params.walk_acceleration if \
+                    walk_acceleration_with_friction if \
                     displacement.x > 0 else \
-                    -movement_params.walk_acceleration
+                    -walk_acceleration_with_friction
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             velocity.x = 0.0

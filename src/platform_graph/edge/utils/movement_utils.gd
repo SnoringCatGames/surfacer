@@ -439,18 +439,6 @@ static func calculate_time_to_climb(
     return abs(distance / speed)
 
 
-static func calculate_time_to_walk(
-        distance: float,
-        v_0: float,
-        movement_params: MovementParameters) -> float:
-    return calculate_duration_for_displacement(
-            distance,
-            v_0,
-            movement_params.walk_acceleration,
-            movement_params.max_horizontal_speed_default * \
-                movement_params.intra_surface_edge_speed_multiplier)
-
-
 static func calculate_time_to_crawl_on_ceiling(
         distance: float,
         movement_params: MovementParameters) -> float:
@@ -467,10 +455,11 @@ static func calculate_distance_to_stop_from_friction(
         gravity: float,
         friction_coefficient: float,
         friction_multiplier: float) -> float:
-    # TODO: Adapt some sort of continuous analytic formula instead of this
-    #       discrete loop-based approach.
+    # FIXME: LEFT OFF HERE: --------------------------
+    # - Adapt some sort of continuous analytic formula instead of this
+    #   discrete loop-based approach.
     
-    # TODO: Keep this logic in-sync with FloorFrictionAction.
+    # NOTE: Keep this logic in-sync with FloorFrictionAction.
     var friction_deceleration_per_frame := \
             friction_coefficient * friction_multiplier * gravity
     var distance := 0.0
@@ -494,7 +483,7 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
             movement_params.max_horizontal_speed_default * \
             movement_params.intra_surface_edge_speed_multiplier
     
-    # TODO: Keep this logic in-sync with FloorFrictionAction.
+    # NOTE: Keep this logic in-sync with FloorFrictionAction.
     var walk_acceleration_with_friction := \
             movement_params.walk_acceleration - \
             movement_params.walk_acceleration / \
@@ -563,7 +552,7 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
         return stopping_distance_from_max_speed
 
 
-# FIXME: LEFT OFF HERE: ----------------
+# FIXME: LEFT OFF HERE: -----------------
 # - Search for usages.
 # - Update stuff to support dynamic max speeds.
 # - Apply movement_params.intra_surface_edge_speed_multiplier to max-speed when needed.
