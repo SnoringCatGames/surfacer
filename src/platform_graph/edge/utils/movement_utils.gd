@@ -460,23 +460,16 @@ static func calculate_time_to_crawl_on_ceiling(
     return abs(distance / movement_params.ceiling_crawl_speed)
 
 
-# FIXME: LEFT OFF HERE: ------------------------
-# - Update friction logic according to recent changes in FloorFrictionAction.
 static func calculate_distance_to_stop_from_friction(
         movement_params: MovementParameters,
         velocity_x_start: float,
         gravity: float,
         friction_coefficient: float,
         friction_multiplier: float) -> float:
-    # TODO: This stopping-distance formula doesn't work for us (generates
-    #       results that are way too big). But we should adapt some sort of
-    #       continuous analytic formula instead of this discrete loop-based
-    #       approach.
+    # TODO: Adapt some sort of continuous analytic formula instead of this
+    #       discrete loop-based approach.
     
-#    # Stopping distance formula:
-#    #     distance = speed_start^2 / 2 / friction_coefficient / gravity
-#    return speed_start * speed_start / 2.0 / friction_coefficient / gravity
-    
+    # TODO: Keep this logic in-sync with FloorFrictionAction.
     var friction_deceleration_per_frame := \
             friction_coefficient * friction_multiplier * gravity
     var distance := 0.0
@@ -487,8 +480,6 @@ static func calculate_distance_to_stop_from_friction(
     return distance
 
 
-# FIXME: LEFT OFF HERE: ------------------------
-# - Update friction logic according to recent changes in FloorFrictionAction.
 static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
         movement_params: MovementParameters,
         velocity_x_start: float,
@@ -498,6 +489,15 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
         friction_multiplier: float) -> float:
     var distance_from_end := abs(displacement_x_from_end)
     
+    # TODO: Keep this logic in-sync with FloorFrictionAction.
+    var walk_acceleration_with_friction := \
+            movement_params.walk_acceleration / \
+            (friction_coefficient * friction_multiplier + 1.0)
+    walk_acceleration_with_friction = clamp(
+            walk_acceleration_with_friction,
+            0.0,
+            movement_params.walk_acceleration)
+    
     # From a basic equation of motion:
     #     v^2 = v_0^2 + 2*a*(s - s_0)
     # Algebra...:
@@ -506,7 +506,7 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
             (movement_params.max_horizontal_speed_default * \
             movement_params.max_horizontal_speed_default - \
             velocity_x_start * velocity_x_start) / \
-            2.0 / movement_params.walk_acceleration
+            2.0 / walk_acceleration_with_friction
     
     var stopping_distance_from_max_speed := \
             calculate_distance_to_stop_from_friction(
