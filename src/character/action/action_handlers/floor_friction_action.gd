@@ -20,20 +20,6 @@ func process(character) -> bool:
     if !character.processed_action(FloorJumpAction.NAME):
         # Friction.
         
-        # FIXME: LEFT OFF HERE: REMOVE THIS OLD LOGIC ----------------
-#        var friction_multiplier: float = \
-#                character.surface_state.grabbed_surface.properties \
-#                    .friction_multiplier if \
-#                character.surface_state.is_grabbing_surface else \
-#                1.0
-#        var friction_offset: float = \
-#                friction_multiplier * \
-#                character.movement_params.friction_coefficient * \
-#                character.movement_params.gravity_fast_fall * \
-#                character.actions.delta_scaled
-#        friction_offset = clamp(friction_offset, 0, abs(character.velocity.x))
-#        character.velocity.x += -sign(character.velocity.x) * friction_offset
-        
         var acceleration_sign: int = \
                 character.surface_state.horizontal_acceleration_sign
         var speed_sign := sign(character.velocity.x)
@@ -52,6 +38,8 @@ func process(character) -> bool:
             # -   This is what makes slippery ice difficult to build speed on.
             # -   Force a minimum speed value, in order to prevent early
             #     acceleration from being cancelled-out by the min-speed cutoff.
+            # TODO: Keep this logic in-sync with
+            #       MovementUtils.calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed.
             var default_move_offset: float = \
                     character.movement_params.walk_acceleration * \
                     character.actions.delta_scaled
@@ -75,6 +63,8 @@ func process(character) -> bool:
             # -   Apply a friction offset that counters the character's speed.
             # -   This friction offset will be proportional to the coefficient
             #     of friction.
+            # TODO: Keep this logic in-sync with
+            #       MovementUtils.calculate_distance_to_stop_from_friction.
             var friction_factor: float = \
                     character.movement_params \
                         .friction_coefficient_constant_speed * \
