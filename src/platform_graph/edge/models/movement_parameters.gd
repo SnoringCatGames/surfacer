@@ -432,8 +432,8 @@ var climb_up_speed: float
 var climb_down_speed: float
 var ceiling_crawl_speed: float
 
-var friction_coefficient_accelerating: float
-var friction_coefficient_constant_speed: float
+var friction_coeff_with_sideways_input: float
+var friction_coeff_without_sideways_input: float
 
 var jump_boost: float
 var wall_jump_horizontal_boost: float
@@ -763,12 +763,12 @@ func _derive_parameters() -> void:
             ceiling_crawl_speed_multiplier * \
             Su.movement.ceiling_crawl_speed_default * \
             intra_surface_edge_speed_multiplier
-    friction_coefficient_accelerating = \
+    friction_coeff_with_sideways_input = \
             friction_coefficient_multiplier * \
-            Su.movement.friction_coefficient_accelerating_default
-    friction_coefficient_constant_speed = \
+            Su.movement.friction_coeff_with_sideways_input_default
+    friction_coeff_without_sideways_input = \
             friction_coefficient_multiplier * \
-            Su.movement.friction_coefficient_constant_speed_default
+            Su.movement.friction_coeff_without_sideways_input_default
     jump_boost = \
             jump_boost_multiplier * \
             Su.movement.jump_boost_default
