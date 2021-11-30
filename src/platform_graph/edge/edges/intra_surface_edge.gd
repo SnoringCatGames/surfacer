@@ -86,7 +86,7 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
         SurfaceSide.FLOOR:
             # NOTE: Keep this logic in-sync with FloorFrictionAction.
             var friction_factor := \
-                    movement_params.friction_coefficient_accelerating * \
+                    movement_params.friction_coeff_with_sideways_input * \
                     surface.properties.friction_multiplier
             var walk_acceleration_with_friction := \
                     movement_params.walk_acceleration - \
@@ -153,7 +153,7 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
         SurfaceSide.FLOOR:
             # NOTE: Keep this logic in-sync with FloorFrictionAction.
             var friction_factor := \
-                    movement_params.friction_coefficient_accelerating * \
+                    movement_params.friction_coeff_with_sideways_input * \
                     surface.properties.friction_multiplier
             var walk_acceleration_with_friction := \
                     movement_params.walk_acceleration - \

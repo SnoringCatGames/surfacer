@@ -289,7 +289,7 @@ func calculate_duration(
             
             # NOTE: Keep this logic in-sync with FloorFrictionAction.
             var friction_factor := \
-                    movement_params.friction_coefficient_accelerating * \
+                    movement_params.friction_coeff_with_sideways_input * \
                     start.surface.properties.friction_multiplier
             var walk_acceleration_with_friction := \
                     movement_params.walk_acceleration - \
@@ -339,7 +339,7 @@ func _calculate_velocity_end(
             
             # NOTE: Keep this logic in-sync with FloorFrictionAction.
             var friction_factor := \
-                    movement_params.friction_coefficient_accelerating * \
+                    movement_params.friction_coeff_with_sideways_input * \
                     start.surface.properties.friction_multiplier
             var walk_acceleration_with_friction := \
                     movement_params.walk_acceleration - \
@@ -528,7 +528,7 @@ func _calculate_trajectory(
             
             # NOTE: Keep this logic in-sync with FloorFrictionAction.
             var friction_factor := \
-                    movement_params.friction_coefficient_accelerating * \
+                    movement_params.friction_coeff_with_sideways_input * \
                     start.surface.properties.friction_multiplier
             var walk_acceleration_with_friction := \
                     movement_params.walk_acceleration - \
@@ -641,7 +641,7 @@ func _calculate_stopping_distance(
                             velocity_start.x,
                             displacement.x,
                             movement_params.gravity_fast_fall,
-                            movement_params.friction_coefficient_constant_speed,
+                            movement_params.friction_coeff_without_sideways_input,
                             end.surface.properties.friction_multiplier)
             return stopping_distance if \
                     abs(displacement.x) - stopping_distance > \

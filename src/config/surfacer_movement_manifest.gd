@@ -52,8 +52,8 @@ var climb_up_speed_default := -230.0
 var climb_down_speed_default := 120.0
 var ceiling_crawl_speed_default := 230.0
 
-var friction_coefficient_accelerating_default := 1.25
-var friction_coefficient_constant_speed_default := 1.0
+var friction_coeff_with_sideways_input_default := 1.25
+var friction_coeff_without_sideways_input_default := 1.0
 
 var jump_boost_default := -900.0
 var wall_jump_horizontal_boost_default := 200.0
@@ -133,12 +133,12 @@ func _register_manifest(manifest: Dictionary) -> void:
     if manifest.has("ceiling_crawl_speed_default"):
         self.ceiling_crawl_speed_default = \
                 manifest.ceiling_crawl_speed_default
-    if manifest.has("friction_coefficient_accelerating_default"):
-        self.friction_coefficient_accelerating_default = \
-                manifest.friction_coefficient_accelerating_default
-    if manifest.has("friction_coefficient_constant_speed_default"):
-        self.friction_coefficient_constant_speed_default = \
-                manifest.friction_coefficient_constant_speed_default
+    if manifest.has("friction_coeff_with_sideways_input_default"):
+        self.friction_coeff_with_sideways_input_default = \
+                manifest.friction_coeff_with_sideways_input_default
+    if manifest.has("friction_coeff_without_sideways_input_default"):
+        self.friction_coeff_without_sideways_input_default = \
+                manifest.friction_coeff_without_sideways_input_default
     if manifest.has("jump_boost_default"):
         self.jump_boost_default = \
                 manifest.jump_boost_default

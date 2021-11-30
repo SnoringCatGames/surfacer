@@ -47,7 +47,7 @@ func process(character) -> bool:
                     character.actions.delta_scaled
             var friction_factor: float = \
                     character.movement_params \
-                        .friction_coefficient_accelerating * \
+                        .friction_coeff_with_sideways_input * \
                     friction_multiplier
             var friction_offset: float = \
                     default_move_offset / \
@@ -69,7 +69,7 @@ func process(character) -> bool:
             #       MovementUtils.calculate_distance_to_stop_from_friction.
             var friction_factor: float = \
                     character.movement_params \
-                        .friction_coefficient_constant_speed * \
+                        .friction_coeff_without_sideways_input * \
                     friction_multiplier
             var friction_magnitude: float = \
                     character.movement_params.gravity_fast_fall * \
