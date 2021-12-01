@@ -75,6 +75,7 @@ var walking_edge_weight_multiplier_default := 1.2
 var ceiling_crawling_edge_weight_multiplier_default := 2.0
 var climbing_edge_weight_multiplier_default := 1.8
 var climb_to_adjacent_surface_edge_weight_multiplier_default := 1.0
+var move_to_collinear_surface_edge_weight_multiplier_default := 0.0
 var air_edge_weight_multiplier_default := 1.0
 
 # Dictionary<String, MovementParameters>
@@ -194,6 +195,10 @@ func _register_manifest(manifest: Dictionary) -> void:
         self.climb_to_adjacent_surface_edge_weight_multiplier_default = \
                 manifest \
                 .climb_to_adjacent_surface_edge_weight_multiplier_default
+    if manifest.has("move_to_collinear_surface_edge_weight_multiplier_default"):
+        self.move_to_collinear_surface_edge_weight_multiplier_default = \
+                manifest \
+                .move_to_collinear_surface_edge_weight_multiplier_default
     if manifest.has("air_edge_weight_multiplier_default"):
         self.air_edge_weight_multiplier_default = \
                 manifest.air_edge_weight_multiplier_default
