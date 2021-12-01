@@ -141,6 +141,10 @@ var climbing_edge_weight_multiplier_override := -1.0 \
 ## the path may take longer.
 var climb_to_adjacent_surface_edge_weight_multiplier_override := -1.0 \
         setget _set_climb_to_adjacent_surface_edge_weight_multiplier_override
+## When transitioning to a collinear neighbor surface, it often makes sense to
+## not include any edge weight.
+var move_to_collinear_surface_edge_weight_multiplier_override := -1.0 \
+        setget _set_move_to_collinear_surface_edge_weight_multiplier_override
 ## If extra weight is applied to air edges, then the character will favor
 ## paths that involve fewer jumps, even if the path may take longer.
 var air_edge_weight_multiplier_override := -1.0 \
@@ -454,6 +458,7 @@ var walking_edge_weight_multiplier: float
 var ceiling_crawling_edge_weight_multiplier: float
 var climbing_edge_weight_multiplier: float
 var climb_to_adjacent_surface_edge_weight_multiplier: float
+var move_to_collinear_surface_edge_weight_multiplier: float
 var air_edge_weight_multiplier: float
 
 var floor_jump_max_horizontal_jump_distance: float
@@ -825,6 +830,11 @@ func _derive_parameters() -> void:
             climb_to_adjacent_surface_edge_weight_multiplier_override \
                     != -1.0 else \
             Su.movement.climb_to_adjacent_surface_edge_weight_multiplier_default
+    move_to_collinear_surface_edge_weight_multiplier = \
+            move_to_collinear_surface_edge_weight_multiplier_override if \
+            move_to_collinear_surface_edge_weight_multiplier_override \
+                    != -1.0 else \
+            Su.movement.move_to_collinear_surface_edge_weight_multiplier_default
     air_edge_weight_multiplier = \
             air_edge_weight_multiplier_override if \
             air_edge_weight_multiplier_override != -1.0 else \
@@ -1054,6 +1064,12 @@ func _set_climbing_edge_weight_multiplier_override(value: float) -> void:
 func _set_climb_to_adjacent_surface_edge_weight_multiplier_override(
         value: float) -> void:
     climb_to_adjacent_surface_edge_weight_multiplier_override = value
+    _update_parameters()
+
+
+func _set_move_to_collinear_surface_edge_weight_multiplier_override(
+        value: float) -> void:
+    move_to_collinear_surface_edge_weight_multiplier_override = value
     _update_parameters()
 
 
