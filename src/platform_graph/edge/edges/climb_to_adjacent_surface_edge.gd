@@ -183,8 +183,8 @@ func _check_did_just_reach_surface_destination(
     
     if !get_is_convex() and \
             surface_state.grabbed_surface == end_surface:
-        # For a concave corner, as soon as we are no longer touching the origin
-        # surface, we have reached the destination.
+        # For a concave or collinear transition, as soon as we are no longer
+        # touching the origin surface, we have reached the destination.
         return true
     
     # For a convex corner, we must pass the target coordinate.
@@ -243,6 +243,24 @@ func get_is_convex() -> bool:
                     end_position_along_surface.surface or \
             start_position_along_surface.surface \
                     .counter_clockwise_convex_neighbor == \
+                    end_position_along_surface.surface
+
+
+func get_is_concave() -> bool:
+    return start_position_along_surface.surface \
+                    .clockwise_concave_neighbor == \
+                    end_position_along_surface.surface or \
+            start_position_along_surface.surface \
+                    .counter_clockwise_concave_neighbor == \
+                    end_position_along_surface.surface
+
+
+func get_is_collinear() -> bool:
+    return start_position_along_surface.surface \
+                    .clockwise_collinear_neighbor == \
+                    end_position_along_surface.surface or \
+            start_position_along_surface.surface \
+                    .counter_clockwise_collinear_neighbor == \
                     end_position_along_surface.surface
 
 
