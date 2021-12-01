@@ -770,12 +770,14 @@ static func _dedup_node(
 #     also be ok when it does happen. It'll just result in a little more
 #     storage.
 static func _node_to_cell_id(node: PositionAlongSurface) -> String:
-    return "%s,%s,%s" % [
+    return "%s,%s,%s,%s,%s" % [
             node.side,
-            floor((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / \
-                    CLUSTER_CELL_SIZE) as int,
-            floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / \
-                    CLUSTER_CELL_SIZE) as int,
+            int((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / \
+                    CLUSTER_CELL_SIZE),
+            int((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / \
+                    CLUSTER_CELL_SIZE),
+            int(node.surface.center.x),
+            int(node.surface.center.y),
         ]
 
 
