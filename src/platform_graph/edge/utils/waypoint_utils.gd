@@ -114,6 +114,16 @@ static func calculate_waypoints_around_surface(
     var position_ccw := Vector2.INF
     var position_cw := Vector2.INF
     
+    # Get references to the the furthest collinear transitive-neighbor surfaces.
+    var colliding_collinear_cw := colliding_surface
+    while colliding_collinear_cw.clockwise_collinear_neighbor != null:
+        colliding_collinear_cw = \
+                colliding_collinear_cw.clockwise_collinear_neighbor
+    var colliding_collinear_ccw := colliding_surface
+    while colliding_collinear_ccw.clockwise_collinear_neighbor != null:
+        colliding_collinear_ccw = \
+                colliding_collinear_ccw.clockwise_collinear_neighbor
+    
     # Calculate the positions of each waypoint.
     match colliding_surface.side:
         SurfaceSide.FLOOR:
@@ -121,40 +131,40 @@ static func calculate_waypoints_around_surface(
             should_stay_on_min_side_ccw = true
             should_stay_on_min_side_cw = false
             # Left end (counter-clockwise end).
-            position_ccw = colliding_surface.first_point + \
+            position_ccw = colliding_collinear_ccw.first_point + \
                     Vector2(-waypoint_offset.x, -waypoint_offset.y)
             # Right end (clockwise end).
-            position_cw = colliding_surface.last_point + \
+            position_cw = colliding_collinear_cw.last_point + \
                     Vector2(waypoint_offset.x, -waypoint_offset.y)
         SurfaceSide.CEILING:
             passing_vertically = true
             should_stay_on_min_side_ccw = false
             should_stay_on_min_side_cw = true
             # Right end (counter-clockwise end).
-            position_ccw = colliding_surface.first_point + \
+            position_ccw = colliding_collinear_ccw.first_point + \
                     Vector2(waypoint_offset.x, waypoint_offset.y)
             # Left end (clockwise end).
-            position_cw = colliding_surface.last_point + \
+            position_cw = colliding_collinear_cw.last_point + \
                     Vector2(-waypoint_offset.x, waypoint_offset.y)
         SurfaceSide.LEFT_WALL:
             passing_vertically = false
             should_stay_on_min_side_ccw = true
             should_stay_on_min_side_cw = false
             # Top end (counter-clockwise end).
-            position_ccw = colliding_surface.first_point + \
+            position_ccw = colliding_collinear_ccw.first_point + \
                     Vector2(waypoint_offset.x, -waypoint_offset.y)
             # Bottom end (clockwise end).
-            position_cw = colliding_surface.last_point + \
+            position_cw = colliding_collinear_cw.last_point + \
                     Vector2(waypoint_offset.x, waypoint_offset.y)
         SurfaceSide.RIGHT_WALL:
             passing_vertically = false
             should_stay_on_min_side_ccw = false
             should_stay_on_min_side_cw = true
             # Bottom end (counter-clockwise end).
-            position_ccw = colliding_surface.first_point + \
+            position_ccw = colliding_collinear_ccw.first_point + \
                     Vector2(-waypoint_offset.x, waypoint_offset.y)
             # Top end (clockwise end).
-            position_cw = colliding_surface.last_point + \
+            position_cw = colliding_collinear_cw.last_point + \
                     Vector2(-waypoint_offset.x, -waypoint_offset.y)
     
     var should_skip_ccw := false
@@ -163,11 +173,11 @@ static func calculate_waypoints_around_surface(
     # We ignore waypoints that would correspond to moving back the way we came.
     if previous_waypoint.surface != null and \
             previous_waypoint.surface == \
-            colliding_surface.counter_clockwise_convex_neighbor:
+            colliding_collinear_ccw.counter_clockwise_convex_neighbor:
         should_skip_ccw = true
     if previous_waypoint.surface != null and \
             previous_waypoint.surface == \
-            colliding_surface.clockwise_convex_neighbor:
+            colliding_collinear_cw.clockwise_convex_neighbor:
         should_skip_cw = true
     
     # We ignore waypoints that are redundant with the constraint we were
@@ -194,7 +204,7 @@ static func calculate_waypoints_around_surface(
     
     if !should_skip_ccw:
         waypoint_a_original = Waypoint.new(
-                colliding_surface,
+                colliding_collinear_ccw,
                 position_ccw,
                 passing_vertically,
                 should_stay_on_min_side_ccw,
@@ -230,7 +240,7 @@ static func calculate_waypoints_around_surface(
     
     if !should_skip_cw:
         waypoint_b_original = Waypoint.new(
-                colliding_surface,
+                colliding_collinear_cw,
                 position_cw,
                 passing_vertically,
                 should_stay_on_min_side_cw,
@@ -322,96 +332,139 @@ static func _calculate_protrusion_waypoint(
         destination_waypoint: Waypoint,
         colliding_surface: Surface,
         waypoint_offset: Vector2) -> void:
-    var protrusion_waypoint: Waypoint
-    if colliding_surface.vertices.size() > 2:
-        var protrusion_position := Vector2.INF
-        var passing_protrusion_vertically: bool
-        var should_stay_on_protrusion_min_side: bool
-        match colliding_surface.side:
-            SurfaceSide.FLOOR:
-                var min_y := colliding_surface.bounding_box.position.y
-                var does_middle_vertex_protrude := \
-                        colliding_surface.first_point.y > min_y + 0.1 and \
-                        colliding_surface.last_point.y > min_y + 0.1
-                if does_middle_vertex_protrude:
-                    var protruding_vertex := Vector2.INF
-                    for vertex in colliding_surface.vertices:
+    if colliding_surface.is_single_vertex:
+        return
+    
+    # Get references to the the furthest collinear transitive-neighbor surfaces.
+    var colliding_collinear_cw := colliding_surface
+    while colliding_collinear_cw.clockwise_collinear_neighbor != null:
+        colliding_collinear_cw = \
+                colliding_collinear_cw.clockwise_collinear_neighbor
+    var colliding_collinear_ccw := colliding_surface
+    while colliding_collinear_ccw.clockwise_collinear_neighbor != null:
+        colliding_collinear_ccw = \
+                colliding_collinear_ccw.clockwise_collinear_neighbor
+    
+    # Calculate the combined collinear-neighbor bounding-box.
+    var current_surface := colliding_collinear_ccw
+    var collinear_neighbors_bb := current_surface.bounding_box
+    while current_surface.clockwise_collinear_neighbor != null:
+        current_surface = current_surface.clockwise_collinear_neighbor
+        collinear_neighbors_bb.merge(current_surface.bounding_box)
+    
+    var protrusion_position := Vector2.INF
+    var protrusion_surface: Surface
+    var passing_protrusion_vertically: bool
+    var should_stay_on_protrusion_min_side: bool
+    
+    match colliding_surface.side:
+        SurfaceSide.FLOOR:
+            var min_y := collinear_neighbors_bb.position.y
+            var does_middle_vertex_protrude := \
+                    colliding_collinear_ccw.first_point.y > min_y + 0.1 and \
+                    colliding_collinear_cw.last_point.y > min_y + 0.1
+            if does_middle_vertex_protrude:
+                var protruding_vertex := Vector2.INF
+                current_surface = colliding_collinear_ccw
+                while current_surface.clockwise_collinear_neighbor != null:
+                    current_surface = \
+                            current_surface.clockwise_collinear_neighbor
+                    for vertex in current_surface.vertices:
                         if vertex.y < protruding_vertex.y:
                             protruding_vertex = vertex
-                    protrusion_position = \
-                            protruding_vertex + \
-                            Vector2(0.0, -waypoint_offset.y)
-                    passing_protrusion_vertically = false
-                    should_stay_on_protrusion_min_side = true
-            SurfaceSide.LEFT_WALL:
-                var max_x := colliding_surface.bounding_box.end.x
-                var does_middle_vertex_protrude := \
-                        colliding_surface.first_point.x < max_x - 0.1 and \
-                        colliding_surface.last_point.x < max_x - 0.1
-                if does_middle_vertex_protrude:
-                    var protruding_vertex := -Vector2.INF
-                    for vertex in colliding_surface.vertices:
+                            protrusion_surface = current_surface
+                protrusion_position = \
+                        protruding_vertex + \
+                        Vector2(0.0, -waypoint_offset.y)
+                passing_protrusion_vertically = false
+                should_stay_on_protrusion_min_side = true
+            
+        SurfaceSide.LEFT_WALL:
+            var max_x := collinear_neighbors_bb.end.x
+            var does_middle_vertex_protrude := \
+                    colliding_collinear_ccw.first_point.x < max_x - 0.1 and \
+                    colliding_collinear_cw.last_point.x < max_x - 0.1
+            if does_middle_vertex_protrude:
+                var protruding_vertex := -Vector2.INF
+                current_surface = colliding_collinear_ccw
+                while current_surface.clockwise_collinear_neighbor != null:
+                    current_surface = \
+                            current_surface.clockwise_collinear_neighbor
+                    for vertex in current_surface.vertices:
                         if vertex.x > protruding_vertex.x:
                             protruding_vertex = vertex
-                    protrusion_position = \
-                            protruding_vertex + \
-                            Vector2(waypoint_offset.x, 0.0)
-                    passing_protrusion_vertically = true
-                    should_stay_on_protrusion_min_side = false
-            SurfaceSide.RIGHT_WALL:
-                var min_x := colliding_surface.bounding_box.position.x
-                var does_middle_vertex_protrude := \
-                        colliding_surface.first_point.x > min_x + 0.1 and \
-                        colliding_surface.last_point.x > min_x + 0.1
-                if does_middle_vertex_protrude:
-                    var protruding_vertex := Vector2.INF
-                    for vertex in colliding_surface.vertices:
+                            protrusion_surface = current_surface
+                protrusion_position = \
+                        protruding_vertex + \
+                        Vector2(waypoint_offset.x, 0.0)
+                passing_protrusion_vertically = true
+                should_stay_on_protrusion_min_side = false
+            
+        SurfaceSide.RIGHT_WALL:
+            var min_x := collinear_neighbors_bb.position.x
+            var does_middle_vertex_protrude := \
+                    colliding_collinear_ccw.first_point.x > min_x + 0.1 and \
+                    colliding_collinear_cw.last_point.x > min_x + 0.1
+            if does_middle_vertex_protrude:
+                var protruding_vertex := Vector2.INF
+                current_surface = colliding_collinear_ccw
+                while current_surface.clockwise_collinear_neighbor != null:
+                    current_surface = \
+                            current_surface.clockwise_collinear_neighbor
+                    for vertex in current_surface.vertices:
                         if vertex.x < protruding_vertex.x:
                             protruding_vertex = vertex
-                    protrusion_position = \
-                            protruding_vertex + \
-                            Vector2(-waypoint_offset.x, 0.0)
-                    passing_protrusion_vertically = true
-                    should_stay_on_protrusion_min_side = true
-            SurfaceSide.CEILING:
-                var max_y := colliding_surface.bounding_box.end.y
-                var does_middle_vertex_protrude := \
-                        colliding_surface.first_point.y < max_y - 0.1 and \
-                        colliding_surface.last_point.y < max_y - 0.1
-                if does_middle_vertex_protrude:
-                    var protruding_vertex := -Vector2.INF
-                    for vertex in colliding_surface.vertices:
+                            protrusion_surface = current_surface
+                protrusion_position = \
+                        protruding_vertex + \
+                        Vector2(-waypoint_offset.x, 0.0)
+                passing_protrusion_vertically = true
+                should_stay_on_protrusion_min_side = true
+            
+        SurfaceSide.CEILING:
+            var max_y := collinear_neighbors_bb.end.y
+            var does_middle_vertex_protrude := \
+                    colliding_collinear_ccw.first_point.y < max_y - 0.1 and \
+                    colliding_collinear_cw.last_point.y < max_y - 0.1
+            if does_middle_vertex_protrude:
+                var protruding_vertex := -Vector2.INF
+                current_surface = colliding_collinear_ccw
+                while current_surface.clockwise_collinear_neighbor != null:
+                    current_surface = \
+                            current_surface.clockwise_collinear_neighbor
+                    for vertex in current_surface.vertices:
                         if vertex.y > protruding_vertex.y:
                             protruding_vertex = vertex
-                    protrusion_position = \
-                            protruding_vertex + \
-                            Vector2(0.0, waypoint_offset.y)
-                    passing_protrusion_vertically = false
-                    should_stay_on_protrusion_min_side = false
-            _:
-                Sc.logger.error()
-        
-        if protrusion_position != Vector2.INF:
-            protrusion_waypoint = Waypoint.new(
-                    colliding_surface,
-                    protrusion_position,
-                    passing_protrusion_vertically,
-                    should_stay_on_protrusion_min_side,
-                    false,
-                    previous_waypoint,
-                    next_waypoint)
-            # Calculate and record state for the waypoint.
-            update_waypoint(
-                    protrusion_waypoint,
-                    origin_waypoint,
-                    movement_params,
-                    vertical_step.velocity_step_start,
-                    vertical_step.can_hold_jump_button,
-                    vertical_step,
-                    Vector2.INF)
+                            protrusion_surface = current_surface
+                protrusion_position = \
+                        protruding_vertex + \
+                        Vector2(0.0, waypoint_offset.y)
+                passing_protrusion_vertically = false
+                should_stay_on_protrusion_min_side = false
+            
+        _:
+            Sc.logger.error()
     
-    # Include the result, in sorted order.
-    if is_instance_valid(protrusion_waypoint):
+    if protrusion_position != Vector2.INF:
+        var protrusion_waypoint := Waypoint.new(
+                protrusion_surface,
+                protrusion_position,
+                passing_protrusion_vertically,
+                should_stay_on_protrusion_min_side,
+                false,
+                previous_waypoint,
+                next_waypoint)
+        # Calculate and record state for the waypoint.
+        update_waypoint(
+                protrusion_waypoint,
+                origin_waypoint,
+                movement_params,
+                vertical_step.velocity_step_start,
+                vertical_step.can_hold_jump_button,
+                vertical_step,
+                Vector2.INF)
+        
+        # Include the result, in sorted order.
         if result.size() >= 1 and \
                 !result[0].is_valid:
             result.insert(0, protrusion_waypoint)
@@ -493,7 +546,7 @@ static func update_waypoint(
         can_hold_jump_button_at_origin: bool,
         vertical_step: VerticalEdgeStep,
         additional_high_waypoint_position: Vector2) -> void:
-    # Previous waypoint, next waypoint,  and vertical_step should be provided
+    # Previous waypoint, next waypoint, and vertical_step should be provided
     # when updating intermediate waypoints.
     assert(waypoint.previous_waypoint != null or \
             waypoint.is_origin)

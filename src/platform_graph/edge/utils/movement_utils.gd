@@ -455,9 +455,8 @@ static func calculate_distance_to_stop_from_friction(
         gravity: float,
         friction_coefficient: float,
         friction_multiplier: float) -> float:
-    # FIXME: LEFT OFF HERE: --------------------------
-    # - Adapt some sort of continuous analytic formula instead of this
-    #   discrete loop-based approach.
+    # FIXME: Adapt some sort of continuous analytic formula instead of this
+    #        discrete loop-based approach.
     
     # NOTE: Keep this logic in-sync with FloorFrictionAction.
     var friction_deceleration_per_frame := \
