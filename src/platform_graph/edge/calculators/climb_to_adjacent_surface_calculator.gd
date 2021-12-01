@@ -168,10 +168,10 @@ func calculate_edge(
             
             position_end = PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
-                            early_end,
-                            position_end.surface,
-                            collision_params.movement_params.collider,
-                            false)
+                        early_end,
+                        position_end.surface,
+                        collision_params.movement_params.collider,
+                        false)
             if !position_end.is_valid:
                 return null
             var duration := (positions.size() - 1) * Time.PHYSICS_TIME_STEP
@@ -183,6 +183,7 @@ func calculate_edge(
     var velocity_end := _get_velocity_end(
             position_start,
             position_end,
+            velocity_start,
             collision_params.movement_params)
     
     var time_at_surface_switch := _calculate_duration_along_start_surface(
@@ -215,6 +216,12 @@ func _calculate_jump_land_positions(
     var is_convex := _get_is_neighbor_convex(
             origin_surface,
             is_clockwise)
+    var is_concave := _get_is_neighbor_concave(
+            origin_surface,
+            is_clockwise)
+    var is_collinear := _get_is_neighbor_collinear(
+            origin_surface,
+            is_clockwise)
     var corner_point := \
             origin_surface.last_point if \
             is_clockwise else \
@@ -222,7 +229,8 @@ func _calculate_jump_land_positions(
     
     var start_target_point: Vector2
     var end_target_point: Vector2
-    if is_convex:
+    if !is_concave:
+        # Convex or collinear.
         start_target_point = corner_point
         end_target_point = corner_point
     else:
@@ -231,29 +239,29 @@ func _calculate_jump_land_positions(
             # axially-aligned projections.
             end_target_point = Sc.geometry \
                     .project_shape_onto_segment_and_away_from_concave_neighbors(
-                            corner_point,
-                            movement_params.collider,
-                            neighbor,
-                            true)
+                        corner_point,
+                        movement_params.collider,
+                        neighbor,
+                        true)
             start_target_point = Sc.geometry \
                     .project_shape_onto_segment_and_away_from_concave_neighbors(
-                            end_target_point,
-                            movement_params.collider,
-                            origin_surface,
-                            true)
+                        end_target_point,
+                        movement_params.collider,
+                        origin_surface,
+                        true)
             end_target_point = Sc.geometry \
                     .project_shape_onto_segment_and_away_from_concave_neighbors(
-                            start_target_point,
-                            movement_params.collider,
-                            neighbor,
-                            true)
+                        start_target_point,
+                        movement_params.collider,
+                        neighbor,
+                        true)
         else:
             var target_point: Vector2 = Sc.geometry \
                     .project_shape_onto_segment_and_away_from_concave_neighbors(
-                            corner_point,
-                            movement_params.collider,
-                            origin_surface,
-                            true)
+                        corner_point,
+                        movement_params.collider,
+                        origin_surface,
+                        true)
             
             if target_point == Vector2.INF:
                 # The climb-around would leave the character not overlapping the
@@ -269,20 +277,20 @@ func _calculate_jump_land_positions(
     
     var start_position := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
-                    start_target_point,
-                    origin_surface,
-                    movement_params.collider,
-                    false,
-                    true)
+                start_target_point,
+                origin_surface,
+                movement_params.collider,
+                false,
+                true)
     if !start_position.is_valid:
         return null
     var end_position := PositionAlongSurfaceFactory \
             .create_position_offset_from_target_point(
-                    end_target_point,
-                    neighbor,
-                    movement_params.collider,
-                    false,
-                    true)
+                end_target_point,
+                neighbor,
+                movement_params.collider,
+                false,
+                true)
     if !end_position.is_valid:
         return null
     
@@ -295,9 +303,13 @@ func _calculate_jump_land_positions(
             Sc.geometry.are_floats_equal_with_epsilon(
                 displacement.y,
                 0.0,
-                _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD)):
-        # We are't able to move enough around the corner, so
-        # abandon this edge.
+                _EARLY_END_INVALID_DISPLACEMENT_THRESHOLD)) or \
+            is_collinear and \
+            !Sc.geometry.are_points_equal_with_epsilon(
+                start_position.target_point,
+                end_position.target_point,
+                0.001):
+        # We are't able to move enough around the corner, so abandon this edge.
         return null
     
     var velocity_start := _get_velocity_start(
@@ -320,11 +332,14 @@ func _calculate_instructions(
         movement_params: MovementParameters) -> EdgeInstructions:
     var start_side := position_start.side
     var end_side := position_end.side
-    var is_convex := \
-            position_start.surface.clockwise_convex_neighbor == \
-                    position_end.surface or \
-            position_start.surface.counter_clockwise_convex_neighbor == \
-                    position_end.surface
+    var is_clockwise := \
+            position_start.surface.clockwise_neighbor == position_end.surface
+    var is_convex := _get_is_neighbor_convex(
+            position_start.surface,
+            is_clockwise)
+    var is_concave := _get_is_neighbor_concave(
+            position_start.surface,
+            is_clockwise)
     var is_left_side := \
             start_side == SurfaceSide.RIGHT_WALL or \
             end_side == SurfaceSide.RIGHT_WALL
@@ -372,7 +387,7 @@ func _calculate_instructions(
         
         instructions = [grab_instruction, move_instruction]
         
-    else:
+    elif is_concave:
         var input_key: String
         if is_wall:
             if is_top_side:
@@ -384,6 +399,39 @@ func _calculate_instructions(
                 input_key = "mr"
             else:
                 input_key = "ml"
+        
+        var move_instruction := EdgeInstruction.new(
+                input_key,
+                0.0,
+                true)
+        
+        instructions = [move_instruction]
+        
+    else: # is_collinear
+        var input_key: String
+        match start_side:
+            SurfaceSide.FLOOR:
+                if is_clockwise:
+                    input_key = "mr"
+                else:
+                    input_key = "ml"
+            SurfaceSide.LEFT_WALL:
+                if is_clockwise:
+                    input_key = "md"
+                else:
+                    input_key = "mu"
+            SurfaceSide.RIGHT_WALL:
+                if is_clockwise:
+                    input_key = "mu"
+                else:
+                    input_key = "md"
+            SurfaceSide.CEILING:
+                if is_clockwise:
+                    input_key = "ml"
+                else:
+                    input_key = "mr"
+            _:
+                Sc.logger.error()
         
         var move_instruction := EdgeInstruction.new(
                 input_key,
@@ -410,9 +458,9 @@ func _calculate_trajectory(
         duration: float) -> EdgeTrajectory:
     var is_convex := \
             position_start.surface.clockwise_convex_neighbor == \
-                    position_end.surface or \
+                position_end.surface or \
             position_start.surface.counter_clockwise_convex_neighbor == \
-                    position_end.surface
+                position_end.surface
     
     var trajectory := EdgeTrajectory.new()
     
@@ -423,12 +471,12 @@ func _calculate_trajectory(
     
     if !movement_params.includes_discrete_trajectory_state and \
             !movement_params \
-                    .includes_continuous_trajectory_positions and \
+                .includes_continuous_trajectory_positions and \
             !movement_params.includes_continuous_trajectory_velocities:
         return trajectory
     
     if !is_convex:
-        _populate_concave_trajectory(
+        _populate_concave_or_collinear_trajectory(
                 trajectory,
                 position_start,
                 position_end,
@@ -445,7 +493,7 @@ func _calculate_trajectory(
     return trajectory
 
 
-func _populate_concave_trajectory(
+func _populate_concave_or_collinear_trajectory(
         trajectory: EdgeTrajectory,
         position_start: PositionAlongSurface,
         position_end: PositionAlongSurface,
@@ -507,9 +555,9 @@ func _populate_convex_trajectory(
             position_end.surface.counter_clockwise_neighbor
     var is_next_neighbor_concave := \
             next_neighbor == \
-                    position_end.surface.clockwise_concave_neighbor or \
+                position_end.surface.clockwise_concave_neighbor or \
             next_neighbor == \
-                    position_end.surface.counter_clockwise_concave_neighbor
+                position_end.surface.counter_clockwise_concave_neighbor
     var next_neighbor_normal_side_override := SurfaceSide.NONE
     if is_next_neighbor_concave:
         match end_side:
@@ -830,9 +878,14 @@ func _get_velocity_start(
         movement_params: MovementParameters) -> Vector2:
     var is_convex := \
             position_start.surface.clockwise_convex_neighbor == \
-                    position_end.surface or \
+                position_end.surface or \
             position_start.surface.counter_clockwise_convex_neighbor == \
-                    position_end.surface
+                position_end.surface
+    var is_concave := \
+            position_start.surface.clockwise_concave_neighbor == \
+                position_end.surface or \
+            position_start.surface.counter_clockwise_concave_neighbor == \
+                position_end.surface
     var is_moving_left: bool
     var is_moving_up: bool
     if is_convex:
@@ -842,13 +895,18 @@ func _get_velocity_start(
         is_moving_up = \
                 position_start.side == SurfaceSide.CEILING or \
                 position_end.side == SurfaceSide.FLOOR
-    else:
+    elif is_concave:
         is_moving_left = \
                 position_start.side == SurfaceSide.LEFT_WALL or \
                 position_end.side == SurfaceSide.LEFT_WALL
         is_moving_up = \
                 position_start.side == SurfaceSide.CEILING or \
                 position_end.side == SurfaceSide.CEILING
+    else: # is_collinear
+        is_moving_left = \
+                position_start.surface.center.x > position_end.surface.center.x
+        is_moving_up = \
+                position_start.surface.center.y > position_end.surface.center.y
     
     var velocity_x: float
     var velocity_y: float
@@ -884,12 +942,21 @@ func _get_velocity_start(
 func _get_velocity_end(
         position_start: PositionAlongSurface,
         position_end: PositionAlongSurface,
+        velocity_start: Vector2,
         movement_params: MovementParameters) -> Vector2:
+    var is_collinear := \
+            position_start.surface.clockwise_collinear_neighbor == \
+                position_end.surface or \
+            position_start.surface.counter_clockwise_collinear_neighbor == \
+                position_end.surface
+    if is_collinear:
+        return velocity_start
+    
     var is_convex := \
             position_start.surface.clockwise_convex_neighbor == \
-                    position_end.surface or \
+                position_end.surface or \
             position_start.surface.counter_clockwise_convex_neighbor == \
-                    position_end.surface
+                position_end.surface
     
     var velocity_x: float
     var velocity_y: float
@@ -901,9 +968,9 @@ func _get_velocity_end(
                 var acceleration_x := movement_params.walk_acceleration
                 var floor_component_distance: float = abs(Sc.geometry \
                         .calculate_displacement_x_for_vertical_distance_past_edge(
-                                movement_params.collider.half_width_height.y,
-                                is_starting_from_left_wall,
-                                movement_params.rounding_corner_calc_shape))
+                            movement_params.collider.half_width_height.y,
+                            is_starting_from_left_wall,
+                            movement_params.rounding_corner_calc_shape))
                 var floor_component_speed_x_start := 0.0
                 
                 # From a basic equation of motion:
@@ -963,9 +1030,9 @@ func _calculate_duration(
         movement_params: MovementParameters) -> float:
     var is_convex := \
             position_start.surface.clockwise_convex_neighbor == \
-                    position_end.surface or \
+                position_end.surface or \
             position_start.surface.counter_clockwise_convex_neighbor == \
-                    position_end.surface
+                position_end.surface
     
     if !is_convex:
         return 0.0
@@ -1019,15 +1086,15 @@ func _calculate_duration(
     if is_wall:
         distance_end = abs(Sc.geometry \
                 .calculate_displacement_x_for_vertical_distance_past_edge(
-                        distance_start,
-                        !is_left_side,
-                        movement_params.rounding_corner_calc_shape))
+                    distance_start,
+                    !is_left_side,
+                    movement_params.rounding_corner_calc_shape))
     else:
         distance_end = abs(Sc.geometry \
                 .calculate_displacement_y_for_horizontal_distance_past_edge(
-                        distance_start,
-                        is_top_side,
-                        movement_params.rounding_corner_calc_shape))
+                    distance_start,
+                    is_top_side,
+                    movement_params.rounding_corner_calc_shape))
     
     var duration_start := distance_start / speed_start
     
@@ -1094,9 +1161,9 @@ func _calculate_duration_along_start_surface(
         movement_params: MovementParameters) -> float:
     var is_convex := \
             position_start.surface.clockwise_convex_neighbor == \
-                    position_end.surface or \
+                position_end.surface or \
             position_start.surface.counter_clockwise_convex_neighbor == \
-                    position_end.surface
+                position_end.surface
     if !is_convex:
         return 0.0
     
@@ -1163,3 +1230,19 @@ func _get_is_neighbor_convex(
     return is_instance_valid(surface.clockwise_convex_neighbor) if \
             is_clockwise else \
             is_instance_valid(surface.counter_clockwise_convex_neighbor)
+
+
+func _get_is_neighbor_concave(
+        surface: Surface,
+        is_clockwise: bool) -> bool:
+    return is_instance_valid(surface.clockwise_concave_neighbor) if \
+            is_clockwise else \
+            is_instance_valid(surface.counter_clockwise_concave_neighbor)
+
+
+func _get_is_neighbor_collinear(
+        surface: Surface,
+        is_clockwise: bool) -> bool:
+    return is_instance_valid(surface.clockwise_collinear_neighbor) if \
+            is_clockwise else \
+            is_instance_valid(surface.counter_clockwise_collinear_neighbor)
