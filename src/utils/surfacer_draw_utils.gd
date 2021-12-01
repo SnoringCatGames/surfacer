@@ -6,37 +6,6 @@ extends ScaffolderDrawUtils
 const SQRT_TWO := sqrt(2.0)
 
 
-func draw_single_vertex_surface(
-        canvas: CanvasItem,
-        surface: Surface,
-        color: Color,
-        depth: float = Sc.ann_params.surface_depth) -> void:
-    var point: Vector2 = surface.vertices[0]
-    
-    var alpha_start: float = Sc.ann_params.surface_alpha_end_ratio
-    var alpha_delta: float = \
-            (color.a - alpha_start) / \
-            Sc.ann_params.surface_depth_divisions_count
-    
-    var color_start := color
-    color_start.a = alpha_start
-    var color_overlay := color
-    # TODO: This is a quick hack to make the gradient more exponential.
-    color_overlay.a = alpha_delta * 0.3
-    
-    var radius := depth
-    var delta_radius: float = \
-            depth / Sc.ann_params.surface_depth_divisions_count
-    
-    canvas.draw_circle(point, radius, color_start)
-    
-    for i in range(1, Sc.ann_params.surface_depth_divisions_count):
-        radius -= delta_radius
-        canvas.draw_circle(point, radius, color_overlay)
-        # TODO: This is a quick hack to make the gradient more exponential.
-        color_overlay.a *= 1.8
-
-
 func draw_surface(
         canvas: CanvasItem,
         surface: Surface,
@@ -151,15 +120,23 @@ func draw_surface_segment(
     var following_segment_direction := \
             (following_point - segment_end).normalized()
     
+    var preceding_angular_bisector_direction_non_normalized := \
+            (-preceding_segment_direction + segment_direction) if \
+            preceding_segment_direction != segment_direction else \
+            segment_direction.tangent()
     var preceding_angular_bisector_segment_end_offset := \
-            (-preceding_segment_direction + segment_direction) * 1000
+            preceding_angular_bisector_direction_non_normalized * 1000
     var preceding_angular_bisector_segment_start := \
             segment_start - preceding_angular_bisector_segment_end_offset
     var preceding_angular_bisector_segment_end := \
             segment_start + preceding_angular_bisector_segment_end_offset
     
+    var following_angular_bisector_direction_non_normalized := \
+            (-segment_direction + following_segment_direction) if \
+            segment_direction != following_segment_direction else \
+            segment_direction.tangent()
     var following_angular_bisector_segment_end_offset := \
-            (-segment_direction + following_segment_direction) * 1000
+            following_angular_bisector_direction_non_normalized * 1000
     var following_angular_bisector_segment_start := \
             segment_end - following_angular_bisector_segment_end_offset
     var following_angular_bisector_segment_end := \
@@ -215,6 +192,37 @@ func draw_surface_segment(
                 current_depth_segment_end,
                 color,
                 surface_depth_division_size)
+
+
+func draw_single_vertex_surface(
+        canvas: CanvasItem,
+        surface: Surface,
+        color: Color,
+        depth: float = Sc.ann_params.surface_depth) -> void:
+    var point: Vector2 = surface.vertices[0]
+    
+    var alpha_start: float = Sc.ann_params.surface_alpha_end_ratio
+    var alpha_delta: float = \
+            (color.a - alpha_start) / \
+            Sc.ann_params.surface_depth_divisions_count
+    
+    var color_start := color
+    color_start.a = alpha_start
+    var color_overlay := color
+    # TODO: This is a quick hack to make the gradient more exponential.
+    color_overlay.a = alpha_delta * 0.3
+    
+    var radius := depth
+    var delta_radius: float = \
+            depth / Sc.ann_params.surface_depth_divisions_count
+    
+    canvas.draw_circle(point, radius, color_start)
+    
+    for i in range(1, Sc.ann_params.surface_depth_divisions_count):
+        radius -= delta_radius
+        canvas.draw_circle(point, radius, color_overlay)
+        # TODO: This is a quick hack to make the gradient more exponential.
+        color_overlay.a *= 1.8
 
 
 func draw_position_along_surface(
