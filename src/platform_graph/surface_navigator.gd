@@ -832,7 +832,6 @@ func _update(
                 navigation_state,
                 surface_state,
                 playback,
-                just_started_new_edge,
                 is_starting_navigation_retry)
     
     if navigation_state.just_interrupted:
