@@ -1413,11 +1413,22 @@ func _optimize_edges_for_approach(
                         false,
                         target_point)
     
-    if movement_params.optimizes_edge_jump_positions_at_run_time or \
-            movement_params.optimizes_edge_land_positions_at_run_time or \
-            movement_params \
-            .prevents_path_ends_from_exceeding_surface_ends_with_offsets:
-        path.update_distance_and_duration()
+    # Update intra-surface-edge start-velocities to match previous-edge
+    # end-velocities.
+    for i in path.edges.size() - 1:
+        var previous_edge: Edge = path.edges[i]
+        var next_edge: Edge = path.edges[i + 1]
+        if next_edge is IntraSurfaceEdge:
+            var side := next_edge.get_start_surface().side
+            var is_horizontal := \
+                    side == SurfaceSide.FLOOR or \
+                    side == SurfaceSide.CEILING
+            if is_horizontal:
+                next_edge.velocity_start.x = previous_edge.velocity_end.x
+            else:
+                next_edge.velocity_start.y = previous_edge.velocity_end.y
+    
+    path.update_distance_and_duration()
     
     path.is_optimized = true
     
