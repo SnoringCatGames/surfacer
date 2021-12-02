@@ -249,6 +249,7 @@ func _get_is_surface_expected_for_grab(
 func _get_is_surface_start_or_collinear_neighbor(surface: Surface) -> bool:
     return surface == start_position_along_surface.surface or \
             (surface != null and \
+            start_position_along_surface.surface != null and \
             (surface == start_position_along_surface.surface \
                 .clockwise_collinear_neighbor or \
             surface == start_position_along_surface.surface \
@@ -258,6 +259,7 @@ func _get_is_surface_start_or_collinear_neighbor(surface: Surface) -> bool:
 func _get_is_surface_end_or_collinear_neighbor(surface: Surface) -> bool:
     return surface == end_position_along_surface.surface or \
             (surface != null and \
+            end_position_along_surface.surface != null and \
             (surface == end_position_along_surface.surface \
                 .clockwise_collinear_neighbor or \
             surface == end_position_along_surface.surface \
@@ -268,6 +270,8 @@ func _get_is_surface_start_end_or_collinear_neighbor(surface: Surface) -> bool:
     return surface == start_position_along_surface.surface or \
             surface == end_position_along_surface.surface or \
             (surface != null and \
+            start_position_along_surface.surface != null and \
+            end_position_along_surface.surface != null and \
             (surface == start_position_along_surface.surface \
                 .clockwise_collinear_neighbor or \
             surface == start_position_along_surface.surface \
