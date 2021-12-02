@@ -33,10 +33,17 @@
 1/shapes = [  ]
 1/z_index = 0
 
-[node name="SurfaceEnablement" type="TileMap"]
+[node name="SurfaceEnablement" type="TileMap" groups=["surface_marks"]]
+modulate = Color( 0, 1, 0.0999999, 0.7 )
+light_mask = 0
+position = Vector2( -8, -8 )
 tile_set = SubResource( 1 )
 cell_size = Vector2( 16, 16 )
 cell_custom_transform = Transform2D( 16, 0, 0, 16, 0, 0 )
+collision_layer = 0
+collision_mask = 0
 format = 1
 script = ExtResource( 1 )
-spell_elements = null
+characters = 0
+include_exclusively = true
+exclude = false
