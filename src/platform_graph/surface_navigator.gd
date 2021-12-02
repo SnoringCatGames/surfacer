@@ -720,32 +720,7 @@ func _start_edge(
     edge_index = index
     edge = path.edges[index]
     
-    if surface_state.grabbed_surface != edge.get_start_surface():
-        # -   This can sometimes happen when the edge was detected as
-        #     successfully completing because the character was grabbing the
-        #     next-neighbor surface.
-        # -   In that case, we update the surface state to match what is
-        #     expected for the start of the next edge.
-        var actual_str := \
-                surface_state.grabbed_surface.to_string(false) if \
-                is_instance_valid(surface_state.grabbed_surface) else \
-                "-"
-        var expected_str := \
-                edge.get_start_surface().to_string(false) if \
-                is_instance_valid(edge.get_start_surface()) else \
-                "-"
-        var details := (
-                "actual=%s; " +
-                "expected=%s; " +
-                "_start_edge: Grabbed surface was not expected"
-            ) % [
-                actual_str,
-                expected_str,
-            ]
-        _log("Sync edge st",
-                details)
-        
-        character._match_expected_navigation_surface_state(edge, 0.0)
+    _sync_surface_state_for_start_of_edge(edge)
     
     if edge is IntraSurfaceEdge:
         edge.calculator.update_for_surface_state(
@@ -782,6 +757,37 @@ func _start_edge(
     # state, so this gives us a chance to move straight to the next edge.
     _update(true,
             is_starting_navigation_retry)
+
+
+func _sync_surface_state_for_start_of_edge(edge: Edge) -> void:
+    if surface_state.grabbed_surface == edge.get_start_surface():
+        return
+    
+    # -   This can sometimes happen when the edge was detected as
+    #     successfully completing because the character was grabbing the
+    #     next-neighbor surface.
+    # -   In that case, we update the surface state to match what is
+    #     expected for the start of the next edge.
+    var actual_str := \
+            surface_state.grabbed_surface.to_string(false) if \
+            is_instance_valid(surface_state.grabbed_surface) else \
+            "-"
+    var expected_str := \
+            edge.get_start_surface().to_string(false) if \
+            is_instance_valid(edge.get_start_surface()) else \
+            "-"
+    var details := (
+            "actual=%s; " +
+            "expected=%s; " +
+            "_start_edge: Grabbed surface was not expected"
+        ) % [
+            actual_str,
+            expected_str,
+        ]
+    _log("Sync edge st",
+            details)
+    
+    character._match_expected_navigation_surface_state(edge, 0.0)
 
 
 func _update(
@@ -848,12 +854,11 @@ func _update(
                     just_started_new_edge,
                     resolution_override)
         else:
-            Sc.logger.warning("The character navigation is stuck!")
             _handle_interruption(just_started_new_edge)
         return
     
     if navigation_state.just_reached_end_of_edge:
-        _handle_reached_end_of_edge()
+        _handle_reached_end_of_edge(true)
 
 
 func _check_if_character_is_stuck() -> bool:
@@ -912,6 +917,9 @@ func _handle_interruption(
             ],
             false)
     
+    if navigation_state.just_interrupted_by_being_stuck:
+        Sc.logger.warning("The character navigation is stuck!")
+    
     match interruption_resolution_mode:
         NavigationInterruptionResolution.CANCEL_NAV:
             _reset()
@@ -940,7 +948,7 @@ func _handle_interruption(
             character._match_expected_navigation_surface_state(
                     edge,
                     edge.duration)
-            _handle_reached_end_of_edge()
+            _handle_reached_end_of_edge(true)
             
         NavigationInterruptionResolution.FORCE_EXPECTED_STATE:
             navigation_state.has_interrupted = false
@@ -959,7 +967,7 @@ func _handle_interruption(
     emit_signal("navigation_interrupted", interruption_resolution_mode)
 
 
-func _handle_reached_end_of_edge() -> void:
+func _handle_reached_end_of_edge(starts_next_edge: bool) -> void:
     _log("Edge end",
             edge.get_name(),
             false)
@@ -970,6 +978,9 @@ func _handle_reached_end_of_edge() -> void:
             playback,
             Sc.time.get_scaled_play_time())
     playback = null
+    
+    if !starts_next_edge:
+        return
     
     # Check for the next edge to navigate.
     var next_edge_index := edge_index + 1
