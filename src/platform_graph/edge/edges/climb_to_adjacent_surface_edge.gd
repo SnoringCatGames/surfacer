@@ -168,6 +168,9 @@ func _check_did_just_reach_surface_destination(
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration
     
+    if get_is_collinear():
+        return true
+    
     var is_clockwise := get_is_clockwise()
     var start_surface := start_position_along_surface.surface
     var end_surface := end_position_along_surface.surface
