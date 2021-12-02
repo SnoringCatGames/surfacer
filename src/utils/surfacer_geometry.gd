@@ -278,10 +278,10 @@ static func project_shape_onto_segment(
     
     if !is_instance_valid(shape):
         return Sc.geometry.get_intersection_of_segments(
-                    shape_position - surface_normal * 100000.0,
-                    shape_position + surface_normal * 100000.0,
-                    segment_start,
-                    segment_end)
+                shape_position - surface_normal * 100000.0,
+                shape_position + surface_normal * 100000.0,
+                segment_start,
+                segment_end)
     
     var original_shape_position := shape_position
     var half_width_height := shape.half_width_height
@@ -760,7 +760,7 @@ static func project_shape_onto_segment(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
-                if shape_max_x > rightward_segment_point.x:
+                elif shape_max_x > rightward_segment_point.x:
                     # The shape overlaps with the segment right side.
                     var possible_contact_point_displacement_y := \
                             rightward_segment_point.y - shape_close_end_y
@@ -773,7 +773,7 @@ static func project_shape_onto_segment(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
-                if shape_min_x > leftward_segment_point.x:
+                elif shape_min_x > leftward_segment_point.x:
                     # The segment overlaps with the shape left side.
                     
                     # Slope formula:
@@ -795,7 +795,7 @@ static func project_shape_onto_segment(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
                 
-                if shape_max_x < rightward_segment_point.x:
+                elif shape_max_x < rightward_segment_point.x:
                     # The segment overlaps with the shape right side.
                     
                     # Slope formula:
@@ -816,6 +816,9 @@ static func project_shape_onto_segment(
                         projection_displacement_y = max(
                                 projection_displacement_y,
                                 possible_contact_point_displacement_y)
+                    
+                else:
+                    ScaffolderLog.static_error()
                 
             SurfaceSide.LEFT_WALL, \
             SurfaceSide.RIGHT_WALL:
@@ -848,7 +851,7 @@ static func project_shape_onto_segment(
                                 projection_displacement_x,
                                 possible_contact_point_displacement_x)
                 
-                if shape_max_y > lower_segment_point.y:
+                elif shape_max_y > lower_segment_point.y:
                     # The shape overlaps with the segment bottom side.
                     var possible_contact_point_displacement_x := \
                             lower_segment_point.x - shape_close_end_x
@@ -861,7 +864,7 @@ static func project_shape_onto_segment(
                                 projection_displacement_x,
                                 possible_contact_point_displacement_x)
                 
-                if shape_min_y > upper_segment_point.y:
+                elif shape_min_y > upper_segment_point.y:
                     # The segment overlaps with the shape top side.
                     
                     # Slope formula:
@@ -883,7 +886,7 @@ static func project_shape_onto_segment(
                                 projection_displacement_x,
                                 possible_contact_point_displacement_x)
                 
-                if shape_max_y < lower_segment_point.y:
+                elif shape_max_y < lower_segment_point.y:
                     # The segment overlaps with the shape bottom side.
                     
                     # Slope formula:
@@ -904,9 +907,12 @@ static func project_shape_onto_segment(
                         projection_displacement_x = min(
                                 projection_displacement_x,
                                 possible_contact_point_displacement_x)
+                    
+                else:
+                    ScaffolderLog.static_error()
                 
             _:
-                Sc.logger.error()
+                ScaffolderLog.static_error()
     
     return original_shape_position + \
             Vector2(projection_displacement_x, projection_displacement_y)
@@ -1048,6 +1054,9 @@ static func project_away_from_concave_neighbor(
     return Vector2.INF
 
 
+# If both the closest segment and the closest side of the shape are
+# axially-aligned, then this will return the closest surface position to the
+# center of the shape rather than to one of the corners of the shape.
 static func get_closest_point_on_surface_to_shape(
         surface: Surface,
         shape_position: Vector2,
@@ -1150,8 +1159,75 @@ static func get_furthest_shape_boundary_point_in_direction(
                 return capsule_end_center + shape.shape.radius * direction
         
     else:
-        Sc.logger.error()
+        ScaffolderLog.static_error()
         return Vector2.INF
+
+
+static func nudge_point_along_axially_aligned_segment_toward_shape_center(
+        point: Vector2,
+        surface: Surface,
+        shape_position: Vector2) -> Vector2:
+    if surface.is_single_vertex:
+        # No room to nudge.
+        return point
+    
+    var is_horizontal := \
+            surface.side == SurfaceSide.FLOOR or \
+            surface.side == SurfaceSide.CEILING
+    if is_horizontal and are_floats_equal_with_epsilon(
+                point.x,
+                shape_position.x,
+                0.001) or \
+            !is_horizontal and are_floats_equal_with_epsilon(
+                point.y,
+                shape_position.y,
+                0.001):
+        # Already centered.
+        return point
+    
+    var segment_points := []
+    get_surface_segment_at_point(
+            segment_points,
+            surface,
+            point,
+            true)
+    var segment_start: Vector2 = segment_points[0]
+    var segment_end: Vector2 = segment_points[1]
+    var displacement := segment_end - segment_start
+    var is_segment_axially_aligned := \
+            segment_start.x == segment_end.x or \
+            segment_start.y == segment_end.y
+    if !is_segment_axially_aligned:
+        # If the segment isn't axially aligned, then there should only be the
+        # one point of intersection.
+        return point
+    
+    var nudged_point := point
+    match surface.side:
+        SurfaceSide.FLOOR:
+            nudged_point.x = clamp(
+                    shape_position.x,
+                    segment_start.x,
+                    segment_end.x)
+        SurfaceSide.LEFT_WALL:
+            nudged_point.y = clamp(
+                    shape_position.x,
+                    segment_start.x,
+                    segment_end.x)
+        SurfaceSide.RIGHT_WALL:
+            nudged_point.y = clamp(
+                    shape_position.x,
+                    segment_end.x,
+                    segment_start.x)
+        SurfaceSide.CEILING:
+            nudged_point.x = clamp(
+                    shape_position.x,
+                    segment_end.x,
+                    segment_start.x)
+        _:
+            ScaffolderLog.static_error()
+    
+    return nudged_point
 
 
 static func do_surface_and_rectangle_intersect(

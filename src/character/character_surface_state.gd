@@ -502,6 +502,23 @@ func _calculate_surface_contact_from_collision(
         # -  This is uncommon.
         return null
     
+    # Modify the contact position to be closer to the character center if the
+    # contact is on axially-aligned segments of both the surface and the
+    # character-collider boundary.
+    var centered_contact_position: Vector2 = Sc.geometry \
+            .nudge_point_along_axially_aligned_segment_toward_shape_center(
+                contact_position,
+                contacted_surface,
+                center_position)
+    if centered_contact_position != contact_position:
+        contact_position = centered_contact_position
+        contact_tile_map_coord = Sc.geometry.world_to_tile_map(
+                contact_position,
+                contacted_tile_map)
+        contact_tile_map_index = Sc.geometry.get_tile_map_index_from_grid_coord(
+                contact_tile_map_coord,
+                contacted_tile_map)
+    
     var contact_normal: Vector2 = Sc.geometry.get_surface_normal_at_point(
             contacted_surface, contact_position)
     
