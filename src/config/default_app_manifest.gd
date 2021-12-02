@@ -126,8 +126,8 @@ func _update_to_emphasize_annotations(manifest: Dictionary) -> void:
     ann_params_man.preselection_surface_opacity = 0.6
     ann_params_man.preselection_indicator_opacity = 0.6
     ann_params_man.preselection_path_opacity = 0.6
+    ann_params_man.preselection_hash_opacity = 0.3
 #    ann_params_man.preselection_hash_opacity = 0.0
-    ann_params_man.preselection_hash_opacity = 0.0
     
     ann_params_man.recent_movement_opacity_newest = 0.99
 #    ann_params_man.recent_movement_opacity_newest = 0.0

@@ -143,9 +143,19 @@ func _get_is_surface_expected_for_touch_contact(
             contact_surface == get_next_neighbor()
 
 
-func _get_is_surface_expected_for_grab(grabbed_surface: Surface) -> bool:
+func _get_is_surface_expected_for_grab(
+        grabbed_surface: Surface,
+        navigation_state: CharacterNavigationState) -> bool:
     return grabbed_surface == start_position_along_surface.surface or \
+            grabbed_surface == start_position_along_surface.surface \
+                .clockwise_collinear_neighbor or \
+            grabbed_surface == start_position_along_surface.surface \
+                .counter_clockwise_collinear_neighbor or \
             grabbed_surface == end_position_along_surface.surface or \
+            grabbed_surface == end_position_along_surface.surface \
+                .clockwise_collinear_neighbor or \
+            grabbed_surface == end_position_along_surface.surface \
+                .counter_clockwise_collinear_neighbor or \
             grabbed_surface == get_next_neighbor()
 
 

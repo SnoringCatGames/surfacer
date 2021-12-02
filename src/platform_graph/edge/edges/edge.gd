@@ -119,9 +119,11 @@ func update_navigation_state(
     
     var still_grabbing_start_surface_at_start := \
             just_started_new_edge and \
-            surface_state.grabbed_surface == self.get_start_surface()
+            _get_is_surface_start_or_collinear_neighbor(
+                    surface_state.grabbed_surface)
     var is_grabbed_surface_expected: bool = \
-            surface_state.grabbed_surface == self.get_end_surface()
+            _get_is_surface_end_or_collinear_neighbor(
+                    surface_state.grabbed_surface)
     navigation_state.just_left_air_unexpectedly = \
             surface_state.just_left_air and \
             !is_grabbed_surface_expected and \
@@ -207,7 +209,8 @@ func _check_for_unexpected_collision(
         return
     
     var is_still_colliding_with_start_surface := \
-            surface_state.grabbed_surface == get_start_surface()
+            _get_is_surface_start_or_collinear_neighbor(
+                surface_state.grabbed_surface)
     
     if is_still_colliding_with_start_surface:
         for contact_surface in surface_state.surfaces_to_contacts:
@@ -220,25 +223,59 @@ func _check_for_unexpected_collision(
                         .just_interrupted_by_unexpected_collision = true
                 return
     
-    if !_get_is_surface_expected_for_grab(surface_state.grabbed_surface):
+    if !_get_is_surface_expected_for_grab(
+            surface_state.grabbed_surface,
+            navigation_state):
         navigation_state.just_interrupted_by_unexpected_collision = true
 
 
 func _get_is_surface_expected_for_touch_contact(
         contact_surface: Surface,
         navigation_state: CharacterNavigationState) -> bool:
-    var start_surface := get_start_surface()
-    var end_surface := get_end_surface()
-    return contact_surface == start_surface or \
-            contact_surface == end_surface or \
+    return _get_is_surface_start_end_or_collinear_neighbor(contact_surface) or \
             (navigation_state.edge_frame_count <= 1 and \
-            (contact_surface == start_surface.clockwise_neighbor or \
-            contact_surface == start_surface.counter_clockwise_neighbor))
+            (contact_surface == start_position_along_surface.surface \
+                .clockwise_neighbor or \
+            contact_surface == start_position_along_surface.surface \
+                .counter_clockwise_neighbor))
 
 
-func _get_is_surface_expected_for_grab(grabbed_surface: Surface) -> bool:
-    return grabbed_surface == start_position_along_surface.surface or \
-            grabbed_surface == end_position_along_surface.surface
+func _get_is_surface_expected_for_grab(
+        grabbed_surface: Surface,
+        navigation_state: CharacterNavigationState) -> bool:
+    return _get_is_surface_start_end_or_collinear_neighbor(grabbed_surface)
+
+
+func _get_is_surface_start_or_collinear_neighbor(surface: Surface) -> bool:
+    return surface == start_position_along_surface.surface or \
+            (surface != null and \
+            (surface == start_position_along_surface.surface \
+                .clockwise_collinear_neighbor or \
+            surface == start_position_along_surface.surface \
+                .counter_clockwise_collinear_neighbor))
+
+
+func _get_is_surface_end_or_collinear_neighbor(surface: Surface) -> bool:
+    return surface == end_position_along_surface.surface or \
+            (surface != null and \
+            (surface == end_position_along_surface.surface \
+                .clockwise_collinear_neighbor or \
+            surface == end_position_along_surface.surface \
+                .counter_clockwise_collinear_neighbor))
+
+
+func _get_is_surface_start_end_or_collinear_neighbor(surface: Surface) -> bool:
+    return surface == start_position_along_surface.surface or \
+            surface == end_position_along_surface.surface or \
+            (surface != null and \
+            (surface == start_position_along_surface.surface \
+                .clockwise_collinear_neighbor or \
+            surface == start_position_along_surface.surface \
+                .counter_clockwise_collinear_neighbor or \
+            surface == end_position_along_surface.surface \
+                .clockwise_collinear_neighbor or \
+            surface == end_position_along_surface.surface \
+                .counter_clockwise_collinear_neighbor))
 
 
 # This should probably only be used during debugging. Otherwise, local memory
@@ -583,7 +620,11 @@ func check_just_landed_on_expected_surface(
         return playback.get_elapsed_time_scaled() >= duration
     else:
         return surface_state.just_left_air and \
-                surface_state.grabbed_surface == end_surface
+                surface_state.grabbed_surface == end_surface or \
+                surface_state.grabbed_surface == \
+                    end_surface.clockwise_collinear_neighbor or \
+                surface_state.grabbed_surface == \
+                    end_surface.counter_clockwise_collinear_neighbor
 
 
 func load_from_json_object(
