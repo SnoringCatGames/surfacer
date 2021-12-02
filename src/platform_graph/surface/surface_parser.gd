@@ -1621,22 +1621,29 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         right_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             right_surface.properties:
-                    current_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            current_surface.vertices_array,
-                            right_surface.vertices_array)
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            right_surface.tile_map_indices)
-                    tile_map_index_to_floor[right_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            right_surface,
-                            current_surface,
-                            tile_map_index_to_floor)
+                        current_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                current_surface.vertices_array,
+                                right_surface.vertices_array)
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                right_surface.tile_map_indices)
+                        tile_map_index_to_floor[right_neighbor_index] = \
+                                current_surface
+                        _replace_surface(
+                                right_surface,
+                                current_surface,
+                                tile_map_index_to_floor)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_floor.erase(tile_map_index)
+                            current_surface.free()
+                        if right_surface.vertices_array.size() == 1:
+                            tile_map_index_to_floor.erase(right_neighbor_index)
+                            right_surface.free()
             
             if tile_map_index_to_floor.has(tile_map_index) and \
                     tile_map_index_to_floor.has(bottom_left_neighbor_index):
@@ -1647,24 +1654,32 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_left_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_left_surface.properties:
-                    bottom_left_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            bottom_left_surface.vertices_array,
-                            current_surface.vertices_array)
-                    current_surface.vertices_array = \
-                            bottom_left_surface.vertices_array
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_left_surface.tile_map_indices)
-                    tile_map_index_to_floor[bottom_left_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            bottom_left_surface,
-                            current_surface,
-                            tile_map_index_to_floor)
+                        bottom_left_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                bottom_left_surface.vertices_array,
+                                current_surface.vertices_array)
+                        current_surface.vertices_array = \
+                                bottom_left_surface.vertices_array
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_left_surface.tile_map_indices)
+                        tile_map_index_to_floor[bottom_left_neighbor_index] = \
+                                current_surface
+                        _replace_surface(
+                                bottom_left_surface,
+                                current_surface,
+                                tile_map_index_to_floor)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_floor.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_left_surface.vertices_array.size() == 1:
+                            tile_map_index_to_floor.erase(
+                                    bottom_left_neighbor_index)
+                            bottom_left_surface.free()
             
             if tile_map_index_to_floor.has(tile_map_index) and \
                     tile_map_index_to_floor.has(bottom_right_neighbor_index):
@@ -1675,22 +1690,30 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_right_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_right_surface.properties:
-                    current_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            current_surface.vertices_array,
-                            bottom_right_surface.vertices_array)
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_right_surface.tile_map_indices)
-                    tile_map_index_to_floor[bottom_right_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            bottom_right_surface,
-                            current_surface,
-                            tile_map_index_to_floor)
+                        current_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                current_surface.vertices_array,
+                                bottom_right_surface.vertices_array)
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_right_surface.tile_map_indices)
+                        tile_map_index_to_floor[bottom_right_neighbor_index] = \
+                                current_surface
+                        _replace_surface(
+                                bottom_right_surface,
+                                current_surface,
+                                tile_map_index_to_floor)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_floor.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_right_surface.vertices_array.size() == 1:
+                            tile_map_index_to_floor.erase(
+                                    bottom_right_neighbor_index)
+                            bottom_right_surface.free()
             
             if tile_map_index_to_ceiling.has(tile_map_index) and \
                     tile_map_index_to_ceiling.has(right_neighbor_index):
@@ -1701,24 +1724,32 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         right_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             right_surface.properties:
-                    right_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            right_surface.vertices_array,
-                            current_surface.vertices_array)
-                    current_surface.vertices_array = \
-                            right_surface.vertices_array
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            right_surface.tile_map_indices)
-                    tile_map_index_to_ceiling[right_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            right_surface,
-                            current_surface,
-                            tile_map_index_to_ceiling)
+                        right_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                right_surface.vertices_array,
+                                current_surface.vertices_array)
+                        current_surface.vertices_array = \
+                                right_surface.vertices_array
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                right_surface.tile_map_indices)
+                        tile_map_index_to_ceiling[right_neighbor_index] = \
+                                current_surface
+                        _replace_surface(
+                                right_surface,
+                                current_surface,
+                                tile_map_index_to_ceiling)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_ceiling.erase(tile_map_index)
+                            current_surface.free()
+                        if right_surface.vertices_array.size() == 1:
+                            tile_map_index_to_ceiling.erase(
+                                    right_neighbor_index)
+                            right_surface.free()
             
             if tile_map_index_to_ceiling.has(tile_map_index) and \
                     tile_map_index_to_ceiling.has(bottom_left_neighbor_index):
@@ -1729,22 +1760,30 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_left_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_left_surface.properties:
-                    current_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            current_surface.vertices_array,
-                            bottom_left_surface.vertices_array)
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_left_surface.tile_map_indices)
-                    tile_map_index_to_ceiling[bottom_left_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            bottom_left_surface,
-                            current_surface,
-                            tile_map_index_to_ceiling)
+                        current_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                current_surface.vertices_array,
+                                bottom_left_surface.vertices_array)
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_left_surface.tile_map_indices)
+                        tile_map_index_to_ceiling[ \
+                                bottom_left_neighbor_index] = current_surface
+                        _replace_surface(
+                                bottom_left_surface,
+                                current_surface,
+                                tile_map_index_to_ceiling)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_ceiling.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_left_surface.vertices_array.size() == 1:
+                            tile_map_index_to_ceiling.erase(
+                                    bottom_left_neighbor_index)
+                            bottom_left_surface.free()
             
             if tile_map_index_to_ceiling.has(tile_map_index) and \
                     tile_map_index_to_ceiling.has(bottom_right_neighbor_index):
@@ -1755,24 +1794,32 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_right_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_right_surface.properties:
-                    bottom_right_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            bottom_right_surface.vertices_array,
-                            current_surface.vertices_array)
-                    current_surface.vertices_array = \
-                            bottom_right_surface.vertices_array
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_right_surface.tile_map_indices)
-                    tile_map_index_to_ceiling[bottom_right_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            bottom_right_surface,
-                            current_surface,
-                            tile_map_index_to_ceiling)
+                        bottom_right_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                bottom_right_surface.vertices_array,
+                                current_surface.vertices_array)
+                        current_surface.vertices_array = \
+                                bottom_right_surface.vertices_array
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_right_surface.tile_map_indices)
+                        tile_map_index_to_ceiling[ \
+                                bottom_right_neighbor_index] = current_surface
+                        _replace_surface(
+                                bottom_right_surface,
+                                current_surface,
+                                tile_map_index_to_ceiling)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_ceiling.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_right_surface.vertices_array.size() == 1:
+                            tile_map_index_to_ceiling.erase(
+                                    bottom_right_neighbor_index)
+                            bottom_right_surface.free()
             
             if tile_map_index_to_left_wall.has(tile_map_index) and \
                     tile_map_index_to_left_wall.has(bottom_neighbor_index):
@@ -1783,22 +1830,30 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_surface.properties:
-                    current_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            current_surface.vertices_array,
-                            bottom_surface.vertices_array)
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_surface.tile_map_indices)
-                    tile_map_index_to_left_wall[bottom_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            bottom_surface,
-                            current_surface,
-                            tile_map_index_to_left_wall)
+                        current_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                current_surface.vertices_array,
+                                bottom_surface.vertices_array)
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_surface.tile_map_indices)
+                        tile_map_index_to_left_wall[bottom_neighbor_index] = \
+                                current_surface
+                        _replace_surface(
+                                bottom_surface,
+                                current_surface,
+                                tile_map_index_to_left_wall)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_left_wall.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_surface.vertices_array.size() == 1:
+                            tile_map_index_to_left_wall.erase(
+                                    bottom_neighbor_index)
+                            bottom_surface.free()
             
             if tile_map_index_to_left_wall.has(tile_map_index) and \
                     tile_map_index_to_left_wall.has(bottom_left_neighbor_index):
@@ -1809,22 +1864,30 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_left_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_left_surface.properties:
-                    current_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            current_surface.vertices_array,
-                            bottom_left_surface.vertices_array)
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_left_surface.tile_map_indices)
-                    tile_map_index_to_left_wall[bottom_left_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            bottom_left_surface,
-                            current_surface,
-                            tile_map_index_to_left_wall)
+                        current_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                current_surface.vertices_array,
+                                bottom_left_surface.vertices_array)
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_left_surface.tile_map_indices)
+                        tile_map_index_to_left_wall[ \
+                                bottom_left_neighbor_index] = current_surface
+                        _replace_surface(
+                                bottom_left_surface,
+                                current_surface,
+                                tile_map_index_to_left_wall)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_left_wall.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_left_surface.vertices_array.size() == 1:
+                            tile_map_index_to_left_wall.erase(
+                                    bottom_left_neighbor_index)
+                            bottom_left_surface.free()
             
             if tile_map_index_to_left_wall.has(tile_map_index) and \
                     tile_map_index_to_left_wall \
@@ -1837,22 +1900,30 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_right_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_right_surface.properties:
-                    current_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            current_surface.vertices_array,
-                            bottom_right_surface.vertices_array)
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_right_surface.tile_map_indices)
-                    tile_map_index_to_left_wall[bottom_right_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            bottom_right_surface,
-                            current_surface,
-                            tile_map_index_to_left_wall)
+                        current_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                current_surface.vertices_array,
+                                bottom_right_surface.vertices_array)
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_right_surface.tile_map_indices)
+                        tile_map_index_to_left_wall[ \
+                                bottom_right_neighbor_index] = current_surface
+                        _replace_surface(
+                                bottom_right_surface,
+                                current_surface,
+                                tile_map_index_to_left_wall)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_left_wall.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_right_surface.vertices_array.size() == 1:
+                            tile_map_index_to_left_wall.erase(
+                                    bottom_right_neighbor_index)
+                            bottom_right_surface.free()
             
             if tile_map_index_to_right_wall.has(tile_map_index) and \
                     tile_map_index_to_right_wall.has(bottom_neighbor_index):
@@ -1863,24 +1934,32 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_surface.properties:
-                    bottom_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            bottom_surface.vertices_array,
-                            current_surface.vertices_array)
-                    current_surface.vertices_array = \
-                            bottom_surface.vertices_array
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_surface.tile_map_indices)
-                    tile_map_index_to_right_wall[bottom_neighbor_index] = \
-                            current_surface
-                    _replace_surface(
-                            bottom_surface,
-                            current_surface,
-                            tile_map_index_to_right_wall)
+                        bottom_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                bottom_surface.vertices_array,
+                                current_surface.vertices_array)
+                        current_surface.vertices_array = \
+                                bottom_surface.vertices_array
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_surface.tile_map_indices)
+                        tile_map_index_to_right_wall[bottom_neighbor_index] = \
+                                current_surface
+                        _replace_surface(
+                                bottom_surface,
+                                current_surface,
+                                tile_map_index_to_right_wall)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_right_wall.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_surface.vertices_array.size() == 1:
+                            tile_map_index_to_right_wall.erase(
+                                    bottom_neighbor_index)
+                            bottom_surface.free()
             
             if tile_map_index_to_right_wall.has(tile_map_index) and \
                     tile_map_index_to_right_wall \
@@ -1893,24 +1972,32 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_left_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_left_surface.properties:
-                    bottom_left_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            bottom_left_surface.vertices_array,
-                            current_surface.vertices_array)
-                    current_surface.vertices_array = \
-                            bottom_left_surface.vertices_array
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_left_surface.tile_map_indices)
-                    tile_map_index_to_right_wall[ \
-                            bottom_left_neighbor_index] = current_surface
-                    _replace_surface(
-                            bottom_left_surface,
-                            current_surface,
-                            tile_map_index_to_right_wall)
+                        bottom_left_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                bottom_left_surface.vertices_array,
+                                current_surface.vertices_array)
+                        current_surface.vertices_array = \
+                                bottom_left_surface.vertices_array
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_left_surface.tile_map_indices)
+                        tile_map_index_to_right_wall[ \
+                                bottom_left_neighbor_index] = current_surface
+                        _replace_surface(
+                                bottom_left_surface,
+                                current_surface,
+                                tile_map_index_to_right_wall)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_right_wall.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_left_surface.vertices_array.size() == 1:
+                            tile_map_index_to_right_wall.erase(
+                                    bottom_left_neighbor_index)
+                            bottom_left_surface.free()
             
             if tile_map_index_to_right_wall.has(tile_map_index) and \
                     tile_map_index_to_right_wall \
@@ -1923,24 +2010,32 @@ static func _merge_continuous_surfaces(
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_right_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
-                        _EQUAL_POINT_EPSILON) and \
-                        current_surface.properties == \
+                        _EQUAL_POINT_EPSILON):
+                    if current_surface.properties == \
                             bottom_right_surface.properties:
-                    bottom_right_surface.vertices_array.pop_back()
-                    Sc.utils.concat(
-                            bottom_right_surface.vertices_array,
-                            current_surface.vertices_array)
-                    current_surface.vertices_array = \
-                            bottom_right_surface.vertices_array
-                    Sc.utils.concat(
-                            current_surface.tile_map_indices,
-                            bottom_right_surface.tile_map_indices)
-                    tile_map_index_to_right_wall[ \
-                            bottom_right_neighbor_index] = current_surface
-                    _replace_surface(
-                            bottom_right_surface,
-                            current_surface,
-                            tile_map_index_to_right_wall)
+                        bottom_right_surface.vertices_array.pop_back()
+                        Sc.utils.concat(
+                                bottom_right_surface.vertices_array,
+                                current_surface.vertices_array)
+                        current_surface.vertices_array = \
+                                bottom_right_surface.vertices_array
+                        Sc.utils.concat(
+                                current_surface.tile_map_indices,
+                                bottom_right_surface.tile_map_indices)
+                        tile_map_index_to_right_wall[ \
+                                bottom_right_neighbor_index] = current_surface
+                        _replace_surface(
+                                bottom_right_surface,
+                                current_surface,
+                                tile_map_index_to_right_wall)
+                    else:
+                        if current_surface.vertices_array.size() == 1:
+                            tile_map_index_to_right_wall.erase(tile_map_index)
+                            current_surface.free()
+                        if bottom_right_surface.vertices_array.size() == 1:
+                            tile_map_index_to_right_wall.erase(
+                                    bottom_right_neighbor_index)
+                            bottom_right_surface.free()
 
 
 static func _get_surface_list_from_map(
