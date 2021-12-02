@@ -502,6 +502,15 @@ func _calculate_surface_contact_from_collision(
         # -  This is uncommon.
         return null
     
+    # If both the surface and its collinear neighbor are axially-aligned,
+    # and the character center is closer to the collinear neighbor,
+    # then use the neighbor instead.
+    var nudged_surface := _get_closer_collinear_axially_aligned_surface(
+            contacted_surface,
+            center_position)
+    if nudged_surface != contacted_surface:
+        contacted_surface = nudged_surface
+    
     # Modify the contact position to be closer to the character center if the
     # contact is on axially-aligned segments of both the surface and the
     # character-collider boundary.
@@ -557,6 +566,87 @@ func _calculate_surface_contact_from_collision(
                 true)
     
     return surface_contact
+
+
+func _get_closer_collinear_axially_aligned_surface(
+        surface: Surface,
+        point: Vector2) -> Surface:
+    if surface.is_single_vertex:
+        return surface
+    
+    match surface.side:
+        SurfaceSide.FLOOR:
+            var neighbor := surface.counter_clockwise_collinear_neighbor
+            while neighbor != null and \
+                    point.x < surface.first_point.x and \
+                    surface.is_axially_aligned and \
+                    neighbor.is_axially_aligned:
+                surface = neighbor
+                neighbor = surface.counter_clockwise_collinear_neighbor
+            
+            neighbor = surface.clockwise_collinear_neighbor
+            while neighbor != null and \
+                    point.x > surface.last_point.x and \
+                    surface.is_axially_aligned and \
+                    neighbor.is_axially_aligned:
+                surface = neighbor
+                neighbor = surface.clockwise_collinear_neighbor
+            
+        SurfaceSide.LEFT_WALL:
+            var neighbor := surface.counter_clockwise_collinear_neighbor
+            while neighbor != null and \
+                    point.y < surface.first_point.y and \
+                    surface.is_axially_aligned and \
+                    neighbor.is_axially_aligned:
+                surface = neighbor
+                neighbor = surface.counter_clockwise_collinear_neighbor
+            
+            neighbor = surface.clockwise_collinear_neighbor
+            while neighbor != null and \
+                    point.y > surface.last_point.y and \
+                    surface.is_axially_aligned and \
+                    neighbor.is_axially_aligned:
+                surface = neighbor
+                neighbor = surface.clockwise_collinear_neighbor
+            
+        SurfaceSide.RIGHT_WALL:
+            var neighbor := surface.counter_clockwise_collinear_neighbor
+            while neighbor != null and \
+                    point.y > surface.first_point.y and \
+                    surface.is_axially_aligned and \
+                    neighbor.is_axially_aligned:
+                surface = neighbor
+                neighbor = surface.counter_clockwise_collinear_neighbor
+            
+            neighbor = surface.clockwise_collinear_neighbor
+            while neighbor != null and \
+                    point.y < surface.last_point.y and \
+                    surface.is_axially_aligned and \
+                    neighbor.is_axially_aligned:
+                surface = neighbor
+                neighbor = surface.clockwise_collinear_neighbor
+            
+        SurfaceSide.CEILING_WALL:
+            var neighbor := surface.counter_clockwise_collinear_neighbor
+            while neighbor != null and \
+                    point.x > surface.first_point.x and \
+                    surface.is_axially_aligned and \
+                    neighbor.is_axially_aligned:
+                surface = neighbor
+                neighbor = surface.counter_clockwise_collinear_neighbor
+            
+            neighbor = surface.clockwise_collinear_neighbor
+            while neighbor != null and \
+                    point.x < surface.last_point.x and \
+                    surface.is_axially_aligned and \
+                    neighbor.is_axially_aligned:
+                surface = neighbor
+                neighbor = surface.clockwise_collinear_neighbor
+            
+        _:
+            Sc.logger.error()
+    
+    return surface
 
 
 func _update_surface_contact_from_rounded_corner() -> bool:
