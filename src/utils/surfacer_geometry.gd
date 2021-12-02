@@ -1211,14 +1211,14 @@ static func nudge_point_along_axially_aligned_segment_toward_shape_center(
                     segment_end.x)
         SurfaceSide.LEFT_WALL:
             nudged_point.y = clamp(
-                    shape_position.x,
-                    segment_start.x,
-                    segment_end.x)
+                    shape_position.y,
+                    segment_start.y,
+                    segment_end.y)
         SurfaceSide.RIGHT_WALL:
             nudged_point.y = clamp(
-                    shape_position.x,
-                    segment_end.x,
-                    segment_start.x)
+                    shape_position.y,
+                    segment_end.y,
+                    segment_start.y)
         SurfaceSide.CEILING:
             nudged_point.x = clamp(
                     shape_position.x,
