@@ -626,7 +626,7 @@ func _get_closer_collinear_axially_aligned_surface(
                 surface = neighbor
                 neighbor = surface.clockwise_collinear_neighbor
             
-        SurfaceSide.CEILING_WALL:
+        SurfaceSide.CEILING:
             var neighbor := surface.counter_clockwise_collinear_neighbor
             while neighbor != null and \
                     point.x > surface.first_point.x and \
