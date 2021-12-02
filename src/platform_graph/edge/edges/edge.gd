@@ -102,7 +102,6 @@ func update_navigation_state(
         navigation_state: CharacterNavigationState,
         surface_state: CharacterSurfaceState,
         playback,
-        just_started_new_edge: bool,
         is_starting_navigation_retry: bool) -> void:
     # When retrying navigation, we need to ignore whatever surface state in
     # the current frame led to the previous navigation being interrupted.
@@ -116,6 +115,9 @@ func update_navigation_state(
         navigation_state.just_reached_end_of_edge = false
         navigation_state.is_stalling_one_frame_before_reaching_end = false
         return
+    
+    var just_started_new_edge := \
+            navigation_state.edge_frame_count == 0
     
     var still_grabbing_start_surface_at_start := \
             just_started_new_edge and \
@@ -624,11 +626,11 @@ func check_just_landed_on_expected_surface(
         return playback.get_elapsed_time_scaled() >= duration
     else:
         return surface_state.just_left_air and \
-                surface_state.grabbed_surface == end_surface or \
+                (surface_state.grabbed_surface == end_surface or \
                 surface_state.grabbed_surface == \
                     end_surface.clockwise_collinear_neighbor or \
                 surface_state.grabbed_surface == \
-                    end_surface.counter_clockwise_collinear_neighbor
+                    end_surface.counter_clockwise_collinear_neighbor)
 
 
 func load_from_json_object(
