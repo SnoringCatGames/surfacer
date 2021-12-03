@@ -67,10 +67,17 @@ func get_surface_set(movement_params: MovementParameters) -> Dictionary:
         surface_collections.push_back(ceilings)
     for surface_collection in surface_collections:
         for surface in surface_collection:
-            set[surface] = true
+            # Filter-out surfaces that cannot be grabbed according to their
+            # properties.
+            if surface.properties.can_grab:
+                set[surface] = true
     
     # Filter-out surfaces according to SurfaceMarks.
     for mark in marks:
+        if !(mark is SurfaceEnablement):
+            # Only omit surfaces for the enablement mark.
+            continue
+        
         var does_mark_match_character: bool = \
                 mark.get_character_names().has(movement_params.character_name)
         if does_mark_match_character:
