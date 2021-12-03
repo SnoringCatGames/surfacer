@@ -430,6 +430,10 @@ static func _prepend_walk_to_fall_off_portion(
     var current_frame_position := start.target_point
     var current_frame_velocity := Vector2(velocity_x_start, 0.0)
     
+    var max_surface_speed := \
+            movement_params.get_max_surface_speed() * \
+            origin_surface.properties.speed_multiplier
+    
     for frame_index in frame_count_before_fall_off:
         if movement_params.includes_discrete_trajectory_state:
             trajectory.frame_discrete_positions_from_test[frame_index] = \
@@ -452,10 +456,10 @@ static func _prepend_walk_to_fall_off_portion(
                         null)
         
         current_frame_velocity += acceleration * Time.PHYSICS_TIME_STEP
-        current_frame_velocity = \
-                MovementUtils.clamp_horizontal_velocity_to_max_default(
-                        movement_params,
-                        current_frame_velocity)
+        current_frame_velocity.x = clamp(
+                current_frame_velocity.x,
+                -max_surface_speed,
+                max_surface_speed)
     
     # Update the trajectory distance.
     trajectory.distance_from_continuous_trajectory = \

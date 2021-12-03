@@ -692,6 +692,10 @@ func _populate_convex_trajectory(
             
             velocity.y = 0.0
             
+            var max_surface_speed := \
+                    movement_params.get_max_surface_speed() * \
+                    position_end.surface.properties.speed_multiplier
+            
             var is_rounding_corner_finished := false
             while !is_rounding_corner_finished and \
                     frame_index < frame_count:
@@ -709,10 +713,10 @@ func _populate_convex_trajectory(
                 
                 # Account for acceleration along the floor.
                 velocity.x += acceleration_x * Time.PHYSICS_TIME_STEP
-                velocity = \
-                        MovementUtils.clamp_horizontal_velocity_to_max_default(
-                            movement_params,
-                            velocity)
+                velocity.x = clamp(
+                        velocity.x,
+                        -max_surface_speed,
+                        max_surface_speed)
                 is_rounding_corner_finished = \
                         position.x >= corner_position.x if \
                         is_left_side else \
