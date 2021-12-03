@@ -830,11 +830,11 @@ static func _update_waypoint_velocity_and_time(
             min_velocity_x = \
                     waypoint.min_velocity_x if \
                     !is_inf(waypoint.min_velocity_x) else \
-                    -movement_params.max_horizontal_speed_default
+                    -movement_params.get_max_air_horizontal_speed()
             max_velocity_x = \
                     waypoint.max_velocity_x if \
                     !is_inf(waypoint.max_velocity_x) else \
-                    movement_params.max_horizontal_speed_default
+                    movement_params.get_max_air_horizontal_speed()
             
         else:
             # This is an intermediate waypoint (not the origin or destination).
@@ -908,7 +908,7 @@ static func _update_waypoint_velocity_and_time(
                             duration_from_origin,
                             origin_waypoint.min_velocity_x,
                             origin_waypoint.max_velocity_x,
-                            movement_params.max_horizontal_speed_default,
+                            movement_params.get_max_air_horizontal_speed(),
                             movement_params.in_air_horizontal_acceleration,
                             waypoint.horizontal_movement_sign)
             if min_and_max_velocity_from_origin.empty():
@@ -927,7 +927,7 @@ static func _update_waypoint_velocity_and_time(
                             duration_to_next,
                             waypoint.next_waypoint.min_velocity_x,
                             waypoint.next_waypoint.max_velocity_x,
-                            movement_params.max_horizontal_speed_default,
+                            movement_params.get_max_air_horizontal_speed(),
                             movement_params.in_air_horizontal_acceleration,
                             waypoint.horizontal_movement_sign)
             if min_and_max_velocity_for_next_step.empty():
@@ -992,12 +992,12 @@ static func _calculate_time_to_reach_destination_from_new_waypoint(
     var acceleration: float
     if displacement.x > 0:
         velocity_x_at_new_waypoint = \
-                movement_params.max_horizontal_speed_default * \
+                movement_params.get_max_air_horizontal_speed() * \
                 CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER
         acceleration = movement_params.in_air_horizontal_acceleration
     else:
         velocity_x_at_new_waypoint = \
-                -movement_params.max_horizontal_speed_default * \
+                -movement_params.get_max_air_horizontal_speed() * \
                 CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER
         acceleration = -movement_params.in_air_horizontal_acceleration
     
@@ -1006,7 +1006,7 @@ static func _calculate_time_to_reach_destination_from_new_waypoint(
                     displacement.x,
                     velocity_x_at_new_waypoint,
                     acceleration,
-                    movement_params.max_horizontal_speed_default)
+                    movement_params.get_max_air_horizontal_speed())
     
     var time_to_reach_fall_displacement: float
     if displacement.y > 0:

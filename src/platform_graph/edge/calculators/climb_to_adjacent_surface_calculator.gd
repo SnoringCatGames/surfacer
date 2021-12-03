@@ -758,11 +758,9 @@ func _populate_convex_trajectory(
                 # Assume that the character will have reached max speed by the
                 # time they've walked to the end of a floor surface.
                 velocity.x = \
-                        -movement_params.max_horizontal_speed_default if \
+                        -movement_params.get_max_surface_speed() if \
                         is_left_side else \
-                        movement_params.max_horizontal_speed_default
-                velocity.x *= \
-                        movement_params.intra_surface_edge_speed_multiplier
+                        movement_params.get_max_surface_speed()
             else:
                 velocity.x = \
                         -movement_params.ceiling_crawl_speed if \
@@ -915,10 +913,9 @@ func _get_velocity_start(
             # Assume that the character will have reached max speed by the time
             # they've walked to the end of the floor surface.
             velocity_x = \
-                    -movement_params.max_horizontal_speed_default if \
+                    -movement_params.get_max_surface_speed() if \
                     is_moving_left else \
-                    movement_params.max_horizontal_speed_default
-            velocity_x *= movement_params.intra_surface_edge_speed_multiplier
+                    movement_params.get_max_surface_speed()
             velocity_y = 0.0
         SurfaceSide.CEILING:
             velocity_x = \
@@ -983,8 +980,7 @@ func _get_velocity_end(
                 if is_starting_from_left_wall:
                     velocity_x = -velocity_x
                 var max_horizontal_speed := \
-                        movement_params.max_horizontal_speed_default * \
-                        movement_params.intra_surface_edge_speed_multiplier
+                        movement_params.get_max_surface_speed()
                 velocity_x = clamp(
                         velocity_x,
                         -max_horizontal_speed,
@@ -1054,9 +1050,7 @@ func _calculate_duration(
             position_start.surface.last_point if \
             is_clockwise else \
             position_start.surface.first_point
-    var max_horizontal_speed := \
-            movement_params.max_horizontal_speed_default * \
-            movement_params.intra_surface_edge_speed_multiplier
+    var max_horizontal_speed := movement_params.get_max_surface_speed()
     
     # -   Movement around a convex corner is comprised of two parts:
     #     -   a part based on the start surface,
@@ -1187,8 +1181,7 @@ func _calculate_duration_along_start_surface(
             start_side == SurfaceSide.RIGHT_WALL
     
     var speed_start := abs(
-            movement_params.max_horizontal_speed_default * \
-                movement_params.intra_surface_edge_speed_multiplier if \
+            movement_params.get_max_surface_speed() if \
             start_side == SurfaceSide.FLOOR else \
             movement_params.ceiling_crawl_speed if \
             start_side == SurfaceSide.CEILING else \

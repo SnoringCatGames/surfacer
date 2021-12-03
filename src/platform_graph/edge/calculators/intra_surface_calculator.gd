@@ -145,9 +145,7 @@ func update_for_surface_state(
             edge.start_position_along_surface,
             surface_state.center_position_along_surface)
     edge.velocity_start = surface_state.velocity
-    var max_horizontal_speed := \
-            edge.movement_params.max_horizontal_speed_default * \
-            edge.movement_params.intra_surface_edge_speed_multiplier
+    var max_horizontal_speed := edge.movement_params.get_max_surface_speed()
     edge.velocity_start.x = clamp(
             edge.velocity_start.x,
             -max_horizontal_speed,
@@ -304,8 +302,7 @@ func calculate_duration(
                     displacement_x,
                     velocity_start_x,
                     walk_acceleration_with_friction,
-                    movement_params.max_horizontal_speed_default * \
-                        movement_params.intra_surface_edge_speed_multiplier)
+                    movement_params.get_max_surface_speed())
             assert(!is_inf(duration))
             return duration
             
@@ -354,9 +351,7 @@ func _calculate_velocity_end(
                     walk_acceleration_with_friction if \
                     displacement.x > 0.0 else \
                     -walk_acceleration_with_friction
-            var max_horizontal_speed := \
-                    movement_params.max_horizontal_speed_default * \
-                    movement_params.intra_surface_edge_speed_multiplier
+            var max_horizontal_speed := movement_params.get_max_surface_speed()
             var velocity_end_x: float = \
                     MovementUtils.calculate_velocity_end_for_displacement(
                         displacement.x,
@@ -506,9 +501,7 @@ func _calculate_trajectory(
     var ran_into_concave_next_neighbor := false
     
     var displacement := end.target_point - start.target_point
-    var max_horizontal_speed := \
-            movement_params.max_horizontal_speed_default * \
-            movement_params.intra_surface_edge_speed_multiplier
+    var max_horizontal_speed := movement_params.get_max_surface_speed()
     
     var frame_count := int(max(ceil(duration / Time.PHYSICS_TIME_STEP), 1))
     var frame_index := 0

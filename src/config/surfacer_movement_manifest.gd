@@ -392,8 +392,9 @@ func _calculate_dependent_movement_params(
                     movement_params.jump_boost,
                     movement_params.gravity_slow_rise)
     var intra_surface_max_horizontal_speed := \
-            movement_params.max_horizontal_speed_default * \
-            movement_params.intra_surface_edge_speed_multiplier
+            movement_params.get_max_surface_speed()
+    var max_air_horizontal_speed := \
+            movement_params.get_max_air_horizontal_speed()
     # From a basic equation of motion:
     #     v^2 = v_0^2 + 2*a*(s - s_0)
     #     v_0 = 0
@@ -412,7 +413,7 @@ func _calculate_dependent_movement_params(
                 .calculate_max_horizontal_displacement_before_returning_to_starting_height(
                     0.0,
                     movement_params.jump_boost,
-                    movement_params.max_horizontal_speed_default,
+                    max_air_horizontal_speed,
                     movement_params.gravity_slow_rise,
                     movement_params.gravity_fast_fall)
     movement_params.wall_jump_max_horizontal_jump_distance = \
@@ -420,7 +421,7 @@ func _calculate_dependent_movement_params(
                 .calculate_max_horizontal_displacement_before_returning_to_starting_height(
                     movement_params.wall_jump_horizontal_boost,
                     movement_params.jump_boost,
-                    movement_params.max_horizontal_speed_default,
+                    max_air_horizontal_speed,
                     movement_params.gravity_slow_rise,
                     movement_params.gravity_fast_fall)
 

@@ -17,15 +17,10 @@ func _init().(
 
 
 func process(character) -> bool:
-    var max_horizontal_speed: float
-    if character.current_max_horizontal_speed == \
-            character.movement_params.max_horizontal_speed_default and \
-            character.surface_state.is_grabbing_surface:
-        max_horizontal_speed = \
-                character.movement_params.max_horizontal_speed_default * \
-                character.movement_params.intra_surface_edge_speed_multiplier
-    else:
-        max_horizontal_speed = character.current_max_horizontal_speed
+    var max_horizontal_speed: float = \
+            character.current_surface_max_horizontal_speed if \
+            character.surface_state.is_grabbing_surface else \
+            character.current_air_max_horizontal_speed
     
     character.velocity = MovementUtils.cap_velocity(
             character.velocity,

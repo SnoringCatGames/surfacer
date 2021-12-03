@@ -100,9 +100,7 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
                     walk_acceleration_with_friction if \
                     displacement.x > 0 else \
                     -walk_acceleration_with_friction
-            var max_horizontal_speed := \
-                    movement_params.max_horizontal_speed_default * \
-                    movement_params.intra_surface_edge_speed_multiplier
+            var max_horizontal_speed := movement_params.get_max_surface_speed()
             var displacement_x := \
                     MovementUtils.calculate_displacement_for_duration(
                         edge_time,
@@ -167,9 +165,7 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
                     walk_acceleration_with_friction if \
                     displacement.x > 0 else \
                     -walk_acceleration_with_friction
-            var max_horizontal_speed := \
-                    movement_params.max_horizontal_speed_default * \
-                    movement_params.intra_surface_edge_speed_multiplier
+            var max_horizontal_speed := movement_params.get_max_surface_speed()
             var velocity_x := velocity_start.x + acceleration_x * edge_time
             velocity_x = clamp(
                     velocity_x,

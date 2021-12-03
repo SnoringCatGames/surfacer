@@ -184,7 +184,7 @@ static func check_instructions_discrete_trajectory_state(
         velocity = MovementUtils.cap_velocity(
                 velocity,
                 movement_params,
-                movement_params.max_horizontal_speed_default)
+                movement_params.get_max_air_horizontal_speed())
         previous_time = current_time
         current_time += delta
     

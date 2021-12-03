@@ -478,9 +478,7 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
         friction_multiplier: float) -> float:
     var distance_from_end := abs(displacement_x_from_end)
     
-    var max_horizontal_speed := \
-            movement_params.max_horizontal_speed_default * \
-            movement_params.intra_surface_edge_speed_multiplier
+    var max_horizontal_speed := movement_params.get_max_surface_speed()
     
     # NOTE: Keep this logic in-sync with FloorFrictionAction.
     var walk_acceleration_with_friction := \
@@ -551,10 +549,13 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
         return stopping_distance_from_max_speed
 
 
-# FIXME: LEFT OFF HERE: -----------------
+# FIXME: LEFT OFF HERE: ---------------------------------
+# - Parameterize this more to distinguish between surface, in-air, transitioning?
+
+# FIXME: LEFT OFF HERE: ------------------
 # - Search for usages.
 # - Update stuff to support dynamic max speeds.
-# - Apply movement_params.intra_surface_edge_speed_multiplier to max-speed when needed.
+# - Apply movement_params.surface_speed_multiplier to max-speed when needed.
 #   - (Is this ever called for intra-surface edges?)
 static func clamp_horizontal_velocity_to_max_default(
         movement_params: MovementParameters,

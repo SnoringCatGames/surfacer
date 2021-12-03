@@ -27,14 +27,20 @@ var can_double_jump := false setget _set_can_double_jump
 
 const _PHYSICS_MOVEMENT_GROUP := {
     group_name = "physics_movement",
-    first_property_name = "intra_surface_edge_speed_multiplier",
+    first_property_name = "surface_speed_multiplier",
 }
 
-## -   This only affects the speed of intra-surface edges.[br]
-## -   This does not affect jump start/end velocities.[br]
+## -   This affects the character's speed while moving along a surface.[br]
+## -   This does not affect jump start/end velocities or in-air velocities.[br]
 ## -   This will modify both acceleration and max-speed.[br]
-var intra_surface_edge_speed_multiplier := 1.0 \
-        setget _set_intra_surface_edge_speed_multiplier
+var surface_speed_multiplier := 1.0 \
+        setget _set_surface_speed_multiplier
+
+## -   This affects the character's horizontal speed while in air.[br]
+## -   This does not affect jump start/end velocities or surface speeds.[br]
+## -   This will modify both acceleration and max-speed.[br]
+var air_horizontal_speed_multiplier := 1.0 \
+        setget _set_air_horizontal_speed_multiplier
 
 ## Each character can use a different gravity value.
 var gravity_multiplier := 1.0 \
@@ -624,9 +630,12 @@ func _update_parameters_debounced() -> void:
 
 
 func _validate_parameters() -> void:
-    if intra_surface_edge_speed_multiplier <= 0.0:
+    if surface_speed_multiplier <= 0.0:
         _set_configuration_warning(
-                "intra_surface_edge_speed_multiplier must be greater than 0.")
+                "surface_speed_multiplier must be greater than 0.")
+    if air_horizontal_speed_multiplier <= 0.0:
+        _set_configuration_warning(
+                "air_speed_multiplier must be greater than 0.")
     elif gravity_fast_fall < 0:
         _set_configuration_warning(
                 "gravity_fast_fall must be non-negative.")
@@ -752,22 +761,23 @@ func _derive_parameters() -> void:
     walk_acceleration = \
             walk_acceleration_multiplier * \
             Su.movement.walk_acceleration_default * \
-            intra_surface_edge_speed_multiplier
+            surface_speed_multiplier
     in_air_horizontal_acceleration = \
             in_air_horizontal_acceleration_multiplier * \
-            Su.movement.in_air_horizontal_acceleration_default
+            Su.movement.in_air_horizontal_acceleration_default * \
+            air_horizontal_speed_multiplier
     climb_up_speed = \
             climb_up_speed_multiplier * \
             Su.movement.climb_up_speed_default * \
-            intra_surface_edge_speed_multiplier
+            surface_speed_multiplier
     climb_down_speed = \
             climb_down_speed_multiplier * \
             Su.movement.climb_down_speed_default * \
-            intra_surface_edge_speed_multiplier
+            surface_speed_multiplier
     ceiling_crawl_speed = \
             ceiling_crawl_speed_multiplier * \
             Su.movement.ceiling_crawl_speed_default * \
-            intra_surface_edge_speed_multiplier
+            surface_speed_multiplier
     friction_coeff_with_sideways_input = \
             friction_coefficient_multiplier * \
             Su.movement.friction_coeff_with_sideways_input_default
@@ -779,10 +789,12 @@ func _derive_parameters() -> void:
             Su.movement.jump_boost_default
     wall_jump_horizontal_boost = \
             wall_jump_horizontal_boost_multiplier * \
-            Su.movement.wall_jump_horizontal_boost_default
+            Su.movement.wall_jump_horizontal_boost_default * \
+            air_horizontal_speed_multiplier
     wall_fall_horizontal_boost = \
             wall_fall_horizontal_boost_multiplier * \
-            Su.movement.wall_fall_horizontal_boost_default
+            Su.movement.wall_fall_horizontal_boost_default * \
+            air_horizontal_speed_multiplier
     
     max_horizontal_speed_default = \
             max_horizontal_speed_default_multiplier * \
@@ -898,6 +910,14 @@ func get_max_horizontal_jump_distance(surface_side: int) -> float:
             floor_jump_max_horizontal_jump_distance
 
 
+func get_max_surface_speed() -> float:
+    return max_horizontal_speed_default * surface_speed_multiplier
+
+
+func get_max_air_horizontal_speed() -> float:
+    return max_horizontal_speed_default * air_horizontal_speed_multiplier
+
+
 func _set_is_instanced_from_bootstrap(value: bool) -> void:
     _is_instanced_from_bootstrap = value
     _set_up()
@@ -928,8 +948,13 @@ func _set_can_double_jump(value: bool) -> void:
     _update_parameters()
 
 
-func _set_intra_surface_edge_speed_multiplier(value: float) -> void:
-    intra_surface_edge_speed_multiplier = value
+func _set_surface_speed_multiplier(value: float) -> void:
+    surface_speed_multiplier = value
+    _update_parameters()
+
+
+func _set_air_horizontal_speed_multiplier(value: float) -> void:
+    air_horizontal_speed_multiplier = value
     _update_parameters()
 
 

@@ -369,14 +369,14 @@ static func calculate_jump_or_fall_range_polygon_from_point(
     # From a basic equation of motion:
     #     s = s_0 + v*t
     var offset_x_for_acceleration_to_terminal_velocity := \
-            movement_params.max_horizontal_speed_default * \
+            movement_params.get_max_air_horizontal_speed() * \
             time_to_terminal_velocity_y
     
     var offset_for_acceleration_to_terminal_velocity := \
             Vector2(offset_x_for_acceleration_to_terminal_velocity, 0.0)
     var slope := \
             movement_params.max_vertical_speed / \
-            movement_params.max_horizontal_speed_default
+            movement_params.get_max_air_horizontal_speed()
     var offset_x_from_top_corner_to_bottom_corner := 10000.0
     var offset_y_from_top_corner_to_bottom_corner := 10000.0 * slope
     
@@ -401,7 +401,7 @@ static func calculate_jump_or_fall_range_polygon_from_point(
                 .calculate_max_horizontal_displacement_before_returning_to_starting_height(
                         abs(velocity_start.x),
                         velocity_start.y,
-                        movement_params.max_horizontal_speed_default,
+                        movement_params.get_max_air_horizontal_speed(),
                         movement_params.gravity_slow_rise,
                         movement_params.gravity_fast_fall)
         var horizontal_offset_during_jump_vertical_offset := \
@@ -460,13 +460,13 @@ static func calculate_jump_or_fall_range_polygon_from_surface(
     # From a basic equation of motion:
     #     s = s_0 + v*t
     var offset_x_for_acceleration_to_terminal_velocity := \
-            movement_params.max_horizontal_speed_default * \
+            movement_params.get_max_air_horizontal_speed() * \
             time_to_terminal_velocity_y
     
     var offset_for_acceleration_to_terminal_velocity := \
             Vector2(offset_x_for_acceleration_to_terminal_velocity, 0.0)
     var slope := movement_params.max_vertical_speed / \
-            movement_params.max_horizontal_speed_default
+            movement_params.get_max_air_horizontal_speed()
     var offset_x_from_top_corner_to_bottom_corner := 100000.0
     var offset_y_from_top_corner_to_bottom_corner := 100000.0 * slope
     
