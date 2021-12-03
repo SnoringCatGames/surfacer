@@ -33,6 +33,7 @@ const _PHYSICS_MOVEMENT_GROUP := {
 ## -   This affects the character's speed while moving along a surface.[br]
 ## -   This does not affect jump start/end velocities or in-air velocities.[br]
 ## -   This will modify both acceleration and max-speed.[br]
+## -   This is similar to SurfaceProperties.speed_multiplier[br]
 var surface_speed_multiplier := 1.0 \
         setget _set_surface_speed_multiplier
 

@@ -3379,9 +3379,11 @@ static func get_horizontal_velocity_start(
             if prefer_zero_horizontal_speed:
                 return 0.0
             elif is_moving_leftward:
-                return -movement_params.ceiling_crawl_speed
+                return -movement_params.ceiling_crawl_speed * \
+                        origin_surface.properties.speed_multiplier
             else:
-                return movement_params.ceiling_crawl_speed
+                return movement_params.ceiling_crawl_speed * \
+                        origin_surface.properties.speed_multiplier
             
         _:
             Sc.logger.error()

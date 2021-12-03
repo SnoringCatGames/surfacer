@@ -140,12 +140,15 @@ func update_for_surface_state(
         edge: IntraSurfaceEdge,
         surface_state: CharacterSurfaceState,
         is_final_edge: bool) -> void:
-    assert(surface_state.grabbed_surface == edge.get_start_surface())
+    var start_surface := edge.get_start_surface()
+    assert(surface_state.grabbed_surface == start_surface)
     PositionAlongSurface.copy(
             edge.start_position_along_surface,
             surface_state.center_position_along_surface)
     edge.velocity_start = surface_state.velocity
-    var max_horizontal_speed := edge.movement_params.get_max_surface_speed()
+    var max_horizontal_speed := \
+            edge.movement_params.get_max_surface_speed() * \
+            start_surface.properties.speed_multiplier
     edge.velocity_start.x = clamp(
             edge.velocity_start.x,
             -max_horizontal_speed,
@@ -286,11 +289,14 @@ func calculate_duration(
                 displacement_x = -displacement_x
             var walk_acceleration := _calculate_acceleration_with_friction(
                     movement_params, start.surface)
+            var max_speed := \
+                    movement_params.get_max_surface_speed() * \
+                    start.surface.properties.speed_multiplier
             var duration := MovementUtils.calculate_duration_for_displacement(
                     displacement_x,
                     velocity_start_x,
                     walk_acceleration,
-                    movement_params.get_max_surface_speed())
+                    max_speed)
             assert(!is_inf(duration))
             return duration
             
@@ -300,10 +306,12 @@ func calculate_duration(
             return MovementUtils.calculate_time_to_climb(
                     abs(displacement.y),
                     is_climbing_upward,
+                    start.surface,
                     movement_params)
         SurfaceSide.CEILING:
             return MovementUtils.calculate_time_to_crawl_on_ceiling(
                     abs(displacement.x),
+                    start.surface,
                     movement_params)
         _:
             Sc.logger.error()
@@ -327,7 +335,9 @@ func _calculate_velocity_end(
                     walk_acceleration if \
                     displacement.x > 0.0 else \
                     -walk_acceleration
-            var max_horizontal_speed := movement_params.get_max_surface_speed()
+            var max_horizontal_speed := \
+                    movement_params.get_max_surface_speed() * \
+                    start.surface.properties.speed_multiplier
             var velocity_end_x: float = \
                     MovementUtils.calculate_velocity_end_for_displacement(
                         displacement.x,
@@ -343,6 +353,7 @@ func _calculate_velocity_end(
                     movement_params.climb_up_speed if \
                     displacement.y < 0.0 else \
                     movement_params.climb_down_speed
+            velocity_end_y *= start.surface.properties.speed_multiplier
             return Vector2(0.0, velocity_end_y)
         SurfaceSide.CEILING:
             # We use a constant speed (no acceleration) when crawling on the
@@ -351,6 +362,7 @@ func _calculate_velocity_end(
                     movement_params.ceiling_crawl_speed if \
                     displacement.x > 0.0 else \
                     -movement_params.ceiling_crawl_speed
+            velocity_end_x *= start.surface.properties.speed_multiplier
             return Vector2(velocity_end_x, 0.0)
         _:
             Sc.logger.error()
@@ -477,7 +489,9 @@ func _calculate_trajectory(
     var ran_into_concave_next_neighbor := false
     
     var displacement := end.target_point - start.target_point
-    var max_horizontal_speed := movement_params.get_max_surface_speed()
+    var max_horizontal_speed := \
+            movement_params.get_max_surface_speed() * \
+            start.surface.properties.speed_multiplier
     
     var frame_count := int(max(ceil(duration / Time.PHYSICS_TIME_STEP), 1))
     var frame_index := 0
@@ -507,11 +521,13 @@ func _calculate_trajectory(
                     movement_params.climb_down_speed if \
                     displacement.y > 0 else \
                     movement_params.climb_up_speed
+            velocity.y *= start.surface.properties.speed_multiplier
         SurfaceSide.CEILING:
             velocity.x = \
                     movement_params.ceiling_crawl_speed if \
                     displacement.x > 0 else \
                     -movement_params.ceiling_crawl_speed
+            velocity.x *= start.surface.properties.speed_multiplier
             velocity.y = 0.0
         _:
             Sc.logger.error()
@@ -631,14 +647,17 @@ func _calculate_stopping_distance(
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var climb_speed := \
-                    abs(movement_params.climb_up_speed) if \
+                    (abs(movement_params.climb_up_speed) if \
                     displacement.y < 0 else \
-                    abs(movement_params.climb_down_speed)
+                    abs(movement_params.climb_down_speed)) * \
+                    end.surface.properties.speed_multiplier
             return climb_speed * \
                     Time.PHYSICS_TIME_STEP + \
                     0.01
         SurfaceSide.CEILING:
-            var climb_speed := abs(movement_params.ceiling_crawl_speed)
+            var climb_speed := \
+                    abs(movement_params.ceiling_crawl_speed) * \
+                    end.surface.properties.speed_multiplier
             return climb_speed * \
                     Time.PHYSICS_TIME_STEP + \
                     0.01

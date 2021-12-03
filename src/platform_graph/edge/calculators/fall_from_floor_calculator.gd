@@ -201,7 +201,9 @@ func _get_all_edges_from_one_side(
                     falls_on_left_side)
     
     var velocity_x_start := surface_end_velocity_start.x
-    var max_horizontal_speed := movement_params.get_max_surface_speed()
+    var max_horizontal_speed := \
+            movement_params.get_max_surface_speed() * \
+            origin_surface.properties.speed_multiplier
     
     var velocity_x_fall_off: float = \
             MovementUtils.calculate_velocity_end_for_displacement(

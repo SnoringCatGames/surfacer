@@ -88,7 +88,9 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
                     get_walk_acceleration() if \
                     displacement.x > 0 else \
                     -get_walk_acceleration()
-            var max_horizontal_speed := movement_params.get_max_surface_speed()
+            var max_horizontal_speed := \
+                    movement_params.get_max_surface_speed() * \
+                    surface.properties.speed_multiplier
             var displacement_x := \
                     MovementUtils.calculate_displacement_for_duration(
                         edge_time,
@@ -107,6 +109,7 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
                     movement_params.climb_up_speed if \
                     displacement.y < 0.0 else \
                     movement_params.climb_down_speed
+            velocity_y *= surface.properties.speed_multiplier
             var position_y := start.y + velocity_y * edge_time
             return Sc.geometry.project_shape_onto_surface(
                     Vector2(0.0, position_y),
@@ -118,6 +121,7 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
                     movement_params.ceiling_crawl_speed if \
                     displacement.x > 0.0 else \
                     -movement_params.ceiling_crawl_speed
+            velocity_x *= surface.properties.speed_multiplier
             var position_x := start.x + velocity_x * edge_time
             return Sc.geometry.project_shape_onto_surface(
                     Vector2(position_x, 0.0),
@@ -141,7 +145,9 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
                     get_walk_acceleration() if \
                     displacement.x > 0 else \
                     -get_walk_acceleration()
-            var max_horizontal_speed := movement_params.get_max_surface_speed()
+            var max_horizontal_speed := \
+                    movement_params.get_max_surface_speed() * \
+                    surface.properties.speed_multiplier
             var velocity_x := velocity_start.x + acceleration_x * edge_time
             velocity_x = clamp(
                     velocity_x,
@@ -154,12 +160,14 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
                     movement_params.climb_up_speed if \
                     displacement.y < 0.0 else \
                     movement_params.climb_down_speed
+            velocity_y *= surface.properties.speed_multiplier
             return Vector2(0.0, velocity_y)
         SurfaceSide.CEILING:
             var velocity_x := \
                     movement_params.ceiling_crawl_speed if \
                     displacement.x > 0.0 else \
                     -movement_params.ceiling_crawl_speed
+            velocity_x *= surface.properties.speed_multiplier
             return Vector2(velocity_x, 0.0)
         _:
             Sc.logger.error()
