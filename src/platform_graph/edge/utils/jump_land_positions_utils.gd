@@ -3346,12 +3346,20 @@ static func get_horizontal_velocity_start(
             if prefer_zero_horizontal_speed:
                 return 0.0
             
+            var surface_max_horizontal_speed := \
+                    movement_params.get_max_surface_speed() * \
+                    origin_surface.properties.speed_multiplier
+            var distance_to_half_max_horizontal_speed := \
+                    surface_max_horizontal_speed * 0.5 * \
+                    surface_max_horizontal_speed * 0.5 / \
+                    2.0 / movement_params.walk_acceleration
+            
             # This uses a simplifying assumption, since we can't know whether
             # there is actually enough ramp-up distance without knowing the
             # exact position within the bounds of the surface.
             var can_reach_half_max_speed := \
                     origin_surface.bounding_box.size.x > \
-                    movement_params.distance_to_half_max_horizontal_speed
+                    distance_to_half_max_horizontal_speed
             
             if can_reach_half_max_speed:
                 if is_moving_leftward:

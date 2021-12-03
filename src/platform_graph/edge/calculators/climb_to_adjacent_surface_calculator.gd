@@ -679,12 +679,15 @@ func _populate_convex_trajectory(
                         movement_params.ceiling_crawl_speed if \
                         is_left_side else \
                         -movement_params.ceiling_crawl_speed
+                velocity.x *= position_end.surface.properties.speed_multiplier
                 acceleration_x = 0.0
             else:
                 acceleration_x = \
                         movement_params.walk_acceleration if \
                         is_left_side else \
                         -movement_params.walk_acceleration
+                acceleration_x *= \
+                        position_end.surface.properties.speed_multiplier
             
             velocity.y = 0.0
             
@@ -962,7 +965,9 @@ func _get_velocity_end(
             var is_starting_from_left_wall := \
                     position_start.side == SurfaceSide.LEFT_WALL
             if is_convex:
-                var acceleration_x := movement_params.walk_acceleration
+                var acceleration_x := \
+                        movement_params.walk_acceleration * \
+                        position_end.surface.properties.speed_multiplier
                 var floor_component_distance: float = abs(Sc.geometry \
                         .calculate_displacement_x_for_vertical_distance_past_edge(
                             movement_params.collider.half_width_height.y,
@@ -1105,7 +1110,9 @@ func _calculate_duration(
         duration_end = distance_end / speed_end
     else:
         # Account for acceleration-along-floor when climbing over a wall.
-        var acceleration_x := movement_params.walk_acceleration
+        var acceleration_x := \
+                movement_params.walk_acceleration * \
+                position_end.surface.properties.speed_multiplier
         var end_speed_x_start := 0.0
         # From a basic equation of motion:
         #     v^2 = v_0^2 + 2a(s - s_0)
