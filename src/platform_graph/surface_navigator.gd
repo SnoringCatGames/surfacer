@@ -99,11 +99,16 @@ func navigate_path(
             graph.collision_params,
             path)
     
-    
-    var start_velocity := \
-            MovementUtils.clamp_horizontal_velocity_to_max_default(
-                    movement_params,
-                    character.velocity)
+    var max_speed := \
+            movement_params.get_max_surface_speed() * \
+            graph_origin.surface.properties.speed_multiplier if \
+            surface_state.is_grabbing_surface else \
+            movement_params.get_max_air_horizontal_speed()
+    var start_velocity := character.velocity
+    start_velocity.x = clamp(
+            start_velocity.x,
+            -max_speed,
+            max_speed)
     _optimize_edges_for_approach(
             graph.collision_params,
             path,
@@ -222,9 +227,12 @@ func find_path(
         # FIXME: --------------- Test/tweak/remove? this.
         var start_velocity_epsilon := Vector2(0.0, -5.0)
         var start_velocity := character.velocity + start_velocity_epsilon
-        start_velocity = MovementUtils.clamp_horizontal_velocity_to_max_default(
-                movement_params,
-                start_velocity)
+        var max_air_horizontal_speed := \
+                movement_params.get_max_air_horizontal_speed()
+        start_velocity.x = clamp(
+                start_velocity.x,
+                -max_air_horizontal_speed,
+                max_air_horizontal_speed)
         var can_hold_jump_button_at_start: bool = \
                 character.actions.pressed_jump
         var from_air_edge := from_air_calculator.find_a_landing_trajectory(
@@ -333,10 +341,16 @@ func find_path(
     Sc.profiler.stop("navigator_find_path")
     
     if path != null:
-        var start_velocity := \
-                MovementUtils.clamp_horizontal_velocity_to_max_default(
-                        movement_params,
-                        character.velocity)
+        var max_speed := \
+                movement_params.get_max_surface_speed() * \
+                graph_origin.surface.properties.speed_multiplier if \
+                surface_state.is_grabbing_surface else \
+                movement_params.get_max_air_horizontal_speed()
+        var start_velocity := character.velocity
+        start_velocity.x = clamp(
+                start_velocity.x,
+                -max_speed,
+                max_speed)
         if movement_params.also_optimizes_preselection_path:
             _optimize_edges_for_approach(
                     graph.collision_params,
