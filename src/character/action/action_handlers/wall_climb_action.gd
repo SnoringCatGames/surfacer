@@ -20,10 +20,10 @@ func process(character) -> bool:
     if !character.processed_action(WallJumpAction.NAME) and \
             !character.processed_action(WallFallAction.NAME):
         if character.actions.pressed_up:
-            character.velocity.y = character.movement_params.climb_up_speed
+            character.velocity.y = character.current_climb_up_speed
             return true
         elif character.actions.pressed_down:
-            character.velocity.y = character.movement_params.climb_down_speed
+            character.velocity.y = character.current_climb_down_speed
             return true
     
     return false

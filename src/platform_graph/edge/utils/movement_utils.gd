@@ -427,11 +427,13 @@ static func cap_velocity(
 static func calculate_time_to_climb(
         distance: float,
         is_climbing_upward: bool,
+        surface: Surface,
         movement_params: MovementParameters) -> float:
     var speed := \
             movement_params.climb_up_speed if \
             is_climbing_upward else \
             movement_params.climb_down_speed
+    speed *= surface.properties.speed_multiplier
     # From a basic equation of motion:
     #     s = s_0 + v*t
     # Algebra...
@@ -441,12 +443,14 @@ static func calculate_time_to_climb(
 
 static func calculate_time_to_crawl_on_ceiling(
         distance: float,
+        surface: Surface,
         movement_params: MovementParameters) -> float:
     # From a basic equation of motion:
     #     s = s_0 + v*t
     # Algebra...
     #     t = (s - s_0) / v
-    return abs(distance / movement_params.ceiling_crawl_speed)
+    return abs(distance / (movement_params.ceiling_crawl_speed * \
+            surface.properties.speed_multiplier))
 
 
 static func calculate_distance_to_stop_from_friction(
@@ -556,6 +560,7 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
 
 # FIXME: LEFT OFF HERE: ---------------------------------
 # - Parameterize this more to distinguish between surface, in-air, transitioning?
+# - And account for surface speed_multiplier?
 
 # FIXME: LEFT OFF HERE: ------------------
 # - Search for usages.

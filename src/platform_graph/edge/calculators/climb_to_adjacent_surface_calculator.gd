@@ -635,6 +635,7 @@ func _populate_convex_trajectory(
                     movement_params.climb_up_speed if \
                     is_top_side else \
                     movement_params.climb_down_speed
+            velocity.y *= position_start.surface.properties.speed_multiplier
             
             var is_character_past_end := false
             while !is_character_past_end:
@@ -769,6 +770,7 @@ func _populate_convex_trajectory(
                         -movement_params.ceiling_crawl_speed if \
                         is_left_side else \
                         movement_params.ceiling_crawl_speed
+            velocity.x *= position_start.surface.properties.speed_multiplier
             velocity.y = 0.0
             
             var is_character_past_end := false
@@ -813,6 +815,7 @@ func _populate_convex_trajectory(
                     movement_params.climb_down_speed if \
                     is_top_side else \
                     movement_params.climb_up_speed
+            velocity.y *= position_end.surface.properties.speed_multiplier
             
             var is_rounding_corner_finished := false
             while !is_rounding_corner_finished and \
@@ -919,12 +922,14 @@ func _get_velocity_start(
                     -movement_params.get_max_surface_speed() if \
                     is_moving_left else \
                     movement_params.get_max_surface_speed()
+            velocity_x *= position_start.surface.properties.speed_multiplier
             velocity_y = 0.0
         SurfaceSide.CEILING:
             velocity_x = \
                     -movement_params.ceiling_crawl_speed if \
                     is_moving_left else \
                     movement_params.ceiling_crawl_speed
+            velocity_x *= position_start.surface.properties.speed_multiplier
             velocity_y = 0.0
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
@@ -933,6 +938,7 @@ func _get_velocity_start(
                     movement_params.climb_up_speed if \
                     is_moving_up else \
                     movement_params.climb_down_speed
+            velocity_y *= position_start.surface.properties.speed_multiplier
         _:
             Sc.logger.error()
     
@@ -985,7 +991,8 @@ func _get_velocity_end(
                 if is_starting_from_left_wall:
                     velocity_x = -velocity_x
                 var max_horizontal_speed := \
-                        movement_params.get_max_surface_speed()
+                        movement_params.get_max_surface_speed() * \
+                        position_end.surface.properties.speed_multiplier
                 velocity_x = clamp(
                         velocity_x,
                         -max_horizontal_speed,
@@ -1002,6 +1009,7 @@ func _get_velocity_end(
                         -movement_params.ceiling_crawl_speed if \
                         is_starting_from_left_wall else \
                         movement_params.ceiling_crawl_speed
+                velocity_x *= position_end.surface.properties.speed_multiplier
             else:
                 velocity_x = 0.0
             velocity_y = 0.0
@@ -1017,6 +1025,7 @@ func _get_velocity_end(
                         movement_params.climb_down_speed if \
                         is_starting_from_floor else \
                         movement_params.climb_up_speed
+                velocity_y *= position_end.surface.properties.speed_multiplier
             else:
                 velocity_y = 0.0
         _:
@@ -1074,7 +1083,8 @@ func _calculate_duration(
             start_side == SurfaceSide.CEILING else \
             movement_params.climb_up_speed if \
             is_top_side else \
-            movement_params.climb_down_speed)
+            movement_params.climb_down_speed) * \
+            position_start.surface.properties.speed_multiplier
     
     var distance_start := \
             movement_params.collider.half_width_height.y if \
@@ -1106,7 +1116,8 @@ func _calculate_duration(
                 end_side == SurfaceSide.CEILING else \
                 movement_params.climb_down_speed if \
                 is_top_side else \
-                movement_params.climb_up_speed)
+                movement_params.climb_up_speed) * \
+                position_end.surface.properties.speed_multiplier
         duration_end = distance_end / speed_end
     else:
         # Account for acceleration-along-floor when climbing over a wall.
@@ -1120,13 +1131,16 @@ func _calculate_duration(
         var end_speed_x_end := sqrt(
                 end_speed_x_start * end_speed_x_start + \
                 2 * acceleration_x * distance_end)
+        var end_max_horizontal_speed := \
+                max_horizontal_speed * \
+                position_end.surface.properties.speed_multiplier
         
-        if end_speed_x_end > max_horizontal_speed:
+        if end_speed_x_end > end_max_horizontal_speed:
             # We hit max speed before reaching the end, so we need to account
             # separately for the duration while acceleration and the duration
             # at max speed.
             
-            end_speed_x_end = max_horizontal_speed
+            end_speed_x_end = end_max_horizontal_speed
             # From a basic equation of motion:
             #     v = v_0 + at
             #     t = (v - v_0) / a
@@ -1194,7 +1208,8 @@ func _calculate_duration_along_start_surface(
             start_side == SurfaceSide.CEILING else \
             movement_params.climb_up_speed if \
             is_top_side else \
-            movement_params.climb_down_speed)
+            movement_params.climb_down_speed) * \
+            position_start.surface.properties.speed_multiplier
     var distance_start := \
             movement_params.collider.half_width_height.y if \
             is_wall else \

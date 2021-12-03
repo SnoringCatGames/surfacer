@@ -22,4 +22,8 @@ var can_grab := true
 
 var friction_multiplier := 1.0
 
+## -   This affects the character's speed while moving along the surface.[br]
+## -   This does not affect jump start/end velocities or in-air velocities.[br]
+## -   This will modify both acceleration and max-speed.[br]
+## -   This is similar to MovementParameters.surface_speed_multiplier.[br]
 var speed_multiplier := 1.0

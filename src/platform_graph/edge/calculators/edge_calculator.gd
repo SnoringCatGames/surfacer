@@ -412,11 +412,16 @@ static func _optimize_edge_jump_position_for_floor(
     var previous_edge_displacement := \
             previous_edge.get_end() - previous_edge.get_start()
     
+    var start_surface := previous_edge.get_start_surface()
     var acceleration_x := \
-            movement_params.walk_acceleration if \
+            (movement_params.walk_acceleration if \
             previous_edge_displacement.x >= 0.0 else \
-            -movement_params.walk_acceleration
-    
+            -movement_params.walk_acceleration) * \
+            start_surface.properties.speed_multiplier
+    var max_speed := \
+            movement_params.get_max_surface_speed() * \
+            start_surface.properties.speed_multiplier
+
     for i in JUMP_RATIOS.size():
         var jump_position: PositionAlongSurface
         if JUMP_RATIOS[i] == 0.0:
@@ -428,7 +433,7 @@ static func _optimize_edge_jump_position_for_floor(
                                     previous_edge_displacement.x * \
                                     JUMP_RATIOS[i],
                                     0.0),
-                            previous_edge.get_start_surface(),
+                                    start_surface,
                             movement_params.collider)
         
         # Calculate the start velocity to use according to the available
@@ -438,9 +443,8 @@ static func _optimize_edge_jump_position_for_floor(
                         jump_position.target_point.x - \
                                 previous_edge.get_start().x,
                         previous_velocity_end_x,
-                        acceleration_x * previous_edge.get_start_surface() \
-                                .properties.speed_multiplier,
-                        movement_params.get_max_surface_speed())
+                        acceleration_x,
+                        max_speed)
         var velocity_start_y := movement_params.jump_boost
         var velocity_start = Vector2(velocity_start_x, velocity_start_y)
         

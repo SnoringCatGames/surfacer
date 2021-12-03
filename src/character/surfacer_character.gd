@@ -981,7 +981,10 @@ func _get_is_dashing() -> bool:
 func _get_current_surface_max_horizontal_speed() -> float:
     return movement_params.max_horizontal_speed_default * \
             movement_params.surface_speed_multiplier * \
-            _current_max_horizontal_speed_multiplier
+            _current_max_horizontal_speed_multiplier * \
+            (surface_state.grabbed_surface.properties.speed_multiplier if \
+            surface_state.is_grabbing_surface else \
+            1.0)
 
 
 func _get_current_air_max_horizontal_speed() -> float:
