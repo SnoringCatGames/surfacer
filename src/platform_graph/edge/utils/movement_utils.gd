@@ -471,6 +471,7 @@ static func calculate_distance_to_stop_from_friction(
 
 static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
         movement_params: MovementParameters,
+        surface: Surface,
         velocity_x_start: float,
         displacement_x_from_end: float,
         gravity: float,
@@ -478,17 +479,21 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
         friction_multiplier: float) -> float:
     var distance_from_end := abs(displacement_x_from_end)
     
-    var max_horizontal_speed := movement_params.get_max_surface_speed()
+    var max_horizontal_speed := \
+            movement_params.get_max_surface_speed() * \
+            surface.properties.speed_multiplier
     
     # NOTE: Keep this logic in-sync with FloorFrictionAction.
+    var walk_acceleration_with_surface_properties := \
+            movement_params.walk_acceleration * \
+            surface.properties.speed_multiplier
     var walk_acceleration_with_friction := \
-            movement_params.walk_acceleration - \
-            movement_params.walk_acceleration / \
-            (friction_coefficient * friction_multiplier + 1.0)
+            walk_acceleration_with_surface_properties * \
+            (1 - 1 / (friction_coefficient * friction_multiplier + 1.0))
     walk_acceleration_with_friction = clamp(
             walk_acceleration_with_friction,
             0.0,
-            movement_params.walk_acceleration)
+            walk_acceleration_with_surface_properties)
     
     # From a basic equation of motion:
     #     v^2 = v_0^2 + 2*a*(s - s_0)

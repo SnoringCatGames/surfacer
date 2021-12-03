@@ -284,24 +284,12 @@ func calculate_duration(
             if displacement_x < 0.0:
                 velocity_start_x = -velocity_start_x
                 displacement_x = -displacement_x
-            
-            # NOTE: Keep this logic in-sync with FloorFrictionAction.
-            var friction_factor := \
-                    movement_params.friction_coeff_with_sideways_input * \
-                    start.surface.properties.friction_multiplier
-            var walk_acceleration_with_friction := \
-                    movement_params.walk_acceleration - \
-                    movement_params.walk_acceleration / \
-                    (friction_factor + 1.0)
-            walk_acceleration_with_friction = clamp(
-                    walk_acceleration_with_friction,
-                    0.0,
-                    movement_params.walk_acceleration)
-            
+            var walk_acceleration := _calculate_acceleration_with_friction(
+                    movement_params, start.surface)
             var duration := MovementUtils.calculate_duration_for_displacement(
                     displacement_x,
                     velocity_start_x,
-                    walk_acceleration_with_friction,
+                    walk_acceleration,
                     movement_params.get_max_surface_speed())
             assert(!is_inf(duration))
             return duration
@@ -333,24 +321,12 @@ func _calculate_velocity_end(
         SurfaceSide.FLOOR:
             # We need to calculate the end velocity, taking into account whether
             # we will have had enough distance to reach max horizontal speed.
-            
-            # NOTE: Keep this logic in-sync with FloorFrictionAction.
-            var friction_factor := \
-                    movement_params.friction_coeff_with_sideways_input * \
-                    start.surface.properties.friction_multiplier
-            var walk_acceleration_with_friction := \
-                    movement_params.walk_acceleration - \
-                    movement_params.walk_acceleration / \
-                    (friction_factor + 1.0)
-            walk_acceleration_with_friction = clamp(
-                    walk_acceleration_with_friction,
-                    0.0,
-                    movement_params.walk_acceleration)
-            
+            var walk_acceleration := _calculate_acceleration_with_friction(
+                movement_params, start.surface)
             var acceleration := \
-                    walk_acceleration_with_friction if \
+                    walk_acceleration if \
                     displacement.x > 0.0 else \
-                    -walk_acceleration_with_friction
+                    -walk_acceleration
             var max_horizontal_speed := movement_params.get_max_surface_speed()
             var velocity_end_x: float = \
                     MovementUtils.calculate_velocity_end_for_displacement(
@@ -518,24 +494,12 @@ func _calculate_trajectory(
         SurfaceSide.FLOOR:
             velocity.x = velocity_start.x
             velocity.y = 0.0
-            
-            # NOTE: Keep this logic in-sync with FloorFrictionAction.
-            var friction_factor := \
-                    movement_params.friction_coeff_with_sideways_input * \
-                    start.surface.properties.friction_multiplier
-            var walk_acceleration_with_friction := \
-                    movement_params.walk_acceleration - \
-                    movement_params.walk_acceleration / \
-                    (friction_factor + 1.0)
-            walk_acceleration_with_friction = clamp(
-                    walk_acceleration_with_friction,
-                    0.0,
-                    movement_params.walk_acceleration)
-            
+            var walk_acceleration := _calculate_acceleration_with_friction(
+                    movement_params, start.surface)
             acceleration.x = \
-                    walk_acceleration_with_friction if \
+                    walk_acceleration if \
                     displacement.x > 0 else \
-                    -walk_acceleration_with_friction
+                    -walk_acceleration
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             velocity.x = 0.0
@@ -610,6 +574,25 @@ func _calculate_trajectory(
     return trajectory
 
 
+func _calculate_acceleration_with_friction(
+        movement_params: MovementParameters,
+        surface: Surface) -> float:
+    # NOTE: Keep this logic in-sync with FloorFrictionAction.
+    var friction_factor := \
+            movement_params.friction_coeff_with_sideways_input * \
+            surface.properties.friction_multiplier
+    var walk_acceleration_with_surface_properties := \
+            movement_params.walk_acceleration * \
+            surface.properties.speed_multiplier
+    var walk_acceleration_with_friction := \
+            walk_acceleration_with_surface_properties * \
+            (1 - 1 / (friction_factor + 1.0))
+    return clamp(
+            walk_acceleration_with_friction,
+            0.0,
+            walk_acceleration_with_surface_properties)
+
+
 # Calculate the distance from the end position at which the move button should
 # be released, so that the character comes to rest at the desired end position
 # after decelerating due to friction (and with accelerating, or coasting at
@@ -631,6 +614,7 @@ func _calculate_stopping_distance(
             var stopping_distance := MovementUtils \
                     .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
                             movement_params,
+                            start.surface,
                             velocity_start.x,
                             displacement.x,
                             movement_params.gravity_fast_fall,

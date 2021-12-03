@@ -10,6 +10,7 @@ extends Reference
 #   - And add a way to validate that this matches the normal TileSet encoding.
 # - Update config in SquirrelAway.
 
+
 const KEYS := [
     "can_grab",
     "friction_multiplier",
@@ -20,3 +21,5 @@ var name: String
 var can_grab := true
 
 var friction_multiplier := 1.0
+
+var speed_multiplier := 1.0

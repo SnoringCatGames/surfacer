@@ -40,11 +40,20 @@ var just_triggered_jump := false
 var is_rising_from_jump := false
 var jump_count := 0
 
+var is_dashing: bool setget ,_get_is_dashing
+
 var current_surface_max_horizontal_speed: float \
         setget ,_get_current_surface_max_horizontal_speed
 var current_air_max_horizontal_speed: float \
         setget ,_get_current_air_max_horizontal_speed
-var is_dashing: bool setget ,_get_is_dashing
+var current_walk_acceleration: float \
+        setget ,_get_current_walk_acceleration
+var current_climb_up_speed: float \
+        setget ,_get_current_climb_up_speed
+var current_climb_down_speed: float \
+        setget ,_get_current_climb_down_speed
+var current_ceiling_crawl_speed: float \
+        setget ,_get_current_ceiling_crawl_speed
 
 var _current_max_horizontal_speed_multiplier := 1.0
 var _can_dash := true
@@ -965,6 +974,10 @@ func _update_reachable_surfaces(basis_surface: Surface) -> void:
                     movement_params.max_distance_for_reachable_surface_tracking)
 
 
+func _get_is_dashing() -> bool:
+    return _dash_fade_tween.is_active()
+
+
 func _get_current_surface_max_horizontal_speed() -> float:
     return movement_params.max_horizontal_speed_default * \
             movement_params.surface_speed_multiplier * \
@@ -977,5 +990,29 @@ func _get_current_air_max_horizontal_speed() -> float:
             _current_max_horizontal_speed_multiplier
 
 
-func _get_is_dashing() -> bool:
-    return _dash_fade_tween.is_active()
+func _get_current_walk_acceleration() -> float:
+    return movement_params.walk_acceleration * \
+            (surface_state.grabbed_surface.properties.speed_multiplier if \
+            surface_state.is_grabbing_surface else \
+            1.0)
+
+
+func _get_current_climb_up_speed() -> float:
+    return movement_params.climb_up_speed * \
+            (surface_state.grabbed_surface.properties.speed_multiplier if \
+            surface_state.is_grabbing_surface else \
+            1.0)
+
+
+func _get_current_climb_down_speed() -> float:
+    return movement_params.climb_down_speed * \
+            (surface_state.grabbed_surface.properties.speed_multiplier if \
+            surface_state.is_grabbing_surface else \
+            1.0)
+
+
+func _get_current_ceiling_crawl_speed() -> float:
+    return movement_params.ceiling_crawl_speed * \
+            (surface_state.grabbed_surface.properties.speed_multiplier if \
+            surface_state.is_grabbing_surface else \
+            1.0)

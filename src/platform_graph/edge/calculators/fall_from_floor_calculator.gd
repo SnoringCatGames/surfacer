@@ -191,6 +191,7 @@ func _get_all_edges_from_one_side(
             -movement_params.walk_acceleration if \
             falls_on_left_side else \
             movement_params.walk_acceleration
+    acceleration *= origin_surface.properties.speed_multiplier
     
     var surface_end_velocity_start: Vector2 = \
             JumpLandPositionsUtils.get_velocity_start(
@@ -421,6 +422,7 @@ static func _prepend_walk_to_fall_off_portion(
             -movement_params.walk_acceleration if \
             falls_on_left_side else \
             movement_params.walk_acceleration
+    acceleration_x *= start.surface.properties.speed_multiplier
     var acceleration := Vector2(acceleration_x, 0.0)
     
     var current_frame_position := start.target_point

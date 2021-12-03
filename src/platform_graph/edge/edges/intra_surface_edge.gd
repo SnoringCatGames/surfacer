@@ -84,22 +84,10 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
     var surface := get_start_surface()
     match surface.side:
         SurfaceSide.FLOOR:
-            # NOTE: Keep this logic in-sync with FloorFrictionAction.
-            var friction_factor := \
-                    movement_params.friction_coeff_with_sideways_input * \
-                    surface.properties.friction_multiplier
-            var walk_acceleration_with_friction := \
-                    movement_params.walk_acceleration - \
-                    movement_params.walk_acceleration / \
-                    (friction_factor + 1.0)
-            walk_acceleration_with_friction = clamp(
-                    walk_acceleration_with_friction,
-                    0.0,
-                    movement_params.walk_acceleration)
             var acceleration_x := \
-                    walk_acceleration_with_friction if \
+                    get_walk_acceleration() if \
                     displacement.x > 0 else \
-                    -walk_acceleration_with_friction
+                    -get_walk_acceleration()
             var max_horizontal_speed := movement_params.get_max_surface_speed()
             var displacement_x := \
                     MovementUtils.calculate_displacement_for_duration(
@@ -149,22 +137,10 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
     var surface := get_start_surface()
     match surface.side:
         SurfaceSide.FLOOR:
-            # NOTE: Keep this logic in-sync with FloorFrictionAction.
-            var friction_factor := \
-                    movement_params.friction_coeff_with_sideways_input * \
-                    surface.properties.friction_multiplier
-            var walk_acceleration_with_friction := \
-                    movement_params.walk_acceleration - \
-                    movement_params.walk_acceleration / \
-                    (friction_factor + 1.0)
-            walk_acceleration_with_friction = clamp(
-                    walk_acceleration_with_friction,
-                    0.0,
-                    movement_params.walk_acceleration)
             var acceleration_x := \
-                    walk_acceleration_with_friction if \
+                    get_walk_acceleration() if \
                     displacement.x > 0 else \
-                    -walk_acceleration_with_friction
+                    -get_walk_acceleration()
             var max_horizontal_speed := movement_params.get_max_surface_speed()
             var velocity_x := velocity_start.x + acceleration_x * edge_time
             velocity_x = clamp(
@@ -318,3 +294,20 @@ func get_next_neighbor() -> Surface:
     return end_position_along_surface.surface.clockwise_neighbor if \
             is_moving_clockwise else \
             end_position_along_surface.surface.counter_clockwise_neighbor
+
+
+func get_walk_acceleration() -> float:
+    # NOTE: Keep this logic in-sync with FloorFrictionAction.
+    var friction_factor := \
+            movement_params.friction_coeff_with_sideways_input * \
+            start_position_along_surface.surface.properties.friction_multiplier
+    var walk_acceleration_with_surface_properties := \
+            movement_params.walk_acceleration * \
+            start_position_along_surface.surface.properties.speed_multiplier
+    var walk_acceleration_with_friction := \
+            walk_acceleration_with_surface_properties * \
+            (1 - 1 / (friction_factor + 1.0))
+    return clamp(
+            walk_acceleration_with_friction,
+            0.0,
+            walk_acceleration_with_surface_properties)

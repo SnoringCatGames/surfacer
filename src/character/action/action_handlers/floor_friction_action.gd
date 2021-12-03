@@ -43,7 +43,7 @@ func process(character) -> bool:
             #       IntraSurfaceEdge,
             #       IntraSurfaceCalculator.
             var default_move_offset: float = \
-                    character.movement_params.walk_acceleration * \
+                    character.current_walk_acceleration * \
                     character.actions.delta_scaled
             var friction_factor: float = \
                     character.movement_params \

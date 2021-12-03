@@ -391,23 +391,8 @@ func _calculate_dependent_movement_params(
                     -movement_params.max_upward_jump_distance,
                     movement_params.jump_boost,
                     movement_params.gravity_slow_rise)
-    var intra_surface_max_horizontal_speed := \
-            movement_params.get_max_surface_speed()
     var max_air_horizontal_speed := \
             movement_params.get_max_air_horizontal_speed()
-    # From a basic equation of motion:
-    #     v^2 = v_0^2 + 2*a*(s - s_0)
-    #     v_0 = 0
-    # Algebra:
-    #     (s - s_0) = v^2 / 2 / a
-    movement_params.distance_to_max_horizontal_speed = \
-            intra_surface_max_horizontal_speed * \
-            intra_surface_max_horizontal_speed / \
-            2.0 / movement_params.walk_acceleration
-    movement_params.distance_to_half_max_horizontal_speed = \
-            intra_surface_max_horizontal_speed * 0.5 * \
-            intra_surface_max_horizontal_speed * 0.5 / \
-            2.0 / movement_params.walk_acceleration
     movement_params.floor_jump_max_horizontal_jump_distance = \
             HorizontalMovementUtils \
                 .calculate_max_horizontal_displacement_before_returning_to_starting_height(

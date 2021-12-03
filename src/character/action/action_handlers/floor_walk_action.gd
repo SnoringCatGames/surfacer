@@ -20,7 +20,7 @@ func process(character) -> bool:
     if !character.processed_action(FloorJumpAction.NAME):
         # Horizontal movement.
         character.velocity.x += \
-                character.movement_params.walk_acceleration * \
+                character.current_walk_acceleration * \
                 character.actions.delta_scaled * \
                 character.surface_state.horizontal_acceleration_sign
         
