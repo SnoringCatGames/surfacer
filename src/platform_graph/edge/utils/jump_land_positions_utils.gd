@@ -2215,7 +2215,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                 displacement.x,
                                                 velocity_start.x,
                                                 acceleration_x,
-                                                movement_params.max_horizontal_speed_default)
+                                                movement_params.get_max_air_horizontal_speed())
                                 assert(!is_inf(duration))
                                 if duration < movement_params.time_to_max_upward_jump_distance:
                                     # We can reach the land position on the rise of the jump.
@@ -3561,7 +3561,7 @@ static func _calculate_horizontal_movement_distance(
                     duration,
                     abs(velocity_start.x),
                     movement_params.in_air_horizontal_acceleration,
-                    movement_params.max_horizontal_speed_default)
+                    movement_params.get_max_air_horizontal_speed())
     
     var character_half_width_horizontal_offset := \
             movement_params.collider.half_width_height.x + \
@@ -3613,7 +3613,7 @@ static func _calculate_vertical_movement_displacement(
             displacement.x,
             velocity_start.x,
             acceleration_x,
-            movement_params.max_horizontal_speed_default)
+            movement_params.get_max_air_horizontal_speed())
     assert(!is_inf(duration))
     
     var vertical_displacement_with_fast_fall_gravity: float = \

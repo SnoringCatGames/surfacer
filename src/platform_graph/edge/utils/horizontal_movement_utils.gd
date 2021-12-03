@@ -292,7 +292,7 @@ static func calculate_horizontal_state_for_time(
         velocity = horizontal_step.velocity_step_start.x + \
                 acceleration * delta_time
     
-    assert(velocity <= movement_params.max_horizontal_speed_default + 0.001)
+    assert(velocity <= movement_params.get_max_air_horizontal_speed() + 0.001)
     
     return [position, velocity]
 
@@ -300,7 +300,7 @@ static func calculate_horizontal_state_for_time(
 static func calculate_max_horizontal_displacement_before_returning_to_starting_height(
         velocity_start_x: float,
         velocity_start_y: float,
-        max_horizontal_speed_default: float,
+        max_horizontal_speed: float,
         gravity_slow_rise: float,
         gravity_fast_fall: float) -> float:
     # FIXME: Add horizontal acceleration.
@@ -325,7 +325,7 @@ static func calculate_max_horizontal_displacement_before_returning_to_starting_h
     var max_time_to_starting_height := \
             max_time_to_peak + max_time_for_fall_from_peak_to_starting_height
     # s = s_0 + v * t
-    return max_time_to_starting_height * max_horizontal_speed_default
+    return max_time_to_starting_height * max_horizontal_speed
 
 
 static func _calculate_min_and_max_x_velocity_at_end_of_interval(

@@ -278,7 +278,7 @@ static func calculate_time_to_jump_to_waypoint(
                         velocity_start.x,
                         movement_params.in_air_horizontal_acceleration * \
                         horizontal_acceleration_sign,
-                        movement_params.max_horizontal_speed_default)
+                        movement_params.get_max_air_horizontal_speed())
         if is_inf(duration_to_reach_horizontal_displacement):
             # If we can't reach the destination with that acceleration
             # direction, try the other direction.
@@ -289,7 +289,7 @@ static func calculate_time_to_jump_to_waypoint(
                             velocity_start.x,
                             movement_params.in_air_horizontal_acceleration * \
                             horizontal_acceleration_sign,
-                            movement_params.max_horizontal_speed_default)
+                            movement_params.get_max_air_horizontal_speed())
         assert(!is_inf(duration_to_reach_horizontal_displacement))
         
         if must_reach_destination_on_rise and \

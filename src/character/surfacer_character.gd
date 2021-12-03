@@ -40,7 +40,13 @@ var just_triggered_jump := false
 var is_rising_from_jump := false
 var jump_count := 0
 
-var current_max_horizontal_speed: float
+var current_surface_max_horizontal_speed: float \
+        setget ,_get_current_surface_max_horizontal_speed
+var current_air_max_horizontal_speed: float \
+        setget ,_get_current_air_max_horizontal_speed
+var is_dashing: bool setget ,_get_is_dashing
+
+var _current_max_horizontal_speed_multiplier := 1.0
 var _can_dash := true
 
 var _actions_from_previous_frame := CharacterActionState.new()
@@ -200,8 +206,6 @@ func _initialize_child_movement_params() -> void:
         return
     # Get MovementParameters from scene configuration.
     movement_params = Su.movement.character_movement_params[character_name]
-    self.current_max_horizontal_speed = \
-            movement_params.max_horizontal_speed_default
     movement_params.call_deferred("_parse_shape_from_parent")
 
 
@@ -740,10 +744,6 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
             !movement_params.can_dash:
         return
     
-    var start_max_speed := \
-            movement_params.max_horizontal_speed_default * \
-            movement_params.dash_speed_multiplier
-    var end_max_speed := movement_params.max_horizontal_speed_default
     var duration: float = \
             movement_params.dash_fade_duration / \
             Sc.time.get_combined_scale()
@@ -752,17 +752,18 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
             movement_params.dash_fade_duration) / \
             Sc.time.get_combined_scale()
     
-    current_max_horizontal_speed = start_max_speed
+    _current_max_horizontal_speed_multiplier = \
+            movement_params.dash_speed_multiplier
     
-    velocity.x = current_max_horizontal_speed * horizontal_acceleration_sign
+    velocity.x = current_air_max_horizontal_speed * horizontal_acceleration_sign
     velocity.y += movement_params.dash_vertical_boost
     
     _dash_fade_tween.stop_all()
     _dash_fade_tween.interpolate_property(
             self,
-            "current_max_horizontal_speed",
-            start_max_speed,
-            end_max_speed,
+            "_current_max_horizontal_speed_multiplier",
+            _current_max_horizontal_speed_multiplier,
+            1.0,
             duration,
             "ease_in",
             delay,
@@ -784,9 +785,6 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
 
 
 func force_boost(boost: Vector2) -> void:
-    assert(abs(boost.x) <= current_max_horizontal_speed,
-            "Boost cannot exceed current horizontal speed limit.")
-    
     surface_state.clear_current_state()
     
     velocity = boost
@@ -965,3 +963,19 @@ func _update_reachable_surfaces(basis_surface: Surface) -> void:
             graph.get_all_reversibly_reachable_surfaces(
                     reachable_basis_surface,
                     movement_params.max_distance_for_reachable_surface_tracking)
+
+
+func _get_current_surface_max_horizontal_speed() -> float:
+    return movement_params.max_horizontal_speed_default * \
+            movement_params.surface_speed_multiplier * \
+            _current_max_horizontal_speed_multiplier
+
+
+func _get_current_air_max_horizontal_speed() -> float:
+    return movement_params.max_horizontal_speed_default * \
+            movement_params.air_horizontal_speed_multiplier * \
+            _current_max_horizontal_speed_multiplier
+
+
+func _get_is_dashing() -> bool:
+    return _dash_fade_tween.is_active()
