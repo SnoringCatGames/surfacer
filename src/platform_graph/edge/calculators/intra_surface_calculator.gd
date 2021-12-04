@@ -343,7 +343,8 @@ func _calculate_velocity_end(
                         displacement.x,
                         velocity_start.x,
                         acceleration,
-                        max_horizontal_speed)
+                        max_horizontal_speed,
+                        true)
             return Vector2(velocity_end_x, 0.0)
             
         SurfaceSide.LEFT_WALL, \

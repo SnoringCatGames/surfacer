@@ -236,7 +236,13 @@ static func calculate_velocity_end_for_displacement(
         displacement: float,
         velocity_start: float,
         acceleration: float,
-        max_speed: float) -> float:
+        max_speed: float,
+        should_clamp_velocity_to_max_speed := false) -> float:
+    if should_clamp_velocity_to_max_speed:
+        velocity_start = clamp(velocity_start, -max_speed, max_speed)
+    else:
+        assert(abs(velocity_start) <= max_speed)
+    
     if displacement == 0.0:
         # The start position is the destination.
         return velocity_start
