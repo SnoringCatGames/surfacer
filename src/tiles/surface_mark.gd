@@ -94,7 +94,7 @@ func get_is_surface_marked(surface: Surface) -> bool:
 
 
 func get_character_names() -> Array:
-    var all_character_names := Sc.characters.character_scenes.keys()
+    var all_character_names: Array = Sc.characters.character_scenes.keys()
     var result := []
     for i in all_character_names.size():
         var bitmask: int = 1 << i
@@ -104,7 +104,7 @@ func get_character_names() -> Array:
 
 
 func set_character_names(names: Array) -> void:
-    var all_character_names := Sc.characters.character_scenes.keys()
+    var all_character_names: Array = Sc.characters.character_scenes.keys()
     var character_name_to_index := {}
     for i in all_character_names.size():
         character_name_to_index[all_character_names[i]] = i

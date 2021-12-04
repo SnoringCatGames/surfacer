@@ -101,8 +101,8 @@ func navigate_path(
     
     var max_speed := \
             movement_params.get_max_surface_speed() * \
-            graph_origin.surface.properties.speed_multiplier if \
-            surface_state.is_grabbing_surface else \
+            path.origin.surface.properties.speed_multiplier if \
+            path.origin.surface != null else \
             movement_params.get_max_air_horizontal_speed()
     var start_velocity := character.velocity
     start_velocity.x = clamp(
