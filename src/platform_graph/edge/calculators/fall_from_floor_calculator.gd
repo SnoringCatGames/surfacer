@@ -432,7 +432,7 @@ static func _prepend_walk_to_fall_off_portion(
     
     var max_surface_speed := \
             movement_params.get_max_surface_speed() * \
-            origin_surface.properties.speed_multiplier
+            start.surface.properties.speed_multiplier
     
     for frame_index in frame_count_before_fall_off:
         if movement_params.includes_discrete_trajectory_state:
