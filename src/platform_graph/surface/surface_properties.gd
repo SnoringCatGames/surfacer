@@ -14,6 +14,7 @@ extends Reference
 const KEYS := [
     "can_grab",
     "friction_multiplier",
+    "speed_multiplier",
 ]
 
 var name: String

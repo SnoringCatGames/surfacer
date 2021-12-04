@@ -3378,12 +3378,14 @@ static func get_horizontal_velocity_start(
         SurfaceSide.CEILING:
             if prefer_zero_horizontal_speed:
                 return 0.0
-            elif is_moving_leftward:
-                return -movement_params.ceiling_crawl_speed * \
-                        origin_surface.properties.speed_multiplier
             else:
-                return movement_params.ceiling_crawl_speed * \
-                        origin_surface.properties.speed_multiplier
+                var max_jump_horizontal_speed := min(
+                        movement_params.ceiling_crawl_speed * \
+                            origin_surface.properties.speed_multiplier,
+                        movement_params.get_max_air_horizontal_speed())
+                return -max_jump_horizontal_speed if \
+                        is_moving_leftward else \
+                        max_jump_horizontal_speed
             
         _:
             Sc.logger.error()
@@ -3588,6 +3590,10 @@ static func _calculate_horizontal_movement_distance(
             horizontal_movement_distance_partial_decrease:
         horizontal_movement_distance -= \
                 horizontal_movement_distance_partial_decrease
+    
+    # FIXME: ----------------------------
+    if is_nan(horizontal_movement_distance):
+        print("break")
     
     return horizontal_movement_distance
 
