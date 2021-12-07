@@ -64,10 +64,11 @@ func _record_tile_maps() -> void:
 
 
 func _create_crash_test_dummies_for_collision_calculations() -> void:
-    for character_name in _get_character_names():
-        var crash_test_dummy := CrashTestDummy.new(character_name)
+    for character_category_name in _get_character_category_names():
+        var crash_test_dummy := CrashTestDummy.new(character_category_name)
         add_child(crash_test_dummy)
-        crash_test_dummies[crash_test_dummy.character_name] = crash_test_dummy
+        crash_test_dummies[crash_test_dummy.character_category_name] = \
+                crash_test_dummy
 
 
 func _instantiate_platform_graphs(
@@ -128,17 +129,20 @@ func _calculate_platform_graphs() -> void:
 
 
 func _calculate_next_platform_graph(character_index: int) -> void:
-    var platform_graph_character_names: Array = _get_character_names()
-    var character_name: String = platform_graph_character_names[character_index]
+    var platform_graph_character_category_names: Array = \
+            _get_character_category_names()
+    var character_category_name: String = \
+            platform_graph_character_category_names[character_index]
     var is_last_character := \
-            character_index == platform_graph_character_names.size() - 1
+            character_index == \
+                platform_graph_character_category_names.size() - 1
     
     #######################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     var should_skip_character: bool = \
             Su.debug_params.has("limit_parsing") and \
-            Su.debug_params.limit_parsing.has("character_name") and \
-            character_name != Su.debug_params.limit_parsing.character_name
+            Su.debug_params.limit_parsing.has("character_category_name") and \
+            character_category_name != Su.debug_params.limit_parsing.character_category_name
     #######################################################################
     
     if !should_skip_character:
@@ -147,14 +151,14 @@ func _calculate_next_platform_graph(character_index: int) -> void:
                 "calculation_progressed",
                 self,
                 "_on_graph_calculation_progress",
-                [graph, character_index, character_name])
+                [graph, character_index, character_category_name])
         graph.connect(
                 "calculation_finished",
                 self,
                 "_on_graph_calculation_finished",
                 [character_index, is_last_character])
-        graph.calculate(character_name)
-        platform_graphs[character_name] = graph
+        graph.calculate(character_category_name)
+        platform_graphs[character_category_name] = graph
     else:
         if !is_last_character:
             _calculate_next_platform_graph(character_index + 1)
@@ -167,11 +171,11 @@ func _on_graph_calculation_progress(
         surface_count,
         graph: PlatformGraph,
         character_index: int,
-        character_name: String) -> void:
+        character_category_name: String) -> void:
     emit_signal(
             "calculation_progressed",
             character_index,
-            _get_character_names().size(),
+            _get_character_category_names().size(),
             origin_surface_index,
             surface_count)
 
@@ -244,7 +248,7 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
         graph.load_from_json_object(
                 graph_json_object,
                 context)
-        platform_graphs[graph.character_name] = graph
+        platform_graphs[graph.character_category_name] = graph
     
     _on_graphs_parsed()
 
@@ -262,10 +266,10 @@ func _validate_tile_maps(json_object: Dictionary) -> void:
 
 func _validate_characters(json_object: Dictionary) -> void:
     var expected_name_set := {}
-    for character_name in _get_character_names():
-        expected_name_set[character_name] = true
+    for character_category_name in _get_character_category_names():
+        expected_name_set[character_category_name] = true
     
-    for name in json_object.platform_graph_character_names:
+    for name in json_object.platform_graph_character_category_names:
         assert(expected_name_set.has(name))
         expected_name_set.erase(name)
     assert(expected_name_set.empty())
@@ -324,12 +328,13 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
 
 func _validate_platform_graphs(json_object: Dictionary) -> void:
     var expected_name_set := {}
-    for character_name in _get_character_names():
-        expected_name_set[character_name] = true
+    for character_category_name in _get_character_category_names():
+        expected_name_set[character_category_name] = true
     
     for graph_json_object in json_object.platform_graphs:
-        assert(expected_name_set.has(graph_json_object.character_name))
-        expected_name_set.erase(graph_json_object.character_name)
+        assert(expected_name_set \
+                .has(graph_json_object.character_category_name))
+        expected_name_set.erase(graph_json_object.character_category_name)
     
     assert(expected_name_set.empty())
 
@@ -359,7 +364,8 @@ func to_json_object(includes_debug_only_state: bool) -> Dictionary:
         level_id = level_id,
         surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
         surface_marks = _serialize_surface_marks(),
-        platform_graph_character_names = _get_character_names(),
+        platform_graph_character_category_names = \
+                _get_character_category_names(),
         surface_parser = surface_store.to_json_object(),
         platform_graphs = \
                 _serialize_platform_graphs(includes_debug_only_state),
@@ -374,15 +380,15 @@ func _get_surfaces_tile_map_ids() -> Array:
     return result
 
 
-func _get_character_names() -> Array:
+func _get_character_category_names() -> Array:
     return Sc.level_config.get_level_config(level_id) \
-            .platform_graph_character_names
+            .platform_graph_character_category_names
 
 
 func _serialize_platform_graphs(includes_debug_only_state: bool) -> Array:
     var result := []
-    for character_name in platform_graphs:
-        result.push_back(platform_graphs[character_name] \
+    for character_category_name in platform_graphs:
+        result.push_back(platform_graphs[character_category_name] \
                 .to_json_object(includes_debug_only_state))
     return result
 

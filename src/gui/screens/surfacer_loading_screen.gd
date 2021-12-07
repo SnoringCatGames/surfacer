@@ -107,11 +107,11 @@ func _on_graph_parse_progress(
             float(character_count) * \
             100.0
     
-    var character_name: String = \
+    var character_category_name: String = \
             Sc.level_config.get_level_config(Sc.level_session.id) \
-            .platform_graph_character_names[character_index]
+            .platform_graph_character_category_names[character_index]
     var label_1 := "Character %s (%s of %s)" % [
-        character_name,
+        character_category_name,
         character_index + 1,
         character_count,
     ]

@@ -664,7 +664,7 @@ func _load_edge_state_from_json_object(
 
 func _edge_state_to_json_object(json_object: Dictionary) -> void:
     _edge_attempt_state_to_json_object(json_object)
-    json_object.pn = movement_params.character_name
+    json_object.pn = movement_params.character_category_name
     json_object.io = is_optimized_for_path
     json_object.in = instructions.to_json_object()
     if trajectory != null and \

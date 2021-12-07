@@ -48,7 +48,7 @@ _Probably the easiest way to get started with this is to copy/paste/edit the pre
         -   `name`: The display name for the level.
         -   `sort_priority`: The level's position relative to other levels.
         -   `unlock_conditions`: How and when the level is unlocked.
-        -   `platform_graph_character_names`: The names of the characters that might appear in the level. A platform graph will need to be calculated for each of these characters.
+        -   `platform_graph_character_category_names`: The names of the characters that might appear in the level. A platform graph will need to be calculated for each of these characters.
 
 ## Creating a character
 

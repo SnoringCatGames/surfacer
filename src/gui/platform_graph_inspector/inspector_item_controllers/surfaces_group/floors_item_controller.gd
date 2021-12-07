@@ -27,5 +27,5 @@ func get_description() -> String:
     return ("There are %s floor surfaces in the plaform graph for the %s " +
             "character.") % [
         surface_count,
-        graph.movement_params.character_name,
+        graph.movement_params.character_category_name,
     ]
