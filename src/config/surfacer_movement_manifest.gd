@@ -302,9 +302,13 @@ func _parse_movement_params_from_character_scenes(
 
 func _parse_movement_params_from_character_categories(
         character_categories: Dictionary) -> void:
-    for category in character_categories.values():
+    for category_name in character_categories:
+        var category: SurfacerCharacterCategory = \
+                character_categories[category_name]
         for character_name in category.characters:
             Su.movement.character_movement_params[character_name] = \
+                category.movement_params
+        Su.movement.character_movement_params[category_name] = \
                 category.movement_params
 
 
