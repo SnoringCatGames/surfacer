@@ -418,9 +418,12 @@ static func _optimize_edge_jump_position_for_floor(
             previous_edge_displacement.x >= 0.0 else \
             -movement_params.walk_acceleration) * \
             start_surface.properties.speed_multiplier
-    var max_speed := \
+    var max_surface_speed := \
             movement_params.get_max_surface_speed() * \
             start_surface.properties.speed_multiplier
+    var max_speed := min(
+            movement_params.get_max_air_horizontal_speed(),
+            max_surface_speed)
 
     for i in JUMP_RATIOS.size():
         var jump_position: PositionAlongSurface
