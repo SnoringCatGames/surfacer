@@ -18,7 +18,7 @@ var _MODULATE_INCLUDE := Color.from_hsv(0.35, 1.0, 1.0, 0.7)
 var _MODULATE_EXCLUDE := Color.from_hsv(0.0, 1.0, 1.0, 0.7)
 
 ## The characters that this applies to.
-var characters: int
+var character_categories: int
 
 ## If true, then only marked surfaces are included.
 var include_exclusively := true setget _set_include_exclusively
@@ -39,7 +39,7 @@ func _init() -> void:
     
     _property_list_addendum = [
         {
-            name = "characters",
+            name = "character_categories",
             type = TYPE_INT,
             hint = PROPERTY_HINT_FLAGS,
             hint_string = Sc.utils.join(Sc.characters.character_scenes.keys()),
@@ -93,24 +93,27 @@ func get_is_surface_marked(surface: Surface) -> bool:
     return _marked_surfaces.has(surface)
 
 
-func get_character_names() -> Array:
-    var all_character_names: Array = Sc.characters.character_scenes.keys()
+func get_character_category_names() -> Array:
+    var all_character_category_names: Array = \
+            Sc.characters.character_scenes.keys()
     var result := []
-    for i in all_character_names.size():
+    for i in all_character_category_names.size():
         var bitmask: int = 1 << i
-        if bitmask & characters != 0:
-            result.push_back(all_character_names[i])
+        if bitmask & character_categories != 0:
+            result.push_back(all_character_category_names[i])
     return result
 
 
-func set_character_names(names: Array) -> void:
-    var all_character_names: Array = Sc.characters.character_scenes.keys()
-    var character_name_to_index := {}
-    for i in all_character_names.size():
-        character_name_to_index[all_character_names[i]] = i
-    characters = 0
-    for character_name in names:
-        characters |= 1 << character_name_to_index[character_name]
+func set_character_category_names(names: Array) -> void:
+    var all_character_category_names: Array = \
+            Sc.characters.character_scenes.keys()
+    var character_category_name_to_index := {}
+    for i in all_character_category_names.size():
+        character_category_name_to_index[all_character_category_names[i]] = i
+    character_categories = 0
+    for character_category_name in names:
+        character_categories |= \
+                1 << character_category_name_to_index[character_category_name]
 
 
 func _set_include_exclusively(value: bool) -> void:
@@ -139,7 +142,7 @@ func load_from_json_object(
     for id in json_object.s:
         var surface: Surface = context.id_to_surface[int(id)]
         _marked_surfaces[surface] = true
-    characters = json_object.c
+    character_categories = json_object.c
     include_exclusively = json_object.i
     exclude = json_object.e
 
@@ -151,7 +154,7 @@ func to_json_object() -> Dictionary:
     
     return {
         s = marked_surface_ids,
-        c = characters,
+        c = character_categories,
         i = include_exclusively,
         e = exclude,
     }

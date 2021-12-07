@@ -497,7 +497,7 @@ var fall_from_floor_corner_calc_shape := RotatedShape.new()
 ##     well as for updating character positions at runtime.[br]
 var rounding_corner_calc_shape := RotatedShape.new()
 
-var character_name := ""
+var character_category_name := ""
 
 var belongs_to_a_category := false
 
@@ -532,7 +532,7 @@ var _property_list_addendum := [
         usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
     },
     {
-        name = "character_name",
+        name = "character_category_name",
         type = TYPE_STRING,
         usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_SCRIPT_VARIABLE,
     },
@@ -588,7 +588,7 @@ func _parse_shape_from_parent() -> void:
         _set_configuration_warning("Must define a SurfacerCharacter parent.")
         return
     
-    character_name = parent.character_name
+    character_category_name = parent.character_name
     
     var collision_shapes: Array = Sc.utils.get_children_by_type(
             parent,

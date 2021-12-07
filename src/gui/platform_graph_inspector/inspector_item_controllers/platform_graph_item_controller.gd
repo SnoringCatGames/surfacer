@@ -34,7 +34,7 @@ func _init(
 func get_text() -> String:
     return "%s [%s]" % [
         PREFIX,
-        graph.movement_params.character_name,
+        graph.movement_params.character_category_name,
     ]
 
 
@@ -46,9 +46,9 @@ func get_description() -> String:
 
 
 func to_string() -> String:
-    return "%s { character_name=%s }" % [
+    return "%s { character_category_name=%s }" % [
         InspectorItemType.get_string(type),
-        graph.movement_params.character_name,
+        graph.movement_params.character_category_name,
     ]
 
 

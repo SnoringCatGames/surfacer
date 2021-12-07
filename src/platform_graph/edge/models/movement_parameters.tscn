@@ -6,7 +6,7 @@
 script = ExtResource( 1 )
 collider_shape = null
 collider_rotation = 0.0
-character_name = ""
+character_category_name = ""
 can_grab_walls = false
 can_grab_ceilings = false
 can_grab_floors = true

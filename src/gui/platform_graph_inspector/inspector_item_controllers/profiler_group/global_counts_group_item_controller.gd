@@ -29,7 +29,7 @@ func get_text() -> String:
 func get_description() -> String:
     return ("Some stats on the overall platform graph for the %s " +
             "character.") % [
-        graph.movement_params.character_name,
+        graph.movement_params.character_category_name,
     ]
 
 

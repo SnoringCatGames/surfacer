@@ -67,7 +67,8 @@ func _destroy() -> void:
 
 
 func on_item_selected() -> void:
-    Su.graph_inspector.last_selected_character_name = graph.character_name
+    Su.graph_inspector.last_selected_character_category_name = \
+            graph.character_category_name
     if Sc.gui.hud.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
         _log("Selected: %s" % to_string())

@@ -79,7 +79,8 @@ func get_surface_set(movement_params: MovementParameters) -> Dictionary:
             continue
         
         var does_mark_match_character: bool = \
-                mark.get_character_names().has(movement_params.character_name)
+                mark.get_character_category_names() \
+                    .has(movement_params.character_category_name)
         if does_mark_match_character:
             if mark.include_exclusively:
                 # Remove any surface that isn't marked.

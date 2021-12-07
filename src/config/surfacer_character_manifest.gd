@@ -18,7 +18,7 @@ func _parse_character_categories(categories_config: Array) -> void:
         
         var movement_params := MovementParameters.new()
         movement_params.belongs_to_a_category = true
-        movement_params.character_name = category_config.name
+        movement_params.character_category_name = category_config.name
         for key in category_config.movement_params:
             movement_params.set(key, category_config.movement_params[key])
         category.movement_params = movement_params

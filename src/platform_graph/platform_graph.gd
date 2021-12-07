@@ -19,7 +19,7 @@ signal surface_exclusion_changed
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 
-var character_name: String
+var character_category_name: String
 var collision_params: CollisionCalcParams
 var movement_params: MovementParameters
 var surface_store: SurfaceStore
@@ -54,10 +54,10 @@ var debug_params := {}
 var _surface_exclusion_list := {}
 
 
-func calculate(character_name: String) -> void:
-    self.character_name = character_name
+func calculate(character_category_name: String) -> void:
+    self.character_category_name = character_category_name
     self.movement_params = \
-            Su.movement.character_movement_params[character_name]
+            Su.movement.character_movement_params[character_category_name]
     self.debug_params = Su.debug_params
     self.surface_store = Sc.level.surface_store
     
@@ -65,7 +65,7 @@ func calculate(character_name: String) -> void:
     self.surfaces_set = surface_store.get_surface_set(movement_params)
     
     var crash_test_dummy: CrashTestDummy = \
-            Sc.level.graph_parser.crash_test_dummies[character_name]
+            Sc.level.graph_parser.crash_test_dummies[character_category_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
@@ -471,8 +471,9 @@ func _calculate_nodes_and_edges() -> void:
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     if debug_params.has("limit_parsing") and \
-            debug_params.limit_parsing.has("character_name") and \
-            character_name != debug_params.limit_parsing.character_name:
+            debug_params.limit_parsing.has("character_category_name") and \
+            character_category_name != \
+                    debug_params.limit_parsing.character_category_name:
         return
     ###########################################################################
     
@@ -840,7 +841,7 @@ func _update_counts() -> void:
 
 func to_string() -> String:
     return "PlatformGraph{ character: %s, surfaces: %s, edges: %s }" % [
-        movement_params.character_name,
+        movement_params.character_category_name,
         counts.total_surfaces,
         counts.total_edges,
     ]
@@ -849,9 +850,9 @@ func to_string() -> String:
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
-    self.character_name = json_object.character_name
+    self.character_category_name = json_object.character_category_name
     self.movement_params = \
-            Su.movement.character_movement_params[character_name]
+            Su.movement.character_movement_params[character_category_name]
     self.debug_params = Su.debug_params
     self.surface_store = Sc.level.surface_store
     
@@ -859,7 +860,7 @@ func load_from_json_object(
     self.surfaces_set = surface_store.get_surface_set(movement_params)
     
     var crash_test_dummy: CrashTestDummy = \
-            Sc.level.graph_parser.crash_test_dummies[character_name]
+            Sc.level.graph_parser.crash_test_dummies[character_category_name]
     self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
@@ -933,7 +934,7 @@ func _load_surfaces_to_inter_surface_edges_results_from_json_object(
 
 func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     var json_object := {
-        character_name = character_name,
+        character_category_name = character_category_name,
         position_along_surface_id_to_json_object = \
                 _get_position_along_surface_id_to_json_object(
                         includes_debug_only_state),

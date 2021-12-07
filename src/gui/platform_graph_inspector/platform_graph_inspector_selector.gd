@@ -55,16 +55,17 @@ func _unhandled_input(event: InputEvent) -> void:
         else:
             # Selecting the land position.
             
-            var character_name: String = \
-                    Su.graph_inspector.last_selected_character_name
+            var character_category_name: String = \
+                    Su.graph_inspector.last_selected_character_category_name
             
-            if character_name == "":
+            if character_category_name == "":
                 # We don't know what character to base our inspection on.
                 first_target = null
                 return
             
             var movement_params: MovementParameters = \
-                    Su.movement.character_movement_params[character_name]
+                    Su.movement.character_movement_params[ \
+                        character_category_name]
             possible_jump_land_positions = JumpLandPositionsUtils \
                     .calculate_jump_land_positions_for_surface_pair(
                             movement_params,
@@ -76,7 +77,8 @@ func _unhandled_input(event: InputEvent) -> void:
             # TODO: Add support for configuring edge type and graph from radio
             #       buttons in the inspector?
             var graph: PlatformGraph = \
-                    Sc.level.graph_parser.platform_graphs[character_name]
+                    Sc.level.graph_parser.platform_graphs[ \
+                        character_category_name]
             inspector.select_edge_or_surface(
                     first_target,
                     surface_position,

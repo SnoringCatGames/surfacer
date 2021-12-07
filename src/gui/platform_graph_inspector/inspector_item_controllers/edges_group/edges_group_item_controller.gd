@@ -41,7 +41,7 @@ func get_description() -> String:
             "There are %s total edges in this platform graph for the %s " +
             "character.") % [
                 graph.counts.total_edges,
-                graph.movement_params.character_name,
+                graph.movement_params.character_category_name,
             ]
 
 

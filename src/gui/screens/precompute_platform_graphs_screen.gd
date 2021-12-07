@@ -161,8 +161,9 @@ func _on_graph_parse_progress(
             Su.precompute_platform_graph_for_levels.size() * \
             100.0
     
-    var character_name: String = Sc.level_config.get_level_config(level_id) \
-            .platform_graph_character_names[character_index]
+    var character_category_name: String = \
+            Sc.level_config.get_level_config(level_id) \
+                .platform_graph_character_category_names[character_index]
     var label_1 := "Level %s (%s of %s)" % [
         Su.precompute_platform_graph_for_levels[ \
                 precompute_level_index],
@@ -171,7 +172,7 @@ func _on_graph_parse_progress(
     ]
     var label_2 := "--- Parsing ---"
     var label_3 := "Character %s (%s of %s)" % [
-        character_name,
+        character_category_name,
         character_index + 1,
         character_count,
     ]
