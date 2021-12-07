@@ -355,8 +355,8 @@ var asserts_no_preexisting_collisions_during_edge_calculations := false \
 ##     ceiling.[br]
 var checks_for_alt_intersection_points_for_oblique_collisions := true \
         setget _set_checks_for_alt_intersection_points_for_oblique_collisions
-var oblique_collison_normal_aspect_ratio_threshold_threshold := 10.0 \
-        setget _set_oblique_collison_normal_aspect_ratio_threshold_threshold
+var oblique_collison_normal_aspect_ratio_threshold := 10.0 \
+        setget _set_oblique_collison_normal_aspect_ratio_threshold
 var min_frame_count_when_colliding_early_with_expected_surface := 4 \
         setget _set_min_frame_count_when_colliding_early_with_expected_surface
 var reached_in_air_destination_distance_squared_threshold := \
@@ -499,6 +499,8 @@ var rounding_corner_calc_shape := RotatedShape.new()
 
 var character_name := ""
 
+var belongs_to_a_category := false
+
 # ---
 
 const _PROPERTY_GROUPS := [
@@ -574,6 +576,9 @@ func _set_up() -> void:
 
 
 func _parse_shape_from_parent() -> void:
+    if belongs_to_a_category:
+        return
+    
     var parent := get_parent()
     
     if !is_instance_valid(parent):
@@ -1282,9 +1287,9 @@ func _set_checks_for_alt_intersection_points_for_oblique_collisions(
     _update_parameters()
 
 
-func _set_oblique_collison_normal_aspect_ratio_threshold_threshold(
+func _set_oblique_collison_normal_aspect_ratio_threshold(
         value: float) -> void:
-    oblique_collison_normal_aspect_ratio_threshold_threshold = value
+    oblique_collison_normal_aspect_ratio_threshold = value
     _update_parameters()
 
 

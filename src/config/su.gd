@@ -286,7 +286,7 @@ var legend: Legend
 var selection_description: SelectionDescription
 var ann_manifest: SurfacerAnnotationsManifest
 var movement: SurfacerMovementManifest
-var surface_properties: SurfacerSurfaceProperties
+var surface_properties: SurfacerSurfacePropertiesManifest
 var edge_from_json_factory := EdgeFromJsonFactory.new()
 
 var space_state: Physics2DDirectSpaceState
@@ -309,10 +309,12 @@ func _amend_app_manifest(app_manifest: Dictionary) -> void:
         app_manifest.colors_class = SurfacerColors
     if !app_manifest.has("geometry_class"):
         app_manifest.geometry_class = SurfacerGeometry
-    if !app_manifest.has("draw_utils_class"):
-        app_manifest.draw_utils_class = SurfacerDrawUtils
+    if !app_manifest.has("draw_class"):
+        app_manifest.draw_class = SurfacerDrawUtils
     if !app_manifest.has("ann_params_class"):
         app_manifest.ann_params_class = SurfacerAnnotationParameters
+    if !app_manifest.has("characters_class"):
+        app_manifest.characters_class = SurfacerCharacterManifest
     
     var is_precomputing_platform_graphs: bool = \
             app_manifest.surfacer_manifest \
@@ -411,6 +413,8 @@ func _instantiate_sub_modules() -> void:
     assert(Sc.draw is SurfacerDrawUtils)
     assert(Sc.level_config is SurfacerLevelConfig)
     assert(Sc.level_session is SurfacerLevelSession)
+    assert(Sc.geometry is SurfacerGeometry)
+    assert(Sc.characters is SurfacerCharacterManifest)
     
     Sc.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
     Sc.profiler.preregister_metric_keys(surface_parser_metric_keys)
@@ -431,15 +435,18 @@ func _instantiate_sub_modules() -> void:
     
     if manifest.has("surface_properties_class"):
         self.surface_properties = manifest.surface_properties_class.new()
-        assert(self.surface_properties is SurfacerSurfaceProperties)
+        assert(self.surface_properties is SurfacerSurfacePropertiesManifest)
     else:
-        self.surface_properties = SurfacerSurfaceProperties.new()
+        self.surface_properties = SurfacerSurfacePropertiesManifest.new()
     add_child(self.surface_properties)
 
 
 func _configure_sub_modules() -> void:
-    Su.ann_manifest._register_manifest(Su.manifest.annotations_manifest)
-    Su.movement._register_manifest(Su.manifest.movement_manifest)
+    assert(Sc.ann_params is SurfacerAnnotationParameters)
+    
+    Su.ann_manifest.register_manifest(Su.manifest.annotations_manifest)
+    Su.movement.register_manifest(Su.manifest.movement_manifest)
+    Sc.characters._derive_movement_parameters()
     Su.surface_properties.register_manifest(
             Su.manifest.surface_properties_manifest)
     
