@@ -2069,6 +2069,8 @@ static func update_neighbors_for_new_waypoint(
         next_waypoint: Waypoint,
         edge_calc_params: EdgeCalcParams,
         vertical_step: VerticalEdgeStep) -> void:
+    var original_previous_waypoint_actual_velocity_x := \
+            previous_waypoint.actual_velocity_x
     update_waypoint(
             previous_waypoint,
             edge_calc_params.origin_waypoint,
@@ -2077,6 +2079,11 @@ static func update_neighbors_for_new_waypoint(
             vertical_step.can_hold_jump_button,
             vertical_step,
             Vector2.INF)
+    # We don't want to overwrite the actual_velocity_x value, since a new later
+    # waypoint shouldn't affect the already-calculated actual velocity through
+    # the previous waypoint.
+    previous_waypoint.actual_velocity_x = \
+            original_previous_waypoint_actual_velocity_x
     update_waypoint(
             next_waypoint,
             edge_calc_params.origin_waypoint,
