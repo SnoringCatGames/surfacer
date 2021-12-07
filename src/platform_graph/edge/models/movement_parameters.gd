@@ -799,6 +799,15 @@ func _derive_parameters() -> void:
             wall_fall_horizontal_boost_multiplier * \
             Su.movement.wall_fall_horizontal_boost_default * \
             air_horizontal_speed_multiplier
+    var max_air_horizontal_speed := get_max_air_horizontal_speed()
+    wall_jump_horizontal_boost = clamp(
+            wall_jump_horizontal_boost,
+            -max_air_horizontal_speed,
+            max_air_horizontal_speed)
+    wall_fall_horizontal_boost = clamp(
+            wall_fall_horizontal_boost,
+            -max_air_horizontal_speed,
+            max_air_horizontal_speed)
     
     max_horizontal_speed_default = \
             max_horizontal_speed_default_multiplier * \

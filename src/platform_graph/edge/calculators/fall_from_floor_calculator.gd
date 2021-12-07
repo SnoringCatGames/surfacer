@@ -214,6 +214,12 @@ func _get_all_edges_from_one_side(
                 velocity_x_start,
                 acceleration,
                 max_horizontal_speed)
+    var max_air_horizontal_speed := \
+            movement_params.get_max_air_horizontal_speed()
+    velocity_x_fall_off = clamp(
+            velocity_x_fall_off,
+            -max_air_horizontal_speed,
+            max_air_horizontal_speed)
     
     var time_fall_off: float = \
             MovementUtils.calculate_duration_for_displacement(
