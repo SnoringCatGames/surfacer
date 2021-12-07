@@ -440,7 +440,7 @@ static func check_frame_for_collision(
             collision_normal.y != 0.0 else \
             INF
     var threshold: float = crash_test_dummy.movement_params \
-            .oblique_collison_normal_aspect_ratio_threshold_threshold
+            .oblique_collison_normal_aspect_ratio_threshold
     var inverse_threshold := 1.0 / threshold
     var is_collision_normal_expected: bool = \
             !(displacement_aspect_ratio > threshold and \

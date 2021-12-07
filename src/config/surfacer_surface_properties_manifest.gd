@@ -1,5 +1,5 @@
 tool
-class_name SurfacerSurfaceProperties
+class_name SurfacerSurfacePropertiesManifest
 extends Node
 
 

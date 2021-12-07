@@ -99,7 +99,7 @@ func _init() -> void:
     Sc.logger.on_global_init(self, "SurfacerMovementManifest")
 
 
-func _register_manifest(manifest: Dictionary) -> void:
+func register_manifest(manifest: Dictionary) -> void:
     self._action_handler_classes = manifest.action_handler_classes
     self._edge_calculator_classes = manifest.edge_calculator_classes
     
@@ -207,6 +207,7 @@ func _register_manifest(manifest: Dictionary) -> void:
     _register_edge_calculators(self._edge_calculator_classes)
     _parse_movement_params_from_character_scenes(
             Sc.characters._character_scenes_list)
+    _parse_movement_params_from_character_categories(Sc.characters.categories)
 
 
 func _validate_configuration() -> void:
@@ -270,10 +271,10 @@ func _parse_movement_params_from_character_scenes(
         
         var character_name: String = \
                 Sc.utils.get_property_value_from_scene_state_node(
-                        state,
-                        0,
-                        "character_name",
-                        !Engine.editor_hint)
+                    state,
+                    0,
+                    "character_name",
+                    !Engine.editor_hint)
         
         var movement_params: MovementParameters
         for node_index in state.get_node_count():
@@ -297,6 +298,14 @@ func _parse_movement_params_from_character_scenes(
         if is_instance_valid(movement_params):
             Su.movement.character_movement_params[character_name] = \
                     movement_params
+
+
+func _parse_movement_params_from_character_categories(
+        character_categories: Dictionary) -> void:
+    for category in character_categories.values():
+        for character_name in category.characters:
+            Su.movement.character_movement_params[character_name] = \
+                category.movement_params
 
 
 func _get_is_node_movement_parameters(

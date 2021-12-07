@@ -173,14 +173,23 @@ func _update_editor_configuration_debounced() -> void:
         var movement_params_matches: Array = Sc.utils.get_children_by_type(
                 self,
                 MovementParameters)
-        if movement_params_matches.size() > 1:
-            _set_configuration_warning(
-                    "Must only define a single MovementParameters child node.")
-            return
-        elif movement_params_matches.size() < 1:
-            _set_configuration_warning(
-                    "Must define a MovementParameters child node.")
-            return
+        if is_instance_valid(category):
+            if movement_params_matches.size() > 0:
+                _set_configuration_warning(
+                        ("Must not define a MovementParameters child node, " +
+                        "since this character is registered in a " +
+                        "character-category in the app manifest: %s.") % \
+                        category.name)
+                return
+        else:
+            if movement_params_matches.size() > 1:
+                _set_configuration_warning(
+                        "Must only define a single MovementParameters child node.")
+                return
+            elif movement_params_matches.size() < 1:
+                _set_configuration_warning(
+                        "Must define a MovementParameters child node.")
+                return
         
         # Validate Behaviors from scene configuration.
         var behaviors: Array = \
@@ -213,7 +222,7 @@ func _update_editor_configuration_debounced() -> void:
 func _initialize_child_movement_params() -> void:
     if is_instance_valid(movement_params):
         return
-    # Get MovementParameters from scene configuration.
+    # Get MovementParameters from the scene configuration.
     movement_params = Su.movement.character_movement_params[character_name]
     movement_params.call_deferred("_parse_shape_from_parent")
 

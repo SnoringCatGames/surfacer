@@ -28,6 +28,8 @@ static func calculate_horizontal_step(
     var step_duration := time_step_end - time_step_start
     var displacement := position_end - position_step_start
     
+    assert(velocity_start_x <= movement_params.get_max_air_horizontal_speed())
+    
     ### Calculate the end x-velocity, the direction of acceleration,
     ### acceleration start time, and acceleration end time.
     
