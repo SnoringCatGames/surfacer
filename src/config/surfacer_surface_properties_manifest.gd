@@ -20,16 +20,3 @@ func register_manifest(manifest: Dictionary) -> void:
     
     if !self.properties.has("default"):
         self.properties["default"] = SurfaceProperties.new()
-
-
-# FIXME: Make this more extensible.
-func get_combined_surface_properties(
-        a: SurfaceProperties,
-        b: SurfaceProperties) -> SurfaceProperties:
-    if !a.can_grab:
-        return a
-    elif !b.can_grab:
-        return b
-    else:
-        # FIXME: LEFT OFF HERE: ----------------------
-        return a

@@ -2,13 +2,9 @@ class_name SurfaceProperties
 extends Reference
 
 
-# FIXME: LEFT OFF HERE: -----------------------
-# - Add a can-grab flag.
-# - Add friction.
-# - Add a max-speed modifier.
+# TODO:
 # - Add some way of checking fall-through/walk-through state.
 #   - And add a way to validate that this matches the normal TileSet encoding.
-# - Update config in SquirrelAway.
 
 
 const KEYS := [
