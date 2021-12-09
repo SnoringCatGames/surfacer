@@ -31,6 +31,8 @@ I will not lie, **this is a complex framework**! Hopefully it's external API isn
 -   Include `*.json` under "Filters to export non-resource files/folders" in your export settings.
     -   Platform graphs can be pre-calculated and saved in JSON files.
 
+> **NOTE:** _If you are installing this with the in-editor AssetLib utility, you will need to move the files into `addons/surfacer/` afterward!_
+
 > **NOTE**: The Scaffolder framework is _big_. It probably has a lot of stuff you don't need. Also, it probably structures things differently than you want. You should be able to either hide or ignore the bits from Scaffolder that you don't want. Ideally, Surfacer shouldn't depend on Scaffolder. But decoupling these frameworks hasn't been a priority yet. Sorry!
 
 ## Creating a level
