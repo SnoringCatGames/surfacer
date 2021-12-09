@@ -445,7 +445,7 @@ static func _calculate_protrusion_waypoint(
         _:
             Sc.logger.error()
     
-    if protrusion_position != Vector2.INF:
+    if !Sc.geometry.is_point_partial_inf(protrusion_position):
         var protrusion_waypoint := Waypoint.new(
                 protrusion_surface,
                 protrusion_position,
