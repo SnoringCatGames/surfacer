@@ -25,7 +25,9 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 
 --------
 
-> **NOTE:** _This framework depends the separate [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library. You'll need to add both of these libraries to your `addons/` folder._
+> **NOTE:** _This framework depends the separate [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library._
+
+> **NOTE:** _You'll need to move this libarary to your `addons/` folder. If you are installing this with the in-editor AssetLib utility, you will need to move the files afterward!_
 
 --------
 
