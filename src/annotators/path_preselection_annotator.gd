@@ -136,7 +136,7 @@ func _process(_delta: float) -> void:
                 
                 # Update npc predictions.
                 for surfacer_character in Sc.utils.get_all_nodes_in_group(
-                        Sc.characters.GROUP_NAME_SURFACER_CHARACTERS):
+                        Sc.characters.GROUP_NAME_CHARACTERS):
                     if !surfacer_character.is_player_character:
                         surfacer_character.prediction.match_navigator_or_path(
                                 surfacer_character.navigator,

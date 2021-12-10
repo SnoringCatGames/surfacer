@@ -1,5 +1,5 @@
 class_name JumpLandPositionsAnnotationElement
-extends AnnotationElement
+extends SurfacerAnnotationElement
 
 
 const TYPE := AnnotationElementType.JUMP_LAND_POSITIONS

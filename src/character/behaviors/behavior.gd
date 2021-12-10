@@ -542,7 +542,7 @@ func _get_character_reference_from_parent() -> void:
         return
     
     var is_parent_a_character := \
-            parent.is_in_group(Sc.characters.GROUP_NAME_SURFACER_CHARACTERS)
+            parent.is_in_group(Sc.characters.GROUP_NAME_CHARACTERS)
     var is_parent_a_spawn_position := parent is SpawnPosition
     if !is_parent_a_character and \
             !is_parent_a_spawn_position:

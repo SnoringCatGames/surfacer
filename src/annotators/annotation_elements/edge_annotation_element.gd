@@ -1,5 +1,5 @@
 class_name EdgeAnnotationElement
-extends AnnotationElement
+extends SurfacerAnnotationElement
 
 
 const TYPE := AnnotationElementType.EDGE

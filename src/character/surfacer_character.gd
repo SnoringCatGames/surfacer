@@ -91,7 +91,7 @@ var _dash_fade_tween: ScaffolderTween
 
 
 func _init() -> void:
-    self.add_to_group(Sc.characters.GROUP_NAME_SURFACER_CHARACTERS)
+    self.add_to_group(Sc.characters.GROUP_NAME_CHARACTERS)
 
 
 func _ready() -> void:
