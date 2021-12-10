@@ -875,7 +875,8 @@ func get_intended_position(type: int) -> PositionAlongSurface:
             return null
 
 
-func get_current_animation_state(result: CharacterAnimationState) -> void:
+func get_current_animation_state(
+        result: SurfacerCharacterAnimationState) -> void:
     result.character_position = position
     result.animation_name = animator.get_current_animation_name()
     result.animation_position = \

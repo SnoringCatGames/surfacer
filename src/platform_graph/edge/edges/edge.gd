@@ -352,7 +352,7 @@ func _get_post_trajectory_velocity_for_triggering_grab() -> Vector2:
 
 
 func get_animation_state_at_time(
-        result: CharacterAnimationState,
+        result: SurfacerCharacterAnimationState,
         edge_time: float) -> void:
     Sc.logger.error(
             "Abstract Edge.get_animation_state_at_time is not implemented")

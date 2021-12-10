@@ -65,7 +65,7 @@ func _get_weight_multiplier() -> float:
 
 
 func get_animation_state_at_time(
-        result: CharacterAnimationState,
+        result: SurfacerCharacterAnimationState,
         edge_time: float) -> void:
     var surface := \
             start_position_along_surface.surface if \

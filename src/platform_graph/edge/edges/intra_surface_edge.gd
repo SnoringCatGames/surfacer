@@ -175,7 +175,7 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
 
 
 func get_animation_state_at_time(
-        result: CharacterAnimationState,
+        result: SurfacerCharacterAnimationState,
         edge_time: float) -> void:
     var displacement := get_end() - get_start()
     
