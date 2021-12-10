@@ -1,5 +1,5 @@
 class_name FailedEdgeAttemptAnnotationElement
-extends AnnotationElement
+extends SurfacerAnnotationElement
 
 
 const TYPE := AnnotationElementType.FAILED_EDGE_ATTEMPT

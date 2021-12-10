@@ -1,5 +1,5 @@
 class_name PolylineAnnotationElement
-extends AnnotationElement
+extends SurfacerAnnotationElement
 
 
 var legend_item_class_reference

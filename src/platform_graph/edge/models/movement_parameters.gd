@@ -584,7 +584,7 @@ func _parse_shape_from_parent() -> void:
     if !is_instance_valid(parent):
         return
     
-    if !parent.is_in_group(Sc.characters.GROUP_NAME_SURFACER_CHARACTERS):
+    if !parent.is_in_group(Sc.characters.GROUP_NAME_CHARACTERS):
         _set_configuration_warning("Must define a SurfacerCharacter parent.")
         return
     
