@@ -313,6 +313,8 @@ func _amend_app_manifest(app_manifest: Dictionary) -> void:
         app_manifest.draw_class = SurfacerDrawUtils
     if !app_manifest.has("ann_params_class"):
         app_manifest.ann_params_class = SurfacerAnnotationParameters
+    if !app_manifest.has("beats_class"):
+        app_manifest.beats_class = SurfacerBeatTracker
     if !app_manifest.has("characters_class"):
         app_manifest.characters_class = SurfacerCharacterManifest
     
