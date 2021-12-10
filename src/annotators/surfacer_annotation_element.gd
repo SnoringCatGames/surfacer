@@ -2,6 +2,10 @@ class_name SurfacerAnnotationElement
 extends AnnotationElement
 
 
+func _init(type: int).(type) -> void:
+    pass
+
+
 func _draw_from_surface(
         canvas: CanvasItem,
         surface: Surface,
