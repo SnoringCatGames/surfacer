@@ -2,12 +2,12 @@ class_name CharacterPrediction
 extends Node2D
 
 
-var animation_state := CharacterAnimationState.new()
+var animation_state := SurfacerCharacterAnimationState.new()
 var animator: ScaffolderCharacterAnimator
 var character: ScaffolderCharacter
 
 var _tween: ScaffolderTween
-var _tween_animation_state := CharacterAnimationState.new()
+var _tween_animation_state := SurfacerCharacterAnimationState.new()
 
 
 func set_up(character) -> void:

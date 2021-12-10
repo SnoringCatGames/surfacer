@@ -60,7 +60,7 @@ func push_back(edge: Edge) -> void:
 
 
 func predict_animation_state(
-        result: CharacterAnimationState,
+        result: SurfacerCharacterAnimationState,
         path_time: float) -> bool:
     var is_before_path_end_time := path_time < duration
     if !is_before_path_end_time:

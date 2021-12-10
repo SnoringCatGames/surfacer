@@ -1021,7 +1021,7 @@ func _handle_reached_end_of_edge(starts_next_edge: bool) -> void:
 
 
 func predict_animation_state(
-        result: CharacterAnimationState,
+        result: SurfacerCharacterAnimationState,
         elapsed_time_from_now: float) -> bool:
     if !navigation_state.is_currently_navigating:
         character.get_current_animation_state(result)
