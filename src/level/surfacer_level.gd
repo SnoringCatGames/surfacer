@@ -142,6 +142,40 @@ func _on_intro_choreography_finished() -> void:
     _show_welcome_panel()
 
 
+func _get_default_character_spawn_position() -> ScaffolderSpawnPosition:
+    # If no spawn position was defined for the default character, then start
+    # them at 0,0. 
+    if !spawn_positions.has(Sc.characters.default_character_name):
+        var spawn_position := ScaffolderSpawnPosition.new()
+        spawn_position.character_name = Sc.characters.default_character_name
+        spawn_position.position = Vector2.ZERO
+        spawn_position.surface_attachment = "NONE"
+        register_spawn_position(
+                Sc.characters.default_character_name, spawn_position)
+    return spawn_positions[Sc.characters.default_character_name][0]
+
+
+func _update_character_spawn_state(
+        character: ScaffolderCharacter,
+        position_or_spawn_position) -> void:
+    if position_or_spawn_position is SurfacerSpawnPosition:
+        character.set_start_attachment_surface_side_or_position(
+                position_or_spawn_position.surface_side)
+        
+        # Move any projected Behaviors into the Character.
+        var projected_behaviors: Array = Sc.utils.get_children_by_type(
+                position_or_spawn_position,
+                Behavior,
+                false)
+        for behavior in projected_behaviors:
+            position_or_spawn_position.remove_child(behavior)
+            character.add_child(behavior)
+    else:
+        # Default to floor attachment.
+        character.set_start_attachment_surface_side_or_position(
+                SurfaceSide.FLOOR)
+
+
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
     set_background_visibility(false)
