@@ -2,7 +2,7 @@ class_name FailedEdgeTrajectoryLegendItem
 extends LegendItem
 
 
-const TYPE := LegendItemType.FAILED_EDGE_TRAJECTORY
+const TYPE := "FAILED_EDGE_TRAJECTORY"
 const TEXT := "Failed\nedge"
 
 const X_WIDTH := 7.5

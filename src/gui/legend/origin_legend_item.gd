@@ -2,7 +2,7 @@ class_name OriginLegendItem
 extends LegendItem
 
 
-const TYPE := LegendItemType.ORIGIN
+const TYPE := "ORIGIN"
 const TEXT := "Origin"
 
 const SCALE := 0.8
