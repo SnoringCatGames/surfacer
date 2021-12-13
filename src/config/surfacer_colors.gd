@@ -11,7 +11,6 @@ const ORANGE := Color(1.0, 0.648, 0.277)
 
 # --- Configured colors ---
 
-var click: Color
 var surface_click_selection: Color
 var grid_indices: Color
 var ruler: Color
@@ -19,13 +18,10 @@ var invalid: Color
 var inspector_origin: Color
 
 var _surfacer_defaults := {
-    click = ScaffolderColors.static_opacify(
-            WHITE, ScaffolderColors.ALPHA_SLIGHTLY_FAINT),
     surface_click_selection = ScaffolderColors.static_opacify(
             WHITE, ScaffolderColors.ALPHA_SOLID),
     grid_indices = ScaffolderColors.static_opacify(
             WHITE, ScaffolderColors.ALPHA_FAINT),
-    ruler = WHITE,
     invalid = RED,
     inspector_origin = ScaffolderColors.static_opacify(
             ORANGE, ScaffolderColors.ALPHA_FAINT),
