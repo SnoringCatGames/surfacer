@@ -282,7 +282,6 @@ var surface_parser_metric_keys := [
 ]
 
 var graph_inspector: PlatformGraphInspector
-var legend: Legend
 var selection_description: SelectionDescription
 var ann_manifest: SurfacerAnnotationsManifest
 var movement: SurfacerMovementManifest

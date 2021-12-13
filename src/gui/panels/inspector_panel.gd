@@ -63,7 +63,7 @@ func _ready() -> void:
     Su.graph_inspector = \
             $ScaffolderPanelContainer/VBoxContainer/Sections/ \
             InspectorContainer/PlatformGraphInspector
-    Su.legend = \
+    Sc.legend = \
             $ScaffolderPanelContainer/VBoxContainer/Sections/Legend
     Su.selection_description = \
             $ScaffolderPanelContainer/VBoxContainer/Sections/ \
@@ -90,9 +90,9 @@ func _destroy() -> void:
     if is_instance_valid(Su.graph_inspector):
         Su.graph_inspector._destroy()
     Su.graph_inspector = null
-    if is_instance_valid(Su.legend):
-        Su.legend._destroy()
-    Su.legend = null
+    if is_instance_valid(Sc.legend):
+        Sc.legend._destroy()
+    Sc.legend = null
     Su.selection_description = null
 
 
