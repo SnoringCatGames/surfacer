@@ -1,5 +1,5 @@
 tool
-class_name DefaultAppManifest
+class_name SurfacerDefaultAppManifest
 extends FrameworkConfig
 
 
@@ -9,7 +9,8 @@ extends FrameworkConfig
 # between builds or between development and production environments.
 func _override_configs_for_current_run() -> void:
     Sc.logger.error(
-            "Abstract DefaultAppManifest._override_configs_for_current_run " +
+            "Abstract SurfacerDefaultAppManifest" +
+            "._override_configs_for_current_run " +
             "is not implemented")
 
 
