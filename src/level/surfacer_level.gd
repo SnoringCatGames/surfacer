@@ -225,3 +225,14 @@ func _update_session_in_editor() -> void:
             Vector2.INF if \
             tile_maps.empty() else \
             tile_maps[0].cell_size
+
+
+func _set_level_id(value: String) -> void:
+    # Override parent.
+    #._set_level_id(value)
+    level_id = value
+    if !Engine.editor_hint and \
+            !Su.is_precomputing_platform_graphs:
+        assert(Sc.level_session.id == level_id)
+    _update_editor_configuration()
+    _update_session_in_editor()

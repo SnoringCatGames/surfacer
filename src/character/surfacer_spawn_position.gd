@@ -32,19 +32,8 @@ var _surfacer_property_list_addendum = [
 ]
 
 
-# -   This makes the `character_name` property exported for editing in the
-#     inspector panel.
-# -   This also defines the `character_name` property as an enum of all the
-#     character names that are registered in the app manifest.
-func _update_property_list_addendum() -> void:
-    var character_names: Array = Sc.characters.character_scenes.keys()
-    character_names.push_front("")
-    CHARACTER_NAME_PROPERTY_CONFIG.hint_string = \
-            Sc.utils.join(character_names, ",")
-
-
 func _get_property_list() -> Array:
-    return _property_list_addendum
+    return _surfacer_property_list_addendum
 
 
 func _draw() -> void:
