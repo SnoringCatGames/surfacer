@@ -13,7 +13,6 @@ const ORANGE := Color(1.0, 0.648, 0.277)
 
 var surface_click_selection: Color
 var grid_indices: Color
-var ruler: Color
 var invalid: Color
 var inspector_origin: Color
 
