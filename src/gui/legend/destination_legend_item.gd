@@ -2,7 +2,7 @@ class_name DestinationLegendItem
 extends LegendItem
 
 
-const TYPE := LegendItemType.DESTINATION
+const TYPE := "DESTINATION"
 const TEXT := "Destination"
 
 const SCALE := 0.8
