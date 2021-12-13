@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/surfacer/src/character/surfacer_spawn_position.gd" type="Script" id=1]
+
+[node name="SurfacerSpawnPosition" type="Position2D"]
+self_modulate = Color( 1, 1, 1, 0.4 )
+script = ExtResource( 1 )
+character_name = ""
+surface_attachment = "FLOOR"
+include_exclusively = false
+exclude = false

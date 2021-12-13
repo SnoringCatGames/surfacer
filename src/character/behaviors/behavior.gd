@@ -543,11 +543,11 @@ func _get_character_reference_from_parent() -> void:
     
     var is_parent_a_character := \
             parent.is_in_group(Sc.characters.GROUP_NAME_CHARACTERS)
-    var is_parent_a_spawn_position := parent is SpawnPosition
+    var is_parent_a_spawn_position := parent is SurfacerSpawnPosition
     if !is_parent_a_character and \
             !is_parent_a_spawn_position:
         _set_configuration_warning(
-                "Must be a child of a SurfacerCharacter or SpawnPosition.")
+                "Must be a child of a SurfacerCharacter or SurfacerSpawnPosition.")
     
     if is_parent_a_character:
         character = parent
