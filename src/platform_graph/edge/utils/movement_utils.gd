@@ -274,8 +274,10 @@ static func calculate_velocity_end_for_displacement(
     var time_to_reach_max_speed := \
             (velocity_at_max_speed - velocity_start) / acceleration
     if time_to_reach_max_speed < 0.0:
-        # We're accelerating in the wrong direction.
-        return INF
+        # We pass and reverse directions before hitting max speed.
+        velocity_at_max_speed *= -1.0
+        time_to_reach_max_speed = \
+                (velocity_at_max_speed - velocity_start) / acceleration
     
     # From a basic equation of motion:
     #     s = s_0 + v_0*t + 1/2*a*t^2
