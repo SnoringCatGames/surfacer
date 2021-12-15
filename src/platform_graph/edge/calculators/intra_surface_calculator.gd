@@ -317,6 +317,13 @@ func _update(edge: IntraSurfaceEdge) -> void:
             release_time,
             is_pressing_forward)
     
+    assert(!is_inf(stopping_distance))
+    assert(!is_inf(release_time))
+    assert(!is_inf(duration))
+    assert(!Sc.geometry.is_point_partial_inf(release_position))
+    assert(!Sc.geometry.is_point_partial_inf(release_velocity))
+    assert(!Sc.geometry.is_point_partial_inf(velocity_end))
+    
     PositionAlongSurface.copy(
             edge.start_position_along_surface,
             start)

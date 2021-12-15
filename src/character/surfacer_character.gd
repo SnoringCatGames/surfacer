@@ -335,6 +335,8 @@ func _match_expected_navigation_trajectory() -> void:
         _match_expected_edge_start_trajectory()
     elif is_instance_valid(navigator.edge):
         _match_expected_edge_trajectory()
+    
+    assert(!Sc.geometry.is_point_partial_inf(velocity))
 
 
 func _match_expected_path_end_trajectory() -> void:
@@ -585,6 +587,8 @@ func _process_actions() -> void:
 #                        "",
 #                        CharacterLogType.ACTION,
 #                        true)
+    
+    assert(!Sc.geometry.is_point_partial_inf(velocity))
 
 
 func _process_animation() -> void:
