@@ -103,7 +103,7 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
                             surface.properties)
                 var acceleration_x := \
                         acceleration_magnitude if \
-                        displacement.x > 0 or !is_pressing_forward else \
+                        displacement.x > 0 == is_pressing_forward else \
                         -acceleration_magnitude
                 var max_horizontal_speed := \
                         movement_params.get_max_surface_speed() * \
@@ -185,7 +185,7 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
                             surface.properties)
                 var acceleration_x := \
                         acceleration_magnitude if \
-                        displacement.x > 0 or !is_pressing_forward else \
+                        displacement.x > 0 == is_pressing_forward else \
                         -acceleration_magnitude
                 var max_horizontal_speed := \
                         movement_params.get_max_surface_speed() * \
@@ -368,3 +368,7 @@ func get_next_neighbor() -> Surface:
     return end_position_along_surface.surface.clockwise_neighbor if \
             is_moving_clockwise else \
             end_position_along_surface.surface.counter_clockwise_neighbor
+
+
+func get_is_enough_time_to_decelerate() -> bool:
+    return release_time > 0.0
