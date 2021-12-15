@@ -310,11 +310,6 @@ func _update(edge: IntraSurfaceEdge) -> void:
                     release_velocity,
                     is_pressing_forward)
     
-    # FIXME: ------------------------------
-    if release_position == Vector2.INF:
-        print("break")
-        assert(false)
-    
     var instructions := _calculate_instructions(
             start,
             end,
@@ -799,13 +794,19 @@ func _calculate_is_pressing_forward(
         movement_params: MovementParameters) -> bool:
     if start.surface.side != SurfaceSide.FLOOR:
         return true
+    
+    var displacement := end.target_point - start.target_point
+    if (displacement.x > 0) != (velocity_start.x > 0):
+        # We start-out moving in the wrong direction, so we must accelerate
+        # toward the correct direction.
+        return true
+    
     var stopping_distance_from_start_speed := \
             MovementUtils.calculate_distance_to_stop_from_friction(
                 movement_params,
                 start.surface.properties,
                 velocity_start.x)
-    return stopping_distance_from_start_speed < \
-            abs(end.target_point.x - start.target_point.x)
+    return stopping_distance_from_start_speed < abs(displacement.x)
 
 
 # Calculate the distance from the end position at which the move button should
@@ -821,42 +822,23 @@ func _calculate_stopping_distance(
     var displacement := end.target_point - start.target_point
     
     # TODO: Add support for acceleration and friction along walls and ceilings.
-    match end.surface.side:
-        SurfaceSide.FLOOR:
-            if is_pressing_forward:
-                return MovementUtils \
-                        .calculate_distance_to_stop_from_friction_with_forward_acceleration_to_non_max_speed(
-                            movement_params,
-                            start.surface.properties,
-                            velocity_start.x,
-                            displacement.x)
-            else:
-                return MovementUtils \
-                        .calculate_distance_to_stop_from_friction_with_some_backward_acceleration(
-                            movement_params,
-                            start.surface.properties,
-                            velocity_start.x,
-                            displacement.x)
-        SurfaceSide.LEFT_WALL, \
-        SurfaceSide.RIGHT_WALL:
-            var climb_speed := \
-                    (abs(movement_params.climb_up_speed) if \
-                    displacement.y < 0 else \
-                    abs(movement_params.climb_down_speed)) * \
-                    end.surface.properties.speed_multiplier
-            return climb_speed * \
-                    Time.PHYSICS_TIME_STEP + \
-                    0.01
-        SurfaceSide.CEILING:
-            var climb_speed := \
-                    abs(movement_params.ceiling_crawl_speed) * \
-                    end.surface.properties.speed_multiplier
-            return climb_speed * \
-                    Time.PHYSICS_TIME_STEP + \
-                    0.01
-        _:
-            Sc.logger.error()
-            return INF
+    if end.surface.side != SurfaceSide.FLOOR:
+        return 0.0
+    
+    if is_pressing_forward:
+        return MovementUtils \
+                .calculate_distance_to_stop_from_friction_with_forward_acceleration_to_non_max_speed(
+                    movement_params,
+                    start.surface.properties,
+                    velocity_start.x,
+                    displacement.x)
+    else:
+        return MovementUtils \
+                .calculate_distance_to_stop_from_friction_with_some_backward_acceleration(
+                    movement_params,
+                    start.surface.properties,
+                    velocity_start.x,
+                    displacement.x)
 
 
 func _calculate_release_time(
@@ -874,10 +856,6 @@ func _calculate_release_time(
     
     match start.side:
         SurfaceSide.FLOOR:
-            var input_displacement := \
-                    displacement.x - stopping_distance if \
-                    displacement.x > 0.0 else \
-                    displacement.x + stopping_distance
             var acceleration_magnitude := MovementUtils \
                     .get_walking_acceleration_with_friction_magnitude(
                         movement_params,
@@ -889,11 +867,21 @@ func _calculate_release_time(
             var max_horizontal_speed := \
                     movement_params.get_max_surface_speed() * \
                     start.surface.properties.speed_multiplier
+            var input_displacement := \
+                    displacement.x - stopping_distance if \
+                    displacement.x > 0.0 else \
+                    displacement.x + stopping_distance
+            # -   If pressing forward, there could be backward movement.
+            # -   So if pressing forward, we use the later possible duration.
+            var returns_lower_result := !is_pressing_forward
+            
             return MovementUtils.calculate_duration_for_displacement(
                     input_displacement,
                     velocity_start.x,
                     acceleration_x,
-                    max_horizontal_speed)
+                    max_horizontal_speed,
+                    returns_lower_result)
+            
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var is_climbing_upward := displacement.y < 0

@@ -158,7 +158,8 @@ static func calculate_duration_for_displacement(
         displacement: float,
         velocity_start: float,
         acceleration: float,
-        max_speed: float) -> float:
+        max_speed: float,
+        returns_lower_result := true) -> float:
     if displacement == 0.0:
         # The start position is the destination.
         return 0.0
@@ -191,8 +192,10 @@ static func calculate_duration_for_displacement(
     var time_to_reach_max_speed := \
             (velocity_at_max_speed - velocity_start) / acceleration
     if time_to_reach_max_speed < 0.0:
-        # We're accelerating in the wrong direction.
-        return INF
+        # We pass and reverse directions before hitting max speed.
+        velocity_at_max_speed *= -1.0
+        time_to_reach_max_speed = \
+                (velocity_at_max_speed - velocity_start) / acceleration
     
     # From a basic equation of motion:
     #     s = s_0 + v_0*t + 1/2*a*t^2
@@ -212,7 +215,7 @@ static func calculate_duration_for_displacement(
                 displacement,
                 velocity_start,
                 acceleration,
-                true,
+                returns_lower_result,
                 0.0,
                 false)
     else:
@@ -500,7 +503,8 @@ static func calculate_distance_to_stop_from_friction(
     #     s_0 = 0
     # Algebra...:
     #     s_1 = (v_1^2 - v_0^2) / 2 / a
-    return -velocity_x_start * velocity_x_start / 2.0 / friction_deceleration
+    return abs(-velocity_x_start * velocity_x_start / 2.0 / \
+            friction_deceleration)
 
 
 static func calculate_distance_to_stop_from_friction_with_forward_acceleration_to_non_max_speed(
@@ -567,9 +571,7 @@ static func calculate_distance_to_stop_from_friction_with_forward_acceleration_t
     #     s_1 = ((v_2^2 - v_0^2)/2 - s_2*a_1) / (a_0 - a_1)
     #     stopping_distance = s_2 - s_1
     var displacement_to_instruction_end: float = \
-            ((Su.movement.min_horizontal_speed * \
-                    Su.movement.min_horizontal_speed - \
-            velocity_x_start * velocity_x_start) / 2.0 - \
+            (-velocity_x_start * velocity_x_start / 2.0 - \
                     displacement_x_from_end * friction_deceleration) / \
             (walk_acceleration - friction_deceleration)
     var stopping_displacement := \
@@ -623,9 +625,7 @@ static func calculate_distance_to_stop_from_friction_with_some_backward_accelera
     #     s_1 = ((v_2^2 - v_0^2)/2 - s_2*a_1) / (a_0 - a_1)
     #     stopping_distance = s_2 - s_1
     var displacement_to_instruction_end: float = \
-            ((Su.movement.min_horizontal_speed * \
-                    Su.movement.min_horizontal_speed - \
-            velocity_x_start * velocity_x_start) / 2.0 - \
+            (-velocity_x_start * velocity_x_start / 2.0 - \
                     displacement_x_from_end * friction_deceleration) / \
             (walk_acceleration - friction_deceleration)
     var stopping_displacement := \
