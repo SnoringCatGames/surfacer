@@ -371,4 +371,15 @@ func get_next_neighbor() -> Surface:
 
 
 func get_is_enough_time_to_decelerate() -> bool:
-    return release_time > 0.0
+    var displacement := \
+            end_position_along_surface.target_point - \
+            start_position_along_surface.target_point
+    var axially_aligned_distance := \
+            abs(displacement.x if \
+            start_position_along_surface.surface.side == \
+                SurfaceSide.FLOOR or \
+            start_position_along_surface.surface.side == \
+                SurfaceSide.CEILING else \
+            displacement.y)
+    return is_pressing_forward or \
+            stopping_distance < axially_aligned_distance - 0.01

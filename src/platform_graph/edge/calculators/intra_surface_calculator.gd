@@ -165,26 +165,71 @@ func _update(edge: IntraSurfaceEdge) -> void:
     var is_degenerate: bool = _calculate_is_degenerate(
             start,
             end)
+    var is_moving_clockwise := _calculate_is_moving_clockwise(
+            start,
+            end)
+    var distance := calculate_distance(
+            movement_params,
+            start,
+            end)
+    var is_pressing_forward := _calculate_is_pressing_forward(
+            start,
+            end,
+            velocity_start,
+            movement_params)
+    var stopping_distance := _calculate_stopping_distance(
+            start,
+            end,
+            velocity_start,
+            is_pressing_forward,
+            movement_params)
+    var release_time := _calculate_release_time(
+            movement_params,
+            start,
+            end,
+            velocity_start,
+            stopping_distance,
+            is_pressing_forward)
+    var release_position := _calculate_release_position(
+            movement_params,
+            start,
+            end,
+            velocity_start,
+            release_time,
+            is_pressing_forward)
+    var release_velocity := _calculate_release_velocity(
+            movement_params,
+            start,
+            end,
+            velocity_start,
+            release_time,
+            is_pressing_forward)
+    var velocity_end := _calculate_velocity_end(
+            movement_params,
+            start,
+            end,
+            velocity_start,
+            stopping_distance,
+            is_pressing_forward)
     var duration := calculate_duration(
             movement_params,
             start,
             end,
-            velocity_start)
-    var is_moving_clockwise := _calculate_is_moving_clockwise(
-            start,
-            end)
-    var instructions := _calculate_instructions(
-            start,
-            end,
-            duration)
+            velocity_start,
+            stopping_distance,
+            release_time,
+            release_velocity,
+            is_pressing_forward)
     var trajectory := _calculate_trajectory(
+            movement_params,
             start,
             end,
             velocity_start,
             duration,
+            release_time,
+            is_pressing_forward,
             is_moving_clockwise,
-            is_degenerate,
-            movement_params)
+            is_degenerate)
     
     # We might need to shorten our expected movement for a concave next neighbor
     # (which can form a tight cusp).
@@ -206,33 +251,71 @@ func _update(edge: IntraSurfaceEdge) -> void:
                             end.surface,
                             movement_params.collider,
                             false)
+            is_degenerate = _calculate_is_degenerate(
+                    start,
+                    end)
+            is_moving_clockwise = _calculate_is_moving_clockwise(
+                    start,
+                    end)
+            distance = calculate_distance(
+                    movement_params,
+                    start,
+                    end)
+            is_pressing_forward = _calculate_is_pressing_forward(
+                    start,
+                    end,
+                    velocity_start,
+                    movement_params)
+            stopping_distance = _calculate_stopping_distance(
+                    start,
+                    end,
+                    velocity_start,
+                    is_pressing_forward,
+                    movement_params)
+            release_time = _calculate_release_time(
+                    movement_params,
+                    start,
+                    end,
+                    velocity_start,
+                    stopping_distance,
+                    is_pressing_forward)
+            release_position = _calculate_release_position(
+                    movement_params,
+                    start,
+                    end,
+                    velocity_start,
+                    release_time,
+                    is_pressing_forward)
+            release_velocity = _calculate_release_velocity(
+                    movement_params,
+                    start,
+                    end,
+                    velocity_start,
+                    release_time,
+                    is_pressing_forward)
+            velocity_end = _calculate_velocity_end(
+                    movement_params,
+                    start,
+                    end,
+                    velocity_start,
+                    stopping_distance,
+                    is_pressing_forward)
             duration = calculate_duration(
                     movement_params,
                     start,
                     end,
-                    velocity_start)
-            is_moving_clockwise = _calculate_is_moving_clockwise(
-                    start,
-                    end)
-            instructions = _calculate_instructions(
-                    start,
-                    end,
-                    duration)
+                    velocity_start,
+                    stopping_distance,
+                    release_time,
+                    release_velocity,
+                    is_pressing_forward)
     
-    var distance := calculate_distance(
-            movement_params,
-            start,
-            end)
-    var velocity_end := _calculate_velocity_end(
+    var instructions := _calculate_instructions(
             start,
             end,
-            velocity_start,
-            movement_params)
-    var stopping_distance := _calculate_stopping_distance(
-            start,
-            end,
-            velocity_start,
-            movement_params)
+            duration,
+            release_time,
+            is_pressing_forward)
     
     PositionAlongSurface.copy(
             edge.start_position_along_surface,
@@ -244,7 +327,11 @@ func _update(edge: IntraSurfaceEdge) -> void:
     edge.duration = duration
     edge.velocity_end = velocity_end
     edge.is_moving_clockwise = is_moving_clockwise
+    edge.is_pressing_forward = is_pressing_forward
     edge.stopping_distance = stopping_distance
+    edge.release_time = release_time
+    edge.release_position = release_position
+    edge.release_velocity = release_velocity
     edge.is_degenerate = is_degenerate
     edge.instructions = instructions
     edge.trajectory = trajectory
@@ -270,82 +357,102 @@ func calculate_duration(
         movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface,
-        velocity_start := Vector2.ZERO) -> float:
+        velocity_start: Vector2,
+        stopping_distance: float,
+        release_time: float,
+        release_velocity: Vector2,
+        is_pressing_forward: bool) -> float:
     var is_degenerate: bool = _calculate_is_degenerate(start, end)
     if is_degenerate:
         return 0.00001
     
     var displacement := end.target_point - start.target_point
     
-    match start.side:
-        SurfaceSide.FLOOR:
-            var displacement_x := displacement.x
-            var velocity_start_x := velocity_start.x
-            # Our calculations currently assume that acceleration is in the
-            # positive direction, so let's make sure our velocity/displacement
-            # align with that.
-            if displacement_x < 0.0:
-                velocity_start_x = -velocity_start_x
-                displacement_x = -displacement_x
-            var walk_acceleration := _calculate_acceleration_with_friction(
-                    movement_params, start.surface)
-            var max_speed := \
-                    movement_params.get_max_surface_speed() * \
-                    start.surface.properties.speed_multiplier
-            var duration := MovementUtils.calculate_duration_for_displacement(
-                    displacement_x,
-                    velocity_start_x,
-                    walk_acceleration,
-                    max_speed)
+    if start.side == SurfaceSide.FLOOR:
+        if !is_pressing_forward and \
+                stopping_distance > abs(displacement.x) - 0.01:
+            # We don't have enough time to decelerate to zero speed at the end.
+            assert(!is_pressing_forward)
+            var acceleration_magnitude := MovementUtils \
+                    .get_walking_acceleration_with_friction_magnitude(
+                        movement_params,
+                        start.surface.properties)
+            var acceleration_x := \
+                    acceleration_magnitude if \
+                    displacement.x > 0 == is_pressing_forward else \
+                    -acceleration_magnitude
+            var duration: float = MovementUtils.calculate_movement_duration(
+                    displacement.x,
+                    velocity_start.x,
+                    acceleration_x,
+                    true,
+                    0.0,
+                    false,
+                    false)
             assert(!is_inf(duration))
             return duration
-            
-        SurfaceSide.LEFT_WALL, \
-        SurfaceSide.RIGHT_WALL:
-            var is_climbing_upward := displacement.y < 0
-            return MovementUtils.calculate_time_to_climb(
-                    abs(displacement.y),
-                    is_climbing_upward,
-                    start.surface,
-                    movement_params)
-        SurfaceSide.CEILING:
-            return MovementUtils.calculate_time_to_crawl_on_ceiling(
-                    abs(displacement.x),
-                    start.surface,
-                    movement_params)
-        _:
-            Sc.logger.error()
-            return INF
+        else:
+            # We do have enough time to decelerate to zero speed at the end.
+            # From a basic equation of motion:
+            #     v_1 = v_0 + a*t
+            #     v_1 = 0.0
+            # Algebra...:
+            #     t = -v_0 / a
+            var deceleration_magnitude := MovementUtils \
+                    .get_stopping_friction_acceleration_magnitude(
+                        movement_params,
+                        start.surface.properties)
+            var deceleration_time := \
+                    abs(release_velocity.x) / deceleration_magnitude
+            return release_time + deceleration_time
+        
+    else:
+        return release_time
 
 
 func _calculate_velocity_end(
+        movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
-        movement_params: MovementParameters) -> Vector2:
+        stopping_distance: float,
+        is_pressing_forward: bool) -> Vector2:
     var displacement := end.target_point - start.target_point
     
     match start.side:
         SurfaceSide.FLOOR:
-            # We need to calculate the end velocity, taking into account whether
-            # we will have had enough distance to reach max horizontal speed.
-            var walk_acceleration := _calculate_acceleration_with_friction(
-                movement_params, start.surface)
-            var acceleration := \
-                    walk_acceleration if \
-                    displacement.x > 0.0 else \
-                    -walk_acceleration
-            var max_horizontal_speed := \
-                    movement_params.get_max_surface_speed() * \
-                    start.surface.properties.speed_multiplier
-            var velocity_end_x: float = \
-                    MovementUtils.calculate_velocity_end_for_displacement(
-                        displacement.x,
-                        velocity_start.x,
-                        acceleration,
-                        max_horizontal_speed,
-                        true)
-            return Vector2(velocity_end_x, 0.0)
+            var is_degenerate: bool = _calculate_is_degenerate(start, end)
+            if is_degenerate:
+                return velocity_start
+            
+            if !is_pressing_forward and \
+                    stopping_distance > abs(displacement.x) - 0.01:
+                # We don't have enough time to decelerate to zero speed at the
+                # end.
+                assert(!is_pressing_forward)
+                var acceleration_magnitude := MovementUtils \
+                        .get_walking_acceleration_with_friction_magnitude(
+                            movement_params,
+                            start.surface.properties)
+                var acceleration_x := \
+                        acceleration_magnitude if \
+                        displacement.x > 0 == is_pressing_forward else \
+                        -acceleration_magnitude
+                var max_horizontal_speed := \
+                        movement_params.get_max_surface_speed() * \
+                        start.surface.properties.speed_multiplier
+                var velocity_end_x: float = \
+                        MovementUtils.calculate_velocity_end_for_displacement(
+                            displacement.x,
+                            velocity_start.x,
+                            acceleration_x,
+                            max_horizontal_speed,
+                            true)
+                return Vector2(velocity_end_x, 0.0)
+                
+            else:
+                # We do have enough time to decelerate to zero speed at the end.
+                return Vector2.ZERO
             
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
@@ -391,42 +498,50 @@ func _calculate_is_moving_clockwise(
 func _calculate_instructions(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
-        duration: float) -> EdgeInstructions:
+        duration: float,
+        release_time: float,
+        is_pressing_forward: bool) -> EdgeInstructions:
     if start == null or end == null:
         return null
     
     var input_key: String
     var is_wall_surface := end.surface.normal.y == 0.0
     if is_wall_surface:
-        if start.target_point.y < end.target_point.y:
+        if start.target_point.y < end.target_point.y == is_pressing_forward:
             input_key = "md"
         else:
             input_key = "mu"
     else:
-        if start.target_point.x < end.target_point.x:
+        if start.target_point.x < end.target_point.x == is_pressing_forward:
             input_key = "mr"
         else:
             input_key = "ml"
     
-    var instruction := EdgeInstruction.new(
+    var press := EdgeInstruction.new(
             input_key,
             0.0,
             true)
+    var release := EdgeInstruction.new(
+            input_key,
+            release_time,
+            false)
     
     return EdgeInstructions.new(
-            [instruction],
+            [press, release],
             duration,
             false)
 
 
 func _calculate_trajectory(
+        movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
         duration: float,
+        release_time: float,
+        is_pressing_forward: bool,
         is_moving_clockwise: bool,
-        is_degenerate: bool,
-        movement_params: MovementParameters) -> EdgeTrajectory:
+        is_degenerate: bool) -> EdgeTrajectory:
     var trajectory := EdgeTrajectory.new()
     
     trajectory.waypoint_positions = [
@@ -498,7 +613,8 @@ func _calculate_trajectory(
     var frame_index := 0
     var position := start.target_point
     var velocity := velocity_start
-    var acceleration := Vector2.ZERO
+    var acceleration_with_pressing := Vector2.ZERO
+    var deceleration_with_friction := Vector2.ZERO
     
     var positions := []
     positions.resize(frame_count)
@@ -509,12 +625,22 @@ func _calculate_trajectory(
         SurfaceSide.FLOOR:
             velocity.x = velocity_start.x
             velocity.y = 0.0
-            var walk_acceleration := _calculate_acceleration_with_friction(
-                    movement_params, start.surface)
-            acceleration.x = \
-                    walk_acceleration if \
+            var acceleration_with_pressing_magnitude := MovementUtils \
+                    .get_walking_acceleration_with_friction_magnitude(
+                        movement_params,
+                        start.surface.properties)
+            acceleration_with_pressing.x = \
+                    acceleration_with_pressing_magnitude if \
+                    displacement.x > 0 == is_pressing_forward else \
+                    -acceleration_with_pressing_magnitude
+            var deceleration_with_friction_magnitude := MovementUtils \
+                    .get_stopping_friction_acceleration_magnitude(
+                        movement_params,
+                        start.surface.properties)
+            deceleration_with_friction.x = \
+                    -deceleration_with_friction_magnitude if \
                     displacement.x > 0 else \
-                    -walk_acceleration
+                    deceleration_with_friction_magnitude
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             velocity.x = 0.0
@@ -533,22 +659,48 @@ func _calculate_trajectory(
         _:
             Sc.logger.error()
     
+    # These min/max limits are used to ensure the last frames don't pass the
+    # expected values.
+    var velocity_x_min: float
+    var velocity_x_max: float
+    var position_x_min: float
+    var position_x_max: float
+    if displacement.x > 0:
+        velocity_x_min = 0.0
+        velocity_x_max = max_horizontal_speed
+        position_x_min = start.target_point.x
+        position_x_max = end.target_point.x
+    else:
+        velocity_x_min = -max_horizontal_speed
+        velocity_x_max = 0.0
+        position_x_min = end.target_point.x
+        position_x_max = start.target_point.x
+    
     while frame_index < frame_count:
         positions[frame_index] = position
         velocities[frame_index] = velocity
         
         frame_index += 1
+        var frame_time := frame_index * Time.PHYSICS_TIME_STEP
+        var acceleration := \
+                acceleration_with_pressing if \
+                frame_time < release_time else \
+                deceleration_with_friction
         position += velocity * Time.PHYSICS_TIME_STEP
         position = Sc.geometry.project_shape_onto_surface(
                 position,
                 movement_params.collider,
                 start.surface,
                 true)
+        position.x = clamp(
+                position.x,
+                position_x_min,
+                position_x_max)
         velocity += acceleration * Time.PHYSICS_TIME_STEP
         velocity.x = clamp(
                 velocity.x,
-                -max_horizontal_speed,
-                max_horizontal_speed)
+                velocity_x_min,
+                velocity_x_max)
         
         if is_next_neighbor_concave:
             # This prevents collisions with concave next neighbors
@@ -591,23 +743,20 @@ func _calculate_trajectory(
     return trajectory
 
 
-func _calculate_acceleration_with_friction(
-        movement_params: MovementParameters,
-        surface: Surface) -> float:
-    # NOTE: Keep this logic in-sync with FloorFrictionAction.
-    var friction_factor := \
-            movement_params.friction_coeff_with_sideways_input * \
-            surface.properties.friction_multiplier
-    var walk_acceleration_with_surface_properties := \
-            movement_params.walk_acceleration * \
-            surface.properties.speed_multiplier
-    var walk_acceleration_with_friction := \
-            walk_acceleration_with_surface_properties * \
-            (1 - 1 / (friction_factor + 1.0))
-    return clamp(
-            walk_acceleration_with_friction,
-            0.0,
-            walk_acceleration_with_surface_properties)
+func _calculate_is_pressing_forward(
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
+        velocity_start: Vector2,
+        movement_params: MovementParameters) -> bool:
+    if start.surface.side != SurfaceSide.FLOOR:
+        return true
+    var stopping_distance_from_start_speed := \
+            MovementUtils.calculate_distance_to_stop_from_friction(
+                movement_params,
+                start.surface.properties,
+                velocity_start.x)
+    return stopping_distance_from_start_speed < \
+            abs(end.target_point.x - start.target_point.x)
 
 
 # Calculate the distance from the end position at which the move button should
@@ -618,33 +767,27 @@ func _calculate_stopping_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
+        is_pressing_forward: bool,
         movement_params: MovementParameters) -> float:
-    if movement_params.forces_character_position_to_match_path_at_end:
-        return 0.0
-    
     var displacement := end.target_point - start.target_point
     
-    # TODO: Add support for acceleration and friction alongs walls and
-    #       ceilings.
+    # TODO: Add support for acceleration and friction along walls and ceilings.
     match end.surface.side:
         SurfaceSide.FLOOR:
-            var stopping_distance := MovementUtils \
-                    .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
+            if is_pressing_forward:
+                return MovementUtils \
+                        .calculate_distance_to_stop_from_friction_with_forward_acceleration_to_non_max_speed(
                             movement_params,
-                            start.surface,
+                            start.surface.properties,
                             velocity_start.x,
-                            displacement.x,
-                            movement_params.gravity_fast_fall,
-                            movement_params.friction_coeff_without_sideways_input,
-                            end.surface.properties.friction_multiplier)
-            return stopping_distance if \
-                    abs(displacement.x) - stopping_distance > \
-                        IntraSurfaceEdge \
-                                .REACHED_DESTINATION_DISTANCE_THRESHOLD else \
-                    max(abs(displacement.x) - \
-                        IntraSurfaceEdge \
-                                .REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0,
-                        0.0)
+                            displacement.x)
+            else:
+                return MovementUtils \
+                        .calculate_distance_to_stop_from_friction_with_some_backward_acceleration(
+                            movement_params,
+                            start.surface.properties,
+                            velocity_start.x,
+                            displacement.x)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var climb_speed := \
@@ -665,3 +808,116 @@ func _calculate_stopping_distance(
         _:
             Sc.logger.error()
             return INF
+
+
+func _calculate_release_time(
+        movement_params: MovementParameters,
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
+        velocity_start: Vector2,
+        stopping_distance: float,
+        is_pressing_forward: bool) -> float:
+    var is_degenerate: bool = _calculate_is_degenerate(start, end)
+    if is_degenerate:
+        return 0.0
+    
+    var displacement := end.target_point - start.target_point
+    
+    match start.side:
+        SurfaceSide.FLOOR:
+            var input_displacement := \
+                    displacement.x - stopping_distance if \
+                    displacement.x > 0.0 else \
+                    displacement.x + stopping_distance
+            var acceleration_magnitude := MovementUtils \
+                    .get_walking_acceleration_with_friction_magnitude(
+                        movement_params,
+                        start.surface.properties)
+            var acceleration_x := \
+                    acceleration_magnitude if \
+                    displacement.x > 0 == is_pressing_forward else \
+                    -acceleration_magnitude
+            var max_horizontal_speed := \
+                    movement_params.get_max_surface_speed() * \
+                    start.surface.properties.speed_multiplier
+            return MovementUtils.calculate_duration_for_displacement(
+                    input_displacement,
+                    velocity_start.x,
+                    acceleration_x,
+                    max_horizontal_speed)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            var is_climbing_upward := displacement.y < 0
+            return MovementUtils.calculate_time_to_climb(
+                    abs(displacement.y),
+                    is_climbing_upward,
+                    start.surface,
+                    movement_params)
+        SurfaceSide.CEILING:
+            return MovementUtils.calculate_time_to_crawl_on_ceiling(
+                    abs(displacement.x),
+                    start.surface,
+                    movement_params)
+        _:
+            Sc.logger.error()
+            return INF
+
+
+func _calculate_release_position(
+        movement_params: MovementParameters,
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
+        velocity_start: Vector2,
+        release_time: float,
+        is_pressing_forward: bool) -> Vector2:
+    var displacement := end.target_point - start.target_point
+    var acceleration_magnitude := MovementUtils \
+            .get_walking_acceleration_with_friction_magnitude(
+                movement_params,
+                start.surface.properties)
+    var acceleration_x := \
+            acceleration_magnitude if \
+            displacement.x > 0 == is_pressing_forward else \
+            -acceleration_magnitude
+    var max_horizontal_speed := \
+            movement_params.get_max_surface_speed() * \
+            start.surface.properties.speed_multiplier
+    var displacement_x := \
+            MovementUtils.calculate_displacement_for_duration(
+                release_time,
+                velocity_start.x,
+                acceleration_x,
+                max_horizontal_speed)
+    var position_x := start.target_point.x + displacement_x
+    return Sc.geometry.project_shape_onto_surface(
+            Vector2(position_x, 0.0),
+            movement_params.collider,
+            start.surface,
+            true)
+
+
+func _calculate_release_velocity(
+        movement_params: MovementParameters,
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
+        velocity_start: Vector2,
+        release_time: float,
+        is_pressing_forward: bool) -> Vector2:
+    var displacement := end.target_point - start.target_point
+    var acceleration_magnitude := MovementUtils \
+            .get_walking_acceleration_with_friction_magnitude(
+                movement_params,
+                start.surface.properties)
+    var acceleration_x := \
+            acceleration_magnitude if \
+            displacement.x > 0 == is_pressing_forward else \
+            -acceleration_magnitude
+    var max_horizontal_speed := \
+            movement_params.get_max_surface_speed() * \
+            start.surface.properties.speed_multiplier
+    var velocity_x := velocity_start.x + acceleration_x * release_time
+    velocity_x = clamp(
+            velocity_x,
+            -max_horizontal_speed,
+            max_horizontal_speed)
+    return Vector2(velocity_x, 0.0)
