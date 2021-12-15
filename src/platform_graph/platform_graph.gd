@@ -385,10 +385,11 @@ static func _calculate_intra_surface_edge_weight(
     # Use either the distance or the duration as the weight for the edge.
     var weight: float
     if movement_params.uses_duration_instead_of_distance_for_edge_weight:
-        weight = Su.movement.intra_surface_calculator.calculate_duration(
-                movement_params,
-                node_a,
-                node_b)
+        weight = Su.movement.intra_surface_calculator \
+                .calculate_duration_with_zero_start_velocity(
+                    movement_params,
+                    node_a,
+                    node_b)
     else:
         weight = Su.movement.intra_surface_calculator.calculate_distance(
                 movement_params,

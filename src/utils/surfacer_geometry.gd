@@ -120,10 +120,15 @@ static func project_shape_onto_surface(
             side_override == SurfaceSide.NONE else \
             side_override
     
+    var is_horizontal_surface := \
+            surface_side == SurfaceSide.FLOOR or \
+            surface_side == SurfaceSide.CEILING
+    
     if !is_instance_valid(surface):
         return Vector2.INF
     
-    if shape_position == Vector2.INF:
+    if is_horizontal_surface and is_inf(shape_position.x) or \
+            !is_horizontal_surface and is_inf(shape_position.y):
         return Vector2.INF
     
     if !is_instance_valid(shape):
@@ -131,10 +136,6 @@ static func project_shape_onto_surface(
                 shape_position,
                 surface,
                 surface_side)
-    
-    var is_horizontal_surface := \
-            surface_side == SurfaceSide.FLOOR or \
-            surface_side == SurfaceSide.CEILING
     
     # Allow callers to provide an infinite coordinate for the axis that we're
     # projecting along.

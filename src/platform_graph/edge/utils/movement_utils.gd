@@ -496,12 +496,11 @@ static func calculate_distance_to_stop_from_friction(
             surface_properties)
     # From a basic equation of motion:
     #     v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
+    #     v_1 = 0
     #     s_0 = 0
     # Algebra...:
     #     s_1 = (v_1^2 - v_0^2) / 2 / a
-    return (Su.movement.min_horizontal_speed * \
-            Su.movement.min_horizontal_speed - \
-            velocity_x_start * velocity_x_start) / 2.0 / friction_deceleration
+    return -velocity_x_start * velocity_x_start / 2.0 / friction_deceleration
 
 
 static func calculate_distance_to_stop_from_friction_with_forward_acceleration_to_non_max_speed(

@@ -310,6 +310,11 @@ func _update(edge: IntraSurfaceEdge) -> void:
                     release_velocity,
                     is_pressing_forward)
     
+    # FIXME: ------------------------------
+    if release_position == Vector2.INF:
+        print("break")
+        assert(false)
+    
     var instructions := _calculate_instructions(
             start,
             end,
@@ -351,6 +356,50 @@ func calculate_distance(
     return abs(displacement.x) if \
             is_horizontal else \
             abs(displacement.y)
+
+
+func calculate_duration_with_zero_start_velocity(
+        movement_params: MovementParameters,
+        start: PositionAlongSurface,
+        end: PositionAlongSurface) -> float:
+    var is_degenerate: bool = _calculate_is_degenerate(start, end)
+    if is_degenerate:
+        return 0.00001
+    
+    var displacement := end.target_point - start.target_point
+    
+    match start.side:
+        SurfaceSide.FLOOR:
+            var acceleration_magnitude := MovementUtils \
+                    .get_walking_acceleration_with_friction_magnitude(
+                        movement_params,
+                        start.surface.properties)
+            var max_speed := \
+                    movement_params.get_max_surface_speed() * \
+                    start.surface.properties.speed_multiplier
+            var duration := MovementUtils.calculate_duration_for_displacement(
+                    abs(displacement.x),
+                    0.0,
+                    acceleration_magnitude,
+                    max_speed)
+            assert(!is_inf(duration))
+            return duration
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            var is_climbing_upward := displacement.y < 0
+            return MovementUtils.calculate_time_to_climb(
+                    abs(displacement.y),
+                    is_climbing_upward,
+                    start.surface,
+                    movement_params)
+        SurfaceSide.CEILING:
+            return MovementUtils.calculate_time_to_crawl_on_ceiling(
+                    abs(displacement.x),
+                    start.surface,
+                    movement_params)
+        _:
+            Sc.logger.error()
+            return INF
 
 
 func calculate_duration(
