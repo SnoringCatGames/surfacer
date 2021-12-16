@@ -384,8 +384,8 @@ static func update_velocity_in_air(
     
     # Make gravity stronger when falling. This creates a more satisfying jump.
     # Similarly, make gravity stronger for double jumps.
-    var gravity_multiplier := \
-            1.0 if \
+    var gravity := \
+            movement_params.gravity_fast_fall if \
             !is_rising_from_jump else \
             (movement_params.gravity_slow_rise if \
             is_first_jump else \
@@ -394,8 +394,7 @@ static func update_velocity_in_air(
     # Vertical movement.
     velocity.y += \
             delta * \
-            movement_params.gravity_fast_fall * \
-            gravity_multiplier
+            gravity
     
     # Horizontal movement.
     velocity.x += \
