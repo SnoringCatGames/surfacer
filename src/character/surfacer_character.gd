@@ -601,15 +601,7 @@ func _process_animation() -> void:
                 surface_state.grab_position,
                 surface_state.grab_normal)
     
-    var just_moved_to_adjacent_surface := \
-            surface_state.just_changed_surface and \
-            is_instance_valid(surface_state.grabbed_surface) and \
-            is_instance_valid(surface_state.previous_grabbed_surface) and \
-            (surface_state.grabbed_surface.clockwise_neighbor == \
-                surface_state.previous_grabbed_surface or \
-            surface_state.grabbed_surface.counter_clockwise_neighbor == \
-                surface_state.previous_grabbed_surface)
-    if just_moved_to_adjacent_surface:
+    if surface_state.get_just_changed_to_neighbor_surface():
         # TODO: Improve on this.
         # -   Right now, this skip is prevents an issue with the next animation
         #     starting its blend with the previous animation at a what is now a
@@ -652,7 +644,13 @@ func _process_animation() -> void:
 
 
 func _process_sounds() -> void:
-    pass
+    if just_triggered_jump:
+        Sc.audio.play_sound("jump")
+    
+    if surface_state.just_left_air:
+        Sc.audio.play_sound("land")
+    elif surface_state.just_touched_surface:
+        Sc.audio.play_sound("land")
 
 
 func processed_action(name: String) -> bool:
