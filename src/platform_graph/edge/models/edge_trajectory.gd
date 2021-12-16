@@ -36,6 +36,10 @@ var distance_from_continuous_trajectory: float
 
 var collided_early: bool
 
+var position_duplication_start_index: int
+
+var skipped_duplicated_positions: bool setget ,_get_skipped_duplicated_positions
+
 
 func _init(frame_continuous_positions_from_steps := PoolVector2Array(),
             frame_continuous_velocities_from_steps := PoolVector2Array(),
@@ -49,6 +53,11 @@ func _init(frame_continuous_positions_from_steps := PoolVector2Array(),
     self.distance_from_continuous_trajectory = \
             distance_from_continuous_trajectory
     self.collided_early = false
+    self.position_duplication_start_index = -1
+
+
+func _get_skipped_duplicated_positions() -> bool:
+    return position_duplication_start_index >= 0
 
 
 func load_from_json_object(
@@ -73,6 +82,8 @@ func load_from_json_object(
         jump_instruction_end.load_from_json_object(json_object.j, context)
     if json_object.has("c"):
         collided_early = json_object.c
+    if json_object.has("s"):
+        skipped_duplicated_positions = json_object.c
     distance_from_continuous_trajectory = json_object.f
 
 
@@ -92,6 +103,7 @@ func to_json_object() -> Dictionary:
     var json_object := {
         f = distance_from_continuous_trajectory,
         c = collided_early,
+        s = skipped_duplicated_positions,
     }
     if !frame_discrete_positions_from_test.empty():
         json_object.d = Sc.json.encode_vector2_array(
