@@ -100,7 +100,8 @@ func _attempt_navigation(just_turned_around: bool) -> int:
                         latest_move_start_position_along_surface,
                         intra_surface_destination,
                         Vector2.ZERO,
-                        character.movement_params)
+                        character.movement_params,
+                        false)
         edges.push_back(intra_surface_edge)
     
     if can_grab_next_surface and \

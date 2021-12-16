@@ -14,6 +14,7 @@ const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
 
 var is_moving_clockwise := false
 var is_pressing_forward := false
+var includes_deceleration_at_end := false
 var stopping_distance := INF
 var release_time := INF
 var release_position := Vector2.INF
@@ -32,6 +33,7 @@ func _init(
         duration := INF,
         is_moving_clockwise := false,
         is_pressing_forward := false,
+        includes_deceleration_at_end := false,
         stopping_distance := INF,
         release_time := INF,
         release_position := Vector2.INF,
@@ -66,6 +68,7 @@ func _init(
     self.is_optimized_for_path = true
     self.is_moving_clockwise = is_moving_clockwise
     self.is_pressing_forward = is_pressing_forward
+    self.includes_deceleration_at_end = includes_deceleration_at_end
     self.stopping_distance = stopping_distance
     self.release_time = release_time
     self.release_position = release_position

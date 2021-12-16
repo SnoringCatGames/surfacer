@@ -428,19 +428,19 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                 0.0
         var intra_surface_edge: IntraSurfaceEdge = Su.movement \
                 .intra_surface_calculator.create_correction_interstitial(
-                        original_edge.start_position_along_surface,
-                        Vector2(previous_velocity_end_x, 0.0),
-                        character.movement_params)
+                    original_edge.start_position_along_surface,
+                    Vector2(previous_velocity_end_x, 0.0),
+                    character.movement_params)
         new_edges.push_back(intra_surface_edge)
         
         while remaining_distance > close_enough_to_end_distance:
             var jump_origin := PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
-                            current_start_point,
-                            surface,
-                            character.collider,
-                            true,
-                            false)
+                        current_start_point,
+                        surface,
+                        character.collider,
+                        true,
+                        false)
             
             var possible_displacements := \
                     [main_jump_displacement, fallback_jump_displacement] if \
@@ -457,11 +457,11 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                 current_end_point = current_start_point + jump_displacement
                 jump_destination = PositionAlongSurfaceFactory \
                         .create_position_offset_from_target_point(
-                                current_end_point,
-                                surface,
-                                character.collider,
-                                true,
-                                false)
+                            current_end_point,
+                            surface,
+                            character.collider,
+                            true,
+                            false)
                 jump_edge = calculator.calculate_edge(
                         null,
                         graph.collision_params,
@@ -478,9 +478,9 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                 previous_velocity_end_x = jump_edge.velocity_end.x
                 intra_surface_edge = Su.movement.intra_surface_calculator \
                         .create_correction_interstitial(
-                                jump_edge.end_position_along_surface,
-                                Vector2(previous_velocity_end_x, 0.0),
-                                character.movement_params)
+                            jump_edge.end_position_along_surface,
+                            Vector2(previous_velocity_end_x, 0.0),
+                            character.movement_params)
                 new_edges.push_back(intra_surface_edge)
             else:
                 # We weren't able to calculate a jump edge for this span, so
@@ -488,10 +488,11 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                 previous_velocity_end_x = intra_surface_edge.velocity_end.x
                 intra_surface_edge = \
                         Su.movement.intra_surface_calculator.create(
-                                jump_origin,
-                                jump_destination,
-                                Vector2(previous_velocity_end_x, 0.0),
-                                character.movement_params)
+                            jump_origin,
+                            jump_destination,
+                            Vector2(previous_velocity_end_x, 0.0),
+                            character.movement_params,
+                            false)
                 new_edges.push_back(intra_surface_edge)
             
             remaining_distance = abs(end_point.x - current_end_point.x)
@@ -506,7 +507,8 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                     intra_surface_edge.start_position_along_surface,
                     original_edge.end_position_along_surface,
                     intra_surface_edge.velocity_start,
-                    character.movement_params)
+                    character.movement_params,
+                    false)
             new_edges[new_edges.size() - 1] = intra_surface_edge
         
         # Merge any adjacent intra-surface edges.
@@ -520,7 +522,8 @@ func bouncify_path(path: PlatformGraphPath) -> void:
                         previous.start_position_along_surface,
                         next.end_position_along_surface,
                         previous.velocity_start,
-                        character.movement_params)
+                        character.movement_params,
+                        false)
                 new_edges.remove(j + 1)
                 j -= 1
             j += 1
@@ -980,7 +983,7 @@ func _handle_interruption(
     emit_signal("navigation_interrupted", interruption_resolution_mode)
 
 
-func _handle_reached_end_of_edge(starts_next_edge: bool) -> void:
+func _handle_reached_end_of_edge(starts_current_edge: bool) -> void:
     _log("Edge end",
             edge.get_name(),
             false)
@@ -992,12 +995,12 @@ func _handle_reached_end_of_edge(starts_next_edge: bool) -> void:
             Sc.time.get_scaled_play_time())
     playback = null
     
-    if !starts_next_edge:
+    if !starts_current_edge:
         return
     
     # Check for the next edge to navigate.
-    var next_edge_index := edge_index + 1
-    var was_last_edge := path.edges.size() == next_edge_index
+    var current_edge_index := edge_index + 1
+    var was_last_edge := path.edges.size() == current_edge_index
     if was_last_edge:
         var backtracking_edge := \
                 _possibly_backtrack_to_not_protrude_past_surface_end(
@@ -1015,9 +1018,9 @@ func _handle_reached_end_of_edge(starts_next_edge: bool) -> void:
             
             path.edges.push_back(backtracking_edge)
             
-            _start_edge(next_edge_index)
+            _start_edge(current_edge_index)
     else:
-        _start_edge(next_edge_index)
+        _start_edge(current_edge_index)
 
 
 func predict_animation_state(
@@ -1208,7 +1211,8 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                     start_position,
                     end_position,
                     velocity,
-                    movement_params)
+                    movement_params,
+                    true)
     backtracking_edge.is_backtracking_to_not_protrude_past_surface_end = true
     return backtracking_edge
 
@@ -1431,32 +1435,42 @@ func _optimize_edges_for_approach(
         var edge: IntraSurfaceEdge = path.edges[0]
         edge.calculator.update_for_start_velocity(edge, velocity_start)
     
-    # Update intra-surface-edge start-velocities to match previous-edge
-    # end-velocities.
+    # Update intra-surface-edge start-velocities and
+    # includes-deceleration flags.
     for i in path.edges.size() - 1:
         var previous_edge: Edge = path.edges[i]
-        var next_edge: Edge = path.edges[i + 1]
-        var next_edge_start_side := next_edge.get_start_surface().side
-        var next_edge_start_is_horizontal := \
-                next_edge_start_side == SurfaceSide.FLOOR or \
-                next_edge_start_side == SurfaceSide.CEILING
-        if next_edge is IntraSurfaceEdge:
+        var current_edge: Edge = path.edges[i + 1]
+        var next_edge: Edge = \
+                path.edges[i + 2] if \
+                path.edges.size() > i + 2 else \
+                null
+        var current_edge_start_side := current_edge.get_start_surface().side
+        var current_edge_start_is_horizontal := \
+                current_edge_start_side == SurfaceSide.FLOOR or \
+                current_edge_start_side == SurfaceSide.CEILING
+        if current_edge is IntraSurfaceEdge:
+            current_edge.includes_deceleration_at_end = \
+                    !is_instance_valid(next_edge) or \
+                    next_edge is JumpFromSurfaceEdge and \
+                    next_edge.get_start_surface().side == \
+                        SurfaceSide.FLOOR and \
+                    next_edge.velocity_start.x == 0.0
             var current_velocity_start := Vector2.ZERO
-            if next_edge_start_is_horizontal:
+            if current_edge_start_is_horizontal:
                 current_velocity_start.x = previous_edge.velocity_end.x
             else:
                 current_velocity_start.y = previous_edge.velocity_end.y
-            next_edge.calculator.update_for_start_velocity(
-                    next_edge,
+            current_edge.calculator.update_for_start_velocity(
+                    current_edge,
                     current_velocity_start)
-        elif next_edge is ClimbToAdjacentSurfaceEdge and \
-                next_edge.get_is_collinear():
-            if next_edge_start_is_horizontal:
-                next_edge.velocity_start.x = previous_edge.velocity_end.x
-                next_edge.velocity_end.x = previous_edge.velocity_end.x
+        elif current_edge is ClimbToAdjacentSurfaceEdge and \
+                current_edge.get_is_collinear():
+            if current_edge_start_is_horizontal:
+                current_edge.velocity_start.x = previous_edge.velocity_end.x
+                current_edge.velocity_end.x = previous_edge.velocity_end.x
             else:
-                next_edge.velocity_start.y = previous_edge.velocity_end.y
-                next_edge.velocity_end.y = previous_edge.velocity_end.y
+                current_edge.velocity_start.y = previous_edge.velocity_end.y
+                current_edge.velocity_end.y = previous_edge.velocity_end.y
     
     path.update_distance_and_duration()
     

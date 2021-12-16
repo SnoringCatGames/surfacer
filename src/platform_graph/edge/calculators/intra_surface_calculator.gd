@@ -49,7 +49,8 @@ func calculate_edge(
             position_start,
             position_end,
             velocity_start,
-            collision_params.movement_params)
+            collision_params.movement_params,
+            false)
 
 
 func _calculate_is_degenerate(
@@ -68,6 +69,7 @@ func create(
         end: PositionAlongSurface,
         velocity_start: Vector2,
         movement_params: MovementParameters,
+        includes_deceleration_at_end: bool,
         allows_unexpected_collisions_with_concave_neighbors := false \
         ) -> IntraSurfaceEdge:
     assert(start.surface == end.surface)
@@ -112,7 +114,8 @@ func create_correction_interstitial(
             position,
             position,
             velocity,
-            movement_params)
+            movement_params,
+            false)
 
 
 func update_terminal(
@@ -197,10 +200,6 @@ func _update(edge: IntraSurfaceEdge) -> void:
             velocity_start,
             is_pressing_forward,
             movement_params)
-    # FIXME: LEFT OFF HERE: REMOVE: -----------------------------------
-    if start.surface.first_point == Vector2(96, -192) and \
-            velocity_start.x > 0.0:
-        pass
     var release_time := _calculate_release_time(
             movement_params,
             start,

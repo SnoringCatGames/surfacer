@@ -388,12 +388,18 @@ static func optimize_edge_jump_position_for_path_helper(
                 Vector2(previous_velocity_end_x, 0.0) if \
                 jump_side == SurfaceSide.FLOOR else \
                 Vector2.ZERO
+        var includes_deceleration_at_end := \
+                optimized_edge is JumpFromSurfaceEdge and \
+                optimized_edge.get_start_surface().side == \
+                    SurfaceSide.FLOOR and \
+                optimized_edge.velocity_start.x == 0.0
         
         previous_edge = Su.movement.intra_surface_calculator.create(
                 previous_edge.start_position_along_surface,
                 optimized_edge.start_position_along_surface,
                 previous_edge_velocity_start,
-                collision_params.movement_params)
+                collision_params.movement_params,
+                includes_deceleration_at_end)
         
         path.edges[edge_index - 1] = previous_edge
         path.edges[edge_index] = optimized_edge
@@ -590,12 +596,15 @@ static func optimize_edge_land_position_for_path_helper(
                 optimized_edge.velocity_end if \
                 land_side == SurfaceSide.FLOOR else \
                 Vector2.ZERO
+        var includes_deceleration_at_end := \
+                next_edge.includes_deceleration_at_end
         
         next_edge = Su.movement.intra_surface_calculator.create(
                 optimized_edge.end_position_along_surface,
                 next_edge.end_position_along_surface,
                 next_edge_velocity_start,
-                collision_params.movement_params)
+                collision_params.movement_params,
+                includes_deceleration_at_end)
         
         path.edges[edge_index] = optimized_edge
         path.edges[edge_index + 1] = next_edge
