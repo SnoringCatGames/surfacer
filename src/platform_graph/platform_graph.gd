@@ -104,13 +104,14 @@ func find_path(
         return null
     
     if origin_surface == destination_surface:
-        # If the we are simply trying to get to a different position on the
-        # same surface, then we don't need A*.
+        # If we are simply trying to get to a different position on the same
+        # surface, then we don't need A*.
         var edges := [Su.movement.intra_surface_calculator.create(
                 origin,
                 destination,
                 Vector2.ZERO,
-                movement_params)]
+                movement_params,
+                true)]
         return PlatformGraphPath.new(edges)
     
     var explored_surfaces := {}
@@ -242,7 +243,8 @@ func find_path(
                     previous_node,
                     current_node,
                     Vector2.ZERO,
-                    movement_params)
+                    movement_params,
+                    false)
         else:
             next_edge = _get_cheapest_edge_between_nodes(
                     previous_node,
