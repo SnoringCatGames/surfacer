@@ -230,7 +230,8 @@ func _update(edge: IntraSurfaceEdge) -> void:
             end,
             velocity_start,
             stopping_distance,
-            is_pressing_forward)
+            is_pressing_forward,
+            includes_deceleration_at_end)
     var duration := calculate_duration(
             movement_params,
             start,
@@ -239,7 +240,8 @@ func _update(edge: IntraSurfaceEdge) -> void:
             stopping_distance,
             release_time,
             release_velocity,
-            is_pressing_forward)
+            is_pressing_forward,
+            includes_deceleration_at_end)
     var trajectory := _calculate_trajectory(
             movement_params,
             start,
@@ -321,7 +323,8 @@ func _update(edge: IntraSurfaceEdge) -> void:
                     end,
                     velocity_start,
                     stopping_distance,
-                    is_pressing_forward)
+                    is_pressing_forward,
+                    includes_deceleration_at_end)
             duration = calculate_duration(
                     movement_params,
                     start,
@@ -330,7 +333,8 @@ func _update(edge: IntraSurfaceEdge) -> void:
                     stopping_distance,
                     release_time,
                     release_velocity,
-                    is_pressing_forward)
+                    is_pressing_forward,
+                    includes_deceleration_at_end)
     
     if trajectory.skipped_duplicated_positions:
         var previous_duration := duration
@@ -447,14 +451,16 @@ func calculate_duration(
         stopping_distance: float,
         release_time: float,
         release_velocity: Vector2,
-        is_pressing_forward: bool) -> float:
+        is_pressing_forward: bool,
+        includes_deceleration_at_end: bool) -> float:
     var is_degenerate: bool = _calculate_is_degenerate(start, end)
     if is_degenerate:
         return 0.00001
     
     var displacement := end.target_point - start.target_point
     
-    if start.side == SurfaceSide.FLOOR:
+    if start.side == SurfaceSide.FLOOR and \
+            includes_deceleration_at_end:
         if !is_pressing_forward and \
                 stopping_distance > abs(displacement.x) - 0.01:
             # We don't have enough time to decelerate to zero speed at the end.
@@ -502,7 +508,8 @@ func _calculate_velocity_end(
         end: PositionAlongSurface,
         velocity_start: Vector2,
         stopping_distance: float,
-        is_pressing_forward: bool) -> Vector2:
+        is_pressing_forward: bool,
+        includes_deceleration_at_end: bool) -> Vector2:
     var displacement := end.target_point - start.target_point
     
     match start.side:
@@ -511,11 +518,16 @@ func _calculate_velocity_end(
             if is_degenerate:
                 return velocity_start
             
-            if !is_pressing_forward and \
-                    stopping_distance > abs(displacement.x) - 0.01:
+            var has_enough_time_to_decelerate_to_zero := \
+                    !is_pressing_forward and \
+                    stopping_distance > abs(displacement.x) - 0.01
+            
+            if !includes_deceleration_at_end or \
+                    has_enough_time_to_decelerate_to_zero:
                 # We don't have enough time to decelerate to zero speed at the
                 # end.
-                assert(!is_pressing_forward)
+                assert(!includes_deceleration_at_end or \
+                        !is_pressing_forward)
                 var acceleration_magnitude := MovementUtils \
                         .get_walking_acceleration_with_friction_magnitude(
                             movement_params,
