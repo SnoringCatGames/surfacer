@@ -310,6 +310,19 @@ func _update(edge: IntraSurfaceEdge) -> void:
                     release_velocity,
                     is_pressing_forward)
     
+    if trajectory.skipped_duplicated_positions:
+        var previous_duration := duration
+        duration = \
+                trajectory.frame_continuous_positions_from_steps.size() * \
+                Time.PHYSICS_TIME_STEP
+        var lost_time := previous_duration - duration
+        # TODO: These could be inaccurate.
+        release_time -= lost_time
+        release_position = trajectory.frame_continuous_positions_from_steps[ \
+                trajectory.position_duplication_start_index]
+        release_velocity = trajectory.frame_continuous_velocities_from_steps[ \
+                trajectory.position_duplication_start_index]
+    
     var instructions := _calculate_instructions(
             start,
             end,
@@ -653,7 +666,10 @@ func _calculate_trajectory(
                         SurfaceSide.RIGHT_WALL
             _:
                 Sc.logger.error()
+    
     var ran_into_concave_next_neighbor := false
+    var position_duplication_start_index := -1
+    var position_duplication_count := 0
     
     var displacement := end.target_point - start.target_point
     var max_horizontal_speed := \
@@ -662,6 +678,8 @@ func _calculate_trajectory(
     
     var frame_count := int(max(ceil(duration / Time.PHYSICS_TIME_STEP), 1))
     var frame_index := 0
+    var previous_position := Vector2.INF
+    var previous_velocity := Vector2.INF
     var position := start.target_point
     var velocity := velocity_start
     var acceleration_with_pressing := Vector2.ZERO
@@ -712,41 +730,61 @@ func _calculate_trajectory(
     
     # These min/max limits are used to ensure the last frames don't pass the
     # expected values.
-    var velocity_x_min: float
-    var velocity_x_max: float
+    var velocity_x_min := -max_horizontal_speed
+    var velocity_x_max := max_horizontal_speed
     var position_x_min: float
     var position_x_max: float
     if displacement.x > 0:
-        velocity_x_min = 0.0
-        velocity_x_max = max_horizontal_speed
-        position_x_min = start.target_point.x
+        position_x_min = start.surface.first_point.x + 0.1
         position_x_max = end.target_point.x
     else:
-        velocity_x_min = -max_horizontal_speed
-        velocity_x_max = 0.0
         position_x_min = end.target_point.x
-        position_x_max = start.target_point.x
+        position_x_max = start.surface.last_point.x - 0.1
     
-    while frame_index < frame_count:
-        positions[frame_index] = position
-        velocities[frame_index] = velocity
+    while frame_index + position_duplication_count < frame_count:
+        # TODO: Replace this quick fix with something better.
+        if position != previous_position:
+            # -   With our current implementation, it's possible for multiple
+            #     adjacent frames to be snapped to the end of the surface.
+            # -   In that case, we skip any duplicated positions.
+            positions[frame_index] = position
+            velocities[frame_index] = velocity
+        else:
+            position_duplication_count += 1
+            frame_index -= 1
+            if position_duplication_start_index < 0:
+                position_duplication_start_index = frame_index
+            assert(Sc.geometry.are_floats_equal_with_epsilon(
+                        position.x,
+                        position_x_min) or \
+                    Sc.geometry.are_floats_equal_with_epsilon(
+                        position.x,
+                        position_x_max) or \
+                    Sc.geometry.are_floats_equal_with_epsilon(
+                        previous_velocity.x,
+                        0.0,
+                        0.01))
         
         frame_index += 1
-        var frame_time := frame_index * Time.PHYSICS_TIME_STEP
+        var frame_time := \
+                (frame_index + position_duplication_count) * \
+                Time.PHYSICS_TIME_STEP
         var acceleration := \
                 acceleration_with_pressing if \
                 frame_time < release_time else \
                 deceleration_with_friction
+        previous_position = position
         position += velocity * Time.PHYSICS_TIME_STEP
+        position.x = clamp(
+                position.x,
+                position_x_min,
+                position_x_max)
         position = Sc.geometry.project_shape_onto_surface(
                 position,
                 movement_params.collider,
                 start.surface,
                 true)
-        position.x = clamp(
-                position.x,
-                position_x_min,
-                position_x_max)
+        previous_velocity = velocity
         velocity += acceleration * Time.PHYSICS_TIME_STEP
         velocity.x = clamp(
                 velocity.x,
@@ -765,7 +803,7 @@ func _calculate_trajectory(
             if override != Vector2.INF:
                 ran_into_concave_next_neighbor = true
                 position = override
-                if frame_index < frame_count:
+                if frame_index + position_duplication_count < frame_count:
                     positions[frame_index] = position
                     velocities[frame_index] = velocity
                 break
@@ -790,6 +828,8 @@ func _calculate_trajectory(
             EdgeTrajectoryUtils.sum_distance_between_frames(positions)
     
     trajectory.collided_early = ran_into_concave_next_neighbor
+    trajectory.position_duplication_start_index = \
+            position_duplication_start_index
     
     return trajectory
 

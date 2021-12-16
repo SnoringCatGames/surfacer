@@ -1229,6 +1229,16 @@ func _optimize_edges_for_approach(
     
     var movement_params := collision_params.movement_params
     
+    if !path.edges.empty() and \
+            path.edges[0] is IntraSurfaceEdge:
+        # Sync the start velocity of the leading intra-surface-edge to the
+        # character's current velocity.
+        var edge: IntraSurfaceEdge = path.edges[0]
+        edge.calculator.update_for_surface_state(
+                edge,
+                surface_state,
+                edge == path.edges.back())
+    
     # -   At runtime, after finding a path through build-time-calculated edges,
     #     try to optimize the jump-off or land points of the edges to better
     #     account for the direction that the character will be approaching the
