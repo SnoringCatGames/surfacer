@@ -579,6 +579,7 @@ func _process_actions() -> void:
 #                    action_handler.name != CapVelocityAction.NAME and \
 #                    action_handler.name != FloorDefaultAction.NAME and \
 #                    action_handler.name != FloorFrictionAction.NAME and \
+#                    action_handler.name != FloorWalkAction.NAME and \
 #                    action_handler.name != AirDefaultAction.NAME:
 #                var name_str: String = Sc.utils.resize_string(
 #                        action_handler.name,

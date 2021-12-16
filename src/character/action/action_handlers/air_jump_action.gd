@@ -19,7 +19,10 @@ func _init().(
 func process(character) -> bool:
     if character.actions.just_pressed_jump and \
             character.jump_count < character.movement_params.max_jump_chain:
-        character.jump_count += 1
+        if character.surface_state.just_entered_air:
+            character.jump_count = 1
+        else:
+            character.jump_count += 1
         character.just_triggered_jump = true
         character.is_rising_from_jump = true
         character.velocity.y = character.movement_params.jump_boost
