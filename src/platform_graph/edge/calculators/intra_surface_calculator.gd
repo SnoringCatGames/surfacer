@@ -177,6 +177,7 @@ func _update(edge: IntraSurfaceEdge) -> void:
     var start := edge.start_position_along_surface
     var end := edge.end_position_along_surface
     var velocity_start := edge.velocity_start
+    var includes_deceleration_at_end := edge.includes_deceleration_at_end
     var movement_params := edge.movement_params
     
     var is_degenerate: bool = _calculate_is_degenerate(
@@ -190,16 +191,18 @@ func _update(edge: IntraSurfaceEdge) -> void:
             start,
             end)
     var is_pressing_forward := _calculate_is_pressing_forward(
+            movement_params,
             start,
             end,
             velocity_start,
-            movement_params)
+            includes_deceleration_at_end)
     var stopping_distance := _calculate_stopping_distance(
+            movement_params,
             start,
             end,
             velocity_start,
             is_pressing_forward,
-            movement_params)
+            includes_deceleration_at_end)
     var release_time := _calculate_release_time(
             movement_params,
             start,
@@ -279,16 +282,18 @@ func _update(edge: IntraSurfaceEdge) -> void:
                     start,
                     end)
             is_pressing_forward = _calculate_is_pressing_forward(
+                    movement_params,
                     start,
                     end,
                     velocity_start,
-                    movement_params)
+                    includes_deceleration_at_end)
             stopping_distance = _calculate_stopping_distance(
+                    movement_params,
                     start,
                     end,
                     velocity_start,
                     is_pressing_forward,
-                    movement_params)
+                    includes_deceleration_at_end)
             release_time = _calculate_release_time(
                     movement_params,
                     start,
@@ -852,11 +857,13 @@ func _calculate_trajectory(
 
 
 func _calculate_is_pressing_forward(
+        movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
-        movement_params: MovementParameters) -> bool:
-    if start.surface.side != SurfaceSide.FLOOR:
+        includes_deceleration_at_end: bool) -> bool:
+    if start.surface.side != SurfaceSide.FLOOR or \
+            !includes_deceleration_at_end:
         return true
     
     var displacement := end.target_point - start.target_point
@@ -878,15 +885,17 @@ func _calculate_is_pressing_forward(
 # after decelerating due to friction (and with accelerating, or coasting at
 # max-speed, until starting deceleration).
 func _calculate_stopping_distance(
+        movement_params: MovementParameters,
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
         is_pressing_forward: bool,
-        movement_params: MovementParameters) -> float:
+        includes_deceleration_at_end: bool) -> float:
     var displacement := end.target_point - start.target_point
     
     # TODO: Add support for acceleration and friction along walls and ceilings.
-    if end.surface.side != SurfaceSide.FLOOR:
+    if end.surface.side != SurfaceSide.FLOOR or \
+            !includes_deceleration_at_end:
         return 0.0
     
     if is_pressing_forward:
@@ -983,12 +992,11 @@ func _calculate_release_position(
     var max_horizontal_speed := \
             movement_params.get_max_surface_speed() * \
             start.surface.properties.speed_multiplier
-    var displacement_x := \
-            MovementUtils.calculate_displacement_for_duration(
-                release_time,
-                velocity_start.x,
-                acceleration_x,
-                max_horizontal_speed)
+    var displacement_x := MovementUtils.calculate_displacement_for_duration(
+            release_time,
+            velocity_start.x,
+            acceleration_x,
+            max_horizontal_speed)
     var position_x := start.target_point.x + displacement_x
     return Sc.geometry.project_shape_onto_surface(
             Vector2(position_x, 0.0),
