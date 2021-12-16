@@ -156,6 +156,20 @@ func update_for_surface_state(
     _update(edge)
 
 
+func update_for_start_velocity(
+        edge: IntraSurfaceEdge,
+        start_velocity: Vector2) -> void:
+    edge.velocity_start = start_velocity
+    var max_horizontal_speed := \
+            edge.movement_params.get_max_surface_speed() * \
+            edge.get_start_surface().properties.speed_multiplier
+    edge.velocity_start.x = clamp(
+            edge.velocity_start.x,
+            -max_horizontal_speed,
+            max_horizontal_speed)
+    _update(edge)
+
+
 func _update(edge: IntraSurfaceEdge) -> void:
     var start := edge.start_position_along_surface
     var end := edge.end_position_along_surface
@@ -183,6 +197,10 @@ func _update(edge: IntraSurfaceEdge) -> void:
             velocity_start,
             is_pressing_forward,
             movement_params)
+    # FIXME: LEFT OFF HERE: REMOVE: -----------------------------------
+    if start.surface.first_point == Vector2(96, -192) and \
+            velocity_start.x > 0.0:
+        pass
     var release_time := _calculate_release_time(
             movement_params,
             start,
