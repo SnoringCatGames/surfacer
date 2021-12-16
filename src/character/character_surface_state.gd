@@ -278,11 +278,6 @@ func update_for_initial_surface_attachment(
             is_grabbing_ceiling = true
         _:
             Sc.logger.error()
-    is_grabbing_surface = \
-            is_grabbing_floor or \
-            is_grabbing_ceiling or \
-            is_grabbing_left_wall or \
-            is_grabbing_right_wall
     
     _update_action_state()
     
@@ -383,12 +378,6 @@ func _update_touch_state() -> void:
             _:
                 Sc.logger.error()
     
-    var next_is_touching_surface := \
-            next_is_touching_floor or \
-            next_is_touching_ceiling or \
-            next_is_touching_left_wall or \
-            next_is_touching_right_wall
-    
     var next_just_touched_floor := \
             next_is_touching_floor and !is_touching_floor
     var next_just_stopped_touching_floor := \
@@ -409,22 +398,10 @@ func _update_touch_state() -> void:
     var next_just_stopped_touching_right_wall := \
             !next_is_touching_right_wall and is_touching_right_wall
     
-    var next_just_touched_surface := \
-            next_just_touched_floor or \
-            next_just_touched_ceiling or \
-            next_just_touched_left_wall or \
-            next_just_touched_right_wall
-    var next_just_stopped_touching_surface := \
-            next_just_stopped_touching_floor or \
-            next_just_stopped_touching_ceiling or \
-            next_just_stopped_touching_left_wall or \
-            next_just_stopped_touching_right_wall
-    
     is_touching_floor = next_is_touching_floor
     is_touching_ceiling = next_is_touching_ceiling
     is_touching_left_wall = next_is_touching_left_wall
     is_touching_right_wall = next_is_touching_right_wall
-    is_touching_surface = next_is_touching_surface
     
     just_touched_floor = \
             next_just_touched_floor or \
@@ -453,17 +430,6 @@ func _update_touch_state() -> void:
     just_stopped_touching_right_wall = \
             next_just_stopped_touching_right_wall or \
             just_stopped_touching_right_wall and !next_just_touched_right_wall
-    
-    just_touched_surface = \
-            just_touched_floor or \
-            just_touched_ceiling or \
-            just_touched_left_wall or \
-            just_touched_right_wall
-    just_stopped_touching_surface = \
-            just_stopped_touching_floor or \
-            just_stopped_touching_ceiling or \
-            just_stopped_touching_left_wall or \
-            just_stopped_touching_right_wall
     
     # Calculate the sign of a colliding wall's direction.
     toward_wall_sign = \
