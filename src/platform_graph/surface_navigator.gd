@@ -1229,16 +1229,6 @@ func _optimize_edges_for_approach(
     
     var movement_params := collision_params.movement_params
     
-    if !path.edges.empty() and \
-            path.edges[0] is IntraSurfaceEdge:
-        # Sync the start velocity of the leading intra-surface-edge to the
-        # character's current velocity.
-        var edge: IntraSurfaceEdge = path.edges[0]
-        edge.calculator.update_for_surface_state(
-                edge,
-                surface_state,
-                edge == path.edges.back())
-    
     # -   At runtime, after finding a path through build-time-calculated edges,
     #     try to optimize the jump-off or land points of the edges to better
     #     account for the direction that the character will be approaching the
@@ -1434,20 +1424,39 @@ func _optimize_edges_for_approach(
                         false,
                         target_point)
     
+    if !path.edges.empty() and \
+            path.edges[0] is IntraSurfaceEdge:
+        # Sync the start velocity of the leading intra-surface-edge to the
+        # character's current velocity.
+        var edge: IntraSurfaceEdge = path.edges[0]
+        edge.calculator.update_for_start_velocity(edge, velocity_start)
+    
     # Update intra-surface-edge start-velocities to match previous-edge
     # end-velocities.
     for i in path.edges.size() - 1:
         var previous_edge: Edge = path.edges[i]
         var next_edge: Edge = path.edges[i + 1]
+        var next_edge_start_side := next_edge.get_start_surface().side
+        var next_edge_start_is_horizontal := \
+                next_edge_start_side == SurfaceSide.FLOOR or \
+                next_edge_start_side == SurfaceSide.CEILING
         if next_edge is IntraSurfaceEdge:
-            var side := next_edge.get_start_surface().side
-            var is_horizontal := \
-                    side == SurfaceSide.FLOOR or \
-                    side == SurfaceSide.CEILING
-            if is_horizontal:
+            var current_velocity_start := Vector2.ZERO
+            if next_edge_start_is_horizontal:
+                current_velocity_start.x = previous_edge.velocity_end.x
+            else:
+                current_velocity_start.y = previous_edge.velocity_end.y
+            next_edge.calculator.update_for_start_velocity(
+                    next_edge,
+                    current_velocity_start)
+        elif next_edge is ClimbToAdjacentSurfaceEdge and \
+                next_edge.get_is_collinear():
+            if next_edge_start_is_horizontal:
                 next_edge.velocity_start.x = previous_edge.velocity_end.x
+                next_edge.velocity_end.x = previous_edge.velocity_end.x
             else:
                 next_edge.velocity_start.y = previous_edge.velocity_end.y
+                next_edge.velocity_end.y = previous_edge.velocity_end.y
     
     path.update_distance_and_duration()
     
