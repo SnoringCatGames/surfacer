@@ -387,9 +387,9 @@ static func update_velocity_in_air(
     var gravity_multiplier := \
             1.0 if \
             !is_rising_from_jump else \
-            (movement_params.slow_rise_gravity_multiplier if \
+            (movement_params.gravity_slow_rise if \
             is_first_jump else \
-            movement_params.rise_double_jump_gravity_multiplier)
+            movement_params.rise_double_jump_gravity)
     
     # Vertical movement.
     velocity.y += \

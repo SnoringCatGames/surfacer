@@ -607,7 +607,8 @@ static func calculate_vertical_state_for_time(
             velocity_step_start_y * slow_rise_end_time + \
             0.5 * movement_params.gravity_slow_rise * slow_rise_end_time * \
                     slow_rise_end_time
-    var slow_rise_end_velocity := velocity_step_start_y + \
+    var slow_rise_end_velocity := \
+            velocity_step_start_y + \
             movement_params.gravity_slow_rise * slow_rise_end_time
     
     var position: float

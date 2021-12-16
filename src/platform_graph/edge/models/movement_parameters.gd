@@ -436,6 +436,7 @@ var gravity_fast_fall: float
 var slow_rise_gravity_multiplier: float
 var gravity_slow_rise: float
 var rise_double_jump_gravity_multiplier: float
+var rise_double_jump_gravity: float
 
 var walk_acceleration: float
 var in_air_horizontal_acceleration: float
@@ -880,6 +881,8 @@ func _derive_parameters() -> void:
             edge_calculator_names)
     
     gravity_slow_rise = gravity_fast_fall * slow_rise_gravity_multiplier
+    rise_double_jump_gravity = \
+            gravity_fast_fall * rise_double_jump_gravity_multiplier
     
     if is_instance_valid(collider_shape):
         collider.update(collider_shape, collider_rotation)
