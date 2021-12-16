@@ -989,7 +989,8 @@ func _update_reachable_surfaces(basis_surface: Surface) -> void:
 
 
 func _get_is_dashing() -> bool:
-    return _dash_fade_tween.is_active()
+    return is_instance_valid(_dash_fade_tween) and \
+            _dash_fade_tween.is_active()
 
 
 func _get_current_surface_max_horizontal_speed() -> float:
