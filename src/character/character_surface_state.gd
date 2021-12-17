@@ -1792,13 +1792,30 @@ func get_just_changed_to_neighbor_surface() -> bool:
                 previous_grabbed_surface)
 
 
-func get_just_changed_to_collinear_neighbor_surface() -> bool:
-    return just_changed_surface and \
-            is_instance_valid(grabbed_surface) and \
+func get_is_previous_surface_collinear_neighbor() -> bool:
+    return is_instance_valid(grabbed_surface) and \
             is_instance_valid(previous_grabbed_surface) and \
             (grabbed_surface.clockwise_collinear_neighbor == \
                 previous_grabbed_surface or \
             grabbed_surface.counter_clockwise_collinear_neighbor == \
+                previous_grabbed_surface)
+
+
+func get_is_previous_surface_convex_neighbor() -> bool:
+    return is_instance_valid(grabbed_surface) and \
+            is_instance_valid(previous_grabbed_surface) and \
+            (grabbed_surface.clockwise_convex_neighbor == \
+                previous_grabbed_surface or \
+            grabbed_surface.counter_clockwise_convex_neighbor == \
+                previous_grabbed_surface)
+
+
+func get_is_previous_surface_concave_neighbor() -> bool:
+    return is_instance_valid(grabbed_surface) and \
+            is_instance_valid(previous_grabbed_surface) and \
+            (grabbed_surface.clockwise_concave_neighbor == \
+                previous_grabbed_surface or \
+            grabbed_surface.counter_clockwise_concave_neighbor == \
                 previous_grabbed_surface)
 
 
@@ -1918,6 +1935,43 @@ func sync_state_for_surface_grab(
         surface: Surface,
         center_position: Vector2,
         did_just_grab: bool) -> void:
+    var next_just_touched_floor := false
+    var next_just_grabbed_floor := false
+    var next_just_touched_left_wall := false
+    var next_just_grabbed_left_wall := false
+    var next_just_touched_right_wall := false
+    var next_just_grabbed_right_wall := false
+    var next_just_touched_ceiling := false
+    var next_just_grabbed_ceiling := false
+    if did_just_grab:
+        match surface.side:
+            SurfaceSide.FLOOR:
+                next_just_touched_floor = !is_touching_floor
+                next_just_grabbed_floor = !is_grabbing_floor
+            SurfaceSide.LEFT_WALL:
+                next_just_touched_left_wall = !is_touching_left_wall
+                next_just_grabbed_left_wall = !is_grabbing_left_wall
+            SurfaceSide.RIGHT_WALL:
+                next_just_touched_right_wall = !is_touching_right_wall
+                next_just_grabbed_right_wall = !is_grabbing_right_wall
+            SurfaceSide.CEILING:
+                next_just_touched_ceiling = !is_touching_ceiling
+                next_just_grabbed_ceiling = !is_grabbing_ceiling
+            _:
+                Sc.logger.error()
+    
+    clear_current_state()
+    
+    just_touched_floor = next_just_touched_floor
+    just_grabbed_floor = next_just_grabbed_floor
+    just_touched_left_wall = next_just_touched_left_wall
+    just_grabbed_left_wall = next_just_grabbed_left_wall
+    just_touched_right_wall = next_just_touched_right_wall
+    just_grabbed_right_wall = next_just_grabbed_right_wall
+    just_touched_ceiling = next_just_touched_ceiling
+    just_grabbed_ceiling = next_just_grabbed_ceiling
+    
+    self.center_position = center_position
     grabbed_surface = surface
     contact_count = 1
     
@@ -1985,23 +2039,6 @@ func sync_state_for_surface_grab(
             ceiling_contact = surface_grab
         _:
             Sc.logger.error()
-    
-    if did_just_grab:
-        match surface.side:
-            SurfaceSide.FLOOR:
-                just_touched_floor = true
-                just_grabbed_floor = true
-            SurfaceSide.LEFT_WALL:
-                just_touched_left_wall = true
-                just_grabbed_left_wall = true
-            SurfaceSide.RIGHT_WALL:
-                just_touched_right_wall = true
-                just_grabbed_right_wall = true
-            SurfaceSide.CEILING:
-                just_touched_ceiling = true
-                just_grabbed_ceiling = true
-            _:
-                Sc.logger.error()
 
 
 func sync_state_for_surface_release(

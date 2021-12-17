@@ -276,13 +276,11 @@ func _sync_expected_middle_surface_state(
     var velocity := get_velocity_at_time(edge_time)
     var surface := get_start_surface()
     
-    surface_state.clear_current_state()
-    surface_state.center_position = position
-    surface_state.velocity = velocity
     surface_state.sync_state_for_surface_grab(
             surface,
             position,
             false)
+    surface_state.velocity = velocity
 
 
 func _check_did_just_reach_surface_destination(

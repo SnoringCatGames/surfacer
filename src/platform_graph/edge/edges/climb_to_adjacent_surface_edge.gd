@@ -121,9 +121,6 @@ func _sync_expected_middle_surface_state(
     var position := get_position_at_time(edge_time)
     var velocity := get_velocity_at_time(edge_time)
     
-    surface_state.clear_current_state()
-    surface_state.center_position = position
-    surface_state.velocity = velocity
     if did_just_switch:
         surface_state.sync_state_for_surface_release(
                 get_start_surface(),
@@ -132,6 +129,7 @@ func _sync_expected_middle_surface_state(
             surface,
             position,
             did_just_switch)
+    surface_state.velocity = velocity
 
 
 func _get_is_surface_expected_for_touch_contact(

@@ -84,10 +84,6 @@ func _sync_expected_middle_surface_state(
     var position := get_position_at_time(edge_time)
     var velocity := get_velocity_at_time(edge_time)
     
-    surface_state.clear_current_state()
-    surface_state.center_position = position
-    surface_state.velocity = velocity
-    
     if is_on_start_floor:
         surface_state.sync_state_for_surface_grab(
                 get_start_surface(),
@@ -97,6 +93,11 @@ func _sync_expected_middle_surface_state(
         surface_state.sync_state_for_surface_release(
                 get_start_surface(),
                 position)
+    else:
+        surface_state.clear_current_state()
+    
+    surface_state.center_position = position
+    surface_state.velocity = velocity
 
 
 func _update_expected_position_along_surface(

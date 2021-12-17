@@ -382,12 +382,10 @@ func _sync_expected_start_surface_state(
     var velocity := velocity_start
     var surface := get_start_surface()
     
-    surface_state.clear_current_state()
-    surface_state.center_position = position
-    surface_state.velocity = velocity
-    
     if is_instance_valid(surface):
         surface_state.sync_state_for_surface_grab(surface, position, false)
+    surface_state.center_position = position
+    surface_state.velocity = velocity
 
 
 func _sync_expected_end_surface_state(
@@ -396,12 +394,10 @@ func _sync_expected_end_surface_state(
     var velocity := velocity_end
     var surface := get_end_surface()
     
-    surface_state.clear_current_state()
+    if is_instance_valid(surface):
+        surface_state.sync_state_for_surface_grab(surface, position, enters_air)
     surface_state.center_position = position
     surface_state.velocity = velocity
-    
-    if is_instance_valid(surface):
-        surface_state.sync_state_for_surface_grab(surface, position, true)
 
 
 func _sync_expected_middle_surface_state(
