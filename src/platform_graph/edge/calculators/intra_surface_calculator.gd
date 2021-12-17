@@ -82,6 +82,7 @@ func create(
     edge.end_position_along_surface = PositionAlongSurface.new(end)
     edge.velocity_start = velocity_start
     edge.movement_params = movement_params
+    edge.includes_deceleration_at_end = includes_deceleration_at_end
     
     _update(edge)
     
