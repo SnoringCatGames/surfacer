@@ -275,11 +275,17 @@ func _sync_expected_middle_surface_state(
     var position := get_position_at_time(edge_time)
     var velocity := get_velocity_at_time(edge_time)
     var surface := get_start_surface()
+    var displacement := get_end() - get_start()
+    var facing_left := \
+            true if surface.side == SurfaceSide.LEFT_WALL else \
+            false if surface.side == SurfaceSide.RIGHT_WALL else \
+            displacement.x < 0.0
     
     surface_state.sync_state_for_surface_grab(
             surface,
             position,
-            false)
+            false,
+            facing_left)
     surface_state.velocity = velocity
 
 

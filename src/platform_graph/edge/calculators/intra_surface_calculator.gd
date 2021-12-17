@@ -790,10 +790,12 @@ func _calculate_trajectory(
                 position_duplication_start_index = frame_index
             assert(Sc.geometry.are_floats_equal_with_epsilon(
                         position.x,
-                        position_x_min) or \
+                        position_x_min,
+                        0.01) or \
                     Sc.geometry.are_floats_equal_with_epsilon(
                         position.x,
-                        position_x_max) or \
+                        position_x_max,
+                        0.01) or \
                     Sc.geometry.are_floats_equal_with_epsilon(
                         previous_velocity.x,
                         0.0,

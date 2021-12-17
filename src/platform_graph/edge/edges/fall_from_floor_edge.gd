@@ -83,12 +83,14 @@ func _sync_expected_middle_surface_state(
     var did_just_release := edge_frame_index == fall_off_index
     var position := get_position_at_time(edge_time)
     var velocity := get_velocity_at_time(edge_time)
+    var facing_left := falls_on_left_side
     
     if is_on_start_floor:
         surface_state.sync_state_for_surface_grab(
                 get_start_surface(),
                 position,
-                false)
+                false,
+                facing_left)
     elif did_just_release:
         surface_state.sync_state_for_surface_release(
                 get_start_surface(),

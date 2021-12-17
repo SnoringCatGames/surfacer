@@ -1934,7 +1934,8 @@ func clear_current_state() -> void:
 func sync_state_for_surface_grab(
         surface: Surface,
         center_position: Vector2,
-        did_just_grab: bool) -> void:
+        did_just_grab: bool,
+        facing_left: bool) -> void:
     var next_just_touched_floor := false
     var next_just_grabbed_floor := false
     var next_just_touched_left_wall := false
@@ -1973,6 +1974,7 @@ func sync_state_for_surface_grab(
     
     self.center_position = center_position
     grabbed_surface = surface
+    horizontal_facing_sign = -1 if facing_left else 1
     contact_count = 1
     
     grab_position = Sc.geometry.get_closest_point_on_surface_to_shape(
@@ -2028,8 +2030,8 @@ func sync_state_for_surface_grab(
             is_facing_wall = true
             is_triggering_implicit_wall_grab = false
             surface_type = SurfaceType.WALL
-            horizontal_facing_sign = -1
-            toward_wall_sign = -1
+            horizontal_facing_sign = 1
+            toward_wall_sign = 1
             right_wall_contact = surface_grab
         SurfaceSide.CEILING:
             is_touching_ceiling = true
@@ -2044,6 +2046,7 @@ func sync_state_for_surface_grab(
 func sync_state_for_surface_release(
         surface: Surface,
         center_position: Vector2) -> void:
+    # FIXME: LEFT OFF HERE: -------------------------
     match surface.side:
         SurfaceSide.FLOOR:
             just_stopped_touching_floor = true

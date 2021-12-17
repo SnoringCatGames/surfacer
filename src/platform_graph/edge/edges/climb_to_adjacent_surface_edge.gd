@@ -120,6 +120,11 @@ func _sync_expected_middle_surface_state(
             get_end_surface()
     var position := get_position_at_time(edge_time)
     var velocity := get_velocity_at_time(edge_time)
+    var corner_point := get_corner_point()
+    var facing_left := \
+            true if surface.side == SurfaceSide.LEFT_WALL else \
+            false if surface.side == SurfaceSide.RIGHT_WALL else \
+            position.x < corner_point.x
     
     if did_just_switch:
         surface_state.sync_state_for_surface_release(
@@ -128,7 +133,8 @@ func _sync_expected_middle_surface_state(
     surface_state.sync_state_for_surface_grab(
             surface,
             position,
-            did_just_switch)
+            did_just_switch,
+            facing_left)
     surface_state.velocity = velocity
 
 
@@ -243,6 +249,15 @@ func _load_edge_state_from_json_object(
 func _edge_state_to_json_object(json_object: Dictionary) -> void:
     ._edge_state_to_json_object(json_object)
     json_object.ts = time_at_surface_switch
+
+
+func get_corner_point() -> Vector2:
+    var start_surface := start_position_along_surface.surface
+    var end_surface := end_position_along_surface.surface
+    return start_surface.first_point if \
+            start_surface.first_point == end_surface.first_point or \
+            start_surface.first_point == end_surface.last_point else \
+            start_surface.last_point
 
 
 func get_is_clockwise() -> bool:
