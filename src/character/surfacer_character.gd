@@ -601,7 +601,8 @@ func _process_animation() -> void:
                 surface_state.grab_position,
                 surface_state.grab_normal)
     
-    if surface_state.get_just_changed_to_neighbor_surface():
+    if surface_state.get_just_changed_to_neighbor_surface() and \
+            !surface_state.get_is_previous_surface_collinear_neighbor():
         # TODO: Improve on this.
         # -   Right now, this skip is prevents an issue with the next animation
         #     starting its blend with the previous animation at a what is now a

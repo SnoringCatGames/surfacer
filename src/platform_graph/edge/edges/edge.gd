@@ -366,7 +366,7 @@ func sync_expected_surface_state(
     var is_at_end_of_edge := \
             !is_instance_valid(trajectory) or \
             edge_frame_index >= \
-                    trajectory.frame_continuous_positions_from_steps.size() - 1
+                trajectory.frame_continuous_positions_from_steps.size() - 1
     
     if is_at_end_of_edge:
         _sync_expected_end_surface_state(surface_state)
@@ -381,9 +381,17 @@ func _sync_expected_start_surface_state(
     var position := start_position_along_surface.target_point
     var velocity := velocity_start
     var surface := get_start_surface()
+    var facing_left := \
+            trajectory.frame_continuous_velocities_from_steps[0].x < 0.0 if \
+            !trajectory.frame_continuous_velocities_from_steps.empty() else \
+            (get_end() - get_start()).x < 0.0
     
     if is_instance_valid(surface):
-        surface_state.sync_state_for_surface_grab(surface, position, false)
+        surface_state.sync_state_for_surface_grab(
+                surface,
+                position,
+                false,
+                facing_left)
     surface_state.center_position = position
     surface_state.velocity = velocity
 
@@ -393,9 +401,19 @@ func _sync_expected_end_surface_state(
     var position := end_position_along_surface.target_point
     var velocity := velocity_end
     var surface := get_end_surface()
+    var facing_left := \
+            trajectory.frame_continuous_velocities_from_steps[ \
+                trajectory.frame_continuous_velocities_from_steps \
+                    .size() - 1].x < 0.0 if \
+            !trajectory.frame_continuous_velocities_from_steps.empty() else \
+            (get_end() - get_start()).x < 0.0
     
     if is_instance_valid(surface):
-        surface_state.sync_state_for_surface_grab(surface, position, enters_air)
+        surface_state.sync_state_for_surface_grab(
+                surface,
+                position,
+                enters_air,
+                facing_left)
     surface_state.center_position = position
     surface_state.velocity = velocity
 
