@@ -785,24 +785,47 @@ func _sync_surface_state_for_start_of_edge(edge: Edge) -> void:
     #     next-neighbor surface.
     # -   In that case, we update the surface state to match what is
     #     expected for the start of the next edge.
-    var actual_str := \
-            surface_state.grabbed_surface.to_string(false) if \
-            is_instance_valid(surface_state.grabbed_surface) else \
-            "-"
-    var expected_str := \
-            edge.get_start_surface().to_string(false) if \
-            is_instance_valid(edge.get_start_surface()) else \
-            "-"
-    var details := (
-            "actual=%s; " +
-            "expected=%s; " +
-            "_start_edge: Grabbed surface was not expected"
-        ) % [
-            actual_str,
-            expected_str,
-        ]
-    _log("Sync edge st",
-            details)
+    var actual_surface := surface_state.grabbed_surface
+    var expected_surface := edge.get_start_surface()
+    var is_collinear_cusp := \
+            is_instance_valid(actual_surface) and \
+            is_instance_valid(expected_surface) and \
+            (actual_surface == expected_surface.clockwise_collinear_neighbor or \
+            actual_surface == \
+                expected_surface.counter_clockwise_collinear_neighbor) and \
+            (Sc.geometry.are_points_equal_with_epsilon(
+                surface_state.grab_position,
+                expected_surface.first_point,
+                1.0) or \
+            Sc.geometry.are_points_equal_with_epsilon(
+                surface_state.grab_position,
+                expected_surface.last_point,
+                1.0))
+    if !is_collinear_cusp or \
+            character.logs_verbose_navigator_events:
+        var actual_str := \
+                actual_surface.to_string(false) if \
+                is_instance_valid(actual_surface) else \
+                "-"
+        var expected_str := \
+                expected_surface.to_string(false) if \
+                is_instance_valid(expected_surface) else \
+                "-"
+        var details := (
+                "actual=%s; " +
+                "expected=%s; " +
+                "_start_edge: Grabbed surface was not expected"
+            ) % [
+                actual_str,
+                expected_str,
+            ]
+        var message: String
+        if is_collinear_cusp:
+            message = "Sync co e st"
+            details += " (but was collinear neighbor at cusp)"
+        else:
+            message = "Sync edge st"
+        _log(message, details, is_collinear_cusp)
     
     character._match_expected_navigation_surface_state(edge, 0.0)
 
