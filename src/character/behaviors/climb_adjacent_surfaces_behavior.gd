@@ -97,11 +97,12 @@ func _attempt_navigation(just_turned_around: bool) -> int:
     if !is_already_at_surface_end:
         var intra_surface_edge: IntraSurfaceEdge = \
                 Su.movement.intra_surface_calculator.create(
-                        latest_move_start_position_along_surface,
-                        intra_surface_destination,
-                        Vector2.ZERO,
-                        character.movement_params,
-                        false)
+                    latest_move_start_position_along_surface,
+                    intra_surface_destination,
+                    Vector2.ZERO,
+                    character.movement_params,
+                    false,
+                    false)
         edges.push_back(intra_surface_edge)
     
     if can_grab_next_surface and \

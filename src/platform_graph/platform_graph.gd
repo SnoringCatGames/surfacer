@@ -111,7 +111,8 @@ func find_path(
                 destination,
                 Vector2.ZERO,
                 movement_params,
-                true)]
+                true,
+                false)]
         return PlatformGraphPath.new(edges)
     
     var explored_surfaces := {}
@@ -244,6 +245,7 @@ func find_path(
                     current_node,
                     Vector2.ZERO,
                     movement_params,
+                    false,
                     false)
         else:
             next_edge = _get_cheapest_edge_between_nodes(
