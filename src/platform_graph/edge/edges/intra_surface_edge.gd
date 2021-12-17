@@ -13,13 +13,13 @@ const ENTERS_AIR := false
 const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
 
 var is_moving_clockwise := false
-var is_pressing_forward := false
+var is_pressing_left := false
 var includes_deceleration_at_end := false
 var stopping_distance := INF
 var release_time := INF
 var release_position := Vector2.INF
 var release_velocity := Vector2.INF
-var is_backtracking_to_not_protrude_past_surface_end := false
+var is_backtracking_edge_to_end_at_destination := false
 # If true, then this edge starts and ends at the same position.
 var is_degenerate: bool
 
@@ -32,7 +32,7 @@ func _init(
         distance := INF,
         duration := INF,
         is_moving_clockwise := false,
-        is_pressing_forward := false,
+        is_pressing_left := false,
         includes_deceleration_at_end := false,
         stopping_distance := INF,
         release_time := INF,
@@ -67,7 +67,7 @@ func _init(
     # they're only calculated at run time when navigating a specific path.
     self.is_optimized_for_path = true
     self.is_moving_clockwise = is_moving_clockwise
-    self.is_pressing_forward = is_pressing_forward
+    self.is_pressing_left = is_pressing_left
     self.includes_deceleration_at_end = includes_deceleration_at_end
     self.stopping_distance = stopping_distance
     self.release_time = release_time
@@ -105,9 +105,9 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
                             movement_params,
                             surface.properties)
                 var acceleration_x := \
-                        acceleration_magnitude if \
-                        displacement.x > 0 == is_pressing_forward else \
-                        -acceleration_magnitude
+                        -acceleration_magnitude if \
+                        is_pressing_left else \
+                        acceleration_magnitude
                 var max_horizontal_speed := \
                         movement_params.get_max_surface_speed() * \
                         surface.properties.speed_multiplier
@@ -187,9 +187,9 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
                             movement_params,
                             surface.properties)
                 var acceleration_x := \
-                        acceleration_magnitude if \
-                        displacement.x > 0 == is_pressing_forward else \
-                        -acceleration_magnitude
+                        -acceleration_magnitude if \
+                        is_pressing_left else \
+                        acceleration_magnitude
                 var max_horizontal_speed := \
                         movement_params.get_max_surface_speed() * \
                         surface.properties.speed_multiplier
@@ -297,8 +297,9 @@ func _check_did_just_reach_surface_destination(
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration
     
+    var surface := get_start_surface()
+    
     if surface_state.contact_count > 1:
-        var surface := get_start_surface()
         var concave_neighbor_approaching := \
                 surface.clockwise_concave_neighbor if \
                 is_moving_clockwise else \
@@ -357,9 +358,21 @@ func _check_did_just_reach_surface_destination(
     var is_close_to_destination := \
             abs(diff) < REACHED_DESTINATION_DISTANCE_THRESHOLD
     
-    return moved_across_destination or \
-            is_close_to_destination or \
-            is_moving_away_from_destination
+    if !is_backtracking_edge_to_end_at_destination:
+        return moved_across_destination or \
+                is_close_to_destination or \
+                is_moving_away_from_destination
+    else:
+        # FIXME: LEFT OFF HERE: ----------------- Double-check this new logic.
+        # TODO: Add support for acceleration and friction along wall and
+        #       ceiling surfaces.
+        assert(surface.side == SurfaceSide.FLOOR)
+        return (moved_across_destination or \
+                is_close_to_destination) and \
+                Sc.geometry.are_floats_equal_with_epsilon(
+                    surface_state.velocity.x,
+                    velocity_end.x,
+                    0.1)
 
 
 func _get_is_surface_expected_for_touch_contact(

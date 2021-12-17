@@ -399,7 +399,8 @@ static func optimize_edge_jump_position_for_path_helper(
                 optimized_edge.start_position_along_surface,
                 previous_edge_velocity_start,
                 collision_params.movement_params,
-                includes_deceleration_at_end)
+                includes_deceleration_at_end,
+                false)
         
         path.edges[edge_index - 1] = previous_edge
         path.edges[edge_index] = optimized_edge
@@ -604,7 +605,8 @@ static func optimize_edge_land_position_for_path_helper(
                 next_edge.end_position_along_surface,
                 next_edge_velocity_start,
                 collision_params.movement_params,
-                includes_deceleration_at_end)
+                includes_deceleration_at_end,
+                next_edge.is_backtracking_edge_to_end_at_destination)
         
         path.edges[edge_index] = optimized_edge
         path.edges[edge_index + 1] = next_edge

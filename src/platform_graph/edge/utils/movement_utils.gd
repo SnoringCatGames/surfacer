@@ -610,8 +610,8 @@ static func calculate_distance_to_stop_from_friction_with_some_backward_accelera
             distance_from_end
     
     if !is_there_enough_room_to_stop_with_some_acceleration_backwards:
-        # We can't actually stop in time, so use the entire distance.
-        return distance_from_end
+        # We can't stop in time.
+        return INF
     
     # There are two parts of the motion:
     # 1.  Constant deceleration from pressing backward.
