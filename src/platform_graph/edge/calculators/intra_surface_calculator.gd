@@ -598,6 +598,7 @@ func _calculate_velocity_end(
                             velocity_start.x,
                             acceleration_x,
                             max_horizontal_speed,
+                            true,
                             true)
                 return Vector2(velocity_end_x, 0.0)
                 
