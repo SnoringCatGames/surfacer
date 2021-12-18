@@ -206,10 +206,19 @@ static func calculate_duration_for_displacement(
             0.5 * acceleration * time_to_reach_max_speed * \
             time_to_reach_max_speed
     
-    if displacement_to_reach_max_speed > displacement and \
-                    displacement > 0.0 or \
+    var is_decelerating := \
+            (velocity_start > 0.0) != (acceleration > 0.0)
+    var decelerating_from_max_speed := \
+            time_to_reach_max_speed < 0.01 and \
+            is_decelerating
+    var reaches_destination_before_max_speed := \
+            displacement_to_reach_max_speed > displacement and \
+                displacement > 0.0 or \
             displacement_to_reach_max_speed < displacement and \
-                    displacement < 0.0:
+                displacement < 0.0
+    
+    if decelerating_from_max_speed or \
+            reaches_destination_before_max_speed:
         # We do not reach max speed before we reach the displacement.
         return calculate_movement_duration(
                 displacement,
