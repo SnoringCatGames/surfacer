@@ -521,7 +521,7 @@ func bouncify_path(path: PlatformGraphPath) -> void:
             var next: Edge = new_edges[j + 1]
             if previous is IntraSurfaceEdge and \
                     next is IntraSurfaceEdge and \
-                    !next.is_backtracking_edge_to_end_at_destination:
+                    !next.is_backtracking:
                 new_edges[j] = Su.movement.intra_surface_calculator.create(
                         previous.start_position_along_surface,
                         next.end_position_along_surface,
@@ -1095,7 +1095,7 @@ static func _calculate_possible_backtracking_edge_to_end_at_destination(
     if surface == null or \
             !movement_params \
             .prevents_path_ends_from_exceeding_surface_ends_with_offsets or \
-            edge.is_backtracking_edge_to_end_at_destination:
+            edge.is_backtracking:
         return null
     
     if surface.side != SurfaceSide.FLOOR:
