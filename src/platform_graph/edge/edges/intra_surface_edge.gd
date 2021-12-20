@@ -19,7 +19,8 @@ var stopping_distance := INF
 var release_time := INF
 var release_position := Vector2.INF
 var release_velocity := Vector2.INF
-var is_backtracking_edge_to_end_at_destination := false
+# Whether this edge turns around and covers any distance twice.
+var is_backtracking := false
 # If true, then this edge starts and ends at the same position.
 var is_degenerate: bool
 
@@ -358,7 +359,7 @@ func _check_did_just_reach_surface_destination(
     var is_close_to_destination := \
             abs(diff) < REACHED_DESTINATION_DISTANCE_THRESHOLD
     
-    if !is_backtracking_edge_to_end_at_destination:
+    if !is_backtracking:
         return moved_across_destination or \
                 is_close_to_destination or \
                 is_moving_away_from_destination
