@@ -298,18 +298,24 @@ static func calculate_velocity_end_for_displacement(
             0.5 * acceleration * time_to_reach_max_speed * \
             time_to_reach_max_speed
     
-    var is_decelerating := \
-            (velocity_start > 0.0) != (acceleration > 0.0)
+    var is_decelerating := (velocity_start > 0.0) != (acceleration > 0.0)
+    var is_starting_at_max_speed := time_to_reach_max_speed < 0.01
     var is_decelerating_from_max_speed := \
-            time_to_reach_max_speed < 0.01 and \
+            is_starting_at_max_speed and \
             is_decelerating
-    var reaches_destination_before_max_speed := \
-            (displacement_to_reach_max_speed > 0.0) != \
-                (displacement > 0.0) or \
-            displacement > 0.0 and \
+    
+    var reaches_destination_before_max_speed: bool
+    if is_starting_at_max_speed and !is_decelerating:
+        reaches_destination_before_max_speed = false
+    elif (displacement_to_reach_max_speed > 0.0) != (displacement > 0.0):
+        reaches_destination_before_max_speed = true
+    elif displacement > 0.0 and \
                 displacement_to_reach_max_speed > displacement or \
             displacement < 0.0 and \
-                displacement_to_reach_max_speed < displacement
+                displacement_to_reach_max_speed < displacement:
+        reaches_destination_before_max_speed = true
+    else:
+        reaches_destination_before_max_speed = false
     
     if is_decelerating_from_max_speed or \
             reaches_destination_before_max_speed:
