@@ -438,22 +438,43 @@ func calculate_distance(
         end: PositionAlongSurface,
         velocity_start := Vector2.ZERO,
         is_backtracking := false) -> float:
-    # FIXME: LEFT OFF HERE: ------------------
-    # - Calculate turn-around point, at v=0.
-    # - Sum distance from start to turn-around, and from turn-around to end.
     if _calculate_is_degenerate(
             start,
             end,
             velocity_start,
             is_backtracking):
         return 0.00001
+    
     var displacement := end.target_point - start.target_point
-    var is_horizontal := \
-            start.surface.side == SurfaceSide.FLOOR or \
-            start.surface.side == SurfaceSide.CEILING
-    return abs(displacement.x) if \
-            is_horizontal else \
-            abs(displacement.y)
+    
+    if is_backtracking:
+        # Use the sum of the distance from the start to the turn-around point
+        # and from the turn-around point to the end.
+        var walk_acceleration := \
+                MovementUtils.get_walking_acceleration_with_friction_magnitude(
+                    movement_params,
+                    start.surface.properties)
+        if velocity_start.x > 0.0:
+            walk_acceleration *= -1.0
+        # From a basic equation of motion:
+        #     v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
+        #     s_0 = 0
+        #     v_1 = 0
+        # Algebra...:
+        #     s_1 = -v_0^2 / 2 / a
+        var displacement_from_start_to_turn_around_point := \
+                -velocity_start.x * velocity_start.x / 2.0 / walk_acceleration
+        var displacement_from_turn_around_point_to_end := \
+                displacement.x - displacement_from_start_to_turn_around_point
+        return abs(displacement_from_start_to_turn_around_point) + \
+                abs(displacement_from_turn_around_point_to_end)
+    else:
+        var is_horizontal := \
+                start.surface.side == SurfaceSide.FLOOR or \
+                start.surface.side == SurfaceSide.CEILING
+        return abs(displacement.x) if \
+                is_horizontal else \
+                abs(displacement.y)
 
 
 func calculate_duration_with_zero_start_velocity(
@@ -1181,6 +1202,9 @@ func _calculate_is_backtracking(
         end: PositionAlongSurface,
         velocity_start: Vector2,
         is_backtracking: bool) -> bool:
+    # TODO: Add support for acceleration and friction along walls and ceilings.
+    if start.surface.side != SurfaceSide.FLOOR:
+        return false
     if is_backtracking:
         # If this was already recorded as backtracking, then preserve that.
         return true
