@@ -193,6 +193,12 @@ func _update(edge: IntraSurfaceEdge) -> void:
             edge.is_backtracking_edge_to_end_at_destination
     var movement_params := edge.movement_params
     
+    # FIXME: LEFT OFF HERE: -------------------------------------
+    if start.surface.first_point == Vector2(96, -192) and \
+            is_backtracking_edge_to_end_at_destination and \
+            velocity_start.x < 1.0:
+        pass
+    
     var is_degenerate := _calculate_is_degenerate(
             start,
             end,
@@ -204,13 +210,32 @@ func _update(edge: IntraSurfaceEdge) -> void:
     var distance := calculate_distance(
             movement_params,
             start,
-            end)
+            end,
+            velocity_start,
+            is_backtracking_edge_to_end_at_destination)
     var is_pressing_left := _calculate_is_pressing_left(
             movement_params,
             start,
             end,
             velocity_start,
-            includes_deceleration_at_end)
+            includes_deceleration_at_end,
+            is_backtracking_edge_to_end_at_destination,
+            is_degenerate)
+    
+    # FIXME: LEFT OFF HERE: -------------------------------------------------
+    if !is_pressing_left and \
+            start.target_point.x > end.target_point.x and \
+            velocity_start.x > 0.0 and \
+            !is_backtracking_edge_to_end_at_destination:
+        is_pressing_left = _calculate_is_pressing_left(
+                movement_params,
+                start,
+                end,
+                velocity_start,
+                includes_deceleration_at_end,
+                is_backtracking_edge_to_end_at_destination,
+                is_degenerate)
+    
     var is_pressing_forward := _calculate_is_pressing_forward(
             movement_params,
             start,
@@ -224,7 +249,9 @@ func _update(edge: IntraSurfaceEdge) -> void:
             velocity_start,
             is_pressing_left,
             is_pressing_forward,
-            includes_deceleration_at_end)
+            includes_deceleration_at_end,
+            is_backtracking_edge_to_end_at_destination,
+            is_degenerate)
     var release_time := _calculate_release_time(
             movement_params,
             start,
@@ -279,6 +306,7 @@ func _update(edge: IntraSurfaceEdge) -> void:
             release_time,
             is_pressing_left,
             is_moving_clockwise,
+            is_backtracking_edge_to_end_at_destination,
             is_degenerate)
     
     # We might need to shorten our expected movement for a concave next neighbor
@@ -312,13 +340,17 @@ func _update(edge: IntraSurfaceEdge) -> void:
             distance = calculate_distance(
                     movement_params,
                     start,
-                    end)
+                    end,
+                    velocity_start,
+                    is_backtracking_edge_to_end_at_destination)
             is_pressing_left = _calculate_is_pressing_left(
                     movement_params,
                     start,
                     end,
                     velocity_start,
-                    includes_deceleration_at_end)
+                    includes_deceleration_at_end,
+                    is_backtracking_edge_to_end_at_destination,
+                    is_degenerate)
             is_pressing_forward = _calculate_is_pressing_forward(
                     movement_params,
                     start,
@@ -332,7 +364,9 @@ func _update(edge: IntraSurfaceEdge) -> void:
                     velocity_start,
                     is_pressing_left,
                     is_pressing_forward,
-                    includes_deceleration_at_end)
+                    includes_deceleration_at_end,
+                    is_backtracking_edge_to_end_at_destination,
+                    is_degenerate)
             release_time = _calculate_release_time(
                     movement_params,
                     start,
@@ -398,6 +432,29 @@ func _update(edge: IntraSurfaceEdge) -> void:
             duration,
             release_time,
             is_pressing_left)
+    
+    # FIXME: LEFT OFF HERE: ------------------------
+    if velocity_end.x < -440:
+        velocity_end = _calculate_velocity_end(
+                movement_params,
+                start,
+                end,
+                velocity_start,
+                stopping_distance,
+                is_pressing_left,
+                is_pressing_forward,
+                includes_deceleration_at_end,
+                is_degenerate)
+    # FIXME: LEFT OFF HERE: ------------------------
+    if is_inf(release_time):
+        is_pressing_left = _calculate_is_pressing_left(
+                movement_params,
+                start,
+                end,
+                velocity_start,
+                includes_deceleration_at_end,
+                is_backtracking_edge_to_end_at_destination,
+                is_degenerate)
     
     assert(!is_inf(release_time))
     assert(!is_inf(duration))
@@ -693,6 +750,7 @@ func _calculate_trajectory(
         release_time: float,
         is_pressing_left: bool,
         is_moving_clockwise: bool,
+        is_backtracking_edge_to_end_at_destination: bool,
         is_degenerate: bool) -> EdgeTrajectory:
     var trajectory := EdgeTrajectory.new()
     
@@ -822,7 +880,12 @@ func _calculate_trajectory(
     var velocity_x_max := max_horizontal_speed
     var position_x_min: float
     var position_x_max: float
-    if displacement.x > 0:
+    var is_movement_on_left_side_of_target := \
+            is_backtracking_edge_to_end_at_destination and \
+            velocity_start.x < 0.0 or \
+            !is_backtracking_edge_to_end_at_destination and \
+            displacement.x > 0.0
+    if is_movement_on_left_side_of_target:
         position_x_min = start.surface.first_point.x + 0.1
         position_x_max = end.target_point.x
     else:
@@ -945,14 +1008,18 @@ func _calculate_is_pressing_left(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
-        includes_deceleration_at_end: bool) -> bool:
+        includes_deceleration_at_end: bool,
+        is_backtracking_edge_to_end_at_destination: bool,
+        is_degenerate: bool) -> bool:
     var displacement := end.target_point - start.target_point
     var is_displacement_leftward := displacement.x < 0.0
     match start.surface.side:
         SurfaceSide.FLOOR:
             if !includes_deceleration_at_end:
                 return is_displacement_leftward
-            if displacement.x == 0.0:
+            if is_degenerate:
+                return false
+            if is_backtracking_edge_to_end_at_destination:
                 return velocity_start.x > 0.0
             var stopping_distance_from_start_speed := \
                     MovementUtils.calculate_distance_to_stop_from_friction(
@@ -983,15 +1050,25 @@ func _calculate_stopping_distance(
         velocity_start: Vector2,
         is_pressing_left: bool,
         is_pressing_forward: bool,
-        includes_deceleration_at_end: bool) -> float:
-    var displacement := end.target_point - start.target_point
-    
+        includes_deceleration_at_end: bool,
+        is_backtracking_edge_to_end_at_destination: bool,
+        is_degenerate: bool) -> float:
     # TODO: Add support for acceleration and friction along walls and ceilings.
     if end.surface.side != SurfaceSide.FLOOR or \
+            is_degenerate or \
             !includes_deceleration_at_end:
         return 0.0
     
-    if is_pressing_forward:
+    var displacement := end.target_point - start.target_point
+    
+    if is_backtracking_edge_to_end_at_destination:
+        return MovementUtils \
+                .calculate_distance_to_stop_from_friction_with_turn_around(
+                    movement_params,
+                    start.surface.properties,
+                    velocity_start.x,
+                    displacement.x)
+    elif is_pressing_forward:
         return MovementUtils \
                 .calculate_distance_to_stop_from_friction_with_forward_acceleration_to_non_max_speed(
                     movement_params,
