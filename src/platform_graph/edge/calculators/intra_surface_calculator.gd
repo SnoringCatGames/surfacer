@@ -175,12 +175,6 @@ func _update(edge: IntraSurfaceEdge) -> void:
     var includes_deceleration_at_end := edge.includes_deceleration_at_end
     var is_backtracking := edge.is_backtracking
     
-    # FIXME: LEFT OFF HERE: -------------------------------------
-    if start.surface.first_point == Vector2(96, -192) and \
-            is_backtracking and \
-            velocity_start.x < 1.0:
-        pass
-    
     is_backtracking = _calculate_is_backtracking(
             start,
             end,
@@ -208,20 +202,6 @@ func _update(edge: IntraSurfaceEdge) -> void:
             includes_deceleration_at_end,
             is_backtracking,
             is_degenerate)
-    
-    # FIXME: LEFT OFF HERE: -------------------------------------------------
-    if !is_pressing_left and \
-            start.target_point.x > end.target_point.x and \
-            velocity_start.x > 0.0 and \
-            !is_backtracking:
-        is_pressing_left = _calculate_is_pressing_left(
-                movement_params,
-                start,
-                end,
-                velocity_start,
-                includes_deceleration_at_end,
-                is_backtracking,
-                is_degenerate)
     
     var is_pressing_forward := _calculate_is_pressing_forward(
             movement_params,
@@ -424,29 +404,6 @@ func _update(edge: IntraSurfaceEdge) -> void:
             duration,
             release_time,
             is_pressing_left)
-    
-    # FIXME: LEFT OFF HERE: ------------------------
-    if velocity_end.x < -440:
-        velocity_end = _calculate_velocity_end(
-                movement_params,
-                start,
-                end,
-                velocity_start,
-                stopping_distance,
-                is_pressing_left,
-                is_pressing_forward,
-                includes_deceleration_at_end,
-                is_degenerate)
-    # FIXME: LEFT OFF HERE: ------------------------
-    if is_inf(release_time):
-        is_pressing_left = _calculate_is_pressing_left(
-                movement_params,
-                start,
-                end,
-                velocity_start,
-                includes_deceleration_at_end,
-                is_backtracking,
-                is_degenerate)
     
     assert(!is_inf(release_time))
     assert(!is_inf(duration))
