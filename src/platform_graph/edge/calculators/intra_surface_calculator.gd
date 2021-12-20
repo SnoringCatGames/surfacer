@@ -823,9 +823,19 @@ func _calculate_trajectory(
                     .get_stopping_friction_acceleration_magnitude(
                         movement_params,
                         start.surface.properties)
+            var is_stopping_friction_acceleration_positive: bool
+            if is_backtracking:
+                is_stopping_friction_acceleration_positive = \
+                        velocity_start.x > 0.0
+            elif displacement.x == 0.0:
+                is_stopping_friction_acceleration_positive = \
+                        velocity_start.x < 0.0
+            else:
+                is_stopping_friction_acceleration_positive = \
+                        displacement.x < 0.0
             deceleration_with_friction.x = \
                     deceleration_with_friction_magnitude if \
-                    is_pressing_left else \
+                    is_stopping_friction_acceleration_positive else \
                     -deceleration_with_friction_magnitude
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
