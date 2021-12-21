@@ -227,6 +227,7 @@ func _update(edge: IntraSurfaceEdge) -> void:
             stopping_distance,
             is_pressing_left,
             is_pressing_forward,
+            is_backtracking,
             is_degenerate)
     var release_position := _calculate_release_position(
             movement_params,
@@ -347,6 +348,7 @@ func _update(edge: IntraSurfaceEdge) -> void:
                     stopping_distance,
                     is_pressing_left,
                     is_pressing_forward,
+                    is_backtracking,
                     is_degenerate)
             release_position = _calculate_release_position(
                     movement_params,
@@ -1073,6 +1075,7 @@ func _calculate_release_time(
         stopping_distance: float,
         is_pressing_left: bool,
         is_pressing_forward: bool,
+        is_backtracking: bool,
         is_degenerate: bool) -> float:
     if is_degenerate:
         return 0.0
@@ -1097,15 +1100,22 @@ func _calculate_release_time(
                     !is_inf(stopping_distance)
             var input_displacement: float
             if has_enough_time_to_decelerate_to_zero:
-                input_displacement = \
-                        displacement.x - stopping_distance if \
-                        displacement.x > 0.0 else \
-                        displacement.x + stopping_distance
+                if is_backtracking:
+                    input_displacement = \
+                            displacement.x + stopping_distance if \
+                            is_pressing_left else \
+                            displacement.x - stopping_distance
+                else:
+                    input_displacement = \
+                            displacement.x - stopping_distance if \
+                            displacement.x > 0.0 else \
+                            displacement.x + stopping_distance
             else:
                 input_displacement = displacement.x
             # -   If pressing forward, there could be backward movement.
             # -   So if pressing forward, we use the later possible duration.
-            var returns_lower_result := !is_pressing_forward
+            var returns_lower_result := \
+                    !is_backtracking and !is_pressing_forward
             
             return MovementUtils.calculate_duration_for_displacement(
                     input_displacement,
@@ -1139,7 +1149,6 @@ func _calculate_release_position(
         velocity_start: Vector2,
         release_time: float,
         is_pressing_left: bool) -> Vector2:
-    var displacement := end.target_point - start.target_point
     var acceleration_magnitude := MovementUtils \
             .get_walking_acceleration_with_friction_magnitude(
                 movement_params,
@@ -1171,7 +1180,6 @@ func _calculate_release_velocity(
         velocity_start: Vector2,
         release_time: float,
         is_pressing_left: bool) -> Vector2:
-    var displacement := end.target_point - start.target_point
     var acceleration_magnitude := MovementUtils \
             .get_walking_acceleration_with_friction_magnitude(
                 movement_params,
