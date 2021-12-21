@@ -909,6 +909,12 @@ func _calculate_trajectory(
                 acceleration_with_pressing if \
                 frame_time < release_time else \
                 deceleration_with_friction
+        previous_velocity = velocity
+        velocity += acceleration * Time.PHYSICS_TIME_STEP
+        velocity.x = clamp(
+                velocity.x,
+                velocity_x_min,
+                velocity_x_max)
         previous_position = position
         position += velocity * Time.PHYSICS_TIME_STEP
         position.x = clamp(
@@ -920,12 +926,6 @@ func _calculate_trajectory(
                 movement_params.collider,
                 start.surface,
                 true)
-        previous_velocity = velocity
-        velocity += acceleration * Time.PHYSICS_TIME_STEP
-        velocity.x = clamp(
-                velocity.x,
-                velocity_x_min,
-                velocity_x_max)
         
         if is_next_neighbor_concave:
             # This prevents collisions with concave next neighbors
