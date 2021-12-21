@@ -595,10 +595,10 @@ static func calculate_distance_to_stop_from_friction_with_forward_acceleration_t
     #     s_0 = 0
     # Algebra...:
     #     s_1 = ((v_2^2 - v_0^2)/2 - s_2*a_1) / (a_0 - a_1)
-    #     stopping_distance = s_2 - s_1
+    #     stopping_displacement = s_2 - s_1
     var displacement_to_instruction_end: float = \
             (-velocity_x_start * velocity_x_start / 2.0 - \
-                    displacement_x_from_end * friction_deceleration) / \
+                displacement_x_from_end * friction_deceleration) / \
             (walk_acceleration - friction_deceleration)
     var stopping_displacement := \
             displacement_x_from_end - displacement_to_instruction_end
@@ -649,10 +649,10 @@ static func calculate_distance_to_stop_from_friction_with_some_backward_accelera
     #     s_0 = 0
     # Algebra...:
     #     s_1 = ((v_2^2 - v_0^2)/2 - s_2*a_1) / (a_0 - a_1)
-    #     stopping_distance = s_2 - s_1
+    #     stopping_displacement = s_2 - s_1
     var displacement_to_instruction_end: float = \
             (-velocity_x_start * velocity_x_start / 2.0 - \
-                    displacement_x_from_end * friction_deceleration) / \
+                displacement_x_from_end * friction_deceleration) / \
             (walk_acceleration - friction_deceleration)
     var stopping_displacement := \
             displacement_x_from_end - displacement_to_instruction_end
@@ -671,7 +671,7 @@ static func calculate_distance_to_stop_from_friction_with_turn_around(
     var friction_deceleration := get_stopping_friction_acceleration_magnitude(
             movement_params,
             surface_properties)
-    if velocity_start < 0.0:
+    if velocity_start > 0.0:
         walk_acceleration *= -1.0
     else:
         friction_deceleration *= -1.0
@@ -685,11 +685,14 @@ static func calculate_distance_to_stop_from_friction_with_turn_around(
     #     v_1^2 = v_0^2 + 2*a_0*(s_1 - s_0)
     #     v_2^2 = v_1^2 + 2*a_1*(s_2 - s_1)
     #     s_0 = 0
+    #     v_2 = 0
     # Algebra...:
-    #     s_1 = (-v_0^2/2 - s_2*a_1) / (a_0 - a_1)
+    #     s_1 = (v_0^2/2 + s_2*a_1) / (a_1 - a_0)
     #     stopping_displacement = s_2 - s_1
     var displacement_to_instruction_end: float = \
-            (-velocity_start * velocity_start / 2.0 - \
-                    displacement * friction_deceleration) / \
-            (walk_acceleration - friction_deceleration)
-    return abs(displacement_to_instruction_end)
+            (velocity_start * velocity_start / 2.0 + \
+                displacement * friction_deceleration) / \
+            (friction_deceleration - walk_acceleration)
+    var stopping_displacement := displacement - displacement_to_instruction_end
+    
+    return abs(stopping_displacement)
