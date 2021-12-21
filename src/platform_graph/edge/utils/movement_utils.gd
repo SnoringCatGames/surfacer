@@ -48,7 +48,7 @@ static func calculate_movement_duration(
             return duration if duration > 0.0 else INF
     
     # From a basic equation of motion:
-    #     s = s_0 + v_0*t + 1/2*a*t^2.
+    #     s = s_0 + v_0*t + 1/2*a*t^2
     # Solve for t using the quadratic formula.
     var discriminant := v_0 * v_0 + 2.0 * a * displacement
     if discriminant < 0.0:
@@ -206,16 +206,24 @@ static func calculate_duration_for_displacement(
             0.5 * acceleration * time_to_reach_max_speed * \
             time_to_reach_max_speed
     
-    var is_decelerating := \
-            (velocity_start > 0.0) != (acceleration > 0.0)
+    var is_decelerating := (velocity_start > 0.0) != (acceleration > 0.0)
+    var is_starting_at_max_speed := time_to_reach_max_speed < 0.01
     var is_decelerating_from_max_speed := \
-            time_to_reach_max_speed < 0.01 and \
+            is_starting_at_max_speed and \
             is_decelerating
-    var reaches_destination_before_max_speed := \
-            displacement_to_reach_max_speed > displacement and \
-                displacement > 0.0 or \
-            displacement_to_reach_max_speed < displacement and \
-                displacement < 0.0
+    
+    var reaches_destination_before_max_speed: bool
+    if is_starting_at_max_speed and !is_decelerating:
+        reaches_destination_before_max_speed = false
+    elif (displacement_to_reach_max_speed > 0.0) != (displacement > 0.0):
+        reaches_destination_before_max_speed = true
+    elif displacement > 0.0 and \
+                displacement_to_reach_max_speed > displacement or \
+            displacement < 0.0 and \
+                displacement_to_reach_max_speed < displacement:
+        reaches_destination_before_max_speed = true
+    else:
+        reaches_destination_before_max_speed = false
     
     if is_decelerating_from_max_speed or \
             reaches_destination_before_max_speed:
