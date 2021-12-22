@@ -861,19 +861,20 @@ func _calculate_trajectory(
     # expected values.
     var velocity_x_min := -max_horizontal_speed
     var velocity_x_max := max_horizontal_speed
-    var position_x_min: float
-    var position_x_max: float
-    var is_movement_on_left_side_of_target := \
-            is_backtracking and \
-            velocity_start.x < 0.0 or \
-            !is_backtracking and \
-            displacement.x > 0.0
-    if is_movement_on_left_side_of_target:
-        position_x_min = start.surface.first_point.x + 0.1
-        position_x_max = end.target_point.x
-    else:
-        position_x_min = end.target_point.x
-        position_x_max = start.surface.last_point.x - 0.1
+    var position_x_min := -INF
+    var position_x_max := INF
+    if start.surface.side == SurfaceSide.FLOOR:
+        var is_movement_on_left_side_of_target := \
+                is_backtracking and \
+                velocity_start.x < 0.0 or \
+                !is_backtracking and \
+                displacement.x > 0.0
+        if is_movement_on_left_side_of_target:
+            position_x_min = start.surface.first_point.x + 0.1
+            position_x_max = end.target_point.x
+        else:
+            position_x_min = end.target_point.x
+            position_x_max = start.surface.last_point.x - 0.1
     
     while frame_index + position_duplication_count < frame_count:
         # TODO: Replace this quick fix with something better.
@@ -1180,6 +1181,18 @@ func _calculate_release_velocity(
         velocity_start: Vector2,
         release_time: float,
         is_pressing_left: bool) -> Vector2:
+    # TODO: Add support for acceleration and friction along walls and ceilings.
+    if start.surface.side != SurfaceSide.FLOOR:
+        return _calculate_velocity_end(
+                movement_params,
+                start,
+                end,
+                velocity_start,
+                0,
+                is_pressing_left,
+                true,
+                false,
+                false)
     var acceleration_magnitude := MovementUtils \
             .get_walking_acceleration_with_friction_magnitude(
                 movement_params,
