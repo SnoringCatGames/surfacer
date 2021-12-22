@@ -280,9 +280,6 @@ func update_for_initial_surface_attachment(
             Sc.logger.error()
     
     _update_action_state()
-    # FIXME: -------------------------------
-    if !is_instance_valid(grabbed_surface):
-        _update_action_state()
     assert(is_instance_valid(grabbed_surface),
             "start_attachment_surface_side_or_position is invalid")
     
@@ -435,13 +432,6 @@ func _update_touch_state() -> void:
     just_stopped_touching_right_wall = \
             next_just_stopped_touching_right_wall or \
             just_stopped_touching_right_wall and !next_just_touched_right_wall
-    
-    # FIXME: ----------------------------------------------
-    if just_touched_floor or \
-            just_touched_right_wall or \
-            just_touched_left_wall or \
-            just_touched_ceiling:
-        pass
     
     # Calculate the sign of a colliding wall's direction.
     toward_wall_sign = \
@@ -2046,19 +2036,54 @@ func sync_state_for_surface_grab(
 func sync_state_for_surface_release(
         surface: Surface,
         center_position: Vector2) -> void:
-    # FIXME: LEFT OFF HERE: -------------------------
+    var next_just_stopped_touching_floor := false
+    var next_just_stopped_grabbing_floor := false
+    var next_just_stopped_touching_left_wall := false
+    var next_just_stopped_grabbing_left_wall := false
+    var next_just_stopped_touching_right_wall := false
+    var next_just_stopped_grabbing_right_wall := false
+    var next_just_stopped_touching_ceiling := false
+    var next_just_stopped_grabbing_ceiling := false
     match surface.side:
         SurfaceSide.FLOOR:
-            just_stopped_touching_floor = true
-            just_stopped_grabbing_floor = true
+            next_just_stopped_touching_floor = is_touching_floor
+            next_just_stopped_grabbing_floor = is_grabbing_floor
         SurfaceSide.LEFT_WALL:
-            just_stopped_touching_left_wall = true
-            just_stopped_grabbing_left_wall = true
+            next_just_stopped_touching_left_wall = is_touching_left_wall
+            next_just_stopped_grabbing_left_wall = is_grabbing_left_wall
         SurfaceSide.RIGHT_WALL:
-            just_stopped_touching_right_wall = true
-            just_stopped_grabbing_right_wall = true
+            next_just_stopped_touching_right_wall = is_touching_right_wall
+            next_just_stopped_grabbing_right_wall = is_grabbing_right_wall
         SurfaceSide.CEILING:
-            just_stopped_touching_ceiling = true
-            just_stopped_grabbing_ceiling = true
+            next_just_stopped_touching_ceiling = is_touching_ceiling
+            next_just_stopped_grabbing_ceiling = is_grabbing_ceiling
+        _:
+            Sc.logger.error()
+    
+    match surface.side:
+        SurfaceSide.FLOOR:
+            is_touching_floor = false
+            is_grabbing_floor = false
+            just_stopped_touching_floor = next_just_stopped_touching_floor
+            just_stopped_grabbing_floor = next_just_stopped_grabbing_floor
+        SurfaceSide.LEFT_WALL:
+            is_touching_left_wall = false
+            is_grabbing_left_wall = false
+            just_stopped_touching_left_wall = \
+                    next_just_stopped_touching_left_wall
+            just_stopped_grabbing_left_wall = \
+                    next_just_stopped_grabbing_left_wall
+        SurfaceSide.RIGHT_WALL:
+            is_touching_right_wall = false
+            is_grabbing_right_wall = false
+            just_stopped_touching_right_wall = \
+                    next_just_stopped_touching_right_wall
+            just_stopped_grabbing_right_wall = \
+                    next_just_stopped_grabbing_right_wall
+        SurfaceSide.CEILING:
+            is_touching_ceiling = false
+            is_grabbing_ceiling = false
+            just_stopped_touching_ceiling = next_just_stopped_touching_ceiling
+            just_stopped_grabbing_ceiling = next_just_stopped_grabbing_ceiling
         _:
             Sc.logger.error()
