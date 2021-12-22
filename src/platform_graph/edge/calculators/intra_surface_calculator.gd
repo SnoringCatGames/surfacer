@@ -897,7 +897,7 @@ func _calculate_trajectory(
                         position_x_max,
                         0.01) or \
                     Sc.geometry.are_floats_equal_with_epsilon(
-                        previous_velocity.x,
+                        velocity.x,
                         0.0,
                         0.01))
         
