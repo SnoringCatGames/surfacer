@@ -924,13 +924,24 @@ func _parse_behavior_children() -> void:
     default_behavior.trigger(false)
 
 
-func add_behavior(behavior: Behavior) -> void:
+func add_behavior(
+        behavior: Behavior,
+        is_default := false) -> void:
     var script: Script = behavior.get_script()
     assert(get_behavior(script) == null)
     _behaviors_by_class[script] = behavior
     _behaviors_list.push_back(behavior)
     if Engine.editor_hint:
         return
+    if is_default:
+        behavior.is_active_at_start = true
+        if is_instance_valid(default_behavior):
+            assert(default_behavior is DefaultBehavior)
+            for b in _behaviors_list:
+                if b.next_behavior == default_behavior:
+                    b.next_behavior = behavior
+            default_behavior.queue_free()
+        remove_behavior(DefaultBehavior)
     behavior.is_enabled = true
     add_child(behavior)
     _add_return_behavior_if_needed(behavior)

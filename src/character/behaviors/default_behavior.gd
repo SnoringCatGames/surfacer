@@ -48,5 +48,11 @@ func _move() -> int:
     return BehaviorMoveResult.VALID_MOVE
 
 
+func _on_navigation_ended(did_navigation_finish: bool) -> void:
+    # NOTE: This replaces the default behavior, rather than extending it.
+#    ._on_navigation_ended(did_navigation_finish)
+    pass
+
+
 func get_is_paused() -> bool:
     return true
