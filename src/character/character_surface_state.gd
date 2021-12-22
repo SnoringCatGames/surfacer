@@ -1580,24 +1580,6 @@ func _update_grab_state() -> void:
             character.movement_params.can_grab_walls and \
                 (_get_is_grabbing_wall() or \
                     character.actions.pressed_up)
-    
-    var surface_side := SurfaceSide.NONE
-    match surface_type:
-        SurfaceType.FLOOR:
-            surface_side = SurfaceSide.FLOOR
-        SurfaceType.WALL:
-            if is_grabbing_left_wall:
-                surface_side = SurfaceSide.LEFT_WALL
-            else:
-                surface_side = SurfaceSide.RIGHT_WALL
-        SurfaceType.CEILING:
-            surface_side = SurfaceSide.CEILING
-        SurfaceType.AIR, \
-        SurfaceType.OTHER:
-            surface_side = SurfaceSide.NONE
-        _:
-            Sc.logger.error()
-    var surface_normal := SurfaceSide.get_normal(surface_side)
 
 
 func _update_grab_contact() -> void:
@@ -1624,8 +1606,8 @@ func _update_grab_contact() -> void:
         
         just_changed_surface = \
                 just_changed_surface or \
-                (just_left_air or \
-                     next_grabbed_surface != grabbed_surface)
+                just_left_air or \
+                next_grabbed_surface != grabbed_surface
         if just_changed_surface and \
                 next_grabbed_surface != grabbed_surface and \
                 is_instance_valid(grabbed_surface):
@@ -1634,8 +1616,8 @@ func _update_grab_contact() -> void:
         
         just_changed_grab_position = \
                 just_changed_grab_position or \
-                (just_left_air or \
-                    next_grab_position != grab_position)
+                just_left_air or \
+                next_grab_position != grab_position
         if just_changed_grab_position and \
                 next_grab_position != grab_position and \
                 grab_position != Vector2.INF:
@@ -1646,14 +1628,14 @@ func _update_grab_contact() -> void:
         
         just_changed_tile_map = \
                 just_changed_tile_map or \
-                (just_left_air or \
-                    grabbed_tile_map != previous_grabbed_tile_map)
+                just_left_air or \
+                grabbed_tile_map != previous_grabbed_tile_map
         
         just_changed_tile_map_coord = \
                 just_changed_tile_map_coord or \
-                (just_left_air or \
-                    grab_position_tile_map_coord != \
-                    previous_grab_position_tile_map_coord)
+                just_left_air or \
+                grab_position_tile_map_coord != \
+                    previous_grab_position_tile_map_coord
         
     else:
         if just_entered_air:
@@ -1674,6 +1656,7 @@ func _update_grab_contact() -> void:
                     grab_normal != Vector2.INF else \
                     previous_grab_normal
         
+        surface_grab = null
         grab_position = Vector2.INF
         grab_normal = Vector2.INF
         grabbed_tile_map = null
@@ -1951,6 +1934,13 @@ func sync_state_for_surface_grab(
             _:
                 Sc.logger.error()
     
+    var previous_grab_position := grab_position
+    var previous_grab_normal := grab_normal
+    var previous_grabbed_surface := grabbed_surface
+    var previous_is_grabbing_surface := _get_is_grabbing_surface()
+    var previous_grabbed_tile_map := grabbed_tile_map
+    var previous_grab_position_tile_map_coord := grab_position_tile_map_coord
+    
     clear_current_state()
     
     just_touched_floor = next_just_touched_floor
@@ -1983,9 +1973,11 @@ func sync_state_for_surface_grab(
                 grab_position_tile_map_coord,
                 grabbed_tile_map)
     center_position_along_surface.match_current_grab(surface, center_position)
-    surface_grab = SurfaceContact.new()
-    surfaces_to_contacts[surface] = surface_grab
+    PositionAlongSurface.copy(
+            last_position_along_surface,
+            center_position_along_surface)
     
+    surface_grab = SurfaceContact.new()
     surface_grab.type = SurfaceContact.MATCH_TRAJECTORY
     surface_grab.surface = surface
     surface_grab.contact_position = grab_position
@@ -1997,6 +1989,29 @@ func sync_state_for_surface_grab(
             center_position)
     surface_grab.just_started = did_just_grab
     surface_grab._is_still_touching = true
+    surfaces_to_contacts[surface] = surface_grab
+    
+    just_entered_air = false
+    just_left_air = !previous_is_grabbing_surface
+    
+    just_changed_surface = \
+            just_left_air or \
+            grabbed_surface != previous_grabbed_surface
+    if grabbed_surface != previous_grabbed_surface:
+        self.previous_grabbed_surface = previous_grabbed_surface
+    just_changed_grab_position = \
+            just_left_air or \
+            grab_position != previous_grab_position
+    if grab_position != previous_grab_position:
+        self.previous_grab_position = previous_grab_position
+        self.previous_grab_normal = previous_grab_normal
+    just_changed_tile_map = \
+            just_left_air or \
+            grabbed_tile_map != previous_grabbed_tile_map
+    just_changed_tile_map_coord = \
+            just_left_air or \
+            grab_position_tile_map_coord != \
+                previous_grab_position_tile_map_coord
     
     match surface.side:
         SurfaceSide.FLOOR:
@@ -2031,6 +2046,9 @@ func sync_state_for_surface_grab(
             ceiling_contact = surface_grab
         _:
             Sc.logger.error()
+    
+    if just_changed_surface:
+        character._update_reachable_surfaces(grabbed_surface)
 
 
 func sync_state_for_surface_release(
@@ -2059,6 +2077,26 @@ func sync_state_for_surface_release(
             next_just_stopped_grabbing_ceiling = is_grabbing_ceiling
         _:
             Sc.logger.error()
+    
+    var previous_grab_position := grab_position
+    var previous_grab_normal := grab_normal
+    var previous_grabbed_surface := grabbed_surface
+    var previous_is_grabbing_surface := _get_is_grabbing_surface()
+    
+    # TODO: Call this?
+#    clear_current_state()
+    
+    just_entered_air = previous_is_grabbing_surface
+    just_left_air = false
+    
+    if just_entered_air:
+        just_changed_grab_position = true
+        just_changed_tile_map = true
+        just_changed_tile_map_coord = true
+        just_changed_surface = true
+        previous_grabbed_surface = previous_grabbed_surface
+        previous_grab_position = previous_grab_position
+        previous_grab_normal = previous_grab_normal
     
     match surface.side:
         SurfaceSide.FLOOR:
