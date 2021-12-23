@@ -27,8 +27,6 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 
 > **NOTE:** _This framework depends the separate [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library._
 
-> **NOTE:** _You'll need to move this libarary to your `addons/` folder. If you are installing this with Godot's in-editor AssetLib utility, you will need to move the files afterward!_
-
 --------
 
 <p align="center">

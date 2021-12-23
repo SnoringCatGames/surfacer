@@ -2,6 +2,8 @@
 
 I will not lie, **this is a complex framework**! Hopefully it's external API isn't _too_ convoluted, but still, probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel_away), and then adjust it to fit your needs.
 
+> **NOTE:** _If you are adding this to a new project, than than copy/paste/modifying a demo project, you will see a lot of console errors and editor-slowness when in Godot until you have finished configuring the AutoLoads correctly, and Godot has then updated the project manifest afterward. This is unfortunate, but expected!_
+
 -   Set up Scaffolder
     -   https://github.com/snoringcatgames/scaffolder/blob/master/docs/getting_set_up.md
 -   `addons/scaffolder`
@@ -30,8 +32,6 @@ I will not lie, **this is a complex framework**! Hopefully it's external API isn
     -   Configure both the Surfacer and Scaffolder frameworks by calling `Sc.run(app_manifest)` as early as possible in your application.
 -   Include `*.json` under "Filters to export non-resource files/folders" in your export settings.
     -   Platform graphs can be pre-calculated and saved in JSON files.
-
-> **NOTE:** _If you are installing this with the in-editor AssetLib utility, you will need to move the files into `addons/surfacer/` afterward!_
 
 > **NOTE**: The Scaffolder framework is _big_. It probably has a lot of stuff you don't need. Also, it probably structures things differently than you want. You should be able to either hide or ignore the bits from Scaffolder that you don't want. Ideally, Surfacer shouldn't depend on Scaffolder. But decoupling these frameworks hasn't been a priority yet. Sorry!
 
