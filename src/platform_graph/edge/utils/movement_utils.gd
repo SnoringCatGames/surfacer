@@ -182,7 +182,7 @@ static func calculate_duration_for_displacement(
     
     var velocity_at_max_speed := \
             max_speed if \
-            displacement > 0.0 else \
+            acceleration > 0.0 else \
             -max_speed
     
     # From a basic equation of motion:
@@ -191,53 +191,35 @@ static func calculate_duration_for_displacement(
     #     t = (v - v_0) / a
     var time_to_reach_max_speed := \
             (velocity_at_max_speed - velocity_start) / acceleration
-    if time_to_reach_max_speed < 0.0:
-        # We pass and reverse directions before hitting max speed.
-        velocity_at_max_speed *= -1.0
-        time_to_reach_max_speed = \
-                (velocity_at_max_speed - velocity_start) / acceleration
     
-    # From a basic equation of motion:
-    #     s = s_0 + v_0*t + 1/2*a*t^2
-    # Algebra...
-    #     (s - s_0) = v_0*t + 1/2*a*t^2
-    var displacement_to_reach_max_speed := \
-            velocity_start * time_to_reach_max_speed + \
-            0.5 * acceleration * time_to_reach_max_speed * \
-            time_to_reach_max_speed
-    
-    var is_decelerating := (velocity_start > 0.0) != (acceleration > 0.0)
-    var is_starting_at_max_speed := time_to_reach_max_speed < 0.01
-    var is_decelerating_from_max_speed := \
-            is_starting_at_max_speed and \
-            is_decelerating
-    
-    var reaches_destination_before_max_speed: bool
-    if is_starting_at_max_speed and !is_decelerating:
-        reaches_destination_before_max_speed = false
-    elif (displacement_to_reach_max_speed > 0.0) != (displacement > 0.0):
-        reaches_destination_before_max_speed = true
-    elif displacement > 0.0 and \
-                displacement_to_reach_max_speed > displacement or \
-            displacement < 0.0 and \
-                displacement_to_reach_max_speed < displacement:
-        reaches_destination_before_max_speed = true
-    else:
-        reaches_destination_before_max_speed = false
-    
-    if is_decelerating_from_max_speed or \
-            reaches_destination_before_max_speed:
-        # We do not reach max speed before we reach the displacement.
-        return calculate_movement_duration(
+    var time_to_reach_destination_without_speed_cap := \
+            calculate_movement_duration(
                 displacement,
                 velocity_start,
                 acceleration,
                 returns_lower_result,
                 0.0,
+                false,
                 false)
+    
+    var reaches_destination_before_max_speed := \
+            time_to_reach_destination_without_speed_cap <= \
+            time_to_reach_max_speed
+    
+    if reaches_destination_before_max_speed:
+        # We do not reach max speed before we reach the displacement.
+        return time_to_reach_destination_without_speed_cap
     else:
         # We reach max speed before we reach the displacement.
         
+        # From a basic equation of motion:
+        #     s = s_0 + v_0*t + 1/2*a*t^2
+        # Algebra...
+        #     (s - s_0) = v_0*t + 1/2*a*t^2
+        var displacement_to_reach_max_speed := \
+                velocity_start * time_to_reach_max_speed + \
+                0.5 * acceleration * \
+                time_to_reach_max_speed * time_to_reach_max_speed
         var remaining_displacement_at_max_speed := \
                 displacement - displacement_to_reach_max_speed
         # From a basic equation of motion:
@@ -282,7 +264,7 @@ static func calculate_velocity_end_for_displacement(
     
     var velocity_at_max_speed := \
             max_speed if \
-            displacement > 0.0 else \
+            acceleration > 0.0 else \
             -max_speed
     
     # From a basic equation of motion:
@@ -291,53 +273,27 @@ static func calculate_velocity_end_for_displacement(
     #     t = (v - v_0) / a
     var time_to_reach_max_speed := \
             (velocity_at_max_speed - velocity_start) / acceleration
-    if time_to_reach_max_speed < 0.0:
-        # We pass and reverse directions before hitting max speed.
-        velocity_at_max_speed *= -1.0
-        time_to_reach_max_speed = \
-                (velocity_at_max_speed - velocity_start) / acceleration
     
-    # From a basic equation of motion:
-    #     s = s_0 + v_0*t + 1/2*a*t^2
-    # Algebra...
-    #     (s - s_0) = v_0*t + 1/2*a*t^2
-    var displacement_to_reach_max_speed := \
-            velocity_start * time_to_reach_max_speed + \
-            0.5 * acceleration * time_to_reach_max_speed * \
-            time_to_reach_max_speed
-    
-    var is_decelerating := (velocity_start > 0.0) != (acceleration > 0.0)
-    var is_starting_at_max_speed := time_to_reach_max_speed < 0.01
-    var is_decelerating_from_max_speed := \
-            is_starting_at_max_speed and \
-            is_decelerating
-    
-    var reaches_destination_before_max_speed: bool
-    if is_starting_at_max_speed and !is_decelerating:
-        reaches_destination_before_max_speed = false
-    elif (displacement_to_reach_max_speed > 0.0) != (displacement > 0.0):
-        reaches_destination_before_max_speed = true
-    elif displacement > 0.0 and \
-                displacement_to_reach_max_speed > displacement or \
-            displacement < 0.0 and \
-                displacement_to_reach_max_speed < displacement:
-        reaches_destination_before_max_speed = true
-    else:
-        reaches_destination_before_max_speed = false
-    
-    if is_decelerating_from_max_speed or \
-            reaches_destination_before_max_speed:
-        # We do not reach max speed before we reach the displacement.
-        var time_for_displacement := calculate_movement_duration(
+    var time_to_reach_destination_without_speed_cap := \
+            calculate_movement_duration(
                 displacement,
                 velocity_start,
                 acceleration,
                 returns_lower_result,
                 0.0,
+                false,
                 false)
+    
+    var reaches_destination_before_max_speed := \
+            time_to_reach_destination_without_speed_cap <= \
+            time_to_reach_max_speed
+    
+    if reaches_destination_before_max_speed:
+        # We do not reach max speed before we reach the displacement.
         # From a basic equation of motion:
         #     v = v_0 + a*t
-        return velocity_start + acceleration * time_for_displacement
+        return velocity_start + \
+                acceleration * time_to_reach_destination_without_speed_cap
     else:
         # We reach max speed before we reach the displacement.
         return velocity_at_max_speed
