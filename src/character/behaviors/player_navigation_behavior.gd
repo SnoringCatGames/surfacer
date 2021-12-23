@@ -119,5 +119,6 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
 
 
 func _on_finished() -> void:
-    ._on_finished()
-    Sc.logger.error("PlayerNavigationBehavior should always be active.")
+    # NOTE: This replaces the default behavior, rather than extending it.
+#    ._on_finished()
+    Sc.logger.warning("PlayerNavigationBehavior should always be active.")
