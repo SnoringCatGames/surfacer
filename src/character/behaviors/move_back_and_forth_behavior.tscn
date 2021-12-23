@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=2]
-
-[ext_resource path="res://addons/surfacer/src/character/behaviors/move_back_and_forth_behavior.gd" type="Script" id=1]
-
-
-[node name="MoveBackAndForthBehavior" type="Node2D"]
-script = ExtResource( 1 )
