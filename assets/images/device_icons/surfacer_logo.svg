@@ -2,22 +2,36 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="64"
    height="64"
    viewBox="0 0 16.933333 16.933333"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="surfacer-logo.svg">
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="surfacer_logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
-     id="defs2" />
+     id="defs2">
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter76036"
+       x="-0.06018581"
+       y="-0.21062816"
+       width="1.1203716"
+       height="1.4212563">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.40707615"
+         id="feGaussianBlur76038" />
+    </filter>
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -25,18 +39,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6568543"
-     inkscape:cx="129.20285"
-     inkscape:cy="-32.097932"
+     inkscape:zoom="4"
+     inkscape:cx="244.25"
+     inkscape:cy="127"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="3840"
-     inkscape:window-height="2035"
-     inkscape:window-x="3827"
-     inkscape:window-y="-13"
+     inkscape:window-width="1920"
+     inkscape:window-height="1010"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
      inkscape:window-maximized="1"
-     units="px" />
+     units="px"
+     inkscape:pagecheckerboard="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -45,7 +60,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -328,8 +343,9 @@
     <g
        id="g6058-7"
        transform="translate(73.245213,-0.79510947)"
-       inkscape:export-xdpi="768"
-       inkscape:export-ydpi="768">
+       inkscape:export-xdpi="1536"
+       inkscape:export-ydpi="1536"
+       inkscape:export-filename="C:\Users\lsl\Repositories\exampler\addons\surfacer\assets\images\device_icons\surfacer-v0.7.0.png">
       <rect
          y="299.31671"
          x="8.7838134e-07"
@@ -584,6 +600,98 @@
              style="opacity:1;vector-effect:none;fill:#414042;fill-opacity:1;stroke:none;stroke-width:0.50428009;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
              inkscape:connector-curvature="0" />
         </g>
+      </g>
+    </g>
+    <g
+       id="g65578-8"
+       transform="matrix(0.3963135,0,0,0.3963135,77.382828,184.58107)"
+       style="fill:none;fill-opacity:0;stroke:#000000;stroke-opacity:1;stroke-width:1.00008157;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter76036);opacity:0.44262295"
+       inkscape:export-filename="C:\Users\lsl\Repositories\exampler\addons\surfacer\assets\images\device_icons\surfacer-v0.7.0.png"
+       inkscape:export-xdpi="1536"
+       inkscape:export-ydpi="1536">
+      <g
+         id="g67236-5"
+         transform="translate(1.9843749,-2.4473958)"
+         style="fill:none;fill-opacity:0;stroke:#000000;stroke-opacity:1;stroke-width:1.00008157;stroke-miterlimit:4;stroke-dasharray:none">
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;fill:none;fill-opacity:0;stroke:#000000;stroke-width:1.00008157;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+           x="-3.3316023"
+           y="314.66315"
+           id="text2900-90"><tspan
+             sodipodi:role="line"
+             id="tspan2898-5"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;fill:none;fill-opacity:0;stroke-width:1.00008157;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+             x="-3.3316023"
+             y="314.66315">v070</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;fill:none;fill-opacity:0;stroke:#000000;stroke-width:1.00008157;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+           x="6.6880026"
+           y="314.66315"
+           id="text2900-9-3"><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;fill:none;fill-opacity:0;stroke-width:1.00008157;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+             x="6.6880026"
+             y="314.66315"
+             id="tspan53839-8">.</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;fill:none;fill-opacity:0;stroke:#000000;stroke-width:1.00008157;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+           x="12.101597"
+           y="314.66315"
+           id="text2900-9-6-3"><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;fill:none;fill-opacity:0;stroke-width:1.00008157;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+             x="12.101597"
+             y="314.66315"
+             id="tspan53839-5-1">.</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g65578"
+       transform="matrix(0.3963135,0,0,0.3963135,77.382828,184.58107)"
+       style="fill:#efe71c;fill-opacity:1"
+       inkscape:export-filename="C:\Users\lsl\Repositories\exampler\addons\surfacer\assets\images\device_icons\surfacer-v0.7.0.png"
+       inkscape:export-xdpi="1536"
+       inkscape:export-ydpi="1536">
+      <g
+         id="g67236"
+         transform="translate(1.9843749,-2.4473958)"
+         style="fill:#efe71c;fill-opacity:1">
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;fill:#efe71c;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="-3.3316023"
+           y="314.66315"
+           id="text2900"><tspan
+             sodipodi:role="line"
+             id="tspan2898"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;fill:#efe71c;fill-opacity:1;stroke-width:0.264583"
+             x="-3.3316023"
+             y="314.66315">v070</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;fill:#efe71c;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="6.6880026"
+           y="314.66315"
+           id="text2900-9"><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;fill:#efe71c;fill-opacity:1;stroke-width:0.264583"
+             x="6.6880026"
+             y="314.66315"
+             id="tspan53839">.</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;fill:#efe71c;fill-opacity:1;stroke:none;stroke-width:0.264583"
+           x="12.101597"
+           y="314.66315"
+           id="text2900-9-6"><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;fill:#efe71c;fill-opacity:1;stroke-width:0.264583"
+             x="12.101597"
+             y="314.66315"
+             id="tspan53839-5">.</tspan></text>
       </g>
     </g>
   </g>
