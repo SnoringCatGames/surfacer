@@ -5,6 +5,16 @@ extends TileMap
 ## The surfaces that a character can collide with.
 
 
+signal cell_tile_changed(
+        cell_position,
+        next_tile_id,
+        previous_tile_id)
+signal cell_autotile_changed(
+        cell_position,
+        next_autotile_position,
+        previous_autotile_position,
+        tile_id)
+
 const GROUP_NAME_SURFACES := "surfaces"
 
 export var id: String
@@ -39,3 +49,56 @@ func _draw() -> void:
 func _set_draws_tile_indices(value: bool) -> void:
     draws_tile_indices = value
     update()
+
+
+func set_cell(
+        x: int,
+        y: int,
+        tile_id: int,
+        flip_x := false,
+        flip_y := false,
+        transpose := false,
+        autotile_coord := Vector2.ZERO) -> void:
+    var previous_tile_id := get_cell(x, y)
+    var is_autotile := \
+            tile_id != INVALID_CELL and \
+            tile_set.tile_get_tile_mode(tile_id) == TileSet.AUTO_TILE
+    var previous_autotile_coord := \
+            get_cell_autotile_coord(x, y) if \
+            is_autotile else \
+            Vector2.INF
+    .set_cell(x, y, tile_id, flip_x, flip_y, transpose, autotile_coord)
+    if previous_tile_id != tile_id:
+        emit_signal(
+                "cell_tile_changed",
+                Vector2(x, y),
+                tile_id,
+                previous_tile_id)
+    else:
+        if is_autotile and \
+                previous_autotile_coord != autotile_coord:
+            emit_signal(
+                    "cell_autotile_changed",
+                    Vector2(x, y),
+                    autotile_coord,
+                    previous_autotile_coord,
+                    tile_id)
+
+
+# FIXME: --------------------------------
+# - Make sure this doesn't trigger set_cell() under the hood, which would cause
+#   our signal to emit twice.
+func set_cellv(
+        position: Vector2,
+        tile_id: int,
+        flip_x := false,
+        flip_y := false,
+        transpose := false) -> void:
+    var previous_tile_id := get_cellv(position)
+    .set_cellv(position, tile_id, flip_x, flip_y, transpose)
+    if previous_tile_id != tile_id:
+        emit_signal(
+                "cell_tile_changed",
+                position,
+                tile_id,
+                previous_tile_id)
