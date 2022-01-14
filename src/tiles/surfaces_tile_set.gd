@@ -3,6 +3,18 @@ class_name SurfacesTileSet
 extends TileSet
 
 
+const INVALID_BITMASK := -1
+const FULL_BITMASK_3x3 := \
+        TileSet.BIND_TOPLEFT | \
+        TileSet.BIND_TOP | \
+        TileSet.BIND_TOPRIGHT | \
+        TileSet.BIND_LEFT | \
+        TileSet.BIND_CENTER | \
+        TileSet.BIND_RIGHT | \
+        TileSet.BIND_BOTTOMLEFT | \
+        TileSet.BIND_BOTTOM | \
+        TileSet.BIND_BOTTOMRIGHT
+
 # Array<[String,Array<String>]>
 var _properties_manifest: Array
 
