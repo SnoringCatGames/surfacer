@@ -6,10 +6,14 @@ var position: Vector2
 var angle_type: int
 var bitmask: int
 
+var top_left_neighbor_angle_type: int
 var top_neighbor_angle_type: int
-var bottom_neighbor_angle_type: int
+var top_right_neighbor_angle_type: int
 var left_neighbor_angle_type: int
 var right_neighbor_angle_type: int
+var bottom_left_neighbor_angle_type: int
+var bottom_neighbor_angle_type: int
+var bottom_right_neighbor_angle_type: int
 
 var top_left_neighbor_bitmask: int
 var top_neighbor_bitmask: int
@@ -48,14 +52,22 @@ var is_bottom_right_neighbor_exposed_at_bottom_right: bool \
 
 var is_internal: bool setget ,_get_is_internal
 
+var is_top_left_neighbor_same_angle_type: bool \
+        setget ,_get_is_top_left_neighbor_same_angle_type
 var is_top_neighbor_same_angle_type: bool \
         setget ,_get_is_top_neighbor_same_angle_type
-var is_bottom_neighbor_same_angle_type: bool \
-        setget ,_get_is_bottom_neighbor_same_angle_type
+var is_top_right_neighbor_same_angle_type: bool \
+        setget ,_get_is_top_right_neighbor_same_angle_type
 var is_left_neighbor_same_angle_type: bool \
         setget ,_get_is_left_neighbor_same_angle_type
 var is_right_neighbor_same_angle_type: bool \
         setget ,_get_is_right_neighbor_same_angle_type
+var is_bottom_left_neighbor_same_angle_type: bool \
+        setget ,_get_is_bottom_left_neighbor_same_angle_type
+var is_bottom_neighbor_same_angle_type: bool \
+        setget ,_get_is_bottom_neighbor_same_angle_type
+var is_bottom_right_neighbor_same_angle_type: bool \
+        setget ,_get_is_bottom_right_neighbor_same_angle_type
 
 var are_all_neighbors_same_angle_type: bool \
         setget, _get_are_all_neighbors_same_angle_type
@@ -145,14 +157,19 @@ func _get_is_internal() -> bool:
     return bitmask == SurfacesTileSet.FULL_BITMASK_3x3
 
 
+func _get_is_top_left_neighbor_same_angle_type() -> bool:
+    return (top_left_neighbor_angle_type == angle_type or \
+            top_left_neighbor_angle_type == CellAngleType.EMPTY)
+
+
 func _get_is_top_neighbor_same_angle_type() -> bool:
     return (top_neighbor_angle_type == angle_type or \
             top_neighbor_angle_type == CellAngleType.EMPTY)
 
 
-func _get_is_bottom_neighbor_same_angle_type() -> bool:
-    return (bottom_neighbor_angle_type == angle_type or \
-            bottom_neighbor_angle_type == CellAngleType.EMPTY)
+func _get_is_top_right_neighbor_same_angle_type() -> bool:
+    return (top_right_neighbor_angle_type == angle_type or \
+            top_right_neighbor_angle_type == CellAngleType.EMPTY)
 
 
 func _get_is_left_neighbor_same_angle_type() -> bool:
@@ -165,12 +182,35 @@ func _get_is_right_neighbor_same_angle_type() -> bool:
             right_neighbor_angle_type == CellAngleType.EMPTY)
 
 
+func _get_is_bottom_left_neighbor_same_angle_type() -> bool:
+    return (bottom_left_neighbor_angle_type == angle_type or \
+            bottom_left_neighbor_angle_type == CellAngleType.EMPTY)
+
+
+func _get_is_bottom_neighbor_same_angle_type() -> bool:
+    return (bottom_neighbor_angle_type == angle_type or \
+            bottom_neighbor_angle_type == CellAngleType.EMPTY)
+
+
+func _get_is_bottom_right_neighbor_same_angle_type() -> bool:
+    return (bottom_right_neighbor_angle_type == angle_type or \
+            bottom_right_neighbor_angle_type == CellAngleType.EMPTY)
+
+
 func _get_are_all_neighbors_same_angle_type() -> bool:
-    return (top_neighbor_angle_type == angle_type or \
+    return (top_left_neighbor_angle_type == angle_type or \
+            top_left_neighbor_angle_type == CellAngleType.EMPTY) and \
+            (top_neighbor_angle_type == angle_type or \
             top_neighbor_angle_type == CellAngleType.EMPTY) and \
-            (bottom_neighbor_angle_type == angle_type or \
-            bottom_neighbor_angle_type == CellAngleType.EMPTY) and \
+            (top_right_neighbor_angle_type == angle_type or \
+            top_right_neighbor_angle_type == CellAngleType.EMPTY) and \
             (left_neighbor_angle_type == angle_type or \
             left_neighbor_angle_type == CellAngleType.EMPTY) and \
             (right_neighbor_angle_type == angle_type or \
-            right_neighbor_angle_type == CellAngleType.EMPTY)
+            right_neighbor_angle_type == CellAngleType.EMPTY) and \
+            (bottom_left_neighbor_angle_type == angle_type or \
+            bottom_left_neighbor_angle_type == CellAngleType.EMPTY) and \
+            (bottom_neighbor_angle_type == angle_type or \
+            bottom_neighbor_angle_type == CellAngleType.EMPTY) and \
+            (bottom_right_neighbor_angle_type == angle_type or \
+            bottom_right_neighbor_angle_type == CellAngleType.EMPTY)
