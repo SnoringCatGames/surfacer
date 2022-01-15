@@ -40,10 +40,10 @@ func _enter_tree() -> void:
 func _draw() -> void:
     if draws_tile_indices:
         Sc.draw.draw_tile_map_indices(
-                    self,
-                    self,
-                    Color.white,
-                    false)
+                self,
+                self,
+                Color.white,
+                false)
 
 
 func _set_draws_tile_indices(value: bool) -> void:
