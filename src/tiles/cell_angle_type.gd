@@ -10,7 +10,7 @@ enum {
 }
 
 
-func get_string(type: int) -> String:
+static func get_string(type: int) -> String:
     match type:
         UNKNOWN:
             return "UNKNOWN"
