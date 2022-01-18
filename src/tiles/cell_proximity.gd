@@ -78,9 +78,7 @@ func _get_is_exposed_at_top_left() -> bool:
 
 
 func _get_is_exposed_at_top() -> bool:
-    return !(bitmask & TileSet.BIND_TOPLEFT) or \
-            !(bitmask & TileSet.BIND_TOP) or \
-            !(bitmask & TileSet.BIND_TOPRIGHT)
+    return !(bitmask & TileSet.BIND_TOP)
 
 
 func _get_is_exposed_at_top_right() -> bool:
@@ -88,15 +86,11 @@ func _get_is_exposed_at_top_right() -> bool:
 
 
 func _get_is_exposed_at_left() -> bool:
-    return !(bitmask & TileSet.BIND_TOPLEFT) or \
-            !(bitmask & TileSet.BIND_LEFT) or \
-            !(bitmask & TileSet.BIND_BOTTOMLEFT)
+    return !(bitmask & TileSet.BIND_LEFT)
 
 
 func _get_is_exposed_at_right() -> bool:
-    return !(bitmask & TileSet.BIND_TOPRIGHT) or \
-            !(bitmask & TileSet.BIND_RIGHT) or \
-            !(bitmask & TileSet.BIND_BOTTOMRIGHT)
+    return !(bitmask & TileSet.BIND_RIGHT)
 
 
 func _get_is_exposed_at_bottom_left() -> bool:
@@ -104,9 +98,7 @@ func _get_is_exposed_at_bottom_left() -> bool:
 
 
 func _get_is_exposed_at_bottom() -> bool:
-    return !(bitmask & TileSet.BIND_BOTTOMLEFT) or \
-            !(bitmask & TileSet.BIND_BOTTOM) or \
-            !(bitmask & TileSet.BIND_BOTTOMRIGHT)
+    return !(bitmask & TileSet.BIND_BOTTOM)
 
 
 func _get_is_exposed_at_bottom_right() -> bool:
