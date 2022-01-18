@@ -38,6 +38,15 @@ var is_exposed_at_top_or_right: bool setget ,_get_is_exposed_at_top_or_right
 var is_exposed_at_bottom_or_left: bool setget ,_get_is_exposed_at_bottom_or_left
 var is_exposed_at_bottom_or_right: bool setget ,_get_is_exposed_at_bottom_or_right
 
+var is_exposed_around_top_left: bool \
+        setget ,_get_is_exposed_around_top_left
+var is_exposed_around_top_right: bool \
+        setget ,_get_is_exposed_around_top_right
+var is_exposed_around_bottom_left: bool \
+        setget ,_get_is_exposed_around_bottom_left
+var is_exposed_around_bottom_right: bool \
+        setget ,_get_is_exposed_around_bottom_right
+
 var is_top_left_neighbor_exposed_at_top_left: bool \
         setget ,_get_is_top_left_neighbor_exposed_at_top_left
 var is_top_neighbor_exposed_at_top: bool \
@@ -63,6 +72,24 @@ var is_bottom_left_neighbor_exposed_at_bottom_or_left: bool \
         setget ,_get_is_bottom_left_neighbor_exposed_at_bottom_or_left
 var is_bottom_right_neighbor_exposed_at_bottom_or_right: bool \
         setget ,_get_is_bottom_right_neighbor_exposed_at_bottom_or_right
+
+var is_top_neighbor_exposed_around_top: bool \
+        setget ,_get_is_top_neighbor_exposed_around_top
+var is_bottom_neighbor_exposed_around_bottom: bool \
+        setget ,_get_is_bottom_neighbor_exposed_around_bottom
+var is_left_neighbor_exposed_around_left: bool \
+        setget ,_get_is_left_neighbor_exposed_around_left
+var is_right_neighbor_exposed_around_right: bool \
+        setget ,_get_is_right_neighbor_exposed_around_right
+
+var is_top_left_neighbor_exposed_around_top_left: bool \
+        setget ,_get_is_top_left_neighbor_exposed_around_top_left
+var is_top_right_neighbor_exposed_around_top_right: bool \
+        setget ,_get_is_top_right_neighbor_exposed_around_top_right
+var is_bottom_left_neighbor_exposed_around_bottom_left: bool \
+        setget ,_get_is_bottom_left_neighbor_exposed_around_bottom_left
+var is_bottom_right_neighbor_exposed_around_bottom_right: bool \
+        setget ,_get_is_bottom_right_neighbor_exposed_around_bottom_right
 
 var is_internal: bool setget ,_get_is_internal
 
@@ -139,6 +166,30 @@ func _get_is_exposed_at_bottom_or_right() -> bool:
             !(bitmask & TileSet.BIND_RIGHT)
 
 
+func _get_is_exposed_around_top_left() -> bool:
+    return !(bitmask & TileSet.BIND_TOPLEFT) or \
+            !(bitmask & TileSet.BIND_TOP) or \
+            !(bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_exposed_around_top_right() -> bool:
+    return !(bitmask & TileSet.BIND_TOPRIGHT) or \
+            !(bitmask & TileSet.BIND_TOP) or \
+            !(bitmask & TileSet.BIND_RIGHT)
+
+
+func _get_is_exposed_around_bottom_left() -> bool:
+    return !(bitmask & TileSet.BIND_BOTTOMLEFT) or \
+            !(bitmask & TileSet.BIND_BOTTOM) or \
+            !(bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_exposed_around_bottom_right() -> bool:
+    return !(bitmask & TileSet.BIND_BOTTOMRIGHT) or \
+            !(bitmask & TileSet.BIND_BOTTOM) or \
+            !(bitmask & TileSet.BIND_RIGHT)
+
+
 func _get_is_top_left_neighbor_exposed_at_top_left() -> bool:
     return !(top_left_neighbor_bitmask & TileSet.BIND_TOPLEFT)
 
@@ -171,7 +222,6 @@ func _get_is_bottom_right_neighbor_exposed_at_bottom_right() -> bool:
     return !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOMRIGHT)
 
 
-
 func _get_is_top_left_neighbor_exposed_at_top_or_left() -> bool:
     return !(top_left_neighbor_bitmask & TileSet.BIND_TOP) or \
             !(top_left_neighbor_bitmask & TileSet.BIND_LEFT)
@@ -189,6 +239,54 @@ func _get_is_bottom_left_neighbor_exposed_at_bottom_or_left() -> bool:
 
 func _get_is_bottom_right_neighbor_exposed_at_bottom_or_right() -> bool:
     return !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
+            !(bottom_right_neighbor_bitmask & TileSet.BIND_RIGHT)
+
+
+func _get_is_top_neighbor_exposed_around_top() -> bool:
+    return !(top_neighbor_bitmask & TileSet.BIND_TOPLEFT) or \
+            !(top_neighbor_bitmask & TileSet.BIND_TOP) or \
+            !(top_neighbor_bitmask & TileSet.BIND_TOPRIGHT)
+
+
+func _get_is_bottom_neighbor_exposed_around_bottom() -> bool:
+    return !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOMLEFT) or \
+            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
+            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOMRIGHT)
+
+
+func _get_is_left_neighbor_exposed_around_left() -> bool:
+    return !(left_neighbor_bitmask & TileSet.BIND_TOPLEFT) or \
+            !(left_neighbor_bitmask & TileSet.BIND_LEFT) or \
+            !(left_neighbor_bitmask & TileSet.BIND_BOTTOMLEFT)
+
+
+func _get_is_right_neighbor_exposed_around_right() -> bool:
+    return !(right_neighbor_bitmask & TileSet.BIND_TOPRIGHT) or \
+            !(right_neighbor_bitmask & TileSet.BIND_RIGHT) or \
+            !(right_neighbor_bitmask & TileSet.BIND_BOTTOMRIGHT)
+
+
+func _get_is_top_left_neighbor_exposed_around_top_left() -> bool:
+    return !(top_left_neighbor_bitmask & TileSet.BIND_TOPLEFT) or \
+            !(top_left_neighbor_bitmask & TileSet.BIND_TOP) or \
+            !(top_left_neighbor_bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_top_right_neighbor_exposed_around_top_right() -> bool:
+    return !(top_right_neighbor_bitmask & TileSet.BIND_TOPRIGHT) or \
+            !(top_right_neighbor_bitmask & TileSet.BIND_TOP) or \
+            !(top_right_neighbor_bitmask & TileSet.BIND_RIGHT)
+
+
+func _get_is_bottom_left_neighbor_exposed_around_bottom_left() -> bool:
+    return !(bottom_left_neighbor_bitmask & TileSet.BIND_BOTTOMLEFT) or \
+            !(bottom_left_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
+            !(bottom_left_neighbor_bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_bottom_right_neighbor_exposed_around_bottom_right() -> bool:
+    return !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOMRIGHT) or \
+            !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
             !(bottom_right_neighbor_bitmask & TileSet.BIND_RIGHT)
 
 
