@@ -91,6 +91,31 @@ var is_bottom_left_neighbor_exposed_around_bottom_left: bool \
 var is_bottom_right_neighbor_exposed_around_bottom_right: bool \
         setget ,_get_is_bottom_right_neighbor_exposed_around_bottom_right
 
+var is_top_neighbor_45_pos: bool \
+        setget ,_get_is_top_neighbor_45_pos
+var is_top_neighbor_45_neg: bool \
+        setget ,_get_is_top_neighbor_45_neg
+var is_bottom_neighbor_45_pos: bool \
+        setget ,_get_is_bottom_neighbor_45_pos
+var is_bottom_neighbor_45_neg: bool \
+        setget ,_get_is_bottom_neighbor_45_neg
+var is_left_neighbor_45_pos: bool \
+        setget ,_get_is_left_neighbor_45_pos
+var is_left_neighbor_45_neg: bool \
+        setget ,_get_is_left_neighbor_45_neg
+var is_right_neighbor_45_pos: bool \
+        setget ,_get_is_right_neighbor_45_pos
+var is_right_neighbor_45_neg: bool \
+        setget ,_get_is_right_neighbor_45_neg
+var is_top_neighbor_cap: bool \
+        setget ,_get_is_top_neighbor_cap
+var is_bottom_neighbor_cap: bool \
+        setget ,_get_is_bottom_neighbor_cap
+var is_left_neighbor_cap: bool \
+        setget ,_get_is_left_neighbor_cap
+var is_right_neighbor_cap: bool \
+        setget ,_get_is_right_neighbor_cap
+
 var is_internal: bool setget ,_get_is_internal
 
 var is_top_left_neighbor_same_angle_type: bool \
@@ -288,6 +313,98 @@ func _get_is_bottom_right_neighbor_exposed_around_bottom_right() -> bool:
     return !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOMRIGHT) or \
             !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
             !(bottom_right_neighbor_bitmask & TileSet.BIND_RIGHT)
+
+
+func _get_is_top_neighbor_45_pos() -> bool:
+    return top_neighbor_angle_type == CellAngleType.A45 and \
+            (bitmask & TileSet.BIND_TOP) and \
+            (bitmask & TileSet.BIND_TOPRIGHT) and \
+            !(bitmask & TileSet.BIND_TOPLEFT) and \
+            !(top_neighbor_bitmask & TileSet.BIND_TOP)
+
+
+func _get_is_top_neighbor_45_neg() -> bool:
+    return top_neighbor_angle_type == CellAngleType.A45 and \
+            (bitmask & TileSet.BIND_TOP) and \
+            (bitmask & TileSet.BIND_TOPLEFT) and \
+            !(bitmask & TileSet.BIND_TOPRIGHT) and \
+            !(top_neighbor_bitmask & TileSet.BIND_TOP)
+
+
+func _get_is_bottom_neighbor_45_pos() -> bool:
+    return bottom_neighbor_angle_type == CellAngleType.A45 and \
+            (bitmask & TileSet.BIND_BOTTOM) and \
+            (bitmask & TileSet.BIND_BOTTOMLEFT) and \
+            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
+            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM)
+
+
+func _get_is_bottom_neighbor_45_neg() -> bool:
+    return bottom_neighbor_angle_type == CellAngleType.A45 and \
+            (bitmask & TileSet.BIND_BOTTOM) and \
+            (bitmask & TileSet.BIND_BOTTOMRIGHT) and \
+            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
+            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM)
+
+
+func _get_is_left_neighbor_45_pos() -> bool:
+    return left_neighbor_angle_type == CellAngleType.A45 and \
+            (bitmask & TileSet.BIND_LEFT) and \
+            (bitmask & TileSet.BIND_BOTTOMLEFT) and \
+            !(bitmask & TileSet.BIND_TOPLEFT) and \
+            !(left_neighbor_bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_left_neighbor_45_neg() -> bool:
+    return left_neighbor_angle_type == CellAngleType.A45 and \
+            (bitmask & TileSet.BIND_LEFT) and \
+            (bitmask & TileSet.BIND_TOPLEFT) and \
+            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
+            !(left_neighbor_bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_right_neighbor_45_pos() -> bool:
+    return right_neighbor_angle_type == CellAngleType.A45 and \
+            (bitmask & TileSet.BIND_RIGHT) and \
+            (bitmask & TileSet.BIND_TOPRIGHT) and \
+            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
+            !(right_neighbor_bitmask & TileSet.BIND_RIGHT)
+
+
+func _get_is_right_neighbor_45_neg() -> bool:
+    return right_neighbor_angle_type == CellAngleType.A45 and \
+            (bitmask & TileSet.BIND_RIGHT) and \
+            (bitmask & TileSet.BIND_BOTTOMRIGHT) and \
+            !(bitmask & TileSet.BIND_TOPRIGHT) and \
+            !(right_neighbor_bitmask & TileSet.BIND_RIGHT)
+
+
+func _get_is_top_neighbor_cap() -> bool:
+    return (bitmask & TileSet.BIND_TOP) and \
+            !(bitmask & TileSet.BIND_TOPLEFT) and \
+            !(bitmask & TileSet.BIND_TOPRIGHT) and \
+            !(top_neighbor_bitmask & TileSet.BIND_TOP)
+
+
+func _get_is_bottom_neighbor_cap() -> bool:
+    return (bitmask & TileSet.BIND_BOTTOM) and \
+            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
+            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
+            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM)
+
+
+func _get_is_left_neighbor_cap() -> bool:
+    return (bitmask & TileSet.BIND_LEFT) and \
+            !(bitmask & TileSet.BIND_TOPLEFT) and \
+            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
+            !(left_neighbor_bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_right_neighbor_cap() -> bool:
+    return (bitmask & TileSet.BIND_RIGHT) and \
+            !(bitmask & TileSet.BIND_TOPRIGHT) and \
+            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
+            !(right_neighbor_bitmask & TileSet.BIND_RIGHT)
 
 
 func _get_is_internal() -> bool:
