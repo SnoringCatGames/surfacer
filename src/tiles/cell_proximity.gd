@@ -116,6 +116,23 @@ var is_left_neighbor_cap: bool \
 var is_right_neighbor_cap: bool \
         setget ,_get_is_right_neighbor_cap
 
+var is_floor_with_45_curve_in_at_left: bool \
+        setget ,_get_is_floor_with_45_curve_in_at_left
+var is_floor_with_45_curve_in_at_right: bool \
+        setget ,_get_is_floor_with_45_curve_in_at_right
+var is_ceiling_with_45_curve_in_at_left: bool \
+        setget ,_get_is_ceiling_with_45_curve_in_at_left
+var is_ceiling_with_45_curve_in_at_right: bool \
+        setget ,_get_is_ceiling_with_45_curve_in_at_right
+var is_left_wall_with_45_curve_in_at_top: bool \
+        setget ,_get_is_left_wall_with_45_curve_in_at_top
+var is_left_wall_with_45_curve_in_at_bottom: bool \
+        setget ,_get_is_left_wall_with_45_curve_in_at_bottom
+var is_right_wall_with_45_curve_in_at_top: bool \
+        setget ,_get_is_right_wall_with_45_curve_in_at_top
+var is_right_wall_with_45_curve_in_at_bottom: bool \
+        setget ,_get_is_right_wall_with_45_curve_in_at_bottom
+
 var is_internal: bool setget ,_get_is_internal
 
 var is_top_left_neighbor_same_angle_type: bool \
@@ -405,6 +422,70 @@ func _get_is_right_neighbor_cap() -> bool:
             !(bitmask & TileSet.BIND_TOPRIGHT) and \
             !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
             !(right_neighbor_bitmask & TileSet.BIND_RIGHT)
+
+
+func _get_is_floor_with_45_curve_in_at_left() -> bool:
+    return (bitmask & TileSet.BIND_LEFT) and \
+            (bitmask & TileSet.BIND_RIGHT) and \
+            !(bitmask & TileSet.BIND_TOP) and \
+            !(bitmask & TileSet.BIND_TOPLEFT) and \
+            (bitmask & TileSet.BIND_BOTTOMLEFT)
+
+
+func _get_is_floor_with_45_curve_in_at_right() -> bool:
+    return (bitmask & TileSet.BIND_LEFT) and \
+            (bitmask & TileSet.BIND_RIGHT) and \
+            !(bitmask & TileSet.BIND_TOP) and \
+            !(bitmask & TileSet.BIND_TOPRIGHT) and \
+            (bitmask & TileSet.BIND_BOTTOMRIGHT)
+
+
+func _get_is_ceiling_with_45_curve_in_at_left() -> bool:
+    return (bitmask & TileSet.BIND_LEFT) and \
+            (bitmask & TileSet.BIND_RIGHT) and \
+            !(bitmask & TileSet.BIND_BOTTOM) and \
+            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
+            (bitmask & TileSet.BIND_TOPLEFT)
+
+
+func _get_is_ceiling_with_45_curve_in_at_right() -> bool:
+    return (bitmask & TileSet.BIND_LEFT) and \
+            (bitmask & TileSet.BIND_RIGHT) and \
+            !(bitmask & TileSet.BIND_BOTTOM) and \
+            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
+            (bitmask & TileSet.BIND_TOPRIGHT)
+
+
+func _get_is_left_wall_with_45_curve_in_at_top() -> bool:
+    return (bitmask & TileSet.BIND_TOP) and \
+            (bitmask & TileSet.BIND_BOTTOM) and \
+            !(bitmask & TileSet.BIND_RIGHT) and \
+            !(bitmask & TileSet.BIND_TOPRIGHT) and \
+            (bitmask & TileSet.BIND_TOPLEFT)
+
+
+func _get_is_left_wall_with_45_curve_in_at_bottom() -> bool:
+    return (bitmask & TileSet.BIND_TOP) and \
+            (bitmask & TileSet.BIND_BOTTOM) and \
+            !(bitmask & TileSet.BIND_RIGHT) and \
+            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
+            (bitmask & TileSet.BIND_BOTTOMLEFT)
+
+
+func _get_is_right_wall_with_45_curve_in_at_top() -> bool:
+    return (bitmask & TileSet.BIND_TOP) and \
+            (bitmask & TileSet.BIND_BOTTOM) and \
+            !(bitmask & TileSet.BIND_LEFT) and \
+            !(bitmask & TileSet.BIND_TOPLEFT) and \
+            (bitmask & TileSet.BIND_TOPRIGHT)
+
+
+func _get_is_right_wall_with_45_curve_in_at_bottom() -> bool:
+    return (bitmask & TileSet.BIND_TOP) and \
+            (bitmask & TileSet.BIND_BOTTOM) and \
+            !(bitmask & TileSet.BIND_LEFT) and \
+            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
+            (bitmask & TileSet.BIND_BOTTOMRIGHT)
 
 
 func _get_is_internal() -> bool:
