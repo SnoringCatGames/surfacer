@@ -133,6 +133,23 @@ var is_right_wall_with_45_curve_in_at_top: bool \
 var is_right_wall_with_45_curve_in_at_bottom: bool \
         setget ,_get_is_right_wall_with_45_curve_in_at_bottom
 
+var is_top_neighbor_90_left_wall: bool \
+        setget ,_get_is_top_neighbor_90_left_wall
+var is_bottom_neighbor_90_left_wall: bool \
+        setget ,_get_is_bottom_neighbor_90_left_wall
+var is_top_neighbor_90_right_wall: bool \
+        setget ,_get_is_top_neighbor_90_right_wall
+var is_bottom_neighbor_90_right_wall: bool \
+        setget ,_get_is_bottom_neighbor_90_right_wall
+var is_left_neighbor_90_floor: bool \
+        setget ,_get_is_left_neighbor_90_floor
+var is_right_neighbor_90_floor: bool \
+        setget ,_get_is_right_neighbor_90_floor
+var is_left_neighbor_90_ceiling: bool \
+        setget ,_get_is_left_neighbor_90_ceiling
+var is_right_neighbor_90_ceiling: bool \
+        setget ,_get_is_right_neighbor_90_ceiling
+
 var is_internal: bool setget ,_get_is_internal
 
 var is_top_left_neighbor_same_angle_type: bool \
@@ -428,6 +445,7 @@ func _get_is_floor_with_45_curve_in_at_left() -> bool:
     return (bitmask & TileSet.BIND_LEFT) and \
             (bitmask & TileSet.BIND_RIGHT) and \
             !(bitmask & TileSet.BIND_TOP) and \
+            left_neighbor_angle_type == CellAngleType.A45 and \
             !(bitmask & TileSet.BIND_TOPLEFT) and \
             !(left_neighbor_bitmask & TileSet.BIND_LEFT) and \
             (bitmask & TileSet.BIND_BOTTOMLEFT)
@@ -437,6 +455,7 @@ func _get_is_floor_with_45_curve_in_at_right() -> bool:
     return (bitmask & TileSet.BIND_LEFT) and \
             (bitmask & TileSet.BIND_RIGHT) and \
             !(bitmask & TileSet.BIND_TOP) and \
+            right_neighbor_angle_type == CellAngleType.A45 and \
             !(bitmask & TileSet.BIND_TOPRIGHT) and \
             !(right_neighbor_bitmask & TileSet.BIND_RIGHT) and \
             (bitmask & TileSet.BIND_BOTTOMRIGHT)
@@ -446,6 +465,7 @@ func _get_is_ceiling_with_45_curve_in_at_left() -> bool:
     return (bitmask & TileSet.BIND_LEFT) and \
             (bitmask & TileSet.BIND_RIGHT) and \
             !(bitmask & TileSet.BIND_BOTTOM) and \
+            left_neighbor_angle_type == CellAngleType.A45 and \
             !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
             !(left_neighbor_bitmask & TileSet.BIND_LEFT) and \
             (bitmask & TileSet.BIND_TOPLEFT)
@@ -455,6 +475,7 @@ func _get_is_ceiling_with_45_curve_in_at_right() -> bool:
     return (bitmask & TileSet.BIND_LEFT) and \
             (bitmask & TileSet.BIND_RIGHT) and \
             !(bitmask & TileSet.BIND_BOTTOM) and \
+            right_neighbor_angle_type == CellAngleType.A45 and \
             !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
             !(right_neighbor_bitmask & TileSet.BIND_RIGHT) and \
             (bitmask & TileSet.BIND_TOPRIGHT)
@@ -464,6 +485,7 @@ func _get_is_left_wall_with_45_curve_in_at_top() -> bool:
     return (bitmask & TileSet.BIND_TOP) and \
             (bitmask & TileSet.BIND_BOTTOM) and \
             !(bitmask & TileSet.BIND_RIGHT) and \
+            top_neighbor_angle_type == CellAngleType.A45 and \
             !(bitmask & TileSet.BIND_TOPRIGHT) and \
             !(top_neighbor_bitmask & TileSet.BIND_TOP) and \
             (bitmask & TileSet.BIND_TOPLEFT)
@@ -473,6 +495,7 @@ func _get_is_left_wall_with_45_curve_in_at_bottom() -> bool:
     return (bitmask & TileSet.BIND_TOP) and \
             (bitmask & TileSet.BIND_BOTTOM) and \
             !(bitmask & TileSet.BIND_RIGHT) and \
+            bottom_neighbor_angle_type == CellAngleType.A45 and \
             !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
             !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) and \
             (bitmask & TileSet.BIND_BOTTOMLEFT)
@@ -482,6 +505,7 @@ func _get_is_right_wall_with_45_curve_in_at_top() -> bool:
     return (bitmask & TileSet.BIND_TOP) and \
             (bitmask & TileSet.BIND_BOTTOM) and \
             !(bitmask & TileSet.BIND_LEFT) and \
+            top_neighbor_angle_type == CellAngleType.A45 and \
             !(bitmask & TileSet.BIND_TOPLEFT) and \
             !(top_neighbor_bitmask & TileSet.BIND_TOP) and \
             (bitmask & TileSet.BIND_TOPRIGHT)
@@ -491,9 +515,58 @@ func _get_is_right_wall_with_45_curve_in_at_bottom() -> bool:
     return (bitmask & TileSet.BIND_TOP) and \
             (bitmask & TileSet.BIND_BOTTOM) and \
             !(bitmask & TileSet.BIND_LEFT) and \
+            bottom_neighbor_angle_type == CellAngleType.A45 and \
             !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
             !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) and \
             (bitmask & TileSet.BIND_BOTTOMRIGHT)
+
+
+func _get_is_top_neighbor_90_left_wall() -> bool:
+    return top_neighbor_angle_type == CellAngleType.A90 or \
+            (top_neighbor_bitmask & TileSet.BIND_TOP) and \
+            !(top_neighbor_bitmask & TileSet.BIND_RIGHT)
+
+
+func _get_is_bottom_neighbor_90_left_wall() -> bool:
+    return bottom_neighbor_angle_type == CellAngleType.A90 or \
+            (bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) and \
+            !(bottom_neighbor_bitmask & TileSet.BIND_RIGHT)
+
+
+func _get_is_top_neighbor_90_right_wall() -> bool:
+    return top_neighbor_angle_type == CellAngleType.A90 or \
+            (top_neighbor_bitmask & TileSet.BIND_TOP) and \
+            !(top_neighbor_bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_bottom_neighbor_90_right_wall() -> bool:
+    return bottom_neighbor_angle_type == CellAngleType.A90 or \
+            (bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) and \
+            !(bottom_neighbor_bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_left_neighbor_90_floor() -> bool:
+    return left_neighbor_angle_type == CellAngleType.A90 or \
+            (left_neighbor_bitmask & TileSet.BIND_LEFT) and \
+            !(left_neighbor_bitmask & TileSet.BIND_TOP)
+
+
+func _get_is_right_neighbor_90_floor() -> bool:
+    return right_neighbor_angle_type == CellAngleType.A90 or \
+            (right_neighbor_bitmask & TileSet.BIND_RIGHT) and \
+            !(right_neighbor_bitmask & TileSet.BIND_TOP)
+
+
+func _get_is_left_neighbor_90_ceiling() -> bool:
+    return left_neighbor_angle_type == CellAngleType.A90 or \
+            (left_neighbor_bitmask & TileSet.BIND_LEFT) and \
+            !(left_neighbor_bitmask & TileSet.BIND_BOTTOM)
+
+
+func _get_is_right_neighbor_90_ceiling() -> bool:
+    return right_neighbor_angle_type == CellAngleType.A90 or \
+            (right_neighbor_bitmask & TileSet.BIND_RIGHT) and \
+            !(right_neighbor_bitmask & TileSet.BIND_BOTTOM)
 
 
 func _get_is_internal() -> bool:
