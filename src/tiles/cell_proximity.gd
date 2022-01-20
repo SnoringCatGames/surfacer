@@ -190,9 +190,6 @@ func get_neighbor_angle_type(relative_x: int, relative_y: int) -> int:
 
 
 func get_is_neighbor_present(relative_x: int, relative_y: int) -> bool:
-    # FIXME: LEFT OFF HERE: ------------------------------
-    # - Replace the _is_tile_bound call with a simple array/dictionary lookup,
-    #   using a new structure that's configured in SurfacesTileSet?
     var neighbor_id := tile_map.get_cell(
             position.x + relative_x,
             position.y + relative_y)
@@ -200,9 +197,6 @@ func get_is_neighbor_present(relative_x: int, relative_y: int) -> bool:
 
 
 func get_is_neighbor_empty(relative_x: int, relative_y: int) -> bool:
-    # FIXME: LEFT OFF HERE: ------------------------------
-    # - Replace the _is_tile_bound call with a simple array/dictionary lookup,
-    #   using a new structure that's configured in SurfacesTileSet?
     var neighbor_id := tile_map.get_cell(
             position.x + relative_x,
             position.y + relative_y)
