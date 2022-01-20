@@ -46,7 +46,7 @@ func _parse_tiles_manifest(tiles_manifest: Array) -> void:
     
     # Ensure at least one tile is configured as collidable.
     var is_at_least_one_tile_collidable := false
-    for entry in tiles_manifest:
+    for entry in _tile_id_to_config.values():
         is_at_least_one_tile_collidable = \
                 is_at_least_one_tile_collidable or entry.is_collidable
     assert(is_at_least_one_tile_collidable)
