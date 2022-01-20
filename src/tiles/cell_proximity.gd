@@ -2,27 +2,32 @@ class_name CellProximity
 extends Reference
 
 
+var tile_map: SurfacesTileMap
+var tile_set: SurfacesTileSet
+
 var position: Vector2
+var tile_id: int
 var angle_type: int
-var bitmask: int
 
-var top_left_neighbor_angle_type: int
-var top_neighbor_angle_type: int
-var top_right_neighbor_angle_type: int
-var left_neighbor_angle_type: int
-var right_neighbor_angle_type: int
-var bottom_left_neighbor_angle_type: int
-var bottom_neighbor_angle_type: int
-var bottom_right_neighbor_angle_type: int
+# FIXME: LEFT OFF HERE: --------------------
+# - Remove most of these properties in favor of direct methods?
 
-var top_left_neighbor_bitmask: int
-var top_neighbor_bitmask: int
-var top_right_neighbor_bitmask: int
-var left_neighbor_bitmask: int
-var right_neighbor_bitmask: int
-var bottom_left_neighbor_bitmask: int
-var bottom_neighbor_bitmask: int
-var bottom_right_neighbor_bitmask: int
+var top_left_neighbor_angle_type: int \
+        setget ,_get_top_left_neighbor_angle_type
+var top_neighbor_angle_type: int \
+        setget ,_get_top_neighbor_angle_type
+var top_right_neighbor_angle_type: int \
+        setget ,_get_top_right_neighbor_angle_type
+var left_neighbor_angle_type: int \
+        setget ,_get_left_neighbor_angle_type
+var right_neighbor_angle_type: int \
+        setget ,_get_right_neighbor_angle_type
+var bottom_left_neighbor_angle_type: int \
+        setget ,_get_bottom_left_neighbor_angle_type
+var bottom_neighbor_angle_type: int \
+        setget ,_get_bottom_neighbor_angle_type
+var bottom_right_neighbor_angle_type: int \
+        setget ,_get_bottom_right_neighbor_angle_type
 
 var is_exposed_at_top_left: bool setget ,_get_is_exposed_at_top_left
 var is_exposed_at_top: bool setget ,_get_is_exposed_at_top
@@ -150,483 +155,501 @@ var is_left_neighbor_90_ceiling: bool \
 var is_right_neighbor_90_ceiling: bool \
         setget ,_get_is_right_neighbor_90_ceiling
 
-var is_internal: bool setget ,_get_is_internal
 
-var is_top_left_neighbor_same_angle_type: bool \
-        setget ,_get_is_top_left_neighbor_same_angle_type
-var is_top_neighbor_same_angle_type: bool \
-        setget ,_get_is_top_neighbor_same_angle_type
-var is_top_right_neighbor_same_angle_type: bool \
-        setget ,_get_is_top_right_neighbor_same_angle_type
-var is_left_neighbor_same_angle_type: bool \
-        setget ,_get_is_left_neighbor_same_angle_type
-var is_right_neighbor_same_angle_type: bool \
-        setget ,_get_is_right_neighbor_same_angle_type
-var is_bottom_left_neighbor_same_angle_type: bool \
-        setget ,_get_is_bottom_left_neighbor_same_angle_type
-var is_bottom_neighbor_same_angle_type: bool \
-        setget ,_get_is_bottom_neighbor_same_angle_type
-var is_bottom_right_neighbor_same_angle_type: bool \
-        setget ,_get_is_bottom_right_neighbor_same_angle_type
+func _init(
+        tile_map: SurfacesTileMap,
+        tile_set: SurfacesTileSet,
+        position: Vector2,
+        tile_id: int) -> void:
+    self.tile_map = tile_map
+    self.tile_set = tile_set
+    self.position = position
+    self.tile_id = tile_id
+    self.angle_type = get_neighbor_angle_type(0,0)
 
-var are_all_neighbors_same_angle_type: bool \
-        setget, _get_are_all_neighbors_same_angle_type
+
+func _get_top_left_neighbor_angle_type() -> int:
+    return get_neighbor_angle_type(-1,-1)
+
+
+func _get_top_neighbor_angle_type() -> int:
+    return get_neighbor_angle_type(0,-1)
+
+
+func _get_top_right_neighbor_angle_type() -> int:
+    return get_neighbor_angle_type(1,-1)
+
+
+func _get_left_neighbor_angle_type() -> int:
+    return get_neighbor_angle_type(-1,0)
+
+
+func _get_right_neighbor_angle_type() -> int:
+    return get_neighbor_angle_type(1,0)
+
+
+func _get_bottom_left_neighbor_angle_type() -> int:
+    return get_neighbor_angle_type(-1,1)
+
+
+func _get_bottom_neighbor_angle_type() -> int:
+    return get_neighbor_angle_type(0,1)
+
+
+func _get_bottom_right_neighbor_angle_type() -> int:
+    return get_neighbor_angle_type(1,1)
+
+
+func _get_is_top_left_neighbor_present() -> bool:
+    return get_is_neighbor_present(-1,-1)
+
+
+func _get_is_top_neighbor_present() -> bool:
+    return get_is_neighbor_present(0,-1)
+
+
+func _get_is_top_right_neighbor_present() -> bool:
+    return get_is_neighbor_present(1,-1)
+
+
+func _get_is_left_neighbor_present() -> bool:
+    return get_is_neighbor_present(-1,0)
+
+
+func _get_is_right_neighbor_present() -> bool:
+    return get_is_neighbor_present(1,0)
+
+
+func _get_is_bottom_left_neighbor_present() -> bool:
+    return get_is_neighbor_present(-1,1)
+
+
+func _get_is_bottom_neighbor_present() -> bool:
+    return get_is_neighbor_present(0,1)
+
+
+func _get_is_bottom_right_neighbor_present() -> bool:
+    return get_is_neighbor_present(1,1)
 
 
 func _get_is_exposed_at_top_left() -> bool:
-    return !(bitmask & TileSet.BIND_TOPLEFT)
+    return get_is_neighbor_empty(-1,-1)
 
 
 func _get_is_exposed_at_top() -> bool:
-    return !(bitmask & TileSet.BIND_TOP)
+    return get_is_neighbor_empty(0,-1)
 
 
 func _get_is_exposed_at_top_right() -> bool:
-    return !(bitmask & TileSet.BIND_TOPRIGHT)
+    return get_is_neighbor_empty(1,-1)
 
 
 func _get_is_exposed_at_left() -> bool:
-    return !(bitmask & TileSet.BIND_LEFT)
+    return get_is_neighbor_empty(-1,0)
 
 
 func _get_is_exposed_at_right() -> bool:
-    return !(bitmask & TileSet.BIND_RIGHT)
+    return get_is_neighbor_empty(1,0)
 
 
 func _get_is_exposed_at_bottom_left() -> bool:
-    return !(bitmask & TileSet.BIND_BOTTOMLEFT)
+    return get_is_neighbor_empty(-1,1)
 
 
 func _get_is_exposed_at_bottom() -> bool:
-    return !(bitmask & TileSet.BIND_BOTTOM)
+    return get_is_neighbor_empty(0,1)
 
 
 func _get_is_exposed_at_bottom_right() -> bool:
-    return !(bitmask & TileSet.BIND_BOTTOMRIGHT)
+    return get_is_neighbor_empty(1,1)
 
 
 func _get_is_exposed_at_top_or_left() -> bool:
-    return !(bitmask & TileSet.BIND_TOP) or \
-            !(bitmask & TileSet.BIND_LEFT)
+    return _get_is_exposed_at_top() or \
+            _get_is_exposed_at_left()
 
 
 func _get_is_exposed_at_top_or_right() -> bool:
-    return !(bitmask & TileSet.BIND_TOP) or \
-            !(bitmask & TileSet.BIND_RIGHT)
+    return _get_is_exposed_at_top() or \
+            _get_is_exposed_at_right()
 
 
 func _get_is_exposed_at_bottom_or_left() -> bool:
-    return !(bitmask & TileSet.BIND_BOTTOM) or \
-            !(bitmask & TileSet.BIND_LEFT)
+    return _get_is_exposed_at_bottom() or \
+            _get_is_exposed_at_left()
 
 
 func _get_is_exposed_at_bottom_or_right() -> bool:
-    return !(bitmask & TileSet.BIND_BOTTOM) or \
-            !(bitmask & TileSet.BIND_RIGHT)
+    return _get_is_exposed_at_bottom() or \
+            _get_is_exposed_at_right()
 
 
 func _get_is_exposed_around_top_left() -> bool:
-    return !(bitmask & TileSet.BIND_TOPLEFT) or \
-            !(bitmask & TileSet.BIND_TOP) or \
-            !(bitmask & TileSet.BIND_LEFT)
+    return _get_is_exposed_at_top_left() or \
+            _get_is_exposed_at_top() or \
+            _get_is_exposed_at_left()
 
 
 func _get_is_exposed_around_top_right() -> bool:
-    return !(bitmask & TileSet.BIND_TOPRIGHT) or \
-            !(bitmask & TileSet.BIND_TOP) or \
-            !(bitmask & TileSet.BIND_RIGHT)
+    return _get_is_exposed_at_top_right() or \
+            _get_is_exposed_at_top() or \
+            _get_is_exposed_at_right()
 
 
 func _get_is_exposed_around_bottom_left() -> bool:
-    return !(bitmask & TileSet.BIND_BOTTOMLEFT) or \
-            !(bitmask & TileSet.BIND_BOTTOM) or \
-            !(bitmask & TileSet.BIND_LEFT)
+    return _get_is_exposed_at_bottom_left() or \
+            _get_is_exposed_at_bottom() or \
+            _get_is_exposed_at_left()
 
 
 func _get_is_exposed_around_bottom_right() -> bool:
-    return !(bitmask & TileSet.BIND_BOTTOMRIGHT) or \
-            !(bitmask & TileSet.BIND_BOTTOM) or \
-            !(bitmask & TileSet.BIND_RIGHT)
+    return _get_is_exposed_at_bottom_right() or \
+            _get_is_exposed_at_bottom() or \
+            _get_is_exposed_at_right()
 
 
 func _get_is_top_left_neighbor_exposed_at_top_left() -> bool:
-    return !(top_left_neighbor_bitmask & TileSet.BIND_TOPLEFT)
+    return get_is_neighbor_empty(-2,-2)
 
 
 func _get_is_top_neighbor_exposed_at_top() -> bool:
-    return !(top_neighbor_bitmask & TileSet.BIND_TOP)
+    return get_is_neighbor_empty(0,-2)
 
 
 func _get_is_top_right_neighbor_exposed_at_top_right() -> bool:
-    return !(top_right_neighbor_bitmask & TileSet.BIND_TOPRIGHT)
+    return get_is_neighbor_empty(2,-2)
 
 
 func _get_is_left_neighbor_exposed_at_left() -> bool:
-    return !(left_neighbor_bitmask & TileSet.BIND_LEFT)
+    return get_is_neighbor_empty(-2,0)
 
 
 func _get_is_right_neighbor_exposed_at_right() -> bool:
-    return !(right_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return get_is_neighbor_empty(2,0)
 
 
 func _get_is_bottom_left_neighbor_exposed_at_bottom_left() -> bool:
-    return !(bottom_left_neighbor_bitmask & TileSet.BIND_BOTTOMLEFT)
+    return get_is_neighbor_empty(-2,2)
 
 
 func _get_is_bottom_neighbor_exposed_at_bottom() -> bool:
-    return !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM)
+    return get_is_neighbor_empty(0,2)
 
 
 func _get_is_bottom_right_neighbor_exposed_at_bottom_right() -> bool:
-    return !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOMRIGHT)
+    return get_is_neighbor_empty(2,2)
 
 
 func _get_is_top_left_neighbor_exposed_at_top_or_left() -> bool:
-    return !(top_left_neighbor_bitmask & TileSet.BIND_TOP) or \
-            !(top_left_neighbor_bitmask & TileSet.BIND_LEFT)
+    return get_is_neighbor_empty(-1,-2) or \
+            get_is_neighbor_empty(-2,-1)
 
 
 func _get_is_top_right_neighbor_exposed_at_top_or_right() -> bool:
-    return !(top_right_neighbor_bitmask & TileSet.BIND_TOP) or \
-            !(top_right_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return get_is_neighbor_empty(1,-2) or \
+            get_is_neighbor_empty(2,-1)
 
 
 func _get_is_bottom_left_neighbor_exposed_at_bottom_or_left() -> bool:
-    return !(bottom_left_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
-            !(bottom_left_neighbor_bitmask & TileSet.BIND_LEFT)
+    return get_is_neighbor_empty(-1,2) or \
+            get_is_neighbor_empty(-2,1)
 
 
 func _get_is_bottom_right_neighbor_exposed_at_bottom_or_right() -> bool:
-    return !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
-            !(bottom_right_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return get_is_neighbor_empty(1,2) or \
+            get_is_neighbor_empty(2,1)
 
 
 func _get_is_top_neighbor_exposed_around_top() -> bool:
-    return !(top_neighbor_bitmask & TileSet.BIND_TOPLEFT) or \
-            !(top_neighbor_bitmask & TileSet.BIND_TOP) or \
-            !(top_neighbor_bitmask & TileSet.BIND_TOPRIGHT)
+    return get_is_neighbor_empty(-1,-2) or \
+            get_is_neighbor_empty(0,-2) or \
+            get_is_neighbor_empty(1,-2)
 
 
 func _get_is_bottom_neighbor_exposed_around_bottom() -> bool:
-    return !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOMLEFT) or \
-            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
-            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOMRIGHT)
+    return get_is_neighbor_empty(-1,2) or \
+            get_is_neighbor_empty(0,2) or \
+            get_is_neighbor_empty(1,2)
 
 
 func _get_is_left_neighbor_exposed_around_left() -> bool:
-    return !(left_neighbor_bitmask & TileSet.BIND_TOPLEFT) or \
-            !(left_neighbor_bitmask & TileSet.BIND_LEFT) or \
-            !(left_neighbor_bitmask & TileSet.BIND_BOTTOMLEFT)
+    return get_is_neighbor_empty(-2,-1) or \
+            get_is_neighbor_empty(-2,0) or \
+            get_is_neighbor_empty(-2,1)
 
 
 func _get_is_right_neighbor_exposed_around_right() -> bool:
-    return !(right_neighbor_bitmask & TileSet.BIND_TOPRIGHT) or \
-            !(right_neighbor_bitmask & TileSet.BIND_RIGHT) or \
-            !(right_neighbor_bitmask & TileSet.BIND_BOTTOMRIGHT)
+    return get_is_neighbor_empty(2,-1) or \
+            get_is_neighbor_empty(2,0) or \
+            get_is_neighbor_empty(2,1)
 
 
 func _get_is_top_left_neighbor_exposed_around_top_left() -> bool:
-    return !(top_left_neighbor_bitmask & TileSet.BIND_TOPLEFT) or \
-            !(top_left_neighbor_bitmask & TileSet.BIND_TOP) or \
-            !(top_left_neighbor_bitmask & TileSet.BIND_LEFT)
+    return get_is_neighbor_empty(-2,-2) or \
+            get_is_neighbor_empty(-1,-2) or \
+            get_is_neighbor_empty(-2,-1)
 
 
 func _get_is_top_right_neighbor_exposed_around_top_right() -> bool:
-    return !(top_right_neighbor_bitmask & TileSet.BIND_TOPRIGHT) or \
-            !(top_right_neighbor_bitmask & TileSet.BIND_TOP) or \
-            !(top_right_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return get_is_neighbor_empty(2,-2) or \
+            get_is_neighbor_empty(1,-2) or \
+            get_is_neighbor_empty(2,-1)
 
 
 func _get_is_bottom_left_neighbor_exposed_around_bottom_left() -> bool:
-    return !(bottom_left_neighbor_bitmask & TileSet.BIND_BOTTOMLEFT) or \
-            !(bottom_left_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
-            !(bottom_left_neighbor_bitmask & TileSet.BIND_LEFT)
+    return get_is_neighbor_empty(-2,2) or \
+            get_is_neighbor_empty(-1,2) or \
+            get_is_neighbor_empty(-2,1)
 
 
 func _get_is_bottom_right_neighbor_exposed_around_bottom_right() -> bool:
-    return !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOMRIGHT) or \
-            !(bottom_right_neighbor_bitmask & TileSet.BIND_BOTTOM) or \
-            !(bottom_right_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return get_is_neighbor_empty(2,2) or \
+            get_is_neighbor_empty(1,2) or \
+            get_is_neighbor_empty(2,1)
 
 
 func _get_is_top_neighbor_45_pos() -> bool:
-    return top_neighbor_angle_type == CellAngleType.A45 and \
-            (bitmask & TileSet.BIND_TOP) and \
-            (bitmask & TileSet.BIND_TOPRIGHT) and \
-            !(bitmask & TileSet.BIND_TOPLEFT) and \
-            !(top_neighbor_bitmask & TileSet.BIND_TOP)
+    return _get_top_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_top_neighbor_present() and \
+            _get_is_top_right_neighbor_present() and \
+            _get_is_exposed_at_top_left() and \
+            get_is_neighbor_empty(0,-2)
 
 
 func _get_is_top_neighbor_45_neg() -> bool:
-    return top_neighbor_angle_type == CellAngleType.A45 and \
-            (bitmask & TileSet.BIND_TOP) and \
-            (bitmask & TileSet.BIND_TOPLEFT) and \
-            !(bitmask & TileSet.BIND_TOPRIGHT) and \
-            !(top_neighbor_bitmask & TileSet.BIND_TOP)
+    return _get_top_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_top_neighbor_present() and \
+            _get_is_top_left_neighbor_present() and \
+            _get_is_exposed_at_top_right() and \
+            get_is_neighbor_empty(0,-2)
 
 
 func _get_is_bottom_neighbor_45_pos() -> bool:
-    return bottom_neighbor_angle_type == CellAngleType.A45 and \
-            (bitmask & TileSet.BIND_BOTTOM) and \
-            (bitmask & TileSet.BIND_BOTTOMLEFT) and \
-            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
-            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM)
+    return _get_bottom_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_bottom_neighbor_present() and \
+            _get_is_bottom_left_neighbor_present() and \
+            _get_is_exposed_at_bottom_right() and \
+            get_is_neighbor_empty(0,2)
 
 
 func _get_is_bottom_neighbor_45_neg() -> bool:
-    return bottom_neighbor_angle_type == CellAngleType.A45 and \
-            (bitmask & TileSet.BIND_BOTTOM) and \
-            (bitmask & TileSet.BIND_BOTTOMRIGHT) and \
-            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
-            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM)
+    return _get_bottom_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_bottom_neighbor_present() and \
+            _get_is_bottom_right_neighbor_present() and \
+            _get_is_exposed_at_bottom_left() and \
+            get_is_neighbor_empty(0,2)
 
 
 func _get_is_left_neighbor_45_pos() -> bool:
-    return left_neighbor_angle_type == CellAngleType.A45 and \
-            (bitmask & TileSet.BIND_LEFT) and \
-            (bitmask & TileSet.BIND_BOTTOMLEFT) and \
-            !(bitmask & TileSet.BIND_TOPLEFT) and \
-            !(left_neighbor_bitmask & TileSet.BIND_LEFT)
+    return _get_left_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_left_neighbor_present() and \
+            _get_is_bottom_left_neighbor_present() and \
+            _get_is_exposed_at_top_left() and \
+            get_is_neighbor_empty(-2,0)
 
 
 func _get_is_left_neighbor_45_neg() -> bool:
-    return left_neighbor_angle_type == CellAngleType.A45 and \
-            (bitmask & TileSet.BIND_LEFT) and \
-            (bitmask & TileSet.BIND_TOPLEFT) and \
-            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
-            !(left_neighbor_bitmask & TileSet.BIND_LEFT)
+    return _get_left_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_left_neighbor_present() and \
+            _get_is_top_left_neighbor_present() and \
+            _get_is_exposed_at_bottom_left() and \
+            get_is_neighbor_empty(-2,0)
 
 
 func _get_is_right_neighbor_45_pos() -> bool:
-    return right_neighbor_angle_type == CellAngleType.A45 and \
-            (bitmask & TileSet.BIND_RIGHT) and \
-            (bitmask & TileSet.BIND_TOPRIGHT) and \
-            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
-            !(right_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return _get_right_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_right_neighbor_present() and \
+            _get_is_top_right_neighbor_present() and \
+            _get_is_exposed_at_bottom_right() and \
+            get_is_neighbor_empty(2,0)
 
 
 func _get_is_right_neighbor_45_neg() -> bool:
-    return right_neighbor_angle_type == CellAngleType.A45 and \
-            (bitmask & TileSet.BIND_RIGHT) and \
-            (bitmask & TileSet.BIND_BOTTOMRIGHT) and \
-            !(bitmask & TileSet.BIND_TOPRIGHT) and \
-            !(right_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return _get_right_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_right_neighbor_present() and \
+            _get_is_bottom_right_neighbor_present() and \
+            _get_is_exposed_at_top_right() and \
+            get_is_neighbor_empty(2,0)
 
 
 func _get_is_top_neighbor_cap() -> bool:
-    return (bitmask & TileSet.BIND_TOP) and \
-            !(bitmask & TileSet.BIND_TOPLEFT) and \
-            !(bitmask & TileSet.BIND_TOPRIGHT) and \
-            !(top_neighbor_bitmask & TileSet.BIND_TOP)
+    return _get_is_top_neighbor_present() and \
+            _get_is_exposed_at_top_left() and \
+            _get_is_exposed_at_top_right() and \
+            get_is_neighbor_empty(0,-2)
 
 
 func _get_is_bottom_neighbor_cap() -> bool:
-    return (bitmask & TileSet.BIND_BOTTOM) and \
-            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
-            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
-            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM)
+    return _get_is_bottom_neighbor_present() and \
+            _get_is_exposed_at_bottom_left() and \
+            _get_is_exposed_at_bottom_right() and \
+            get_is_neighbor_empty(0,2)
 
 
 func _get_is_left_neighbor_cap() -> bool:
-    return (bitmask & TileSet.BIND_LEFT) and \
-            !(bitmask & TileSet.BIND_TOPLEFT) and \
-            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
-            !(left_neighbor_bitmask & TileSet.BIND_LEFT)
+    return _get_is_left_neighbor_present() and \
+            _get_is_exposed_at_top_left() and \
+            _get_is_exposed_at_bottom_left() and \
+            get_is_neighbor_empty(-2,0)
 
 
 func _get_is_right_neighbor_cap() -> bool:
-    return (bitmask & TileSet.BIND_RIGHT) and \
-            !(bitmask & TileSet.BIND_TOPRIGHT) and \
-            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
-            !(right_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return _get_is_right_neighbor_present() and \
+            _get_is_exposed_at_top_right() and \
+            _get_is_exposed_at_bottom_right() and \
+            get_is_neighbor_empty(2,0)
 
 
 func _get_is_floor_with_45_curve_in_at_left() -> bool:
-    return (bitmask & TileSet.BIND_LEFT) and \
-            (bitmask & TileSet.BIND_RIGHT) and \
-            !(bitmask & TileSet.BIND_TOP) and \
-            left_neighbor_angle_type == CellAngleType.A45 and \
-            !(bitmask & TileSet.BIND_TOPLEFT) and \
-            !(left_neighbor_bitmask & TileSet.BIND_LEFT) and \
-            (bitmask & TileSet.BIND_BOTTOMLEFT)
+    return _get_is_left_neighbor_present() and \
+            _get_is_right_neighbor_present() and \
+            _get_is_exposed_at_top() and \
+            _get_left_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_exposed_at_top_left() and \
+            get_is_neighbor_empty(-2,0) and \
+            _get_is_bottom_left_neighbor_present()
 
 
 func _get_is_floor_with_45_curve_in_at_right() -> bool:
-    return (bitmask & TileSet.BIND_LEFT) and \
-            (bitmask & TileSet.BIND_RIGHT) and \
-            !(bitmask & TileSet.BIND_TOP) and \
-            right_neighbor_angle_type == CellAngleType.A45 and \
-            !(bitmask & TileSet.BIND_TOPRIGHT) and \
-            !(right_neighbor_bitmask & TileSet.BIND_RIGHT) and \
-            (bitmask & TileSet.BIND_BOTTOMRIGHT)
+    return _get_is_left_neighbor_present() and \
+            _get_is_right_neighbor_present() and \
+            _get_is_exposed_at_top() and \
+            _get_right_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_exposed_at_top_right() and \
+            get_is_neighbor_empty(2,0) and \
+            _get_is_bottom_right_neighbor_present()
 
 
 func _get_is_ceiling_with_45_curve_in_at_left() -> bool:
-    return (bitmask & TileSet.BIND_LEFT) and \
-            (bitmask & TileSet.BIND_RIGHT) and \
-            !(bitmask & TileSet.BIND_BOTTOM) and \
-            left_neighbor_angle_type == CellAngleType.A45 and \
-            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
-            !(left_neighbor_bitmask & TileSet.BIND_LEFT) and \
-            (bitmask & TileSet.BIND_TOPLEFT)
+    return _get_is_left_neighbor_present() and \
+            _get_is_right_neighbor_present() and \
+            _get_is_exposed_at_bottom() and \
+            _get_left_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_exposed_at_bottom_left() and \
+            get_is_neighbor_empty(-2,0) and \
+            _get_is_top_left_neighbor_present()
 
 
 func _get_is_ceiling_with_45_curve_in_at_right() -> bool:
-    return (bitmask & TileSet.BIND_LEFT) and \
-            (bitmask & TileSet.BIND_RIGHT) and \
-            !(bitmask & TileSet.BIND_BOTTOM) and \
-            right_neighbor_angle_type == CellAngleType.A45 and \
-            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
-            !(right_neighbor_bitmask & TileSet.BIND_RIGHT) and \
-            (bitmask & TileSet.BIND_TOPRIGHT)
+    return _get_is_left_neighbor_present() and \
+            _get_is_right_neighbor_present() and \
+            _get_is_exposed_at_bottom() and \
+            _get_right_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_exposed_at_bottom_right() and \
+            get_is_neighbor_empty(2,0) and \
+            _get_is_top_right_neighbor_present()
 
 
 func _get_is_left_wall_with_45_curve_in_at_top() -> bool:
-    return (bitmask & TileSet.BIND_TOP) and \
-            (bitmask & TileSet.BIND_BOTTOM) and \
-            !(bitmask & TileSet.BIND_RIGHT) and \
-            top_neighbor_angle_type == CellAngleType.A45 and \
-            !(bitmask & TileSet.BIND_TOPRIGHT) and \
-            !(top_neighbor_bitmask & TileSet.BIND_TOP) and \
-            (bitmask & TileSet.BIND_TOPLEFT)
+    return _get_is_top_neighbor_present() and \
+            _get_is_bottom_neighbor_present() and \
+            _get_is_exposed_at_right() and \
+            _get_top_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_exposed_at_top_right() and \
+            get_is_neighbor_empty(0,-2) and \
+            _get_is_top_left_neighbor_present()
 
 
 func _get_is_left_wall_with_45_curve_in_at_bottom() -> bool:
-    return (bitmask & TileSet.BIND_TOP) and \
-            (bitmask & TileSet.BIND_BOTTOM) and \
-            !(bitmask & TileSet.BIND_RIGHT) and \
-            bottom_neighbor_angle_type == CellAngleType.A45 and \
-            !(bitmask & TileSet.BIND_BOTTOMRIGHT) and \
-            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) and \
-            (bitmask & TileSet.BIND_BOTTOMLEFT)
+    return _get_is_top_neighbor_present() and \
+            _get_is_bottom_neighbor_present() and \
+            _get_is_exposed_at_right() and \
+            _get_bottom_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_exposed_at_bottom_right() and \
+            get_is_neighbor_empty(0,2) and \
+            _get_is_bottom_left_neighbor_present()
 
 
 func _get_is_right_wall_with_45_curve_in_at_top() -> bool:
-    return (bitmask & TileSet.BIND_TOP) and \
-            (bitmask & TileSet.BIND_BOTTOM) and \
-            !(bitmask & TileSet.BIND_LEFT) and \
-            top_neighbor_angle_type == CellAngleType.A45 and \
-            !(bitmask & TileSet.BIND_TOPLEFT) and \
-            !(top_neighbor_bitmask & TileSet.BIND_TOP) and \
-            (bitmask & TileSet.BIND_TOPRIGHT)
+    return _get_is_top_neighbor_present() and \
+            _get_is_bottom_neighbor_present() and \
+            _get_is_exposed_at_left() and \
+            _get_top_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_exposed_at_top_left() and \
+            get_is_neighbor_empty(0,-2) and \
+            _get_is_top_right_neighbor_present()
 
 
 func _get_is_right_wall_with_45_curve_in_at_bottom() -> bool:
-    return (bitmask & TileSet.BIND_TOP) and \
-            (bitmask & TileSet.BIND_BOTTOM) and \
-            !(bitmask & TileSet.BIND_LEFT) and \
-            bottom_neighbor_angle_type == CellAngleType.A45 and \
-            !(bitmask & TileSet.BIND_BOTTOMLEFT) and \
-            !(bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) and \
-            (bitmask & TileSet.BIND_BOTTOMRIGHT)
+    return _get_is_top_neighbor_present() and \
+            _get_is_bottom_neighbor_present() and \
+            _get_is_exposed_at_left() and \
+            _get_bottom_neighbor_angle_type() == CellAngleType.A45 and \
+            _get_is_exposed_at_bottom_left() and \
+            get_is_neighbor_empty(0,2) and \
+            _get_is_bottom_right_neighbor_present()
 
 
 func _get_is_top_neighbor_90_left_wall() -> bool:
-    return top_neighbor_angle_type == CellAngleType.A90 or \
-            (top_neighbor_bitmask & TileSet.BIND_TOP) and \
-            !(top_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return _get_top_neighbor_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(0,-2) and \
+            get_is_neighbor_empty(1,-1)
 
 
 func _get_is_bottom_neighbor_90_left_wall() -> bool:
-    return bottom_neighbor_angle_type == CellAngleType.A90 or \
-            (bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) and \
-            !(bottom_neighbor_bitmask & TileSet.BIND_RIGHT)
+    return _get_bottom_neighbor_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(0,2) and \
+            get_is_neighbor_empty(1,1)
 
 
 func _get_is_top_neighbor_90_right_wall() -> bool:
-    return top_neighbor_angle_type == CellAngleType.A90 or \
-            (top_neighbor_bitmask & TileSet.BIND_TOP) and \
-            !(top_neighbor_bitmask & TileSet.BIND_LEFT)
+    return _get_top_neighbor_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(0,-2) and \
+            get_is_neighbor_empty(-1,-1)
 
 
 func _get_is_bottom_neighbor_90_right_wall() -> bool:
-    return bottom_neighbor_angle_type == CellAngleType.A90 or \
-            (bottom_neighbor_bitmask & TileSet.BIND_BOTTOM) and \
-            !(bottom_neighbor_bitmask & TileSet.BIND_LEFT)
+    return _get_bottom_neighbor_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(0,2) and \
+            get_is_neighbor_empty(-1,1)
 
 
 func _get_is_left_neighbor_90_floor() -> bool:
-    return left_neighbor_angle_type == CellAngleType.A90 or \
-            (left_neighbor_bitmask & TileSet.BIND_LEFT) and \
-            !(left_neighbor_bitmask & TileSet.BIND_TOP)
+    return _get_left_neighbor_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(-2,0) and \
+            get_is_neighbor_empty(-1,-1)
 
 
 func _get_is_right_neighbor_90_floor() -> bool:
-    return right_neighbor_angle_type == CellAngleType.A90 or \
-            (right_neighbor_bitmask & TileSet.BIND_RIGHT) and \
-            !(right_neighbor_bitmask & TileSet.BIND_TOP)
+    return _get_right_neighbor_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(2,0) and \
+            get_is_neighbor_empty(1,-1)
 
 
 func _get_is_left_neighbor_90_ceiling() -> bool:
-    return left_neighbor_angle_type == CellAngleType.A90 or \
-            (left_neighbor_bitmask & TileSet.BIND_LEFT) and \
-            !(left_neighbor_bitmask & TileSet.BIND_BOTTOM)
+    return _get_left_neighbor_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(-2,0) and \
+            get_is_neighbor_empty(-1,1)
 
 
 func _get_is_right_neighbor_90_ceiling() -> bool:
-    return right_neighbor_angle_type == CellAngleType.A90 or \
-            (right_neighbor_bitmask & TileSet.BIND_RIGHT) and \
-            !(right_neighbor_bitmask & TileSet.BIND_BOTTOM)
+    return _get_right_neighbor_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(2,0) and \
+            get_is_neighbor_empty(1,1)
 
 
-func _get_is_internal() -> bool:
-    return bitmask == SurfacesTileSet.FULL_BITMASK_3x3
+func get_neighbor_angle_type(relative_x: int, relative_y: int) -> int:
+    var neighbor_id := tile_map.get_cell(
+            position.x + relative_x,
+            position.y + relative_y)
+    return tile_set.tile_get_angle_type(neighbor_id)
 
 
-func _get_is_top_left_neighbor_same_angle_type() -> bool:
-    return (top_left_neighbor_angle_type == angle_type or \
-            top_left_neighbor_angle_type == CellAngleType.EMPTY)
+func get_is_neighbor_present(relative_x: int, relative_y: int) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------------
+    # - Replace the _is_tile_bound call with a simple array/dictionary lookup,
+    #   using a new structure that's configured in SurfacesTileSet?
+    var neighbor_id := tile_map.get_cell(
+            position.x + relative_x,
+            position.y + relative_y)
+    return tile_set._is_tile_bound(tile_id, neighbor_id)
 
 
-func _get_is_top_neighbor_same_angle_type() -> bool:
-    return (top_neighbor_angle_type == angle_type or \
-            top_neighbor_angle_type == CellAngleType.EMPTY)
-
-
-func _get_is_top_right_neighbor_same_angle_type() -> bool:
-    return (top_right_neighbor_angle_type == angle_type or \
-            top_right_neighbor_angle_type == CellAngleType.EMPTY)
-
-
-func _get_is_left_neighbor_same_angle_type() -> bool:
-    return (left_neighbor_angle_type == angle_type or \
-            left_neighbor_angle_type == CellAngleType.EMPTY)
-
-
-func _get_is_right_neighbor_same_angle_type() -> bool:
-    return (right_neighbor_angle_type == angle_type or \
-            right_neighbor_angle_type == CellAngleType.EMPTY)
-
-
-func _get_is_bottom_left_neighbor_same_angle_type() -> bool:
-    return (bottom_left_neighbor_angle_type == angle_type or \
-            bottom_left_neighbor_angle_type == CellAngleType.EMPTY)
-
-
-func _get_is_bottom_neighbor_same_angle_type() -> bool:
-    return (bottom_neighbor_angle_type == angle_type or \
-            bottom_neighbor_angle_type == CellAngleType.EMPTY)
-
-
-func _get_is_bottom_right_neighbor_same_angle_type() -> bool:
-    return (bottom_right_neighbor_angle_type == angle_type or \
-            bottom_right_neighbor_angle_type == CellAngleType.EMPTY)
-
-
-func _get_are_all_neighbors_same_angle_type() -> bool:
-    return (top_left_neighbor_angle_type == angle_type or \
-            top_left_neighbor_angle_type == CellAngleType.EMPTY) and \
-            (top_neighbor_angle_type == angle_type or \
-            top_neighbor_angle_type == CellAngleType.EMPTY) and \
-            (top_right_neighbor_angle_type == angle_type or \
-            top_right_neighbor_angle_type == CellAngleType.EMPTY) and \
-            (left_neighbor_angle_type == angle_type or \
-            left_neighbor_angle_type == CellAngleType.EMPTY) and \
-            (right_neighbor_angle_type == angle_type or \
-            right_neighbor_angle_type == CellAngleType.EMPTY) and \
-            (bottom_left_neighbor_angle_type == angle_type or \
-            bottom_left_neighbor_angle_type == CellAngleType.EMPTY) and \
-            (bottom_neighbor_angle_type == angle_type or \
-            bottom_neighbor_angle_type == CellAngleType.EMPTY) and \
-            (bottom_right_neighbor_angle_type == angle_type or \
-            bottom_right_neighbor_angle_type == CellAngleType.EMPTY)
+func get_is_neighbor_empty(relative_x: int, relative_y: int) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------------
+    # - Replace the _is_tile_bound call with a simple array/dictionary lookup,
+    #   using a new structure that's configured in SurfacesTileSet?
+    var neighbor_id := tile_map.get_cell(
+            position.x + relative_x,
+            position.y + relative_y)
+    return !tile_set._is_tile_bound(tile_id, neighbor_id)
