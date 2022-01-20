@@ -169,6 +169,49 @@ var is_left_90_ceiling: bool \
 var is_right_90_ceiling: bool \
         setget ,_get_is_right_90_ceiling
 
+var is_top_left_corner_cutout_90: bool \
+        setget ,_get_is_top_left_corner_cutout_90
+var is_top_left_corner_cutout_45: bool \
+        setget ,_get_is_top_left_corner_cutout_45
+var is_top_left_corner_cutout_partial_45: bool \
+        setget ,_get_is_top_left_corner_cutout_partial_45
+var is_top_left_corner_cutout_90_vertical_to_45: bool \
+        setget ,_get_is_top_left_corner_cutout_90_vertical_to_45
+var is_top_left_corner_cutout_90_horizontal_to_45: bool \
+        setget ,_get_is_top_left_corner_cutout_90_horizontal_to_45
+var is_top_right_corner_cutout_90: bool \
+        setget ,_get_is_top_right_corner_cutout_90
+var is_top_right_corner_cutout_45: bool \
+        setget ,_get_is_top_right_corner_cutout_45
+var is_top_right_corner_cutout_partial_45: bool \
+        setget ,_get_is_top_right_corner_cutout_partial_45
+var is_top_right_corner_cutout_90_vertical_to_45: bool \
+        setget ,_get_is_top_right_corner_cutout_90_vertical_to_45
+var is_top_right_corner_cutout_90_horizontal_to_45: bool \
+        setget ,_get_is_top_right_corner_cutout_90_horizontal_to_45
+var is_bottom_left_corner_cutout_90: bool \
+        setget ,_get_is_bottom_left_corner_cutout_90
+var is_bottom_left_corner_cutout_45: bool \
+        setget ,_get_is_bottom_left_corner_cutout_45
+var is_bottom_left_corner_cutout_partial_45: bool \
+        setget ,_get_is_bottom_left_corner_cutout_partial_45
+var is_bottom_left_corner_cutout_90_vertical_to_45: bool \
+        setget ,_get_is_bottom_left_corner_cutout_90_vertical_to_45
+var is_bottom_left_corner_cutout_90_horizontal_to_45: bool \
+        setget ,_get_is_bottom_left_corner_cutout_90_horizontal_to_45
+var is_bottom_right_corner_cutout_90: bool \
+        setget ,_get_is_bottom_right_corner_cutout_90
+var is_bottom_right_corner_cutout_45: bool \
+        setget ,_get_is_bottom_right_corner_cutout_45
+var is_bottom_right_corner_cutout_partial_45: bool \
+        setget ,_get_is_bottom_right_corner_cutout_partial_45
+var is_bottom_right_corner_cutout_90_vertical_to_45: bool \
+        setget ,_get_is_bottom_right_corner_cutout_90_vertical_to_45
+var is_bottom_right_corner_cutout_90_horizontal_to_45: bool \
+        setget ,_get_is_bottom_right_corner_cutout_90_horizontal_to_45
+var is_any_corner_cutout_partial_45: bool \
+        setget ,_get_is_any_corner_cutout_partial_45
+
 
 func _init(
         tile_map: SurfacesTileMap,
@@ -656,48 +699,195 @@ func _get_is_right_wall_with_45_curve_in_at_bottom() -> bool:
 
 
 func _get_is_top_90_left_wall() -> bool:
-    return _get_top_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(0,-2) and \
+    return (_get_top_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(0,-2)) and \
             get_is_neighbor_empty(1,-1)
 
 
 func _get_is_bottom_90_left_wall() -> bool:
-    return _get_bottom_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(0,2) and \
+    return (_get_bottom_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(0,2)) and \
             get_is_neighbor_empty(1,1)
 
 
 func _get_is_top_90_right_wall() -> bool:
-    return _get_top_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(0,-2) and \
+    return (_get_top_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(0,-2)) and \
             get_is_neighbor_empty(-1,-1)
 
 
 func _get_is_bottom_90_right_wall() -> bool:
-    return _get_bottom_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(0,2) and \
+    return (_get_bottom_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(0,2)) and \
             get_is_neighbor_empty(-1,1)
 
 
 func _get_is_left_90_floor() -> bool:
-    return _get_left_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(-2,0) and \
+    return (_get_left_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(-2,0)) and \
             get_is_neighbor_empty(-1,-1)
 
 
 func _get_is_right_90_floor() -> bool:
-    return _get_right_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(2,0) and \
+    return (_get_right_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(2,0)) and \
             get_is_neighbor_empty(1,-1)
 
 
 func _get_is_left_90_ceiling() -> bool:
-    return _get_left_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(-2,0) and \
+    return (_get_left_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(-2,0)) and \
             get_is_neighbor_empty(-1,1)
 
 
 func _get_is_right_90_ceiling() -> bool:
-    return _get_right_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(2,0) and \
+    return (_get_right_angle_type() == CellAngleType.A90 or \
+            get_is_neighbor_present(2,0)) and \
             get_is_neighbor_empty(1,1)
+
+
+func _get_is_top_left_corner_cutout_90() -> bool:
+    return _get_is_top_90_right_wall() and \
+            _get_is_left_90_floor()
+
+
+func _get_is_top_left_corner_cutout_45() -> bool:
+    return _get_is_top_left_empty() and \
+            _get_is_top_present() and \
+            _get_is_left_present() and \
+            !_get_is_top_90_right_wall() and \
+            !_get_is_left_90_floor()
+
+
+func _get_is_top_left_corner_cutout_partial_45() -> bool:
+    return _get_is_top_left_empty() and \
+            _get_is_top_present() and \
+            _get_is_left_present() and \
+            (!_get_is_top_90_right_wall() or \
+            !_get_is_left_90_floor())
+
+
+func _get_is_top_left_corner_cutout_90_vertical_to_45() -> bool:
+    return _get_is_top_left_empty() and \
+            _get_is_top_90_right_wall() and \
+            _get_is_top_present() and \
+            !_get_is_left_90_floor()
+
+
+func _get_is_top_left_corner_cutout_90_horizontal_to_45() -> bool:
+    return _get_is_top_left_empty() and \
+            _get_is_left_90_floor() and \
+            _get_is_top_present() and \
+            !_get_is_top_90_right_wall()
+
+
+func _get_is_top_right_corner_cutout_90() -> bool:
+    return _get_is_top_90_left_wall() and \
+            _get_is_right_90_floor()
+
+
+func _get_is_top_right_corner_cutout_45() -> bool:
+    return _get_is_top_right_empty() and \
+            _get_is_top_present() and \
+            _get_is_right_present() and \
+            !_get_is_top_90_left_wall() and \
+            !_get_is_right_90_floor()
+
+
+func _get_is_top_right_corner_cutout_partial_45() -> bool:
+    return _get_is_top_right_empty() and \
+            _get_is_top_present() and \
+            _get_is_right_present() and \
+            (!_get_is_top_90_left_wall() or \
+            !_get_is_right_90_floor())
+
+
+func _get_is_top_right_corner_cutout_90_vertical_to_45() -> bool:
+    return _get_is_top_right_empty() and \
+            _get_is_top_90_left_wall() and \
+            _get_is_top_present() and \
+            !_get_is_right_90_floor()
+
+
+func _get_is_top_right_corner_cutout_90_horizontal_to_45() -> bool:
+    return _get_is_top_right_empty() and \
+            _get_is_right_90_floor() and \
+            _get_is_top_present() and \
+            !_get_is_top_90_left_wall()
+
+
+func _get_is_bottom_left_corner_cutout_90() -> bool:
+    return _get_is_bottom_90_right_wall() and \
+            _get_is_left_90_ceiling()
+
+
+func _get_is_bottom_left_corner_cutout_45() -> bool:
+    return _get_is_bottom_left_empty() and \
+            _get_is_bottom_present() and \
+            _get_is_left_present() and \
+            !_get_is_bottom_90_right_wall() and \
+            !_get_is_left_90_ceiling()
+
+
+func _get_is_bottom_left_corner_cutout_partial_45() -> bool:
+    return _get_is_bottom_left_empty() and \
+            _get_is_bottom_present() and \
+            _get_is_left_present() and \
+            (!_get_is_bottom_90_right_wall() or \
+            !_get_is_left_90_ceiling())
+
+
+func _get_is_bottom_left_corner_cutout_90_vertical_to_45() -> bool:
+    return _get_is_bottom_left_empty() and \
+            _get_is_bottom_90_right_wall() and \
+            _get_is_bottom_present() and \
+            !_get_is_left_90_ceiling()
+
+
+func _get_is_bottom_left_corner_cutout_90_horizontal_to_45() -> bool:
+    return _get_is_bottom_left_empty() and \
+            _get_is_left_90_ceiling() and \
+            _get_is_bottom_present() and \
+            !_get_is_bottom_90_right_wall()
+
+
+func _get_is_bottom_right_corner_cutout_90() -> bool:
+    return _get_is_bottom_90_left_wall() and \
+            _get_is_right_90_ceiling()
+
+
+func _get_is_bottom_right_corner_cutout_45() -> bool:
+    return _get_is_bottom_right_empty() and \
+            _get_is_bottom_present() and \
+            _get_is_right_present() and \
+            !_get_is_bottom_90_left_wall() and \
+            !_get_is_right_90_ceiling()
+
+
+func _get_is_bottom_right_corner_cutout_partial_45() -> bool:
+    return _get_is_bottom_right_empty() and \
+            _get_is_bottom_present() and \
+            _get_is_right_present() and \
+            (!_get_is_bottom_90_left_wall() or \
+            !_get_is_right_90_ceiling())
+
+
+func _get_is_bottom_right_corner_cutout_90_vertical_to_45() -> bool:
+    return _get_is_bottom_right_empty() and \
+            _get_is_bottom_90_left_wall() and \
+            _get_is_bottom_present() and \
+            !_get_is_right_90_ceiling()
+
+
+func _get_is_bottom_right_corner_cutout_90_horizontal_to_45() -> bool:
+    return _get_is_bottom_right_empty() and \
+            _get_is_right_90_ceiling() and \
+            _get_is_bottom_present() and \
+            !_get_is_bottom_90_left_wall()
+
+
+func _get_is_any_corner_cutout_partial_45() -> bool:
+    return _get_is_top_left_corner_cutout_partial_45() or \
+            _get_is_top_right_corner_cutout_partial_45() or \
+            _get_is_bottom_left_corner_cutout_partial_45() or \
+            _get_is_bottom_right_corner_cutout_partial_45()
