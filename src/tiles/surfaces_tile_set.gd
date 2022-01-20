@@ -4,16 +4,6 @@ extends TileSet
 
 
 const INVALID_BITMASK := -1
-const FULL_BITMASK_3x3 := \
-        TileSet.BIND_TOPLEFT | \
-        TileSet.BIND_TOP | \
-        TileSet.BIND_TOPRIGHT | \
-        TileSet.BIND_LEFT | \
-        TileSet.BIND_CENTER | \
-        TileSet.BIND_RIGHT | \
-        TileSet.BIND_BOTTOMLEFT | \
-        TileSet.BIND_BOTTOM | \
-        TileSet.BIND_BOTTOMRIGHT
 
 # Dictionary<int, Dictionary>
 var _tile_id_to_config: Dictionary
@@ -33,7 +23,9 @@ func _parse_tiles_manifest(tiles_manifest: Array) -> void:
     for entry in tiles_manifest:
         assert(entry is Dictionary)
         assert(entry.has("name") and entry.name is String)
-        assert(entry.has("angle") and entry.angle is int)
+        assert(entry.has("is_collidable") and entry.is_collidable is bool)
+        assert(!entry.is_collidable or \
+                entry.has("angle") and entry.angle is int)
         assert(!entry.has("properties") or entry.properties is String)
         var tile_id := find_tile_by_name(entry.name)
         assert(tile_id != TileMap.INVALID_CELL)
@@ -47,9 +39,17 @@ func _parse_tiles_manifest(tiles_manifest: Array) -> void:
             _tile_id_to_config[tile_id] = {
                 id = tile_id,
                 name = tile_name,
+                is_collidable = true,
                 angle = CellAngleType.A90,
                 properties = "",
             }
+    
+    # Ensure at least one tile is configured as collidable.
+    var is_at_least_one_tile_collidable := false
+    for entry in tiles_manifest:
+        is_at_least_one_tile_collidable = \
+                is_at_least_one_tile_collidable or entry.is_collidable
+    assert(is_at_least_one_tile_collidable)
 
 
 func get_tile_properties(tile_name: String) -> SurfaceProperties:
@@ -70,11 +70,27 @@ func _create_tiles_to_properties() -> Dictionary:
     return tiles_to_properties
 
 
+func _is_tile_bound( \
+        drawn_id: int, \
+        neighbor_id: int) -> bool:
+    if neighbor_id == TileMap.INVALID_CELL:
+        return false
+    return _tile_id_to_config[drawn_id].is_collidable and \
+            _tile_id_to_config[neighbor_id].is_collidable
+
+
 func tile_get_neighbor_angle_type(tile_id: int) -> int:
     if tile_id == TileMap.INVALID_CELL:
         return CellAngleType.EMPTY
     else:
         return _tile_id_to_config[tile_id].angle
+
+
+func get_collidable_tiles_ids() -> Array:
+    var collidable_tiles_ids := []
+    for tile_id in get_tiles_ids():
+        collidable_tiles_ids.push_back(tile_id)
+    return collidable_tiles_ids
 
 
 func get_cell_autotile_bitmask(
