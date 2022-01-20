@@ -70,7 +70,7 @@ func _create_tiles_to_properties() -> Dictionary:
     return tiles_to_properties
 
 
-func tile_get_angle_type(tile_id: int) -> int:
+func tile_get_neighbor_angle_type(tile_id: int) -> int:
     if tile_id == TileMap.INVALID_CELL:
         return CellAngleType.EMPTY
     else:
