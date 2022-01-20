@@ -26,6 +26,11 @@ var bottom_angle_type: int \
 var bottom_right_angle_type: int \
         setget ,_get_bottom_right_angle_type
 
+var is_angle_type_45: bool \
+        setget ,_get_is_angle_type_45
+var is_angle_type_90: bool \
+        setget ,_get_is_angle_type_90
+
 var is_top_angle_type_45: bool \
         setget ,_get_is_top_angle_type_45
 var is_bottom_angle_type_45: bool \
@@ -276,6 +281,14 @@ func _get_bottom_angle_type() -> int:
 
 func _get_bottom_right_angle_type() -> int:
     return get_neighbor_angle_type(1,1)
+
+
+func _get_is_angle_type_45() -> bool:
+    return angle_type == CellAngleType.A45
+
+
+func _get_is_angle_type_90() -> bool:
+    return angle_type == CellAngleType.A90
 
 
 func _get_is_top_angle_type_45() -> bool:
