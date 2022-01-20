@@ -614,7 +614,9 @@ func _get_is_left_wall_with_45_curve_in_at_top() -> bool:
             _get_top_angle_type() == CellAngleType.A45 and \
             _get_is_top_right_empty() and \
             get_is_neighbor_empty(0,-2) and \
-            _get_is_top_left_present()
+            (_get_is_top_left_present() or \
+                _get_is_top_cap() and \
+                    _get_is_left_empty())
 
 
 func _get_is_left_wall_with_45_curve_in_at_bottom() -> bool:
@@ -624,7 +626,9 @@ func _get_is_left_wall_with_45_curve_in_at_bottom() -> bool:
             _get_bottom_angle_type() == CellAngleType.A45 and \
             _get_is_bottom_right_empty() and \
             get_is_neighbor_empty(0,2) and \
-            _get_is_bottom_left_present()
+            (_get_is_bottom_left_present() or \
+                _get_is_bottom_cap() and \
+                    _get_is_left_empty())
 
 
 func _get_is_right_wall_with_45_curve_in_at_top() -> bool:
@@ -634,7 +638,9 @@ func _get_is_right_wall_with_45_curve_in_at_top() -> bool:
             _get_top_angle_type() == CellAngleType.A45 and \
             _get_is_top_left_empty() and \
             get_is_neighbor_empty(0,-2) and \
-            _get_is_top_right_present()
+            (_get_is_top_right_present() or \
+                _get_is_top_cap() and \
+                    _get_is_right_empty())
 
 
 func _get_is_right_wall_with_45_curve_in_at_bottom() -> bool:
@@ -644,7 +650,9 @@ func _get_is_right_wall_with_45_curve_in_at_bottom() -> bool:
             _get_bottom_angle_type() == CellAngleType.A45 and \
             _get_is_bottom_left_empty() and \
             get_is_neighbor_empty(0,2) and \
-            _get_is_bottom_right_present()
+            (_get_is_bottom_right_present() or \
+                _get_is_bottom_cap() and \
+                    _get_is_right_empty())
 
 
 func _get_is_top_90_left_wall() -> bool:

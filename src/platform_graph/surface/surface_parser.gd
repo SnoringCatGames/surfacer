@@ -300,7 +300,7 @@ static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
             "TileSets attached to a collidable TileMap must be assigned " +
             "a script that extends SurfacesTileSet.")
     
-    var ids := tile_set.get_collidable_tiles_ids()
+    var ids: Array = tile_set.get_collidable_tiles_ids()
     assert(ids.size() > 0)
     
     for tile_id in ids:
