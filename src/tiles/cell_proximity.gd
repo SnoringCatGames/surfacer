@@ -45,58 +45,58 @@ var is_top_or_right_empty: bool setget ,_get_is_top_or_right_empty
 var is_bottom_or_left_empty: bool setget ,_get_is_bottom_or_left_empty
 var is_bottom_or_right_empty: bool setget ,_get_is_bottom_or_right_empty
 
-var is_exposed_around_top_left: bool \
-        setget ,_get_is_exposed_around_top_left
-var is_exposed_around_top_right: bool \
-        setget ,_get_is_exposed_around_top_right
-var is_exposed_around_bottom_left: bool \
-        setget ,_get_is_exposed_around_bottom_left
-var is_exposed_around_bottom_right: bool \
-        setget ,_get_is_exposed_around_bottom_right
+var is_empty_around_top_left: bool \
+        setget ,_get_is_empty_around_top_left
+var is_empty_around_top_right: bool \
+        setget ,_get_is_empty_around_top_right
+var is_empty_around_bottom_left: bool \
+        setget ,_get_is_empty_around_bottom_left
+var is_empty_around_bottom_right: bool \
+        setget ,_get_is_empty_around_bottom_right
 
-var is_top_left_exposed_at_top_left: bool \
-        setget ,_get_is_top_left_exposed_at_top_left
-var is_top_exposed_at_top: bool \
-        setget ,_get_is_top_exposed_at_top
-var is_top_right_exposed_at_top_right: bool \
-        setget ,_get_is_top_right_exposed_at_top_right
-var is_left_exposed_at_left: bool \
-        setget ,_get_is_left_exposed_at_left
-var is_right_exposed_at_right: bool \
-        setget ,_get_is_right_exposed_at_right
-var is_bottom_left_exposed_at_bottom_left: bool \
-        setget ,_get_is_bottom_left_exposed_at_bottom_left
-var is_bottom_exposed_at_bottom: bool \
-        setget ,_get_is_bottom_exposed_at_bottom
-var is_bottom_right_exposed_at_bottom_right: bool \
-        setget ,_get_is_bottom_right_exposed_at_bottom_right
+var is_top_left_empty_at_top_left: bool \
+        setget ,_get_is_top_left_empty_at_top_left
+var is_top_empty_at_top: bool \
+        setget ,_get_is_top_empty_at_top
+var is_top_right_empty_at_top_right: bool \
+        setget ,_get_is_top_right_empty_at_top_right
+var is_left_empty_at_left: bool \
+        setget ,_get_is_left_empty_at_left
+var is_right_empty_at_right: bool \
+        setget ,_get_is_right_empty_at_right
+var is_bottom_left_empty_at_bottom_left: bool \
+        setget ,_get_is_bottom_left_empty_at_bottom_left
+var is_bottom_empty_at_bottom: bool \
+        setget ,_get_is_bottom_empty_at_bottom
+var is_bottom_right_empty_at_bottom_right: bool \
+        setget ,_get_is_bottom_right_empty_at_bottom_right
 
-var is_top_left_exposed_at_top_or_left: bool \
-        setget ,_get_is_top_left_exposed_at_top_or_left
-var is_top_right_exposed_at_top_or_right: bool \
-        setget ,_get_is_top_right_exposed_at_top_or_right
-var is_bottom_left_exposed_at_bottom_or_left: bool \
-        setget ,_get_is_bottom_left_exposed_at_bottom_or_left
-var is_bottom_right_exposed_at_bottom_or_right: bool \
-        setget ,_get_is_bottom_right_exposed_at_bottom_or_right
+var is_top_left_empty_at_top_or_left: bool \
+        setget ,_get_is_top_left_empty_at_top_or_left
+var is_top_right_empty_at_top_or_right: bool \
+        setget ,_get_is_top_right_empty_at_top_or_right
+var is_bottom_left_empty_at_bottom_or_left: bool \
+        setget ,_get_is_bottom_left_empty_at_bottom_or_left
+var is_bottom_right_empty_at_bottom_or_right: bool \
+        setget ,_get_is_bottom_right_empty_at_bottom_or_right
 
-var is_top_exposed_around_top: bool \
-        setget ,_get_is_top_exposed_around_top
-var is_bottom_exposed_around_bottom: bool \
-        setget ,_get_is_bottom_exposed_around_bottom
-var is_left_exposed_around_left: bool \
-        setget ,_get_is_left_exposed_around_left
-var is_right_exposed_around_right: bool \
-        setget ,_get_is_right_exposed_around_right
+var is_top_empty_around_top: bool \
+        setget ,_get_is_top_empty_around_top
+var is_bottom_empty_around_bottom: bool \
+        setget ,_get_is_bottom_empty_around_bottom
+var is_left_empty_around_left: bool \
+        setget ,_get_is_left_empty_around_left
+var is_right_empty_around_right: bool \
+        setget ,_get_is_right_empty_around_right
 
-var is_top_left_exposed_around_top_left: bool \
-        setget ,_get_is_top_left_exposed_around_top_left
-var is_top_right_exposed_around_top_right: bool \
-        setget ,_get_is_top_right_exposed_around_top_right
-var is_bottom_left_exposed_around_bottom_left: bool \
-        setget ,_get_is_bottom_left_exposed_around_bottom_left
-var is_bottom_right_exposed_around_bottom_right: bool \
-        setget ,_get_is_bottom_right_exposed_around_bottom_right
+var is_top_left_empty_around_top_left: bool \
+        setget ,_get_is_top_left_empty_around_top_left
+var is_top_right_empty_around_top_right: bool \
+        setget ,_get_is_top_right_empty_around_top_right
+var is_bottom_left_empty_around_bottom_left: bool \
+        setget ,_get_is_bottom_left_empty_around_bottom_left
+var is_bottom_right_empty_around_bottom_right: bool \
+        setget ,_get_is_bottom_right_empty_around_bottom_right
 
 var is_top_45_pos: bool \
         setget ,_get_is_top_45_pos
@@ -358,125 +358,125 @@ func _get_is_bottom_or_right_empty() -> bool:
             _get_is_right_empty()
 
 
-func _get_is_exposed_around_top_left() -> bool:
+func _get_is_empty_around_top_left() -> bool:
     return _get_is_top_left_empty() or \
             _get_is_top_empty() or \
             _get_is_left_empty()
 
 
-func _get_is_exposed_around_top_right() -> bool:
+func _get_is_empty_around_top_right() -> bool:
     return _get_is_top_right_empty() or \
             _get_is_top_empty() or \
             _get_is_right_empty()
 
 
-func _get_is_exposed_around_bottom_left() -> bool:
+func _get_is_empty_around_bottom_left() -> bool:
     return _get_is_bottom_left_empty() or \
             _get_is_bottom_empty() or \
             _get_is_left_empty()
 
 
-func _get_is_exposed_around_bottom_right() -> bool:
+func _get_is_empty_around_bottom_right() -> bool:
     return _get_is_bottom_right_empty() or \
             _get_is_bottom_empty() or \
             _get_is_right_empty()
 
 
-func _get_is_top_left_exposed_at_top_left() -> bool:
+func _get_is_top_left_empty_at_top_left() -> bool:
     return get_is_neighbor_empty(-2,-2)
 
 
-func _get_is_top_exposed_at_top() -> bool:
+func _get_is_top_empty_at_top() -> bool:
     return get_is_neighbor_empty(0,-2)
 
 
-func _get_is_top_right_exposed_at_top_right() -> bool:
+func _get_is_top_right_empty_at_top_right() -> bool:
     return get_is_neighbor_empty(2,-2)
 
 
-func _get_is_left_exposed_at_left() -> bool:
+func _get_is_left_empty_at_left() -> bool:
     return get_is_neighbor_empty(-2,0)
 
 
-func _get_is_right_exposed_at_right() -> bool:
+func _get_is_right_empty_at_right() -> bool:
     return get_is_neighbor_empty(2,0)
 
 
-func _get_is_bottom_left_exposed_at_bottom_left() -> bool:
+func _get_is_bottom_left_empty_at_bottom_left() -> bool:
     return get_is_neighbor_empty(-2,2)
 
 
-func _get_is_bottom_exposed_at_bottom() -> bool:
+func _get_is_bottom_empty_at_bottom() -> bool:
     return get_is_neighbor_empty(0,2)
 
 
-func _get_is_bottom_right_exposed_at_bottom_right() -> bool:
+func _get_is_bottom_right_empty_at_bottom_right() -> bool:
     return get_is_neighbor_empty(2,2)
 
 
-func _get_is_top_left_exposed_at_top_or_left() -> bool:
+func _get_is_top_left_empty_at_top_or_left() -> bool:
     return get_is_neighbor_empty(-1,-2) or \
             get_is_neighbor_empty(-2,-1)
 
 
-func _get_is_top_right_exposed_at_top_or_right() -> bool:
+func _get_is_top_right_empty_at_top_or_right() -> bool:
     return get_is_neighbor_empty(1,-2) or \
             get_is_neighbor_empty(2,-1)
 
 
-func _get_is_bottom_left_exposed_at_bottom_or_left() -> bool:
+func _get_is_bottom_left_empty_at_bottom_or_left() -> bool:
     return get_is_neighbor_empty(-1,2) or \
             get_is_neighbor_empty(-2,1)
 
 
-func _get_is_bottom_right_exposed_at_bottom_or_right() -> bool:
+func _get_is_bottom_right_empty_at_bottom_or_right() -> bool:
     return get_is_neighbor_empty(1,2) or \
             get_is_neighbor_empty(2,1)
 
 
-func _get_is_top_exposed_around_top() -> bool:
+func _get_is_top_empty_around_top() -> bool:
     return get_is_neighbor_empty(-1,-2) or \
             get_is_neighbor_empty(0,-2) or \
             get_is_neighbor_empty(1,-2)
 
 
-func _get_is_bottom_exposed_around_bottom() -> bool:
+func _get_is_bottom_empty_around_bottom() -> bool:
     return get_is_neighbor_empty(-1,2) or \
             get_is_neighbor_empty(0,2) or \
             get_is_neighbor_empty(1,2)
 
 
-func _get_is_left_exposed_around_left() -> bool:
+func _get_is_left_empty_around_left() -> bool:
     return get_is_neighbor_empty(-2,-1) or \
             get_is_neighbor_empty(-2,0) or \
             get_is_neighbor_empty(-2,1)
 
 
-func _get_is_right_exposed_around_right() -> bool:
+func _get_is_right_empty_around_right() -> bool:
     return get_is_neighbor_empty(2,-1) or \
             get_is_neighbor_empty(2,0) or \
             get_is_neighbor_empty(2,1)
 
 
-func _get_is_top_left_exposed_around_top_left() -> bool:
+func _get_is_top_left_empty_around_top_left() -> bool:
     return get_is_neighbor_empty(-2,-2) or \
             get_is_neighbor_empty(-1,-2) or \
             get_is_neighbor_empty(-2,-1)
 
 
-func _get_is_top_right_exposed_around_top_right() -> bool:
+func _get_is_top_right_empty_around_top_right() -> bool:
     return get_is_neighbor_empty(2,-2) or \
             get_is_neighbor_empty(1,-2) or \
             get_is_neighbor_empty(2,-1)
 
 
-func _get_is_bottom_left_exposed_around_bottom_left() -> bool:
+func _get_is_bottom_left_empty_around_bottom_left() -> bool:
     return get_is_neighbor_empty(-2,2) or \
             get_is_neighbor_empty(-1,2) or \
             get_is_neighbor_empty(-2,1)
 
 
-func _get_is_bottom_right_exposed_around_bottom_right() -> bool:
+func _get_is_bottom_right_empty_around_bottom_right() -> bool:
     return get_is_neighbor_empty(2,2) or \
             get_is_neighbor_empty(1,2) or \
             get_is_neighbor_empty(2,1)
