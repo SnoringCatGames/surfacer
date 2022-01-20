@@ -31,23 +31,6 @@ var is_angle_type_45: bool \
 var is_angle_type_90: bool \
         setget ,_get_is_angle_type_90
 
-var is_top_angle_type_45: bool \
-        setget ,_get_is_top_angle_type_45
-var is_bottom_angle_type_45: bool \
-        setget ,_get_is_bottom_angle_type_45
-var is_left_angle_type_45: bool \
-        setget ,_get_is_left_angle_type_45
-var is_right_angle_type_45: bool \
-        setget ,_get_is_right_angle_type_45
-var is_top_angle_type_90: bool \
-        setget ,_get_is_top_angle_type_90
-var is_bottom_angle_type_90: bool \
-        setget ,_get_is_bottom_angle_type_90
-var is_left_angle_type_90: bool \
-        setget ,_get_is_left_angle_type_90
-var is_right_angle_type_90: bool \
-        setget ,_get_is_right_angle_type_90
-
 var is_top_left_empty: bool setget ,_get_is_top_left_empty
 var is_top_empty: bool setget ,_get_is_top_empty
 var is_top_right_empty: bool setget ,_get_is_top_right_empty
@@ -289,38 +272,6 @@ func _get_is_angle_type_45() -> bool:
 
 func _get_is_angle_type_90() -> bool:
     return angle_type == CellAngleType.A90
-
-
-func _get_is_top_angle_type_45() -> bool:
-    return _get_top_angle_type() == CellAngleType.A45
-
-
-func _get_is_bottom_angle_type_45() -> bool:
-    return _get_bottom_angle_type() == CellAngleType.A45
-
-
-func _get_is_left_angle_type_45() -> bool:
-    return _get_left_angle_type() == CellAngleType.A45
-
-
-func _get_is_right_angle_type_45() -> bool:
-    return _get_right_angle_type() == CellAngleType.A45
-
-
-func _get_is_top_angle_type_90() -> bool:
-    return _get_top_angle_type() == CellAngleType.A90
-
-
-func _get_is_bottom_angle_type_90() -> bool:
-    return _get_bottom_angle_type() == CellAngleType.A90
-
-
-func _get_is_left_angle_type_90() -> bool:
-    return _get_left_angle_type() == CellAngleType.A90
-
-
-func _get_is_right_angle_type_90() -> bool:
-    return _get_right_angle_type() == CellAngleType.A90
 
 
 func _get_is_top_left_present() -> bool:
