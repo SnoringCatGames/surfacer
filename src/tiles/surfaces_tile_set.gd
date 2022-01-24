@@ -5,6 +5,167 @@ extends TileSet
 
 const INVALID_BITMASK := -1
 
+# SubtileBinding
+# -   Each end of each side (e.g., top-left, top-right, left-top, left-bottom,
+#     ...) of a subtile is represented by one of these flags.
+#enum {
+#    UNKNOWN,
+#
+#    EMPTY,
+#    EXTERIOR,
+#    INTERIOR,
+#
+#    # Exterior edges (the transition from exterior to air).
+#    EXT_90,
+#    EXT_45,
+#    EXT_45N,
+#    EXT_27P_SHALLOW,
+#    EXT_27P_STEEP,
+#    EXT_27N_STEEP,
+#    EXT_27P_INV_STEEP,
+#    EXT_27N_INV_STEEP,
+#
+#    # Interior edges (the transition from interior to exterior).
+#    INT_90_PERPENDICULAR,
+#    INT_90_PERP_AND_PARALLEL,
+#    INT_90_PARALLEL,
+#    INT_90_PARALLEL_TO_45,
+#    INT_90_PARALLEL_TO_27_SHALLOW,
+#    INT_90_PARALLEL_TO_27_STEEP_SHORT,
+#    INT_90_PARALLEL_TO_27_STEEP_LONG,
+#    INT_45,
+#    INT_45_TO_PARALLEL,
+#    INT_45_INV,
+#    INT_45_INV_WITH_90_PERPENDICULAR,
+#    INT_45_INV_WITH_90_PERP_AND_PARALLEL,
+#    INT_45_INV_WITH_90_PARALLEL,
+#    INT_45_INV_NARROW,
+#    INT_45_INV_MID_NOTCH,
+#    INT_27_SHALLOW,
+#    INT_27_SHALLOW_TO_PARALLEL,
+#    INT_27_STEEP_CLOSE,
+#    INT_27_STEEP_CLOSE_TO_PARALLEL,
+#    INT_27_STEEP_FAR,
+#    INT_27_STEEP_FAR_TO_PARALLEL,
+#    INT_27N_STEEP,
+#}
+
+
+
+
+
+# FIXME: LEFT OFF HERE: --------------------------------------------------------------
+# - RE-THINK THE BINDING STRATEGY!
+# - Instead of being based on sides (top-left, top-right, left-top, left-bottom, etc.), be based on corners.
+#   - This should be more intuitive to conceptualize, and less text to encode?
+# - This might be more enum cases, but probably simpler logic for matching.
+# SubtileCorner
+enum {
+    UNKNOWN,
+    
+    # Air or space beyond the collision boundary.
+    EMPTY,
+    # Space inside the collision boundary, but before transitioning to the
+    # more-faded interior (green, purple, yellow, or light-grey in the
+    # template).
+    EXTERIOR,
+    # Space both inside the collision boundary, and after transitioning to the
+    # more-faded interior (the darker grey colors in the template).
+    INTERIOR,
+    
+    EXT_90H,
+    EXT_90V,
+    EXT_90_90_CONVEX,
+    EXT_90_90_CONCAVE,
+    
+    
+    EXT_45P_FLOOR,
+    EXT_45N_FLOOR,
+    EXT_45P_CEILING,
+    EXT_45N_CEILING,
+    
+    
+    EXT_27P_SHALLOW,
+    EXT_27P_STEEP,
+    EXT_27N_STEEP,
+    
+    
+    EXT_27P_INV_SHALLOW,
+    EXT_27N_INV_SHALLOW,
+    EXT_27P_INV_STEEP,
+    EXT_27N_INV_STEEP,
+    
+    
+    EXT_90H_45_CONVEX,
+    EXT_90H_45_CONCAVE,
+    EXT_90V_45_CONVEX,
+    EXT_90V_45_CONCAVE,
+    
+    
+    
+    
+    
+    
+    
+    INT_90H,
+    INT_90V,
+    INT_90_90_CONCAVE,
+    INT_90_90_CONVEX,
+    INT_90H_TO_45,
+    INT_90V_TO_45,
+    INT_90H_TO_27_SHALLOW,
+    INT_90H_TO_27_STEEP_SHORT,
+    INT_90H_TO_27_STEEP_LONG,
+    INT_45,
+    INT_45_TO_90H,
+    INT_45_TO_90V,
+    INT_45_TO_90H_AND_90V,
+    INT_45_INV,
+    INT_45_INV_WITH_90_90_CONCAVE,
+    INT_45_INV_WITH_90_90_CONVEX,
+    INT_45_INV_WITH_90H,
+    INT_45_INV_WITH_90V,
+    INT_45_INV_NARROW,
+    INT_45_INV_MID_NOTCH_H,
+    INT_45_INV_MID_NOTCH_V,
+    
+}
+
+
+
+
+
+# FIXME: LEFT OFF HERE: ---------------------------
+# - Abandon the 5x5 bitmask idea for internal tiles.
+#   - Way too complicated:
+#     - I'd need to encode a _lot_ of optional bits.
+#     - I'd also need to know shapes of neighbors.
+# - Instead, just describe the shape of the internal exposure transition.
+#   - flat along side
+#   - 90 in corner
+#   - 45 in corner
+#   - 27 in corner
+# - Then, have the logic look at the interesting exposure edge cases, and
+#   decide which exposure-transition-shape properties must be matched.
+
+# FIXME: LEFT OFF HERE: ---------------------------------
+# - Include in the subtiles configuration a way to specify which angles are
+#   allowed to transition into eachother.
+# - For example, 45 into 27, 27 into 90, 27-open into 27-closed, etc.
+# - Then, the tile-set author can choose how much art they want to make.
+# - And account for this in the matching logic.
+
+# FIXME: LEFT OFF HERE: ----------------------------------
+# - Plan how to deal with 45-interior-transition strips that don't actually fade
+#   to dark, and then also end abruptly due to not opening up into a wider area.
+
+# FIXME: LEFT OFF HERE: ----------------------------------
+# - How to handle the special subtiles that are designed to transition into a
+#   different angle on the next subtile:
+#   - Allow an optional second pair of flags for a side to indicate the in-bound
+#     shape that this side will bind to.
+
+
 # Dictionary<int, Dictionary>
 var _tile_id_to_config: Dictionary
 
@@ -67,6 +228,9 @@ func _create_tiles_to_properties() -> Dictionary:
                 entry.properties != "":
             tile_config.surface_properties = \
                     Su.surface_properties.properties[entry.properties]
+        else:
+            tile_config.surface_properties = \
+                    Su.surface_properties.properties.default
     return tiles_to_properties
 
 
@@ -133,3 +297,13 @@ func get_cell_actual_bitmask(
     if tile_map.get_cellv(position + Vector2(1, 1)) != TileMap.INVALID_CELL:
         bitmask |= TileSet.BIND_BOTTOMRIGHT
     return bitmask
+
+
+# FIXME: LEFT OFF HERE: -------------------------------------------
+static func get_subtile_side_binding_string(type: int) -> String:
+    match type:
+#        UNKNOWN:
+#            return "UNKNOWN"
+        _:
+            Sc.logger.error()
+            return "??"
