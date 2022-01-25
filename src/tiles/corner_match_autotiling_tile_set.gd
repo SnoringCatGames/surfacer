@@ -51,6 +51,9 @@ extends SurfacesTileSet
 
 
 
+# FIXME: LEFT OFF HERE: ------------------------------------------------------
+# - Update the corner-type legend to match the latest enums list.
+
 
 # FIXME: LEFT OFF HERE: --------------------------------------------------------------
 # - RE-THINK THE BINDING STRATEGY!
@@ -77,11 +80,13 @@ enum {
     EXT_90_90_CONCAVE,
     
     
-    EXT_45P_FLOOR,
-    EXT_45N_FLOOR,
-    EXT_45P_CEILING,
-    EXT_45N_CEILING,
+    EXT_45_CONCAVE,
+    EXT_45_FLOOR,
+    EXT_45_CEILING,
     
+    
+    EXT_27_SHALLOW_CONCAVE,
+    EXT_27_STEEP_CONCAVE,
     
     EXT_27P_FLOOR_SHALLOW,
     EXT_27N_FLOOR_SHALLOW,
@@ -95,10 +100,11 @@ enum {
     EXT_27N_CEILING_STEEP,
     
     
-    EXT_90H_45_CONVEX,
     EXT_90H_45_CONCAVE,
-    EXT_90V_45_CONVEX,
     EXT_90V_45_CONCAVE,
+    
+    EXT_90H_45_CONVEX,
+    EXT_90V_45_CONVEX,
     EXT_90H_45_CONVEX_ACUTE,
     EXT_90V_45_CONVEX_ACUTE,
     
@@ -134,13 +140,90 @@ enum {
     INT_27_CEILING_STEEP,
 }
 
-const _CORNERS := ["tl", "tr", "bl", "br"]
+# NOTE:
+# -   This mapping enables us to match one corner type with another.
+# -   Defining a value as negative will configure it as a valid match, but with
+#     a lower-priority than a positive value.
+var _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES := {
+    UNKNOWN: [],
+    
+    EMPTY: [EXT_90_90_CONVEX],
+    EXTERIOR: [],
+    INTERIOR: [],
+    
+    EXT_90H: [],
+    EXT_90V: [],
+    EXT_90_90_CONVEX: [EMPTY],
+    EXT_90_90_CONCAVE: [-EXT_45_CONCAVE],
+    
+    
+    EXT_45_CONCAVE: [],
+    EXT_45_FLOOR: [],
+    EXT_45_CEILING: [],
+    
+    
+    EXT_27_SHALLOW_CONCAVE: [-EXT_45_CONCAVE],
+    EXT_27_STEEP_CONCAVE: [-EXT_45_CONCAVE],
+    
+    EXT_27P_FLOOR_SHALLOW: [],
+    EXT_27N_FLOOR_SHALLOW: [],
+    EXT_27P_FLOOR_STEEP: [],
+    EXT_27N_FLOOR_STEEP: [],
+    
+    
+    EXT_27P_CEILING_SHALLOW: [],
+    EXT_27N_CEILING_SHALLOW: [],
+    EXT_27P_CEILING_STEEP: [],
+    EXT_27N_CEILING_STEEP: [],
+    
+    
+    EXT_90H_45_CONCAVE: [-EXT_45_CONCAVE],
+    EXT_90V_45_CONCAVE: [-EXT_45_CONCAVE],
+    
+    EXT_90H_45_CONVEX: [],
+    EXT_90V_45_CONVEX: [],
+    EXT_90H_45_CONVEX_ACUTE: [],
+    EXT_90V_45_CONVEX_ACUTE: [],
+    
+    
+    INT_90H: [],
+    INT_90V: [],
+    INT_90_90_CONCAVE: [],
+    INT_90_90_CONVEX: [],
+    INT_90H_TO_45: [],
+    INT_90V_TO_45: [],
+    INT_90H_TO_27_SHALLOW: [],
+    INT_90H_TO_27_STEEP_SHORT: [],
+    INT_90H_TO_27_STEEP_LONG: [],
+    INT_90V_TO_27_SHALLOW_SHORT: [],
+    INT_90V_TO_27_SHALLOW_LONG: [],
+    INT_90V_TO_27_STEEP: [],
+    
+    INT_45_FLOOR: [],
+    INT_45_FLOOR_TO_90H: [],
+    INT_45_FLOOR_TO_90V: [],
+    INT_45_FLOOR_TO_90H_AND_90V: [],
+    
+    INT_45_CEILING: [],
+    INT_45_CEILING_WITH_90_90_CONCAVE: [],
+    INT_45_CEILING_WITH_90_90_CONVEX: [],
+    INT_45_CEILING_WITH_90H: [],
+    INT_45_CEILING_WITH_90V: [],
+    INT_45_CEILING_NARROW: [],
+    INT_45_MID_NOTCH_H: [],
+    INT_45_MID_NOTCH_V: [],
+    
+    INT_27_CEILING_SHALLOW: [],
+    INT_27_CEILING_STEEP: [],
+}
+
+var _CORNERS := ["tl", "tr", "bl", "br"]
 
 # FIXME: LEFT OFF HERE: --------------------------------
-const _ACCEPTABLE_MATCH_PRIORITY_THRESHOLD := 4.0
+var _ACCEPTABLE_MATCH_PRIORITY_THRESHOLD := 4.0
 
 # Dictionary<int, String>
-var _subtile_corner_type_value_to_key: Dictionary
+var _SUBTILE_CORNER_TYPE_VALUE_TO_KEY: Dictionary
 
 # Dictionary<
 #     ("tl"|"tr"|"bl"|"br"),
@@ -175,6 +258,9 @@ var _error_indicator_subtile_position: Vector2
 #         available.
 var _allows_partial_matches: bool
 
+# -   If false, then custom corner-match autotiling behavior will not happen at
+#     runtime, and will only happen when editing within the scene editor.
+var _supports_runtime_autotiling: bool
 
 
 
@@ -213,13 +299,19 @@ var _allows_partial_matches: bool
 func _init(
         tiles_manifest: Array,
         subtiles_manifest: Dictionary,
-        allows_partial_matches: bool).(tiles_manifest) -> void:
+        allows_partial_matches: bool,
+        supports_runtime_autotiling: bool).(tiles_manifest) -> void:
     self._allows_partial_matches = allows_partial_matches
+    self._supports_runtime_autotiling = supports_runtime_autotiling
     _parse_enum_key_values()
     _parse_subtiles_manifest(subtiles_manifest)
 
 
 func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
+    if !Engine.editor_hint and \
+            !_supports_runtime_autotiling:
+        return
+    
     # FIXME: LEFT OFF HERE: ----------------- Parse other parts of manifest.
     
     assert(subtiles_manifest.has("error_indicator_subtile_position") and \
@@ -231,11 +323,12 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
     for corner in _CORNERS:
         var type_to_subtiles := {}
         _corner_to_type_to_subtiles[corner] = type_to_subtiles
-        for corner_type in _subtile_corner_type_value_to_key:
+        for corner_type in _SUBTILE_CORNER_TYPE_VALUE_TO_KEY:
             if _get_is_subtile_corner_type_interesting(corner_type):
                 var subtiles := {}
                 type_to_subtiles[corner_type] = subtiles
     
+    # Create a structured mapping to subtile positions based on type.
     for subtile_config in subtiles_manifest.subtiles:
         assert(subtile_config.has("p") and \
                 subtile_config.p is Vector2)
@@ -250,6 +343,14 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
                         subtile_config
                 was_a_corner_interesting = true
         assert(was_a_corner_interesting)
+    
+    # Check that the corner-type enum values match the
+    # corner-type-to-matching-types map.
+    assert(_SUBTILE_CORNER_TYPE_VALUE_TO_KEY.size() == \
+            _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES.size())
+    for corner_type in _SUBTILE_CORNER_TYPE_VALUE_TO_KEY:
+        assert(_CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES.has(corner_type))
+        assert(_CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[corner_type is Array])
 
 
 # This hacky function exists for a couple reasons:
@@ -263,17 +364,21 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
 # -   GDScript's type system doesn't allow referencing the name of a class from
 #     within that class.
 func _parse_enum_key_values() -> void:
+    if !Engine.editor_hint and \
+            !_supports_runtime_autotiling:
+        return
+    
     var script: Script = self.get_script()
     var constants := script.get_script_constant_map()
     while !constants.has("EMPTY"):
         script = script.get_base_script()
         constants = script.get_script_constant_map()
     for key in constants:
-        _subtile_corner_type_value_to_key[constants[key]] = key
+        _SUBTILE_CORNER_TYPE_VALUE_TO_KEY[constants[key]] = key
 
 
 func get_subtile_corner_string(type: int) -> String:
-    return _subtile_corner_type_value_to_key[type]
+    return _SUBTILE_CORNER_TYPE_VALUE_TO_KEY[type]
 
 
 func get_subtile_config_string(subtile_config: Dictionary) -> String:
@@ -302,14 +407,19 @@ func _forward_subtile_selection(
         bitmask: int,
         tile_map: Object,
         cell_position: Vector2):
-    var actual_bitmask := get_cell_actual_bitmask(cell_position, tile_map)
-    var proximity := CellProximity.new(
-            tile_map,
-            self,
-            cell_position,
-            tile_id,
-            actual_bitmask)
-    var subtile_position := _choose_subtile(proximity)
+    var subtile_position := Vector2.INF
+    
+    if Engine.editor_hint or \
+            _supports_runtime_autotiling:
+        var actual_bitmask := get_cell_actual_bitmask(cell_position, tile_map)
+        var proximity := CellProximity.new(
+                tile_map,
+                self,
+                cell_position,
+                tile_id,
+                actual_bitmask)
+        subtile_position = _choose_subtile(proximity)
+    
     if subtile_position != Vector2.INF:
         return subtile_position
     else:
@@ -404,6 +514,37 @@ static func _get_target_corners_with_an_empty_side(proximity: CellProximity) -> 
     var tr := UNKNOWN
     var bl := UNKNOWN
     var br := UNKNOWN
+    
+    if proximity.is_top_empty:
+        if proximity.is_left_empty:
+            # FIXME: LEFT OFF HERE: -------------------------------------------------------------
+            tl = EMPTY
+        else:
+            if proximity.is_angle_type_90:
+                pass
+            elif proximity.is_angle_type_45:
+                pass
+            else:
+                pass
+        
+        if proximity.is_right_empty:
+            pass
+        else:
+            pass
+    else:
+        if proximity.is_left_empty:
+            pass
+        else:
+            pass
+        
+        if proximity.is_right_empty:
+            pass
+        else:
+            pass
+    
+    
+    
+    
     
     if proximity.is_top_empty:
         if proximity.is_bottom_empty:
