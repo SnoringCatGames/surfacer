@@ -2,12 +2,33 @@ class_name CellProximity
 extends Reference
 
 
+const FULLY_INTERNAL_BITMASK := \
+        TileSet.BIND_TOPLEFT | \
+        TileSet.BIND_TOP | \
+        TileSet.BIND_TOPRIGHT | \
+        TileSet.BIND_LEFT | \
+        TileSet.BIND_RIGHT | \
+        TileSet.BIND_BOTTOMLEFT | \
+        TileSet.BIND_BOTTOM | \
+        TileSet.BIND_BOTTOMRIGHT
+const ALL_SIDES_BITMASK := \
+        TileSet.BIND_TOP | \
+        TileSet.BIND_LEFT | \
+        TileSet.BIND_RIGHT | \
+        TileSet.BIND_BOTTOM
+
 var tile_map: SurfacesTileMap
 var tile_set: SurfacesTileSet
 
 var position: Vector2
 var tile_id: int
 var angle_type: int
+var bitmask: int
+
+var is_fully_internal: bool \
+        setget ,_get_is_fully_internal
+var are_all_sides_covered: bool \
+        setget ,_get_are_all_sides_covered
 
 var top_left_angle_type: int \
         setget ,_get_top_left_angle_type
@@ -205,11 +226,13 @@ func _init(
         tile_map: SurfacesTileMap,
         tile_set: SurfacesTileSet,
         position: Vector2,
-        tile_id: int) -> void:
+        tile_id: int,
+        bitmask: int) -> void:
     self.tile_map = tile_map
     self.tile_set = tile_set
     self.position = position
     self.tile_id = tile_id
+    self.bitmask = bitmask
     self.angle_type = get_neighbor_angle_type(0,0)
 
 
@@ -232,6 +255,14 @@ func get_is_neighbor_empty(relative_x: int, relative_y: int) -> bool:
             position.x + relative_x,
             position.y + relative_y)
     return !tile_set._is_tile_bound(tile_id, neighbor_id)
+
+
+func _get_is_fully_internal() -> bool:
+    return bitmask == FULLY_INTERNAL_BITMASK
+
+
+func _get_are_all_sides_covered() -> bool:
+    return (bitmask ^ ALL_SIDES_BITMASK) == 0
 
 
 func _get_top_left_angle_type() -> int:
@@ -275,67 +306,67 @@ func _get_is_angle_type_90() -> bool:
 
 
 func _get_is_top_left_present() -> bool:
-    return get_is_neighbor_present(-1,-1)
+    return !!(bitmask & TileSet.BIND_TOPLEFT)
 
 
 func _get_is_top_present() -> bool:
-    return get_is_neighbor_present(0,-1)
+    return !!(bitmask & TileSet.BIND_TOP)
 
 
 func _get_is_top_right_present() -> bool:
-    return get_is_neighbor_present(1,-1)
+    return !!(bitmask & TileSet.BIND_TOPRIGHT)
 
 
 func _get_is_left_present() -> bool:
-    return get_is_neighbor_present(-1,0)
+    return !!(bitmask & TileSet.BIND_LEFT)
 
 
 func _get_is_right_present() -> bool:
-    return get_is_neighbor_present(1,0)
+    return !!(bitmask & TileSet.BIND_RIGHT)
 
 
 func _get_is_bottom_left_present() -> bool:
-    return get_is_neighbor_present(-1,1)
+    return !!(bitmask & TileSet.BIND_BOTTOMLEFT)
 
 
 func _get_is_bottom_present() -> bool:
-    return get_is_neighbor_present(0,1)
+    return !!(bitmask & TileSet.BIND_BOTTOM)
 
 
 func _get_is_bottom_right_present() -> bool:
-    return get_is_neighbor_present(1,1)
+    return !!(bitmask & TileSet.BIND_BOTTOMRIGHT)
 
 
 func _get_is_top_left_empty() -> bool:
-    return get_is_neighbor_empty(-1,-1)
+    return !(bitmask & TileSet.BIND_TOPLEFT)
 
 
 func _get_is_top_empty() -> bool:
-    return get_is_neighbor_empty(0,-1)
+    return !(bitmask & TileSet.BIND_TOP)
 
 
 func _get_is_top_right_empty() -> bool:
-    return get_is_neighbor_empty(1,-1)
+    return !(bitmask & TileSet.BIND_TOPRIGHT)
 
 
 func _get_is_left_empty() -> bool:
-    return get_is_neighbor_empty(-1,0)
+    return !(bitmask & TileSet.BIND_LEFT)
 
 
 func _get_is_right_empty() -> bool:
-    return get_is_neighbor_empty(1,0)
+    return !(bitmask & TileSet.BIND_RIGHT)
 
 
 func _get_is_bottom_left_empty() -> bool:
-    return get_is_neighbor_empty(-1,1)
+    return !(bitmask & TileSet.BIND_BOTTOMLEFT)
 
 
 func _get_is_bottom_empty() -> bool:
-    return get_is_neighbor_empty(0,1)
+    return !(bitmask & TileSet.BIND_BOTTOM)
 
 
 func _get_is_bottom_right_empty() -> bool:
-    return get_is_neighbor_empty(1,1)
+    return !(bitmask & TileSet.BIND_BOTTOMRIGHT)
 
 
 func _get_is_top_or_left_empty() -> bool:

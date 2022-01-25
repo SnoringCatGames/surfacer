@@ -99,6 +99,8 @@ enum {
     EXT_90H_45_CONCAVE,
     EXT_90V_45_CONVEX,
     EXT_90V_45_CONCAVE,
+    EXT_90H_45_CONVEX_ACUTE,
+    EXT_90V_45_CONVEX_ACUTE,
     
     
     INT_90H,
@@ -250,16 +252,63 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
         assert(was_a_corner_interesting)
 
 
+# This hacky function exists for a couple reasons:
+# -   We need to be able to use the anonymous enum syntax for these
+#     SubtileCorner values, so that tile-set authors don't need to include so
+#     many extra characters for the enum prefix in their GDScript
+#     configurations.
+# -   We need to be able to print the key for a given enum value, so that a
+#     human can debug what's going on.
+# -   We need to be able to iterate over all possible enum values.
+# -   GDScript's type system doesn't allow referencing the name of a class from
+#     within that class.
+func _parse_enum_key_values() -> void:
+    var script: Script = self.get_script()
+    var constants := script.get_script_constant_map()
+    while !constants.has("EMPTY"):
+        script = script.get_base_script()
+        constants = script.get_script_constant_map()
+    for key in constants:
+        _subtile_corner_type_value_to_key[constants[key]] = key
+
+
+func get_subtile_corner_string(type: int) -> String:
+    return _subtile_corner_type_value_to_key[type]
+
+
+func get_subtile_config_string(subtile_config: Dictionary) -> String:
+    var optional_position_string: String = \
+            "p:%s, " % subtile_config.p if \
+            subtile_config.has("p") else \
+            ""
+    return "{%stl:%s, tr:%s, bl:%s, br:%s}" % [
+        optional_position_string,
+        get_subtile_corner_string(subtile_config.tl),
+        get_subtile_corner_string(subtile_config.tr),
+        get_subtile_corner_string(subtile_config.bl),
+        get_subtile_corner_string(subtile_config.br),
+    ]
+
+
+func _get_is_subtile_corner_type_interesting(type: int) -> bool:
+    return type != UNKNOWN and \
+            type != EMPTY and \
+            type != EXTERIOR and \
+            type != INTERIOR
+
+
 func _forward_subtile_selection(
         tile_id: int,
         bitmask: int,
         tile_map: Object,
         cell_position: Vector2):
+    var actual_bitmask := get_cell_actual_bitmask(cell_position, tile_map)
     var proximity := CellProximity.new(
             tile_map,
             self,
             cell_position,
-            tile_id)
+            tile_id,
+            actual_bitmask)
     var subtile_position := _choose_subtile(proximity)
     if subtile_position != Vector2.INF:
         return subtile_position
@@ -284,6 +333,10 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
                 _corner_to_type_to_subtiles[corner][corner_type] if \
                 _get_is_subtile_corner_type_interesting(corner_type) else \
                 {}
+    
+    # FIXME: LEFT OFF HERE: ---------------------------
+    # - As an efficiency step, first check if the pre-existing cell in the
+    #   TileMap already has the ideal match.
     
     if _allows_partial_matches:
         var set := {}
@@ -336,57 +389,181 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
         return _error_indicator_subtile_position
 
 
-func _get_target_corners(proximity: CellProximity) -> Dictionary:
-    # FIXME: LEFT OFF HERE: -----------------------
-    # - Define target_corners according to neighbor tile presence and angle-types.
+static func _get_target_corners(proximity: CellProximity) -> Dictionary:
+    if proximity.is_fully_internal:
+        return _get_target_corners_with_no_empty_neighbors(proximity)
+    elif proximity.are_all_sides_covered:
+        return _get_target_corners_with_no_empty_sides(proximity)
+    else:
+        return _get_target_corners_with_an_empty_side(proximity)
+
+
+static func _get_target_corners_with_an_empty_side(proximity: CellProximity) -> Dictionary:
+    # FIXME: LEFT OFF HERE: ---------------------------------------------------
+    var tl := UNKNOWN
+    var tr := UNKNOWN
+    var bl := UNKNOWN
+    var br := UNKNOWN
+    
+    if proximity.is_top_empty:
+        if proximity.is_bottom_empty:
+            if proximity.is_left_empty:
+                if proximity.is_right_empty:
+                    # All sides are empty.
+                    pass
+                else:
+                    # Top, bottom, left sides are empty.
+                    pass
+            else:
+                if proximity.is_right_empty:
+                    # Top, bottom, right sides are empty.
+                    pass
+                else:
+                    # Top and bottom sides are empty.
+                    pass
+        else:
+            if proximity.is_left_empty:
+                if proximity.is_right_empty:
+                    # Top, left, right sides are empty.
+                    pass
+                else:
+                    # Top and left sides are empty.
+                    pass
+            else:
+                if proximity.is_right_empty:
+                    # Top and right sides are empty.
+                    pass
+                else:
+                    # Top side is empty.
+                    pass
+    else:
+        if proximity.is_bottom_empty:
+            if proximity.is_left_empty:
+                if proximity.is_right_empty:
+                    # Bottom, left, right sides are empty.
+                    pass
+                else:
+                    # Bottom and left sides are empty.
+                    pass
+            else:
+                if proximity.is_right_empty:
+                    # Bottom and right sides are empty.
+                    pass
+                else:
+                    # Bottom side is empty.
+                    pass
+        else:
+            if proximity.is_left_empty:
+                if proximity.is_right_empty:
+                    # Left and right sides are empty.
+                    pass
+                else:
+                    # Left side is empty.
+                    pass
+            else:
+                if proximity.is_right_empty:
+                    # Right side is empty.
+                    pass
+                else:
+                    Sc.logger.error("No side is empty.")
     
     return {
-        tl = EMPTY,
-        tr = EXT_45P_FLOOR,
-        bl = EXT_45P_FLOOR,
-        br = EXTERIOR,
+        tl = tl,
+        tr = tr,
+        bl = bl,
+        br = br,
     }
 
 
-# This hacky function exists for a couple reasons:
-# -   We need to be able to use the anonymous enum syntax for these
-#     SubtileCorner values, so that tile-set authors don't need to include so
-#     many extra characters for the enum prefix in their GDScript
-#     configurations.
-# -   We need to be able to print the key for a given enum value, so that a
-#     human can debug what's going on.
-# -   We need to be able to iterate over all possible enum values.
-# -   GDScript's type system doesn't allow referencing the name of a class from
-#     within that class.
-func _parse_enum_key_values() -> void:
-    var script: Script = self.get_script()
-    var constants := script.get_script_constant_map()
-    while !constants.has("EMPTY"):
-        script = script.get_base_script()
-        constants = script.get_script_constant_map()
-    for key in constants:
-        _subtile_corner_type_value_to_key[constants[key]] = key
+static func _get_target_corners_with_no_empty_sides(proximity: CellProximity) -> Dictionary:
+    var tl := UNKNOWN
+    var tr := UNKNOWN
+    var bl := UNKNOWN
+    var br := UNKNOWN
+    
+    # FIXME: LEFT OFF HERE: --------------------------------------------------
+    
+    if proximity.is_top_left_empty:
+        if proximity.is_top_right_empty:
+            if proximity.is_bottom_left_empty:
+                if proximity.is_bottom_right_empty:
+                    # All corners are empty.
+                    pass
+                else:
+                    # Top-left, top-right, bottom-left corners are empty.
+                    pass
+            else:
+                if proximity.is_bottom_right_empty:
+                    # Top-left, top-right, bottom-right corners are empty.
+                    pass
+                else:
+                    # Top-left and top-right corners are empty.
+                    pass
+        else:
+            if proximity.is_bottom_left_empty:
+                if proximity.is_bottom_right_empty:
+                    # Top-left, bottom-left, bottom-right corners are empty.
+                    pass
+                else:
+                    # Top-left and bottom-left corners are empty.
+                    pass
+            else:
+                if proximity.is_bottom_right_empty:
+                    # Top-left and bottom-right corners are empty.
+                    pass
+                else:
+                    # Top-left corner is empty.
+                    pass
+    else:
+        if proximity.is_top_right_empty:
+            if proximity.is_bottom_left_empty:
+                if proximity.is_bottom_right_empty:
+                    # Top-right, bottom-left, bottom-right corners are empty.
+                    pass
+                else:
+                    # Top-right and bottom-left corners are empty.
+                    pass
+            else:
+                if proximity.is_bottom_right_empty:
+                    # Top-right and bottom-right corners are empty.
+                    pass
+                else:
+                    # Top-right corner is empty.
+                    pass
+        else:
+            if proximity.is_bottom_left_empty:
+                if proximity.is_bottom_right_empty:
+                    # Bottom-left and bottom-right corners are empty.
+                    pass
+                else:
+                    # Bottom-left corner is empty.
+                    pass
+            else:
+                if proximity.is_bottom_right_empty:
+                    # Bottom-right corner is empty.
+                    pass
+                else:
+                    Sc.logger.error("No corner is empty.")
+    
+    return {
+        tl = tl,
+        tr = tr,
+        bl = bl,
+        br = br,
+    }
 
 
-func get_subtile_corner_string(type: int) -> String:
-    return _subtile_corner_type_value_to_key[type]
-
-
-func get_subtile_config_string(subtile_config: Dictionary) -> String:
-    var optional_position_string: String = \
-            "p:%s, " % subtile_config.p if \
-            subtile_config.has("p") else \
-            ""
-    return "{%stl:%s, tr:%s, bl:%s, br:%s}" % [
-        optional_position_string,
-        get_subtile_corner_string(subtile_config.tl),
-        get_subtile_corner_string(subtile_config.tr),
-        get_subtile_corner_string(subtile_config.bl),
-        get_subtile_corner_string(subtile_config.br),
-    ]
-
-
-func _get_is_subtile_corner_type_interesting(type: int) -> bool:
-    return type != EMPTY and \
-            type != EXTERIOR and \
-            type != INTERIOR
+static func _get_target_corners_with_no_empty_neighbors(proximity: CellProximity) -> Dictionary:
+    var tl := UNKNOWN
+    var tr := UNKNOWN
+    var bl := UNKNOWN
+    var br := UNKNOWN
+    
+    # FIXME: LEFT OFF HERE: --------------------------------------------------
+    
+    return {
+        tl = tl,
+        tr = tr,
+        bl = bl,
+        br = br,
+    }
