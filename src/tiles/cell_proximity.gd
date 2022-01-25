@@ -182,50 +182,59 @@ var is_right_90_ceiling: bool \
 
 var is_top_left_corner_concave_90: bool \
         setget ,_get_is_top_left_corner_concave_90
-var is_top_left_corner_concave_45: bool \
-        setget ,_get_is_top_left_corner_concave_45
-var is_top_left_corner_concave_partial_45: bool \
-        setget ,_get_is_top_left_corner_concave_partial_45
-var is_top_left_corner_concave_90_vertical_to_45: bool \
-        setget ,_get_is_top_left_corner_concave_90_vertical_to_45
-var is_top_left_corner_concave_90_horizontal_to_45: bool \
-        setget ,_get_is_top_left_corner_concave_90_horizontal_to_45
-
 var is_top_right_corner_concave_90: bool \
         setget ,_get_is_top_right_corner_concave_90
-var is_top_right_corner_concave_45: bool \
-        setget ,_get_is_top_right_corner_concave_45
-var is_top_right_corner_concave_partial_45: bool \
-        setget ,_get_is_top_right_corner_concave_partial_45
-var is_top_right_corner_concave_90_vertical_to_45: bool \
-        setget ,_get_is_top_right_corner_concave_90_vertical_to_45
-var is_top_right_corner_concave_90_horizontal_to_45: bool \
-        setget ,_get_is_top_right_corner_concave_90_horizontal_to_45
-
 var is_bottom_left_corner_concave_90: bool \
         setget ,_get_is_bottom_left_corner_concave_90
-var is_bottom_left_corner_concave_45: bool \
-        setget ,_get_is_bottom_left_corner_concave_45
-var is_bottom_left_corner_concave_partial_45: bool \
-        setget ,_get_is_bottom_left_corner_concave_partial_45
-var is_bottom_left_corner_concave_90_vertical_to_45: bool \
-        setget ,_get_is_bottom_left_corner_concave_90_vertical_to_45
-var is_bottom_left_corner_concave_90_horizontal_to_45: bool \
-        setget ,_get_is_bottom_left_corner_concave_90_horizontal_to_45
-
 var is_bottom_right_corner_concave_90: bool \
         setget ,_get_is_bottom_right_corner_concave_90
+
+var is_top_left_corner_concave_45: bool \
+        setget ,_get_is_top_left_corner_concave_45
+var is_top_right_corner_concave_45: bool \
+        setget ,_get_is_top_right_corner_concave_45
+var is_bottom_left_corner_concave_45: bool \
+        setget ,_get_is_bottom_left_corner_concave_45
 var is_bottom_right_corner_concave_45: bool \
         setget ,_get_is_bottom_right_corner_concave_45
+
+var is_top_left_corner_concave_partial_45: bool \
+        setget ,_get_is_top_left_corner_concave_partial_45
+var is_top_right_corner_concave_partial_45: bool \
+        setget ,_get_is_top_right_corner_concave_partial_45
+var is_bottom_left_corner_concave_partial_45: bool \
+        setget ,_get_is_bottom_left_corner_concave_partial_45
 var is_bottom_right_corner_concave_partial_45: bool \
         setget ,_get_is_bottom_right_corner_concave_partial_45
+var is_any_corner_concave_partial_45: bool \
+        setget ,_get_is_any_corner_concave_partial_45
+
+var is_top_left_corner_concave_90_vertical_to_45: bool \
+        setget ,_get_is_top_left_corner_concave_90_vertical_to_45
+var is_top_right_corner_concave_90_vertical_to_45: bool \
+        setget ,_get_is_top_right_corner_concave_90_vertical_to_45
+var is_bottom_left_corner_concave_90_vertical_to_45: bool \
+        setget ,_get_is_bottom_left_corner_concave_90_vertical_to_45
 var is_bottom_right_corner_concave_90_vertical_to_45: bool \
         setget ,_get_is_bottom_right_corner_concave_90_vertical_to_45
+
+var is_top_left_corner_concave_90_horizontal_to_45: bool \
+        setget ,_get_is_top_left_corner_concave_90_horizontal_to_45
+var is_top_right_corner_concave_90_horizontal_to_45: bool \
+        setget ,_get_is_top_right_corner_concave_90_horizontal_to_45
+var is_bottom_left_corner_concave_90_horizontal_to_45: bool \
+        setget ,_get_is_bottom_left_corner_concave_90_horizontal_to_45
 var is_bottom_right_corner_concave_90_horizontal_to_45: bool \
         setget ,_get_is_bottom_right_corner_concave_90_horizontal_to_45
 
-var is_any_corner_concave_partial_45: bool \
-        setget ,_get_is_any_corner_concave_partial_45
+var is_top_left_corner_convex_90_horizontal_to_45: bool \
+        setget ,_get_is_top_left_corner_convex_90_horizontal_to_45
+var is_top_right_corner_convex_90_horizontal_to_45: bool \
+        setget ,_get_is_top_right_corner_convex_90_horizontal_to_45
+var is_bottom_left_corner_convex_90_horizontal_to_45: bool \
+        setget ,_get_is_bottom_left_corner_convex_90_horizontal_to_45
+var is_bottom_right_corner_convex_90_horizontal_to_45: bool \
+        setget ,_get_is_bottom_right_corner_convex_90_horizontal_to_45
 
 
 func _init(
@@ -756,39 +765,27 @@ func _get_is_top_left_corner_concave_90() -> bool:
             _get_is_left_90_floor()
 
 
+func _get_is_top_right_corner_concave_90() -> bool:
+    return _get_is_top_90_left_wall() and \
+            _get_is_right_90_floor()
+
+
+func _get_is_bottom_left_corner_concave_90() -> bool:
+    return _get_is_bottom_90_right_wall() and \
+            _get_is_left_90_ceiling()
+
+
+func _get_is_bottom_right_corner_concave_90() -> bool:
+    return _get_is_bottom_90_left_wall() and \
+            _get_is_right_90_ceiling()
+
+
 func _get_is_top_left_corner_concave_45() -> bool:
     return _get_is_top_left_empty() and \
             _get_is_top_present() and \
             _get_is_left_present() and \
             !_get_is_top_90_right_wall() and \
             !_get_is_left_90_floor()
-
-
-func _get_is_top_left_corner_concave_partial_45() -> bool:
-    return _get_is_top_left_empty() and \
-            _get_is_top_present() and \
-            _get_is_left_present() and \
-            (!_get_is_top_90_right_wall() or \
-            !_get_is_left_90_floor())
-
-
-func _get_is_top_left_corner_concave_90_vertical_to_45() -> bool:
-    return _get_is_top_left_empty() and \
-            _get_is_top_90_right_wall() and \
-            _get_is_top_present() and \
-            !_get_is_left_90_floor()
-
-
-func _get_is_top_left_corner_concave_90_horizontal_to_45() -> bool:
-    return _get_is_top_left_empty() and \
-            _get_is_left_90_floor() and \
-            _get_is_top_present() and \
-            !_get_is_top_90_right_wall()
-
-
-func _get_is_top_right_corner_concave_90() -> bool:
-    return _get_is_top_90_left_wall() and \
-            _get_is_right_90_floor()
 
 
 func _get_is_top_right_corner_concave_45() -> bool:
@@ -799,66 +796,12 @@ func _get_is_top_right_corner_concave_45() -> bool:
             !_get_is_right_90_floor()
 
 
-func _get_is_top_right_corner_concave_partial_45() -> bool:
-    return _get_is_top_right_empty() and \
-            _get_is_top_present() and \
-            _get_is_right_present() and \
-            (!_get_is_top_90_left_wall() or \
-            !_get_is_right_90_floor())
-
-
-func _get_is_top_right_corner_concave_90_vertical_to_45() -> bool:
-    return _get_is_top_right_empty() and \
-            _get_is_top_90_left_wall() and \
-            _get_is_top_present() and \
-            !_get_is_right_90_floor()
-
-
-func _get_is_top_right_corner_concave_90_horizontal_to_45() -> bool:
-    return _get_is_top_right_empty() and \
-            _get_is_right_90_floor() and \
-            _get_is_top_present() and \
-            !_get_is_top_90_left_wall()
-
-
-func _get_is_bottom_left_corner_concave_90() -> bool:
-    return _get_is_bottom_90_right_wall() and \
-            _get_is_left_90_ceiling()
-
-
 func _get_is_bottom_left_corner_concave_45() -> bool:
     return _get_is_bottom_left_empty() and \
             _get_is_bottom_present() and \
             _get_is_left_present() and \
             !_get_is_bottom_90_right_wall() and \
             !_get_is_left_90_ceiling()
-
-
-func _get_is_bottom_left_corner_concave_partial_45() -> bool:
-    return _get_is_bottom_left_empty() and \
-            _get_is_bottom_present() and \
-            _get_is_left_present() and \
-            (!_get_is_bottom_90_right_wall() or \
-            !_get_is_left_90_ceiling())
-
-
-func _get_is_bottom_left_corner_concave_90_vertical_to_45() -> bool:
-    return _get_is_bottom_left_empty() and \
-            _get_is_bottom_90_right_wall() and \
-            _get_is_bottom_present() and \
-            !_get_is_left_90_ceiling()
-
-
-func _get_is_bottom_left_corner_concave_90_horizontal_to_45() -> bool:
-    return _get_is_bottom_left_empty() and \
-            _get_is_left_90_ceiling() and \
-            _get_is_bottom_present() and \
-            !_get_is_bottom_90_right_wall()
-
-
-func _get_is_bottom_right_corner_concave_90() -> bool:
-    return _get_is_bottom_90_left_wall() and \
-            _get_is_right_90_ceiling()
 
 
 func _get_is_bottom_right_corner_concave_45() -> bool:
@@ -869,12 +812,64 @@ func _get_is_bottom_right_corner_concave_45() -> bool:
             !_get_is_right_90_ceiling()
 
 
+func _get_is_top_left_corner_concave_partial_45() -> bool:
+    return _get_is_top_left_empty() and \
+            _get_is_top_present() and \
+            _get_is_left_present() and \
+            (!_get_is_top_90_right_wall() or \
+            !_get_is_left_90_floor())
+
+
+func _get_is_top_right_corner_concave_partial_45() -> bool:
+    return _get_is_top_right_empty() and \
+            _get_is_top_present() and \
+            _get_is_right_present() and \
+            (!_get_is_top_90_left_wall() or \
+            !_get_is_right_90_floor())
+
+
+func _get_is_bottom_left_corner_concave_partial_45() -> bool:
+    return _get_is_bottom_left_empty() and \
+            _get_is_bottom_present() and \
+            _get_is_left_present() and \
+            (!_get_is_bottom_90_right_wall() or \
+            !_get_is_left_90_ceiling())
+
+
 func _get_is_bottom_right_corner_concave_partial_45() -> bool:
     return _get_is_bottom_right_empty() and \
             _get_is_bottom_present() and \
             _get_is_right_present() and \
             (!_get_is_bottom_90_left_wall() or \
             !_get_is_right_90_ceiling())
+
+
+func _get_is_any_corner_concave_partial_45() -> bool:
+    return _get_is_top_left_corner_concave_partial_45() or \
+            _get_is_top_right_corner_concave_partial_45() or \
+            _get_is_bottom_left_corner_concave_partial_45() or \
+            _get_is_bottom_right_corner_concave_partial_45()
+
+
+func _get_is_top_left_corner_concave_90_vertical_to_45() -> bool:
+    return _get_is_top_left_empty() and \
+            _get_is_top_90_right_wall() and \
+            _get_is_top_present() and \
+            !_get_is_left_90_floor()
+
+
+func _get_is_top_right_corner_concave_90_vertical_to_45() -> bool:
+    return _get_is_top_right_empty() and \
+            _get_is_top_90_left_wall() and \
+            _get_is_top_present() and \
+            !_get_is_right_90_floor()
+
+
+func _get_is_bottom_left_corner_concave_90_vertical_to_45() -> bool:
+    return _get_is_bottom_left_empty() and \
+            _get_is_bottom_90_right_wall() and \
+            _get_is_bottom_present() and \
+            !_get_is_left_90_ceiling()
 
 
 func _get_is_bottom_right_corner_concave_90_vertical_to_45() -> bool:
@@ -884,6 +879,27 @@ func _get_is_bottom_right_corner_concave_90_vertical_to_45() -> bool:
             !_get_is_right_90_ceiling()
 
 
+func _get_is_top_left_corner_concave_90_horizontal_to_45() -> bool:
+    return _get_is_top_left_empty() and \
+            _get_is_left_90_floor() and \
+            _get_is_top_present() and \
+            !_get_is_top_90_right_wall()
+
+
+func _get_is_top_right_corner_concave_90_horizontal_to_45() -> bool:
+    return _get_is_top_right_empty() and \
+            _get_is_right_90_floor() and \
+            _get_is_top_present() and \
+            !_get_is_top_90_left_wall()
+
+
+func _get_is_bottom_left_corner_concave_90_horizontal_to_45() -> bool:
+    return _get_is_bottom_left_empty() and \
+            _get_is_left_90_ceiling() and \
+            _get_is_bottom_present() and \
+            !_get_is_bottom_90_right_wall()
+
+
 func _get_is_bottom_right_corner_concave_90_horizontal_to_45() -> bool:
     return _get_is_bottom_right_empty() and \
             _get_is_right_90_ceiling() and \
@@ -891,8 +907,29 @@ func _get_is_bottom_right_corner_concave_90_horizontal_to_45() -> bool:
             !_get_is_bottom_90_left_wall()
 
 
-func _get_is_any_corner_concave_partial_45() -> bool:
-    return _get_is_top_left_corner_concave_partial_45() or \
-            _get_is_top_right_corner_concave_partial_45() or \
-            _get_is_bottom_left_corner_concave_partial_45() or \
-            _get_is_bottom_right_corner_concave_partial_45()
+func _get_is_top_left_corner_convex_90_horizontal_to_45() -> bool:
+    return _get_is_top_empty() and \
+            _get_is_left_45_pos() and \
+            (_get_is_angle_type_90() or \
+            _get_is_right_present())
+
+
+func _get_is_top_right_corner_convex_90_horizontal_to_45() -> bool:
+    return _get_is_top_empty() and \
+            _get_is_right_45_neg() and \
+            (_get_is_angle_type_90() or \
+            _get_is_left_present())
+
+
+func _get_is_bottom_left_corner_convex_90_horizontal_to_45() -> bool:
+    return _get_is_bottom_empty() and \
+            _get_is_left_45_neg() and \
+            (_get_is_angle_type_90() or \
+            _get_is_right_present())
+
+
+func _get_is_bottom_right_corner_convex_90_horizontal_to_45() -> bool:
+    return _get_is_bottom_empty() and \
+            _get_is_right_45_pos() and \
+            (_get_is_angle_type_90() or \
+            _get_is_left_present())

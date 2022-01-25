@@ -230,6 +230,7 @@ var _SUBTILE_CORNER_TYPE_VALUE_TO_KEY: Dictionary
 #         SubtileCorner,
 #         Dictionary<Vector2, {
 #             p: Vector2,
+#             a: Array<90|45|27>,
 #             tl: SubtileCorner,
 #             tr: SubtileCorner,
 #             bl: SubtileCorner,
@@ -347,6 +348,35 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
     for subtile_config in subtiles_manifest.subtiles:
         assert(subtile_config.has("p") and \
                 subtile_config.p is Vector2)
+        assert(subtile_config.has("a"))
+        
+        # Parse angle types.
+        var angle_types: Array = \
+                subtile_config.a if \
+                subtile_config.a is Array else \
+                [subtile_config.a]
+        var is_angle_type_90 := false
+        var is_angle_type_45 := false
+        var is_angle_type_27 := false
+        for angle_type in angle_types:
+            assert(angle_type == 90 or \
+                    angle_type == 45 or \
+                    angle_type == 27)
+            if angle_type == 90:
+                assert(!is_angle_type_90)
+                is_angle_type_90 = true
+            if angle_type == 45:
+                assert(!is_angle_type_45)
+                is_angle_type_45 = true
+            if angle_type == 27:
+                assert(!is_angle_type_27)
+                is_angle_type_27 = true
+        subtile_config.is_a90 = is_angle_type_90
+        subtile_config.is_a45 = is_angle_type_45
+        subtile_config.is_a27 = is_angle_type_27
+        subtile_config.erase("a")
+        
+        # Add to corresponding corner/corner-type maps.
         var position: Vector2 = subtile_config.p
         var was_a_corner_interesting := false
         for corner in _CORNERS:
@@ -407,6 +437,14 @@ func _get_is_subtile_corner_type_interesting(type: int) -> bool:
             type != EMPTY and \
             type != EXTERIOR and \
             type != INTERIOR
+
+
+func _get_does_angle_type_match(
+        actual_corners: Dictionary,
+        expected_corners: Dictionary) -> bool:
+    return expected_corners.is_a90 and actual_corners.is_a90 or \
+            expected_corners.is_a45 and actual_corners.is_a45 or \
+            expected_corners.is_a27 and actual_corners.is_a27
 
 
 func _get_match_priority(
@@ -487,9 +525,15 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
         
         for corner in _CORNERS:
             for corner_match in corner_to_matches[corner]:
+                if !_get_does_angle_type_match(corner_match, target_corners):
+                    # Skip the possible corner match, since it doesn't match
+                    # the angle type.
+                    continue
+                
                 var priority := \
                         _get_match_priority(corner_match, target_corners)
                 var subtile_position: Vector2 = corner_match.p
+                
                 if !set.has(subtile_position):
                     set[subtile_position] = true
                     if queue.get_root_priority() == priority:
@@ -532,12 +576,20 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
 
 
 static func _get_target_corners(proximity: CellProximity) -> Dictionary:
+    var target_config: Dictionary
+    
     if proximity.is_fully_internal:
-        return _get_target_corners_with_no_empty_neighbors(proximity)
+        target_config = _get_target_corners_with_no_empty_neighbors(proximity)
     elif proximity.are_all_sides_covered:
-        return _get_target_corners_with_no_empty_sides(proximity)
+        target_config = _get_target_corners_with_no_empty_sides(proximity)
     else:
-        return _get_target_corners_with_an_empty_side(proximity)
+        target_config = _get_target_corners_with_an_empty_side(proximity)
+    
+    target_config.is_a90 = proximity.is_angle_type_90
+    target_config.is_a45 = proximity.is_angle_type_45
+    target_config.is_a27 = proximity.is_angle_type_27
+    
+    return target_config
 
 
 static func _get_target_corners_with_an_empty_side(proximity: CellProximity) -> Dictionary:
@@ -551,8 +603,10 @@ static func _get_target_corners_with_an_empty_side(proximity: CellProximity) -> 
         if proximity.is_left_empty:
             tl = EMPTY
         else:
-            if proximity.is_top_left_corner_concave_90_horizontal_to_45:
-                return EXT_90H_45_CONVEX
+            # FIXME: LEFT OFF HERE: --------------------------------------------
+            # - Implement is_top_left_corner_convex_90_horizontal_to_45.
+            if proximity.is_top_left_corner_convex_90_horizontal_to_45:
+                tl = EXT_90H_45_CONVEX
                 
             if proximity.is_angle_type_45:
                 if proximity.is_right_empty:
@@ -595,6 +649,8 @@ static func _get_target_corners_with_an_empty_side(proximity: CellProximity) -> 
             else:
                 tl = EXT_90_90_CONVEX
         else:
+            # FIXME: LEFT OFF HERE: ---------------------------------
+            # - proximity.is_top_left_corner_concave_90_horizontal_to_45
             pass
         
         if proximity.is_right_empty:
