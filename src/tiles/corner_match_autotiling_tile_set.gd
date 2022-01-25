@@ -603,41 +603,27 @@ static func _get_target_corners_with_an_empty_side(proximity: CellProximity) -> 
         if proximity.is_left_empty:
             tl = EMPTY
         else:
-            # FIXME: LEFT OFF HERE: --------------------------------------------
-            # - Implement is_top_left_corner_convex_90_horizontal_to_45.
-            if proximity.is_top_left_corner_convex_90_horizontal_to_45:
-                tl = EXT_90H_45_CONVEX
-                
-            if proximity.is_angle_type_45:
-                if proximity.is_right_empty:
+            if proximity.is_floor_at_left:
+                if proximity.is_floor_with_45_curve_in_at_left:
+                    tl = EXT_90H_45_CONVEX
+                else:
+                    tl = EXT_90H
+            elif proximity.is_floor_45_neg:
                     # FIXME: LEFT OFF HERE: --------------------
                     # - Distinguish between 45 continuing vs 45 transitioning
                     #   to a floor at right.
                     tl = EXT_45_FLOOR
-                else:
-                    # FIXME: LEFT OFF HERE: --------------------
-                    # - Distinguish between 90 continuing vs 90 transitioning
-                    #   to 45 at left.
-                    tl = EXT_90H
             elif proximity.is_angle_27:
                 # FIXME: LEFT OFF HERE: -----------------------
                 pass
             else:
-                # FIXME: LEFT OFF HERE: --------------------
-                # - Distinguish between 90 continuing vs 90 transitioning
-                #   to 45 at left.
-                tl = EXT_90H
+                Sc.logger.error()
         
         if proximity.is_right_empty:
             tr = EMPTY
         else:
-            if proximity.is_angle_type_45:
-                tr = EXT_45_FLOOR
-            elif proximity.is_angle_27:
-                # FIXME: LEFT OFF HERE: -----------------------
-                pass
-            else:
-                tr = EXT_90_90_CONVEX
+            # FIXME: LEFT OFF HERE: -----------------------
+            pass
         
     else:
         if proximity.is_left_empty:
