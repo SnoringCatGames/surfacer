@@ -429,7 +429,8 @@ func _get_match_priority(
             else:
                 priority += 0.5
         else:
-            priority += 0.0
+            # FIXME: -------------- Is there a more elegant fallback for this?
+            priority += -4.0
     
     return priority
 
@@ -548,23 +549,51 @@ static func _get_target_corners_with_an_empty_side(proximity: CellProximity) -> 
     
     if proximity.is_top_empty:
         if proximity.is_left_empty:
-            # FIXME: LEFT OFF HERE: -------------------------------------------------------------
             tl = EMPTY
         else:
-            if proximity.is_angle_type_90:
-                pass
-            elif proximity.is_angle_type_45:
+            if proximity.is_top_left_corner_concave_90_horizontal_to_45:
+                return EXT_90H_45_CONVEX
+                
+            if proximity.is_angle_type_45:
+                if proximity.is_right_empty:
+                    # FIXME: LEFT OFF HERE: --------------------
+                    # - Distinguish between 45 continuing vs 45 transitioning
+                    #   to a floor at right.
+                    tl = EXT_45_FLOOR
+                else:
+                    # FIXME: LEFT OFF HERE: --------------------
+                    # - Distinguish between 90 continuing vs 90 transitioning
+                    #   to 45 at left.
+                    tl = EXT_90H
+            elif proximity.is_angle_27:
+                # FIXME: LEFT OFF HERE: -----------------------
                 pass
             else:
-                pass
+                # FIXME: LEFT OFF HERE: --------------------
+                # - Distinguish between 90 continuing vs 90 transitioning
+                #   to 45 at left.
+                tl = EXT_90H
         
         if proximity.is_right_empty:
-            pass
+            tr = EMPTY
         else:
-            pass
+            if proximity.is_angle_type_45:
+                tr = EXT_45_FLOOR
+            elif proximity.is_angle_27:
+                # FIXME: LEFT OFF HERE: -----------------------
+                pass
+            else:
+                tr = EXT_90_90_CONVEX
+        
     else:
         if proximity.is_left_empty:
-            pass
+            if proximity.is_angle_type_45:
+                tl = EXT_45_FLOOR
+            elif proximity.is_angle_27:
+                # FIXME: LEFT OFF HERE: -----------------------
+                pass
+            else:
+                tl = EXT_90_90_CONVEX
         else:
             pass
         
