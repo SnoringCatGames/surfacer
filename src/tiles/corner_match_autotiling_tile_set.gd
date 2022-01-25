@@ -219,7 +219,7 @@ var _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES := {
 var _CORNERS := ["tl", "tr", "bl", "br"]
 
 # FIXME: LEFT OFF HERE: --------------------------------
-var _ACCEPTABLE_MATCH_PRIORITY_THRESHOLD := 4.0
+var _ACCEPTABLE_MATCH_PRIORITY_THRESHOLD := 2.0
 
 # Dictionary<int, String>
 var _SUBTILE_CORNER_TYPE_VALUE_TO_KEY: Dictionary
@@ -318,6 +318,22 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
     _error_indicator_subtile_position = \
             subtiles_manifest.error_indicator_subtile_position
     
+    # Check that the corner-type enum values match the
+    # corner-type-to-matching-types map.
+    assert(_SUBTILE_CORNER_TYPE_VALUE_TO_KEY.size() == \
+            _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES.size())
+    for corner_type in _SUBTILE_CORNER_TYPE_VALUE_TO_KEY:
+        assert(_CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES.has(corner_type))
+        assert(_CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[corner_type is Array])
+    
+    # Convert additional-matching arrays into sets.
+    for corner_type in _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES:
+        var list: Array = _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[corner_type]
+        var set := {}
+        for matching_type in list:
+            set[matching_type] = true
+        _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[corner_type] = set
+    
     # Create the nested dictionary structure for holding the subtile manifest.
     for corner in _CORNERS:
         var type_to_subtiles := {}
@@ -342,14 +358,6 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
                         subtile_config
                 was_a_corner_interesting = true
         assert(was_a_corner_interesting)
-    
-    # Check that the corner-type enum values match the
-    # corner-type-to-matching-types map.
-    assert(_SUBTILE_CORNER_TYPE_VALUE_TO_KEY.size() == \
-            _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES.size())
-    for corner_type in _SUBTILE_CORNER_TYPE_VALUE_TO_KEY:
-        assert(_CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES.has(corner_type))
-        assert(_CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[corner_type is Array])
 
 
 # This hacky function exists for a couple reasons:
@@ -399,6 +407,31 @@ func _get_is_subtile_corner_type_interesting(type: int) -> bool:
             type != EMPTY and \
             type != EXTERIOR and \
             type != INTERIOR
+
+
+func _get_match_priority(
+        actual_corners: Dictionary,
+        expected_corners: Dictionary) -> float:
+    var priority := 0.0
+    
+    for corner in _CORNERS:
+        var actual_corner: int = actual_corners[corner]
+        var expected_corner: int = expected_corners[corner]
+        
+        # Determine the priority-contribution for this corner.
+        if actual_corner == expected_corner:
+            priority += 1.0
+        var additional_matching_types: Dictionary = \
+                _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[expected_corner]
+        if additional_matching_types.has(actual_corner):
+            if additional_matching_types[actual_corner] > 0:
+                priority += 1.0
+            else:
+                priority += 0.5
+        else:
+            priority += 0.0
+    
+    return priority
 
 
 func _forward_subtile_selection(
@@ -453,7 +486,8 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
         
         for corner in _CORNERS:
             for corner_match in corner_to_matches[corner]:
-                var priority := 0.0
+                var priority := \
+                        _get_match_priority(corner_match, target_corners)
                 var subtile_position: Vector2 = corner_match.p
                 if !set.has(subtile_position):
                     set[subtile_position] = true
@@ -480,11 +514,9 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
         # Look for a subtile config that matches along all corners.
         for corner in _CORNERS:
             for corner_match in corner_to_matches[corner]:
-                var matches_all_corners: bool = \
-                        corner_match.tl == target_corners.tl and \
-                        corner_match.tr == target_corners.tr and \
-                        corner_match.bl == target_corners.bl and \
-                        corner_match.br == target_corners.br
+                var match_priority := \
+                        _get_match_priority(corner_match, target_corners)
+                var matches_all_corners = match_priority == 4.0
                 if matches_all_corners:
                     return corner_match.p
             if _get_is_subtile_corner_type_interesting(target_corners[corner]):
