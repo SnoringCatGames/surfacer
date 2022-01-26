@@ -132,6 +132,24 @@ var is_45_pos_ceiling: bool \
 var is_45_neg_ceiling: bool \
         setget ,_get_is_45_neg_ceiling
 
+var is_27_shallow_pos_floor: bool \
+        setget ,_get_is_27_shallow_pos_floor
+var is_27_shallow_neg_floor: bool \
+        setget ,_get_is_27_shallow_neg_floor
+var is_27_shallow_pos_ceiling: bool \
+        setget ,_get_is_27_shallow_pos_ceiling
+var is_27_shallow_neg_ceiling: bool \
+        setget ,_get_is_27_shallow_neg_ceiling
+
+var is_27_steep_pos_floor: bool \
+        setget ,_get_is_27_steep_pos_floor
+var is_27_steep_neg_floor: bool \
+        setget ,_get_is_27_steep_neg_floor
+var is_27_steep_pos_ceiling: bool \
+        setget ,_get_is_27_steep_pos_ceiling
+var is_27_steep_neg_ceiling: bool \
+        setget ,_get_is_27_steep_neg_ceiling
+
 var is_top_45_pos: bool \
         setget ,_get_is_top_45_pos
 var is_top_45_neg: bool \
@@ -148,6 +166,40 @@ var is_right_45_pos: bool \
         setget ,_get_is_right_45_pos
 var is_right_45_neg: bool \
         setget ,_get_is_right_45_neg
+
+var is_top_27_shallow_pos: bool \
+        setget ,_get_is_top_27_shallow_pos
+var is_top_27_shallow_neg: bool \
+        setget ,_get_is_top_27_shallow_neg
+var is_bottom_27_shallow_pos: bool \
+        setget ,_get_is_bottom_27_shallow_pos
+var is_bottom_27_shallow_neg: bool \
+        setget ,_get_is_bottom_27_shallow_neg
+var is_left_27_shallow_pos: bool \
+        setget ,_get_is_left_27_shallow_pos
+var is_left_27_shallow_neg: bool \
+        setget ,_get_is_left_27_shallow_neg
+var is_right_27_shallow_pos: bool \
+        setget ,_get_is_right_27_shallow_pos
+var is_right_27_shallow_neg: bool \
+        setget ,_get_is_right_27_shallow_neg
+
+var is_top_27_steep_pos: bool \
+        setget ,_get_is_top_27_steep_pos
+var is_top_27_steep_neg: bool \
+        setget ,_get_is_top_27_steep_neg
+var is_bottom_27_steep_pos: bool \
+        setget ,_get_is_bottom_27_steep_pos
+var is_bottom_27_steep_neg: bool \
+        setget ,_get_is_bottom_27_steep_neg
+var is_left_27_steep_pos: bool \
+        setget ,_get_is_left_27_steep_pos
+var is_left_27_steep_neg: bool \
+        setget ,_get_is_left_27_steep_neg
+var is_right_27_steep_pos: bool \
+        setget ,_get_is_right_27_steep_pos
+var is_right_27_steep_neg: bool \
+        setget ,_get_is_right_27_steep_neg
 
 var is_top_cap: bool \
         setget ,_get_is_top_cap
@@ -576,6 +628,46 @@ func _get_is_45_neg_ceiling() -> bool:
             _get_is_left_present()
 
 
+func _get_is_27_shallow_pos_floor() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_27_shallow_neg_floor() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_27_shallow_pos_ceiling() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_27_shallow_neg_ceiling() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_27_steep_pos_floor() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_27_steep_neg_floor() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_27_steep_pos_ceiling() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_27_steep_neg_ceiling() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
 func _get_is_top_45_pos() -> bool:
     return _get_top_angle_type() == CellAngleType.A45 and \
             _get_is_top_present() and \
@@ -638,6 +730,86 @@ func _get_is_right_45_neg() -> bool:
             _get_is_bottom_right_present() and \
             _get_is_top_right_empty() and \
             get_is_neighbor_empty(2,0)
+
+
+func _get_is_top_27_shallow_pos() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_top_27_shallow_neg() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_bottom_27_shallow_pos() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_bottom_27_shallow_neg() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_left_27_shallow_pos() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_left_27_shallow_neg() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_right_27_shallow_pos() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_right_27_shallow_neg() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_top_27_steep_pos() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_top_27_steep_neg() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_bottom_27_steep_pos() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_bottom_27_steep_neg() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_left_27_steep_pos() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_left_27_steep_neg() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_right_27_steep_pos() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func _get_is_right_27_steep_neg() -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
 
 
 func _get_is_top_cap() -> bool:
