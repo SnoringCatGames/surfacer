@@ -84,6 +84,11 @@ enum {
     EXT_45_FLOOR,
     EXT_45_CEILING,
     
+    EXT_45_FLOOR_TO_90,
+    EXT_45_FLOOR_TO_45_CONVEX,
+    EXT_45_CEILING_TO_90,
+    EXT_45_CEILING_TO_45_CONVEX,
+    
     
     EXT_27_SHALLOW_CONCAVE,
     EXT_27_STEEP_CONCAVE,
@@ -160,6 +165,11 @@ var _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES := {
     EXT_45_CONCAVE: [],
     EXT_45_FLOOR: [],
     EXT_45_CEILING: [],
+    
+    EXT_45_FLOOR_TO_90: [-EXT_45_FLOOR],
+    EXT_45_FLOOR_TO_45_CONVEX: [-EXT_45_FLOOR],
+    EXT_45_CEILING_TO_90: [-EXT_45_CEILING],
+    EXT_45_CEILING_TO_45_CONVEX: [-EXT_45_CEILING],
     
     
     EXT_27_SHALLOW_CONCAVE: [-EXT_45_CONCAVE],
@@ -593,25 +603,30 @@ static func _get_target_corners(proximity: CellProximity) -> Dictionary:
 
 
 static func _get_target_corners_with_an_empty_side(proximity: CellProximity) -> Dictionary:
-    # FIXME: LEFT OFF HERE: ---------------------------------------------------
     var tl := UNKNOWN
     var tr := UNKNOWN
     var bl := UNKNOWN
     var br := UNKNOWN
     
+    # FIXME: LEFT OFF HERE: ---------------------------------------------------
+    
+    # Handle the top corners.
     if proximity.is_top_empty:
         if proximity.is_left_empty:
             tl = EMPTY
         else:
-            if proximity.is_floor_at_left:
+            # Top empty, left present.
+            if proximity.is_90_floor:
                 if proximity.is_floor_with_45_curve_in_at_left:
                     tl = EXT_90H_45_CONVEX
                 else:
                     tl = EXT_90H
-            elif proximity.is_floor_45_neg:
-                    # FIXME: LEFT OFF HERE: --------------------
-                    # - Distinguish between 45 continuing vs 45 transitioning
-                    #   to a floor at right.
+            elif proximity.is_45_neg_floor:
+                if proximity.is_left_45_pos:
+                    tl = EXT_45_FLOOR_TO_45_CONVEX
+                elif proximity.is_left_90_floor:
+                    tl = EXT_45_FLOOR_TO_90
+                else:
                     tl = EXT_45_FLOOR
             elif proximity.is_angle_27:
                 # FIXME: LEFT OFF HERE: -----------------------
@@ -622,27 +637,137 @@ static func _get_target_corners_with_an_empty_side(proximity: CellProximity) -> 
         if proximity.is_right_empty:
             tr = EMPTY
         else:
-            # FIXME: LEFT OFF HERE: -----------------------
-            pass
-        
-    else:
-        if proximity.is_left_empty:
-            if proximity.is_angle_type_45:
-                tl = EXT_45_FLOOR
+            # Top empty, right present
+            if proximity.is_90_floor:
+                if proximity.is_floor_with_45_curve_in_at_right:
+                    tr = EXT_90H_45_CONVEX
+                else:
+                    tr = EXT_90H
+            elif proximity.is_45_pos_floor:
+                if proximity.is_right_45_neg:
+                    tr = EXT_45_FLOOR_TO_45_CONVEX
+                elif proximity.is_right_90_floor:
+                    tr = EXT_45_FLOOR_TO_90
+                else:
+                    tr = EXT_45_FLOOR
             elif proximity.is_angle_27:
                 # FIXME: LEFT OFF HERE: -----------------------
                 pass
             else:
-                tl = EXT_90_90_CONVEX
+                Sc.logger.error()
+        
+    else:
+        if proximity.is_left_empty:
+            # Top present, left empty.
+            if proximity.is_90_right_wall:
+                if proximity.is_right_wall_with_45_curve_in_at_top:
+                    tl = EXT_90V_45_CONVEX
+                else:
+                    tl = EXT_90V
+            elif proximity.is_45_neg_ceiling:
+                if proximity.is_top_45_pos:
+                    tl = EXT_45_CEILING_TO_45_CONVEX
+                elif proximity.is_top_90_right_wall:
+                    tl = EXT_45_CEILING_TO_90
+                else:
+                    tl = EXT_45_CEILING
+            elif proximity.is_angle_27:
+                # FIXME: LEFT OFF HERE: -----------------------
+                pass
+            else:
+                Sc.logger.error()
         else:
-            # FIXME: LEFT OFF HERE: ---------------------------------
-            # - proximity.is_top_left_corner_concave_90_horizontal_to_45
-            pass
+            if proximity.is_top_left_empty:
+                # Top present, left present, top-left empty.
+                if proximity.is_top_90_right_wall:
+                    if proximity.is_left_90_floor:
+                        tl = EXT_90_90_CONCAVE
+                    elif proximity.is_left_45_pos:
+                        tl = EXT_90V_45_CONCAVE
+                    elif proximity.left_angle_type == CellAngleType.A27:
+                        # FIXME: LEFT OFF HERE: -----------------------
+                        pass
+                    else:
+                        Sc.logger.error()
+                elif proximity.is_top_45_pos:
+                    if proximity.is_left_90_floor:
+                        tl = EXT_90H_45_CONCAVE
+                    elif proximity.is_left_45_pos:
+                        tl = EXT_45_CONCAVE
+                    elif proximity.left_angle_type == CellAngleType.A27:
+                        # FIXME: LEFT OFF HERE: -----------------------
+                        pass
+                    else:
+                        Sc.logger.error()
+                elif proximity.top_angle_type == CellAngleType.A27:
+                    # FIXME: LEFT OFF HERE: -----------------------
+                    pass
+                else:
+                    Sc.logger.error()
+            else:
+                # Internal.
+                # FIXME: LEFT OFF HERE: ---------------------------------------
+                pass
+            
         
         if proximity.is_right_empty:
-            pass
+            # Top present, right empty.
+            if proximity.is_90_left_wall:
+                if proximity.is_left_wall_with_45_curve_in_at_top:
+                    tr = EXT_90V_45_CONVEX
+                else:
+                    tr = EXT_90V
+            elif proximity.is_45_pos_ceiling:
+                if proximity.is_top_45_neg:
+                    tr = EXT_45_CEILING_TO_45_CONVEX
+                elif proximity.is_top_90_left_wall:
+                    tr = EXT_45_CEILING_TO_90
+                else:
+                    tr = EXT_45_CEILING
+            elif proximity.is_angle_27:
+                # FIXME: LEFT OFF HERE: -----------------------
+                pass
+            else:
+                Sc.logger.error()
         else:
-            pass
+            if proximity.is_top_right_empty:
+                # Top present, right present, top-right empty.
+                if proximity.is_top_90_left_wall:
+                    if proximity.is_right_90_floor:
+                        tl = EXT_90_90_CONCAVE
+                    elif proximity.is_right_45_neg:
+                        tl = EXT_90V_45_CONCAVE
+                    elif proximity.right_angle_type == CellAngleType.A27:
+                        # FIXME: right OFF HERE: -----------------------
+                        pass
+                    else:
+                        Sc.logger.error()
+                elif proximity.is_top_45_neg:
+                    if proximity.is_right_90_floor:
+                        tl = EXT_90H_45_CONCAVE
+                    elif proximity.is_right_45_neg:
+                        tl = EXT_45_CONCAVE
+                    elif proximity.right_angle_type == CellAngleType.A27:
+                        # FIXME: right OFF HERE: -----------------------
+                        pass
+                    else:
+                        Sc.logger.error()
+                elif proximity.top_angle_type == CellAngleType.A27:
+                    # FIXME: right OFF HERE: -----------------------
+                    pass
+                else:
+                    Sc.logger.error()
+            else:
+                # Internal.
+                # FIXME: right OFF HERE: ---------------------------------------
+                pass
+    
+    
+    
+    
+    
+    
+    
     
     
     
