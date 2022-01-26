@@ -149,6 +149,8 @@ enum {
 # -   This mapping enables us to match one corner type with another.
 # -   Defining a value as negative will configure it as a valid match, but with
 #     a lower-priority than a positive value.
+# -   This maps from an expected target corner type to what is actually
+#     configured in the given tile-set.
 var _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES := {
     UNKNOWN: [],
     
@@ -671,7 +673,19 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
                     Sc.logger.error()
             else:
                 # Adjacent sides and corner are present.
-                if proximity.is_bottom_empty or \
+                if proximity.is_bottom_present and \
+                        proximity.is_right_present and \
+                        proximity.is_bottom_left_empty and \
+                        proximity.is_bottom_right_empty and \
+                        !proximity.is_top_right_empty:
+                    return INT_45_MID_NOTCH_H
+                elif proximity.is_bottom_present and \
+                        proximity.is_right_present and \
+                        proximity.is_top_right_empty and \
+                        proximity.is_bottom_right_empty and \
+                        !proximity.is_bottom_left_empty:
+                    return INT_45_MID_NOTCH_V
+                elif proximity.is_bottom_empty or \
                         proximity.is_right_empty or \
                         proximity.is_top_right_empty or \
                         proximity.is_bottom_left_empty:
@@ -715,9 +729,27 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
                             return EXTERIOR
                 else:
                     # Fully interior.
-                    # FIXME: LEFT OFF HERE: ---------------------------------------
+                    # FIXME: LEFT OFF HERE: -----------------------------------------
+                    # - Pause this logic until adding some more CellProximity
+                    #   helpers for internal cases.
                     pass
                     return INTERIOR
+                    
+                    
+                    if proximity.is_top_empty_at_top:
+                        if proximity.is_left_empty_at_left:
+                            if proximity.is_top_left_empty_at_top_left:
+                                # FIXME: LEFT OFF HERE: ---------------------------------------
+                                pass
+                            else:
+                                # FIXME: LEFT OFF HERE: ---------------------------------------
+                                pass
+                        else:
+                            # FIXME: LEFT OFF HERE: ---------------------------------------
+                            pass
+                    else:
+                        # FIXME: LEFT OFF HERE: ---------------------------------------
+                        pass
     
     # FIXME: LEFT OFF HERE: ---------- Remove after adding all above cases.
     return UNKNOWN
