@@ -1141,3 +1141,75 @@ func _get_is_bottom_right_corner_concave_90_horizontal_to_45() -> bool:
             _get_is_right_90_ceiling() and \
             _get_is_bottom_present() and \
             !_get_is_bottom_90_left_wall()
+
+
+
+
+
+
+
+
+# FIXME: LEFT OFF HERE: -----------------------
+# - Add helpers for internal cases.
+
+
+
+
+func _get_is_int_90_90_concave_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90h_along_top() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90v_along_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90h_to_45_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90v_to_45_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90h_to_27_shallow_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90h_to_27_steep_short_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90h_to_27_steep_long_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90v_to_27_shallow_short_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90v_to_27_shallow_long_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_90v_to_27_steep_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
+
+
+func _get_is_int_45_ext_corner_in_top_left() -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
