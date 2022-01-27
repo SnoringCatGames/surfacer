@@ -419,7 +419,7 @@ func get_is_90_floor(
                     get_is_empty(relative_x + 1, relative_y - 1))
         CellAngleType.A27:
             # A27s become A90s in a few cases.
-            # FIXME: LEFT OFF HERE: ----------------------------------
+            # FIXME: LEFT OFF HERE: -------- A27
             # - Copy the logic in _get_is_90_left_wall.
             return false
         _:
@@ -447,7 +447,7 @@ func get_is_90_ceiling(
                     get_is_empty(relative_x + 1, relative_y + 1))
         CellAngleType.A27:
             # A27s become A90s in a few cases.
-            # FIXME: LEFT OFF HERE: ----------------------------------
+            # FIXME: LEFT OFF HERE: -------- A27
             # - Copy the logic in _get_is_90_left_wall.
             return false
         _:
@@ -594,7 +594,7 @@ func get_is_90_right_wall(
                     get_is_empty(relative_x - 1, relative_y + 1))
         CellAngleType.A27:
             # A27s become A90s in a few cases.
-            # FIXME: LEFT OFF HERE: ----------------------------------
+            # FIXME: LEFT OFF HERE: -------- A27
             # - Copy the logic in _get_is_90_left_wall.
             return false
         _:
@@ -627,7 +627,7 @@ func get_is_45_pos_floor(relative_x := 0, relative_y := 0) -> bool:
                 return true
             return false
         CellAngleType.A27:
-            # FIXME: LEFT OFF HERE: ------------------------
+            # FIXME: LEFT OFF HERE: -------- A27
             return false
         _:
             Sc.logger.error()
@@ -659,7 +659,7 @@ func get_is_45_neg_floor(relative_x := 0, relative_y := 0) -> bool:
                 return true
             return false
         CellAngleType.A27:
-            # FIXME: LEFT OFF HERE: ------------------------
+            # FIXME: LEFT OFF HERE: -------- A27
             return false
         _:
             Sc.logger.error()
@@ -691,7 +691,7 @@ func get_is_45_pos_ceiling(relative_x := 0, relative_y := 0) -> bool:
                 return true
             return false
         CellAngleType.A27:
-            # FIXME: LEFT OFF HERE: ------------------------
+            # FIXME: LEFT OFF HERE: -------- A27
             return false
         _:
             Sc.logger.error()
@@ -723,7 +723,7 @@ func get_is_45_neg_ceiling(relative_x := 0, relative_y := 0) -> bool:
                 return true
             return false
         CellAngleType.A27:
-            # FIXME: LEFT OFF HERE: ------------------------
+            # FIXME: LEFT OFF HERE: -------- A27
             return false
         _:
             Sc.logger.error()
@@ -733,112 +733,112 @@ func get_is_45_neg_ceiling(relative_x := 0, relative_y := 0) -> bool:
 func get_is_27_pos_floor_in_top(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_neg_floor_in_top(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_pos_floor_in_bottom(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_neg_floor_in_bottom(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_pos_ceiling_in_top(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_neg_ceiling_in_top(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_pos_ceiling_in_bottom(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_neg_ceiling_in_bottom(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_pos_left_wall_in_left(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_neg_left_wall_in_left(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_pos_left_wall_in_right(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_neg_left_wall_in_right(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_pos_right_wall_in_left(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_neg_right_wall_in_left(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_pos_right_wall_in_right(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_27_neg_right_wall_in_right(relative_x := 0, relative_y := 0) -> bool:
     if get_is_empty(relative_x, relative_y):
         return false
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
@@ -1121,28 +1121,28 @@ func get_is_bottom_right_corner_clipped_partial_45(
 func get_is_top_left_corner_clipped_partial_27(
         relative_x := 0,
         relative_y := 0) -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_top_right_corner_clipped_partial_27(
         relative_x := 0,
         relative_y := 0) -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_bottom_left_corner_clipped_partial_27(
         relative_x := 0,
         relative_y := 0) -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func get_is_bottom_right_corner_clipped_partial_27(
         relative_x := 0,
         relative_y := 0) -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
@@ -1185,32 +1185,32 @@ func _get_is_int_90v_to_45_in_top_left() -> bool:
 
 
 func _get_is_int_90h_to_27_shallow_in_top_left() -> bool:
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func _get_is_int_90h_to_27_steep_short_in_top_left() -> bool:
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func _get_is_int_90h_to_27_steep_long_in_top_left() -> bool:
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func _get_is_int_90v_to_27_shallow_short_in_top_left() -> bool:
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func _get_is_int_90v_to_27_shallow_long_in_top_left() -> bool:
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
 func _get_is_int_90v_to_27_steep_in_top_left() -> bool:
-    # FIXME: LEFT OFF HERE: ------------------------
+    # FIXME: LEFT OFF HERE: -------- A27
     return false
 
 
