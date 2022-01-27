@@ -32,23 +32,6 @@ var is_fully_internal: bool \
 var are_all_sides_covered: bool \
         setget ,_get_are_all_sides_covered
 
-var top_left_angle_type: int \
-        setget ,_get_top_left_angle_type
-var top_angle_type: int \
-        setget ,_get_top_angle_type
-var top_right_angle_type: int \
-        setget ,_get_top_right_angle_type
-var left_angle_type: int \
-        setget ,_get_left_angle_type
-var right_angle_type: int \
-        setget ,_get_right_angle_type
-var bottom_left_angle_type: int \
-        setget ,_get_bottom_left_angle_type
-var bottom_angle_type: int \
-        setget ,_get_bottom_angle_type
-var bottom_right_angle_type: int \
-        setget ,_get_bottom_right_angle_type
-
 var is_angle_type_90: bool \
         setget ,_get_is_angle_type_90
 var is_angle_type_45: bool \
@@ -123,183 +106,6 @@ var is_bottom_left_empty_around_bottom_left: bool \
 var is_bottom_right_empty_around_bottom_right: bool \
         setget ,_get_is_bottom_right_empty_around_bottom_right
 
-var is_45_pos_floor: bool \
-        setget ,_get_is_45_pos_floor
-var is_45_neg_floor: bool \
-        setget ,_get_is_45_neg_floor
-var is_45_pos_ceiling: bool \
-        setget ,_get_is_45_pos_ceiling
-var is_45_neg_ceiling: bool \
-        setget ,_get_is_45_neg_ceiling
-
-var is_27_shallow_pos_floor: bool \
-        setget ,_get_is_27_shallow_pos_floor
-var is_27_shallow_neg_floor: bool \
-        setget ,_get_is_27_shallow_neg_floor
-var is_27_shallow_pos_ceiling: bool \
-        setget ,_get_is_27_shallow_pos_ceiling
-var is_27_shallow_neg_ceiling: bool \
-        setget ,_get_is_27_shallow_neg_ceiling
-
-var is_27_steep_pos_floor: bool \
-        setget ,_get_is_27_steep_pos_floor
-var is_27_steep_neg_floor: bool \
-        setget ,_get_is_27_steep_neg_floor
-var is_27_steep_pos_ceiling: bool \
-        setget ,_get_is_27_steep_pos_ceiling
-var is_27_steep_neg_ceiling: bool \
-        setget ,_get_is_27_steep_neg_ceiling
-
-var is_top_45_pos: bool \
-        setget ,_get_is_top_45_pos
-var is_top_45_neg: bool \
-        setget ,_get_is_top_45_neg
-var is_bottom_45_pos: bool \
-        setget ,_get_is_bottom_45_pos
-var is_bottom_45_neg: bool \
-        setget ,_get_is_bottom_45_neg
-var is_left_45_pos: bool \
-        setget ,_get_is_left_45_pos
-var is_left_45_neg: bool \
-        setget ,_get_is_left_45_neg
-var is_right_45_pos: bool \
-        setget ,_get_is_right_45_pos
-var is_right_45_neg: bool \
-        setget ,_get_is_right_45_neg
-
-var is_top_27_shallow_pos: bool \
-        setget ,_get_is_top_27_shallow_pos
-var is_top_27_shallow_neg: bool \
-        setget ,_get_is_top_27_shallow_neg
-var is_bottom_27_shallow_pos: bool \
-        setget ,_get_is_bottom_27_shallow_pos
-var is_bottom_27_shallow_neg: bool \
-        setget ,_get_is_bottom_27_shallow_neg
-var is_left_27_shallow_pos: bool \
-        setget ,_get_is_left_27_shallow_pos
-var is_left_27_shallow_neg: bool \
-        setget ,_get_is_left_27_shallow_neg
-var is_right_27_shallow_pos: bool \
-        setget ,_get_is_right_27_shallow_pos
-var is_right_27_shallow_neg: bool \
-        setget ,_get_is_right_27_shallow_neg
-
-var is_top_27_steep_pos: bool \
-        setget ,_get_is_top_27_steep_pos
-var is_top_27_steep_neg: bool \
-        setget ,_get_is_top_27_steep_neg
-var is_bottom_27_steep_pos: bool \
-        setget ,_get_is_bottom_27_steep_pos
-var is_bottom_27_steep_neg: bool \
-        setget ,_get_is_bottom_27_steep_neg
-var is_left_27_steep_pos: bool \
-        setget ,_get_is_left_27_steep_pos
-var is_left_27_steep_neg: bool \
-        setget ,_get_is_left_27_steep_neg
-var is_right_27_steep_pos: bool \
-        setget ,_get_is_right_27_steep_pos
-var is_right_27_steep_neg: bool \
-        setget ,_get_is_right_27_steep_neg
-
-var is_top_cap: bool \
-        setget ,_get_is_top_cap
-var is_bottom_cap: bool \
-        setget ,_get_is_bottom_cap
-var is_left_cap: bool \
-        setget ,_get_is_left_cap
-var is_right_cap: bool \
-        setget ,_get_is_right_cap
-
-var is_90_floor: bool \
-        setget ,_get_is_90_floor
-var is_90_ceiling: bool \
-        setget ,_get_is_90_ceiling
-var is_90_left_wall: bool \
-        setget ,_get_is_90_left_wall
-var is_90_right_wall: bool \
-        setget ,_get_is_90_right_wall
-
-var is_floor_with_45_curve_in_at_left: bool \
-        setget ,_get_is_floor_with_45_curve_in_at_left
-var is_floor_with_45_curve_in_at_right: bool \
-        setget ,_get_is_floor_with_45_curve_in_at_right
-var is_ceiling_with_45_curve_in_at_left: bool \
-        setget ,_get_is_ceiling_with_45_curve_in_at_left
-var is_ceiling_with_45_curve_in_at_right: bool \
-        setget ,_get_is_ceiling_with_45_curve_in_at_right
-var is_left_wall_with_45_curve_in_at_top: bool \
-        setget ,_get_is_left_wall_with_45_curve_in_at_top
-var is_left_wall_with_45_curve_in_at_bottom: bool \
-        setget ,_get_is_left_wall_with_45_curve_in_at_bottom
-var is_right_wall_with_45_curve_in_at_top: bool \
-        setget ,_get_is_right_wall_with_45_curve_in_at_top
-var is_right_wall_with_45_curve_in_at_bottom: bool \
-        setget ,_get_is_right_wall_with_45_curve_in_at_bottom
-
-var is_top_90_left_wall: bool \
-        setget ,_get_is_top_90_left_wall
-var is_bottom_90_left_wall: bool \
-        setget ,_get_is_bottom_90_left_wall
-var is_top_90_right_wall: bool \
-        setget ,_get_is_top_90_right_wall
-var is_bottom_90_right_wall: bool \
-        setget ,_get_is_bottom_90_right_wall
-var is_left_90_floor: bool \
-        setget ,_get_is_left_90_floor
-var is_right_90_floor: bool \
-        setget ,_get_is_right_90_floor
-var is_left_90_ceiling: bool \
-        setget ,_get_is_left_90_ceiling
-var is_right_90_ceiling: bool \
-        setget ,_get_is_right_90_ceiling
-
-var is_top_left_corner_concave_90: bool \
-        setget ,_get_is_top_left_corner_concave_90
-var is_top_right_corner_concave_90: bool \
-        setget ,_get_is_top_right_corner_concave_90
-var is_bottom_left_corner_concave_90: bool \
-        setget ,_get_is_bottom_left_corner_concave_90
-var is_bottom_right_corner_concave_90: bool \
-        setget ,_get_is_bottom_right_corner_concave_90
-
-var is_top_left_corner_concave_45: bool \
-        setget ,_get_is_top_left_corner_concave_45
-var is_top_right_corner_concave_45: bool \
-        setget ,_get_is_top_right_corner_concave_45
-var is_bottom_left_corner_concave_45: bool \
-        setget ,_get_is_bottom_left_corner_concave_45
-var is_bottom_right_corner_concave_45: bool \
-        setget ,_get_is_bottom_right_corner_concave_45
-
-var is_top_left_corner_concave_partial_45: bool \
-        setget ,_get_is_top_left_corner_concave_partial_45
-var is_top_right_corner_concave_partial_45: bool \
-        setget ,_get_is_top_right_corner_concave_partial_45
-var is_bottom_left_corner_concave_partial_45: bool \
-        setget ,_get_is_bottom_left_corner_concave_partial_45
-var is_bottom_right_corner_concave_partial_45: bool \
-        setget ,_get_is_bottom_right_corner_concave_partial_45
-var is_any_corner_concave_partial_45: bool \
-        setget ,_get_is_any_corner_concave_partial_45
-
-var is_top_left_corner_concave_90_vertical_to_45: bool \
-        setget ,_get_is_top_left_corner_concave_90_vertical_to_45
-var is_top_right_corner_concave_90_vertical_to_45: bool \
-        setget ,_get_is_top_right_corner_concave_90_vertical_to_45
-var is_bottom_left_corner_concave_90_vertical_to_45: bool \
-        setget ,_get_is_bottom_left_corner_concave_90_vertical_to_45
-var is_bottom_right_corner_concave_90_vertical_to_45: bool \
-        setget ,_get_is_bottom_right_corner_concave_90_vertical_to_45
-
-var is_top_left_corner_concave_90_horizontal_to_45: bool \
-        setget ,_get_is_top_left_corner_concave_90_horizontal_to_45
-var is_top_right_corner_concave_90_horizontal_to_45: bool \
-        setget ,_get_is_top_right_corner_concave_90_horizontal_to_45
-var is_bottom_left_corner_concave_90_horizontal_to_45: bool \
-        setget ,_get_is_bottom_left_corner_concave_90_horizontal_to_45
-var is_bottom_right_corner_concave_90_horizontal_to_45: bool \
-        setget ,_get_is_bottom_right_corner_concave_90_horizontal_to_45
-
 
 func _init(
         tile_map: SurfacesTileMap,
@@ -312,24 +118,24 @@ func _init(
     self.position = position
     self.tile_id = tile_id
     self.bitmask = bitmask
-    self.angle_type = get_neighbor_angle_type(0,0)
+    self.angle_type = get_angle_type(0,0)
 
 
-func get_neighbor_angle_type(relative_x: int, relative_y: int) -> int:
+func get_angle_type(relative_x := 0, relative_y := 0) -> int:
     var neighbor_id := tile_map.get_cell(
             position.x + relative_x,
             position.y + relative_y)
-    return tile_set.tile_get_neighbor_angle_type(neighbor_id)
+    return tile_set.tile_get_angle_type(neighbor_id)
 
 
-func get_is_neighbor_present(relative_x: int, relative_y: int) -> bool:
+func get_is_present(relative_x := 0, relative_y := 0) -> bool:
     var neighbor_id := tile_map.get_cell(
             position.x + relative_x,
             position.y + relative_y)
     return tile_set._is_tile_bound(tile_id, neighbor_id)
 
 
-func get_is_neighbor_empty(relative_x: int, relative_y: int) -> bool:
+func get_is_empty(relative_x := 0, relative_y := 0) -> bool:
     var neighbor_id := tile_map.get_cell(
             position.x + relative_x,
             position.y + relative_y)
@@ -343,37 +149,6 @@ func _get_is_fully_internal() -> bool:
 func _get_are_all_sides_covered() -> bool:
     return (bitmask ^ ALL_SIDES_BITMASK) == 0
 
-
-func _get_top_left_angle_type() -> int:
-    return get_neighbor_angle_type(-1,-1)
-
-
-func _get_top_angle_type() -> int:
-    return get_neighbor_angle_type(0,-1)
-
-
-func _get_top_right_angle_type() -> int:
-    return get_neighbor_angle_type(1,-1)
-
-
-func _get_left_angle_type() -> int:
-    return get_neighbor_angle_type(-1,0)
-
-
-func _get_right_angle_type() -> int:
-    return get_neighbor_angle_type(1,0)
-
-
-func _get_bottom_left_angle_type() -> int:
-    return get_neighbor_angle_type(-1,1)
-
-
-func _get_bottom_angle_type() -> int:
-    return get_neighbor_angle_type(0,1)
-
-
-func _get_bottom_right_angle_type() -> int:
-    return get_neighbor_angle_type(1,1)
 
 
 func _get_is_angle_type_90() -> bool:
@@ -497,563 +272,297 @@ func _get_is_empty_around_bottom_right() -> bool:
 
 
 func _get_is_top_left_empty_at_top_left() -> bool:
-    return get_is_neighbor_empty(-2,-2)
+    return get_is_empty(-2,-2)
 
 
 func _get_is_top_empty_at_top() -> bool:
-    return get_is_neighbor_empty(0,-2)
+    return get_is_empty(0,-2)
 
 
 func _get_is_top_right_empty_at_top_right() -> bool:
-    return get_is_neighbor_empty(2,-2)
+    return get_is_empty(2,-2)
 
 
 func _get_is_left_empty_at_left() -> bool:
-    return get_is_neighbor_empty(-2,0)
+    return get_is_empty(-2,0)
 
 
 func _get_is_right_empty_at_right() -> bool:
-    return get_is_neighbor_empty(2,0)
+    return get_is_empty(2,0)
 
 
 func _get_is_bottom_left_empty_at_bottom_left() -> bool:
-    return get_is_neighbor_empty(-2,2)
+    return get_is_empty(-2,2)
 
 
 func _get_is_bottom_empty_at_bottom() -> bool:
-    return get_is_neighbor_empty(0,2)
+    return get_is_empty(0,2)
 
 
 func _get_is_bottom_right_empty_at_bottom_right() -> bool:
-    return get_is_neighbor_empty(2,2)
+    return get_is_empty(2,2)
 
 
 func _get_is_top_left_empty_at_top_or_left() -> bool:
-    return get_is_neighbor_empty(-1,-2) or \
-            get_is_neighbor_empty(-2,-1)
+    return get_is_empty(-1,-2) or \
+            get_is_empty(-2,-1)
 
 
 func _get_is_top_right_empty_at_top_or_right() -> bool:
-    return get_is_neighbor_empty(1,-2) or \
-            get_is_neighbor_empty(2,-1)
+    return get_is_empty(1,-2) or \
+            get_is_empty(2,-1)
 
 
 func _get_is_bottom_left_empty_at_bottom_or_left() -> bool:
-    return get_is_neighbor_empty(-1,2) or \
-            get_is_neighbor_empty(-2,1)
+    return get_is_empty(-1,2) or \
+            get_is_empty(-2,1)
 
 
 func _get_is_bottom_right_empty_at_bottom_or_right() -> bool:
-    return get_is_neighbor_empty(1,2) or \
-            get_is_neighbor_empty(2,1)
+    return get_is_empty(1,2) or \
+            get_is_empty(2,1)
 
 
 func _get_is_top_empty_around_top() -> bool:
-    return get_is_neighbor_empty(-1,-2) or \
-            get_is_neighbor_empty(0,-2) or \
-            get_is_neighbor_empty(1,-2)
+    return get_is_empty(-1,-2) or \
+            get_is_empty(0,-2) or \
+            get_is_empty(1,-2)
 
 
 func _get_is_bottom_empty_around_bottom() -> bool:
-    return get_is_neighbor_empty(-1,2) or \
-            get_is_neighbor_empty(0,2) or \
-            get_is_neighbor_empty(1,2)
+    return get_is_empty(-1,2) or \
+            get_is_empty(0,2) or \
+            get_is_empty(1,2)
 
 
 func _get_is_left_empty_around_left() -> bool:
-    return get_is_neighbor_empty(-2,-1) or \
-            get_is_neighbor_empty(-2,0) or \
-            get_is_neighbor_empty(-2,1)
+    return get_is_empty(-2,-1) or \
+            get_is_empty(-2,0) or \
+            get_is_empty(-2,1)
 
 
 func _get_is_right_empty_around_right() -> bool:
-    return get_is_neighbor_empty(2,-1) or \
-            get_is_neighbor_empty(2,0) or \
-            get_is_neighbor_empty(2,1)
+    return get_is_empty(2,-1) or \
+            get_is_empty(2,0) or \
+            get_is_empty(2,1)
 
 
 func _get_is_top_left_empty_around_top_left() -> bool:
-    return get_is_neighbor_empty(-2,-2) or \
-            get_is_neighbor_empty(-1,-2) or \
-            get_is_neighbor_empty(-2,-1)
+    return get_is_empty(-2,-2) or \
+            get_is_empty(-1,-2) or \
+            get_is_empty(-2,-1)
 
 
 func _get_is_top_right_empty_around_top_right() -> bool:
-    return get_is_neighbor_empty(2,-2) or \
-            get_is_neighbor_empty(1,-2) or \
-            get_is_neighbor_empty(2,-1)
+    return get_is_empty(2,-2) or \
+            get_is_empty(1,-2) or \
+            get_is_empty(2,-1)
 
 
 func _get_is_bottom_left_empty_around_bottom_left() -> bool:
-    return get_is_neighbor_empty(-2,2) or \
-            get_is_neighbor_empty(-1,2) or \
-            get_is_neighbor_empty(-2,1)
+    return get_is_empty(-2,2) or \
+            get_is_empty(-1,2) or \
+            get_is_empty(-2,1)
 
 
 func _get_is_bottom_right_empty_around_bottom_right() -> bool:
-    return get_is_neighbor_empty(2,2) or \
-            get_is_neighbor_empty(1,2) or \
-            get_is_neighbor_empty(2,1)
+    return get_is_empty(2,2) or \
+            get_is_empty(1,2) or \
+            get_is_empty(2,1)
 
 
-func _get_is_45_pos_floor() -> bool:
-    return angle_type == CellAngleType.A45 and \
-            _get_is_top_empty() and \
-            _get_is_left_empty() and \
-            _get_is_bottom_present() and \
-            _get_is_right_present()
+func get_is_top_cap(relative_x := 0, relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_present(relative_x, relative_y + 1) and \
+            get_is_empty(relative_x - 1, relative_y) and \
+            get_is_empty(relative_x + 1, relative_y)
 
 
-func _get_is_45_neg_floor() -> bool:
-    return angle_type == CellAngleType.A45 and \
-            _get_is_top_empty() and \
-            _get_is_right_empty() and \
-            _get_is_bottom_present() and \
-            _get_is_left_present()
+func get_is_bottom_cap(relative_x := 0, relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_present(relative_x, relative_y - 1) and \
+            get_is_empty(relative_x - 1, relative_y) and \
+            get_is_empty(relative_x + 1, relative_y)
 
 
-func _get_is_45_pos_ceiling() -> bool:
-    return angle_type == CellAngleType.A45 and \
-            _get_is_bottom_empty() and \
-            _get_is_left_empty() and \
-            _get_is_top_present() and \
-            _get_is_right_present()
+func get_is_left_cap(relative_x := 0, relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_present(relative_x + 1, relative_y) and \
+            get_is_empty(relative_x, relative_y - 1) and \
+            get_is_empty(relative_x, relative_y + 1)
 
 
-func _get_is_45_neg_ceiling() -> bool:
-    return angle_type == CellAngleType.A45 and \
-            _get_is_bottom_empty() and \
-            _get_is_right_empty() and \
-            _get_is_top_present() and \
-            _get_is_left_present()
+func get_is_right_cap(relative_x := 0, relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_present(relative_x - 1, relative_y) and \
+            get_is_empty(relative_x, relative_y - 1) and \
+            get_is_empty(relative_x, relative_y + 1)
 
 
-func _get_is_27_shallow_pos_floor() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_27_shallow_neg_floor() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_27_shallow_pos_ceiling() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_27_shallow_neg_ceiling() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_27_steep_pos_floor() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_27_steep_neg_floor() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_27_steep_pos_ceiling() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_27_steep_neg_ceiling() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_top_45_pos() -> bool:
-    return _get_top_angle_type() == CellAngleType.A45 and \
-            _get_is_top_present() and \
-            _get_is_top_right_present() and \
-            _get_is_top_left_empty() and \
-            get_is_neighbor_empty(0,-2)
-
-
-func _get_is_top_45_neg() -> bool:
-    return _get_top_angle_type() == CellAngleType.A45 and \
-            _get_is_top_present() and \
-            _get_is_top_left_present() and \
-            _get_is_top_right_empty() and \
-            get_is_neighbor_empty(0,-2)
-
-
-func _get_is_bottom_45_pos() -> bool:
-    return _get_bottom_angle_type() == CellAngleType.A45 and \
-            _get_is_bottom_present() and \
-            _get_is_bottom_left_present() and \
-            _get_is_bottom_right_empty() and \
-            get_is_neighbor_empty(0,2)
-
-
-func _get_is_bottom_45_neg() -> bool:
-    return _get_bottom_angle_type() == CellAngleType.A45 and \
-            _get_is_bottom_present() and \
-            _get_is_bottom_right_present() and \
-            _get_is_bottom_left_empty() and \
-            get_is_neighbor_empty(0,2)
-
-
-func _get_is_left_45_pos() -> bool:
-    return _get_left_angle_type() == CellAngleType.A45 and \
-            _get_is_left_present() and \
-            _get_is_bottom_left_present() and \
-            _get_is_top_left_empty() and \
-            get_is_neighbor_empty(-2,0)
-
-
-func _get_is_left_45_neg() -> bool:
-    return _get_left_angle_type() == CellAngleType.A45 and \
-            _get_is_left_present() and \
-            _get_is_top_left_present() and \
-            _get_is_bottom_left_empty() and \
-            get_is_neighbor_empty(-2,0)
-
-
-func _get_is_right_45_pos() -> bool:
-    return _get_right_angle_type() == CellAngleType.A45 and \
-            _get_is_right_present() and \
-            _get_is_top_right_present() and \
-            _get_is_bottom_right_empty() and \
-            get_is_neighbor_empty(2,0)
-
-
-func _get_is_right_45_neg() -> bool:
-    return _get_right_angle_type() == CellAngleType.A45 and \
-            _get_is_right_present() and \
-            _get_is_bottom_right_present() and \
-            _get_is_top_right_empty() and \
-            get_is_neighbor_empty(2,0)
-
-
-func _get_is_top_27_shallow_pos() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_top_27_shallow_neg() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_bottom_27_shallow_pos() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_bottom_27_shallow_neg() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_left_27_shallow_pos() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_left_27_shallow_neg() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_right_27_shallow_pos() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_right_27_shallow_neg() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_top_27_steep_pos() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_top_27_steep_neg() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_bottom_27_steep_pos() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_bottom_27_steep_neg() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_left_27_steep_pos() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_left_27_steep_neg() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_right_27_steep_pos() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_right_27_steep_neg() -> bool:
-    # FIXME: LEFT OFF HERE: -----------------------
-    return false
-
-
-func _get_is_top_cap() -> bool:
-    return _get_is_top_present() and \
-            _get_is_top_left_empty() and \
-            _get_is_top_right_empty() and \
-            get_is_neighbor_empty(0,-2)
-
-
-func _get_is_bottom_cap() -> bool:
-    return _get_is_bottom_present() and \
-            _get_is_bottom_left_empty() and \
-            _get_is_bottom_right_empty() and \
-            get_is_neighbor_empty(0,2)
-
-
-func _get_is_left_cap() -> bool:
-    return _get_is_left_present() and \
-            _get_is_top_left_empty() and \
-            _get_is_bottom_left_empty() and \
-            get_is_neighbor_empty(-2,0)
-
-
-func _get_is_right_cap() -> bool:
-    return _get_is_right_present() and \
-            _get_is_top_right_empty() and \
-            _get_is_bottom_right_empty() and \
-            get_is_neighbor_empty(2,0)
-
-
-func _get_is_90_floor() -> bool:
-    return _get_is_top_empty() and \
-            (angle_type == CellAngleType.A90 or \
-            _get_is_left_present() and \
-            _get_is_right_present())
-
-
-func _get_is_90_ceiling() -> bool:
-    return _get_is_bottom_empty() and \
-            (angle_type == CellAngleType.A90 or \
-            _get_is_left_present() and \
-            _get_is_right_present())
-
-
-func _get_is_90_left_wall() -> bool:
-    return _get_is_right_empty() and \
-            (angle_type == CellAngleType.A90 or \
-            _get_is_top_present() and \
-            _get_is_bottom_present())
-
-
-func _get_is_90_right_wall() -> bool:
-    return _get_is_left_empty() and \
-            (angle_type == CellAngleType.A90 or \
-            _get_is_top_present() and \
-            _get_is_bottom_present())
-
-
-func _get_is_floor_with_45_curve_in_at_left() -> bool:
-    return _get_is_right_present() and \
-            _get_is_top_empty() and \
-            _get_left_angle_type() == CellAngleType.A45 and \
-            _get_is_top_left_empty() and \
-            get_is_neighbor_empty(-2,0) and \
-            _get_is_bottom_left_present()
-
-
-func _get_is_floor_with_45_curve_in_at_right() -> bool:
-    return _get_is_left_present() and \
-            _get_is_top_empty() and \
-            _get_right_angle_type() == CellAngleType.A45 and \
-            _get_is_top_right_empty() and \
-            get_is_neighbor_empty(2,0) and \
-            _get_is_bottom_right_present()
-
-
-func _get_is_ceiling_with_45_curve_in_at_left() -> bool:
-    return _get_is_right_present() and \
-            _get_is_bottom_empty() and \
-            _get_left_angle_type() == CellAngleType.A45 and \
-            _get_is_bottom_left_empty() and \
-            get_is_neighbor_empty(-2,0) and \
-            _get_is_top_left_present()
-
-
-func _get_is_ceiling_with_45_curve_in_at_right() -> bool:
-    return _get_is_left_present() and \
-            _get_is_bottom_empty() and \
-            _get_right_angle_type() == CellAngleType.A45 and \
-            _get_is_bottom_right_empty() and \
-            get_is_neighbor_empty(2,0) and \
-            _get_is_top_right_present()
-
-
-func _get_is_left_wall_with_45_curve_in_at_top() -> bool:
-    return _get_is_bottom_present() and \
-            _get_is_right_empty() and \
-            _get_top_angle_type() == CellAngleType.A45 and \
-            _get_is_top_right_empty() and \
-            get_is_neighbor_empty(0,-2) and \
-            (_get_is_top_left_present() or \
-                _get_is_top_cap() and \
-                    _get_is_left_empty())
-
-
-func _get_is_left_wall_with_45_curve_in_at_bottom() -> bool:
-    return _get_is_top_present() and \
-            _get_is_right_empty() and \
-            _get_bottom_angle_type() == CellAngleType.A45 and \
-            _get_is_bottom_right_empty() and \
-            get_is_neighbor_empty(0,2) and \
-            (_get_is_bottom_left_present() or \
-                _get_is_bottom_cap() and \
-                    _get_is_left_empty())
-
-
-func _get_is_right_wall_with_45_curve_in_at_top() -> bool:
-    return _get_is_bottom_present() and \
-            _get_is_left_empty() and \
-            _get_top_angle_type() == CellAngleType.A45 and \
-            _get_is_top_left_empty() and \
-            get_is_neighbor_empty(0,-2) and \
-            (_get_is_top_right_present() or \
-                _get_is_top_cap() and \
-                    _get_is_right_empty())
-
-
-func _get_is_right_wall_with_45_curve_in_at_bottom() -> bool:
-    return _get_is_top_present() and \
-            _get_is_left_empty() and \
-            _get_bottom_angle_type() == CellAngleType.A45 and \
-            _get_is_bottom_left_empty() and \
-            get_is_neighbor_empty(0,2) and \
-            (_get_is_bottom_right_present() or \
-                _get_is_bottom_cap() and \
-                    _get_is_right_empty())
-
-
-func _get_is_neighbor_90_left_wall(
-        relative_x: int,
-        relative_y: int) -> bool:
-    if get_is_neighbor_present(relative_x + 1, relative_y):
-        # Can't be a wall if there is another block in front.
+func get_is_90_floor(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
         return false
-    match get_neighbor_angle_type(relative_x, relative_y):
+    if get_is_present(relative_x, relative_y - 1):
+        # Can't be a floor if there is another block in front.
+        return false
+    match get_angle_type(relative_x, relative_y):
         CellAngleType.A90:
             return true
         CellAngleType.A45:
             # A45s become A90s when there are neighbors on either side and at
             # least one of the two front corners are empty.
-            return get_is_neighbor_present(relative_x, relative_y - 1) and \
-                    get_is_neighbor_present(relative_x, relative_y + 1) and \
-                    (get_is_neighbor_empty(relative_x + 1, relative_y - 1) or \
-                    get_is_neighbor_empty(relative_x + 1, relative_y + 1))
+            return get_is_present(relative_x - 1, relative_y) and \
+                    get_is_present(relative_x + 1, relative_y) and \
+                    (get_is_empty(relative_x - 1, relative_y - 1) or \
+                    get_is_empty(relative_x + 1, relative_y - 1))
+        CellAngleType.A27:
+            # A27s become A90s in a few cases.
+            # FIXME: LEFT OFF HERE: ----------------------------------
+            # - Copy the logic in _get_is_90_left_wall.
+            return false
+        _:
+            Sc.logger.error()
+            return false
+
+
+func get_is_90_ceiling(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    if get_is_present(relative_x, relative_y + 1):
+        # Can't be a ceiling if there is another block in front.
+        return false
+    match get_angle_type(relative_x, relative_y):
+        CellAngleType.A90:
+            return true
+        CellAngleType.A45:
+            # A45s become A90s when there are neighbors on either side and at
+            # least one of the two front corners are empty.
+            return get_is_present(relative_x - 1, relative_y) and \
+                    get_is_present(relative_x + 1, relative_y) and \
+                    (get_is_empty(relative_x - 1, relative_y + 1) or \
+                    get_is_empty(relative_x + 1, relative_y + 1))
+        CellAngleType.A27:
+            # A27s become A90s in a few cases.
+            # FIXME: LEFT OFF HERE: ----------------------------------
+            # - Copy the logic in _get_is_90_left_wall.
+            return false
+        _:
+            Sc.logger.error()
+            return false
+
+
+func get_is_90_left_wall(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    if get_is_present(relative_x + 1, relative_y):
+        # Can't be a wall if there is another block in front.
+        return false
+    match get_angle_type(relative_x, relative_y):
+        CellAngleType.A90:
+            return true
+        CellAngleType.A45:
+            # A45s become A90s when there are neighbors on either side and at
+            # least one of the two front corners are empty.
+            return get_is_present(relative_x, relative_y - 1) and \
+                    get_is_present(relative_x, relative_y + 1) and \
+                    (get_is_empty(relative_x + 1, relative_y - 1) or \
+                    get_is_empty(relative_x + 1, relative_y + 1))
         CellAngleType.A27:
             # A27s become A90s in a few cases.
             var two_exposed_at_top := \
-                    get_is_neighbor_present(relative_x, relative_y - 1) and \
-                    get_is_neighbor_present(relative_x, relative_y - 2) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y - 1) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y - 2)
+                    get_is_present(relative_x, relative_y - 1) and \
+                    get_is_present(relative_x, relative_y - 2) and \
+                    get_is_empty(relative_x + 1, relative_y - 1) and \
+                    get_is_empty(relative_x + 1, relative_y - 2)
             var two_exposed_at_bottom := \
-                    get_is_neighbor_present(relative_x, relative_y + 1) and \
-                    get_is_neighbor_present(relative_x, relative_y + 2) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y + 1) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y + 2)
+                    get_is_present(relative_x, relative_y + 1) and \
+                    get_is_present(relative_x, relative_y + 2) and \
+                    get_is_empty(relative_x + 1, relative_y + 1) and \
+                    get_is_empty(relative_x + 1, relative_y + 2)
             # Long side.
             if two_exposed_at_top and \
                     two_exposed_at_bottom:
                 return true
             # Convex on one side.
             if two_exposed_at_top and \
-                    get_is_neighbor_empty(relative_x, relative_y - 3):
+                    get_is_empty(relative_x, relative_y - 3):
                 return true
             if two_exposed_at_bottom and \
-                    get_is_neighbor_empty(relative_x, relative_y + 3):
+                    get_is_empty(relative_x, relative_y + 3):
                 return true
             # Concave on one side.
             if two_exposed_at_top and \
-                    get_is_neighbor_present(relative_x, relative_y - 3) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y - 3) and \
-                    get_is_neighbor_present(relative_x, relative_y + 1) and \
-                    get_is_neighbor_present(relative_x + 1, relative_y + 1):
+                    get_is_present(relative_x, relative_y - 3) and \
+                    get_is_empty(relative_x + 1, relative_y - 3) and \
+                    get_is_present(relative_x, relative_y + 1) and \
+                    get_is_present(relative_x + 1, relative_y + 1):
                 return true
             if two_exposed_at_top and \
-                    get_is_neighbor_present(relative_x, relative_y + 1) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y + 1) and \
-                    get_is_neighbor_present(relative_x, relative_y + 2) and \
-                    get_is_neighbor_present(relative_x + 1, relative_y + 2):
+                    get_is_present(relative_x, relative_y + 1) and \
+                    get_is_empty(relative_x + 1, relative_y + 1) and \
+                    get_is_present(relative_x, relative_y + 2) and \
+                    get_is_present(relative_x + 1, relative_y + 2):
                 return true
             if two_exposed_at_bottom and \
-                    get_is_neighbor_present(relative_x, relative_y + 3) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y + 3) and \
-                    get_is_neighbor_present(relative_x, relative_y - 1) and \
-                    get_is_neighbor_present(relative_x + 1, relative_y - 1):
+                    get_is_present(relative_x, relative_y + 3) and \
+                    get_is_empty(relative_x + 1, relative_y + 3) and \
+                    get_is_present(relative_x, relative_y - 1) and \
+                    get_is_present(relative_x + 1, relative_y - 1):
                 return true
             if two_exposed_at_bottom and \
-                    get_is_neighbor_present(relative_x, relative_y - 1) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y - 1) and \
-                    get_is_neighbor_present(relative_x, relative_y - 2) and \
-                    get_is_neighbor_present(relative_x + 1, relative_y - 2):
+                    get_is_present(relative_x, relative_y - 1) and \
+                    get_is_empty(relative_x + 1, relative_y - 1) and \
+                    get_is_present(relative_x, relative_y - 2) and \
+                    get_is_present(relative_x + 1, relative_y - 2):
                 return true
             # Cap on one side, with this tile being exposed on opposite sides.
-            if get_is_neighbor_present(relative_x, relative_y - 1) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y - 1) and \
-                    get_is_neighbor_empty(relative_x, relative_y - 2) and \
-                    get_is_neighbor_empty(relative_x - 1, relative_y - 1) and \
-                    get_is_neighbor_empty(relative_x - 1, relative_y) and \
-                    get_is_neighbor_present(relative_x, relative_y + 1):
+            if get_is_present(relative_x, relative_y - 1) and \
+                    get_is_empty(relative_x + 1, relative_y - 1) and \
+                    get_is_empty(relative_x, relative_y - 2) and \
+                    get_is_empty(relative_x - 1, relative_y - 1) and \
+                    get_is_empty(relative_x - 1, relative_y) and \
+                    get_is_present(relative_x, relative_y + 1):
                 return true
-            if get_is_neighbor_present(relative_x, relative_y + 1) and \
-                    get_is_neighbor_empty(relative_x + 1, relative_y + 1) and \
-                    get_is_neighbor_empty(relative_x, relative_y + 2) and \
-                    get_is_neighbor_empty(relative_x - 1, relative_y + 1) and \
-                    get_is_neighbor_empty(relative_x - 1, relative_y) and \
-                    get_is_neighbor_present(relative_x, relative_y - 1):
+            if get_is_present(relative_x, relative_y + 1) and \
+                    get_is_empty(relative_x + 1, relative_y + 1) and \
+                    get_is_empty(relative_x, relative_y + 2) and \
+                    get_is_empty(relative_x - 1, relative_y + 1) and \
+                    get_is_empty(relative_x - 1, relative_y) and \
+                    get_is_present(relative_x, relative_y - 1):
                 return true
             # Non-A27 A90 surface on one side and long on the other side.
             var is_top_non_a27_a90_exposed := \
-                    get_neighbor_angle_type(relative_x, relative_y - 1) != \
+                    get_angle_type(relative_x, relative_y - 1) != \
                         CellAngleType.A27 and \
-                    _get_is_neighbor_90_left_wall(relative_x, relative_y - 1)
+                    get_is_90_left_wall(relative_x, relative_y - 1)
             if is_top_non_a27_a90_exposed and \
                     two_exposed_at_bottom:
                 return true
             var is_bottom_non_a27_a90_exposed := \
-                    get_neighbor_angle_type(relative_x, relative_y + 1) != \
+                    get_angle_type(relative_x, relative_y + 1) != \
                         CellAngleType.A27 and \
-                    _get_is_neighbor_90_left_wall(relative_x, relative_y + 1)
+                    get_is_90_left_wall(relative_x, relative_y + 1)
             if is_bottom_non_a27_a90_exposed and \
                     two_exposed_at_top:
                 return true
             # Non-A27 A90 surface on one side and concave on the other side.
             if is_top_non_a27_a90_exposed and \
-                    get_is_neighbor_present(relative_x, relative_y + 1) and \
-                    (get_is_neighbor_present(relative_x + 1, relative_y + 1) or \
-                    get_is_neighbor_present(relative_x, relative_y + 2) and \
-                    get_is_neighbor_present(relative_x + 1, relative_y + 2)):
+                    get_is_present(relative_x, relative_y + 1) and \
+                    (get_is_present(relative_x + 1, relative_y + 1) or \
+                    get_is_present(relative_x, relative_y + 2) and \
+                    get_is_present(relative_x + 1, relative_y + 2)):
                 return true
             if is_bottom_non_a27_a90_exposed and \
-                    get_is_neighbor_present(relative_x, relative_y - 1) and \
-                    (get_is_neighbor_present(relative_x + 1, relative_y - 1) or \
-                    get_is_neighbor_present(relative_x, relative_y - 2) and \
-                    get_is_neighbor_present(relative_x + 1, relative_y - 2)):
+                    get_is_present(relative_x, relative_y - 1) and \
+                    (get_is_present(relative_x + 1, relative_y - 1) or \
+                    get_is_present(relative_x, relative_y - 2) and \
+                    get_is_present(relative_x + 1, relative_y - 2)):
                 return true
             # Non-A27 A90 surface on both sides.
             if is_top_non_a27_a90_exposed and \
@@ -1065,209 +574,577 @@ func _get_is_neighbor_90_left_wall(
             return false
 
 
-func _get_is_neighbor_90_right_wall(
-        relative_x: int,
-        relative_y: int) -> bool:
-    return (get_neighbor_angle_type(relative_x, relative_y) == \
-                CellAngleType.A90 or \
-            get_is_neighbor_present(relative_x, relative_y - 1) and \
-            get_is_neighbor_present(relative_x, relative_y + 1)) and \
-            get_is_neighbor_empty(relative_x - 1, relative_y)
+func get_is_90_right_wall(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    if get_is_present(relative_x - 1, relative_y):
+        # Can't be a wall if there is another block in front.
+        return false
+    match get_angle_type(relative_x, relative_y):
+        CellAngleType.A90:
+            return true
+        CellAngleType.A45:
+            # A45s become A90s when there are neighbors on either side and at
+            # least one of the two front corners are empty.
+            return get_is_present(relative_x, relative_y - 1) and \
+                    get_is_present(relative_x, relative_y + 1) and \
+                    (get_is_empty(relative_x - 1, relative_y - 1) or \
+                    get_is_empty(relative_x - 1, relative_y + 1))
+        CellAngleType.A27:
+            # A27s become A90s in a few cases.
+            # FIXME: LEFT OFF HERE: ----------------------------------
+            # - Copy the logic in _get_is_90_left_wall.
+            return false
+        _:
+            Sc.logger.error()
+            return false
 
 
-func _get_is_top_90_left_wall() -> bool:
-    return (_get_top_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(0,-2)) and \
-            _get_is_top_right_empty()
+func get_is_45_pos_floor(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    if get_is_present(relative_x - 1, relative_y) or \
+            get_is_present(relative_x, relative_y - 1):
+        # Can't be a 45 floor if there is another block in front.
+        return false
+    match get_angle_type(relative_x, relative_y):
+        CellAngleType.A90:
+            return false
+        CellAngleType.A45:
+            # The angle of A45 caps can be flipped in order to transition
+            # smoothly from a diagonal neighbor.
+            if get_is_present(relative_x + 1, relative_y) and \
+                    (get_is_present(
+                        relative_x + 1, relative_y - 1) or \
+                    get_is_empty(relative_x + 1, relative_y + 1)):
+                return true
+            if get_is_present(relative_x, relative_y + 1) and \
+                    (get_is_present(
+                        relative_x - 1, relative_y + 1) or \
+                    get_is_empty(relative_x + 1, relative_y + 1)):
+                return true
+            return false
+        CellAngleType.A27:
+            # FIXME: LEFT OFF HERE: ------------------------
+            return false
+        _:
+            Sc.logger.error()
+            return false
 
 
-func _get_is_bottom_90_left_wall() -> bool:
-    return (_get_bottom_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(0,2)) and \
-            _get_is_bottom_right_empty()
+func get_is_45_neg_floor(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    if get_is_present(relative_x + 1, relative_y) or \
+            get_is_present(relative_x, relative_y - 1):
+        # Can't be a 45 floor if there is another block in front.
+        return false
+    match get_angle_type(relative_x, relative_y):
+        CellAngleType.A90:
+            return false
+        CellAngleType.A45:
+            # The angle of A45 caps can be flipped in order to transition
+            # smoothly from a diagonal neighbor.
+            if get_is_present(relative_x - 1, relative_y) and \
+                    (get_is_present(
+                        relative_x - 1, relative_y - 1) or \
+                    get_is_empty(relative_x - 1, relative_y + 1)):
+                return true
+            if get_is_present(relative_x, relative_y + 1) and \
+                    (get_is_present(
+                        relative_x + 1, relative_y + 1) or \
+                    get_is_empty(relative_x - 1, relative_y + 1)):
+                return true
+            return false
+        CellAngleType.A27:
+            # FIXME: LEFT OFF HERE: ------------------------
+            return false
+        _:
+            Sc.logger.error()
+            return false
 
 
-func _get_is_top_90_right_wall() -> bool:
-    return (_get_top_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(0,-2)) and \
-            _get_is_top_left_empty()
+func get_is_45_pos_ceiling(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    if get_is_present(relative_x + 1, relative_y) or \
+            get_is_present(relative_x, relative_y + 1):
+        # Can't be a 45 ceiling if there is another block in front.
+        return false
+    match get_angle_type(relative_x, relative_y):
+        CellAngleType.A90:
+            return false
+        CellAngleType.A45:
+            # The angle of A45 caps can be flipped in order to transition
+            # smoothly from a diagonal neighbor.
+            if get_is_present(relative_x - 1, relative_y) and \
+                    (get_is_present(
+                        relative_x - 1, relative_y + 1) or \
+                    get_is_empty(relative_x - 1, relative_y - 1)):
+                return true
+            if get_is_present(relative_x, relative_y - 1) and \
+                    (get_is_present(
+                        relative_x + 1, relative_y - 1) or \
+                    get_is_empty(relative_x - 1, relative_y - 1)):
+                return true
+            return false
+        CellAngleType.A27:
+            # FIXME: LEFT OFF HERE: ------------------------
+            return false
+        _:
+            Sc.logger.error()
+            return false
 
 
-func _get_is_bottom_90_right_wall() -> bool:
-    return (_get_bottom_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(0,2)) and \
-            _get_is_bottom_left_empty()
+func get_is_45_neg_ceiling(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    if get_is_present(relative_x - 1, relative_y) or \
+            get_is_present(relative_x, relative_y + 1):
+        # Can't be a 45 ceiling if there is another block in front.
+        return false
+    match get_angle_type(relative_x, relative_y):
+        CellAngleType.A90:
+            return false
+        CellAngleType.A45:
+            # The angle of A45 caps can be flipped in order to transition
+            # smoothly from a diagonal neighbor.
+            if get_is_present(relative_x + 1, relative_y) and \
+                    (get_is_present(
+                        relative_x + 1, relative_y + 1) or \
+                    get_is_empty(relative_x + 1, relative_y - 1)):
+                return true
+            if get_is_present(relative_x, relative_y - 1) and \
+                    (get_is_present(
+                        relative_x - 1, relative_y - 1) or \
+                    get_is_empty(relative_x + 1, relative_y - 1)):
+                return true
+            return false
+        CellAngleType.A27:
+            # FIXME: LEFT OFF HERE: ------------------------
+            return false
+        _:
+            Sc.logger.error()
+            return false
 
 
-func _get_is_left_90_floor() -> bool:
-    return (_get_left_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(-2,0)) and \
-            _get_is_top_left_empty()
+func get_is_27_pos_floor_in_top(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_right_90_floor() -> bool:
-    return (_get_right_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(2,0)) and \
-            _get_is_top_right_empty()
+func get_is_27_neg_floor_in_top(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_left_90_ceiling() -> bool:
-    return (_get_left_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(-2,0)) and \
-            _get_is_bottom_left_empty()
+func get_is_27_pos_floor_in_bottom(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_right_90_ceiling() -> bool:
-    return (_get_right_angle_type() == CellAngleType.A90 or \
-            get_is_neighbor_present(2,0)) and \
-            _get_is_bottom_right_empty()
+func get_is_27_neg_floor_in_bottom(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_top_left_corner_concave_90() -> bool:
-    return _get_is_top_90_right_wall() and \
-            _get_is_left_90_floor()
+func get_is_27_pos_ceiling_in_top(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_top_right_corner_concave_90() -> bool:
-    return _get_is_top_90_left_wall() and \
-            _get_is_right_90_floor()
+func get_is_27_neg_ceiling_in_top(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_bottom_left_corner_concave_90() -> bool:
-    return _get_is_bottom_90_right_wall() and \
-            _get_is_left_90_ceiling()
+func get_is_27_pos_ceiling_in_bottom(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_bottom_right_corner_concave_90() -> bool:
-    return _get_is_bottom_90_left_wall() and \
-            _get_is_right_90_ceiling()
+func get_is_27_neg_ceiling_in_bottom(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_top_left_corner_concave_45() -> bool:
-    return _get_is_top_left_empty() and \
-            _get_is_top_present() and \
-            _get_is_left_present() and \
-            !_get_is_top_90_right_wall() and \
-            !_get_is_left_90_floor()
+func get_is_27_pos_left_wall_in_left(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_top_right_corner_concave_45() -> bool:
-    return _get_is_top_right_empty() and \
-            _get_is_top_present() and \
-            _get_is_right_present() and \
-            !_get_is_top_90_left_wall() and \
-            !_get_is_right_90_floor()
+func get_is_27_neg_left_wall_in_left(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_bottom_left_corner_concave_45() -> bool:
-    return _get_is_bottom_left_empty() and \
-            _get_is_bottom_present() and \
-            _get_is_left_present() and \
-            !_get_is_bottom_90_right_wall() and \
-            !_get_is_left_90_ceiling()
+func get_is_27_pos_left_wall_in_right(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_bottom_right_corner_concave_45() -> bool:
-    return _get_is_bottom_right_empty() and \
-            _get_is_bottom_present() and \
-            _get_is_right_present() and \
-            !_get_is_bottom_90_left_wall() and \
-            !_get_is_right_90_ceiling()
+func get_is_27_neg_left_wall_in_right(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_top_left_corner_concave_partial_45() -> bool:
-    return _get_is_top_left_empty() and \
-            _get_is_top_present() and \
-            _get_is_left_present() and \
-            (!_get_is_top_90_right_wall() or \
-            !_get_is_left_90_floor())
+func get_is_27_pos_right_wall_in_left(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_top_right_corner_concave_partial_45() -> bool:
-    return _get_is_top_right_empty() and \
-            _get_is_top_present() and \
-            _get_is_right_present() and \
-            (!_get_is_top_90_left_wall() or \
-            !_get_is_right_90_floor())
+func get_is_27_neg_right_wall_in_left(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_bottom_left_corner_concave_partial_45() -> bool:
-    return _get_is_bottom_left_empty() and \
-            _get_is_bottom_present() and \
-            _get_is_left_present() and \
-            (!_get_is_bottom_90_right_wall() or \
-            !_get_is_left_90_ceiling())
+func get_is_27_pos_right_wall_in_right(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_bottom_right_corner_concave_partial_45() -> bool:
-    return _get_is_bottom_right_empty() and \
-            _get_is_bottom_present() and \
-            _get_is_right_present() and \
-            (!_get_is_bottom_90_left_wall() or \
-            !_get_is_right_90_ceiling())
+func get_is_27_neg_right_wall_in_right(relative_x := 0, relative_y := 0) -> bool:
+    if get_is_empty(relative_x, relative_y):
+        return false
+    # FIXME: LEFT OFF HERE: ------------------------
+    return false
 
 
-func _get_is_any_corner_concave_partial_45() -> bool:
-    return _get_is_top_left_corner_concave_partial_45() or \
-            _get_is_top_right_corner_concave_partial_45() or \
-            _get_is_bottom_left_corner_concave_partial_45() or \
-            _get_is_bottom_right_corner_concave_partial_45()
+func get_is_90_floor_at_right(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    # - Account for transitions to other angles:
+    #   - The below treats A90 with curve-in to A45 as a false positive.
+    #   - The below treats half-A90 to A27 as a false negative.
+    #   - The below treats cut-out corners as false negatives.
+    #     - BUT, I probably don't want this function to consider cut-out corners
+    #       either.
+    return get_is_90_floor(relative_x, relative_y)
 
 
-func _get_is_top_left_corner_concave_90_vertical_to_45() -> bool:
-    return _get_is_top_left_empty() and \
-            _get_is_top_90_right_wall() and \
-            _get_is_top_present() and \
-            !_get_is_left_90_floor()
+func get_is_90_floor_at_left(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    # - Account for transitions to other angles:
+    #   - The below treats A90 with curve-in to A45 as a false positive.
+    #   - The below treats half-A90 to A27 as a false negative.
+    #   - The below treats cut-out corners as false negatives.
+    #     - BUT, I probably don't want this function to consider cut-out corners
+    #       either.
+    return get_is_90_floor(relative_x, relative_y)
 
 
-func _get_is_top_right_corner_concave_90_vertical_to_45() -> bool:
-    return _get_is_top_right_empty() and \
-            _get_is_top_90_left_wall() and \
-            _get_is_top_present() and \
-            !_get_is_right_90_floor()
+func get_is_90_ceiling_at_right(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    # - Account for transitions to other angles:
+    #   - The below treats A90 with curve-in to A45 as a false positive.
+    #   - The below treats half-A90 to A27 as a false negative.
+    #   - The below treats cut-out corners as false negatives.
+    #     - BUT, I probably don't want this function to consider cut-out corners
+    #       either.
+    return get_is_90_ceiling(relative_x, relative_y)
 
 
-func _get_is_bottom_left_corner_concave_90_vertical_to_45() -> bool:
-    return _get_is_bottom_left_empty() and \
-            _get_is_bottom_90_right_wall() and \
-            _get_is_bottom_present() and \
-            !_get_is_left_90_ceiling()
+func get_is_90_ceiling_at_left(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    # - Account for transitions to other angles:
+    #   - The below treats A90 with curve-in to A45 as a false positive.
+    #   - The below treats half-A90 to A27 as a false negative.
+    #   - The below treats cut-out corners as false negatives.
+    #     - BUT, I probably don't want this function to consider cut-out corners
+    #       either.
+    return get_is_90_ceiling(relative_x, relative_y)
 
 
-func _get_is_bottom_right_corner_concave_90_vertical_to_45() -> bool:
-    return _get_is_bottom_right_empty() and \
-            _get_is_bottom_90_left_wall() and \
-            _get_is_bottom_present() and \
-            !_get_is_right_90_ceiling()
+func get_is_90_left_wall_at_top(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    # - Account for transitions to other angles:
+    #   - The below treats A90 with curve-in to A45 as a false positive.
+    #   - The below treats half-A90 to A27 as a false negative.
+    #   - The below treats cut-out corners as false negatives.
+    #     - BUT, I probably don't want this function to consider cut-out corners
+    #       either.
+    return get_is_90_left_wall(relative_x, relative_y)
 
 
-func _get_is_top_left_corner_concave_90_horizontal_to_45() -> bool:
-    return _get_is_top_left_empty() and \
-            _get_is_left_90_floor() and \
-            _get_is_top_present() and \
-            !_get_is_top_90_right_wall()
+func get_is_90_left_wall_at_bottom(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    # - Account for transitions to other angles:
+    #   - The below treats A90 with curve-in to A45 as a false positive.
+    #   - The below treats half-A90 to A27 as a false negative.
+    #   - The below treats cut-out corners as false negatives.
+    #     - BUT, I probably don't want this function to consider cut-out corners
+    #       either.
+    return get_is_90_left_wall(relative_x, relative_y)
 
 
-func _get_is_top_right_corner_concave_90_horizontal_to_45() -> bool:
-    return _get_is_top_right_empty() and \
-            _get_is_right_90_floor() and \
-            _get_is_top_present() and \
-            !_get_is_top_90_left_wall()
+func get_is_90_right_wall_at_top(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    # - Account for transitions to other angles:
+    #   - The below treats A90 with curve-in to A45 as a false positive.
+    #   - The below treats half-A90 to A27 as a false negative.
+    #   - The below treats cut-out corners as false negatives.
+    #     - BUT, I probably don't want this function to consider cut-out corners
+    #       either.
+    return get_is_90_right_wall(relative_x, relative_y)
 
 
-func _get_is_bottom_left_corner_concave_90_horizontal_to_45() -> bool:
-    return _get_is_bottom_left_empty() and \
-            _get_is_left_90_ceiling() and \
-            _get_is_bottom_present() and \
-            !_get_is_bottom_90_right_wall()
+func get_is_90_right_wall_at_bottom(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: ------------------------
+    # - Account for transitions to other angles:
+    #   - The below treats A90 with curve-in to A45 as a false positive.
+    #   - The below treats half-A90 to A27 as a false negative.
+    #   - The below treats cut-out corners as false negatives.
+    #     - BUT, I probably don't want this function to consider cut-out corners
+    #       either.
+    return get_is_90_right_wall(relative_x, relative_y)
 
 
-func _get_is_bottom_right_corner_concave_90_horizontal_to_45() -> bool:
-    return _get_is_bottom_right_empty() and \
-            _get_is_right_90_ceiling() and \
-            _get_is_bottom_present() and \
-            !_get_is_bottom_90_left_wall()
+func get_is_top_left_corner_clipped_90_90(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_90_floor_at_right(
+                relative_x - 1, relative_y) and \
+            get_is_90_right_wall_at_bottom(
+                relative_x, relative_y - 1)
+
+
+func get_is_top_right_corner_clipped_90_90(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_90_floor_at_left(
+                relative_x + 1, relative_y) and \
+            get_is_90_left_wall_at_bottom(
+                relative_x, relative_y - 1)
+
+
+func get_is_bottom_left_corner_clipped_90_90(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_90_ceiling_at_right(
+                relative_x - 1, relative_y) and \
+            get_is_90_right_wall_at_top(
+                relative_x, relative_y + 1)
+
+
+func get_is_bottom_right_corner_clipped_90_90(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_90_ceiling_at_left(
+                relative_x + 1, relative_y) and \
+            get_is_90_left_wall_at_top(
+                relative_x, relative_y + 1)
+
+
+func get_is_top_left_corner_clipped_45_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_45_pos_floor(relative_x - 1, relative_y) and \
+            get_is_45_pos_floor(relative_x, relative_y - 1)
+
+
+func get_is_top_right_corner_clipped_45_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_45_neg_floor(relative_x + 1, relative_y) and \
+            get_is_45_neg_floor(relative_x, relative_y - 1)
+
+
+func get_is_bottom_left_corner_clipped_45_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_45_neg_ceiling(relative_x - 1, relative_y) and \
+            get_is_45_neg_ceiling(relative_x, relative_y + 1)
+
+
+func get_is_bottom_right_corner_clipped_45_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_45_pos_ceiling(relative_x + 1, relative_y) and \
+            get_is_45_pos_ceiling(relative_x, relative_y + 1)
+
+
+func get_is_top_left_corner_clipped_90H_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_90_floor_at_right(
+                relative_x - 1, relative_y) and \
+            get_is_45_pos_floor(relative_x, relative_y - 1)
+
+
+func get_is_top_right_corner_clipped_90H_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_90_floor_at_right(
+                relative_x + 1, relative_y) and \
+            get_is_45_neg_floor(relative_x, relative_y - 1)
+
+
+func get_is_bottom_left_corner_clipped_90H_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_90_ceiling_at_right(
+                relative_x - 1, relative_y) and \
+            get_is_45_neg_ceiling(relative_x, relative_y + 1)
+
+
+func get_is_bottom_right_corner_clipped_90H_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_90_ceiling_at_left(
+                relative_x + 1, relative_y) and \
+            get_is_45_pos_ceiling(relative_x, relative_y + 1)
+
+
+func get_is_top_left_corner_clipped_90V_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_45_pos_floor(relative_x - 1, relative_y) and \
+            get_is_90_right_wall_at_bottom(relative_x, relative_y - 1)
+
+
+func get_is_top_right_corner_clipped_90V_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_45_neg_floor(relative_x + 1, relative_y) and \
+            get_is_90_left_wall_at_bottom(relative_x, relative_y - 1)
+
+
+func get_is_bottom_left_corner_clipped_90V_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_45_neg_ceiling(relative_x - 1, relative_y) and \
+            get_is_90_right_wall_at_top(relative_x, relative_y + 1)
+
+
+func get_is_bottom_right_corner_clipped_90V_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_45_pos_ceiling(relative_x + 1, relative_y) and \
+            get_is_90_left_wall_at_top(relative_x, relative_y + 1)
+
+
+func get_is_top_left_corner_clipped_partial_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            (get_is_45_pos_floor(relative_x - 1, relative_y) or \
+            get_is_45_pos_floor(relative_x, relative_y - 1))
+
+
+func get_is_top_right_corner_clipped_partial_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            (get_is_45_neg_floor(relative_x + 1, relative_y) or \
+            get_is_45_neg_floor(relative_x, relative_y - 1))
+
+
+func get_is_bottom_left_corner_clipped_partial_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            (get_is_45_neg_ceiling(relative_x - 1, relative_y) or \
+            get_is_45_neg_ceiling(relative_x, relative_y + 1))
+
+
+func get_is_bottom_right_corner_clipped_partial_45(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            (get_is_45_pos_ceiling(relative_x + 1, relative_y) or \
+            get_is_45_pos_ceiling(relative_x, relative_y + 1))
+
+
+func get_is_top_left_corner_clipped_partial_27(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func get_is_top_right_corner_clipped_partial_27(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func get_is_bottom_left_corner_clipped_partial_27(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
+
+func get_is_bottom_right_corner_clipped_partial_27(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    # FIXME: LEFT OFF HERE: -----------------------
+    return false
+
 
 
 

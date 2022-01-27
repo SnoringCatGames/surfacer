@@ -82,7 +82,7 @@ func _is_tile_bound( \
             _tile_id_to_config[neighbor_id].is_collidable
 
 
-func tile_get_neighbor_angle_type(tile_id: int) -> int:
+func tile_get_angle_type(tile_id: int) -> int:
     if tile_id == TileMap.INVALID_CELL:
         return CellAngleType.EMPTY
     else:
