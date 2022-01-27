@@ -948,6 +948,133 @@ func _get_is_right_wall_with_45_curve_in_at_bottom() -> bool:
                     _get_is_right_empty())
 
 
+func _get_is_neighbor_90_left_wall(
+        relative_x: int,
+        relative_y: int) -> bool:
+    if get_is_neighbor_present(relative_x + 1, relative_y):
+        # Can't be a wall if there is another block in front.
+        return false
+    match get_neighbor_angle_type(relative_x, relative_y):
+        CellAngleType.A90:
+            return true
+        CellAngleType.A45:
+            # A45s become A90s when there are neighbors on either side and at
+            # least one of the two front corners are empty.
+            return get_is_neighbor_present(relative_x, relative_y - 1) and \
+                    get_is_neighbor_present(relative_x, relative_y + 1) and \
+                    (get_is_neighbor_empty(relative_x + 1, relative_y - 1) or \
+                    get_is_neighbor_empty(relative_x + 1, relative_y + 1))
+        CellAngleType.A27:
+            # A27s become A90s in a few cases.
+            var two_exposed_at_top := \
+                    get_is_neighbor_present(relative_x, relative_y - 1) and \
+                    get_is_neighbor_present(relative_x, relative_y - 2) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y - 1) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y - 2)
+            var two_exposed_at_bottom := \
+                    get_is_neighbor_present(relative_x, relative_y + 1) and \
+                    get_is_neighbor_present(relative_x, relative_y + 2) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y + 1) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y + 2)
+            # Long side.
+            if two_exposed_at_top and \
+                    two_exposed_at_bottom:
+                return true
+            # Convex on one side.
+            if two_exposed_at_top and \
+                    get_is_neighbor_empty(relative_x, relative_y - 3):
+                return true
+            if two_exposed_at_bottom and \
+                    get_is_neighbor_empty(relative_x, relative_y + 3):
+                return true
+            # Concave on one side.
+            if two_exposed_at_top and \
+                    get_is_neighbor_present(relative_x, relative_y - 3) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y - 3) and \
+                    get_is_neighbor_present(relative_x, relative_y + 1) and \
+                    get_is_neighbor_present(relative_x + 1, relative_y + 1):
+                return true
+            if two_exposed_at_top and \
+                    get_is_neighbor_present(relative_x, relative_y + 1) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y + 1) and \
+                    get_is_neighbor_present(relative_x, relative_y + 2) and \
+                    get_is_neighbor_present(relative_x + 1, relative_y + 2):
+                return true
+            if two_exposed_at_bottom and \
+                    get_is_neighbor_present(relative_x, relative_y + 3) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y + 3) and \
+                    get_is_neighbor_present(relative_x, relative_y - 1) and \
+                    get_is_neighbor_present(relative_x + 1, relative_y - 1):
+                return true
+            if two_exposed_at_bottom and \
+                    get_is_neighbor_present(relative_x, relative_y - 1) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y - 1) and \
+                    get_is_neighbor_present(relative_x, relative_y - 2) and \
+                    get_is_neighbor_present(relative_x + 1, relative_y - 2):
+                return true
+            # Cap on one side, with this tile being exposed on opposite sides.
+            if get_is_neighbor_present(relative_x, relative_y - 1) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y - 1) and \
+                    get_is_neighbor_empty(relative_x, relative_y - 2) and \
+                    get_is_neighbor_empty(relative_x - 1, relative_y - 1) and \
+                    get_is_neighbor_empty(relative_x - 1, relative_y) and \
+                    get_is_neighbor_present(relative_x, relative_y + 1):
+                return true
+            if get_is_neighbor_present(relative_x, relative_y + 1) and \
+                    get_is_neighbor_empty(relative_x + 1, relative_y + 1) and \
+                    get_is_neighbor_empty(relative_x, relative_y + 2) and \
+                    get_is_neighbor_empty(relative_x - 1, relative_y + 1) and \
+                    get_is_neighbor_empty(relative_x - 1, relative_y) and \
+                    get_is_neighbor_present(relative_x, relative_y - 1):
+                return true
+            # Non-A27 A90 surface on one side and long on the other side.
+            var is_top_non_a27_a90_exposed := \
+                    get_neighbor_angle_type(relative_x, relative_y - 1) != \
+                        CellAngleType.A27 and \
+                    _get_is_neighbor_90_left_wall(relative_x, relative_y - 1)
+            if is_top_non_a27_a90_exposed and \
+                    two_exposed_at_bottom:
+                return true
+            var is_bottom_non_a27_a90_exposed := \
+                    get_neighbor_angle_type(relative_x, relative_y + 1) != \
+                        CellAngleType.A27 and \
+                    _get_is_neighbor_90_left_wall(relative_x, relative_y + 1)
+            if is_bottom_non_a27_a90_exposed and \
+                    two_exposed_at_top:
+                return true
+            # Non-A27 A90 surface on one side and concave on the other side.
+            if is_top_non_a27_a90_exposed and \
+                    get_is_neighbor_present(relative_x, relative_y + 1) and \
+                    (get_is_neighbor_present(relative_x + 1, relative_y + 1) or \
+                    get_is_neighbor_present(relative_x, relative_y + 2) and \
+                    get_is_neighbor_present(relative_x + 1, relative_y + 2)):
+                return true
+            if is_bottom_non_a27_a90_exposed and \
+                    get_is_neighbor_present(relative_x, relative_y - 1) and \
+                    (get_is_neighbor_present(relative_x + 1, relative_y - 1) or \
+                    get_is_neighbor_present(relative_x, relative_y - 2) and \
+                    get_is_neighbor_present(relative_x + 1, relative_y - 2)):
+                return true
+            # Non-A27 A90 surface on both sides.
+            if is_top_non_a27_a90_exposed and \
+                    is_bottom_non_a27_a90_exposed:
+                return true
+            return false
+        _:
+            Sc.logger.error()
+            return false
+
+
+func _get_is_neighbor_90_right_wall(
+        relative_x: int,
+        relative_y: int) -> bool:
+    return (get_neighbor_angle_type(relative_x, relative_y) == \
+                CellAngleType.A90 or \
+            get_is_neighbor_present(relative_x, relative_y - 1) and \
+            get_is_neighbor_present(relative_x, relative_y + 1)) and \
+            get_is_neighbor_empty(relative_x - 1, relative_y)
+
+
 func _get_is_top_90_left_wall() -> bool:
     return (_get_top_angle_type() == CellAngleType.A90 or \
             get_is_neighbor_present(0,-2)) and \
