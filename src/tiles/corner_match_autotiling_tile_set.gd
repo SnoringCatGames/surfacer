@@ -605,15 +605,15 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
             return EMPTY
         else:
             # Top empty, left present.
-            if proximity.is_90_floor:
-                if proximity.is_floor_with_45_curve_in_at_left:
+            if proximity.get_is_90_floor_at_left():
+                if proximity.get_is_45_pos_floor_right(-1, 0):
                     return EXT_90H_45_CONVEX
                 else:
                     return EXT_90H
-            elif proximity.is_45_neg_floor:
-                if proximity.is_left_45_pos:
+            elif proximity.get_is_45_neg_floor():
+                if proximity.get_is_45_pos_floor(-1, 0):
                     return EXT_45_FLOOR_TO_45_CONVEX
-                elif proximity.is_left_90_floor:
+                elif proximity.get_is_90_floor_at_right(-1, 0):
                     return EXT_45_FLOOR_TO_90
                 else:
                     return EXT_45_FLOOR
@@ -625,15 +625,15 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
     else:
         if proximity.is_left_empty:
             # Top present, left empty.
-            if proximity.is_90_right_wall:
-                if proximity.is_right_wall_with_45_curve_in_at_top:
+            if proximity.get_is_90_right_wall_at_top():
+                if proximity.get_is_45_pos_floor(0, -1):
                     return EXT_90V_45_CONVEX
                 else:
                     return EXT_90V
-            elif proximity.is_45_neg_ceiling:
-                if proximity.is_top_45_pos:
+            elif proximity.get_is_45_neg_ceiling():
+                if proximity.get_is_45_pos_floor(0, -1):
                     return EXT_45_CEILING_TO_45_CONVEX
-                elif proximity.is_top_90_right_wall:
+                elif proximity.get_is_90_right_wall_at_bottom(0, -1):
                     return EXT_45_CEILING_TO_90
                 else:
                     return EXT_45_CEILING
@@ -646,27 +646,27 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
             # Adjacent sides are present.
             if proximity.is_top_left_empty:
                 # Adjacent sides are present, adjacent corner is empty.
-                if proximity.is_top_90_right_wall:
-                    if proximity.is_left_90_floor:
+                if proximity.get_is_90_right_wall_at_bottom(0, -1):
+                    if proximity.get_is_90_floor_at_right(-1, 0):
                         return EXT_90_90_CONCAVE
-                    elif proximity.is_left_45_pos:
+                    elif proximity.get_is_45_pos_floor(-1, 0):
                         return EXT_90V_45_CONCAVE
-                    elif proximity.left_angle_type == CellAngleType.A27:
+                    elif proximity.get_angle_type(-1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
                         Sc.logger.error()
-                elif proximity.is_top_45_pos:
-                    if proximity.is_left_90_floor:
+                elif proximity.get_is_45_pos_floor(0, -1):
+                    if proximity.get_is_90_floor_at_right(-1, 0):
                         return EXT_90H_45_CONCAVE
-                    elif proximity.is_left_45_pos:
+                    elif proximity.get_is_45_pos_floor(-1, 0):
                         return EXT_45_CONCAVE
-                    elif proximity.left_angle_type == CellAngleType.A27:
+                    elif proximity.get_angle_type(-1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
                         Sc.logger.error()
-                elif proximity.top_angle_type == CellAngleType.A27:
+                elif proximity.get_angle_type(0, -1) == CellAngleType.A27:
                     # FIXME: LEFT OFF HERE: -------- A27
                     pass
                 else:
@@ -694,8 +694,8 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
                     return EXTERIOR
                 elif proximity.is_bottom_right_empty:
                     # Only exposed at opposite corner.
-                    if proximity.is_bottom_right_corner_concave_partial_45:
-                        if proximity.is_bottom_right_corner_concave_partial_27:
+                    if proximity.get_is_bottom_right_corner_clipped_partial_45():
+                        if proximity.get_is_bottom_right_corner_clipped_partial_27():
                             # FIXME: LEFT OFF HERE: -------- A27
                             pass
                         else:
@@ -704,9 +704,9 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
                                 # FIXME: LEFT OFF HERE: --------------------------------------------------------------
                                 # - Replace these with non-tile-type-specific checks.
                                 # - Instead, check for a 90-90 cutout IN THE NEIGHBOR.
-                                if proximity.top_left_angle_type == CellAngleType.A90:
+                                if proximity.get_angle_type(-1, -1) == CellAngleType.A90:
                                     return INT_45_INT_CORNER_WITH_90_90_CONCAVE
-                                elif proximity.top_left_angle_type == CellAngleType.A27:
+                                elif proximity.get_angle_type(-1, -1) == CellAngleType.A27:
                                     # FIXME: LEFT OFF HERE: -------- A27
                                     pass
                                 else:
@@ -721,7 +721,7 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
                             else:
                                 return INT_45_INT_CORNER
                     else:
-                        if proximity.is_bottom_right_corner_concave_partial_27:
+                        if proximity.get_is_bottom_right_corner_clipped_partial_27():
                             # FIXME: LEFT OFF HERE: -------- A27
                             pass
                         else:
