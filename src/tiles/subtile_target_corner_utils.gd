@@ -85,16 +85,12 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
                             "Invalid case: %s" % proximity.to_string())
             else:
                 # Adjacent sides and corner are present.
-                if proximity.is_bottom_present and \
-                        proximity.is_right_present and \
-                        proximity.is_bottom_left_empty and \
-                        proximity.is_bottom_right_empty and \
+                if proximity.get_is_bottom_left_corner_clipped_45_45() and \
+                        proximity.get_is_bottom_right_corner_clipped_45_45() and \
                         !proximity.is_top_right_empty:
                     return SubtileCorner.INT_45_MID_NOTCH_H
-                elif proximity.is_bottom_present and \
-                        proximity.is_right_present and \
-                        proximity.is_top_right_empty and \
-                        proximity.is_bottom_right_empty and \
+                elif proximity.get_is_top_right_corner_clipped_45_45() and \
+                        proximity.get_is_bottom_right_corner_clipped_45_45() and \
                         !proximity.is_bottom_left_empty:
                     return SubtileCorner.INT_45_MID_NOTCH_V
                 elif proximity.is_bottom_empty or \
@@ -250,16 +246,12 @@ static func _get_target_top_right_corner(proximity: CellProximity) -> int:
                             "Invalid case: %s" % proximity.to_string())
             else:
                 # Adjacent sides and corner are present.
-                if proximity.is_bottom_present and \
-                        proximity.is_left_present and \
-                        proximity.is_bottom_right_empty and \
-                        proximity.is_bottom_left_empty and \
+                if proximity.get_is_bottom_left_corner_clipped_45_45() and \
+                        proximity.get_is_bottom_right_corner_clipped_45_45() and \
                         !proximity.is_top_left_empty:
                     return SubtileCorner.INT_45_MID_NOTCH_H
-                elif proximity.is_bottom_present and \
-                        proximity.is_left_present and \
-                        proximity.is_top_left_empty and \
-                        proximity.is_bottom_left_empty and \
+                elif proximity.get_is_top_left_corner_clipped_45_45() and \
+                        proximity.get_is_bottom_right_corner_clipped_45_45() and \
                         !proximity.is_bottom_right_empty:
                     return SubtileCorner.INT_45_MID_NOTCH_V
                 elif proximity.is_bottom_empty or \
@@ -415,16 +407,12 @@ static func _get_target_bottom_left_corner(proximity: CellProximity) -> int:
                             "Invalid case: %s" % proximity.to_string())
             else:
                 # Adjacent sides and corner are present.
-                if proximity.is_top_present and \
-                        proximity.is_right_present and \
-                        proximity.is_top_left_empty and \
-                        proximity.is_top_right_empty and \
+                if proximity.get_is_top_left_corner_clipped_45_45() and \
+                        proximity.get_is_top_right_corner_clipped_45_45() and \
                         !proximity.is_bottom_right_empty:
                     return SubtileCorner.INT_45_MID_NOTCH_H
-                elif proximity.is_top_present and \
-                        proximity.is_right_present and \
-                        proximity.is_bottom_right_empty and \
-                        proximity.is_top_right_empty and \
+                elif proximity.get_is_top_right_corner_clipped_45_45() and \
+                        proximity.get_is_bottom_right_corner_clipped_45_45() and \
                         !proximity.is_top_left_empty:
                     return SubtileCorner.INT_45_MID_NOTCH_V
                 elif proximity.is_top_empty or \
@@ -580,16 +568,12 @@ static func _get_target_bottom_right_corner(proximity: CellProximity) -> int:
                             "Invalid case: %s" % proximity.to_string())
             else:
                 # Adjacent sides and corner are present.
-                if proximity.is_top_present and \
-                        proximity.is_left_present and \
-                        proximity.is_top_right_empty and \
-                        proximity.is_top_left_empty and \
+                if proximity.get_is_top_left_corner_clipped_45_45() and \
+                        proximity.get_is_top_right_corner_clipped_45_45() and \
                         !proximity.is_bottom_left_empty:
                     return SubtileCorner.INT_45_MID_NOTCH_H
-                elif proximity.is_top_present and \
-                        proximity.is_left_present and \
-                        proximity.is_bottom_left_empty and \
-                        proximity.is_top_left_empty and \
+                elif proximity.get_is_top_left_corner_clipped_45_45() and \
+                        proximity.get_is_bottom_left_corner_clipped_45_45() and \
                         !proximity.is_top_right_empty:
                     return SubtileCorner.INT_45_MID_NOTCH_V
                 elif proximity.is_top_empty or \
