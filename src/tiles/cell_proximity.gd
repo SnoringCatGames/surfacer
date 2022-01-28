@@ -27,11 +27,6 @@ var bitmask: int
 
 # FIXME: LEFT OFF HERE: ---------- Remove any unused members.
 
-var is_fully_internal: bool \
-        setget ,_get_is_fully_internal
-var are_all_sides_covered: bool \
-        setget ,_get_are_all_sides_covered
-
 var is_angle_type_90: bool \
         setget ,_get_is_angle_type_90
 var is_angle_type_45: bool \
@@ -111,14 +106,41 @@ func _init(
         tile_map: SurfacesTileMap,
         tile_set: SurfacesTileSet,
         position: Vector2,
-        tile_id: int,
-        bitmask: int) -> void:
+        tile_id := TileMap.INVALID_CELL) -> void:
     self.tile_map = tile_map
     self.tile_set = tile_set
     self.position = position
-    self.tile_id = tile_id
-    self.bitmask = bitmask
+    self.tile_id = \
+            tile_id if \
+            tile_id != TileMap.INVALID_CELL else \
+            tile_map.get_cellv(position)
+    self.bitmask = get_cell_actual_bitmask(position, tile_map)
     self.angle_type = get_angle_type(0,0)
+
+
+static func get_cell_actual_bitmask(
+        position: Vector2,
+        tile_map: TileMap) -> int:
+    var bitmask := 0
+    if tile_map.get_cellv(position + Vector2(-1, -1)) != TileMap.INVALID_CELL:
+        bitmask |= TileSet.BIND_TOPLEFT
+    if tile_map.get_cellv(position + Vector2(0, -1)) != TileMap.INVALID_CELL:
+        bitmask |= TileSet.BIND_TOP
+    if tile_map.get_cellv(position + Vector2(1, -1)) != TileMap.INVALID_CELL:
+        bitmask |= TileSet.BIND_TOPRIGHT
+    if tile_map.get_cellv(position + Vector2(-1, 0)) != TileMap.INVALID_CELL:
+        bitmask |= TileSet.BIND_LEFT
+    if tile_map.get_cellv(position) != TileMap.INVALID_CELL:
+        bitmask |= TileSet.BIND_CENTER
+    if tile_map.get_cellv(position + Vector2(1, 0)) != TileMap.INVALID_CELL:
+        bitmask |= TileSet.BIND_RIGHT
+    if tile_map.get_cellv(position + Vector2(-1, 1)) != TileMap.INVALID_CELL:
+        bitmask |= TileSet.BIND_BOTTOMLEFT
+    if tile_map.get_cellv(position + Vector2(0, 1)) != TileMap.INVALID_CELL:
+        bitmask |= TileSet.BIND_BOTTOM
+    if tile_map.get_cellv(position + Vector2(1, 1)) != TileMap.INVALID_CELL:
+        bitmask |= TileSet.BIND_BOTTOMRIGHT
+    return bitmask
 
 
 func get_angle_type(relative_x := 0, relative_y := 0) -> int:
@@ -140,14 +162,6 @@ func get_is_empty(relative_x := 0, relative_y := 0) -> bool:
             position.x + relative_x,
             position.y + relative_y)
     return !tile_set._is_tile_bound(tile_id, neighbor_id)
-
-
-func _get_is_fully_internal() -> bool:
-    return bitmask == FULLY_INTERNAL_BITMASK
-
-
-func _get_are_all_sides_covered() -> bool:
-    return (bitmask ^ ALL_SIDES_BITMASK) == 0
 
 
 

@@ -111,28 +111,3 @@ func get_cell_autotile_bitmask(
             tile_map.get_cell_autotile_coord(position.x, position.y)
     
     return autotile_get_bitmask(tile_id, subtile_position)
-
-
-func get_cell_actual_bitmask(
-        position: Vector2,
-        tile_map: TileMap) -> int:
-    var bitmask := 0
-    if tile_map.get_cellv(position + Vector2(-1, -1)) != TileMap.INVALID_CELL:
-        bitmask |= TileSet.BIND_TOPLEFT
-    if tile_map.get_cellv(position + Vector2(0, -1)) != TileMap.INVALID_CELL:
-        bitmask |= TileSet.BIND_TOP
-    if tile_map.get_cellv(position + Vector2(1, -1)) != TileMap.INVALID_CELL:
-        bitmask |= TileSet.BIND_TOPRIGHT
-    if tile_map.get_cellv(position + Vector2(-1, 0)) != TileMap.INVALID_CELL:
-        bitmask |= TileSet.BIND_LEFT
-    if tile_map.get_cellv(position) != TileMap.INVALID_CELL:
-        bitmask |= TileSet.BIND_CENTER
-    if tile_map.get_cellv(position + Vector2(1, 0)) != TileMap.INVALID_CELL:
-        bitmask |= TileSet.BIND_RIGHT
-    if tile_map.get_cellv(position + Vector2(-1, 1)) != TileMap.INVALID_CELL:
-        bitmask |= TileSet.BIND_BOTTOMLEFT
-    if tile_map.get_cellv(position + Vector2(0, 1)) != TileMap.INVALID_CELL:
-        bitmask |= TileSet.BIND_BOTTOM
-    if tile_map.get_cellv(position + Vector2(1, 1)) != TileMap.INVALID_CELL:
-        bitmask |= TileSet.BIND_BOTTOMRIGHT
-    return bitmask

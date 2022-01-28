@@ -421,13 +421,11 @@ func _forward_subtile_selection(
     
     if Engine.editor_hint or \
             _supports_runtime_autotiling:
-        var actual_bitmask := get_cell_actual_bitmask(cell_position, tile_map)
         var proximity := CellProximity.new(
                 tile_map,
                 self,
                 cell_position,
-                tile_id,
-                actual_bitmask)
+                tile_id)
         subtile_position = _choose_subtile(proximity)
     
     if subtile_position != Vector2.INF:
@@ -457,6 +455,10 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
     # FIXME: LEFT OFF HERE: ---------------------------
     # - As an efficiency step, first check if the pre-existing cell in the
     #   TileMap already has the ideal match.
+    
+    # FIXME: LEFT OFF HERE: --------------------------------------
+    # - Add support for also checking eight in-bound neighbor corner types when
+    #   choosing subtiles.
     
     if _allows_partial_matches:
         var set := {}
@@ -515,15 +517,35 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
 
 
 static func _get_target_corners(proximity: CellProximity) -> Dictionary:
-    # FIXME: LEFT OFF HERE: --------------------------------------
-    # - Also include the eight in-bound neighbor corner types.
-    # - Add support for also checking these in-bound neighbor corner types when
-    #   choosing subtiles.
+    var top_proximity := CellProximity.new(
+            proximity.tile_map,
+            proximity.tile_set,
+            proximity.position + Vector2(0, -1))
+    var bottom_proximity := CellProximity.new(
+            proximity.tile_map,
+            proximity.tile_set,
+            proximity.position + Vector2(0, 1))
+    var left_proximity := CellProximity.new(
+            proximity.tile_map,
+            proximity.tile_set,
+            proximity.position + Vector2(-1, 0))
+    var right_proximity := CellProximity.new(
+            proximity.tile_map,
+            proximity.tile_set,
+            proximity.position + Vector2(1, 0))
     return {
         tl = _get_target_top_left_corner(proximity),
         tr = _get_target_top_right_corner(proximity),
         bl = _get_target_bottom_left_corner(proximity),
         br = _get_target_bottom_right_corner(proximity),
+        inbound_t_bl = _get_target_bottom_left_corner(top_proximity),
+        inbound_t_br = _get_target_bottom_right_corner(top_proximity),
+        inbound_b_tl = _get_target_top_left_corner(bottom_proximity),
+        inbound_b_tr = _get_target_top_right_corner(bottom_proximity),
+        inbound_l_tr = _get_target_top_right_corner(left_proximity),
+        inbound_l_br = _get_target_bottom_right_corner(left_proximity),
+        inbound_r_tl = _get_target_top_left_corner(right_proximity),
+        inbound_r_bl = _get_target_bottom_left_corner(right_proximity),
         is_a90 = proximity.is_angle_type_90,
         is_a45 = proximity.is_angle_type_45,
         is_a27 = proximity.is_angle_type_27,
