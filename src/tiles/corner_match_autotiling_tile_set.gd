@@ -289,7 +289,7 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
             _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES.size())
     for corner_type in _SUBTILE_CORNER_TYPE_VALUE_TO_KEY:
         assert(_CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES.has(corner_type))
-        assert(_CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[corner_type is Array])
+        assert(_CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[corner_type] is Array)
     
     # Convert additional-matching arrays into sets.
     for corner_type in _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES:
