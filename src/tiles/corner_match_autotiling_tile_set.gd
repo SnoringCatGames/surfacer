@@ -207,6 +207,14 @@ var _SUBTILE_CORNER_TYPE_VALUE_TO_KEY: Dictionary
 #             tr: SubtileCorner,
 #             bl: SubtileCorner,
 #             br: SubtileCorner,
+#             inbound_t_bl?: SubtileCorner,
+#             inbound_t_br?: SubtileCorner,
+#             inbound_b_tl?: SubtileCorner,
+#             inbound_b_tr?: SubtileCorner,
+#             inbound_l_tr?: SubtileCorner,
+#             inbound_l_br?: SubtileCorner,
+#             inbound_r_tl?: SubtileCorner,
+#             inbound_r_bl?: SubtileCorner,
 #         }>>>
 var _corner_to_type_to_subtiles: Dictionary
 
@@ -457,8 +465,8 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
     #   TileMap already has the ideal match.
     
     # FIXME: LEFT OFF HERE: --------------------------------------
-    # - Add support for also checking eight in-bound neighbor corner types when
-    #   choosing subtiles.
+    # - Add support for also checking the eight in-bound neighbor corner types
+    #   when choosing subtiles.
     
     if _allows_partial_matches:
         var set := {}
