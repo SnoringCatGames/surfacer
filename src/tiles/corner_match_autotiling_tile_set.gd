@@ -37,13 +37,13 @@ extends SurfacesTileSet
 # - Is there a simpler way to allow the tile-set author to configure which
 #   slopes are allowed to transition into which others?
 
-var _CORNERS := [
+const _CORNERS := [
     "tl",
     "tr",
     "bl",
     "br",
 ]
-var _INBOUND_CORNERS := [
+const _INBOUND_CORNERS := [
     "inbound_t_bl",
     "inbound_t_br",
     "inbound_b_tl",
@@ -53,7 +53,18 @@ var _INBOUND_CORNERS := [
     "inbound_r_tl",
     "inbound_r_bl",
 ]
-
+const _ALL_EMPTY_CORNERS := {
+    tl = SubtileCorner.EMPTY,
+    tr = SubtileCorner.EMPTY,
+    bl = SubtileCorner.EMPTY,
+    br = SubtileCorner.EMPTY,
+}
+const _ALL_INTERIOR_CORNERS := {
+    tl = SubtileCorner.INTERIOR,
+    tr = SubtileCorner.INTERIOR,
+    bl = SubtileCorner.INTERIOR,
+    br = SubtileCorner.INTERIOR,
+}
 
 
 # NOTE:
@@ -154,6 +165,8 @@ var _SUBTILE_CORNER_TYPE_VALUE_TO_KEY: Dictionary
 var _corner_to_type_to_subtiles: Dictionary
 
 var _error_indicator_subtile_position: Vector2
+var _fully_exterior_subtile_position: Vector2
+var _fully_interior_subtile_position: Vector2
 
 # -   If true, the autotiling logic will try to find the best match given which
 #     subtiles are available.
@@ -200,6 +213,14 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
             subtiles_manifest.error_indicator_subtile_position is Vector2)
     _error_indicator_subtile_position = \
             subtiles_manifest.error_indicator_subtile_position
+    assert(subtiles_manifest.has("fully_exterior_subtile_position") and \
+            subtiles_manifest.fully_exterior_subtile_position is Vector2)
+    _fully_exterior_subtile_position = \
+            subtiles_manifest.fully_exterior_subtile_position
+    assert(subtiles_manifest.has("fully_interior_subtile_position") and \
+            subtiles_manifest.fully_interior_subtile_position is Vector2)
+    _fully_interior_subtile_position = \
+            subtiles_manifest.fully_interior_subtile_position
     
     # If the additional matching type map is a const and has already been
     # parsed, then skip it.
@@ -492,6 +513,10 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
                     Sc.utils.get_vector_string(best_match, 0),
                 ])
         return best_match
+    elif _get_match_priority(_ALL_EMPTY_CORNERS, target_corners) >= 4.0:
+        return _fully_exterior_subtile_position
+    elif _get_match_priority(_ALL_INTERIOR_CORNERS, target_corners) >= 4.0:
+        return _fully_interior_subtile_position
     else:
         return _error_indicator_subtile_position
 
