@@ -34,6 +34,15 @@ var is_angle_type_45: bool \
 var is_angle_type_27: bool \
         setget ,_get_is_angle_type_27
 
+var is_top_left_present: bool setget ,_get_is_top_left_present
+var is_top_present: bool setget ,_get_is_top_present
+var is_top_right_present: bool setget ,_get_is_top_right_present
+var is_left_present: bool setget ,_get_is_left_present
+var is_right_present: bool setget ,_get_is_right_present
+var is_bottom_left_present: bool setget ,_get_is_bottom_left_present
+var is_bottom_present: bool setget ,_get_is_bottom_present
+var is_bottom_right_present: bool setget ,_get_is_bottom_right_present
+
 var is_top_left_empty: bool setget ,_get_is_top_left_empty
 var is_top_empty: bool setget ,_get_is_top_empty
 var is_top_right_empty: bool setget ,_get_is_top_right_empty
@@ -141,6 +150,10 @@ static func get_cell_actual_bitmask(
     if tile_map.get_cellv(position + Vector2(1, 1)) != TileMap.INVALID_CELL:
         bitmask |= TileSet.BIND_BOTTOMRIGHT
     return bitmask
+
+
+func to_string() -> String:
+    return "CellProximity%s" % Sc.utils.get_vector_string(position, 0)
 
 
 func get_angle_type(relative_x := 0, relative_y := 0) -> int:
