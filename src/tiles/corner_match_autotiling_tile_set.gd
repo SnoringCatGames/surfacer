@@ -11,11 +11,27 @@ extends SurfacesTileSet
 # FIXME: LEFT OFF HERE: ------------------------------------------------------
 # - Update the corner-type legend to match the latest enums list.
 
-# FIXME: LEFT OFF HERE: --------------------------------------------------------------
-# - RE-THINK THE BINDING STRATEGY!
-# - Instead of being based on sides (top-left, top-right, left-top, left-bottom, etc.), be based on corners.
-#   - This should be more intuitive to conceptualize, and less text to encode?
-# - This might be more enum cases, but probably simpler logic for matching.
+
+# typedef SubtileConfig: {
+#     # Required.
+#     p: Vector2,
+#     a: Array<90|45|27>,
+#     tl: SubtileCorner,
+#     tr: SubtileCorner,
+#     bl: SubtileCorner,
+#     br: SubtileCorner,
+#     
+#     # Optional.
+#     inbound_t_bl?: SubtileCorner,
+#     inbound_t_br?: SubtileCorner,
+#     inbound_b_tl?: SubtileCorner,
+#     inbound_b_tr?: SubtileCorner,
+#     inbound_l_tr?: SubtileCorner,
+#     inbound_l_br?: SubtileCorner,
+#     inbound_r_tl?: SubtileCorner,
+#     inbound_r_bl?: SubtileCorner,
+# }
+
 # SubtileCorner
 enum {
     UNKNOWN,
@@ -33,41 +49,41 @@ enum {
     EXT_90H,
     EXT_90V,
     EXT_90_90_CONVEX,
-    EXT_90_90_CONCAVE,
     
-    
-    EXT_45_CONCAVE,
     EXT_45_FLOOR,
     EXT_45_CEILING,
     
+    EXT_CLIPPED_90_90,
+    EXT_CLIPPED_45_45,
+    EXT_CLIPPED_90H_45,
+    EXT_CLIPPED_90V_45,
+    
+    EXT_90H_TO_45_CONVEX,
+    EXT_90V_TO_45_CONVEX,
+    EXT_90H_TO_45_CONVEX_ACUTE,
+    EXT_90V_TO_45_CONVEX_ACUTE,
+
     EXT_45_FLOOR_TO_90,
     EXT_45_FLOOR_TO_45_CONVEX,
     EXT_45_CEILING_TO_90,
     EXT_45_CEILING_TO_45_CONVEX,
     
     
-    EXT_27_SHALLOW_CONCAVE,
-    EXT_27_STEEP_CONCAVE,
+    EXT_CLIPPED_27_SHALLOW,
+    EXT_CLIPPED_27_STEEP,
     
-    EXT_27P_FLOOR_SHALLOW,
-    EXT_27N_FLOOR_SHALLOW,
-    EXT_27P_FLOOR_STEEP,
-    EXT_27N_FLOOR_STEEP,
+    EXT_27_FLOOR_SHALLOW_CLOSE,
+    EXT_27_FLOOR_SHALLOW_FAR,
+    EXT_27_FLOOR_STEEP_CLOSE,
+    EXT_27_FLOOR_STEEP_FAR,
+    
+    EXT_27_CEILING_SHALLOW_CLOSE,
+    EXT_27_CEILING_SHALLOW_FAR,
+    EXT_27_CEILING_STEEP_CLOSE,
+    EXT_27_CEILING_STEEP_FAR,
     
     
-    EXT_27P_CEILING_SHALLOW,
-    EXT_27N_CEILING_SHALLOW,
-    EXT_27P_CEILING_STEEP,
-    EXT_27N_CEILING_STEEP,
     
-    
-    EXT_90H_45_CONCAVE,
-    EXT_90V_45_CONCAVE,
-    
-    EXT_90H_45_CONVEX,
-    EXT_90V_45_CONVEX,
-    EXT_90H_45_CONVEX_ACUTE,
-    EXT_90V_45_CONVEX_ACUTE,
     
     
     INT_90H,
@@ -114,17 +130,18 @@ enum {
 var _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES := {
     UNKNOWN: [],
     
-    EMPTY: [EXT_90_90_CONVEX, EXT_90H_45_CONVEX_ACUTE, EXT_90V_45_CONVEX_ACUTE],
+    EMPTY: [EXT_90_90_CONVEX, EXT_90H_TO_45_CONVEX_ACUTE, EXT_90V_TO_45_CONVEX_ACUTE],
     EXTERIOR: [],
     INTERIOR: [],
     
     EXT_90H: [],
     EXT_90V: [],
     EXT_90_90_CONVEX: [EMPTY],
-    EXT_90_90_CONCAVE: [-EXT_45_CONCAVE],
+
+    EXT_CLIPPED_90_90: [-EXT_CLIPPED_45_45],
     
     
-    EXT_45_CONCAVE: [],
+    EXT_CLIPPED_45_45: [],
     EXT_45_FLOOR: [],
     EXT_45_CEILING: [],
     
@@ -134,26 +151,26 @@ var _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES := {
     EXT_45_CEILING_TO_45_CONVEX: [-EXT_45_CEILING],
     
     
-    EXT_27_SHALLOW_CONCAVE: [-EXT_45_CONCAVE],
-    EXT_27_STEEP_CONCAVE: [-EXT_45_CONCAVE],
-    EXT_27P_FLOOR_SHALLOW: [-EXT_90H],
-    EXT_27N_FLOOR_SHALLOW: [-EXT_90H],
-    EXT_27P_FLOOR_STEEP: [-EXT_90V],
-    EXT_27N_FLOOR_STEEP: [-EXT_90V],
+    EXT_CLIPPED_27_SHALLOW: [-EXT_CLIPPED_45_45],
+    EXT_CLIPPED_27_STEEP: [-EXT_CLIPPED_45_45],
+    EXT_27_FLOOR_SHALLOW_CLOSE: [-EXT_90H],
+    EXT_27_FLOOR_SHALLOW_FAR: [],
+    EXT_27_FLOOR_STEEP_CLOSE: [-EXT_90V],
+    EXT_27_FLOOR_STEEP_FAR: [],
     
     
-    EXT_27P_CEILING_SHALLOW: [-EXT_90H],
-    EXT_27N_CEILING_SHALLOW: [-EXT_90H],
-    EXT_27P_CEILING_STEEP: [-EXT_90V],
-    EXT_27N_CEILING_STEEP: [-EXT_90V],
+    EXT_27_CEILING_SHALLOW_CLOSE: [-EXT_90H],
+    EXT_27_CEILING_SHALLOW_FAR: [],
+    EXT_27_CEILING_STEEP_CLOSE: [-EXT_90V],
+    EXT_27_CEILING_STEEP_FAR: [],
     
     
-    EXT_90H_45_CONCAVE: [-EXT_45_CONCAVE],
-    EXT_90V_45_CONCAVE: [-EXT_45_CONCAVE],
-    EXT_90H_45_CONVEX: [-EXT_90H],
-    EXT_90V_45_CONVEX: [-EXT_90V],
-    EXT_90H_45_CONVEX_ACUTE: [EMPTY, EXT_90_90_CONVEX, EXT_90V_45_CONVEX_ACUTE],
-    EXT_90V_45_CONVEX_ACUTE: [EMPTY, EXT_90_90_CONVEX, EXT_90H_45_CONVEX_ACUTE],
+    EXT_CLIPPED_90H_45: [-EXT_CLIPPED_45_45],
+    EXT_CLIPPED_90V_45: [-EXT_CLIPPED_45_45],
+    EXT_90H_TO_45_CONVEX: [-EXT_90H],
+    EXT_90V_TO_45_CONVEX: [-EXT_90V],
+    EXT_90H_TO_45_CONVEX_ACUTE: [EMPTY, EXT_90_90_CONVEX, EXT_90V_TO_45_CONVEX_ACUTE],
+    EXT_90V_TO_45_CONVEX_ACUTE: [EMPTY, EXT_90_90_CONVEX, EXT_90H_TO_45_CONVEX_ACUTE],
     
     # FIXME: LEFT OFF HERE: ------------------------------------
     
@@ -215,22 +232,7 @@ var _SUBTILE_CORNER_TYPE_VALUE_TO_KEY: Dictionary
 #     ("tl"|"tr"|"bl"|"br"),
 #     Dictionary<
 #         SubtileCorner,
-#         Dictionary<Vector2, {
-#             p: Vector2,
-#             a: Array<90|45|27>,
-#             tl: SubtileCorner,
-#             tr: SubtileCorner,
-#             bl: SubtileCorner,
-#             br: SubtileCorner,
-#             inbound_t_bl",
-#             inbound_t_br",
-#             inbound_b_tl",
-#             inbound_b_tr",
-#             inbound_l_tr",
-#             inbound_l_br",
-#             inbound_r_tl",
-#             inbound_r_bl",
-#         }>>>
+#         Dictionary<Vector2, SubtileConfig>>>
 var _corner_to_type_to_subtiles: Dictionary
 
 var _error_indicator_subtile_position: Vector2
@@ -534,11 +536,20 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
                         ])
             queue.insert(priority, subtile_position)
         
-        if _get_is_subtile_corner_type_interesting(target_corners[corner]) and \
+        if _allows_partial_matches and \
+                !queue.empty() and \
+                queue.get_root_priority() >= 4.0:
+            # If we already found a full match from this corner, then we cannot
+            # find a more full match from another corner.
+            break
+        
+        if !_allows_partial_matches and \
+                _get_is_subtile_corner_type_interesting(
+                    target_corners[corner]) and \
                 queue.empty():
-            # If this corner type was interesting, and we didn't find a
-            # perfect match for it, then we know that none of the other
-            # corner mappings will have a perfect match either.
+            # If this corner type was interesting, and we didn't find a full
+            # match for it, then we know that none of the other corner mappings
+            # will have a full match either.
             break
     
     if queue.get_size() > 0:
@@ -592,8 +603,8 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
         else:
             # Top empty, left present.
             if proximity.get_is_90_floor_at_left():
-                if proximity.get_is_45_pos_floor_right(-1, 0):
-                    return EXT_90H_45_CONVEX
+                if proximity.get_is_45_pos_floor(-1, 0):
+                    return EXT_90H_TO_45_CONVEX
                 else:
                     return EXT_90H
             elif proximity.get_is_45_neg_floor():
@@ -613,7 +624,7 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
             # Top present, left empty.
             if proximity.get_is_90_right_wall_at_top():
                 if proximity.get_is_45_pos_floor(0, -1):
-                    return EXT_90V_45_CONVEX
+                    return EXT_90V_TO_45_CONVEX
                 else:
                     return EXT_90V
             elif proximity.get_is_45_neg_ceiling():
@@ -634,9 +645,9 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
                 # Adjacent sides are present, adjacent corner is empty.
                 if proximity.get_is_90_right_wall_at_bottom(0, -1):
                     if proximity.get_is_90_floor_at_right(-1, 0):
-                        return EXT_90_90_CONCAVE
+                        return EXT_CLIPPED_90_90
                     elif proximity.get_is_45_pos_floor(-1, 0):
-                        return EXT_90V_45_CONCAVE
+                        return EXT_CLIPPED_90V_45
                     elif proximity.get_angle_type(-1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
@@ -644,9 +655,9 @@ static func _get_target_top_left_corner(proximity: CellProximity) -> int:
                         Sc.logger.error()
                 elif proximity.get_is_45_pos_floor(0, -1):
                     if proximity.get_is_90_floor_at_right(-1, 0):
-                        return EXT_90H_45_CONCAVE
+                        return EXT_CLIPPED_90H_45
                     elif proximity.get_is_45_pos_floor(-1, 0):
-                        return EXT_45_CONCAVE
+                        return EXT_CLIPPED_45_45
                     elif proximity.get_angle_type(-1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
@@ -748,8 +759,8 @@ static func _get_target_top_right_corner(proximity: CellProximity) -> int:
         else:
             # Top empty, right present.
             if proximity.get_is_90_floor_at_right():
-                if proximity.get_is_45_pos_floor_left(1, 0):
-                    return EXT_90H_45_CONVEX
+                if proximity.get_is_45_pos_floor(1, 0):
+                    return EXT_90H_TO_45_CONVEX
                 else:
                     return EXT_90H
             elif proximity.get_is_45_neg_floor():
@@ -769,7 +780,7 @@ static func _get_target_top_right_corner(proximity: CellProximity) -> int:
             # Top present, right empty.
             if proximity.get_is_90_left_wall_at_top():
                 if proximity.get_is_45_pos_floor(0, -1):
-                    return EXT_90V_45_CONVEX
+                    return EXT_90V_TO_45_CONVEX
                 else:
                     return EXT_90V
             elif proximity.get_is_45_neg_ceiling():
@@ -790,9 +801,9 @@ static func _get_target_top_right_corner(proximity: CellProximity) -> int:
                 # Adjacent sides are present, adjacent corner is empty.
                 if proximity.get_is_90_left_wall_at_bottom(0, -1):
                     if proximity.get_is_90_floor_at_left(1, 0):
-                        return EXT_90_90_CONCAVE
+                        return EXT_CLIPPED_90_90
                     elif proximity.get_is_45_pos_floor(1, 0):
-                        return EXT_90V_45_CONCAVE
+                        return EXT_CLIPPED_90V_45
                     elif proximity.get_angle_type(1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
@@ -800,9 +811,9 @@ static func _get_target_top_right_corner(proximity: CellProximity) -> int:
                         Sc.logger.error()
                 elif proximity.get_is_45_pos_floor(0, -1):
                     if proximity.get_is_90_floor_at_left(1, 0):
-                        return EXT_90H_45_CONCAVE
+                        return EXT_CLIPPED_90H_45
                     elif proximity.get_is_45_pos_floor(1, 0):
-                        return EXT_45_CONCAVE
+                        return EXT_CLIPPED_45_45
                     elif proximity.get_angle_type(1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
@@ -904,8 +915,8 @@ static func _get_target_bottom_left_corner(proximity: CellProximity) -> int:
         else:
             # Bottom empty, left present.
             if proximity.get_is_90_floor_at_left():
-                if proximity.get_is_45_pos_floor_right(-1, 0):
-                    return EXT_90H_45_CONVEX
+                if proximity.get_is_45_pos_floor(-1, 0):
+                    return EXT_90H_TO_45_CONVEX
                 else:
                     return EXT_90H
             elif proximity.get_is_45_neg_floor():
@@ -925,7 +936,7 @@ static func _get_target_bottom_left_corner(proximity: CellProximity) -> int:
             # Bottom present, left empty.
             if proximity.get_is_90_right_wall_at_bottom():
                 if proximity.get_is_45_pos_floor(0, 1):
-                    return EXT_90V_45_CONVEX
+                    return EXT_90V_TO_45_CONVEX
                 else:
                     return EXT_90V
             elif proximity.get_is_45_neg_ceiling():
@@ -946,9 +957,9 @@ static func _get_target_bottom_left_corner(proximity: CellProximity) -> int:
                 # Adjacent sides are present, adjacent corner is empty.
                 if proximity.get_is_90_right_wall_at_top(0, 1):
                     if proximity.get_is_90_floor_at_right(-1, 0):
-                        return EXT_90_90_CONCAVE
+                        return EXT_CLIPPED_90_90
                     elif proximity.get_is_45_pos_floor(-1, 0):
-                        return EXT_90V_45_CONCAVE
+                        return EXT_CLIPPED_90V_45
                     elif proximity.get_angle_type(-1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
@@ -956,9 +967,9 @@ static func _get_target_bottom_left_corner(proximity: CellProximity) -> int:
                         Sc.logger.error()
                 elif proximity.get_is_45_pos_floor(0, -1):
                     if proximity.get_is_90_floor_at_right(-1, 0):
-                        return EXT_90H_45_CONCAVE
+                        return EXT_CLIPPED_90H_45
                     elif proximity.get_is_45_pos_floor(-1, 0):
-                        return EXT_45_CONCAVE
+                        return EXT_CLIPPED_45_45
                     elif proximity.get_angle_type(-1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
@@ -1060,8 +1071,8 @@ static func _get_target_bottom_right_corner(proximity: CellProximity) -> int:
         else:
             # Bottom empty, right present.
             if proximity.get_is_90_floor_at_right():
-                if proximity.get_is_45_pos_floor_left(-1, 0):
-                    return EXT_90H_45_CONVEX
+                if proximity.get_is_45_pos_floor(-1, 0):
+                    return EXT_90H_TO_45_CONVEX
                 else:
                     return EXT_90H
             elif proximity.get_is_45_neg_floor():
@@ -1081,7 +1092,7 @@ static func _get_target_bottom_right_corner(proximity: CellProximity) -> int:
             # Bottom present, right empty.
             if proximity.get_is_90_left_wall_at_bottom():
                 if proximity.get_is_45_pos_floor(0, 1):
-                    return EXT_90V_45_CONVEX
+                    return EXT_90V_TO_45_CONVEX
                 else:
                     return EXT_90V
             elif proximity.get_is_45_neg_ceiling():
@@ -1102,9 +1113,9 @@ static func _get_target_bottom_right_corner(proximity: CellProximity) -> int:
                 # Adjacent sides are present, adjacent corner is empty.
                 if proximity.get_is_90_left_wall_at_top(0, 1):
                     if proximity.get_is_90_floor_at_left(-1, 0):
-                        return EXT_90_90_CONCAVE
+                        return EXT_CLIPPED_90_90
                     elif proximity.get_is_45_pos_floor(-1, 0):
-                        return EXT_90V_45_CONCAVE
+                        return EXT_CLIPPED_90V_45
                     elif proximity.get_angle_type(-1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
@@ -1112,9 +1123,9 @@ static func _get_target_bottom_right_corner(proximity: CellProximity) -> int:
                         Sc.logger.error()
                 elif proximity.get_is_45_pos_floor(0, -1):
                     if proximity.get_is_90_floor_at_left(-1, 0):
-                        return EXT_90H_45_CONCAVE
+                        return EXT_CLIPPED_90H_45
                     elif proximity.get_is_45_pos_floor(-1, 0):
-                        return EXT_45_CONCAVE
+                        return EXT_CLIPPED_45_45
                     elif proximity.get_angle_type(-1, 0) == CellAngleType.A27:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
