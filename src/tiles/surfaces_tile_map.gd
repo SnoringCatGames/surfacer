@@ -20,6 +20,9 @@ const GROUP_NAME_SURFACES := "surfaces"
 export var id: String
 ## This can be useful for debugging.
 export var draws_tile_indices := false setget _set_draws_tile_indices
+## This can be useful for debugging.
+export var draws_tile_grid_positions := false \
+        setget _set_draws_tile_grid_positions
 
 
 func _ready() -> void:
@@ -44,11 +47,30 @@ func _draw() -> void:
                 self,
                 Color.white,
                 false)
+    if draws_tile_grid_positions:
+        Sc.draw.draw_tile_grid_positions(
+                self,
+                self,
+                Color.white,
+                false)
 
 
 func _set_draws_tile_indices(value: bool) -> void:
     draws_tile_indices = value
-    update()
+    if draws_tile_indices and draws_tile_grid_positions:
+        _set_draws_tile_grid_positions(false)
+    else:
+        property_list_changed_notify()
+        update()
+
+
+func _set_draws_tile_grid_positions(value: bool) -> void:
+    draws_tile_grid_positions = value
+    if draws_tile_grid_positions and draws_tile_indices:
+        _set_draws_tile_indices(false)
+    else:
+        property_list_changed_notify()
+        update()
 
 
 func set_cell(
