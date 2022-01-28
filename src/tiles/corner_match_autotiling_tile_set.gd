@@ -188,7 +188,22 @@ var _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES := {
     INT_27_INT_CORNER_STEEP: [],
 }
 
-var _CORNERS := ["tl", "tr", "bl", "br"]
+var _CORNERS := [
+    "tl",
+    "tr",
+    "bl",
+    "br",
+]
+var _INBOUND_CORNERS := [
+    "inbound_t_bl",
+    "inbound_t_br",
+    "inbound_b_tl",
+    "inbound_b_tr",
+    "inbound_l_tr",
+    "inbound_l_br",
+    "inbound_r_tl",
+    "inbound_r_bl",
+]
 
 # FIXME: LEFT OFF HERE: --------------------------------
 var _ACCEPTABLE_MATCH_PRIORITY_THRESHOLD := 2.0
@@ -207,14 +222,14 @@ var _SUBTILE_CORNER_TYPE_VALUE_TO_KEY: Dictionary
 #             tr: SubtileCorner,
 #             bl: SubtileCorner,
 #             br: SubtileCorner,
-#             inbound_t_bl?: SubtileCorner,
-#             inbound_t_br?: SubtileCorner,
-#             inbound_b_tl?: SubtileCorner,
-#             inbound_b_tr?: SubtileCorner,
-#             inbound_l_tr?: SubtileCorner,
-#             inbound_l_br?: SubtileCorner,
-#             inbound_r_tl?: SubtileCorner,
-#             inbound_r_bl?: SubtileCorner,
+#             inbound_t_bl",
+#             inbound_t_br",
+#             inbound_b_tl",
+#             inbound_b_tr",
+#             inbound_l_tr",
+#             inbound_l_br",
+#             inbound_r_tl",
+#             inbound_r_bl",
 #         }>>>
 var _corner_to_type_to_subtiles: Dictionary
 
@@ -402,7 +417,6 @@ func _get_match_priority(
     for corner in _CORNERS:
         var actual_corner: int = actual_corners[corner]
         var expected_corner: int = expected_corners[corner]
-        
         # Determine the priority-contribution for this corner.
         if actual_corner == expected_corner:
             priority += 1.0
@@ -412,10 +426,29 @@ func _get_match_priority(
             if additional_matching_types[actual_corner] > 0:
                 priority += 1.0
             else:
-                priority += 0.5
+                priority += 0.1
         else:
             # FIXME: -------------- Is there a more elegant fallback for this?
-            priority += -4.0
+            priority -= 5.0
+    
+    for inbound_corner in _INBOUND_CORNERS:
+        if !expected_corners.has(inbound_corner):
+            continue
+        var actual_corner: int = actual_corners[inbound_corner]
+        var expected_corner: int = expected_corners[inbound_corner]
+        # Determine the priority-contribution for this inbound corner.
+        if actual_corner == expected_corner:
+            priority += 0.01
+        var additional_matching_types: Dictionary = \
+                _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[expected_corner]
+        if additional_matching_types.has(actual_corner):
+            if additional_matching_types[actual_corner] > 0:
+                priority += 0.01
+            else:
+                priority += 0.001
+        else:
+            # Do nothing for non-matching corners.
+            pass
     
     return priority
 
@@ -462,65 +495,57 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
     
     # FIXME: LEFT OFF HERE: ---------------------------
     # - As an efficiency step, first check if the pre-existing cell in the
-    #   TileMap already has the ideal match.
+    #   TileMap already has the ideal match?
     
-    # FIXME: LEFT OFF HERE: --------------------------------------
-    # - Add support for also checking the eight in-bound neighbor corner types
-    #   when choosing subtiles.
+    var set := {}
+    var queue := PriorityQueue.new([], false)
     
-    if _allows_partial_matches:
-        var set := {}
-        var queue := PriorityQueue.new([], false)
+    for corner in _CORNERS:
+        for corner_match in corner_to_matches[corner]:
+            if !_get_does_angle_type_match(corner_match, target_corners):
+                # Skip the possible corner match, since it doesn't match
+                # the angle type.
+                continue
+            
+            var priority := \
+                    _get_match_priority(corner_match, target_corners)
+            var subtile_position: Vector2 = corner_match.p
+            
+            if !_allows_partial_matches and \
+                    priority < 4.0:
+                # The subtile config doesn't match all four outbound corners.
+                continue
+            
+            if set.has(subtile_position):
+                # We've already recorded this subtile from a different
+                # corner-match.
+                continue
+            
+            set[subtile_position] = true
+            if queue.get_root_priority() == priority:
+                Sc.logger.warning(
+                        ("Two subtiles have the same priority: " + \
+                        "p1=%s, p2=%s, corners=%s") % [
+                            Sc.utils.get_vector_string(
+                                queue.get_root_value(), 0),
+                            Sc.utils.get_vector_string(
+                                subtile_position, 0),
+                            get_subtile_config_string(target_corners),
+                        ])
+            queue.insert(priority, subtile_position)
         
-        for corner in _CORNERS:
-            for corner_match in corner_to_matches[corner]:
-                if !_get_does_angle_type_match(corner_match, target_corners):
-                    # Skip the possible corner match, since it doesn't match
-                    # the angle type.
-                    continue
-                
-                var priority := \
-                        _get_match_priority(corner_match, target_corners)
-                var subtile_position: Vector2 = corner_match.p
-                
-                if !set.has(subtile_position):
-                    set[subtile_position] = true
-                    if queue.get_root_priority() == priority:
-                        Sc.logger.warning(
-                                ("Two subtiles have the same priority: " + \
-                                "p1=%s, p2=%s, corners=%s") % [
-                                    Sc.utils.get_vector_string(
-                                        queue.get_root_value(), 0),
-                                    Sc.utils.get_vector_string(
-                                        subtile_position, 0),
-                                    get_subtile_config_string(target_corners),
-                                ])
-                    queue.insert(priority, subtile_position)
-        
-        if queue.get_size() > 0:
-            if queue.get_root_priority() < _ACCEPTABLE_MATCH_PRIORITY_THRESHOLD:
-                Sc.logger.warning("No subtile was found with a good match.")
-            return queue.get_root_value()
-        else:
-            return _error_indicator_subtile_position
-        
+        if _get_is_subtile_corner_type_interesting(target_corners[corner]) and \
+                queue.empty():
+            # If this corner type was interesting, and we didn't find a
+            # perfect match for it, then we know that none of the other
+            # corner mappings will have a perfect match either.
+            break
+    
+    if queue.get_size() > 0:
+        if queue.get_root_priority() < _ACCEPTABLE_MATCH_PRIORITY_THRESHOLD:
+            Sc.logger.warning("No subtile was found with a good match.")
+        return queue.get_root_value()
     else:
-        # Look for a subtile config that matches along all corners.
-        for corner in _CORNERS:
-            for corner_match in corner_to_matches[corner]:
-                var match_priority := \
-                        _get_match_priority(corner_match, target_corners)
-                var matches_all_corners = match_priority == 4.0
-                if matches_all_corners:
-                    return corner_match.p
-            if _get_is_subtile_corner_type_interesting(target_corners[corner]):
-                # If this corner type was interesting, and we didn't find a
-                # perfect match for it, then we know that none of the other
-                # corner mappings will have a perfect match either.
-                break
-        Sc.logger.warning(
-                "No subtile was found with a perfect match: %s" % \
-                get_subtile_config_string(target_corners))
         return _error_indicator_subtile_position
 
 
