@@ -73,8 +73,8 @@ func _create_tiles_to_properties() -> Dictionary:
     return tiles_to_properties
 
 
-func _is_tile_bound( \
-        drawn_id: int, \
+func _is_tile_bound(
+        drawn_id: int,
         neighbor_id: int) -> bool:
     if neighbor_id == TileMap.INVALID_CELL:
         return false
