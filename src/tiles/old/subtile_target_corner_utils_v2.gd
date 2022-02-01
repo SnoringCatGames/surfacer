@@ -1,4 +1,4 @@
-class_name SubtileTargetCornerUtils
+class_name SubtileTargetCornerUtilsV2
 extends Reference
 
 
