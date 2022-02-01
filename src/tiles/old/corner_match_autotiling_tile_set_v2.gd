@@ -410,7 +410,7 @@ func _forward_subtile_selection(
     
     if Engine.editor_hint or \
             _supports_runtime_autotiling:
-        var proximity := CellProximityV2V2.new(
+        var proximity := CellProximityV2.new(
                 tile_map,
                 self,
                 cell_position,
@@ -523,13 +523,13 @@ func _choose_subtile(proximity: CellProximityV2) -> Vector2:
 
 static func _get_target_corners(proximity: CellProximityV2) -> Dictionary:
     var target_corners := {
-        tl = SubtileTargetCornerUtils \
+        tl = SubtileTargetCornerUtilsV2 \
                 ._get_target_top_left_corner(proximity),
-        tr = SubtileTargetCornerUtils \
+        tr = SubtileTargetCornerUtilsV2 \
                 ._get_target_top_right_corner(proximity),
-        bl = SubtileTargetCornerUtils \
+        bl = SubtileTargetCornerUtilsV2 \
                 ._get_target_bottom_left_corner(proximity),
-        br = SubtileTargetCornerUtils \
+        br = SubtileTargetCornerUtilsV2 \
                 ._get_target_bottom_right_corner(proximity),
         inbound_t_bl = SubtileCornerV2.UNKNOWN,
         inbound_t_br = SubtileCornerV2.UNKNOWN,
@@ -549,36 +549,36 @@ static func _get_target_corners(proximity: CellProximityV2) -> Dictionary:
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(0, -1))
-        target_corners.inbound_t_bl = SubtileTargetCornerUtils \
+        target_corners.inbound_t_bl = SubtileTargetCornerUtilsV2 \
                 ._get_target_bottom_left_corner(top_proximity)
-        target_corners.inbound_t_br = SubtileTargetCornerUtils \
+        target_corners.inbound_t_br = SubtileTargetCornerUtilsV2 \
                 ._get_target_bottom_right_corner(top_proximity)
     if proximity.get_is_present(0, 1):
         var bottom_proximity := CellProximityV2.new(
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(0, 1))
-        target_corners.inbound_b_tl = SubtileTargetCornerUtils \
+        target_corners.inbound_b_tl = SubtileTargetCornerUtilsV2 \
                 ._get_target_top_left_corner(bottom_proximity)
-        target_corners.inbound_b_tr = SubtileTargetCornerUtils \
+        target_corners.inbound_b_tr = SubtileTargetCornerUtilsV2 \
                 ._get_target_top_right_corner(bottom_proximity)
     if proximity.get_is_present(-1, 0):
         var left_proximity := CellProximityV2.new(
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(-1, 0))
-        target_corners.inbound_l_tr = SubtileTargetCornerUtils \
+        target_corners.inbound_l_tr = SubtileTargetCornerUtilsV2 \
                 ._get_target_top_right_corner(left_proximity)
-        target_corners.inbound_l_br = SubtileTargetCornerUtils \
+        target_corners.inbound_l_br = SubtileTargetCornerUtilsV2 \
                 ._get_target_bottom_right_corner(left_proximity)
     if proximity.get_is_present(1, 0):
         var right_proximity := CellProximityV2.new(
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(1, 0))
-        target_corners.inbound_r_tl = SubtileTargetCornerUtils \
+        target_corners.inbound_r_tl = SubtileTargetCornerUtilsV2 \
                 ._get_target_top_left_corner(right_proximity)
-        target_corners.inbound_r_bl = SubtileTargetCornerUtils \
+        target_corners.inbound_r_bl = SubtileTargetCornerUtilsV2 \
                 ._get_target_bottom_left_corner(right_proximity)
     
     return target_corners
