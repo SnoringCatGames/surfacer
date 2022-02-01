@@ -1,4 +1,4 @@
-class_name CellProximityOld
+class_name CellProximityV1
 extends Reference
 
 
