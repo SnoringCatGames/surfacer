@@ -38,6 +38,7 @@ var is_top_left_present: bool setget ,_get_is_top_left_present
 var is_top_present: bool setget ,_get_is_top_present
 var is_top_right_present: bool setget ,_get_is_top_right_present
 var is_left_present: bool setget ,_get_is_left_present
+var is_center_present: bool setget ,_get_is_center_present
 var is_right_present: bool setget ,_get_is_right_present
 var is_bottom_left_present: bool setget ,_get_is_bottom_left_present
 var is_bottom_present: bool setget ,_get_is_bottom_present
@@ -153,7 +154,25 @@ static func get_cell_actual_bitmask(
 
 
 func to_string() -> String:
-    return "CellProximity%s" % Sc.utils.get_vector_string(position, 0)
+    var neighbors := []
+    var neighbors_presence := [
+        "tl", is_top_left_present,
+        "t", is_top_present,
+        "tr", is_top_right_present,
+        "l", is_left_present,
+        "c", is_center_present,
+        "r", is_right_present,
+        "bl", is_bottom_left_present,
+        "b", is_bottom_present,
+        "br", is_bottom_right_present,
+    ]
+    for i in range(0, neighbors_presence.size(), 2):
+        if neighbors_presence[i + 1]:
+            neighbors.push_back(neighbors_presence[i])
+    return "CellProximity(p=%s, neighbors=%s)" % [
+        Sc.utils.get_vector_string(position, 0),
+        Sc.utils.join(neighbors),
+    ]
 
 
 func get_angle_type(relative_x := 0, relative_y := 0) -> int:
@@ -204,6 +223,10 @@ func _get_is_top_right_present() -> bool:
 
 func _get_is_left_present() -> bool:
     return !!(bitmask & TileSet.BIND_LEFT)
+
+
+func _get_is_center_present() -> bool:
+    return !!(bitmask & TileSet.BIND_CENTER)
 
 
 func _get_is_right_present() -> bool:
@@ -971,6 +994,42 @@ func get_is_90_right_wall_at_bottom(
     #     - BUT, I probably don't want this function to consider cut-out corners
     #       either.
     return get_is_90_right_wall(relative_x, relative_y)
+
+
+func get_is_top_left_corner_clipped(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_present(relative_x - 1, relative_y) and \
+            get_is_present(relative_x, relative_y - 1) and \
+            get_is_empty(relative_x - 1, relative_y - 1)
+
+
+func get_is_top_right_corner_clipped(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_present(relative_x + 1, relative_y) and \
+            get_is_present(relative_x, relative_y - 1) and \
+            get_is_empty(relative_x + 1, relative_y - 1)
+
+
+func get_is_bottom_left_corner_clipped(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_present(relative_x - 1, relative_y) and \
+            get_is_present(relative_x, relative_y + 1) and \
+            get_is_empty(relative_x - 1, relative_y + 1)
+
+
+func get_is_bottom_right_corner_clipped(
+        relative_x := 0,
+        relative_y := 0) -> bool:
+    return get_is_present(relative_x, relative_y) and \
+            get_is_present(relative_x + 1, relative_y) and \
+            get_is_present(relative_x, relative_y + 1) and \
+            get_is_empty(relative_x + 1, relative_y + 1)
 
 
 func get_is_top_left_corner_clipped_90_90(

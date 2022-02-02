@@ -6,7 +6,7 @@ static func get_target_top_left_corner(proximity: CellProximityV2) -> int:
     if proximity.is_top_empty:
         if proximity.is_left_empty:
             if proximity.is_angle_type_45:
-                # FIXME: LEFT OFF HERE: -----------------
+                # FIXME: LEFT OFF HERE: ------------------
                 pass
             elif proximity.is_angle_type_27:
                 # FIXME: LEFT OFF HERE: -------- A27
@@ -65,10 +65,10 @@ static func get_target_top_left_corner(proximity: CellProximityV2) -> int:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
-                        Sc.logger.error(
-                                "get_target_top_left_corner: " +
-                                "Clipped corner: " + 
-                                "Invalid case: %s" % proximity.to_string())
+                        _log_error(
+                                "get_target_top_left_corner, " + \
+                                "Clipped corner",
+                                proximity)
                 elif proximity.get_is_45_pos_floor(0, -1):
                     if proximity.get_is_90_floor_at_right(-1, 0):
                         return SubtileCorner.EXT_CLIPPED_90H_45
@@ -78,18 +78,18 @@ static func get_target_top_left_corner(proximity: CellProximityV2) -> int:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
-                        Sc.logger.error(
-                                "get_target_top_left_corner: " +
-                                "Clipped corner: " + 
-                                "Invalid case: %s" % proximity.to_string())
+                        _log_error(
+                                "get_target_top_left_corner, " + \
+                                "Clipped corner",
+                                proximity)
                 elif proximity.get_angle_type(0, -1) == CellAngleType.A27:
                     # FIXME: LEFT OFF HERE: -------- A27
                     pass
                 else:
-                    Sc.logger.error(
-                            "get_target_top_left_corner: " +
-                            "Clipped corner: " + 
-                            "Invalid case: %s" % proximity.to_string())
+                    _log_error(
+                            "get_target_top_left_corner, " + \
+                            "Clipped corner",
+                            proximity)
             else:
                 # Adjacent sides and corner are present.
                 if proximity.get_is_bottom_left_corner_clipped_45_45() and \
@@ -233,10 +233,10 @@ static func get_target_top_right_corner(proximity: CellProximityV2) -> int:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
-                        Sc.logger.error(
-                                "get_target_top_right_corner: " +
-                                "Clipped corner: " + 
-                                "Invalid case: %s" % proximity.to_string())
+                        _log_error(
+                                "get_target_top_right_corner, " + \
+                                "Clipped corner",
+                                proximity)
                 elif proximity.get_is_45_pos_floor(0, -1):
                     if proximity.get_is_90_floor_at_left(1, 0):
                         return SubtileCorner.EXT_CLIPPED_90H_45
@@ -246,18 +246,18 @@ static func get_target_top_right_corner(proximity: CellProximityV2) -> int:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
-                        Sc.logger.error(
-                                "get_target_top_right_corner: " +
-                                "Clipped corner: " + 
-                                "Invalid case: %s" % proximity.to_string())
+                        _log_error(
+                                "get_target_top_right_corner, " + \
+                                "Clipped corner",
+                                proximity)
                 elif proximity.get_angle_type(0, -1) == CellAngleType.A27:
                     # FIXME: LEFT OFF HERE: -------- A27
                     pass
                 else:
-                    Sc.logger.error(
-                            "get_target_top_right_corner: " +
-                            "Clipped corner: " + 
-                            "Invalid case: %s" % proximity.to_string())
+                    _log_error(
+                            "get_target_top_right_corner, " + \
+                            "Clipped corner",
+                            proximity)
             else:
                 # Adjacent sides and corner are present.
                 if proximity.get_is_bottom_left_corner_clipped_45_45() and \
@@ -401,10 +401,10 @@ static func get_target_bottom_left_corner(proximity: CellProximityV2) -> int:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
-                        Sc.logger.error(
-                                "get_target_bottom_left_corner: " +
-                                "Clipped corner: " + 
-                                "Invalid case: %s" % proximity.to_string())
+                        _log_error(
+                                "get_target_bottom_left_corner, " + \
+                                "Clipped corner",
+                                proximity)
                 elif proximity.get_is_45_pos_ceiling(0, 1):
                     if proximity.get_is_90_ceiling_at_right(-1, 0):
                         return SubtileCorner.EXT_CLIPPED_90H_45
@@ -414,18 +414,18 @@ static func get_target_bottom_left_corner(proximity: CellProximityV2) -> int:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
-                        Sc.logger.error(
-                                "get_target_bottom_left_corner: " +
-                                "Clipped corner: " + 
-                                "Invalid case: %s" % proximity.to_string())
+                        _log_error(
+                                "get_target_bottom_left_corner, " + \
+                                "Clipped corner",
+                                proximity)
                 elif proximity.get_angle_type(0, 1) == CellAngleType.A27:
                     # FIXME: LEFT OFF HERE: -------- A27
                     pass
                 else:
-                    Sc.logger.error(
-                            "get_target_bottom_left_corner: " +
-                            "Clipped corner: " + 
-                            "Invalid case: %s" % proximity.to_string())
+                    _log_error(
+                            "get_target_bottom_left_corner, " + \
+                            "Clipped corner",
+                            proximity)
             else:
                 # Adjacent sides and corner are present.
                 if proximity.get_is_top_left_corner_clipped_45_45() and \
@@ -569,10 +569,10 @@ static func get_target_bottom_right_corner(proximity: CellProximityV2) -> int:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
-                        Sc.logger.error(
-                                "get_target_bottom_right_corner: " +
-                                "Clipped corner: " + 
-                                "Invalid case: %s" % proximity.to_string())
+                        _log_error(
+                                "get_target_bottom_right_corner, " + \
+                                "Clipped corner",
+                                proximity)
                 elif proximity.get_is_45_pos_ceiling(0, 1):
                     if proximity.get_is_90_ceiling_at_left(1, 0):
                         return SubtileCorner.EXT_CLIPPED_90H_45
@@ -582,18 +582,18 @@ static func get_target_bottom_right_corner(proximity: CellProximityV2) -> int:
                         # FIXME: LEFT OFF HERE: -------- A27
                         pass
                     else:
-                        Sc.logger.error(
-                                "get_target_bottom_right_corner: " +
-                                "Clipped corner: " + 
-                                "Invalid case: %s" % proximity.to_string())
+                        _log_error(
+                                "get_target_bottom_right_corner, " + \
+                                "Clipped corner",
+                                proximity)
                 elif proximity.get_angle_type(0, 1) == CellAngleType.A27:
                     # FIXME: LEFT OFF HERE: -------- A27
                     pass
                 else:
-                    Sc.logger.error(
-                            "get_target_bottom_right_corner: " +
-                            "Clipped corner: " + 
-                            "Invalid case: %s" % proximity.to_string())
+                    _log_error(
+                            "get_target_bottom_right_corner, " + \
+                            "Clipped corner",
+                            proximity)
             else:
                 # Adjacent sides and corner are present.
                 if proximity.get_is_top_left_corner_clipped_45_45() and \
@@ -672,3 +672,11 @@ static func get_target_bottom_right_corner(proximity: CellProximityV2) -> int:
     
     # FIXME: LEFT OFF HERE: ---------- Remove after adding all above cases.
     return SubtileCorner.UNKNOWN
+
+
+static func _log_error(
+        message: String,
+        proximity: CellProximity) -> void:
+    Sc.logger.error(
+            "An error occured trying to find a matching " + \
+            "subtile corner type: %s; %s" % [message, proximity])

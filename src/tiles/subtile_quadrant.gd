@@ -17,6 +17,12 @@ extends Reference
 #             need to show some vegetation hanging-down over the exposed-rock
 #             art of the ceiling.
 
+# FIXME: LEFT OFF HERE: --------------
+# - Consolidate the separate enums.
+# - They are currently split-apart to make it easier to quickly navigate
+#   between the sections using the GDScript methods panel.
+
+func main(): pass
 enum {
     UNKNOWN,
     
@@ -42,7 +48,9 @@ enum {
     ALONE_TR,
     ALONE_BL,
     ALONE_BR,
-    
+}
+func exterior_90s(): pass
+enum {
     ### Exterior 90s.
     
     EXT_90_FLOOR_EXT_TL,
@@ -84,7 +92,9 @@ enum {
     EXT_CLIPPED_90_90_INT_TR,
     EXT_CLIPPED_90_90_INT_BL,
     EXT_CLIPPED_90_90_INT_BR,
-    
+}
+func interior_90s(): pass
+enum {
     ### Interior 90s.
     
     INT_90_FLOOR_EXT_TL,
@@ -126,8 +136,10 @@ enum {
     INT_CLIPPED_90_90_INT_TR,
     INT_CLIPPED_90_90_INT_BL,
     INT_CLIPPED_90_90_INT_BR,
-    
-    ### External 45s.
+}
+func exterior_45s(): pass
+enum {
+    ### Exterior 45s.
     
     EXT_45P_FLOOR_TR,
     EXT_45P_FLOOR_BL,
@@ -164,8 +176,10 @@ enum {
     EXT_CLIPPED_45N_CEILING_TR,
     EXT_CLIPPED_45N_CEILING_BL,
     EXT_CLIPPED_45N_CEILING_BR,
-    
-    ### Adjacent 45 clipped corners.
+}
+func exterior_adjacent_45_clipped_corners(): pass
+enum {
+    ### Exterior adjacent 45 clipped corners.
     
     EXT_CLIPPED_45P_FLOOR_45N_FLOOR_TL,
     EXT_CLIPPED_45P_FLOOR_45N_FLOOR_TR,
@@ -204,8 +218,10 @@ enum {
     
     EXT_CLIPPED_45P_FLOOR_45N_FLOOR_45N_CEILING_TL,
     EXT_CLIPPED_45P_FLOOR_45N_FLOOR_45N_CEILING_BR,
-    
-    ### 45-45 joins.
+}
+func exterior_45_45_joins(): pass
+enum {
+    ### Exterior 45-45 joins.
     
     EXT_45N_FLOOR_45P_FLOOR_TL,
     EXT_45N_FLOOR_45P_FLOOR_TR,
@@ -266,8 +282,10 @@ enum {
     EXT_45P_CEILING_TO_45N_CEILING_AND_45N_FLOOR_TL,
     EXT_45P_CEILING_TO_45N_CEILING_AND_45N_FLOOR_TR,
     EXT_45P_CEILING_TO_45N_CEILING_AND_45N_FLOOR_BL,
-    
-    ### 45 caps.
+}
+func exterior_45_caps(): pass
+enum {
+    ### Exterior 45 caps.
     
     EXT_CAP_45P_FLOOR_45N_CEILING_TR,
     EXT_CAP_45P_FLOOR_45N_CEILING_BR,
@@ -286,8 +304,10 @@ enum {
     
     EXT_CAP_45N_CEILING_45P_CEILING_TL,
     EXT_CAP_45N_CEILING_45P_CEILING_TR,
-    
-    ### Internal 45s.
+}
+func interior_45s(): pass
+enum {
+    ### Interior 45s.
     
     INT_45P_FLOOR_TL,
     INT_45P_FLOOR_TR,
@@ -308,8 +328,10 @@ enum {
     INT_45N_CEILING_TR,
     INT_45N_CEILING_BL,
     INT_45N_CEILING_BR,
-    
-    ### Internal adjacent 45 clipped corners.
+}
+func interior_adjacent_45_clipped_corners(): pass
+enum {
+    ### Interior adjacent 45 clipped corners.
     
     INT_CLIPPED_45P_FLOOR_45N_FLOOR_TL,
     INT_CLIPPED_45P_FLOOR_45N_FLOOR_TR,
@@ -333,8 +355,10 @@ enum {
     INT_CLIPPED_45P_FLOOR_45N_CEILING_45P_CEILING_BL,
     INT_CLIPPED_45P_FLOOR_45N_FLOOR_45P_CEILING_TR,
     INT_CLIPPED_45P_FLOOR_45N_FLOOR_45N_CEILING_TL,
-    
-    ### Internal 45-45 joins.
+}
+func interior_45_45_joins(): pass
+enum {
+    ### Interior 45-45 joins.
     
     INT_EXT_45N_FLOOR_45P_FLOOR_TL,
     INT_EXT_45N_FLOOR_45P_FLOOR_TR,
@@ -370,8 +394,10 @@ enum {
     
     # FIXME: LEFT OFF HERE: -----------------------
     # - Add all the internal-connection combinations.
-    
-    ### External 90-45 joins.
+}
+func exterior_90_45_joins(): pass
+enum {
+    ### Exterior 90-45 joins.
     
     EXT_45P_FLOOR_TO_90_LEFT_SIDE_BL,
     EXT_90_LEFT_SIDE_TO_45P_FLOOR_TL,
@@ -404,8 +430,10 @@ enum {
     EXT_45N_CEILING_TO_90_CEILING_BL,
     EXT_90_CEILING_TO_45N_CEILING_TR,
     EXT_90_CEILING_TO_45N_CEILING_BR,
-    
-    ### External 90-45 clipped joins.
+}
+func exterior_90_45_clipped_joins(): pass
+enum {
+    ### Exterior 90-45 clipped joins.
     
     EXT_CLIPPED_90_RIGHT_SIDE_45P_CEILING_BL,
     EXT_CLIPPED_90_RIGHT_SIDE_45P_CEILING_BR,
@@ -430,8 +458,10 @@ enum {
     
     EXT_CLIPPED_90_FLOOR_45P_FLOOR_TL,
     EXT_CLIPPED_90_FLOOR_45P_FLOOR_BL,
-    
-    ### External 90-45 acute joins.
+}
+func exterior_90_45_acute_joins(): pass
+enum {
+    ### Exterior 90-45 acute joins.
     
     EXT_90_RIGHT_SIDE_45P_FLOOR_TR,
     EXT_90_RIGHT_SIDE_45P_FLOOR_BR,
@@ -456,8 +486,10 @@ enum {
     
     EXT_90_FLOOR_45P_CEILING_TL,
     EXT_90_FLOOR_45P_CEILING_TR,
-    
-    ### External 45s with clipped corners.
+}
+func exterior_45s_with_clipped_corners(): pass
+enum {
+    ### Exterior 45s with clipped corners.
     
     EXT_45P_FLOOR_CLIPPED_45P_CEILING_TR,
     EXT_45P_FLOOR_CLIPPED_45P_CEILING_BL,
@@ -529,8 +561,10 @@ enum {
     
     
     
-    
-    ### Internal 90-45 joins
+}
+func interior_90_45_joins(): pass
+enum {
+    ### Interior 90-45 joins
     
     INT_CLIPPED_90_RIGHT_SIDE_45P_CEILING_TR,
     INT_CLIPPED_90_RIGHT_SIDE_45P_CEILING_BR,
@@ -559,28 +593,30 @@ enum {
     
     # FIXME: LEFT OFF HERE: -----------------------
     # - Add all the internal-connection combinations.
-    
-    ### External 27s.
-    
-    # FIXME: LEFT OFF HERE: -----------------------
-    
-    ### Internal 27s.
+}
+func a27s(): pass
+enum {
+    ### Exterior 27s.
     
     # FIXME: LEFT OFF HERE: -----------------------
     
-    ### External 27-90 joins.
+    ### Interior 27s.
     
     # FIXME: LEFT OFF HERE: -----------------------
     
-    ### External 27-45 joins.
+    ### Exterior 27-90 joins.
     
     # FIXME: LEFT OFF HERE: -----------------------
     
-    ### Internal 27-90 joins.
+    ### Exterior 27-45 joins.
     
     # FIXME: LEFT OFF HERE: -----------------------
     
-    ### Internal 27-45 joins.
+    ### Interior 27-90 joins.
+    
+    # FIXME: LEFT OFF HERE: -----------------------
+    
+    ### Interior 27-45 joins.
     
     # FIXME: LEFT OFF HERE: -----------------------
     
