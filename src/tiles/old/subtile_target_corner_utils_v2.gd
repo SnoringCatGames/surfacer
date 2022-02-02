@@ -2,7 +2,7 @@ class_name SubtileTargetCornerUtilsV2
 extends Reference
 
 
-static func _get_target_top_left_corner(proximity: CellProximityV2) -> int:
+static func get_target_top_left_corner(proximity: CellProximityV2) -> int:
     if proximity.is_top_empty:
         if proximity.is_left_empty:
             return SubtileCornerV2.EMPTY
@@ -59,7 +59,7 @@ static func _get_target_top_left_corner(proximity: CellProximityV2) -> int:
                         pass
                     else:
                         Sc.logger.error(
-                                "_get_target_top_left_corner: " +
+                                "get_target_top_left_corner: " +
                                 "Clipped corner: " + 
                                 "Invalid case: %s" % proximity.to_string())
                 elif proximity.get_is_45_pos_floor(0, -1):
@@ -72,7 +72,7 @@ static func _get_target_top_left_corner(proximity: CellProximityV2) -> int:
                         pass
                     else:
                         Sc.logger.error(
-                                "_get_target_top_left_corner: " +
+                                "get_target_top_left_corner: " +
                                 "Clipped corner: " + 
                                 "Invalid case: %s" % proximity.to_string())
                 elif proximity.get_angle_type(0, -1) == CellAngleType.A27:
@@ -80,7 +80,7 @@ static func _get_target_top_left_corner(proximity: CellProximityV2) -> int:
                     pass
                 else:
                     Sc.logger.error(
-                            "_get_target_top_left_corner: " +
+                            "get_target_top_left_corner: " +
                             "Clipped corner: " + 
                             "Invalid case: %s" % proximity.to_string())
             else:
@@ -163,7 +163,7 @@ static func _get_target_top_left_corner(proximity: CellProximityV2) -> int:
     return SubtileCornerV2.UNKNOWN
 
 
-static func _get_target_top_right_corner(proximity: CellProximityV2) -> int:
+static func get_target_top_right_corner(proximity: CellProximityV2) -> int:
     if proximity.is_top_empty:
         if proximity.is_right_empty:
             return SubtileCornerV2.EMPTY
@@ -220,7 +220,7 @@ static func _get_target_top_right_corner(proximity: CellProximityV2) -> int:
                         pass
                     else:
                         Sc.logger.error(
-                                "_get_target_top_right_corner: " +
+                                "get_target_top_right_corner: " +
                                 "Clipped corner: " + 
                                 "Invalid case: %s" % proximity.to_string())
                 elif proximity.get_is_45_pos_floor(0, -1):
@@ -233,7 +233,7 @@ static func _get_target_top_right_corner(proximity: CellProximityV2) -> int:
                         pass
                     else:
                         Sc.logger.error(
-                                "_get_target_top_right_corner: " +
+                                "get_target_top_right_corner: " +
                                 "Clipped corner: " + 
                                 "Invalid case: %s" % proximity.to_string())
                 elif proximity.get_angle_type(0, -1) == CellAngleType.A27:
@@ -241,7 +241,7 @@ static func _get_target_top_right_corner(proximity: CellProximityV2) -> int:
                     pass
                 else:
                     Sc.logger.error(
-                            "_get_target_top_right_corner: " +
+                            "get_target_top_right_corner: " +
                             "Clipped corner: " + 
                             "Invalid case: %s" % proximity.to_string())
             else:
@@ -324,7 +324,7 @@ static func _get_target_top_right_corner(proximity: CellProximityV2) -> int:
     return SubtileCornerV2.UNKNOWN
 
 
-static func _get_target_bottom_left_corner(proximity: CellProximityV2) -> int:
+static func get_target_bottom_left_corner(proximity: CellProximityV2) -> int:
     if proximity.is_bottom_empty:
         if proximity.is_left_empty:
             return SubtileCornerV2.EMPTY
@@ -381,7 +381,7 @@ static func _get_target_bottom_left_corner(proximity: CellProximityV2) -> int:
                         pass
                     else:
                         Sc.logger.error(
-                                "_get_target_bottom_left_corner: " +
+                                "get_target_bottom_left_corner: " +
                                 "Clipped corner: " + 
                                 "Invalid case: %s" % proximity.to_string())
                 elif proximity.get_is_45_pos_ceiling(0, 1):
@@ -394,7 +394,7 @@ static func _get_target_bottom_left_corner(proximity: CellProximityV2) -> int:
                         pass
                     else:
                         Sc.logger.error(
-                                "_get_target_bottom_left_corner: " +
+                                "get_target_bottom_left_corner: " +
                                 "Clipped corner: " + 
                                 "Invalid case: %s" % proximity.to_string())
                 elif proximity.get_angle_type(0, 1) == CellAngleType.A27:
@@ -402,7 +402,7 @@ static func _get_target_bottom_left_corner(proximity: CellProximityV2) -> int:
                     pass
                 else:
                     Sc.logger.error(
-                            "_get_target_bottom_left_corner: " +
+                            "get_target_bottom_left_corner: " +
                             "Clipped corner: " + 
                             "Invalid case: %s" % proximity.to_string())
             else:
@@ -485,7 +485,7 @@ static func _get_target_bottom_left_corner(proximity: CellProximityV2) -> int:
     return SubtileCornerV2.UNKNOWN
 
 
-static func _get_target_bottom_right_corner(proximity: CellProximityV2) -> int:
+static func get_target_bottom_right_corner(proximity: CellProximityV2) -> int:
     if proximity.is_bottom_empty:
         if proximity.is_right_empty:
             return SubtileCornerV2.EMPTY
@@ -542,7 +542,7 @@ static func _get_target_bottom_right_corner(proximity: CellProximityV2) -> int:
                         pass
                     else:
                         Sc.logger.error(
-                                "_get_target_bottom_right_corner: " +
+                                "get_target_bottom_right_corner: " +
                                 "Clipped corner: " + 
                                 "Invalid case: %s" % proximity.to_string())
                 elif proximity.get_is_45_pos_ceiling(0, 1):
@@ -555,7 +555,7 @@ static func _get_target_bottom_right_corner(proximity: CellProximityV2) -> int:
                         pass
                     else:
                         Sc.logger.error(
-                                "_get_target_bottom_right_corner: " +
+                                "get_target_bottom_right_corner: " +
                                 "Clipped corner: " + 
                                 "Invalid case: %s" % proximity.to_string())
                 elif proximity.get_angle_type(0, 1) == CellAngleType.A27:
@@ -563,7 +563,7 @@ static func _get_target_bottom_right_corner(proximity: CellProximityV2) -> int:
                     pass
                 else:
                     Sc.logger.error(
-                            "_get_target_bottom_right_corner: " +
+                            "get_target_bottom_right_corner: " +
                             "Clipped corner: " + 
                             "Invalid case: %s" % proximity.to_string())
             else:
