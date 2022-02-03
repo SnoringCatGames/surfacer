@@ -431,8 +431,6 @@ func _forward_subtile_selection(
 
 func _choose_subtile(proximity: CellProximity) -> Vector2:
     var target_corners := _get_target_corners(proximity)
-    var target_quadrants := \
-            SubtileTargetQuadrantUtils.get_target_quadrants(target_corners)
     
     # FIXME: Uncomment this to help with debugging.
 #    Sc.logger.print(">>>>>>>>>>_choose_subtile: %s, corners=%s" % [
