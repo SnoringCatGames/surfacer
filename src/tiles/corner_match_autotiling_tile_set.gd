@@ -53,18 +53,6 @@ const _INBOUND_CORNERS := [
     "inbound_r_tl",
     "inbound_r_bl",
 ]
-const _ALL_EMPTY_CORNERS := {
-    tl = SubtileCorner.EMPTY,
-    tr = SubtileCorner.EMPTY,
-    bl = SubtileCorner.EMPTY,
-    br = SubtileCorner.EMPTY,
-}
-const _ALL_INTERIOR_CORNERS := {
-    tl = SubtileCorner.INTERIOR,
-    tr = SubtileCorner.INTERIOR,
-    bl = SubtileCorner.INTERIOR,
-    br = SubtileCorner.INTERIOR,
-}
 
 
 # NOTE:
@@ -74,81 +62,35 @@ const _ALL_INTERIOR_CORNERS := {
 # -   This maps from an expected target corner type to what is actually
 #     configured in the given tile-set.
 const _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES := {
-    SubtileCorner.UNKNOWN: [],
-    
-    SubtileCorner.EMPTY: [SubtileCorner.EXT_90_90_CONVEX, SubtileCorner.EXT_90H_TO_45_CONVEX_ACUTE, SubtileCorner.EXT_90V_TO_45_CONVEX_ACUTE],
-    SubtileCorner.EXTERIOR: [],
-    SubtileCorner.INTERIOR: [],
-    
-    SubtileCorner.EXT_90H: [],
-    SubtileCorner.EXT_90V: [],
-    SubtileCorner.EXT_90_90_CONVEX: [SubtileCorner.EMPTY],
-    
-    SubtileCorner.EXT_CLIPPED_90_90: [-SubtileCorner.EXT_CLIPPED_45_45],
-    
-    
-    SubtileCorner.EXT_CLIPPED_45_45: [],
-    SubtileCorner.EXT_45_FLOOR: [],
-    SubtileCorner.EXT_45_CEILING: [],
-    
-    SubtileCorner.EXT_45_FLOOR_TO_90: [-SubtileCorner.EXT_45_FLOOR],
-    SubtileCorner.EXT_45_FLOOR_TO_45_CONVEX: [-SubtileCorner.EXT_45_FLOOR],
-    SubtileCorner.EXT_45_CEILING_TO_90: [-SubtileCorner.EXT_45_CEILING],
-    SubtileCorner.EXT_45_CEILING_TO_45_CONVEX: [-SubtileCorner.EXT_45_CEILING],
-    
-    
-    SubtileCorner.EXT_CLIPPED_27_SHALLOW: [-SubtileCorner.EXT_CLIPPED_45_45],
-    SubtileCorner.EXT_CLIPPED_27_STEEP: [-SubtileCorner.EXT_CLIPPED_45_45],
-    SubtileCorner.EXT_27_FLOOR_SHALLOW_CLOSE: [-SubtileCorner.EXT_90H],
-    SubtileCorner.EXT_27_FLOOR_SHALLOW_FAR: [],
-    SubtileCorner.EXT_27_FLOOR_STEEP_CLOSE: [-SubtileCorner.EXT_90V],
-    SubtileCorner.EXT_27_FLOOR_STEEP_FAR: [],
-    
-    
-    SubtileCorner.EXT_27_CEILING_SHALLOW_CLOSE: [-SubtileCorner.EXT_90H],
-    SubtileCorner.EXT_27_CEILING_SHALLOW_FAR: [],
-    SubtileCorner.EXT_27_CEILING_STEEP_CLOSE: [-SubtileCorner.EXT_90V],
-    SubtileCorner.EXT_27_CEILING_STEEP_FAR: [],
-    
-    
-    SubtileCorner.EXT_CLIPPED_90H_45: [-SubtileCorner.EXT_CLIPPED_45_45],
-    SubtileCorner.EXT_CLIPPED_90V_45: [-SubtileCorner.EXT_CLIPPED_45_45],
-    SubtileCorner.EXT_90H_TO_45_CONVEX: [-SubtileCorner.EXT_90H],
-    SubtileCorner.EXT_90V_TO_45_CONVEX: [-SubtileCorner.EXT_90V],
-    SubtileCorner.EXT_90H_TO_45_CONVEX_ACUTE: [SubtileCorner.EMPTY, SubtileCorner.EXT_90_90_CONVEX, SubtileCorner.EXT_90V_TO_45_CONVEX_ACUTE],
-    SubtileCorner.EXT_90V_TO_45_CONVEX_ACUTE: [SubtileCorner.EMPTY, SubtileCorner.EXT_90_90_CONVEX, SubtileCorner.EXT_90H_TO_45_CONVEX_ACUTE],
-    
-    # SubtileCorner.FIXME: SubtileCorner.LEFT SubtileCorner.OFF SubtileCorner.HERE: ------------------------------------
-    
-    SubtileCorner.INT_90H: [],
-    SubtileCorner.INT_90V: [],
-    SubtileCorner.INT_90_90_CONCAVE: [],
-    SubtileCorner.INT_90_90_CONVEX: [],
-    SubtileCorner.INT_90H_TO_45: [],
-    SubtileCorner.INT_90V_TO_45: [],
-    SubtileCorner.INT_90H_TO_27_SHALLOW: [],
-    SubtileCorner.INT_90H_TO_27_STEEP_SHORT: [],
-    SubtileCorner.INT_90H_TO_27_STEEP_LONG: [],
-    SubtileCorner.INT_90V_TO_27_SHALLOW_SHORT: [],
-    SubtileCorner.INT_90V_TO_27_SHALLOW_LONG: [],
-    SubtileCorner.INT_90V_TO_27_STEEP: [],
-    
-    SubtileCorner.INT_45_EXT_CORNER: [],
-    SubtileCorner.INT_45_EXT_CORNER_TO_90H: [],
-    SubtileCorner.INT_45_EXT_CORNER_TO_90V: [],
-    SubtileCorner.INT_45_EXT_CORNER_TO_90H_AND_90V: [],
-    
-    SubtileCorner.INT_45_INT_CORNER: [],
-    SubtileCorner.INT_45_INT_CORNER_WITH_90_90_CONCAVE: [],
-    SubtileCorner.INT_45_INT_CORNER_WITH_90_90_CONVEX: [],
-    SubtileCorner.INT_45_INT_CORNER_WITH_90H: [],
-    SubtileCorner.INT_45_INT_CORNER_WITH_90V: [],
-    SubtileCorner.INT_45_INT_CORNER_NARROW: [],
-    SubtileCorner.INT_45_MID_NOTCH_H: [],
-    SubtileCorner.INT_45_MID_NOTCH_V: [],
-    
-    SubtileCorner.INT_27_INT_CORNER_SHALLOW: [],
-    SubtileCorner.INT_27_INT_CORNER_STEEP: [],
+    # FIXME: LEFT OFF HERE: ----------------
+#    SubtileCorner.EMPTY: [SubtileCorner.EXT_90_90_CONVEX, SubtileCorner.EXT_90H_TO_45_CONVEX_ACUTE, SubtileCorner.EXT_90V_TO_45_CONVEX_ACUTE],
+#
+#    SubtileCorner.EXT_90_90_CONVEX: [SubtileCorner.EMPTY],
+#
+#    SubtileCorner.EXT_CLIPPED_90_90: [-SubtileCorner.EXT_CLIPPED_45_45],
+#
+#    SubtileCorner.EXT_45_FLOOR_TO_90: [-SubtileCorner.EXT_45_FLOOR],
+#    SubtileCorner.EXT_45_FLOOR_TO_45_CONVEX: [-SubtileCorner.EXT_45_FLOOR],
+#    SubtileCorner.EXT_45_CEILING_TO_90: [-SubtileCorner.EXT_45_CEILING],
+#    SubtileCorner.EXT_45_CEILING_TO_45_CONVEX: [-SubtileCorner.EXT_45_CEILING],
+#
+#
+#    SubtileCorner.EXT_CLIPPED_27_SHALLOW: [-SubtileCorner.EXT_CLIPPED_45_45],
+#    SubtileCorner.EXT_CLIPPED_27_STEEP: [-SubtileCorner.EXT_CLIPPED_45_45],
+#    SubtileCorner.EXT_27_FLOOR_SHALLOW_CLOSE: [-SubtileCorner.EXT_90H],
+#    SubtileCorner.EXT_27_FLOOR_STEEP_CLOSE: [-SubtileCorner.EXT_90V],
+#
+#
+#    SubtileCorner.EXT_27_CEILING_SHALLOW_CLOSE: [-SubtileCorner.EXT_90H],
+#    SubtileCorner.EXT_27_CEILING_STEEP_CLOSE: [-SubtileCorner.EXT_90V],
+#
+#
+#    SubtileCorner.EXT_CLIPPED_90H_45: [-SubtileCorner.EXT_CLIPPED_45_45],
+#    SubtileCorner.EXT_CLIPPED_90V_45: [-SubtileCorner.EXT_CLIPPED_45_45],
+#    SubtileCorner.EXT_90H_TO_45_CONVEX: [-SubtileCorner.EXT_90H],
+#    SubtileCorner.EXT_90V_TO_45_CONVEX: [-SubtileCorner.EXT_90V],
+#    SubtileCorner.EXT_90H_TO_45_CONVEX_ACUTE: [SubtileCorner.EMPTY, SubtileCorner.EXT_90_90_CONVEX, SubtileCorner.EXT_90V_TO_45_CONVEX_ACUTE],
+#    SubtileCorner.EXT_90V_TO_45_CONVEX_ACUTE: [SubtileCorner.EMPTY, SubtileCorner.EXT_90_90_CONVEX, SubtileCorner.EXT_90H_TO_45_CONVEX_ACUTE],
 }
 
 # FIXME: LEFT OFF HERE: --------------------------------
@@ -165,8 +107,6 @@ var _SUBTILE_CORNER_TYPE_VALUE_TO_KEY: Dictionary
 var _corner_to_type_to_subtiles: Dictionary
 
 var _error_indicator_subtile_position: Vector2
-var _fully_exterior_subtile_position: Vector2
-var _fully_interior_subtile_position: Vector2
 
 # -   If true, the autotiling logic will try to find the best match given which
 #     subtiles are available.
@@ -213,14 +153,6 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
             subtiles_manifest.error_indicator_subtile_position is Vector2)
     _error_indicator_subtile_position = \
             subtiles_manifest.error_indicator_subtile_position
-    assert(subtiles_manifest.has("fully_exterior_subtile_position") and \
-            subtiles_manifest.fully_exterior_subtile_position is Vector2)
-    _fully_exterior_subtile_position = \
-            subtiles_manifest.fully_exterior_subtile_position
-    assert(subtiles_manifest.has("fully_interior_subtile_position") and \
-            subtiles_manifest.fully_interior_subtile_position is Vector2)
-    _fully_interior_subtile_position = \
-            subtiles_manifest.fully_interior_subtile_position
     
     # If the additional matching type map is a const and has already been
     # parsed, then skip it.
@@ -247,7 +179,8 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
         var type_to_subtiles := {}
         _corner_to_type_to_subtiles[corner] = type_to_subtiles
         for corner_type in _SUBTILE_CORNER_TYPE_VALUE_TO_KEY:
-            if _get_is_subtile_corner_type_interesting(corner_type):
+            if corner_type != SubtileCorner.UNKNOWN and \
+                    corner_type != SubtileCorner.ERROR:
                 var subtiles := {}
                 type_to_subtiles[corner_type] = subtiles
     
@@ -296,7 +229,8 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
             assert(subtile_config.has(corner))
             var corner_type: int = subtile_config[corner]
             assert(corner_type is int and corner_type != SubtileCorner.UNKNOWN)
-            if _get_is_subtile_corner_type_interesting(corner_type):
+            if corner_type != SubtileCorner.UNKNOWN and \
+                    corner_type != SubtileCorner.ERROR:
                 _corner_to_type_to_subtiles[corner][corner_type][position] = \
                         subtile_config
                 was_a_corner_interesting = true
@@ -344,13 +278,6 @@ func get_subtile_config_string(subtile_config: Dictionary) -> String:
         get_subtile_corner_string(subtile_config.bl),
         get_subtile_corner_string(subtile_config.br),
     ]
-
-
-func _get_is_subtile_corner_type_interesting(type: int) -> bool:
-    return type != SubtileCorner.UNKNOWN and \
-            type != SubtileCorner.EMPTY and \
-            type != SubtileCorner.EXTERIOR and \
-            type != SubtileCorner.INTERIOR
 
 
 func _get_does_angle_type_match(
@@ -401,6 +328,29 @@ func _get_match_priority(
     return priority
 
 
+func _get_are_target_corners_valid(target_corners: Dictionary) -> bool:
+    var corner_keys := [
+        ["tl"],
+        ["tr"],
+        ["bl"],
+        ["br"],
+        ["inbound_t_bl"],
+        ["inbound_t_br"],
+        ["inbound_b_tl"],
+        ["inbound_b_tr"],
+        ["inbound_l_tr"],
+        ["inbound_l_br"],
+        ["inbound_r_tl"],
+        ["inbound_r_bl"],
+    ]
+    for corner_key in corner_keys:
+        var corner_type: int = target_corners[corner_key]
+        if corner_type == SubtileCorner.ERROR or \
+                corner_type == SubtileCorner.UNKNOWN:
+            return false
+    return true
+
+
 func _forward_subtile_selection(
         tile_id: int,
         bitmask: int,
@@ -432,6 +382,9 @@ func _forward_subtile_selection(
 func _choose_subtile(proximity: CellProximity) -> Vector2:
     var target_corners := _get_target_corners(proximity)
     
+    if !_get_are_target_corners_valid(target_corners):
+        return _error_indicator_subtile_position
+    
     # FIXME: Uncomment this to help with debugging.
 #    Sc.logger.print(">>>>>>>>>>_choose_subtile: %s, corners=%s" % [
 #        proximity.to_string(),
@@ -443,9 +396,7 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
     for corner in _CORNERS:
         var corner_type: int = target_corners[corner]
         corner_to_matches[corner] = \
-                _corner_to_type_to_subtiles[corner][corner_type] if \
-                _get_is_subtile_corner_type_interesting(corner_type) else \
-                {}
+                _corner_to_type_to_subtiles[corner][corner_type]
     
     # FIXME: LEFT OFF HERE: ---------------------------
     # - As an efficiency step, first check if the pre-existing cell in the
@@ -485,8 +436,6 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
             break
         
         if !_allows_partial_matches and \
-                _get_is_subtile_corner_type_interesting(
-                    target_corners[corner]) and \
                 best_match_positions.empty():
             # If this corner type was interesting, and we didn't find a full
             # match for it, then we know that none of the other corner mappings
@@ -513,10 +462,6 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
                     Sc.utils.get_vector_string(best_match, 0),
                 ])
         return best_match
-    elif _get_match_priority(_ALL_EMPTY_CORNERS, target_corners) >= 4.0:
-        return _fully_exterior_subtile_position
-    elif _get_match_priority(_ALL_INTERIOR_CORNERS, target_corners) >= 4.0:
-        return _fully_interior_subtile_position
     else:
         return _error_indicator_subtile_position
 
