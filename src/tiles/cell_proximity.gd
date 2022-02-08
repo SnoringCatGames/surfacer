@@ -25,8 +25,6 @@ var tile_id: int
 var angle_type: int
 var bitmask: int
 
-# FIXME: LEFT OFF HERE: ---------- Remove any unused members.
-
 var is_angle_type_90: bool \
         setget ,_get_is_angle_type_90
 var is_angle_type_45: bool \
@@ -52,64 +50,6 @@ var is_right_empty: bool setget ,_get_is_right_empty
 var is_bottom_left_empty: bool setget ,_get_is_bottom_left_empty
 var is_bottom_empty: bool setget ,_get_is_bottom_empty
 var is_bottom_right_empty: bool setget ,_get_is_bottom_right_empty
-
-var is_top_or_left_empty: bool setget ,_get_is_top_or_left_empty
-var is_top_or_right_empty: bool setget ,_get_is_top_or_right_empty
-var is_bottom_or_left_empty: bool setget ,_get_is_bottom_or_left_empty
-var is_bottom_or_right_empty: bool setget ,_get_is_bottom_or_right_empty
-
-var is_empty_around_top_left: bool \
-        setget ,_get_is_empty_around_top_left
-var is_empty_around_top_right: bool \
-        setget ,_get_is_empty_around_top_right
-var is_empty_around_bottom_left: bool \
-        setget ,_get_is_empty_around_bottom_left
-var is_empty_around_bottom_right: bool \
-        setget ,_get_is_empty_around_bottom_right
-
-var is_top_left_empty_at_top_left: bool \
-        setget ,_get_is_top_left_empty_at_top_left
-var is_top_empty_at_top: bool \
-        setget ,_get_is_top_empty_at_top
-var is_top_right_empty_at_top_right: bool \
-        setget ,_get_is_top_right_empty_at_top_right
-var is_left_empty_at_left: bool \
-        setget ,_get_is_left_empty_at_left
-var is_right_empty_at_right: bool \
-        setget ,_get_is_right_empty_at_right
-var is_bottom_left_empty_at_bottom_left: bool \
-        setget ,_get_is_bottom_left_empty_at_bottom_left
-var is_bottom_empty_at_bottom: bool \
-        setget ,_get_is_bottom_empty_at_bottom
-var is_bottom_right_empty_at_bottom_right: bool \
-        setget ,_get_is_bottom_right_empty_at_bottom_right
-
-var is_top_left_empty_at_top_or_left: bool \
-        setget ,_get_is_top_left_empty_at_top_or_left
-var is_top_right_empty_at_top_or_right: bool \
-        setget ,_get_is_top_right_empty_at_top_or_right
-var is_bottom_left_empty_at_bottom_or_left: bool \
-        setget ,_get_is_bottom_left_empty_at_bottom_or_left
-var is_bottom_right_empty_at_bottom_or_right: bool \
-        setget ,_get_is_bottom_right_empty_at_bottom_or_right
-
-var is_top_empty_around_top: bool \
-        setget ,_get_is_top_empty_around_top
-var is_bottom_empty_around_bottom: bool \
-        setget ,_get_is_bottom_empty_around_bottom
-var is_left_empty_around_left: bool \
-        setget ,_get_is_left_empty_around_left
-var is_right_empty_around_right: bool \
-        setget ,_get_is_right_empty_around_right
-
-var is_top_left_empty_around_top_left: bool \
-        setget ,_get_is_top_left_empty_around_top_left
-var is_top_right_empty_around_top_right: bool \
-        setget ,_get_is_top_right_empty_around_top_right
-var is_bottom_left_empty_around_bottom_left: bool \
-        setget ,_get_is_bottom_left_empty_around_bottom_left
-var is_bottom_right_empty_around_bottom_right: bool \
-        setget ,_get_is_bottom_right_empty_around_bottom_right
 
 
 func _init(
@@ -196,7 +136,6 @@ func get_is_empty(relative_x := 0, relative_y := 0) -> bool:
     return !tile_set._is_tile_bound(tile_id, neighbor_id)
 
 
-
 func _get_is_angle_type_90() -> bool:
     return angle_type == CellAngleType.A90
 
@@ -275,150 +214,6 @@ func _get_is_bottom_empty() -> bool:
 
 func _get_is_bottom_right_empty() -> bool:
     return !(bitmask & TileSet.BIND_BOTTOMRIGHT)
-
-
-func _get_is_top_or_left_empty() -> bool:
-    return _get_is_top_empty() or \
-            _get_is_left_empty()
-
-
-func _get_is_top_or_right_empty() -> bool:
-    return _get_is_top_empty() or \
-            _get_is_right_empty()
-
-
-func _get_is_bottom_or_left_empty() -> bool:
-    return _get_is_bottom_empty() or \
-            _get_is_left_empty()
-
-
-func _get_is_bottom_or_right_empty() -> bool:
-    return _get_is_bottom_empty() or \
-            _get_is_right_empty()
-
-
-func _get_is_empty_around_top_left() -> bool:
-    return _get_is_top_left_empty() or \
-            _get_is_top_empty() or \
-            _get_is_left_empty()
-
-
-func _get_is_empty_around_top_right() -> bool:
-    return _get_is_top_right_empty() or \
-            _get_is_top_empty() or \
-            _get_is_right_empty()
-
-
-func _get_is_empty_around_bottom_left() -> bool:
-    return _get_is_bottom_left_empty() or \
-            _get_is_bottom_empty() or \
-            _get_is_left_empty()
-
-
-func _get_is_empty_around_bottom_right() -> bool:
-    return _get_is_bottom_right_empty() or \
-            _get_is_bottom_empty() or \
-            _get_is_right_empty()
-
-
-func _get_is_top_left_empty_at_top_left() -> bool:
-    return get_is_empty(-2,-2)
-
-
-func _get_is_top_empty_at_top() -> bool:
-    return get_is_empty(0,-2)
-
-
-func _get_is_top_right_empty_at_top_right() -> bool:
-    return get_is_empty(2,-2)
-
-
-func _get_is_left_empty_at_left() -> bool:
-    return get_is_empty(-2,0)
-
-
-func _get_is_right_empty_at_right() -> bool:
-    return get_is_empty(2,0)
-
-
-func _get_is_bottom_left_empty_at_bottom_left() -> bool:
-    return get_is_empty(-2,2)
-
-
-func _get_is_bottom_empty_at_bottom() -> bool:
-    return get_is_empty(0,2)
-
-
-func _get_is_bottom_right_empty_at_bottom_right() -> bool:
-    return get_is_empty(2,2)
-
-
-func _get_is_top_left_empty_at_top_or_left() -> bool:
-    return get_is_empty(-1,-2) or \
-            get_is_empty(-2,-1)
-
-
-func _get_is_top_right_empty_at_top_or_right() -> bool:
-    return get_is_empty(1,-2) or \
-            get_is_empty(2,-1)
-
-
-func _get_is_bottom_left_empty_at_bottom_or_left() -> bool:
-    return get_is_empty(-1,2) or \
-            get_is_empty(-2,1)
-
-
-func _get_is_bottom_right_empty_at_bottom_or_right() -> bool:
-    return get_is_empty(1,2) or \
-            get_is_empty(2,1)
-
-
-func _get_is_top_empty_around_top() -> bool:
-    return get_is_empty(-1,-2) or \
-            get_is_empty(0,-2) or \
-            get_is_empty(1,-2)
-
-
-func _get_is_bottom_empty_around_bottom() -> bool:
-    return get_is_empty(-1,2) or \
-            get_is_empty(0,2) or \
-            get_is_empty(1,2)
-
-
-func _get_is_left_empty_around_left() -> bool:
-    return get_is_empty(-2,-1) or \
-            get_is_empty(-2,0) or \
-            get_is_empty(-2,1)
-
-
-func _get_is_right_empty_around_right() -> bool:
-    return get_is_empty(2,-1) or \
-            get_is_empty(2,0) or \
-            get_is_empty(2,1)
-
-
-func _get_is_top_left_empty_around_top_left() -> bool:
-    return get_is_empty(-2,-2) or \
-            get_is_empty(-1,-2) or \
-            get_is_empty(-2,-1)
-
-
-func _get_is_top_right_empty_around_top_right() -> bool:
-    return get_is_empty(2,-2) or \
-            get_is_empty(1,-2) or \
-            get_is_empty(2,-1)
-
-
-func _get_is_bottom_left_empty_around_bottom_left() -> bool:
-    return get_is_empty(-2,2) or \
-            get_is_empty(-1,2) or \
-            get_is_empty(-2,1)
-
-
-func _get_is_bottom_right_empty_around_bottom_right() -> bool:
-    return get_is_empty(2,2) or \
-            get_is_empty(1,2) or \
-            get_is_empty(2,1)
 
 
 func get_is_top_cap(relative_x := 0, relative_y := 0) -> bool:
