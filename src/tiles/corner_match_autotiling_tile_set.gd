@@ -2,6 +2,67 @@ tool
 class_name CornerMatchAutotilingTileSet
 extends SurfacesTileSet
 
+# FIXME: LEFT OFF HERE: --------------------------------------
+# --- NEXT:
+#   - TileSetImageParser
+#   - Implement _get_quadrants().
+#     - Return the quadrants with the greatest weight for the given
+#       target_corners.
+#       - 
+#     - Maybe similar to the old _choose_subtile()?
+#   - Implement the inner-TileMap pattern to render quadrants according to the
+#     outer TileMap's cells.
+#   - Add logic (and configuration) for matching quadrant/corner-type fallbacks.
+#   - Hook-up all tile-set configuration.
+#   - ...
+# ---- NOTES:
+# - Configure:
+#   - Quadrant-size
+#   - Image paths:
+#     - CORNER_TYPE_ANNOTATION_KEY
+#     - TILESET_QUADRANTS
+#     - TILESET_CORNER_TYPE_ANNOTATIONS
+#   - TileSetImageParser
+#   - SubtileTargetCornerUtils
+#   - Autotile name prefix.
+#   - Whether 45-degree subtiles are used.
+#   - Whether 47-degree subtiles are used.
+#   - Expect the tile-set author to provide a TileSet.
+#     - We then automatically create/override tiles on this TileSet for our
+#       custom autotiling.
+# - Parse CORNER_TYPE_ANNOTATION_KEY image:
+#   - Look at quadrant-size and image size to automatically determine row and
+#     column count.
+# - Auto-assign TileSet properties:
+#   - tile_set_name() = config.autotile_name_prefix + <angle_type>
+#   - tile_set_texture() = config.TILESET_QUADRANTS
+#   - autotile_set_size() = Vector2.ONE * config.quadrant_size * 2
+#   - tile_set_region()
+#   - tile_set_tile_mode() = TileSet.AUTO_TILE
+#   - autotile_set_bitmask_mode() = TileSet.BITMASK_3X3_MINIMAL
+#   - autotile_set_icon_coordinate() (automatically calculate this according to
+#     corner-types)
+#   - tile_add_shape()
+#   - autotile_set_light_occluder()
+#   - tile_set_z_index()
+#   - tile_set_shape_one_way()
+# ----
+
+var quadrant_size := 16
+var corner_type_annotation_key_path := "res://assets/"
+var tile_set_quadrants_path := "res://assets/"
+var tile_set_corner_type_annotations_path := "res://assets/"
+
+
+
+
+
+
+
+
+
+
+
 
 # FIXME: LEFT OFF HERE: ----------------------------------
 # - Plan how to deal with 45-interior-transition strips that don't actually fade
