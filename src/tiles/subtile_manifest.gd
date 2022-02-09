@@ -27,6 +27,8 @@ var tile_set_corner_type_annotations_path: String
 var tile_set: CornerMatchAutotilingTileSet
 var tile_set_image_parser: TileSetImageParser
 var subtile_target_corner_calculator: SubtileTargetCornerCalculator
+var shape_calculator: CornerMatchAutotileShapeCalculator
+var initializer: CornerMatchAutotileInitializer
 
 var corner_type_annotation_key_texture: Texture
 var tile_set_quadrants_texture: Texture
@@ -76,6 +78,20 @@ func register_manifest(manifest: Dictionary) -> void:
                 SubtileTargetCornerCalculator.new()
     self.add_child(subtile_target_corner_calculator)
     
+    if manifest.has("shape_calculator_class"):
+        self.shape_calculator = manifest.shape_calculator_class.new()
+        assert(self.shape_calculator is CornerMatchAutotileShapeCalculator)
+    else:
+        self.shape_calculator = CornerMatchAutotileShapeCalculator.new()
+    self.add_child(shape_calculator)
+    
+    if manifest.has("initializer_class"):
+        self.initializer = manifest.initializer_class.new()
+        assert(self.initializer is CornerMatchAutotileInitializer)
+    else:
+        self.initializer = CornerMatchAutotileInitializer.new()
+    self.add_child(initializer)
+    
     _parse_corner_types_to_swap_for_bottom_quadrants(manifest)
     
     if !supports_runtime_autotiling and \
@@ -88,7 +104,7 @@ func register_manifest(manifest: Dictionary) -> void:
     self.tile_set_corner_type_annotations_texture = \
             load(tile_set_corner_type_annotations_path)
     
-    tile_set.initialize_tiles()
+    initializer.initialize_tiles(tile_set)
 
 
 func _parse_corner_types_to_swap_for_bottom_quadrants(
