@@ -1,8 +1,8 @@
-class_name SubtileTargetCornerUtils
-extends Reference
+class_name SubtileTargetCornerCalculator
+extends Node
 
 
-static func get_target_top_left_corner(proximity: CellProximity) -> int:
+func get_target_top_left_corner(proximity: CellProximity) -> int:
     if proximity.is_top_empty:
         if proximity.is_left_empty:
             if proximity.get_is_90_floor():
@@ -352,7 +352,7 @@ static func get_target_top_left_corner(proximity: CellProximity) -> int:
     return SubtileCorner.UNKNOWN
 
 
-static func get_target_top_right_corner(proximity: CellProximity) -> int:
+func get_target_top_right_corner(proximity: CellProximity) -> int:
     if proximity.is_top_empty:
         if proximity.is_right_empty:
             if proximity.get_is_90_floor():
@@ -702,7 +702,7 @@ static func get_target_top_right_corner(proximity: CellProximity) -> int:
     return SubtileCorner.UNKNOWN
 
 
-static func get_target_bottom_left_corner(proximity: CellProximity) -> int:
+func get_target_bottom_left_corner(proximity: CellProximity) -> int:
     if proximity.is_bottom_empty:
         if proximity.is_left_empty:
             if proximity.get_is_90_ceiling():
@@ -1052,7 +1052,7 @@ static func get_target_bottom_left_corner(proximity: CellProximity) -> int:
     return SubtileCorner.UNKNOWN
 
 
-static func get_target_bottom_right_corner(proximity: CellProximity) -> int:
+func get_target_bottom_right_corner(proximity: CellProximity) -> int:
     if proximity.is_bottom_empty:
         if proximity.is_right_empty:
             if proximity.get_is_90_ceiling():
@@ -1402,7 +1402,7 @@ static func get_target_bottom_right_corner(proximity: CellProximity) -> int:
     return SubtileCorner.UNKNOWN
 
 
-static func _log_error(
+func _log_error(
         message: String,
         proximity: CellProximity) -> void:
     Sc.logger.error(

@@ -1,5 +1,5 @@
 class_name TileSetImageParser
-extends Reference
+extends Node
 
 
 const ANNOTATION_SIZE := Vector2(4,4)
@@ -10,7 +10,7 @@ const _CORNER_TYPE_BIT_MASK := 1 << 11 - 1
 
 # -   Returns a mapping from pixel-color to pixel-bit-flag to corner-type.
 # Dictionary<int, Dictionary<int, int>>
-static func parse_corner_type_annotation_key(
+func parse_corner_type_annotation_key(
         corner_type_annotation_key_path: String,
         quadrant_size: int) -> Dictionary:
     assert(quadrant_size >= ANNOTATION_SIZE.x * 2)
@@ -89,7 +89,7 @@ static func parse_corner_type_annotation_key(
 #         self-corner | h-opp-corner << 10 | v-opp-corner << 20 | \
 #             h-inbound-corner << 30 | v-inbound-corner << 40
 # Dictionary<("tl"|"tr"|"bl"|"br"), Dictionary<int, Vector2>>
-static func parse_tile_set_corner_type_annotations(
+func parse_tile_set_corner_type_annotations(
         corner_type_annotation_key: Dictionary,
         corner_types_to_swap_for_bottom_quadrants: Dictionary,
         tile_set_corner_type_annotations_path: String,
@@ -133,7 +133,30 @@ static func parse_tile_set_corner_type_annotations(
     return subtile_corner_types
 
 
-static func _parse_corner_type_annotation(
+func get_flag_from_corner_types(
+        self_corner_type: int,
+        h_opp_corner_type: int,
+        v_opp_corner_type: int,
+        h_inbound_corner_type: int,
+        v_inbound_corner_type: int) -> int:
+    return self_corner_type | \
+            h_opp_corner_type << 10 | \
+            v_opp_corner_type << 20 | \
+            h_inbound_corner_type << 30 | \
+            v_inbound_corner_type << 40
+
+
+func get_corner_types_from_flag(corner_types_flag: int) -> Dictionary:
+    return {
+        self_corner_type = corner_types_flag & _CORNER_TYPE_BIT_MASK,
+        h_opp_corner_type = corner_types_flag >> 10 & _CORNER_TYPE_BIT_MASK,
+        v_opp_corner_type = corner_types_flag >> 20 & _CORNER_TYPE_BIT_MASK,
+        h_inbound_corner_type = corner_types_flag >> 30 & _CORNER_TYPE_BIT_MASK,
+        v_inbound_corner_type = corner_types_flag >> 40 & _CORNER_TYPE_BIT_MASK,
+    }
+
+
+func _parse_corner_type_annotation(
         subtile_corner_types: Dictionary,
         corner_type_annotation_key: Dictionary,
         corner_types_to_swap_for_bottom_quadrants: Dictionary,
@@ -512,29 +535,6 @@ static func _parse_corner_type_annotation(
     subtile_corner_types.tr[tr_corner_types_flag] = tr_quadrant_position
     subtile_corner_types.bl[bl_corner_types_flag] = bl_quadrant_position
     subtile_corner_types.br[br_corner_types_flag] = br_quadrant_position
-
-
-static func get_flag_from_corner_types(
-        self_corner_type: int,
-        h_opp_corner_type: int,
-        v_opp_corner_type: int,
-        h_inbound_corner_type: int,
-        v_inbound_corner_type: int) -> int:
-    return self_corner_type | \
-            h_opp_corner_type << 10 | \
-            v_opp_corner_type << 20 | \
-            h_inbound_corner_type << 30 | \
-            v_inbound_corner_type << 40
-
-
-static func get_corner_types_from_flag(corner_types_flag: int) -> Dictionary:
-    return {
-        self_corner_type = corner_types_flag & _CORNER_TYPE_BIT_MASK,
-        h_opp_corner_type = corner_types_flag >> 10 & _CORNER_TYPE_BIT_MASK,
-        v_opp_corner_type = corner_types_flag >> 20 & _CORNER_TYPE_BIT_MASK,
-        h_inbound_corner_type = corner_types_flag >> 30 & _CORNER_TYPE_BIT_MASK,
-        v_inbound_corner_type = corner_types_flag >> 40 & _CORNER_TYPE_BIT_MASK,
-    }
 
 
 static func _get_corner_type_from_annotation(
