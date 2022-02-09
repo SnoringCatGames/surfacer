@@ -30,6 +30,14 @@ extends SurfacesTileSet
 #   - Expect the tile-set author to provide a TileSet.
 #     - We then automatically create/override tiles on this TileSet for our
 #       custom autotiling.
+# - corner_types_to_swap_for_bottom_quadrants: Dictionary
+#   - Actually configure the following array, then convert it to the Dictionary
+#     on init:
+#const _CORNER_TYPES_TO_SWAP_FOR_BOTTOM_QUADRANTS := [
+#    [SubtileCorner.EXT_45_FLOOR, SubtileCorner.EXT_45_CEILING],
+#    [SubtileCorner.EXT_INT_45_FLOOR, SubtileCorner.EXT_INT_45_CEILING],
+#    [SubtileCorner.INT_45_FLOOR, SubtileCorner.INT_45_CEILING],
+#]
 # - Parse CORNER_TYPE_ANNOTATION_KEY image:
 #   - Look at quadrant-size and image size to automatically determine row and
 #     column count.
