@@ -19,9 +19,9 @@ extends SurfacesTileSet
 # - Configure:
 #   - Quadrant-size
 #   - Image paths:
-#     - CORNER_TYPE_ANNOTATION_KEY
-#     - TILESET_QUADRANTS
-#     - TILESET_CORNER_TYPE_ANNOTATIONS
+#     - CORNER_TYPE_ANNOTATION_KEY_PATH
+#     - TILESET_QUADRANTS_IMAGE
+#     - TILESET_CORNER_TYPE_ANNOTATIONS_PATH
 #   - TileSetImageParser
 #   - SubtileTargetCornerUtils
 #   - Autotile name prefix.
