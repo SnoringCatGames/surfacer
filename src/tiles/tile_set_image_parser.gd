@@ -653,10 +653,31 @@ static func _get_quadrant_annotation(
         is_horizontal_inbound: bool,
         is_vertical_inbound: bool) -> Dictionary:
     assert(!is_horizontal_inbound or !is_vertical_inbound)
-    # FIXME: LEFT OFF HERE: -----------------------------
-    # - Handle is_horizontal_inbound and is_vertical_inbound.
+    
+    if is_horizontal_inbound:
+        return _get_quadrant_annotation(
+                quadrant_position,
+                quadrant_size,
+                image,
+                path,
+                is_top,
+                !is_left,
+                false,
+                false)
+    if is_vertical_inbound:
+        return _get_quadrant_annotation(
+                quadrant_position,
+                quadrant_size,
+                image,
+                path,
+                !is_top,
+                is_left,
+                false,
+                false)
+    
     var annotation_bits := 0
     var annotation_color := Color.transparent
+    
     for annotation_row_index in ANNOTATION_SIZE.y:
         for annotation_column_index in ANNOTATION_SIZE.x:
             var x := int(quadrant_position.x + (
@@ -667,6 +688,7 @@ static func _get_quadrant_annotation(
                     annotation_row_index if \
                     is_top else \
                     quadrant_size - 1 - annotation_row_index))
+            
             var color := image.get_pixel(x, y)
             if color == Color.transparent:
                 # Ignore empty pixels.
@@ -682,6 +704,7 @@ static func _get_quadrant_annotation(
                         is_top,
                         is_left,
                     ])
+            
             var bit_index_horizontal_component := int(
                     annotation_column_index if \
                     is_left else \
@@ -693,8 +716,10 @@ static func _get_quadrant_annotation(
             var bit_index := int(
                     bit_index_vertical_component * ANNOTATION_SIZE.x + \
                     bit_index_horizontal_component)
+            
             annotation_color = color
             annotation_bits |= 1 << bit_index
+    
     return {
         bits = annotation_bits,
         color = annotation_color.to_rgba64(),
