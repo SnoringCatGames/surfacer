@@ -17,30 +17,8 @@ extends SurfacesTileSet
 #   - ...
 # ---- NOTES:
 # - Configure:
-#   - Quadrant-size
-#   - Image paths:
-#     - CORNER_TYPE_ANNOTATION_KEY_PATH
-#     - TILESET_QUADRANTS_IMAGE
-#     - TILESET_CORNER_TYPE_ANNOTATIONS_PATH
-#   - TileSetImageParser
-#   - SubtileTargetCornerUtils
-#   - Autotile name prefix.
-#   - Whether 45-degree subtiles are used.
-#   - Whether 47-degree subtiles are used.
-#   - Expect the tile-set author to provide a TileSet.
-#     - We then automatically create/override tiles on this TileSet for our
-#       custom autotiling.
 # - corner_types_to_swap_for_bottom_quadrants: Dictionary
-#   - Actually configure the following array, then convert it to the Dictionary
-#     on init:
-#const _CORNER_TYPES_TO_SWAP_FOR_BOTTOM_QUADRANTS := [
-#    [SubtileCorner.EXT_45_FLOOR, SubtileCorner.EXT_45_CEILING],
-#    [SubtileCorner.EXT_INT_45_FLOOR, SubtileCorner.EXT_INT_45_CEILING],
-#    [SubtileCorner.INT_45_FLOOR, SubtileCorner.INT_45_CEILING],
-#]
-# - Parse CORNER_TYPE_ANNOTATION_KEY image:
-#   - Look at quadrant-size and image size to automatically determine row and
-#     column count.
+#   - Actually configure the array, then convert it to the Dictionary on init.
 # - Auto-assign TileSet properties:
 #   - tile_set_name() = config.autotile_name_prefix + <angle_type>
 #   - tile_set_texture() = config.TILESET_QUADRANTS
@@ -55,13 +33,6 @@ extends SurfacesTileSet
 #   - tile_set_z_index()
 #   - tile_set_shape_one_way()
 # ----
-
-var quadrant_size := 16
-var corner_type_annotation_key_path := "res://assets/"
-var tile_set_quadrants_path := "res://assets/"
-var tile_set_corner_type_annotations_path := "res://assets/"
-
-
 
 
 
@@ -537,13 +508,13 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
 
 static func _get_target_corners(proximity: CellProximity) -> Dictionary:
     var target_corners := {
-        tl = SubtileTargetCornerUtils \
+        tl = Su.subtile_manifest.subtile_target_corner_calculator \
                 .get_target_top_left_corner(proximity),
-        tr = SubtileTargetCornerUtils \
+        tr = Su.subtile_manifest.subtile_target_corner_calculator \
                 .get_target_top_right_corner(proximity),
-        bl = SubtileTargetCornerUtils \
+        bl = Su.subtile_manifest.subtile_target_corner_calculator \
                 .get_target_bottom_left_corner(proximity),
-        br = SubtileTargetCornerUtils \
+        br = Su.subtile_manifest.subtile_target_corner_calculator \
                 .get_target_bottom_right_corner(proximity),
         inbound_t_bl = SubtileCorner.UNKNOWN,
         inbound_t_br = SubtileCorner.UNKNOWN,
@@ -563,36 +534,44 @@ static func _get_target_corners(proximity: CellProximity) -> Dictionary:
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(0, -1))
-        target_corners.inbound_t_bl = SubtileTargetCornerUtils \
-                .get_target_bottom_left_corner(top_proximity)
-        target_corners.inbound_t_br = SubtileTargetCornerUtils \
-                .get_target_bottom_right_corner(top_proximity)
+        target_corners.inbound_t_bl = \
+                Su.subtile_manifest.subtile_target_corner_calculator \
+                    .get_target_bottom_left_corner(top_proximity)
+        target_corners.inbound_t_br = \
+                Su.subtile_manifest.subtile_target_corner_calculator \
+                    .get_target_bottom_right_corner(top_proximity)
     if proximity.get_is_present(0, 1):
         var bottom_proximity := CellProximity.new(
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(0, 1))
-        target_corners.inbound_b_tl = SubtileTargetCornerUtils \
-                .get_target_top_left_corner(bottom_proximity)
-        target_corners.inbound_b_tr = SubtileTargetCornerUtils \
-                .get_target_top_right_corner(bottom_proximity)
+        target_corners.inbound_b_tl = \
+                Su.subtile_manifest.subtile_target_corner_calculator \
+                    .get_target_top_left_corner(bottom_proximity)
+        target_corners.inbound_b_tr = \
+                Su.subtile_manifest.subtile_target_corner_calculator \
+                    .get_target_top_right_corner(bottom_proximity)
     if proximity.get_is_present(-1, 0):
         var left_proximity := CellProximity.new(
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(-1, 0))
-        target_corners.inbound_l_tr = SubtileTargetCornerUtils \
-                .get_target_top_right_corner(left_proximity)
-        target_corners.inbound_l_br = SubtileTargetCornerUtils \
-                .get_target_bottom_right_corner(left_proximity)
+        target_corners.inbound_l_tr = \
+                Su.subtile_manifest.subtile_target_corner_calculator \
+                    .get_target_top_right_corner(left_proximity)
+        target_corners.inbound_l_br = \
+                Su.subtile_manifest.subtile_target_corner_calculator \
+                    .get_target_bottom_right_corner(left_proximity)
     if proximity.get_is_present(1, 0):
         var right_proximity := CellProximity.new(
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(1, 0))
-        target_corners.inbound_r_tl = SubtileTargetCornerUtils \
-                .get_target_top_left_corner(right_proximity)
-        target_corners.inbound_r_bl = SubtileTargetCornerUtils \
-                .get_target_bottom_left_corner(right_proximity)
+        target_corners.inbound_r_tl = \
+                Su.subtile_manifest.subtile_target_corner_calculator \
+                    .get_target_top_left_corner(right_proximity)
+        target_corners.inbound_r_bl = \
+                Su.subtile_manifest.subtile_target_corner_calculator \
+                    .get_target_bottom_left_corner(right_proximity)
     
     return target_corners
