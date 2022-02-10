@@ -79,16 +79,21 @@ func _get_shape_vertices_for_quadrant(
         is_top: bool,
         is_left: bool) -> Array:
     var points := _get_shape_vertices_for_corner_type_at_top_left(corner_type)
+    assert(points.size() % 2 == 0)
     
     # Flip vertically if needed.
     if !is_top:
-        for i in points.size():
-            points[i].y = Su.subtile_manifest.quadrant_size - points[i].y
+        for vertex_index in points.size() / 2:
+            var coordinate_index: int = vertex_index * 2 + 1
+            points[coordinate_index] = \
+                    Su.subtile_manifest.quadrant_size - points[coordinate_index]
     
     # Flip horizontally if needed.
     if !is_left:
-        for i in points.size():
-            points[i].x = Su.subtile_manifest.quadrant_size - points[i].x
+        for vertex_index in points.size() / 2:
+            var coordinate_index: int = vertex_index * 2
+            points[coordinate_index] = \
+                    Su.subtile_manifest.quadrant_size - points[coordinate_index]
     
     return points
 
@@ -101,6 +106,13 @@ func _get_shape_vertices_for_corner_type_at_top_left(corner_type: int) -> Array:
         SubtileCorner.EMPTY:
             return []
         SubtileCorner.FULLY_INTERIOR:
+            return [
+                0, 0,
+                quadrant_size, 0,
+                quadrant_size, quadrant_size,
+                0, quadrant_size,
+            ]
+        SubtileCorner.ERROR:
             return [
                 0, 0,
                 quadrant_size, 0,
@@ -290,10 +302,14 @@ func _get_shape_vertices_for_corner_type_at_top_left(corner_type: int) -> Array:
         
         # FIXME: LEFT OFF HERE: -------- A27
         
-        SubtileCorner.ERROR, \
         SubtileCorner.UNKNOWN, \
         _:
-            Sc.logger.error("CornerMatchAutotileShapeCalculator._get_shape_vertices_for_corner_type_at_top_left")
+            # FIXME: LEFT OFF HERE: ---------------------
+            # - Translate int to String after moving the translator to manifest.
+            Sc.logger.error(
+                    "CornerMatchAutotileShapeCalculator" +
+                    "._get_shape_vertices_for_corner_type_at_top_left: %s" % \
+                    corner_type)
             return [
                 0, 0,
                 quadrant_size, 0,
