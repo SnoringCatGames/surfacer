@@ -528,7 +528,7 @@ func _get_weight_multiplier() -> float:
         SurfaceType.AIR:
             return movement_params.air_edge_weight_multiplier
         _:
-            Sc.logger.error()
+            Sc.logger.error("Edge._get_weight_multiplier")
             return INF
 
 

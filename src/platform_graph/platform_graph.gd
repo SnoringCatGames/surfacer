@@ -410,7 +410,7 @@ static func _calculate_intra_surface_edge_weight(
         SurfaceSide.CEILING:
             weight *= movement_params.ceiling_crawling_edge_weight_multiplier
         _:
-            Sc.logger.error()
+            Sc.logger.error("PlatformGraph._calculate_intra_surface_edge_weight")
     
     # Give a constant extra weight for each additional edge in a path.
     weight += movement_params.additional_edge_weight_offset

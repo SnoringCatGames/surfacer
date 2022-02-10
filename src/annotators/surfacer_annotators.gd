@@ -73,7 +73,7 @@ func _create_annotator(annotator_type: int) -> void:
                 Sc.level.set_tile_map_visibility(true)
                 Sc.level.set_background_visibility(true)
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerAnnotators._create_annotator")
 
 
 func _destroy_annotator(annotator_type: int) -> void:
@@ -100,4 +100,4 @@ func _destroy_annotator(annotator_type: int) -> void:
                 Sc.level.set_tile_map_visibility(false)
                 Sc.level.set_background_visibility(false)
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerAnnotators._destroy_annotator")

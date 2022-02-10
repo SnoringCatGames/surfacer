@@ -92,7 +92,7 @@ func sync_position_rotation_for_contact_normal(
                             (-grab_offset.x + collider.half_width_height.x) / \
                             collider.half_width_height.x / 2.0
                 _:
-                    Sc.logger.error()
+                    Sc.logger.error("SurfacerCharacterAnimator.sync_position_rotation_for_contact_normal")
             inter_segment_progress = clamp(inter_segment_progress, 0.0, 1.0)
             
             var grab_angle: float = lerp_angle(
@@ -124,7 +124,7 @@ func sync_position_rotation_for_contact_normal(
                         abs(animator_rotation) / \
                         (PI / 2.0 - Sc.geometry.FLOOR_MAX_ANGLE)
             _:
-                Sc.logger.error()
+                Sc.logger.error("SurfacerCharacterAnimator.sync_position_rotation_for_contact_normal")
         grab_offset_progress = clamp(grab_offset_progress, 0.0, 1.0)
         
         var is_surface_horizontal := \

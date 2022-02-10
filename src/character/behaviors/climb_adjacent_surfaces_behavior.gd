@@ -210,7 +210,7 @@ func is_point_clockwise(
         SurfaceSide.RIGHT_WALL:
             return target.y <= basis.y
         _:
-            Sc.logger.error()
+            Sc.logger.error("ClimbAdjacentSurfacesBehavior.is_point_clockwise")
             return false
 
 

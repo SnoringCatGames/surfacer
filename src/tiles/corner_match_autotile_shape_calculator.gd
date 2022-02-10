@@ -293,7 +293,7 @@ func _get_shape_vertices_for_corner_type_at_top_left(corner_type: int) -> Array:
         SubtileCorner.ERROR, \
         SubtileCorner.UNKNOWN, \
         _:
-            Sc.logger.error()
+            Sc.logger.error("CornerMatchAutotileShapeCalculator._get_shape_vertices_for_corner_type_at_top_left")
             return [
                 0, 0,
                 quadrant_size, 0,

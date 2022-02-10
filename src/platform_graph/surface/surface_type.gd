@@ -23,7 +23,7 @@ static func get_string(type: int) -> String:
         OTHER:
             return "OTHER"
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfaceType.get_string")
             return ""
 
 
@@ -40,7 +40,7 @@ static func get_prefix(type: int) -> String:
         OTHER:
             return "O"
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfaceType.get_prefix")
             return ""
 
 
@@ -56,5 +56,5 @@ static func get_type_from_side(side: int) -> int:
         SurfaceSide.NONE:
             return AIR
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfaceType.get_type_from_side")
             return INF as int

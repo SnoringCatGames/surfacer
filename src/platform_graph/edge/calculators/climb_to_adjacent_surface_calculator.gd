@@ -431,7 +431,7 @@ func _calculate_instructions(
                 else:
                     input_key = "mr"
             _:
-                Sc.logger.error()
+                Sc.logger.error("ClimbToAdjacentSurfaceCalculator._calculate_instructions")
         
         var move_instruction := EdgeInstruction.new(
                 input_key,
@@ -582,7 +582,7 @@ func _populate_convex_trajectory(
                         is_clockwise else \
                         SurfaceSide.RIGHT_WALL
             _:
-                Sc.logger.error()
+                Sc.logger.error("ClimbToAdjacentSurfaceCalculator._populate_convex_trajectory")
     
     var frame_count := int(ceil(duration / Time.PHYSICS_TIME_STEP))
     
@@ -944,7 +944,7 @@ func _get_velocity_start(
                     movement_params.climb_down_speed
             velocity_y *= position_start.surface.properties.speed_multiplier
         _:
-            Sc.logger.error()
+            Sc.logger.error("ClimbToAdjacentSurfaceCalculator._get_velocity_start")
     
     return Vector2(velocity_x, velocity_y)
 
@@ -1033,7 +1033,7 @@ func _get_velocity_end(
             else:
                 velocity_y = 0.0
         _:
-            Sc.logger.error()
+            Sc.logger.error("ClimbToAdjacentSurfaceCalculator._get_velocity_end")
     
     return Vector2(velocity_x, velocity_y)
 

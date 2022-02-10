@@ -170,7 +170,7 @@ func _get_position_at_time_without_trajectory(edge_time: float) -> Vector2:
                     surface,
                     true)
         _:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceEdge._get_position_at_time_without_trajectory")
             return Vector2.INF
 
 
@@ -234,7 +234,7 @@ func _get_velocity_at_time_without_trajectory(edge_time: float) -> Vector2:
             velocity_x *= surface.properties.speed_multiplier
             return Vector2(velocity_x, 0.0)
         _:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceEdge._get_velocity_at_time_without_trajectory")
             return Vector2.INF
 
 
@@ -267,7 +267,7 @@ func get_animation_state_at_time(
             result.animation_name = "CrawlOnCeiling"
             result.facing_left = displacement.x < 0.0
         _:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceEdge.get_animation_state_at_time")
 
 
 func _sync_expected_middle_surface_state(

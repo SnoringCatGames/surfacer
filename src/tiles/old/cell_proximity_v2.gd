@@ -450,7 +450,7 @@ func get_is_90_floor(
             # - Copy the logic in _get_is_90_left_wall.
             return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellProximityV2.get_is_90_floor")
             return false
 
 
@@ -478,7 +478,7 @@ func get_is_90_ceiling(
             # - Copy the logic in _get_is_90_left_wall.
             return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellProximityV2.get_is_90_ceiling")
             return false
 
 
@@ -597,7 +597,7 @@ func get_is_90_left_wall(
                 return true
             return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellProximityV2.get_is_90_left_wall")
             return false
 
 
@@ -625,7 +625,7 @@ func get_is_90_right_wall(
             # - Copy the logic in _get_is_90_left_wall.
             return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellProximityV2.get_is_90_right_wall")
             return false
 
 
@@ -657,7 +657,7 @@ func get_is_45_pos_floor(relative_x := 0, relative_y := 0) -> bool:
             # FIXME: LEFT OFF HERE: -------- A27
             return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellProximityV2.get_is_45_pos_floor")
             return false
 
 
@@ -689,7 +689,7 @@ func get_is_45_neg_floor(relative_x := 0, relative_y := 0) -> bool:
             # FIXME: LEFT OFF HERE: -------- A27
             return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellProximityV2.get_is_45_neg_floor")
             return false
 
 
@@ -721,7 +721,7 @@ func get_is_45_pos_ceiling(relative_x := 0, relative_y := 0) -> bool:
             # FIXME: LEFT OFF HERE: -------- A27
             return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellProximityV2.get_is_45_pos_ceiling")
             return false
 
 
@@ -753,7 +753,7 @@ func get_is_45_neg_ceiling(relative_x := 0, relative_y := 0) -> bool:
             # FIXME: LEFT OFF HERE: -------- A27
             return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellProximityV2.get_is_45_neg_ceiling")
             return false
 
 

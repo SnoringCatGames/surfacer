@@ -887,7 +887,7 @@ func _get_is_neighbor_90_left_wall(
                 return true
             return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellProximityV1._get_is_neighbor_90_left_wall")
             return false
 
 

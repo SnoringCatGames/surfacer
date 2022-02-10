@@ -595,7 +595,7 @@ static func calculate_jump_or_fall_range_polygon_from_surface(
                     offset_y_from_top_corner_to_bottom_corner)
             
         _:
-            Sc.logger.error()
+            Sc.logger.error("FallMovementUtils.calculate_jump_or_fall_range_polygon_from_surface")
             return []
     
     return [top_left, top_right, bottom_right, bottom_left, top_left]

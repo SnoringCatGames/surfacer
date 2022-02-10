@@ -55,7 +55,7 @@ func _initialize_tile(
         CellAngleType.A27:
             tile_name_suffix = "27"
         _:
-            Sc.logger.error()
+            Sc.logger.error("CornerMatchAutotileInitializer._initialize_tile")
     
     var tile_name: String = \
             Su.subtile_manifest.autotile_name_prefix + tile_name_suffix

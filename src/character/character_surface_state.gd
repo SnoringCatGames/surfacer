@@ -228,7 +228,7 @@ func update_for_initial_surface_attachment(
         SurfaceSide.CEILING:
             assert(character.movement_params.can_grab_ceilings)
         _:
-            Sc.logger.error()
+            Sc.logger.error("CharacterSurfaceState.update_for_initial_surface_attachment")
     
     var start_position: Vector2 = character.position
     var normal := SurfaceSide.get_normal(side)
@@ -277,7 +277,7 @@ func update_for_initial_surface_attachment(
         SurfaceSide.CEILING:
             is_grabbing_ceiling = true
         _:
-            Sc.logger.error()
+            Sc.logger.error("CharacterSurfaceState.update_for_initial_surface_attachment")
     
     _update_action_state()
     assert(is_instance_valid(grabbed_surface),
@@ -378,7 +378,7 @@ func _update_touch_state() -> void:
             SurfaceSide.CEILING:
                 next_is_touching_ceiling = true
             _:
-                Sc.logger.error()
+                Sc.logger.error("CharacterSurfaceState._update_touch_state")
     
     var next_just_touched_floor := \
             next_is_touching_floor and !is_touching_floor
@@ -462,7 +462,7 @@ func _update_physics_contacts() -> void:
             SurfaceSide.CEILING:
                 ceiling_contact = surface_contact
             _:
-                Sc.logger.error()
+                Sc.logger.error("CharacterSurfaceState._update_physics_contacts")
 
 
 func _calculate_surface_contact_from_collision(
@@ -634,7 +634,7 @@ func _get_closer_collinear_axially_aligned_surface(
                 neighbor = surface.clockwise_collinear_neighbor
             
         _:
-            Sc.logger.error()
+            Sc.logger.error("CharacterSurfaceState._get_closer_collinear_axially_aligned_surface")
     
     return surface
 
@@ -785,7 +785,7 @@ func _get_position_along_surface_from_rounded_corner() -> PositionAlongSurface:
                 corner_position = surface.last_point
         
     else:
-        Sc.logger.error()
+        Sc.logger.error("CharacterSurfaceState._get_position_along_surface_from_rounded_corner")
         return null
     
     return PositionAlongSurfaceFactory.create_position_offset_from_target_point(
@@ -893,7 +893,7 @@ func _update_surface_contact_for_explicit_grab(
         SurfaceSide.CEILING:
             ceiling_contact = surface_contact
         _:
-            Sc.logger.error()
+            Sc.logger.error("CharacterSurfaceState._update_surface_contact_for_explicit_grab")
     
     if just_started:
         var details := (
@@ -1326,7 +1326,7 @@ func _update_rounding_corner_state() -> void:
             else:
                 rounding_corner_position = grabbed_surface.first_point
         else:
-            Sc.logger.error()
+            Sc.logger.error("CharacterSurfaceState._update_rounding_corner_state")
             rounding_corner_position = Vector2.INF
     else:
         rounding_corner_position = Vector2.INF
@@ -1567,7 +1567,7 @@ func _update_grab_state() -> void:
         SurfaceType.OTHER:
             is_descending_through_floors = character.actions.pressed_down
         _:
-            Sc.logger.error()
+            Sc.logger.error("CharacterSurfaceState._update_grab_state")
     
     # FIXME: ------- Add support for an ascend-through ceiling input.
     # Whether we should ascend-up through jump-through ceilings.
@@ -1932,7 +1932,7 @@ func sync_state_for_surface_grab(
                 next_just_touched_ceiling = !is_touching_ceiling
                 next_just_grabbed_ceiling = !is_grabbing_ceiling
             _:
-                Sc.logger.error()
+                Sc.logger.error("CharacterSurfaceState.sync_state_for_surface_grab")
     
     var previous_grab_position := grab_position
     var previous_grab_normal := grab_normal
@@ -2045,7 +2045,7 @@ func sync_state_for_surface_grab(
             surface_type = SurfaceType.CEILING
             ceiling_contact = surface_grab
         _:
-            Sc.logger.error()
+            Sc.logger.error("CharacterSurfaceState.sync_state_for_surface_grab")
     
     if just_changed_surface:
         character._update_reachable_surfaces(grabbed_surface)
@@ -2076,7 +2076,7 @@ func sync_state_for_surface_release(
             next_just_stopped_touching_ceiling = is_touching_ceiling
             next_just_stopped_grabbing_ceiling = is_grabbing_ceiling
         _:
-            Sc.logger.error()
+            Sc.logger.error("CharacterSurfaceState.sync_state_for_surface_release")
     
     var previous_grab_position := grab_position
     var previous_grab_normal := grab_normal
@@ -2124,4 +2124,4 @@ func sync_state_for_surface_release(
             just_stopped_touching_ceiling = next_just_stopped_touching_ceiling
             just_stopped_grabbing_ceiling = next_just_stopped_grabbing_ceiling
         _:
-            Sc.logger.error()
+            Sc.logger.error("CharacterSurfaceState.sync_state_for_surface_release")

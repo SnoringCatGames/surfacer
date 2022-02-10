@@ -94,7 +94,7 @@ func _get_text_for_description_index(description_index: int) -> String:
                             .replace("\n                ", " "),
                 ]
         _:
-            Sc.logger.error()
+            Sc.logger.error("EdgeStepCalcResultMetadataItemController._get_text_for_description_index")
             return ""
 
 
