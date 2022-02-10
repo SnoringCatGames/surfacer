@@ -22,7 +22,7 @@ func create_shapes_for_quadrants(
     for corner_direction in tile_set.subtile_corner_types:
         var corner_types_flag_to_position: Dictionary = \
                 tile_set.subtile_corner_types[corner_direction]
-        var is_top: bool = corner_direction.starts_with("t")
+        var is_top: bool = corner_direction.begins_with("t")
         var is_left: bool = corner_direction.ends_with("l")
         for corner_types_flag in corner_types_flag_to_position:
             var corner_type: int = Su.subtile_manifest.tile_set_image_parser \

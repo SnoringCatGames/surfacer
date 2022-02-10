@@ -42,6 +42,13 @@ func parse_corner_type_annotation_key(
             var quadrant_position := \
                     Vector2(quadrant_column_index, quadrant_row_index) * \
                     quadrant_size
+            _check_for_empty_quadrant_non_annotation_pixels(
+                    quadrant_position,
+                    quadrant_size,
+                    image,
+                    corner_type_annotation_key_path,
+                    true,
+                    true)
             # This int corresponds to the SubtileCorner enum value.
             var corner_type := int(
                     quadrant_row_index * quadrant_column_count + \
@@ -57,23 +64,23 @@ func parse_corner_type_annotation_key(
                     false)
             var color: int = annotation.color
             var bits: int = annotation.bits
-            assert(bits != 0,
-                    "Corner-type annotations cannot be empty: %s" % \
-                    _get_log_string(
-                        quadrant_position,
-                        quadrant_size,
-                        true,
-                        true,
-                        false,
-                        false,
-                        corner_type_annotation_key_path))
-            _check_for_empty_quadrant_non_annotation_pixels(
-                    quadrant_position,
-                    quadrant_size,
-                    image,
-                    corner_type_annotation_key_path,
-                    true,
-                    true)
+            if quadrant_position == Vector2.ZERO:
+                assert(bits == 0,
+                        "The first corner-type annotation in the " +
+                        "annotation-key corresponds to UNKNOWN and must be " +
+                        "empty.")
+                continue
+            else:
+                assert(bits != 0,
+                        "Corner-type annotations cannot be empty: %s" % \
+                        _get_log_string(
+                            quadrant_position,
+                            quadrant_size,
+                            true,
+                            true,
+                            false,
+                            false,
+                            corner_type_annotation_key_path))
             if !corner_type_annotation_key.has(color):
                 corner_type_annotation_key[color] = {}
             assert(!corner_type_annotation_key[color].has(bits),
@@ -323,6 +330,28 @@ func _parse_corner_type_annotation(
             false,
             false,
             true)
+    
+    var is_subtile_empty: bool = \
+            tl_corner_annotation.bits == 0 and \
+            tr_corner_annotation.bits == 0 and \
+            bl_corner_annotation.bits == 0 and \
+            br_corner_annotation.bits == 0
+    if is_subtile_empty:
+        assert(tl_h_inbound_corner_annotation.bits == 0 and \
+                tl_v_inbound_corner_annotation.bits == 0 and \
+                tr_h_inbound_corner_annotation.bits == 0 and \
+                tr_v_inbound_corner_annotation.bits == 0 and \
+                bl_h_inbound_corner_annotation.bits == 0 and \
+                bl_v_inbound_corner_annotation.bits == 0 and \
+                br_h_inbound_corner_annotation.bits == 0 and \
+                br_v_inbound_corner_annotation.bits == 0,
+                ("Subtile outbound corner-type annotations are all empty, " +
+                "but not all inbound annotations are empty: " +
+                "subtile=%s, image=%s") % [
+                    subtile_position,
+                    tile_set_corner_type_annotations_path,
+                ])
+        return
     
     # Validate the corner-type annotations.
     _validate_tileset_annotation(
