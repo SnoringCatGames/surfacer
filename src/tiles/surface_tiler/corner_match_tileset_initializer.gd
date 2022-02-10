@@ -1,4 +1,5 @@
-class_name CornerMatchAutotileInitializer
+tool
+class_name CornerMatchTilesetInitializer
 extends Node
 
 
@@ -55,7 +56,7 @@ func _initialize_tile(
         CellAngleType.A27:
             tile_name_suffix = "27"
         _:
-            Sc.logger.error("CornerMatchAutotileInitializer._initialize_tile")
+            Sc.logger.error("CornerMatchTilesetInitializer._initialize_tile")
     
     var tile_name: String = \
             Su.subtile_manifest.autotile_name_prefix + tile_name_suffix
