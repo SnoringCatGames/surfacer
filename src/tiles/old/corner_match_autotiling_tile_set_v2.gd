@@ -1,5 +1,5 @@
 tool
-class_name CornerMatchAutotilingTileSet
+class_name CornerMatchTileset
 extends SurfacesTileSet
 
 

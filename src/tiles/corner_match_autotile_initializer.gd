@@ -2,9 +2,18 @@ class_name CornerMatchAutotileInitializer
 extends Node
 
 
-func initialize_tiles(tile_set: CornerMatchAutotilingTileSet) -> void:
-    # FIXME: LEFT OFF HERE: ----------------
-    # - Actually trigger the tile-set initialization and image parsing.
+func initialize_tiles(tile_set: CornerMatchTileset) -> void:
+    var corner_type_annotation_key: Dictionary = \
+            Su.subtile_manifest.tile_set_image_parser \
+                .parse_corner_type_annotation_key(
+                    Su.subtile_manifest.corner_type_annotation_key_path,
+                    Su.subtile_manifest.quadrant_size)
+    tile_set.subtile_corner_types = Su.subtile_manifest.tile_set_image_parser \
+            .parse_tile_set_corner_type_annotations(
+                corner_type_annotation_key,
+                Su.subtile_manifest.corner_types_to_swap_for_bottom_quadrants,
+                Su.subtile_manifest.tile_set_corner_type_annotations_path,
+                Su.subtile_manifest.quadrant_size)
     
     var shapes: Dictionary = Su.subtile_manifest.shape_calculator \
             .create_shapes_for_quadrants(tile_set)
@@ -33,7 +42,7 @@ func initialize_tiles(tile_set: CornerMatchAutotilingTileSet) -> void:
 
 
 func _initialize_tile(
-        tile_set: CornerMatchAutotilingTileSet,
+        tile_set: CornerMatchTileset,
         angle_type: int,
         collision_shapes: Dictionary,
         occlusion_shapes: Dictionary) -> void:
@@ -80,7 +89,7 @@ func _initialize_tile(
 
 
 func _tile_set_icon_coordinate(
-        tile_set: CornerMatchAutotilingTileSet,
+        tile_set: CornerMatchTileset,
         tile_id: int) -> void:
     # FIXME: LEFT OFF HERE: ----------------------------
 #    autotile_set_icon_coordinate(tile_id, )
@@ -88,7 +97,7 @@ func _tile_set_icon_coordinate(
 
 
 func _tile_set_shapes_for_quadrants(
-        tile_set: CornerMatchAutotilingTileSet,
+        tile_set: CornerMatchTileset,
         tile_id: int,
         collision_shapes: Dictionary,
         occlusion_shapes: Dictionary) -> void:
@@ -115,7 +124,7 @@ func _tile_set_shapes_for_quadrants(
 
 
 func _set_shapes_for_quadrant(
-        tile_set: CornerMatchAutotilingTileSet,
+        tile_set: CornerMatchTileset,
         tile_id: int,
         quadrant_position: Vector2,
         corner_type: int,
