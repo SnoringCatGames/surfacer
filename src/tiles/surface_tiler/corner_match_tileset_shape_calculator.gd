@@ -1,9 +1,9 @@
-class_name CornerMatchAutotileShapeCalculator
+tool
+class_name CornerMatchTilesetShapeCalculator
 extends Node
 
 
-func create_shapes_for_quadrants(
-        tile_set: CornerMatchTileset) -> Dictionary:
+func create_shapes_for_quadrants(tile_set: CornerMatchTileset) -> Dictionary:
     # FIXME: Dedup shape instances.
     
     var collision_shapes := {
@@ -307,7 +307,7 @@ func _get_shape_vertices_for_corner_type_at_top_left(corner_type: int) -> Array:
             # FIXME: LEFT OFF HERE: ---------------------
             # - Translate int to String after moving the translator to manifest.
             Sc.logger.error(
-                    "CornerMatchAutotileShapeCalculator" +
+                    "CornerMatchTilesetShapeCalculator" +
                     "._get_shape_vertices_for_corner_type_at_top_left: %s" % \
                     corner_type)
             return [

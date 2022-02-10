@@ -4,7 +4,7 @@ extends Node
 
 const ANNOTATION_SIZE := Vector2(4,4)
 
-# This is the first 10 bits set.
+# This is an int with the first 10 bits set.
 const _CORNER_TYPE_BIT_MASK := (1 << 10) - 1
 
 
