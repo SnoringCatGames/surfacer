@@ -17,8 +17,8 @@ const ALL_SIDES_BITMASK := \
         TileSet.BIND_RIGHT | \
         TileSet.BIND_BOTTOM
 
-var tile_map: SurfacesTileMap
-var tile_set: SurfacesTileSet
+var tile_map: TileMap
+var tile_set: TileSet
 
 var position: Vector2
 var tile_id: int
@@ -53,8 +53,8 @@ var is_bottom_right_empty: bool setget ,_get_is_bottom_right_empty
 
 
 func _init(
-        tile_map: SurfacesTileMap,
-        tile_set: SurfacesTileSet,
+        tile_map: TileMap,
+        tile_set: TileSet,
         position: Vector2,
         tile_id := TileMap.INVALID_CELL) -> void:
     self.tile_map = tile_map

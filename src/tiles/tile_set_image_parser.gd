@@ -40,7 +40,7 @@ func parse_corner_type_annotation_key(
     for quadrant_row_index in quadrant_row_count:
         for quadrant_column_index in quadrant_column_count:
             var quadrant_position := \
-                    Vector2(quadrant_row_index, quadrant_column_index) * \
+                    Vector2(quadrant_column_index, quadrant_row_index) * \
                     quadrant_size
             # This int corresponds to the SubtileCorner enum value.
             var corner_type := int(
@@ -58,11 +58,15 @@ func parse_corner_type_annotation_key(
             var color: int = annotation.color
             var bits: int = annotation.bits
             assert(bits != 0,
-                    "Corner-type annotations cannot be empty: " +
-                    "image=%s, quadrant=%s" % [
-                        corner_type_annotation_key_path,
-                        Sc.utils.get_vector_string(quadrant_position, 0),
-                    ])
+                    "Corner-type annotations cannot be empty: %s" % \
+                    _get_log_string(
+                        quadrant_position,
+                        quadrant_size,
+                        true,
+                        true,
+                        false,
+                        false,
+                        corner_type_annotation_key_path))
             _check_for_empty_quadrant_non_annotation_pixels(
                     quadrant_position,
                     quadrant_size,
@@ -74,8 +78,14 @@ func parse_corner_type_annotation_key(
                 corner_type_annotation_key[color] = {}
             assert(!corner_type_annotation_key[color].has(bits),
                     "Multiple corner-type annotations have the same shape " +
-                    "and color: quadrant=%s" % \
-                    Sc.utils.get_vector_string(quadrant_position, 0))
+                    "and color: %s" % _get_log_string(
+                        quadrant_position,
+                        quadrant_size,
+                        true,
+                        true,
+                        false,
+                        false,
+                        corner_type_annotation_key_path))
             corner_type_annotation_key[color][bits] = corner_type
     
     image.unlock()
@@ -164,10 +174,14 @@ func _parse_corner_type_annotation(
         quadrant_size: int,
         image: Image,
         tile_set_corner_type_annotations_path: String) -> void:
-    var tl_quadrant_position := subtile_position * 2 + Vector2(0,0)
-    var tr_quadrant_position := subtile_position * 2 + Vector2(1,0)
-    var bl_quadrant_position := subtile_position * 2 + Vector2(0,1)
-    var br_quadrant_position := subtile_position * 2 + Vector2(1,1)
+    var tl_quadrant_position := \
+            (subtile_position * 2 + Vector2(0,0)) * quadrant_size
+    var tr_quadrant_position := \
+            (subtile_position * 2 + Vector2(1,0)) * quadrant_size
+    var bl_quadrant_position := \
+            (subtile_position * 2 + Vector2(0,1)) * quadrant_size
+    var br_quadrant_position := \
+            (subtile_position * 2 + Vector2(1,1)) * quadrant_size
     
     _check_for_empty_quadrant_non_annotation_pixels(
             tl_quadrant_position,
@@ -319,7 +333,8 @@ func _parse_corner_type_annotation(
             true,
             false,
             false,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             tr_corner_annotation,
             corner_type_annotation_key,
@@ -328,7 +343,8 @@ func _parse_corner_type_annotation(
             false,
             false,
             false,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             bl_corner_annotation,
             corner_type_annotation_key,
@@ -337,7 +353,8 @@ func _parse_corner_type_annotation(
             true,
             false,
             false,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             br_corner_annotation,
             corner_type_annotation_key,
@@ -346,7 +363,8 @@ func _parse_corner_type_annotation(
             false,
             false,
             false,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     
     # Also validate the eight possible inbound corner-type annotations.
     _validate_tileset_annotation(
@@ -357,7 +375,8 @@ func _parse_corner_type_annotation(
             true,
             true,
             false,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             tl_v_inbound_corner_annotation,
             corner_type_annotation_key,
@@ -366,7 +385,8 @@ func _parse_corner_type_annotation(
             true,
             false,
             true,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             tr_h_inbound_corner_annotation,
             corner_type_annotation_key,
@@ -375,7 +395,8 @@ func _parse_corner_type_annotation(
             false,
             true,
             false,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             tr_v_inbound_corner_annotation,
             corner_type_annotation_key,
@@ -384,7 +405,8 @@ func _parse_corner_type_annotation(
             false,
             false,
             true,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             bl_h_inbound_corner_annotation,
             corner_type_annotation_key,
@@ -393,7 +415,8 @@ func _parse_corner_type_annotation(
             true,
             true,
             false,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             bl_v_inbound_corner_annotation,
             corner_type_annotation_key,
@@ -402,7 +425,8 @@ func _parse_corner_type_annotation(
             true,
             false,
             true,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             br_h_inbound_corner_annotation,
             corner_type_annotation_key,
@@ -411,7 +435,8 @@ func _parse_corner_type_annotation(
             false,
             true,
             false,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     _validate_tileset_annotation(
             br_v_inbound_corner_annotation,
             corner_type_annotation_key,
@@ -420,7 +445,8 @@ func _parse_corner_type_annotation(
             false,
             false,
             true,
-            tile_set_corner_type_annotations_path)
+            tile_set_corner_type_annotations_path,
+            quadrant_size)
     
     # Map annotations to their corner-types.
     var tl_corner_type := _get_corner_type_from_annotation(
@@ -531,10 +557,14 @@ func _parse_corner_type_annotation(
             br_h_inbound_corner_type,
             br_v_inbound_corner_type)
     
-    subtile_corner_types.tl[tl_corner_types_flag] = tl_quadrant_position
-    subtile_corner_types.tr[tr_corner_types_flag] = tr_quadrant_position
-    subtile_corner_types.bl[bl_corner_types_flag] = bl_quadrant_position
-    subtile_corner_types.br[br_corner_types_flag] = br_quadrant_position
+    subtile_corner_types.tl[tl_corner_types_flag] = \
+            tl_quadrant_position / quadrant_size
+    subtile_corner_types.tr[tr_corner_types_flag] = \
+            tr_quadrant_position / quadrant_size
+    subtile_corner_types.bl[bl_corner_types_flag] = \
+            bl_quadrant_position / quadrant_size
+    subtile_corner_types.br[br_corner_types_flag] = \
+            br_quadrant_position / quadrant_size
 
 
 static func _get_corner_type_from_annotation(
@@ -562,7 +592,8 @@ static func _validate_tileset_annotation(
         is_left: bool,
         is_horizontal_inbound: bool,
         is_vertical_inbound: bool,
-        image_path: String) -> void:
+        image_path: String,
+        quadrant_size: int) -> void:
     var bits: int = annotation.bits
     var color: int = annotation.color
     
@@ -570,26 +601,29 @@ static func _validate_tileset_annotation(
             bits == 0:
         return
     
-    var corner_label := "%s-%s" % [
-            "top" if is_top else "bottom",
-            "left" if is_left else "right",
-        ]
-    if is_horizontal_inbound:
-        corner_label += "-horizontal-inbound"
-    if is_vertical_inbound:
-        corner_label += "-vertical-inbound"
-    
-    assert(bits != 0,
-            ("Corner-type annotations cannot be empty: " +
-            "image=%s, quadrant=%s, %s") % [
-                image_path,
-                Sc.utils.get_vector_string(quadrant_position, 0),
-                corner_label,
-            ])
+    assert(bits != 0, "Corner-type annotations cannot be empty: %s" % 
+            _get_log_string(
+                quadrant_position,
+                quadrant_size,
+                is_top,
+                is_left,
+                is_horizontal_inbound,
+                is_vertical_inbound,
+                image_path))
     
     assert(corner_type_annotation_key.has(color),
             ("Corner-type-annotation color doesn't match the " +
-            "annotation key: %s") % Color(color).to_html())
+            "annotation key: color=%s, %s") % [
+                Color(color).to_html(),
+                _get_log_string(
+                    quadrant_position,
+                    quadrant_size,
+                    is_top,
+                    is_left,
+                    is_horizontal_inbound,
+                    is_vertical_inbound,
+                    image_path),
+            ])
     
     if !corner_type_annotation_key[color].has(bits):
         var shape_string := ""
@@ -603,7 +637,17 @@ static func _validate_tileset_annotation(
                 shape_string += "*" if is_pixel_present else "."
         Sc.logger.error(
                 ("Corner-type-annotation shape doesn't match the " +
-                "annotation key: %s") % shape_string)
+                "annotation key: %s\n%s") % [
+                    shape_string,
+                    _get_log_string(
+                        quadrant_position,
+                        quadrant_size,
+                        is_top,
+                        is_left,
+                        is_horizontal_inbound,
+                        is_vertical_inbound,
+                        image_path),
+                ])
 
 
 static func _check_for_empty_quadrant_non_annotation_pixels(
@@ -640,7 +684,21 @@ static func _check_for_empty_quadrant_non_annotation_pixels(
             var color := image.get_pixel(
                     quadrant_position.x + quadrant_x,
                     quadrant_position.y + quadrant_y)
-            assert(color == Color.transparent)
+            assert(color.a == 0,
+                    ("Quadrant non-annotation-corner pixels must be empty: " +
+                    "pixel_position=(%s,%s), " +
+                    "image=%s") % [
+                        quadrant_x,
+                        quadrant_y,
+                        _get_log_string(
+                            quadrant_position,
+                            quadrant_size,
+                            is_top,
+                            is_left,
+                            false,
+                            false,
+                            path),
+                    ])
 
 
 static func _get_quadrant_annotation(
@@ -690,32 +748,25 @@ static func _get_quadrant_annotation(
                     quadrant_size - 1 - annotation_row_index))
             
             var color := image.get_pixel(x, y)
-            if color == Color.transparent:
+            if color.a == 0:
                 # Ignore empty pixels.
                 continue
-            assert(color == Color.transparent or \
+            assert(color.a == 0 or \
                     color == annotation_color or \
-                    annotation_color == Color.transparent,
-                    "Each corner-type annotation should use only a " +
-                    "single color: " +
-                    "image=%s, quadrant=%s, is_top=%s, is_left=%s" % [
-                        path,
-                        Sc.utils.get_vector_string(quadrant_position, 0),
+                    annotation_color.a == 0,
+                    ("Each corner-type annotation should use only a " +
+                    "single color: %s") % _get_log_string(
+                        quadrant_position,
+                        quadrant_size,
                         is_top,
                         is_left,
-                    ])
+                        is_horizontal_inbound,
+                        is_vertical_inbound,
+                        path))
             
-            var bit_index_horizontal_component := int(
-                    annotation_column_index if \
-                    is_left else \
-                    ANNOTATION_SIZE.x - 1 - annotation_column_index)
-            var bit_index_vertical_component := int(
-                    annotation_row_index if \
-                    is_top else \
-                    ANNOTATION_SIZE.y - 1 - annotation_row_index)
             var bit_index := int(
-                    bit_index_vertical_component * ANNOTATION_SIZE.x + \
-                    bit_index_horizontal_component)
+                    annotation_row_index * ANNOTATION_SIZE.x + \
+                    annotation_column_index)
             
             annotation_color = color
             annotation_bits |= 1 << bit_index
@@ -724,3 +775,34 @@ static func _get_quadrant_annotation(
         bits = annotation_bits,
         color = annotation_color.to_rgba64(),
     }
+
+
+static func _get_log_string(
+        quadrant_position: Vector2,
+        quadrant_size: int,
+        is_top: bool,
+        is_left: bool,
+        is_horizontal_inbound: bool,
+        is_vertical_inbound: bool,
+        image_path: String) -> String:
+    var corner_label := "%s-%s" % [
+            "top" if is_top else "bottom",
+            "left" if is_left else "right",
+            ]
+    if is_horizontal_inbound:
+        corner_label += "-horizontal-inbound"
+    if is_vertical_inbound:
+        corner_label += "-vertical-inbound"
+    return (
+            "subtile=%s, " +
+            "%s, " +
+            "quadrant=%s, " +
+            "image=%s"
+        ) % [
+            Sc.utils.get_vector_string(
+                Sc.utils.floor_vector(quadrant_position / quadrant_size / 2.0),
+                0),
+            corner_label,
+            Sc.utils.get_vector_string(quadrant_position / quadrant_size, 0),
+            image_path,
+        ]

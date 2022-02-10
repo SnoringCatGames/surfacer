@@ -24,7 +24,7 @@ var corner_type_annotation_key_path: String
 var tile_set_quadrants_path: String
 var tile_set_corner_type_annotations_path: String
 
-var tile_set: CornerMatchAutotilingTileSet
+var tile_set: CornerMatchTileset
 var tile_set_image_parser: TileSetImageParser
 var subtile_target_corner_calculator: SubtileTargetCornerCalculator
 var shape_calculator: CornerMatchAutotileShapeCalculator
@@ -58,7 +58,7 @@ func register_manifest(manifest: Dictionary) -> void:
     self.tile_set_corner_type_annotations_path = \
             manifest.tile_set_corner_type_annotations_path
     
-    assert(manifest.tile_set is CornerMatchAutotilingTileSet)
+    assert(manifest.tile_set is CornerMatchTileset)
     self.tile_set = manifest.tile_set
     
     if manifest.has("tile_set_image_parser_class"):

@@ -1,6 +1,6 @@
 tool
-class_name CornerMatchAutotilingTileSet
-extends SurfacesTileSet
+class_name CornerMatchTileset
+extends TileSet
 
 # FIXME: LEFT OFF HERE: --------------------------------------
 #   - TileSetImageParser
@@ -16,6 +16,26 @@ extends SurfacesTileSet
 #   - ...
 
 
+export var tile_set_id := "" setget _set_tile_set_id
+
+
+func _set_tile_set_id(value: String) -> void:
+    tile_set_id = value
+    initialize()
+
+
+func get_is_ready() -> bool:
+    return tile_set_id != ""
+
+
+# FIXME: LEFT OFF HERE: -------------------------
+# - Do initializing stuff here?
+# - Use tile_set_id to connect this resource with the manifest config.
+func initialize() -> void:
+    if !get_is_ready():
+        return
+    pass
+
 # A mapping from pixel-color to pixel-bit-flag to corner-type.
 # Dictionary<int, Dictionary<int, int>>
 var corner_type_annotation_key: Dictionary
@@ -26,6 +46,13 @@ var subtile_corner_types: Dictionary
 
 
 
+#    var corner_types_flag: int = Su.subtile_manifest.tile_set_image_parser \
+#            .get_flag_from_corner_types(
+#                self_corner_type,
+#                h_opp_corner_type,
+#                v_opp_corner_type,
+#                h_inbound_corner_type,
+#                v_inbound_corner_type)
 
 
 
@@ -56,23 +83,6 @@ var subtile_corner_types: Dictionary
 
 
 
-
-
-
-
-
-
-
-
-
-
-# FIXME: LEFT OFF HERE: ----------------------------------
-# - Plan how to deal with 45-interior-transition strips that don't actually fade
-#   to dark, and then also end abruptly due to not opening up into a wider area.
-
-
-# FIXME: LEFT OFF HERE: ------------------------------------------------------
-# - Update the corner-type legend to match the latest enums list.
 
 
 # typedef SubtileConfig: {
@@ -194,17 +204,14 @@ var _allows_partial_matches: bool
 var _supports_runtime_autotiling: bool
 
 
-func _init(
-        tiles_manifest: Array,
-        subtiles_manifest: Dictionary,
-        allows_partial_matches: bool,
-        supports_runtime_autotiling: bool).(tiles_manifest) -> void:
-    self._allows_partial_matches = allows_partial_matches
-    self._supports_runtime_autotiling = supports_runtime_autotiling
-    _parse_enum_key_values()
-    _parse_subtiles_manifest(subtiles_manifest)
+# func _init().([]) -> void:
+    # FIXME: LEFT OFF HERE: ---------------------------------------------
+    # - Move to manifest.
+#    _parse_enum_key_values()
+    # pass
 
 
+# FIXME: LEFT OFF HERE: ---------------------------------------------
 func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
     if !Engine.editor_hint and \
             !_supports_runtime_autotiling:

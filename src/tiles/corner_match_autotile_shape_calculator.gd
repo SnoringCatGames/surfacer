@@ -3,8 +3,8 @@ extends Node
 
 
 func create_shapes_for_quadrants(
-        tile_set: CornerMatchAutotilingTileSet) -> Dictionary:
-    # TODO: Dedup shape instances.
+        tile_set: CornerMatchTileset) -> Dictionary:
+    # FIXME: Dedup shape instances.
     
     var collision_shapes := {
         tl = {},
