@@ -216,7 +216,8 @@ static func calculate_jump_land_positions_for_surface_pair(
             jump_surface_top_end_wrapper = null
             jump_surface_bottom_end_wrapper = null
         _:
-            Sc.logger.error()
+            Sc.logger.error(
+                    "JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair")
     var land_surface_left_end := Vector2.INF
     var land_surface_right_end := Vector2.INF
     var land_surface_top_end := Vector2.INF
@@ -263,7 +264,7 @@ static func calculate_jump_land_positions_for_surface_pair(
             land_surface_top_end_wrapper = null
             land_surface_bottom_end_wrapper = null
         _:
-            Sc.logger.error()
+            Sc.logger.error("JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair")
     
     var are_surfaces_at_same_height: bool = \
             Sc.geometry.are_floats_equal_with_epsilon(
@@ -2913,7 +2914,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                     all_jump_land_positions.remove(j)
                     j -= 1
                     # FIXME: LEFT OFF HERE: ------ If this never happens, maybe remove it?
-#                    Sc.logger.error()
+#                    Sc.logger.error("JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair")
                 j += 1
             i += 1
     
@@ -3330,7 +3331,7 @@ static func get_velocity_start(
                 velocity_start_y = 0.0
                 
             _:
-                Sc.logger.error()
+                Sc.logger.error("JumpLandPositionsUtils.get_velocity_start")
                 return Vector2.INF
     
     return Vector2(velocity_start_x, velocity_start_y)
@@ -3388,7 +3389,7 @@ static func get_horizontal_velocity_start(
                         max_jump_horizontal_speed
             
         _:
-            Sc.logger.error()
+            Sc.logger.error("JumpLandPositionsUtils.get_horizontal_velocity_start")
             return INF
 
 
@@ -3854,7 +3855,8 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
         SurfaceSide.NONE:
             pass
         _:
-            Sc.logger.error()
+            Sc.logger.error(
+                    "JumpLandPositionsUtils.ensure_position_is_not_too_close_to_concave_neighbor")
             return false
     
     # Offset position if it's too close to either end.
@@ -3919,7 +3921,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
             pass
             
         _:
-            Sc.logger.error()
+            Sc.logger.error("JumpLandPositionsUtils.ensure_position_is_not_too_close_to_concave_neighbor")
             return false
     
     # Make sure the target point is still the right distance out from the

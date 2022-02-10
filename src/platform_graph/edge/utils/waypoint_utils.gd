@@ -297,7 +297,7 @@ static func calculate_waypoints_around_surface(
         waypoints = [waypoint_b_final]
     else:
         if should_skip_ccw and should_skip_cw:
-            Sc.logger.error()
+            Sc.logger.error("WaypointUtils.calculate_waypoints_around_surface")
         waypoints = []
     
     _calculate_protrusion_waypoint(
@@ -443,7 +443,7 @@ static func _calculate_protrusion_waypoint(
                 should_stay_on_protrusion_min_side = false
             
         _:
-            Sc.logger.error()
+            Sc.logger.error("WaypointUtils._calculate_protrusion_waypoint")
     
     if !Sc.geometry.is_point_partial_inf(protrusion_position):
         var protrusion_waypoint := Waypoint.new(
@@ -2187,7 +2187,7 @@ static func _calculate_replacement_for_fake_waypoint(
                     iterations += 1
             
         _:
-            Sc.logger.error()
+            Sc.logger.error("WaypointUtils._calculate_replacement_for_fake_waypoint")
     
     if replacement_surface == null:
         # We didn't find a replacement.

@@ -80,7 +80,7 @@ func find_and_expand_controller(
             else:
                 return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("DestinationSurfaceItemController.find_and_expand_controller")
             return false
 
 

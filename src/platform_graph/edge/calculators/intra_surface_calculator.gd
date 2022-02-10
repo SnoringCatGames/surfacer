@@ -22,7 +22,7 @@ func get_can_traverse_from_surface(
         surface: Surface,
         collision_params: CollisionCalcParams) -> bool:
     # This should never be called.
-    Sc.logger.error()
+    Sc.logger.error("IntraSurfaceCalculator.get_can_traverse_from_surface")
     return false
 
 
@@ -33,7 +33,7 @@ func get_all_inter_surface_edges_from_surface(
         surfaces_in_fall_range_set: Dictionary,
         surfaces_in_jump_range_set: Dictionary) -> void:
     # This should never be called.
-    Sc.logger.error()
+    Sc.logger.error("IntraSurfaceCalculator.get_all_inter_surface_edges_from_surface")
 
 
 func calculate_edge(
@@ -94,7 +94,7 @@ func create(
                 Vector2.INF
         if early_collision_position.distance_squared_to(end.target_point) > \
                 _UNEXPECTED_EARLY_COLLISION_DISTANCE_SQUARED_THRESHOLD:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceCalculator.create")
     
     return edge
 
@@ -518,7 +518,7 @@ func calculate_duration_with_zero_start_velocity(
                     start.surface,
                     movement_params)
         _:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceCalculator.calculate_duration_with_zero_start_velocity")
             return INF
 
 
@@ -655,7 +655,7 @@ func _calculate_velocity_end(
             velocity_end_x *= start.surface.properties.speed_multiplier
             return Vector2(velocity_end_x, 0.0)
         _:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceCalculator._calculate_velocity_end")
             return Vector2.INF
 
 
@@ -673,7 +673,7 @@ func _calculate_is_moving_clockwise(
         SurfaceSide.CEILING:
             return displacement.x <= 0
         _:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceCalculator._calculate_is_moving_clockwise")
             return false
 
 
@@ -784,7 +784,7 @@ func _calculate_trajectory(
                         is_moving_clockwise else \
                         SurfaceSide.RIGHT_WALL
             _:
-                Sc.logger.error()
+                Sc.logger.error("IntraSurfaceCalculator._calculate_trajectory")
     
     var ran_into_concave_next_neighbor := false
     var position_duplication_start_index := -1
@@ -855,7 +855,7 @@ func _calculate_trajectory(
             velocity.x *= start.surface.properties.speed_multiplier
             velocity.y = 0.0
         _:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceCalculator._calculate_trajectory")
     
     # These min/max limits are used to ensure the last frames don't pass the
     # expected values.
@@ -1019,7 +1019,7 @@ func _calculate_is_pressing_left(
         SurfaceSide.CEILING:
             return is_displacement_leftward
         _:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceCalculator._calculate_is_pressing_left")
             return false
 
 
@@ -1139,7 +1139,7 @@ func _calculate_release_time(
                     start.surface,
                     movement_params)
         _:
-            Sc.logger.error()
+            Sc.logger.error("IntraSurfaceCalculator._calculate_release_time")
             return INF
 
 

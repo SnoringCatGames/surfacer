@@ -104,7 +104,7 @@ func get_animation_state_at_time(
                     "ClimbDown"
             result.facing_left = false
         _:
-            Sc.logger.error()
+            Sc.logger.error("ClimbToAdjacentSurfaceEdge.get_animation_state_at_time")
 
 
 func _sync_expected_middle_surface_state(
@@ -230,7 +230,7 @@ func _check_did_just_reach_surface_destination(
                     is_clockwise else \
                     current_point.y >= target_point.y
         _:
-            Sc.logger.error()
+            Sc.logger.error("ClimbToAdjacentSurfaceEdge._check_did_just_reach_surface_destination")
             is_past_end_point = false
     return surface_state.grabbed_surface == \
             end_position_along_surface.surface and \

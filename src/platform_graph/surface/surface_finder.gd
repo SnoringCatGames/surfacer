@@ -66,7 +66,7 @@ static func find_closest_position_on_a_surface(
             assert(Su.are_reachable_surfaces_per_player_tracked)
             surfaces = character.reversibly_reachable_surfaces
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfaceFinder.find_closest_position_on_a_surface")
     
     var positions := find_closest_positions_on_surfaces(
             target,
@@ -332,7 +332,7 @@ static func calculate_collision_surface(
         SurfaceSide.CEILING:
             is_touching_ceiling = true
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfaceFinder.calculate_collision_surface")
     
     var surface_side := SurfaceSide.NONE
     var tile_coord := Vector2.INF
@@ -939,7 +939,7 @@ static func calculate_collision_surface(
                 SurfaceSide.CEILING:
                     reversed_collision_normal_or_side = SurfaceSide.FLOOR
                 _:
-                    Sc.logger.error()
+                    Sc.logger.error("SurfaceFinder.calculate_collision_surface")
         else:
             reversed_collision_normal_or_side = -collision_normal_or_side
         calculate_collision_surface(

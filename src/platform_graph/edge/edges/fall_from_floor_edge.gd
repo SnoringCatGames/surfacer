@@ -137,7 +137,7 @@ func _update_navigation_state_edge_specific_helper(
         is_starting_navigation_retry: bool) -> void:
     if is_starting_navigation_retry:
         # This should never happen.
-        Sc.logger.error()
+        Sc.logger.error("FallFromFloorEdge._update_navigation_state_edge_specific_helper")
         return
     
     var is_still_colliding_with_start_surface := \

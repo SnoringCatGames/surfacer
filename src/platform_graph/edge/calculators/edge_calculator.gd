@@ -379,7 +379,7 @@ static func optimize_edge_jump_position_for_path_helper(
                     edge,
                     edge_calculator)
         _:
-            Sc.logger.error()
+            Sc.logger.error("EdgeCalculator.optimize_edge_jump_position_for_path_helper")
     
     if is_instance_valid(optimized_edge):
         optimized_edge.is_optimized_for_path = true
@@ -589,7 +589,7 @@ static func optimize_edge_land_position_for_path_helper(
                     next_edge,
                     edge_calculator)
         _:
-            Sc.logger.error()
+            Sc.logger.error("EdgeCalculator.optimize_edge_land_position_for_path_helper")
     
     if is_instance_valid(optimized_edge):
         optimized_edge.is_optimized_for_path = true

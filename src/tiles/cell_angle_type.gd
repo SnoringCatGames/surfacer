@@ -23,5 +23,5 @@ static func get_string(type: int) -> String:
         A27:
             return "A27"
         _:
-            Sc.logger.error()
+            Sc.logger.error("CellAngleType.get_string")
             return "??"

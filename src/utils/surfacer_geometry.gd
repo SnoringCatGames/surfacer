@@ -44,7 +44,7 @@ static func project_point_onto_surface(
             elif point.y <= end_vertex.y:
                 return end_vertex
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerGeometry.project_point_onto_surface")
     
     # Target lies within the surface boundaries.
     
@@ -260,7 +260,7 @@ static func project_shape_onto_surface(
                 if projection.y > furthest_projection.y:
                     furthest_projection = projection
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerGeometry.project_shape_onto_surface")
     
     return furthest_projection
 
@@ -311,7 +311,7 @@ static func project_shape_onto_segment(
             leftward_segment_point = segment_end
             rightward_segment_point = segment_start
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerGeometry.project_shape_onto_segment")
     
     var segment_tangent := segment_normal.tangent()
     var segment_slope := \
@@ -382,7 +382,7 @@ static func project_shape_onto_segment(
                 SurfaceSide.CEILING:
                     shape_position = upper_capsule_end_center
                 _:
-                    Sc.logger.error()
+                    Sc.logger.error("SurfacerGeometry.project_shape_onto_segment")
             
         else:
             # The flat-side of the capsule is facing the surface.
@@ -498,7 +498,7 @@ static func project_shape_onto_segment(
                             half_width_height = circle_half_width_height
                     
                 _:
-                    Sc.logger.error()
+                    Sc.logger.error("SurfacerGeometry.project_shape_onto_segment")
     
     var shape_min_x := shape_position.x - half_width_height.x
     var shape_max_x := shape_position.x + half_width_height.x
@@ -719,7 +719,7 @@ static func project_shape_onto_segment(
                                 possible_contact_point_displacement_x)
                 
             _:
-                Sc.logger.error()
+                Sc.logger.error("SurfacerGeometry.project_shape_onto_segment")
     
     if is_shape_rectangle:
         # -   There are four possible contact points to consider:
@@ -819,7 +819,7 @@ static func project_shape_onto_segment(
                                 possible_contact_point_displacement_y)
                     
                 else:
-                    ScaffolderLog.static_error()
+                    Sc.logger.error("SurfacerGeometry.project_shape_onto_segment")
                 
             SurfaceSide.LEFT_WALL, \
             SurfaceSide.RIGHT_WALL:
@@ -910,10 +910,10 @@ static func project_shape_onto_segment(
                                 possible_contact_point_displacement_x)
                     
                 else:
-                    ScaffolderLog.static_error()
+                    ScaffolderLog.static_error(".project_shape_onto_segment")
                 
             _:
-                ScaffolderLog.static_error()
+                ScaffolderLog.static_error(".project_shape_onto_segment")
     
     return original_shape_position + \
             Vector2(projection_displacement_x, projection_displacement_y)
@@ -1006,7 +1006,7 @@ static func get_concave_neighbor_projection_side_override(
                     is_clockwise else \
                     SurfaceSide.RIGHT_WALL
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerGeometry.get_concave_neighbor_projection_side_override")
             return SurfaceSide.NONE
 
 
@@ -1050,7 +1050,7 @@ static func project_away_from_concave_neighbor(
                 position.y = concave_neighbor_projection.y
                 return position
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerGeometry.project_away_from_concave_neighbor")
     
     return Vector2.INF
 
@@ -1160,7 +1160,7 @@ static func get_furthest_shape_boundary_point_in_direction(
                 return capsule_end_center + shape.shape.radius * direction
         
     else:
-        ScaffolderLog.static_error()
+        ScaffolderLog.static_error(".get_furthest_shape_boundary_point_in_direction")
         return Vector2.INF
 
 
@@ -1226,7 +1226,7 @@ static func nudge_point_along_axially_aligned_segment_toward_shape_center(
                     segment_end.x,
                     segment_start.x)
         _:
-            ScaffolderLog.static_error()
+            ScaffolderLog.static_error(".nudge_point_along_axially_aligned_segment_toward_shape_center")
     
     return nudged_point
 
@@ -1383,7 +1383,7 @@ static func get_surface_segment_at_point(
                         segment_end = vertices[i]
                         break
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerGeometry.get_surface_segment_at_point")
     
     if inside_bounds or \
             uses_end_segment_if_outside_bounds:
@@ -1468,7 +1468,7 @@ static func get_vertices_around_range(
                 if vertices[i].x < range_min_x:
                     break
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerGeometry.get_vertices_around_range")
     
     var result_size := end_index - start_index + 1
     var result := []
@@ -1577,7 +1577,7 @@ static func project_shape_onto_convex_corner_preserving_tangent_position( \
                 else:
                     return origin_projection
             _:
-                Sc.logger.error()
+                Sc.logger.error("SurfacerGeometry.project_shape_onto_convex_corner_preserving_tangent_position")
         
     else:
         # TODO: Implement this case. Redirect to

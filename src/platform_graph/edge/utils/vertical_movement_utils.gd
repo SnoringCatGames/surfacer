@@ -183,8 +183,10 @@ static func calculate_time_to_jump_to_waypoint(
                 # have been caught earlier.
                 # FIXME: ---------------------
                 # - Fix the undelying problem, and put this error back in.
-                Sc.logger.warning()
-#                Sc.logger.error()
+                Sc.logger.warning(
+                        "VerticalMovementUtils.calculate_time_to_jump_to_waypoint: " +
+                        "distance_to_release_button_for_shorter_jump < displacement.y")
+#                Sc.logger.error("VerticalMovementUtils.calculate_time_to_jump_to_waypoint")
                 return INF
             
             if distance_to_release_button_for_shorter_jump < 0:
@@ -206,7 +208,9 @@ static func calculate_time_to_jump_to_waypoint(
                 # - Also, specify that the above calculate_movement_duration
                 #   call, expects a non-negative result.
                 if is_inf(time_to_release_jump_button):
-                    Sc.logger.warning()
+                    Sc.logger.warning(
+                            "VerticalMovementUtils.calculate_time_to_jump_to_waypoint: " +
+                            "is_inf(time_to_release_jump_button)")
                     return INF
 #                assert(!is_inf(time_to_release_jump_button))
             
@@ -543,7 +547,7 @@ static func calculate_time_for_passing_through_waypoint(
                 is_position_before_instruction_end = false
                 is_position_before_peak = false
         _:
-            ScaffolderLog.static_error()
+            ScaffolderLog.static_error(".calculate_time_for_passing_through_waypoint")
     
     if is_position_before_instruction_end:
         var displacement := target_height - position_start_y

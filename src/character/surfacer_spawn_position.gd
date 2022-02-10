@@ -144,7 +144,7 @@ func _add_character() -> void:
         SurfaceSide.NONE:
             _character.animator.play("JumpFall")
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerSpawnPosition._add_character")
 
 
 func _set_surface_attachment(value: String) -> void:

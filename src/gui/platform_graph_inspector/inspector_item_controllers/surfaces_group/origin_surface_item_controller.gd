@@ -196,7 +196,7 @@ func find_and_expand_controller(
             else:
                 return false
         _:
-            Sc.logger.error()
+            Sc.logger.error("OriginSurfaceItemController.find_and_expand_controller")
             return false
 
 

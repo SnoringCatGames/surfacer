@@ -627,7 +627,7 @@ func _process_animation() -> void:
                 elif actions.pressed_down:
                     animator.play("ClimbDown")
                 else:
-                    Sc.logger.error()
+                    Sc.logger.error("SurfacerCharacter._process_animation")
             else:
                 animator.play("RestOnWall")
         SurfaceType.CEILING:
@@ -641,7 +641,7 @@ func _process_animation() -> void:
             else:
                 animator.play("JumpRise")
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerCharacter._process_animation")
 
 
 func _process_sounds() -> void:

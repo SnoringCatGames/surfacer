@@ -868,7 +868,7 @@ func _update(
         # FIXME: ----------------
         # - This probably should never happen.
         # - What is the underlying problem?
-#        Sc.logger.error()
+#        Sc.logger.error("SurfaceNavigator._update: _check_if_character_is_stuck()")
         navigation_state.just_interrupted_by_being_stuck = true
         navigation_state.has_interrupted = true
         navigation_state.just_interrupted = true
@@ -884,7 +884,7 @@ func _update(
             # FIXME: -----------------
             # - This probably should never happen.
             # - What's the underlying problem?
-#            Sc.logger.error()
+#            Sc.logger.error("SurfaceNavigator._update: is_starting_navigation_retry")
             Sc.logger.warning(
                     "Unable to fix navigation interruption by forcing " +
                     "state to match what's expected.")
@@ -1006,7 +1006,7 @@ func _handle_interruption(
             _update(just_started_new_edge, true)
             
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfaceNavigator._handle_interruption")
     
     emit_signal("navigation_interrupted", interruption_resolution_mode)
 

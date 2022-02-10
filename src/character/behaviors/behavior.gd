@@ -328,7 +328,7 @@ func _attempt_move() -> void:
             # Abort to the default behavior.
             _on_finished()
         _:
-            Sc.logger.error()
+            Sc.logger.error("Behavior._attempt_move")
 
 
 func _move() -> int:

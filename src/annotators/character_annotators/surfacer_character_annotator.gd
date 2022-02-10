@@ -30,7 +30,7 @@ func is_annotator_enabled(annotator_type: int) -> bool:
         AnnotatorType.NAVIGATOR:
             return is_instance_valid(navigator_annotator)
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerCharacterAnnotator.is_annotator_enabled")
             return false
 
 
@@ -55,7 +55,7 @@ func _create_annotator(annotator_type: int) -> void:
             navigator_annotator = NavigatorAnnotator.new(character.navigator)
             add_child(navigator_annotator)
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerCharacterAnnotator._create_annotator")
 
 
 func _destroy_annotator(annotator_type: int) -> void:
@@ -77,4 +77,4 @@ func _destroy_annotator(annotator_type: int) -> void:
             navigator_annotator.queue_free()
             navigator_annotator = null
         _:
-            Sc.logger.error()
+            Sc.logger.error("SurfacerCharacterAnnotator._destroy_annotator")

@@ -110,7 +110,7 @@ func get_is_facing_left_at_time(
                 # This input does not affect the direction the character faces.
                 pass
             _:
-                Sc.logger.error()
+                Sc.logger.error("EdgeInstructions.get_is_facing_left_at_time")
     return is_facing_left
 
 

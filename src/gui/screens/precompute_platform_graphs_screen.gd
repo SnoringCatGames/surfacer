@@ -212,7 +212,7 @@ func _on_stage_progress(
                     CLEAN_UP_SUB_STEP_PROGRESS_RATIO) / \
                     PROGRESS_RATIO_TOTAL
         _:
-            Sc.logger.error()
+            Sc.logger.error("PrecomputePlatformGraphsScreen._on_stage_progress")
     
     var progress: float = \
             (precompute_level_index + sub_step_progress) / \

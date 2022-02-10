@@ -150,7 +150,8 @@ static func check_instructions_discrete_trajectory_state(
                 "fr":
                     pass
                 _:
-                    Sc.logger.error()
+                    Sc.logger.error(
+                            "CollisionCheckUtils.check_instructions_discrete_trajectory_state")
             
             next_instruction = \
                     instructions.instructions \
@@ -423,7 +424,9 @@ static func check_frame_for_collision(
         SurfaceSide.CEILING:
             is_moving_away_from_surface = displacement.y > 0.0
         _:
-            Sc.logger.error()
+            Sc.logger.error(
+                    "CollisionCheckUtils.check_frame_for_collision: " +
+                    "surface_side")
     var is_collision_probably_preexisting := \
             is_moving_away_from_surface and \
             iteration_count == 0
@@ -536,7 +539,9 @@ static func check_frame_for_collision(
         #     too-close-together surfaces that the character can't fit between.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
-            Sc.logger.error()
+            Sc.logger.error(
+                    "CollisionCheckUtils.check_frame_for_collision: " +
+                    "asserts_no_preexisting_collisions_during_edge_calculations")
         surface_collision.is_valid_collision_state = false
         return surface_collision
     
@@ -557,7 +562,9 @@ static func check_frame_for_collision(
         SurfaceSide.CEILING:
             is_moving_away_from_surface = displacement.y > 0.0
         _:
-            Sc.logger.error()
+            Sc.logger.error(
+                    "CollisionCheckUtils.check_frame_for_collision: " +
+                    "surface.side")
     is_collision_probably_preexisting = \
             is_moving_away_from_surface and \
             iteration_count == 0
@@ -575,7 +582,9 @@ static func check_frame_for_collision(
             # Invalid collision state: Happens infrequently.
             if collision_params.movement_params \
                     .asserts_no_preexisting_collisions_during_edge_calculations:
-                Sc.logger.error()
+                Sc.logger.error(
+                        "CollisionCheckUtils.check_frame_for_collision: " +
+                        "is_recursing")
             surface_collision.is_valid_collision_state = false
             return surface_collision
         
@@ -590,7 +599,9 @@ static func check_frame_for_collision(
             SurfaceSide.CEILING:
                 surface_normal = Vector2.DOWN
             _:
-                Sc.logger.error()
+                Sc.logger.error(
+                        "CollisionCheckUtils.check_frame_for_collision: " +
+                        "surface_side")
         
         # Try the collision check again with a reduced margin and a slight
         # offset.
