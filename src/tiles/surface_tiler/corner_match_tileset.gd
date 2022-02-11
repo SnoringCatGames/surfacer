@@ -37,11 +37,12 @@ func initialize() -> void:
     pass
 
 # A mapping from pixel-color to pixel-bit-flag to corner-type.
-# Dictionary<int, Dictionary<int, int>>
+# Dictionary<int, Dictionary<int, SubtileCorner>>
 var corner_type_annotation_key: Dictionary
 
-# A mapping from tl/tr/bl/br to combined-corner-types-flag to quadrant position.
-# Dictionary<("tl"|"tr"|"bl"|"br"), Dictionary<int, Vector2>>
+# A mapping from CornerDirection to combined-corner-types-flag to quadrant
+# position.
+# Dictionary<CornerDirection, Dictionary<int, Vector2>>
 var subtile_corner_types: Dictionary
 
 
@@ -89,43 +90,26 @@ var subtile_corner_types: Dictionary
 #     # Required.
 #     p: Vector2,
 #     a: Array<90|45|27>,
-#     tl: SubtileCorner,
-#     tr: SubtileCorner,
-#     bl: SubtileCorner,
-#     br: SubtileCorner,
+#     CornerDirection.TOP_LEFT: SubtileCorner,
+#     CornerDirection.TOP_RIGHT: SubtileCorner,
+#     CornerDirection.BOTTOM_LEFT: SubtileCorner,
+#     CornerDirection.BOTTOM_RIGHT: SubtileCorner,
 #     
 #     # Optional.
-#     inbound_t_bl?: SubtileCorner,
-#     inbound_t_br?: SubtileCorner,
-#     inbound_b_tl?: SubtileCorner,
-#     inbound_b_tr?: SubtileCorner,
-#     inbound_l_tr?: SubtileCorner,
-#     inbound_l_br?: SubtileCorner,
-#     inbound_r_tl?: SubtileCorner,
-#     inbound_r_bl?: SubtileCorner,
+#     CornerDirection.INBOUND_TL_T?: SubtileCorner,
+#     CornerDirection.INBOUND_TR_T?: SubtileCorner,
+#     CornerDirection.INBOUND_BL_B?: SubtileCorner,
+#     CornerDirection.INBOUND_BR_B?: SubtileCorner,
+#     CornerDirection.INBOUND_TL_L?: SubtileCorner,
+#     CornerDirection.INBOUND_BL_L?: SubtileCorner,
+#     CornerDirection.INBOUND_TR_R?: SubtileCorner,
+#     CornerDirection.INBOUND_BR_R?: SubtileCorner,
 # }
 
 
 # FIXME: LEFT OFF HERE: -----------------------------------------
 # - Is there a simpler way to allow the tile-set author to configure which
 #   slopes are allowed to transition into which others?
-
-const _CORNERS := [
-    "tl",
-    "tr",
-    "bl",
-    "br",
-]
-const _INBOUND_CORNERS := [
-    "inbound_t_bl",
-    "inbound_t_br",
-    "inbound_b_tl",
-    "inbound_b_tr",
-    "inbound_l_tr",
-    "inbound_l_br",
-    "inbound_r_tl",
-    "inbound_r_bl",
-]
 
 
 # NOTE:
@@ -173,7 +157,7 @@ var _ACCEPTABLE_MATCH_PRIORITY_THRESHOLD := 2.0
 var _SUBTILE_CORNER_TYPE_VALUE_TO_KEY: Dictionary
 
 # Dictionary<
-#     ("tl"|"tr"|"bl"|"br"),
+#     CornerDirection,
 #     Dictionary<
 #         SubtileCorner,
 #         Dictionary<Vector2, SubtileConfig>>>
@@ -245,7 +229,7 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
             _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[corner_type] = set
     
     # Create the nested dictionary structure for holding the subtile manifest.
-    for corner in _CORNERS:
+    for corner in CornerDirection.OUTBOUND_CORNERS:
         var type_to_subtiles := {}
         _corner_to_type_to_subtiles[corner] = type_to_subtiles
         for corner_type in _SUBTILE_CORNER_TYPE_VALUE_TO_KEY:
@@ -295,7 +279,7 @@ func _parse_subtiles_manifest(subtiles_manifest: Dictionary) -> void:
         # Add to corresponding corner/corner-type maps.
         var position: Vector2 = subtile_config.p
         var was_a_corner_interesting := false
-        for corner in _CORNERS:
+        for corner in CornerDirection.OUTBOUND_CORNERS:
             assert(subtile_config.has(corner))
             var corner_type: int = subtile_config[corner]
             assert(corner_type is int and corner_type != SubtileCorner.UNKNOWN)
@@ -343,10 +327,10 @@ func get_subtile_config_string(subtile_config: Dictionary) -> String:
             ""
     return "{%stl:%s, tr:%s, bl:%s, br:%s}" % [
         optional_position_string,
-        get_subtile_corner_string(subtile_config.tl),
-        get_subtile_corner_string(subtile_config.tr),
-        get_subtile_corner_string(subtile_config.bl),
-        get_subtile_corner_string(subtile_config.br),
+        get_subtile_corner_string(subtile_config[CornerDirection.TOP_LEFT]),
+        get_subtile_corner_string(subtile_config[CornerDirection.TOP_RIGHT]),
+        get_subtile_corner_string(subtile_config[CornerDirection.BOTTOM_LEFT]),
+        get_subtile_corner_string(subtile_config[CornerDirection.BOTTOM_RIGHT]),
     ]
 
 
@@ -363,7 +347,7 @@ func _get_match_priority(
         expected_corners: Dictionary) -> float:
     var priority := 0.0
     
-    for corner in _CORNERS:
+    for corner in CornerDirection.OUTBOUND_CORNERS:
         var actual_corner: int = actual_corners[corner]
         var expected_corner: int = expected_corners[corner]
         var additional_matching_types: Dictionary = \
@@ -378,7 +362,7 @@ func _get_match_priority(
             # FIXME: -------------- Is there a more elegant fallback for this?
             priority -= 5.0
     
-    for inbound_corner in _INBOUND_CORNERS:
+    for inbound_corner in CornerDirection.INBOUND_CORNERS:
         if !actual_corners.has(inbound_corner):
             continue
         var actual_corner: int = actual_corners[inbound_corner]
@@ -399,22 +383,8 @@ func _get_match_priority(
 
 
 func _get_are_target_corners_valid(target_corners: Dictionary) -> bool:
-    var corner_keys := [
-        ["tl"],
-        ["tr"],
-        ["bl"],
-        ["br"],
-        ["inbound_t_bl"],
-        ["inbound_t_br"],
-        ["inbound_b_tl"],
-        ["inbound_b_tr"],
-        ["inbound_l_tr"],
-        ["inbound_l_br"],
-        ["inbound_r_tl"],
-        ["inbound_r_bl"],
-    ]
-    for corner_key in corner_keys:
-        var corner_type: int = target_corners[corner_key]
+    for corner_direction in CornerDirection.KEYS:
+        var corner_type: int = target_corners[corner_direction]
         if corner_type == SubtileCorner.ERROR or \
                 corner_type == SubtileCorner.UNKNOWN:
             return false
@@ -461,9 +431,9 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
 #        get_subtile_config_string(target_corners),
 #    ])
     
-    # Dictionary<("tl"|"tr"|"bl"|"br"), Dictionary<Vector2, Dictionary>>
+    # Dictionary<CornerDirection, Dictionary<Vector2, Dictionary>>
     var corner_to_matches := {}
-    for corner in _CORNERS:
+    for corner in CornerDirection.OUTBOUND_CORNERS:
         var corner_type: int = target_corners[corner]
         corner_to_matches[corner] = \
                 _corner_to_type_to_subtiles[corner][corner_type]
@@ -475,7 +445,7 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
     var best_match_positions := {}
     var best_match_priority := -INF
     
-    for corner in _CORNERS:
+    for corner in CornerDirection.OUTBOUND_CORNERS:
         for corner_match in corner_to_matches[corner].values():
             if !_get_does_angle_type_match(corner_match, target_corners):
                 # Skip the possible corner match, since it doesn't match
@@ -538,22 +508,22 @@ func _choose_subtile(proximity: CellProximity) -> Vector2:
 
 static func _get_target_corners(proximity: CellProximity) -> Dictionary:
     var target_corners := {
-        tl = Su.subtile_manifest.subtile_target_corner_calculator \
+        CornerDirection.TOP_LEFT: Su.subtile_manifest.subtile_target_corner_calculator \
                 .get_target_top_left_corner(proximity),
-        tr = Su.subtile_manifest.subtile_target_corner_calculator \
+        CornerDirection.TOP_RIGHT: Su.subtile_manifest.subtile_target_corner_calculator \
                 .get_target_top_right_corner(proximity),
-        bl = Su.subtile_manifest.subtile_target_corner_calculator \
+        CornerDirection.BOTTOM_LEFT: Su.subtile_manifest.subtile_target_corner_calculator \
                 .get_target_bottom_left_corner(proximity),
-        br = Su.subtile_manifest.subtile_target_corner_calculator \
+        CornerDirection.BOTTOM_RIGHT: Su.subtile_manifest.subtile_target_corner_calculator \
                 .get_target_bottom_right_corner(proximity),
-        inbound_t_bl = SubtileCorner.UNKNOWN,
-        inbound_t_br = SubtileCorner.UNKNOWN,
-        inbound_b_tl = SubtileCorner.UNKNOWN,
-        inbound_b_tr = SubtileCorner.UNKNOWN,
-        inbound_l_tr = SubtileCorner.UNKNOWN,
-        inbound_l_br = SubtileCorner.UNKNOWN,
-        inbound_r_tl = SubtileCorner.UNKNOWN,
-        inbound_r_bl = SubtileCorner.UNKNOWN,
+        CornerDirection.INBOUND_TL_T: SubtileCorner.UNKNOWN,
+        CornerDirection.INBOUND_TL_L: SubtileCorner.UNKNOWN,
+        CornerDirection.INBOUND_TR_T: SubtileCorner.UNKNOWN,
+        CornerDirection.INBOUND_TR_R: SubtileCorner.UNKNOWN,
+        CornerDirection.INBOUND_BL_B: SubtileCorner.UNKNOWN,
+        CornerDirection.INBOUND_BL_L: SubtileCorner.UNKNOWN,
+        CornerDirection.INBOUND_BR_B: SubtileCorner.UNKNOWN,
+        CornerDirection.INBOUND_BR_R: SubtileCorner.UNKNOWN,
         is_a90 = proximity.is_angle_type_90,
         is_a45 = proximity.is_angle_type_45,
         is_a27 = proximity.is_angle_type_27,
@@ -564,10 +534,10 @@ static func _get_target_corners(proximity: CellProximity) -> Dictionary:
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(0, -1))
-        target_corners.inbound_t_bl = \
+        target_corners[CornerDirection.INBOUND_TL_T] = \
                 Su.subtile_manifest.subtile_target_corner_calculator \
                     .get_target_bottom_left_corner(top_proximity)
-        target_corners.inbound_t_br = \
+        target_corners[CornerDirection.INBOUND_TR_T] = \
                 Su.subtile_manifest.subtile_target_corner_calculator \
                     .get_target_bottom_right_corner(top_proximity)
     if proximity.get_is_present(0, 1):
@@ -575,10 +545,10 @@ static func _get_target_corners(proximity: CellProximity) -> Dictionary:
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(0, 1))
-        target_corners.inbound_b_tl = \
+        target_corners[CornerDirection.INBOUND_BL_B] = \
                 Su.subtile_manifest.subtile_target_corner_calculator \
                     .get_target_top_left_corner(bottom_proximity)
-        target_corners.inbound_b_tr = \
+        target_corners[CornerDirection.INBOUND_BR_B] = \
                 Su.subtile_manifest.subtile_target_corner_calculator \
                     .get_target_top_right_corner(bottom_proximity)
     if proximity.get_is_present(-1, 0):
@@ -586,10 +556,10 @@ static func _get_target_corners(proximity: CellProximity) -> Dictionary:
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(-1, 0))
-        target_corners.inbound_l_tr = \
+        target_corners[CornerDirection.INBOUND_TL_L] = \
                 Su.subtile_manifest.subtile_target_corner_calculator \
                     .get_target_top_right_corner(left_proximity)
-        target_corners.inbound_l_br = \
+        target_corners[CornerDirection.INBOUND_BL_L] = \
                 Su.subtile_manifest.subtile_target_corner_calculator \
                     .get_target_bottom_right_corner(left_proximity)
     if proximity.get_is_present(1, 0):
@@ -597,10 +567,10 @@ static func _get_target_corners(proximity: CellProximity) -> Dictionary:
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(1, 0))
-        target_corners.inbound_r_tl = \
+        target_corners[CornerDirection.INBOUND_TR_R] = \
                 Su.subtile_manifest.subtile_target_corner_calculator \
                     .get_target_top_left_corner(right_proximity)
-        target_corners.inbound_r_bl = \
+        target_corners[CornerDirection.INBOUND_BR_R] = \
                 Su.subtile_manifest.subtile_target_corner_calculator \
                     .get_target_bottom_left_corner(right_proximity)
     
