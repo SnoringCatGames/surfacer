@@ -12,14 +12,6 @@ var _tile_id_to_config: Dictionary
 var _tile_name_to_properties: Dictionary
 
 
-# FIXME: LEFT OFF HERE: --------------------------------
-func initialize() -> void:
-    .initialize()
-    if !get_is_ready():
-        return
-    pass
-
-
 func _parse_tiles_manifest(tiles_manifest: Array) -> void:
     _tile_id_to_config = {}
     
