@@ -3317,4 +3317,3 @@ points = PoolVector2Array( 0, 0, 32, 0, 16, 32, 0, 32 )
 } ]
 8/z_index = 0
 script = ExtResource( 1 )
-tile_set_id = ""
