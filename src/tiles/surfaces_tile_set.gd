@@ -72,12 +72,12 @@ func _create_tiles_to_properties() -> Dictionary:
 func _is_tile_bound(
         drawn_id: int,
         neighbor_id: int) -> bool:
+    if ._is_tile_bound(drawn_id, neighbor_id):
+        return true
     if neighbor_id == TileMap.INVALID_CELL:
         return false
     return _tile_id_to_config[drawn_id].is_collidable and \
-            _tile_id_to_config[neighbor_id].is_collidable or \
-            _tile_id_to_angle_type.has(drawn_id) and \
-            _tile_id_to_angle_type.has(neighbor_id)
+            _tile_id_to_config[neighbor_id].is_collidable
 
 
 func get_collidable_tiles_ids() -> Array:
