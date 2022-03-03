@@ -22,14 +22,14 @@ extends SurfacesTileSet
 #     br: SubtileCorner,
 #     
 #     # Optional.
-#     inbound_t_bl?: SubtileCorner,
-#     inbound_t_br?: SubtileCorner,
-#     inbound_b_tl?: SubtileCorner,
-#     inbound_b_tr?: SubtileCorner,
-#     inbound_l_tr?: SubtileCorner,
-#     inbound_l_br?: SubtileCorner,
-#     inbound_r_tl?: SubtileCorner,
-#     inbound_r_bl?: SubtileCorner,
+#     external_t_bl?: SubtileCorner,
+#     external_t_br?: SubtileCorner,
+#     external_b_tl?: SubtileCorner,
+#     external_b_tr?: SubtileCorner,
+#     external_l_tr?: SubtileCorner,
+#     external_l_br?: SubtileCorner,
+#     external_r_tl?: SubtileCorner,
+#     external_r_bl?: SubtileCorner,
 # }
 
 
@@ -43,15 +43,15 @@ const _CORNERS := [
     "bl",
     "br",
 ]
-const _INBOUND_CORNERS := [
-    "inbound_t_bl",
-    "inbound_t_br",
-    "inbound_b_tl",
-    "inbound_b_tr",
-    "inbound_l_tr",
-    "inbound_l_br",
-    "inbound_r_tl",
-    "inbound_r_bl",
+const _EXTERNAL_CORNERS := [
+    "external_t_bl",
+    "external_t_br",
+    "external_b_tl",
+    "external_b_tr",
+    "external_l_tr",
+    "external_l_br",
+    "external_r_tl",
+    "external_r_bl",
 ]
 const _ALL_EMPTY_CORNERS := {
     tl = SubtileCornerV2.EMPTY,
@@ -381,11 +381,11 @@ func _get_match_priority(
             # FIXME: -------------- Is there a more elegant fallback for this?
             priority -= 5.0
     
-    for inbound_corner in _INBOUND_CORNERS:
-        if !actual_corners.has(inbound_corner):
+    for external_corner in _EXTERNAL_CORNERS:
+        if !actual_corners.has(external_corner):
             continue
-        var actual_corner: int = actual_corners[inbound_corner]
-        var expected_corner: int = expected_corners[inbound_corner]
+        var actual_corner: int = actual_corners[external_corner]
+        var expected_corner: int = expected_corners[external_corner]
         var additional_matching_types: Dictionary = \
                 _CORNER_TYPE_TO_ADDITIONAL_MATCHING_TYPES[expected_corner]
         # Determine the priority-contribution for this inbound corner.
@@ -531,14 +531,14 @@ static func _get_target_corners(proximity: CellProximityV2) -> Dictionary:
                 .get_target_bottom_left_corner(proximity),
         br = SubtileTargetCornerUtilsV2 \
                 .get_target_bottom_right_corner(proximity),
-        inbound_t_bl = SubtileCornerV2.UNKNOWN,
-        inbound_t_br = SubtileCornerV2.UNKNOWN,
-        inbound_b_tl = SubtileCornerV2.UNKNOWN,
-        inbound_b_tr = SubtileCornerV2.UNKNOWN,
-        inbound_l_tr = SubtileCornerV2.UNKNOWN,
-        inbound_l_br = SubtileCornerV2.UNKNOWN,
-        inbound_r_tl = SubtileCornerV2.UNKNOWN,
-        inbound_r_bl = SubtileCornerV2.UNKNOWN,
+        external_t_bl = SubtileCornerV2.UNKNOWN,
+        external_t_br = SubtileCornerV2.UNKNOWN,
+        external_b_tl = SubtileCornerV2.UNKNOWN,
+        external_b_tr = SubtileCornerV2.UNKNOWN,
+        external_l_tr = SubtileCornerV2.UNKNOWN,
+        external_l_br = SubtileCornerV2.UNKNOWN,
+        external_r_tl = SubtileCornerV2.UNKNOWN,
+        external_r_bl = SubtileCornerV2.UNKNOWN,
         is_a90 = proximity.is_angle_type_90,
         is_a45 = proximity.is_angle_type_45,
         is_a27 = proximity.is_angle_type_27,
@@ -549,36 +549,36 @@ static func _get_target_corners(proximity: CellProximityV2) -> Dictionary:
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(0, -1))
-        target_corners.inbound_t_bl = SubtileTargetCornerUtilsV2 \
+        target_corners.external_t_bl = SubtileTargetCornerUtilsV2 \
                 .get_target_bottom_left_corner(top_proximity)
-        target_corners.inbound_t_br = SubtileTargetCornerUtilsV2 \
+        target_corners.external_t_br = SubtileTargetCornerUtilsV2 \
                 .get_target_bottom_right_corner(top_proximity)
     if proximity.get_is_present(0, 1):
         var bottom_proximity := CellProximityV2.new(
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(0, 1))
-        target_corners.inbound_b_tl = SubtileTargetCornerUtilsV2 \
+        target_corners.external_b_tl = SubtileTargetCornerUtilsV2 \
                 .get_target_top_left_corner(bottom_proximity)
-        target_corners.inbound_b_tr = SubtileTargetCornerUtilsV2 \
+        target_corners.external_b_tr = SubtileTargetCornerUtilsV2 \
                 .get_target_top_right_corner(bottom_proximity)
     if proximity.get_is_present(-1, 0):
         var left_proximity := CellProximityV2.new(
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(-1, 0))
-        target_corners.inbound_l_tr = SubtileTargetCornerUtilsV2 \
+        target_corners.external_l_tr = SubtileTargetCornerUtilsV2 \
                 .get_target_top_right_corner(left_proximity)
-        target_corners.inbound_l_br = SubtileTargetCornerUtilsV2 \
+        target_corners.external_l_br = SubtileTargetCornerUtilsV2 \
                 .get_target_bottom_right_corner(left_proximity)
     if proximity.get_is_present(1, 0):
         var right_proximity := CellProximityV2.new(
                 proximity.tile_map,
                 proximity.tile_set,
                 proximity.position + Vector2(1, 0))
-        target_corners.inbound_r_tl = SubtileTargetCornerUtilsV2 \
+        target_corners.external_r_tl = SubtileTargetCornerUtilsV2 \
                 .get_target_top_left_corner(right_proximity)
-        target_corners.inbound_r_bl = SubtileTargetCornerUtilsV2 \
+        target_corners.external_r_bl = SubtileTargetCornerUtilsV2 \
                 .get_target_bottom_left_corner(right_proximity)
     
     return target_corners
