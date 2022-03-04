@@ -17,8 +17,8 @@ const ALL_SIDES_BITMASK := \
         TileSet.BIND_RIGHT | \
         TileSet.BIND_BOTTOM
 
-var tile_map: SurfacesTileMap
-var tile_set: SurfacesTileSet
+var tile_map: SurfacesTilemap
+var tile_set: SurfacesTileset
 
 var position: Vector2
 var tile_id: int
@@ -248,8 +248,8 @@ var is_bottom_right_corner_concave_90_horizontal_to_45: bool \
 
 
 func _init(
-        tile_map: SurfacesTileMap,
-        tile_set: SurfacesTileSet,
+        tile_map: SurfacesTilemap,
+        tile_set: SurfacesTileset,
         position: Vector2,
         tile_id: int,
         bitmask: int) -> void:

@@ -5,7 +5,7 @@ extends ScaffolderLevel
 ## The main level class for Surfacer.[br]
 ## -   You should extend this with a sub-class for your specific game.[br]
 ## -   You should then attach your sub-class to each of your level scenes.[br]
-## -   You should add a SurfacesTileMap child node to each of your level
+## -   You should add a SurfacesTilemap child node to each of your level
 ##     scenes, in order to define the collidable surfaces in your level.[br]
 
 
@@ -101,10 +101,10 @@ func _update_editor_configuration() -> void:
             _configuration_warning != "":
         return
     
-    if Sc.utils.get_children_by_type(self, SurfacesTileMap).empty():
+    if Sc.utils.get_children_by_type(self, SurfacesTilemap).empty():
         _set_configuration_warning(
                 "Subclasses of SurfacerLevel must include a " +
-                "SurfacesTileMap child.")
+                "SurfacesTilemap child.")
         return
     
     _set_configuration_warning("")
@@ -177,7 +177,7 @@ func _update_character_spawn_state(
 
 
 func _initialize_annotators() -> void:
-    set_tile_map_visibility(false)
+    set_tilemap_visibility(false)
     set_background_visibility(false)
     Sc.annotators.on_level_ready()
     for group in [
@@ -187,7 +187,7 @@ func _initialize_annotators() -> void:
             character._on_annotators_ready()
 
 
-func set_tile_map_visibility(is_visible: bool) -> void:
+func set_tilemap_visibility(is_visible: bool) -> void:
     var foregrounds: Array = Sc.utils.get_children_by_type(
             self,
             TileMap)
@@ -220,11 +220,11 @@ func _update_session_in_editor() -> void:
     
     Sc.level_session.reset(level_id)
     
-    var tile_maps: Array = Sc.utils.get_children_by_type(self, SurfacesTileMap)
+    var tilemaps: Array = Sc.utils.get_children_by_type(self, SurfacesTilemap)
     Sc.level_session.config.cell_size = \
             Vector2.INF if \
-            tile_maps.empty() else \
-            tile_maps[0].cell_size
+            tilemaps.empty() else \
+            tilemaps[0].cell_size
 
 
 func _set_level_id(value: String) -> void:

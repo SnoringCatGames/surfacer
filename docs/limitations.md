@@ -14,7 +14,7 @@
         -   For example, if the character is jumping from the bottom of a set of stair-like surfaces, the jump position ideally wouldn't be as close as possible to the first rise of the first step (because they can't start accelerating horizontally until vertically clearing the top of the rise). Instead, if the character jumps from a slight offset from the rise, then they can pass over the rise with more speed, which lets them travel further during the jump.
     -   A single horizontal step that needs multiple different sideways-movement instructions (i.e., accelerating to both one side and then the other in the same jump):
         -   For example, backward acceleration in order to not overshoot the end position as well as forward acceleration to then have enough step-end x velocity in order to reach the following waypoint for the next step.
--   Surfacer is opinionated. It requires that you structure your app using TileMaps, specific node groups, and by subclassing certain framework classes in order to create characters.
+-   Surfacer is opinionated. It requires that you structure your app using Tilemaps, specific node groups, and by subclassing certain framework classes in order to create characters.
     -   You need to define a set of input actions with the following names (via Project Settings > Input Map):
         -   jump
         -   move_up

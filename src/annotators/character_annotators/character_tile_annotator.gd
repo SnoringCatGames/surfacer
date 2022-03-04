@@ -24,9 +24,9 @@ func _draw() -> void:
 
 
 func _draw_tile_border() -> void:
-    var tile_map := character.surface_state.grabbed_tile_map
+    var tile_map := character.surface_state.grabbed_tilemap
     var cell_size := tile_map.cell_size
-    var coord := character.surface_state.grab_position_tile_map_coord
+    var coord := character.surface_state.grab_position_tilemap_coord
     var center := (coord + Vector2(0.5, 0.5)) * cell_size
     
     Sc.draw.draw_rectangle_outline(
@@ -39,5 +39,5 @@ func _draw_tile_border() -> void:
 
 
 func check_for_update() -> void:
-    if character.surface_state.just_changed_tile_map_coord:
+    if character.surface_state.just_changed_tilemap_coord:
         update()

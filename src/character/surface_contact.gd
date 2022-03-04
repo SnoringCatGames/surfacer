@@ -17,9 +17,9 @@ var type := UNKNOWN
 var surface: Surface
 var contact_position := Vector2.INF
 var contact_normal := Vector2.INF
-var tile_map: SurfacesTileMap
-var tile_map_coord := Vector2.INF
-var tile_map_index := -1
+var tile_map: SurfacesTilemap
+var tilemap_coord := Vector2.INF
+var tilemap_index := -1
 var position_along_surface := PositionAlongSurface.new()
 var just_started := false
 var _is_still_touching := false

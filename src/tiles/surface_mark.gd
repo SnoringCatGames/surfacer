@@ -1,6 +1,6 @@
 tool
 class_name SurfaceMark, \
-"res://addons/surfacer/assets/images/editor_icons/surfaces_tile_map.png"
+"res://addons/surfacer/assets/images/editor_icons/surfaces_tilemap.png"
 extends TileMap
 ## For marking surfaces in the level editor.[br]
 ## [br]

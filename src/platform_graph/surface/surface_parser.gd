@@ -19,60 +19,60 @@ const _EQUAL_POINT_EPSILON := 0.1
 
 func parse(
         surface_store: SurfaceStore,
-        tile_maps: Array,
+        tilemaps: Array,
         surface_marks: Array) -> void:
-    _validate_tile_map_collection(tile_maps)
+    _validate_tilemap_collection(tilemaps)
     
     # Record the maximum cell size and combined region from all tile maps.
-    _calculate_max_tile_map_cell_size(surface_store, tile_maps)
-    _calculate_combined_tile_map_rect(surface_store, tile_maps)
+    _calculate_max_tilemap_cell_size(surface_store, tilemaps)
+    _calculate_combined_tilemap_rect(surface_store, tilemaps)
     
-    for tile_map in tile_maps:
-        _parse_tile_map(surface_store, tile_map)
+    for tile_map in tilemaps:
+        _parse_tilemap(surface_store, tile_map)
     
     for mark in surface_marks:
-        _parse_surface_mark(surface_store, mark, tile_maps[0])
+        _parse_surface_mark(surface_store, mark, tilemaps[0])
     surface_store.marks = surface_marks
 
 
-func _validate_tile_map_collection(tile_maps: Array) -> void:
-    assert(!tile_maps.empty(),
+func _validate_tilemap_collection(tilemaps: Array) -> void:
+    assert(!tilemaps.empty(),
             "Collidable TileMap collection must not be empty.")
     # TODO: Add support for more than one collidable TileMap.
-    assert(tile_maps.size() == 1,
+    assert(tilemaps.size() == 1,
             "Surfacer currently does not support multiple collidable " +
-            "TileMaps per level.")
-    var cell_size: Vector2 = tile_maps[0].cell_size
+            "Tilemaps per level.")
+    var cell_size: Vector2 = tilemaps[0].cell_size
     assert(cell_size == Sc.level_session.config.cell_size,
             "TileMap.cell_size does not match level config.")
-    for tile_map in tile_maps:
+    for tile_map in tilemaps:
         assert(tile_map.cell_size == cell_size,
-                "All collidable TileMaps must use the same cell size.")
+                "All collidable Tilemaps must use the same cell size.")
         assert(tile_map.position == Vector2.ZERO,
-                "TileMaps must be positioned at (0,0).")
-        assert(tile_map is SurfacesTileMap)
+                "Tilemaps must be positioned at (0,0).")
+        assert(tile_map is SurfacesTilemap)
 
 
-func _calculate_max_tile_map_cell_size(
+func _calculate_max_tilemap_cell_size(
         surface_store: SurfaceStore,
-        tile_maps: Array) -> void:
-    var max_tile_map_cell_size := Vector2.ZERO
-    for tile_map in tile_maps:
+        tilemaps: Array) -> void:
+    var max_tilemap_cell_size := Vector2.ZERO
+    for tile_map in tilemaps:
         if tile_map.cell_size.x + tile_map.cell_size.y > \
-                max_tile_map_cell_size.x + max_tile_map_cell_size.y:
-            max_tile_map_cell_size = tile_map.cell_size
-    surface_store.max_tile_map_cell_size = max_tile_map_cell_size
+                max_tilemap_cell_size.x + max_tilemap_cell_size.y:
+            max_tilemap_cell_size = tile_map.cell_size
+    surface_store.max_tilemap_cell_size = max_tilemap_cell_size
 
 
-func _calculate_combined_tile_map_rect(
+func _calculate_combined_tilemap_rect(
         surface_store: SurfaceStore,
-        tile_maps: Array) -> void:
-    var combined_tile_map_rect: Rect2 = \
-            Sc.geometry.get_tile_map_bounds_in_world_coordinates(tile_maps[0])
-    for tile_map in tile_maps:
-        combined_tile_map_rect = combined_tile_map_rect.merge(
-                Sc.geometry.get_tile_map_bounds_in_world_coordinates(tile_map))
-    surface_store.combined_tile_map_rect = combined_tile_map_rect
+        tilemaps: Array) -> void:
+    var combined_tilemap_rect: Rect2 = \
+            Sc.geometry.get_tilemap_bounds_in_world_coordinates(tilemaps[0])
+    for tile_map in tilemaps:
+        combined_tilemap_rect = combined_tilemap_rect.merge(
+                Sc.geometry.get_tilemap_bounds_in_world_coordinates(tile_map))
+    surface_store.combined_tilemap_rect = combined_tilemap_rect
 
 
 # Parses the given TileMap into a set of nodes for the platform graph.
@@ -88,55 +88,55 @@ func _calculate_combined_tile_map_rect(
 # - The given TileMap only uses collidable tiles. Use a separate TileMap to
 #   paint any non-collidable tiles.
 # - The given TileMap only uses tiles with convex collision boundaries.
-func _parse_tile_map(
+func _parse_tilemap(
         surface_store: SurfaceStore,
-        tile_map: SurfacesTileMap) -> void:
-    Sc.profiler.start("validate_tile_set")
-    _validate_tile_set(tile_map)
-    Sc.profiler.stop("validate_tile_set")
+        tile_map: SurfacesTilemap) -> void:
+    Sc.profiler.start("validate_tileset")
+    _validate_tileset(tile_map)
+    Sc.profiler.stop("validate_tileset")
     
-    Sc.profiler.start("parse_tile_set")
-    var tile_id_to_coord_to_shape_data := _parse_tile_set(tile_map)
-    Sc.profiler.stop("parse_tile_set")
+    Sc.profiler.start("parse_tileset")
+    var tile_id_to_coord_to_shape_data := _parse_tileset(tile_map)
+    Sc.profiler.stop("parse_tileset")
     
-    Sc.profiler.start("parse_tile_map_cells_into_surfaces")
-    var tile_map_index_to_floor := {}
-    var tile_map_index_to_left_wall := {}
-    var tile_map_index_to_right_wall := {}
-    var tile_map_index_to_ceiling := {}
-    _parse_tile_map_cells_into_surfaces(
-            tile_map_index_to_floor,
-            tile_map_index_to_left_wall,
-            tile_map_index_to_right_wall,
-            tile_map_index_to_ceiling,
+    Sc.profiler.start("parse_tilemap_cells_into_surfaces")
+    var tilemap_index_to_floor := {}
+    var tilemap_index_to_left_wall := {}
+    var tilemap_index_to_right_wall := {}
+    var tilemap_index_to_ceiling := {}
+    _parse_tilemap_cells_into_surfaces(
+            tilemap_index_to_floor,
+            tilemap_index_to_left_wall,
+            tilemap_index_to_right_wall,
+            tilemap_index_to_ceiling,
             tile_id_to_coord_to_shape_data,
             tile_map)
-    Sc.profiler.stop("parse_tile_map_cells_into_surfaces")
+    Sc.profiler.stop("parse_tilemap_cells_into_surfaces")
     
     Sc.profiler.start("remove_internal_surfaces")
     _remove_internal_surfaces(
-            tile_map_index_to_floor,
-            tile_map_index_to_left_wall,
-            tile_map_index_to_right_wall,
-            tile_map_index_to_ceiling,
+            tilemap_index_to_floor,
+            tilemap_index_to_left_wall,
+            tilemap_index_to_right_wall,
+            tilemap_index_to_ceiling,
             tile_id_to_coord_to_shape_data,
             tile_map)
     Sc.profiler.stop("remove_internal_surfaces")
     
     Sc.profiler.start("merge_continuous_surfaces")
     _merge_continuous_surfaces(
-            tile_map_index_to_floor,
-            tile_map_index_to_left_wall,
-            tile_map_index_to_right_wall,
-            tile_map_index_to_ceiling,
+            tilemap_index_to_floor,
+            tilemap_index_to_left_wall,
+            tilemap_index_to_right_wall,
+            tilemap_index_to_ceiling,
             tile_map)
     Sc.profiler.stop("merge_continuous_surfaces")
     
     Sc.profiler.start("get_surface_list_from_map")
-    var floors := _get_surface_list_from_map(tile_map_index_to_floor)
-    var ceilings := _get_surface_list_from_map(tile_map_index_to_ceiling)
-    var left_walls := _get_surface_list_from_map(tile_map_index_to_left_wall)
-    var right_walls := _get_surface_list_from_map(tile_map_index_to_right_wall)
+    var floors := _get_surface_list_from_map(tilemap_index_to_floor)
+    var ceilings := _get_surface_list_from_map(tilemap_index_to_ceiling)
+    var left_walls := _get_surface_list_from_map(tilemap_index_to_left_wall)
+    var right_walls := _get_surface_list_from_map(tilemap_index_to_right_wall)
     Sc.profiler.stop("get_surface_list_from_map")
     
     Sc.profiler.start("remove_internal_collinear_vertices_duration")
@@ -185,7 +185,7 @@ func _parse_tile_map(
 
 func _store_surfaces(
         surface_store: SurfaceStore,
-        tile_map: SurfacesTileMap,
+        tile_map: SurfacesTilemap,
         floors: Array,
         ceilings: Array,
         left_walls: Array,
@@ -224,7 +224,7 @@ func _store_surfaces(
 
 func _populate_derivative_collections(
         surface_store: SurfaceStore,
-        tile_map: SurfacesTileMap) -> void:
+        tile_map: SurfacesTilemap) -> void:
     # TODO: This is broken with multiple tilemaps.
     surface_store.all_surfaces = []
     Sc.utils.concat(
@@ -275,15 +275,15 @@ func _populate_derivative_collections(
             surface_store.left_walls)
     
     var floor_mapping = \
-            _create_tile_map_mapping_from_surfaces(surface_store.floors)
+            _create_tilemap_mapping_from_surfaces(surface_store.floors)
     var ceiling_mapping = \
-            _create_tile_map_mapping_from_surfaces(surface_store.ceilings)
+            _create_tilemap_mapping_from_surfaces(surface_store.ceilings)
     var left_wall_mapping = \
-            _create_tile_map_mapping_from_surfaces(surface_store.left_walls)
+            _create_tilemap_mapping_from_surfaces(surface_store.left_walls)
     var right_wall_mapping = \
-            _create_tile_map_mapping_from_surfaces(surface_store.right_walls)
+            _create_tilemap_mapping_from_surfaces(surface_store.right_walls)
     
-    surface_store._tile_map_index_to_surface_maps[tile_map] = {
+    surface_store._tilemap_index_to_surface_maps[tile_map] = {
         SurfaceSide.FLOOR: floor_mapping,
         SurfaceSide.CEILING: ceiling_mapping,
         SurfaceSide.LEFT_WALL: left_wall_mapping,
@@ -291,14 +291,14 @@ func _populate_derivative_collections(
     }
 
 
-static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
+static func _validate_tileset(tile_map: SurfacesTilemap) -> void:
     var cell_size := tile_map.cell_size
     
     var tile_set := tile_map.tile_set
     assert(is_instance_valid(tile_set))
-    assert(tile_set is SurfacesTileSet,
-            "TileSets attached to a collidable TileMap must be assigned " +
-            "a script that extends SurfacesTileSet.")
+    assert(tile_set is SurfacesTileset,
+            "Tilesets attached to a collidable TileMap must be assigned " +
+            "a script that extends SurfacesTileset.")
     
     var ids: Array = tile_set.get_collidable_tiles_ids()
     assert(ids.size() > 0)
@@ -307,7 +307,7 @@ static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
         var tile_name := tile_set.tile_get_name(tile_id)
         assert(is_instance_valid(tile_set.get_tile_properties(tile_name)),
                 ("Tile ID is not recognized by " +
-                "SurfacesTileSet.get_tile_properties: %s") % tile_name)
+                "SurfacesTileset.get_tile_properties: %s") % tile_name)
         
         var shapes := tile_set.tile_get_shapes(tile_id)
         for shape_data in shapes:
@@ -374,7 +374,7 @@ static func _validate_tile_set(tile_map: SurfacesTileMap) -> void:
                         "the cell-size of the corresponding TileMap.")
 
 
-static func _parse_tile_set(tile_map: SurfacesTileMap) -> Dictionary:
+static func _parse_tileset(tile_map: SurfacesTilemap) -> Dictionary:
     var tile_set := tile_map.tile_set
     var cell_size := tile_map.cell_size
     var tile_id_to_coord_to_shape_data := {}
@@ -658,26 +658,26 @@ static func _get_is_side_along_cell_boundary(
                     vertex.x, cell_size.x)
 
 
-static func _parse_tile_map_cells_into_surfaces(
-        tile_map_index_to_floor: Dictionary,
-        tile_map_index_to_left_wall: Dictionary,
-        tile_map_index_to_right_wall: Dictionary,
-        tile_map_index_to_ceiling: Dictionary,
+static func _parse_tilemap_cells_into_surfaces(
+        tilemap_index_to_floor: Dictionary,
+        tilemap_index_to_left_wall: Dictionary,
+        tilemap_index_to_right_wall: Dictionary,
+        tilemap_index_to_ceiling: Dictionary,
         tile_id_to_coord_to_shape_data: Dictionary,
         tile_map: TileMap) -> void:
     var cell_size := tile_map.cell_size
     var used_cells := tile_map.get_used_cells()
     
-    for tile_map_position in used_cells:
-        var cell_position_world_coords: Vector2 = tile_map_position * cell_size
-        var tile_map_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
-                        tile_map_position,
+    for tilemap_position in used_cells:
+        var cell_position_world_coords: Vector2 = tilemap_position * cell_size
+        var tilemap_index: int = \
+                Sc.geometry.get_tilemap_index_from_grid_coord(
+                        tilemap_position,
                         tile_map)
-        var tile_id := tile_map.get_cellv(tile_map_position)
+        var tile_id := tile_map.get_cellv(tilemap_position)
         var tile_name := tile_map.tile_set.tile_get_name(tile_id)
         var tile_coord := tile_map.get_cell_autotile_coord(
-                tile_map_position.x, tile_map_position.y)
+                tilemap_position.x, tilemap_position.y)
         var tile_shape_data: TileShapeData = \
                 tile_id_to_coord_to_shape_data[tile_id][tile_coord]
         var surface_properties: SurfaceProperties = \
@@ -705,28 +705,28 @@ static func _parse_tile_map_cells_into_surfaces(
         var floor_surface = _TmpSurface.new()
         floor_surface.vertices_array = floor_vertices_world_coords
         floor_surface.tile_map = tile_map
-        floor_surface.tile_map_indices = [tile_map_index]
+        floor_surface.tilemap_indices = [tilemap_index]
         floor_surface.properties = surface_properties
         var ceiling_surface = _TmpSurface.new()
         ceiling_surface.vertices_array = ceiling_vertices_world_coords
         ceiling_surface.tile_map = tile_map
-        ceiling_surface.tile_map_indices = [tile_map_index]
+        ceiling_surface.tilemap_indices = [tilemap_index]
         ceiling_surface.properties = surface_properties
         var left_wall_surface = _TmpSurface.new()
         left_wall_surface.vertices_array = left_wall_vertices_world_coords
         left_wall_surface.tile_map = tile_map
-        left_wall_surface.tile_map_indices = [tile_map_index]
+        left_wall_surface.tilemap_indices = [tilemap_index]
         left_wall_surface.properties = surface_properties
         var right_wall_surface = _TmpSurface.new()
         right_wall_surface.vertices_array = right_wall_vertices_world_coords
         right_wall_surface.tile_map = tile_map
-        right_wall_surface.tile_map_indices = [tile_map_index]
+        right_wall_surface.tilemap_indices = [tilemap_index]
         right_wall_surface.properties = surface_properties
         
-        tile_map_index_to_floor[tile_map_index] = floor_surface
-        tile_map_index_to_ceiling[tile_map_index] = ceiling_surface
-        tile_map_index_to_left_wall[tile_map_index] = left_wall_surface
-        tile_map_index_to_right_wall[tile_map_index] = right_wall_surface
+        tilemap_index_to_floor[tilemap_index] = floor_surface
+        tilemap_index_to_ceiling[tilemap_index] = ceiling_surface
+        tilemap_index_to_left_wall[tilemap_index] = left_wall_surface
+        tilemap_index_to_right_wall[tilemap_index] = right_wall_surface
 
 
 # Removes some "internal" surfaces.
@@ -742,89 +742,89 @@ static func _parse_tile_map_cells_into_surfaces(
 # -   Partial-internal surfaces are truncated.
 # -   Any surface polyline that consists of more than one segment is ignored.
 static func _remove_internal_surfaces(
-        tile_map_index_to_floor: Dictionary,
-        tile_map_index_to_left_wall: Dictionary,
-        tile_map_index_to_right_wall: Dictionary,
-        tile_map_index_to_ceiling: Dictionary,
+        tilemap_index_to_floor: Dictionary,
+        tilemap_index_to_left_wall: Dictionary,
+        tilemap_index_to_right_wall: Dictionary,
+        tilemap_index_to_ceiling: Dictionary,
         tile_id_to_coord_to_shape_data: Dictionary,
         tile_map: TileMap) -> void:
     _remove_internal_single_vertex_surfaces(
-            tile_map_index_to_floor,
-            tile_map_index_to_left_wall,
-            tile_map_index_to_right_wall,
-            tile_map_index_to_ceiling,
+            tilemap_index_to_floor,
+            tilemap_index_to_left_wall,
+            tilemap_index_to_right_wall,
+            tilemap_index_to_ceiling,
             tile_id_to_coord_to_shape_data,
             tile_map)
     _remove_internal_multi_vertex_surfaces(
-            tile_map_index_to_floor,
-            tile_map_index_to_left_wall,
-            tile_map_index_to_right_wall,
-            tile_map_index_to_ceiling,
+            tilemap_index_to_floor,
+            tilemap_index_to_left_wall,
+            tilemap_index_to_right_wall,
+            tilemap_index_to_ceiling,
             tile_id_to_coord_to_shape_data,
             tile_map)
 
 
 static func _remove_internal_single_vertex_surfaces(
-        tile_map_index_to_floor: Dictionary,
-        tile_map_index_to_left_wall: Dictionary,
-        tile_map_index_to_right_wall: Dictionary,
-        tile_map_index_to_ceiling: Dictionary,
+        tilemap_index_to_floor: Dictionary,
+        tilemap_index_to_left_wall: Dictionary,
+        tilemap_index_to_right_wall: Dictionary,
+        tilemap_index_to_ceiling: Dictionary,
         tile_id_to_coord_to_shape_data: Dictionary,
         tile_map: TileMap) -> void:
     var used_rect := tile_map.get_used_rect()
-    var tile_map_row_count: int = used_rect.size.y
-    var tile_map_column_count: int = used_rect.size.x
+    var tilemap_row_count: int = used_rect.size.y
+    var tilemap_column_count: int = used_rect.size.x
     
-    for row in tile_map_row_count:
-        for column in tile_map_column_count:
-            var tile_map_index: int = row * tile_map_column_count + column
+    for row in tilemap_row_count:
+        for column in tilemap_column_count:
+            var tilemap_index: int = row * tilemap_column_count + column
             
             # The left and right neighbors will wrap-around, but that's not a
             # problem, since they won't produce false positives.
-            var left_neighbor_index := tile_map_index - 1
-            var right_neighbor_index := tile_map_index + 1
-            var top_neighbor_index := tile_map_index - tile_map_column_count
-            var bottom_neighbor_index := tile_map_index + tile_map_column_count
+            var left_neighbor_index := tilemap_index - 1
+            var right_neighbor_index := tilemap_index + 1
+            var top_neighbor_index := tilemap_index - tilemap_column_count
+            var bottom_neighbor_index := tilemap_index + tilemap_column_count
             var top_left_neighbor_index := top_neighbor_index - 1
             var top_right_neighbor_index := top_neighbor_index + 1
             var bottom_left_neighbor_index := bottom_neighbor_index - 1
             var bottom_right_neighbor_index := bottom_neighbor_index + 1
             
             var is_single_vertex_floor_at_index: bool = \
-                    tile_map_index_to_floor.has(tile_map_index) and \
-                    tile_map_index_to_floor[tile_map_index] \
+                    tilemap_index_to_floor.has(tilemap_index) and \
+                    tilemap_index_to_floor[tilemap_index] \
                         .vertices_array.size() == 1
             var is_single_vertex_ceiling_at_index: bool = \
-                    tile_map_index_to_ceiling.has(tile_map_index) and \
-                    tile_map_index_to_ceiling[tile_map_index] \
+                    tilemap_index_to_ceiling.has(tilemap_index) and \
+                    tilemap_index_to_ceiling[tilemap_index] \
                         .vertices_array.size() == 1
             var is_single_vertex_left_wall_at_index: bool = \
-                    tile_map_index_to_left_wall.has(tile_map_index) and \
-                    tile_map_index_to_left_wall[tile_map_index] \
+                    tilemap_index_to_left_wall.has(tilemap_index) and \
+                    tilemap_index_to_left_wall[tilemap_index] \
                         .vertices_array.size() == 1
             var is_single_vertex_right_wall_at_index: bool = \
-                    tile_map_index_to_right_wall.has(tile_map_index) and \
-                    tile_map_index_to_right_wall[tile_map_index] \
+                    tilemap_index_to_right_wall.has(tilemap_index) and \
+                    tilemap_index_to_right_wall[tilemap_index] \
                         .vertices_array.size() == 1
             
             if is_single_vertex_floor_at_index:
                 var floor_surface: _TmpSurface = \
-                        tile_map_index_to_floor[tile_map_index]
+                        tilemap_index_to_floor[tilemap_index]
                 var floor_vertex: Vector2 = floor_surface.vertices_array[0]
                 
                 var top_neighbor: _TmpSurface = \
-                        tile_map_index_to_ceiling[top_neighbor_index] if \
-                        tile_map_index_to_ceiling.has(
+                        tilemap_index_to_ceiling[top_neighbor_index] if \
+                        tilemap_index_to_ceiling.has(
                             top_neighbor_index) else \
                         null
                 var top_left_neighbor: _TmpSurface = \
-                        tile_map_index_to_ceiling[top_left_neighbor_index] if \
-                        tile_map_index_to_ceiling.has(
+                        tilemap_index_to_ceiling[top_left_neighbor_index] if \
+                        tilemap_index_to_ceiling.has(
                             top_left_neighbor_index) else \
                         null
                 var top_right_neighbor: _TmpSurface = \
-                        tile_map_index_to_ceiling[top_right_neighbor_index] if \
-                        tile_map_index_to_ceiling.has(
+                        tilemap_index_to_ceiling[top_right_neighbor_index] if \
+                        tilemap_index_to_ceiling.has(
                             top_right_neighbor_index) else \
                         null
                 
@@ -854,44 +854,44 @@ static func _remove_internal_single_vertex_surfaces(
                         is_match_with_top_left_neighbor or \
                         is_match_with_top_right_neighbor:
                     # We found a match, so remove the single-vertex surface.
-                    tile_map_index_to_floor.erase(tile_map_index)
+                    tilemap_index_to_floor.erase(tilemap_index)
                     floor_surface.free()
                     # Check whether the neighbor is also a single-vertex
                     # surface, which should be removed.
                     if is_match_with_top_neighbor and \
                             top_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_ceiling.erase(top_neighbor_index)
+                        tilemap_index_to_ceiling.erase(top_neighbor_index)
                         top_neighbor.free()
                     if is_match_with_top_left_neighbor and \
                             top_left_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_ceiling.erase(top_left_neighbor_index)
+                        tilemap_index_to_ceiling.erase(top_left_neighbor_index)
                         top_left_neighbor.free()
                     if is_match_with_top_neighbor and \
                             top_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_ceiling \
+                        tilemap_index_to_ceiling \
                                 .erase(top_right_neighbor_index)
                         top_right_neighbor.free()
             
             if is_single_vertex_ceiling_at_index:
                 var ceiling_surface: _TmpSurface = \
-                        tile_map_index_to_ceiling[tile_map_index]
+                        tilemap_index_to_ceiling[tilemap_index]
                 var ceiling_vertex: Vector2 = ceiling_surface.vertices_array[0]
                 
                 var bottom_neighbor: _TmpSurface = \
-                        tile_map_index_to_floor[bottom_neighbor_index] if \
-                        tile_map_index_to_floor.has(
+                        tilemap_index_to_floor[bottom_neighbor_index] if \
+                        tilemap_index_to_floor.has(
                             bottom_neighbor_index) else \
                         null
                 var bottom_left_neighbor: _TmpSurface = \
-                        tile_map_index_to_floor[ \
+                        tilemap_index_to_floor[ \
                             bottom_left_neighbor_index] if \
-                        tile_map_index_to_floor.has(
+                        tilemap_index_to_floor.has(
                             bottom_left_neighbor_index) else \
                         null
                 var bottom_right_neighbor: _TmpSurface = \
-                        tile_map_index_to_floor[ \
+                        tilemap_index_to_floor[ \
                             bottom_right_neighbor_index] if \
-                        tile_map_index_to_floor.has(
+                        tilemap_index_to_floor.has(
                             bottom_right_neighbor_index) else \
                         null
                 
@@ -921,46 +921,46 @@ static func _remove_internal_single_vertex_surfaces(
                         is_match_with_bottom_left_neighbor or \
                         is_match_with_bottom_right_neighbor:
                     # We found a match, so remove the single-vertex surface.
-                    tile_map_index_to_ceiling.erase(tile_map_index)
+                    tilemap_index_to_ceiling.erase(tilemap_index)
                     ceiling_surface.free()
                     # Check whether the neighbor is also a single-vertex
                     # surface, which should be removed.
                     if is_match_with_bottom_neighbor and \
                             bottom_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_floor.erase(bottom_neighbor_index)
+                        tilemap_index_to_floor.erase(bottom_neighbor_index)
                         bottom_neighbor.free()
                     if is_match_with_bottom_left_neighbor and \
                             bottom_left_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_floor \
+                        tilemap_index_to_floor \
                                 .erase(bottom_left_neighbor_index)
                         bottom_left_neighbor.free()
                     if is_match_with_bottom_neighbor and \
                             bottom_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_floor \
+                        tilemap_index_to_floor \
                                 .erase(bottom_right_neighbor_index)
                         bottom_right_neighbor.free()
             
             if is_single_vertex_left_wall_at_index:
                 var left_wall_surface: _TmpSurface = \
-                        tile_map_index_to_left_wall[tile_map_index]
+                        tilemap_index_to_left_wall[tilemap_index]
                 var left_wall_vertex: Vector2 = \
                         left_wall_surface.vertices_array[0]
                 
                 var right_neighbor: _TmpSurface = \
-                        tile_map_index_to_right_wall[right_neighbor_index] if \
-                        tile_map_index_to_right_wall.has(
+                        tilemap_index_to_right_wall[right_neighbor_index] if \
+                        tilemap_index_to_right_wall.has(
                             right_neighbor_index) else \
                         null
                 var top_right_neighbor: _TmpSurface = \
-                        tile_map_index_to_right_wall[ \
+                        tilemap_index_to_right_wall[ \
                             top_right_neighbor_index] if \
-                        tile_map_index_to_right_wall.has(
+                        tilemap_index_to_right_wall.has(
                             top_right_neighbor_index) else \
                         null
                 var bottom_right_neighbor: _TmpSurface = \
-                        tile_map_index_to_right_wall[ \
+                        tilemap_index_to_right_wall[ \
                             bottom_right_neighbor_index] if \
-                        tile_map_index_to_right_wall.has(
+                        tilemap_index_to_right_wall.has(
                             bottom_right_neighbor_index) else \
                         null
                 
@@ -990,46 +990,46 @@ static func _remove_internal_single_vertex_surfaces(
                         is_match_with_top_right_neighbor or \
                         is_match_with_bottom_right_neighbor:
                     # We found a match, so remove the single-vertex surface.
-                    tile_map_index_to_left_wall.erase(tile_map_index)
+                    tilemap_index_to_left_wall.erase(tilemap_index)
                     left_wall_surface.free()
                     # Check whether the neighbor is also a single-vertex
                     # surface, which should be removed.
                     if is_match_with_right_neighbor and \
                             right_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_right_wall.erase(right_neighbor_index)
+                        tilemap_index_to_right_wall.erase(right_neighbor_index)
                         right_neighbor.free()
                     if is_match_with_top_right_neighbor and \
                             top_right_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_right_wall \
+                        tilemap_index_to_right_wall \
                                 .erase(top_right_neighbor_index)
                         top_right_neighbor.free()
                     if is_match_with_bottom_right_neighbor and \
                             bottom_right_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_right_wall \
+                        tilemap_index_to_right_wall \
                                 .erase(bottom_right_neighbor_index)
                         bottom_right_neighbor.free()
             
             if is_single_vertex_right_wall_at_index:
                 var right_wall_surface: _TmpSurface = \
-                        tile_map_index_to_right_wall[tile_map_index]
+                        tilemap_index_to_right_wall[tilemap_index]
                 var right_wall_vertex: Vector2 = \
                         right_wall_surface.vertices_array[0]
                 
                 var left_neighbor: _TmpSurface = \
-                        tile_map_index_to_left_wall[left_neighbor_index] if \
-                        tile_map_index_to_left_wall.has(
+                        tilemap_index_to_left_wall[left_neighbor_index] if \
+                        tilemap_index_to_left_wall.has(
                             left_neighbor_index) else \
                         null
                 var top_left_neighbor: _TmpSurface = \
-                        tile_map_index_to_left_wall[ \
+                        tilemap_index_to_left_wall[ \
                             top_left_neighbor_index] if \
-                        tile_map_index_to_left_wall.has(
+                        tilemap_index_to_left_wall.has(
                             top_left_neighbor_index) else \
                         null
                 var bottom_left_neighbor: _TmpSurface = \
-                        tile_map_index_to_left_wall[ \
+                        tilemap_index_to_left_wall[ \
                             bottom_left_neighbor_index] if \
-                        tile_map_index_to_left_wall.has(
+                        tilemap_index_to_left_wall.has(
                             bottom_left_neighbor_index) else \
                         null
                 
@@ -1059,52 +1059,52 @@ static func _remove_internal_single_vertex_surfaces(
                         is_match_with_top_left_neighbor or \
                         is_match_with_bottom_left_neighbor:
                     # We found a match, so remove the single-vertex surface.
-                    tile_map_index_to_right_wall.erase(tile_map_index)
+                    tilemap_index_to_right_wall.erase(tilemap_index)
                     right_wall_surface.free()
                     # Check whether the neighbor is also a single-vertex
                     # surface, which should be removed.
                     if is_match_with_left_neighbor and \
                             left_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_left_wall.erase(left_neighbor_index)
+                        tilemap_index_to_left_wall.erase(left_neighbor_index)
                         left_neighbor.free()
                     if is_match_with_top_left_neighbor and \
                             top_left_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_left_wall \
+                        tilemap_index_to_left_wall \
                                 .erase(top_left_neighbor_index)
                         top_left_neighbor.free()
                     if is_match_with_bottom_left_neighbor and \
                             bottom_left_neighbor.vertices_array.size() == 1:
-                        tile_map_index_to_left_wall \
+                        tilemap_index_to_left_wall \
                                 .erase(bottom_left_neighbor_index)
                         bottom_left_neighbor.free()
 
 
 static func _remove_internal_multi_vertex_surfaces(
-        tile_map_index_to_floor: Dictionary,
-        tile_map_index_to_left_wall: Dictionary,
-        tile_map_index_to_right_wall: Dictionary,
-        tile_map_index_to_ceiling: Dictionary,
+        tilemap_index_to_floor: Dictionary,
+        tilemap_index_to_left_wall: Dictionary,
+        tilemap_index_to_right_wall: Dictionary,
+        tilemap_index_to_ceiling: Dictionary,
         tile_id_to_coord_to_shape_data: Dictionary,
         tile_map: TileMap) -> void:
     var used_rect := tile_map.get_used_rect()
     var grid_offset := Sc.geometry.snap_vector2_to_integers(used_rect.position)
-    var tile_map_row_count: int = used_rect.size.y
-    var tile_map_column_count: int = used_rect.size.x
+    var tilemap_row_count: int = used_rect.size.y
+    var tilemap_column_count: int = used_rect.size.x
     
-    for row in tile_map_row_count:
-        for column in tile_map_column_count:
-            var tile_map_index: int = row * tile_map_column_count + column
+    for row in tilemap_row_count:
+        for column in tilemap_column_count:
+            var tilemap_index: int = row * tilemap_column_count + column
             
             # The left and right neighbors will wrap-around, but that's not a
             # problem, since they won't produce false positives.
-            var left_neighbor_index := tile_map_index - 1
-            var right_neighbor_index := tile_map_index + 1
-            var top_neighbor_index := tile_map_index - tile_map_column_count
-            var bottom_neighbor_index := tile_map_index + tile_map_column_count
+            var left_neighbor_index := tilemap_index - 1
+            var right_neighbor_index := tilemap_index + 1
+            var top_neighbor_index := tilemap_index - tilemap_column_count
+            var bottom_neighbor_index := tilemap_index + tilemap_column_count
             
             var current_grid_coord := Vector2(
-                    tile_map_index % tile_map_column_count,
-                    int(tile_map_index / tile_map_column_count)) + grid_offset
+                    tilemap_index % tilemap_column_count,
+                    int(tilemap_index / tilemap_column_count)) + grid_offset
             var left_neighbor_grid_coord := current_grid_coord + Vector2(-1, 0)
             var right_neighbor_grid_coord := current_grid_coord + Vector2(1, 0)
             var top_neighbor_grid_coord := current_grid_coord + Vector2(0, -1)
@@ -1157,43 +1157,43 @@ static func _remove_internal_multi_vertex_surfaces(
                     null
             
             var is_there_a_non_single_floor_to_ceiling_match: bool = \
-                    tile_map_index_to_floor.has(tile_map_index) and \
-                    tile_map_index_to_floor[tile_map_index] \
+                    tilemap_index_to_floor.has(tilemap_index) and \
+                    tilemap_index_to_floor[tilemap_index] \
                         .vertices_array.size() > 1 and \
-                    tile_map_index_to_ceiling.has(top_neighbor_index) and \
-                    tile_map_index_to_ceiling[top_neighbor_index] \
+                    tilemap_index_to_ceiling.has(top_neighbor_index) and \
+                    tilemap_index_to_ceiling[top_neighbor_index] \
                         .vertices_array.size() > 1 and \
                     is_instance_valid(top_neighbor_tile_shape_data)
             var is_there_a_non_single_ceiling_to_floor_match: bool = \
-                    tile_map_index_to_ceiling.has(tile_map_index) and \
-                    tile_map_index_to_ceiling[tile_map_index] \
+                    tilemap_index_to_ceiling.has(tilemap_index) and \
+                    tilemap_index_to_ceiling[tilemap_index] \
                         .vertices_array.size() > 1 and \
-                    tile_map_index_to_floor.has(bottom_neighbor_index) and \
-                    tile_map_index_to_floor[bottom_neighbor_index] \
+                    tilemap_index_to_floor.has(bottom_neighbor_index) and \
+                    tilemap_index_to_floor[bottom_neighbor_index] \
                         .vertices_array.size() > 1 and \
                     is_instance_valid(bottom_neighbor_tile_shape_data)
             var is_there_a_non_single_left_wall_to_right_wall_match: bool = \
-                    tile_map_index_to_left_wall.has(tile_map_index) and \
-                    tile_map_index_to_left_wall[tile_map_index] \
+                    tilemap_index_to_left_wall.has(tilemap_index) and \
+                    tilemap_index_to_left_wall[tilemap_index] \
                         .vertices_array.size() > 1 and \
-                    tile_map_index_to_right_wall.has(right_neighbor_index) and \
-                    tile_map_index_to_right_wall[right_neighbor_index] \
+                    tilemap_index_to_right_wall.has(right_neighbor_index) and \
+                    tilemap_index_to_right_wall[right_neighbor_index] \
                         .vertices_array.size() > 1 and \
                     is_instance_valid(right_neighbor_tile_shape_data)
             var is_there_a_non_single_right_wall_to_left_wall_match: bool = \
-                    tile_map_index_to_right_wall.has(tile_map_index) and \
-                    tile_map_index_to_right_wall[tile_map_index] \
+                    tilemap_index_to_right_wall.has(tilemap_index) and \
+                    tilemap_index_to_right_wall[tilemap_index] \
                         .vertices_array.size() > 1 and \
-                    tile_map_index_to_left_wall.has(left_neighbor_index) and \
-                    tile_map_index_to_left_wall[left_neighbor_index] \
+                    tilemap_index_to_left_wall.has(left_neighbor_index) and \
+                    tilemap_index_to_left_wall[left_neighbor_index] \
                         .vertices_array.size() > 1 and \
                     is_instance_valid(left_neighbor_tile_shape_data)
             
             if is_there_a_non_single_floor_to_ceiling_match:
                 var floor_surface: _TmpSurface = \
-                        tile_map_index_to_floor[tile_map_index]
+                        tilemap_index_to_floor[tilemap_index]
                 var ceiling_surface: _TmpSurface = \
-                        tile_map_index_to_ceiling[top_neighbor_index]
+                        tilemap_index_to_ceiling[top_neighbor_index]
                 var floor_first_point: Vector2 = \
                         floor_surface.vertices_array.front()
                 var floor_last_point: Vector2 = \
@@ -1223,8 +1223,8 @@ static func _remove_internal_multi_vertex_surfaces(
                 
                 if is_full_match:
                     # We found a match, so remove both surfaces.
-                    tile_map_index_to_floor.erase(tile_map_index)
-                    tile_map_index_to_ceiling.erase(top_neighbor_index)
+                    tilemap_index_to_floor.erase(tilemap_index)
+                    tilemap_index_to_ceiling.erase(top_neighbor_index)
                     floor_surface.free()
                     ceiling_surface.free()
                 elif is_possible_partial_match:
@@ -1240,14 +1240,14 @@ static func _remove_internal_multi_vertex_surfaces(
                             # so remove the ceiling and truncate the floor.
                             floor_surface.vertices_array[0] = \
                                     ceiling_first_point
-                            tile_map_index_to_ceiling.erase(top_neighbor_index)
+                            tilemap_index_to_ceiling.erase(top_neighbor_index)
                             ceiling_surface.free()
                         else:
                             # The ceiling extends past the floor on one side,
                             # so remove the floor and truncate the ceiling.
                             ceiling_surface.vertices_array[1] = \
                                     floor_last_point
-                            tile_map_index_to_floor.erase(tile_map_index)
+                            tilemap_index_to_floor.erase(tilemap_index)
                             floor_surface.free()
                     elif do_right_ends_match:
                         if is_floor_to_the_left:
@@ -1255,14 +1255,14 @@ static func _remove_internal_multi_vertex_surfaces(
                             # so remove the ceiling and truncate the floor.
                             floor_surface.vertices_array[1] = \
                                     ceiling_last_point
-                            tile_map_index_to_ceiling.erase(top_neighbor_index)
+                            tilemap_index_to_ceiling.erase(top_neighbor_index)
                             ceiling_surface.free()
                         else:
                             # The ceiling extends past the floor on one side,
                             # so remove the floor and truncate the ceiling.
                             ceiling_surface.vertices_array[0] = \
                                     floor_first_point
-                            tile_map_index_to_floor.erase(tile_map_index)
+                            tilemap_index_to_floor.erase(tilemap_index)
                             floor_surface.free()
                     else:
                         assert(is_floor_to_the_left != is_floor_to_the_right,
@@ -1285,9 +1285,9 @@ static func _remove_internal_multi_vertex_surfaces(
             
             if is_there_a_non_single_ceiling_to_floor_match:
                 var ceiling_surface: _TmpSurface = \
-                        tile_map_index_to_ceiling[tile_map_index]
+                        tilemap_index_to_ceiling[tilemap_index]
                 var floor_surface: _TmpSurface = \
-                        tile_map_index_to_floor[bottom_neighbor_index]
+                        tilemap_index_to_floor[bottom_neighbor_index]
                 var ceiling_first_point: Vector2 = \
                         ceiling_surface.vertices_array.front()
                 var ceiling_last_point: Vector2 = \
@@ -1317,8 +1317,8 @@ static func _remove_internal_multi_vertex_surfaces(
                 
                 if is_full_match:
                     # We found a match, so remove both surfaces.
-                    tile_map_index_to_ceiling.erase(tile_map_index)
-                    tile_map_index_to_floor.erase(bottom_neighbor_index)
+                    tilemap_index_to_ceiling.erase(tilemap_index)
+                    tilemap_index_to_floor.erase(bottom_neighbor_index)
                     ceiling_surface.free()
                     floor_surface.free()
                 elif is_possible_partial_match:
@@ -1334,14 +1334,14 @@ static func _remove_internal_multi_vertex_surfaces(
                             # so remove the floor and truncate the ceiling.
                             ceiling_surface.vertices_array[1] = \
                                     floor_last_point
-                            tile_map_index_to_floor.erase(bottom_neighbor_index)
+                            tilemap_index_to_floor.erase(bottom_neighbor_index)
                             floor_surface.free()
                         else:
                             # The floor extends past the ceiling on one side,
                             # so remove the ceiling and truncate the floor.
                             floor_surface.vertices_array[0] = \
                                     ceiling_first_point
-                            tile_map_index_to_ceiling.erase(tile_map_index)
+                            tilemap_index_to_ceiling.erase(tilemap_index)
                             ceiling_surface.free()
                     elif do_right_ends_match:
                         if is_ceiling_to_the_left:
@@ -1349,14 +1349,14 @@ static func _remove_internal_multi_vertex_surfaces(
                             # so remove the floor and truncate the ceiling.
                             ceiling_surface.vertices_array[0] = \
                                     floor_first_point
-                            tile_map_index_to_floor.erase(bottom_neighbor_index)
+                            tilemap_index_to_floor.erase(bottom_neighbor_index)
                             floor_surface.free()
                         else:
                             # The floor extends past the ceiling on one side,
                             # so remove the ceiling and truncate the floor.
                             floor_surface.vertices_array[1] = \
                                     ceiling_last_point
-                            tile_map_index_to_ceiling.erase(tile_map_index)
+                            tilemap_index_to_ceiling.erase(tilemap_index)
                             ceiling_surface.free()
                     else:
                         assert(is_ceiling_to_the_left != \
@@ -1380,9 +1380,9 @@ static func _remove_internal_multi_vertex_surfaces(
             
             if is_there_a_non_single_left_wall_to_right_wall_match:
                 var left_wall_surface: _TmpSurface = \
-                        tile_map_index_to_left_wall[tile_map_index]
+                        tilemap_index_to_left_wall[tilemap_index]
                 var right_wall_surface: _TmpSurface = \
-                        tile_map_index_to_right_wall[right_neighbor_index]
+                        tilemap_index_to_right_wall[right_neighbor_index]
                 var left_wall_first_point: Vector2 = \
                         left_wall_surface.vertices_array.front()
                 var left_wall_last_point: Vector2 = \
@@ -1412,8 +1412,8 @@ static func _remove_internal_multi_vertex_surfaces(
                 
                 if is_full_match:
                     # We found a match, so remove both surfaces.
-                    tile_map_index_to_left_wall.erase(tile_map_index)
-                    tile_map_index_to_right_wall.erase(right_neighbor_index)
+                    tilemap_index_to_left_wall.erase(tilemap_index)
+                    tilemap_index_to_right_wall.erase(right_neighbor_index)
                     left_wall_surface.free()
                     right_wall_surface.free()
                 elif is_possible_partial_match:
@@ -1430,7 +1430,7 @@ static func _remove_internal_multi_vertex_surfaces(
                             # left_wall.
                             left_wall_surface.vertices_array[0] = \
                                     right_wall_first_point
-                            tile_map_index_to_right_wall \
+                            tilemap_index_to_right_wall \
                                     .erase(right_neighbor_index)
                             right_wall_surface.free()
                         else:
@@ -1439,7 +1439,7 @@ static func _remove_internal_multi_vertex_surfaces(
                             # right_wall.
                             right_wall_surface.vertices_array[1] = \
                                     left_wall_last_point
-                            tile_map_index_to_left_wall.erase(tile_map_index)
+                            tilemap_index_to_left_wall.erase(tilemap_index)
                             left_wall_surface.free()
                     elif do_bottom_ends_match:
                         if is_left_wall_to_the_top:
@@ -1448,7 +1448,7 @@ static func _remove_internal_multi_vertex_surfaces(
                             # left_wall.
                             left_wall_surface.vertices_array[1] = \
                                     right_wall_last_point
-                            tile_map_index_to_right_wall \
+                            tilemap_index_to_right_wall \
                                     .erase(right_neighbor_index)
                             right_wall_surface.free()
                         else:
@@ -1457,7 +1457,7 @@ static func _remove_internal_multi_vertex_surfaces(
                             # right_wall.
                             right_wall_surface.vertices_array[0] = \
                                     left_wall_first_point
-                            tile_map_index_to_left_wall.erase(tile_map_index)
+                            tilemap_index_to_left_wall.erase(tilemap_index)
                             left_wall_surface.free()
                     else:
                         assert(is_left_wall_to_the_top != \
@@ -1481,9 +1481,9 @@ static func _remove_internal_multi_vertex_surfaces(
             
             if is_there_a_non_single_right_wall_to_left_wall_match:
                 var right_wall_surface: _TmpSurface = \
-                        tile_map_index_to_right_wall[tile_map_index]
+                        tilemap_index_to_right_wall[tilemap_index]
                 var left_wall_surface: _TmpSurface = \
-                        tile_map_index_to_left_wall[left_neighbor_index]
+                        tilemap_index_to_left_wall[left_neighbor_index]
                 var right_wall_first_point: Vector2 = \
                         right_wall_surface.vertices_array.front()
                 var right_wall_last_point: Vector2 = \
@@ -1513,8 +1513,8 @@ static func _remove_internal_multi_vertex_surfaces(
                 
                 if is_full_match:
                     # We found a match, so remove both surfaces.
-                    tile_map_index_to_right_wall.erase(tile_map_index)
-                    tile_map_index_to_left_wall.erase(left_neighbor_index)
+                    tilemap_index_to_right_wall.erase(tilemap_index)
+                    tilemap_index_to_left_wall.erase(left_neighbor_index)
                     right_wall_surface.free()
                     left_wall_surface.free()
                 elif is_possible_partial_match:
@@ -1531,7 +1531,7 @@ static func _remove_internal_multi_vertex_surfaces(
                             # right_wall.
                             right_wall_surface.vertices_array[1] = \
                                     left_wall_last_point
-                            tile_map_index_to_left_wall \
+                            tilemap_index_to_left_wall \
                                     .erase(left_neighbor_index)
                             left_wall_surface.free()
                         else:
@@ -1540,7 +1540,7 @@ static func _remove_internal_multi_vertex_surfaces(
                             # left_wall.
                             left_wall_surface.vertices_array[0] = \
                                     right_wall_first_point
-                            tile_map_index_to_right_wall.erase(tile_map_index)
+                            tilemap_index_to_right_wall.erase(tilemap_index)
                             right_wall_surface.free()
                     elif do_bottom_ends_match:
                         if is_right_wall_to_the_top:
@@ -1549,7 +1549,7 @@ static func _remove_internal_multi_vertex_surfaces(
                             # right_wall.
                             right_wall_surface.vertices_array[0] = \
                                     left_wall_first_point
-                            tile_map_index_to_left_wall \
+                            tilemap_index_to_left_wall \
                                     .erase(left_neighbor_index)
                             left_wall_surface.free()
                         else:
@@ -1558,7 +1558,7 @@ static func _remove_internal_multi_vertex_surfaces(
                             # left_wall.
                             left_wall_surface.vertices_array[1] = \
                                     right_wall_last_point
-                            tile_map_index_to_right_wall.erase(tile_map_index)
+                            tilemap_index_to_right_wall.erase(tilemap_index)
                             right_wall_surface.free()
                     else:
                         assert(is_right_wall_to_the_top != \
@@ -1585,39 +1585,39 @@ static func _replace_surface(
         old_surface: _TmpSurface,
         new_surface: _TmpSurface,
         collection: Dictionary) -> void:
-    for index in old_surface.tile_map_indices:
+    for index in old_surface.tilemap_indices:
         collection[index] = new_surface
     old_surface.free()
 
 
 # Merges adjacent continuous surfaces.
 static func _merge_continuous_surfaces(
-        tile_map_index_to_floor: Dictionary,
-        tile_map_index_to_left_wall: Dictionary,
-        tile_map_index_to_right_wall: Dictionary,
-        tile_map_index_to_ceiling: Dictionary,
+        tilemap_index_to_floor: Dictionary,
+        tilemap_index_to_left_wall: Dictionary,
+        tilemap_index_to_right_wall: Dictionary,
+        tilemap_index_to_ceiling: Dictionary,
         tile_map: TileMap) -> void:
     var used_rect := tile_map.get_used_rect()
-    var tile_map_row_count: int = used_rect.size.y
-    var tile_map_column_count: int = used_rect.size.x
+    var tilemap_row_count: int = used_rect.size.y
+    var tilemap_column_count: int = used_rect.size.x
     
-    for row in tile_map_row_count:
-        for column in tile_map_column_count:
-            var tile_map_index: int = row * tile_map_column_count + column
+    for row in tilemap_row_count:
+        for column in tilemap_column_count:
+            var tilemap_index: int = row * tilemap_column_count + column
             
             # The left and right neighbors can wrap-around, but that's not a
             # problem, since they won't produce false positives.
-            var right_neighbor_index := tile_map_index + 1
-            var bottom_neighbor_index := tile_map_index + tile_map_column_count
+            var right_neighbor_index := tilemap_index + 1
+            var bottom_neighbor_index := tilemap_index + tilemap_column_count
             var bottom_left_neighbor_index := bottom_neighbor_index - 1
             var bottom_right_neighbor_index := bottom_neighbor_index + 1
             
-            if tile_map_index_to_floor.has(tile_map_index) and \
-                    tile_map_index_to_floor.has(right_neighbor_index):
+            if tilemap_index_to_floor.has(tilemap_index) and \
+                    tilemap_index_to_floor.has(right_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_floor[tile_map_index]
+                        tilemap_index_to_floor[tilemap_index]
                 var right_surface: _TmpSurface = \
-                        tile_map_index_to_floor[right_neighbor_index]
+                        tilemap_index_to_floor[right_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         right_surface.vertices_array.front(),
@@ -1629,28 +1629,28 @@ static func _merge_continuous_surfaces(
                                 current_surface.vertices_array,
                                 right_surface.vertices_array)
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                right_surface.tile_map_indices)
-                        tile_map_index_to_floor[right_neighbor_index] = \
+                                current_surface.tilemap_indices,
+                                right_surface.tilemap_indices)
+                        tilemap_index_to_floor[right_neighbor_index] = \
                                 current_surface
                         _replace_surface(
                                 right_surface,
                                 current_surface,
-                                tile_map_index_to_floor)
+                                tilemap_index_to_floor)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_floor.erase(tile_map_index)
+                            tilemap_index_to_floor.erase(tilemap_index)
                             current_surface.free()
                         if right_surface.vertices_array.size() == 1:
-                            tile_map_index_to_floor.erase(right_neighbor_index)
+                            tilemap_index_to_floor.erase(right_neighbor_index)
                             right_surface.free()
             
-            if tile_map_index_to_floor.has(tile_map_index) and \
-                    tile_map_index_to_floor.has(bottom_left_neighbor_index):
+            if tilemap_index_to_floor.has(tilemap_index) and \
+                    tilemap_index_to_floor.has(bottom_left_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_floor[tile_map_index]
+                        tilemap_index_to_floor[tilemap_index]
                 var bottom_left_surface: _TmpSurface = \
-                        tile_map_index_to_floor[bottom_left_neighbor_index]
+                        tilemap_index_to_floor[bottom_left_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_left_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
@@ -1664,29 +1664,29 @@ static func _merge_continuous_surfaces(
                         current_surface.vertices_array = \
                                 bottom_left_surface.vertices_array
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_left_surface.tile_map_indices)
-                        tile_map_index_to_floor[bottom_left_neighbor_index] = \
+                                current_surface.tilemap_indices,
+                                bottom_left_surface.tilemap_indices)
+                        tilemap_index_to_floor[bottom_left_neighbor_index] = \
                                 current_surface
                         _replace_surface(
                                 bottom_left_surface,
                                 current_surface,
-                                tile_map_index_to_floor)
+                                tilemap_index_to_floor)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_floor.erase(tile_map_index)
+                            tilemap_index_to_floor.erase(tilemap_index)
                             current_surface.free()
                         if bottom_left_surface.vertices_array.size() == 1:
-                            tile_map_index_to_floor.erase(
+                            tilemap_index_to_floor.erase(
                                     bottom_left_neighbor_index)
                             bottom_left_surface.free()
             
-            if tile_map_index_to_floor.has(tile_map_index) and \
-                    tile_map_index_to_floor.has(bottom_right_neighbor_index):
+            if tilemap_index_to_floor.has(tilemap_index) and \
+                    tilemap_index_to_floor.has(bottom_right_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_floor[tile_map_index]
+                        tilemap_index_to_floor[tilemap_index]
                 var bottom_right_surface: _TmpSurface = \
-                        tile_map_index_to_floor[bottom_right_neighbor_index]
+                        tilemap_index_to_floor[bottom_right_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_right_surface.vertices_array.front(),
@@ -1698,29 +1698,29 @@ static func _merge_continuous_surfaces(
                                 current_surface.vertices_array,
                                 bottom_right_surface.vertices_array)
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_right_surface.tile_map_indices)
-                        tile_map_index_to_floor[bottom_right_neighbor_index] = \
+                                current_surface.tilemap_indices,
+                                bottom_right_surface.tilemap_indices)
+                        tilemap_index_to_floor[bottom_right_neighbor_index] = \
                                 current_surface
                         _replace_surface(
                                 bottom_right_surface,
                                 current_surface,
-                                tile_map_index_to_floor)
+                                tilemap_index_to_floor)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_floor.erase(tile_map_index)
+                            tilemap_index_to_floor.erase(tilemap_index)
                             current_surface.free()
                         if bottom_right_surface.vertices_array.size() == 1:
-                            tile_map_index_to_floor.erase(
+                            tilemap_index_to_floor.erase(
                                     bottom_right_neighbor_index)
                             bottom_right_surface.free()
             
-            if tile_map_index_to_ceiling.has(tile_map_index) and \
-                    tile_map_index_to_ceiling.has(right_neighbor_index):
+            if tilemap_index_to_ceiling.has(tilemap_index) and \
+                    tilemap_index_to_ceiling.has(right_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_ceiling[tile_map_index]
+                        tilemap_index_to_ceiling[tilemap_index]
                 var right_surface: _TmpSurface = \
-                        tile_map_index_to_ceiling[right_neighbor_index]
+                        tilemap_index_to_ceiling[right_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         right_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
@@ -1734,29 +1734,29 @@ static func _merge_continuous_surfaces(
                         current_surface.vertices_array = \
                                 right_surface.vertices_array
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                right_surface.tile_map_indices)
-                        tile_map_index_to_ceiling[right_neighbor_index] = \
+                                current_surface.tilemap_indices,
+                                right_surface.tilemap_indices)
+                        tilemap_index_to_ceiling[right_neighbor_index] = \
                                 current_surface
                         _replace_surface(
                                 right_surface,
                                 current_surface,
-                                tile_map_index_to_ceiling)
+                                tilemap_index_to_ceiling)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_ceiling.erase(tile_map_index)
+                            tilemap_index_to_ceiling.erase(tilemap_index)
                             current_surface.free()
                         if right_surface.vertices_array.size() == 1:
-                            tile_map_index_to_ceiling.erase(
+                            tilemap_index_to_ceiling.erase(
                                     right_neighbor_index)
                             right_surface.free()
             
-            if tile_map_index_to_ceiling.has(tile_map_index) and \
-                    tile_map_index_to_ceiling.has(bottom_left_neighbor_index):
+            if tilemap_index_to_ceiling.has(tilemap_index) and \
+                    tilemap_index_to_ceiling.has(bottom_left_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_ceiling[tile_map_index]
+                        tilemap_index_to_ceiling[tilemap_index]
                 var bottom_left_surface: _TmpSurface = \
-                        tile_map_index_to_ceiling[bottom_left_neighbor_index]
+                        tilemap_index_to_ceiling[bottom_left_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_left_surface.vertices_array.front(),
@@ -1768,29 +1768,29 @@ static func _merge_continuous_surfaces(
                                 current_surface.vertices_array,
                                 bottom_left_surface.vertices_array)
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_left_surface.tile_map_indices)
-                        tile_map_index_to_ceiling[ \
+                                current_surface.tilemap_indices,
+                                bottom_left_surface.tilemap_indices)
+                        tilemap_index_to_ceiling[ \
                                 bottom_left_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_left_surface,
                                 current_surface,
-                                tile_map_index_to_ceiling)
+                                tilemap_index_to_ceiling)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_ceiling.erase(tile_map_index)
+                            tilemap_index_to_ceiling.erase(tilemap_index)
                             current_surface.free()
                         if bottom_left_surface.vertices_array.size() == 1:
-                            tile_map_index_to_ceiling.erase(
+                            tilemap_index_to_ceiling.erase(
                                     bottom_left_neighbor_index)
                             bottom_left_surface.free()
             
-            if tile_map_index_to_ceiling.has(tile_map_index) and \
-                    tile_map_index_to_ceiling.has(bottom_right_neighbor_index):
+            if tilemap_index_to_ceiling.has(tilemap_index) and \
+                    tilemap_index_to_ceiling.has(bottom_right_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_ceiling[tile_map_index]
+                        tilemap_index_to_ceiling[tilemap_index]
                 var bottom_right_surface: _TmpSurface = \
-                        tile_map_index_to_ceiling[bottom_right_neighbor_index]
+                        tilemap_index_to_ceiling[bottom_right_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_right_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
@@ -1804,29 +1804,29 @@ static func _merge_continuous_surfaces(
                         current_surface.vertices_array = \
                                 bottom_right_surface.vertices_array
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_right_surface.tile_map_indices)
-                        tile_map_index_to_ceiling[ \
+                                current_surface.tilemap_indices,
+                                bottom_right_surface.tilemap_indices)
+                        tilemap_index_to_ceiling[ \
                                 bottom_right_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_right_surface,
                                 current_surface,
-                                tile_map_index_to_ceiling)
+                                tilemap_index_to_ceiling)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_ceiling.erase(tile_map_index)
+                            tilemap_index_to_ceiling.erase(tilemap_index)
                             current_surface.free()
                         if bottom_right_surface.vertices_array.size() == 1:
-                            tile_map_index_to_ceiling.erase(
+                            tilemap_index_to_ceiling.erase(
                                     bottom_right_neighbor_index)
                             bottom_right_surface.free()
             
-            if tile_map_index_to_left_wall.has(tile_map_index) and \
-                    tile_map_index_to_left_wall.has(bottom_neighbor_index):
+            if tilemap_index_to_left_wall.has(tilemap_index) and \
+                    tilemap_index_to_left_wall.has(bottom_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_left_wall[tile_map_index]
+                        tilemap_index_to_left_wall[tilemap_index]
                 var bottom_surface: _TmpSurface = \
-                        tile_map_index_to_left_wall[bottom_neighbor_index]
+                        tilemap_index_to_left_wall[bottom_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_surface.vertices_array.front(),
@@ -1838,29 +1838,29 @@ static func _merge_continuous_surfaces(
                                 current_surface.vertices_array,
                                 bottom_surface.vertices_array)
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_surface.tile_map_indices)
-                        tile_map_index_to_left_wall[bottom_neighbor_index] = \
+                                current_surface.tilemap_indices,
+                                bottom_surface.tilemap_indices)
+                        tilemap_index_to_left_wall[bottom_neighbor_index] = \
                                 current_surface
                         _replace_surface(
                                 bottom_surface,
                                 current_surface,
-                                tile_map_index_to_left_wall)
+                                tilemap_index_to_left_wall)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_left_wall.erase(tile_map_index)
+                            tilemap_index_to_left_wall.erase(tilemap_index)
                             current_surface.free()
                         if bottom_surface.vertices_array.size() == 1:
-                            tile_map_index_to_left_wall.erase(
+                            tilemap_index_to_left_wall.erase(
                                     bottom_neighbor_index)
                             bottom_surface.free()
             
-            if tile_map_index_to_left_wall.has(tile_map_index) and \
-                    tile_map_index_to_left_wall.has(bottom_left_neighbor_index):
+            if tilemap_index_to_left_wall.has(tilemap_index) and \
+                    tilemap_index_to_left_wall.has(bottom_left_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_left_wall[tile_map_index]
+                        tilemap_index_to_left_wall[tilemap_index]
                 var bottom_left_surface: _TmpSurface = \
-                        tile_map_index_to_left_wall[bottom_left_neighbor_index]
+                        tilemap_index_to_left_wall[bottom_left_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
                         bottom_left_surface.vertices_array.front(),
@@ -1872,30 +1872,30 @@ static func _merge_continuous_surfaces(
                                 current_surface.vertices_array,
                                 bottom_left_surface.vertices_array)
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_left_surface.tile_map_indices)
-                        tile_map_index_to_left_wall[ \
+                                current_surface.tilemap_indices,
+                                bottom_left_surface.tilemap_indices)
+                        tilemap_index_to_left_wall[ \
                                 bottom_left_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_left_surface,
                                 current_surface,
-                                tile_map_index_to_left_wall)
+                                tilemap_index_to_left_wall)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_left_wall.erase(tile_map_index)
+                            tilemap_index_to_left_wall.erase(tilemap_index)
                             current_surface.free()
                         if bottom_left_surface.vertices_array.size() == 1:
-                            tile_map_index_to_left_wall.erase(
+                            tilemap_index_to_left_wall.erase(
                                     bottom_left_neighbor_index)
                             bottom_left_surface.free()
             
-            if tile_map_index_to_left_wall.has(tile_map_index) and \
-                    tile_map_index_to_left_wall \
+            if tilemap_index_to_left_wall.has(tilemap_index) and \
+                    tilemap_index_to_left_wall \
                         .has(bottom_right_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_left_wall[tile_map_index]
+                        tilemap_index_to_left_wall[tilemap_index]
                 var bottom_right_surface: _TmpSurface = \
-                        tile_map_index_to_left_wall[ \
+                        tilemap_index_to_left_wall[ \
                             bottom_right_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
@@ -1908,29 +1908,29 @@ static func _merge_continuous_surfaces(
                                 current_surface.vertices_array,
                                 bottom_right_surface.vertices_array)
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_right_surface.tile_map_indices)
-                        tile_map_index_to_left_wall[ \
+                                current_surface.tilemap_indices,
+                                bottom_right_surface.tilemap_indices)
+                        tilemap_index_to_left_wall[ \
                                 bottom_right_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_right_surface,
                                 current_surface,
-                                tile_map_index_to_left_wall)
+                                tilemap_index_to_left_wall)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_left_wall.erase(tile_map_index)
+                            tilemap_index_to_left_wall.erase(tilemap_index)
                             current_surface.free()
                         if bottom_right_surface.vertices_array.size() == 1:
-                            tile_map_index_to_left_wall.erase(
+                            tilemap_index_to_left_wall.erase(
                                     bottom_right_neighbor_index)
                             bottom_right_surface.free()
             
-            if tile_map_index_to_right_wall.has(tile_map_index) and \
-                    tile_map_index_to_right_wall.has(bottom_neighbor_index):
+            if tilemap_index_to_right_wall.has(tilemap_index) and \
+                    tilemap_index_to_right_wall.has(bottom_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_right_wall[tile_map_index]
+                        tilemap_index_to_right_wall[tilemap_index]
                 var bottom_surface: _TmpSurface = \
-                        tile_map_index_to_right_wall[bottom_neighbor_index]
+                        tilemap_index_to_right_wall[bottom_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_surface.vertices_array.back(),
                         current_surface.vertices_array.front(),
@@ -1944,30 +1944,30 @@ static func _merge_continuous_surfaces(
                         current_surface.vertices_array = \
                                 bottom_surface.vertices_array
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_surface.tile_map_indices)
-                        tile_map_index_to_right_wall[bottom_neighbor_index] = \
+                                current_surface.tilemap_indices,
+                                bottom_surface.tilemap_indices)
+                        tilemap_index_to_right_wall[bottom_neighbor_index] = \
                                 current_surface
                         _replace_surface(
                                 bottom_surface,
                                 current_surface,
-                                tile_map_index_to_right_wall)
+                                tilemap_index_to_right_wall)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_right_wall.erase(tile_map_index)
+                            tilemap_index_to_right_wall.erase(tilemap_index)
                             current_surface.free()
                         if bottom_surface.vertices_array.size() == 1:
-                            tile_map_index_to_right_wall.erase(
+                            tilemap_index_to_right_wall.erase(
                                     bottom_neighbor_index)
                             bottom_surface.free()
             
-            if tile_map_index_to_right_wall.has(tile_map_index) and \
-                    tile_map_index_to_right_wall \
+            if tilemap_index_to_right_wall.has(tilemap_index) and \
+                    tilemap_index_to_right_wall \
                         .has(bottom_left_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_right_wall[tile_map_index]
+                        tilemap_index_to_right_wall[tilemap_index]
                 var bottom_left_surface: _TmpSurface = \
-                        tile_map_index_to_right_wall[ \
+                        tilemap_index_to_right_wall[ \
                             bottom_left_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_left_surface.vertices_array.back(),
@@ -1982,30 +1982,30 @@ static func _merge_continuous_surfaces(
                         current_surface.vertices_array = \
                                 bottom_left_surface.vertices_array
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_left_surface.tile_map_indices)
-                        tile_map_index_to_right_wall[ \
+                                current_surface.tilemap_indices,
+                                bottom_left_surface.tilemap_indices)
+                        tilemap_index_to_right_wall[ \
                                 bottom_left_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_left_surface,
                                 current_surface,
-                                tile_map_index_to_right_wall)
+                                tilemap_index_to_right_wall)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_right_wall.erase(tile_map_index)
+                            tilemap_index_to_right_wall.erase(tilemap_index)
                             current_surface.free()
                         if bottom_left_surface.vertices_array.size() == 1:
-                            tile_map_index_to_right_wall.erase(
+                            tilemap_index_to_right_wall.erase(
                                     bottom_left_neighbor_index)
                             bottom_left_surface.free()
             
-            if tile_map_index_to_right_wall.has(tile_map_index) and \
-                    tile_map_index_to_right_wall \
+            if tilemap_index_to_right_wall.has(tilemap_index) and \
+                    tilemap_index_to_right_wall \
                         .has(bottom_right_neighbor_index):
                 var current_surface: _TmpSurface = \
-                        tile_map_index_to_right_wall[tile_map_index]
+                        tilemap_index_to_right_wall[tilemap_index]
                 var bottom_right_surface: _TmpSurface = \
-                        tile_map_index_to_right_wall[ \
+                        tilemap_index_to_right_wall[ \
                             bottom_right_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_right_surface.vertices_array.back(),
@@ -2020,28 +2020,28 @@ static func _merge_continuous_surfaces(
                         current_surface.vertices_array = \
                                 bottom_right_surface.vertices_array
                         Sc.utils.concat(
-                                current_surface.tile_map_indices,
-                                bottom_right_surface.tile_map_indices)
-                        tile_map_index_to_right_wall[ \
+                                current_surface.tilemap_indices,
+                                bottom_right_surface.tilemap_indices)
+                        tilemap_index_to_right_wall[ \
                                 bottom_right_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_right_surface,
                                 current_surface,
-                                tile_map_index_to_right_wall)
+                                tilemap_index_to_right_wall)
                     else:
                         if current_surface.vertices_array.size() == 1:
-                            tile_map_index_to_right_wall.erase(tile_map_index)
+                            tilemap_index_to_right_wall.erase(tilemap_index)
                             current_surface.free()
                         if bottom_right_surface.vertices_array.size() == 1:
-                            tile_map_index_to_right_wall.erase(
+                            tilemap_index_to_right_wall.erase(
                                     bottom_right_neighbor_index)
                             bottom_right_surface.free()
 
 
 static func _get_surface_list_from_map(
-        tile_map_index_to_surface: Dictionary) -> Array:
+        tilemap_index_to_surface: Dictionary) -> Array:
     var surface_set := {}
-    for surface in tile_map_index_to_surface.values():
+    for surface in tilemap_index_to_surface.values():
         surface_set[surface] = true
     return surface_set.keys()
 
@@ -2498,7 +2498,7 @@ static func _populate_surface_objects(
                 tmp_surface.vertices_array,
                 side,
                 tmp_surface.tile_map,
-                tmp_surface.tile_map_indices,
+                tmp_surface.tilemap_indices,
                 tmp_surface.properties)
 
 
@@ -2509,12 +2509,12 @@ static func _copy_surfaces_to_main_collection(
         main_collection.push_back(tmp_surface.surface)
 
 
-static func _create_tile_map_mapping_from_surfaces(
+static func _create_tilemap_mapping_from_surfaces(
         surfaces: Array) -> Dictionary:
     var result = {}
     for surface in surfaces:
-        for tile_map_index in surface.tile_map_indices:
-            result[tile_map_index] = surface
+        for tilemap_index in surface.tilemap_indices:
+            result[tilemap_index] = surface
     return result
 
 
@@ -2526,9 +2526,9 @@ static func _free_objects(objects: Array) -> void:
 class _TmpSurface extends Object:
     # Array<Vector2>
     var vertices_array: Array
-    var tile_map: SurfacesTileMap
+    var tile_map: SurfacesTilemap
     # Array<int>
-    var tile_map_indices: Array
+    var tilemap_indices: Array
     var properties: SurfaceProperties
     var surface: Surface
 
@@ -2538,66 +2538,66 @@ func _parse_surface_mark(
         surface_mark: SurfaceMark,
         tile_map: TileMap) -> void:
     var mark_cell_size := surface_mark.cell_size
-    var tile_map_cell_size := mark_cell_size * 2.0
+    var tilemap_cell_size := mark_cell_size * 2.0
     
     for mark_position in surface_mark.get_used_cells():
         var mark_position_x := int(mark_position.x)
         var mark_position_y := int(mark_position.y)
-        var tile_map_position_x := int(floor((mark_position_x - 1) / 2.0))
-        var tile_map_position_y := int(floor((mark_position_y - 1) / 2.0))
-        var is_between_tile_map_cells_horizontally := \
+        var tilemap_position_x := int(floor((mark_position_x - 1) / 2.0))
+        var tilemap_position_y := int(floor((mark_position_y - 1) / 2.0))
+        var is_between_tilemap_cells_horizontally := \
                 mark_position_x % 2 == 0
-        var is_between_tile_map_cells_vertically := \
+        var is_between_tilemap_cells_vertically := \
                 mark_position_y % 2 == 0
         
-        var tile_map_positions: Array
-        if is_between_tile_map_cells_horizontally and \
-                is_between_tile_map_cells_vertically:
-            tile_map_positions = [
-                Vector2(tile_map_position_x, tile_map_position_y),
-                Vector2(tile_map_position_x + 1, tile_map_position_y),
-                Vector2(tile_map_position_x, tile_map_position_y + 1),
-                Vector2(tile_map_position_x + 1, tile_map_position_y + 1),
+        var tilemap_positions: Array
+        if is_between_tilemap_cells_horizontally and \
+                is_between_tilemap_cells_vertically:
+            tilemap_positions = [
+                Vector2(tilemap_position_x, tilemap_position_y),
+                Vector2(tilemap_position_x + 1, tilemap_position_y),
+                Vector2(tilemap_position_x, tilemap_position_y + 1),
+                Vector2(tilemap_position_x + 1, tilemap_position_y + 1),
             ]
-        elif is_between_tile_map_cells_horizontally:
-            tile_map_positions = [
-                Vector2(tile_map_position_x, tile_map_position_y),
-                Vector2(tile_map_position_x + 1, tile_map_position_y),
+        elif is_between_tilemap_cells_horizontally:
+            tilemap_positions = [
+                Vector2(tilemap_position_x, tilemap_position_y),
+                Vector2(tilemap_position_x + 1, tilemap_position_y),
             ]
-        elif is_between_tile_map_cells_vertically:
-            tile_map_positions = [
-                Vector2(tile_map_position_x, tile_map_position_y),
-                Vector2(tile_map_position_x, tile_map_position_y + 1),
+        elif is_between_tilemap_cells_vertically:
+            tilemap_positions = [
+                Vector2(tilemap_position_x, tilemap_position_y),
+                Vector2(tilemap_position_x, tilemap_position_y + 1),
             ]
         else:
-            tile_map_positions = [
-                Vector2(tile_map_position_x, tile_map_position_y),
+            tilemap_positions = [
+                Vector2(tilemap_position_x, tilemap_position_y),
             ]
         
         var mark_cell_min_world_coords: Vector2 = \
                 mark_position * mark_cell_size
         var mark_cell_max_world_coords := \
                 mark_cell_min_world_coords + mark_cell_size
-        for tile_map_position in tile_map_positions:
-            var tile_map_index := \
-                    Sc.geometry.get_tile_map_index_from_grid_coord(
-                        tile_map_position,
+        for tilemap_position in tilemap_positions:
+            var tilemap_index := \
+                    Sc.geometry.get_tilemap_index_from_grid_coord(
+                        tilemap_position,
                         tile_map)
             var floor_surface := surface_store.get_surface_for_tile(
                     tile_map,
-                    tile_map_index,
+                    tilemap_index,
                     SurfaceSide.FLOOR)
             var ceiling_surface := surface_store.get_surface_for_tile(
                     tile_map,
-                    tile_map_index,
+                    tilemap_index,
                     SurfaceSide.CEILING)
             var left_wall_surface := surface_store.get_surface_for_tile(
                     tile_map,
-                    tile_map_index,
+                    tilemap_index,
                     SurfaceSide.LEFT_WALL)
             var right_wall_surface := surface_store.get_surface_for_tile(
                     tile_map,
-                    tile_map_index,
+                    tilemap_index,
                     SurfaceSide.RIGHT_WALL)
             
             if is_instance_valid(floor_surface) and \

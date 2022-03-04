@@ -855,7 +855,7 @@ func _remove_too_close_neighbors(
     return result
 
 
-func draw_tile_map_indices(
+func draw_tilemap_indices(
         canvas: CanvasItem,
         tile_map: TileMap,
         color: Color,
@@ -866,31 +866,31 @@ func draw_tile_map_indices(
     if only_renders_used_indices:
         positions = tile_map.get_used_cells()
     else:
-        var tile_map_used_rect: Rect2 = tile_map.get_used_rect()
-        var tile_map_start_x := tile_map_used_rect.position.x
-        var tile_map_start_y := tile_map_used_rect.position.y
-        var tile_map_width := tile_map_used_rect.size.x
-        var tile_map_height := tile_map_used_rect.size.y
+        var tilemap_used_rect: Rect2 = tile_map.get_used_rect()
+        var tilemap_start_x := tilemap_used_rect.position.x
+        var tilemap_start_y := tilemap_used_rect.position.y
+        var tilemap_width := tilemap_used_rect.size.x
+        var tilemap_height := tilemap_used_rect.size.y
         positions = []
-        positions.resize(tile_map_width * tile_map_height)
-        for y in tile_map_height:
-            for x in tile_map_width:
-                positions[y * tile_map_width + x] = \
-                        Vector2(x + tile_map_start_x, y + tile_map_start_y)
+        positions.resize(tilemap_width * tilemap_height)
+        for y in tilemap_height:
+            for x in tilemap_width:
+                positions[y * tilemap_width + x] = \
+                        Vector2(x + tilemap_start_x, y + tilemap_start_y)
     
     for position in positions:
         # Draw the grid index of the cell.
         var cell_top_left_corner: Vector2 = tile_map.map_to_world(position)
         var cell_center := cell_top_left_corner + half_cell_size
-        var tile_map_index := Sc.geometry.get_tile_map_index_from_grid_coord(
+        var tilemap_index := Sc.geometry.get_tilemap_index_from_grid_coord(
                 position,
                 tile_map)
         # Only draw positions for every fifth index.
-        if tile_map_index % 5 == 0:
+        if tilemap_index % 5 == 0:
             canvas.draw_string(
                     Sc.gui.fonts.main_xxs,
                     cell_center,
-                    str(tile_map_index),
+                    str(tilemap_index),
                     color)
         canvas.draw_circle(
                 cell_center,
@@ -909,17 +909,17 @@ func draw_tile_grid_positions(
     if only_renders_used_indices:
         positions = tile_map.get_used_cells()
     else:
-        var tile_map_used_rect: Rect2 = tile_map.get_used_rect()
-        var tile_map_start_x := tile_map_used_rect.position.x
-        var tile_map_start_y := tile_map_used_rect.position.y
-        var tile_map_width := tile_map_used_rect.size.x
-        var tile_map_height := tile_map_used_rect.size.y
+        var tilemap_used_rect: Rect2 = tile_map.get_used_rect()
+        var tilemap_start_x := tilemap_used_rect.position.x
+        var tilemap_start_y := tilemap_used_rect.position.y
+        var tilemap_width := tilemap_used_rect.size.x
+        var tilemap_height := tilemap_used_rect.size.y
         positions = []
-        positions.resize(tile_map_width * tile_map_height)
-        for y in tile_map_height:
-            for x in tile_map_width:
-                positions[y * tile_map_width + x] = \
-                        Vector2(x + tile_map_start_x, y + tile_map_start_y)
+        positions.resize(tilemap_width * tilemap_height)
+        for y in tilemap_height:
+            for x in tilemap_width:
+                positions[y * tilemap_width + x] = \
+                        Vector2(x + tilemap_start_x, y + tilemap_start_y)
     
     for position in positions:
         var cell_top_left_corner: Vector2 = tile_map.map_to_world(position)

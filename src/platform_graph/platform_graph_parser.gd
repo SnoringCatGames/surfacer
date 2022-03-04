@@ -14,9 +14,9 @@ signal parse_finished
 const PLATFORM_GRAPHS_DIRECTORY_NAME := "platform_graphs"
 
 var level_id: String
-# The TileMaps that define the collision boundaries of this level.
-# Array<SurfacesTileMap>
-var surface_tile_maps: Array
+# The Tilemaps that define the collision boundaries of this level.
+# Array<SurfacesTilemap>
+var surface_tilemaps: Array
 # Array<SurfaceMark>
 var surface_marks: Array
 # Dictionary<String, CrashTestDummy>
@@ -32,35 +32,35 @@ var is_parse_finished := false
 func parse(
         level_id: String,
         includes_debug_only_state: bool,
-        force_calculation_from_tile_maps := false) -> void:
+        force_calculation_from_tilemaps := false) -> void:
     self.level_id = level_id
-    _record_tile_maps()
+    _record_tilemaps()
     _create_crash_test_dummies_for_collision_calculations()
-    force_calculation_from_tile_maps = \
-            force_calculation_from_tile_maps or \
+    force_calculation_from_tilemaps = \
+            force_calculation_from_tilemaps or \
             Su.ignores_platform_graph_save_files
     _instantiate_platform_graphs(
             includes_debug_only_state,
-            force_calculation_from_tile_maps)
+            force_calculation_from_tilemaps)
 
 
-# Get references to the TileMaps that define the collision boundaries of this
+# Get references to the Tilemaps that define the collision boundaries of this
 # level.
-func _record_tile_maps() -> void:
-    surface_tile_maps = Sc.utils.get_all_nodes_in_group(
-            SurfacesTileMap.GROUP_NAME_SURFACES)
+func _record_tilemaps() -> void:
+    surface_tilemaps = Sc.utils.get_all_nodes_in_group(
+            SurfacesTilemap.GROUP_NAME_SURFACES)
     surface_marks = Sc.utils.get_all_nodes_in_group(
             SurfaceMark.GROUP_NAME_SURFACE_MARKS)
     
-    # Validate the TileMaps.
+    # Validate the Tilemaps.
     if Sc.metadata.debug or Sc.metadata.playtest:
-        assert(surface_tile_maps.size() > 0)
-        var tile_map_ids := {}
-        for tile_map in surface_tile_maps:
-            assert(tile_map is SurfacesTileMap)
-            assert(tile_map.id != "" or surface_tile_maps.size() == 1)
-            assert(!tile_map_ids.has(tile_map.id))
-            tile_map_ids[tile_map.id] = true
+        assert(surface_tilemaps.size() > 0)
+        var tilemap_ids := {}
+        for tile_map in surface_tilemaps:
+            assert(tile_map is SurfacesTilemap)
+            assert(tile_map.id != "" or surface_tilemaps.size() == 1)
+            assert(!tilemap_ids.has(tile_map.id))
+            tilemap_ids[tile_map.id] = true
 
 
 func _create_crash_test_dummies_for_collision_calculations() -> void:
@@ -73,9 +73,9 @@ func _create_crash_test_dummies_for_collision_calculations() -> void:
 
 func _instantiate_platform_graphs(
         includes_debug_only_state: bool,
-        force_calculation_from_tile_maps: bool) -> void:
+        force_calculation_from_tilemaps: bool) -> void:
     is_loaded_from_file = \
-            !force_calculation_from_tile_maps and \
+            !force_calculation_from_tilemaps and \
             File.new().file_exists(
                     _get_path(includes_debug_only_state))
     if is_loaded_from_file:
@@ -121,7 +121,7 @@ func _on_graphs_parsed() -> void:
 func _calculate_platform_graphs() -> void:
     surface_parser.parse(
             surface_store,
-            surface_tile_maps,
+            surface_tilemaps,
             surface_marks)
     platform_graphs = {}
     assert(!Su.movement.character_movement_params.empty())
@@ -219,13 +219,13 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
     var json_object: Dictionary = parse_result.result
     
     var context := {
-        id_to_tile_map = {},
+        id_to_tilemap = {},
         id_to_surface = {},
         id_to_position_along_surface = {},
         id_to_jump_land_positions = {},
     }
-    for tile_map in surface_tile_maps:
-        context.id_to_tile_map[tile_map.id] = tile_map
+    for tile_map in surface_tilemaps:
+        context.id_to_tilemap[tile_map.id] = tile_map
     
     surface_store.load_from_json_object(
             json_object.surface_parser,
@@ -238,7 +238,7 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
     surface_store.marks = surface_marks
     
     if Sc.metadata.debug or Sc.metadata.playtest:
-        _validate_tile_maps(json_object)
+        _validate_tilemaps(json_object)
         _validate_characters(json_object)
         _validate_surfaces(surface_parser)
         _validate_platform_graphs(json_object)
@@ -253,12 +253,12 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
     _on_graphs_parsed()
 
 
-func _validate_tile_maps(json_object: Dictionary) -> void:
+func _validate_tilemaps(json_object: Dictionary) -> void:
     var expected_id_set := {}
-    for tile_map in surface_tile_maps:
+    for tile_map in surface_tilemaps:
         expected_id_set[tile_map.id] = true
     
-    for id in json_object.surfaces_tile_map_ids:
+    for id in json_object.surfaces_tilemap_ids:
         assert(expected_id_set.has(id))
         expected_id_set.erase(id)
     assert(expected_id_set.empty())
@@ -277,10 +277,10 @@ func _validate_characters(json_object: Dictionary) -> void:
 
 func _validate_surfaces(surface_parser: SurfaceParser) -> void:
     var expected_id_set := {}
-    for tile_map in surface_tile_maps:
+    for tile_map in surface_tilemaps:
         expected_id_set[tile_map.id] = true
     
-    for tile_map in surface_store._tile_map_index_to_surface_maps:
+    for tile_map in surface_store._tilemap_index_to_surface_maps:
         assert(expected_id_set.has(tile_map.id))
         expected_id_set.erase(tile_map.id)
     assert(expected_id_set.empty())
@@ -289,13 +289,13 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
         var expected_surface_store := SurfaceStore.new()
         surface_parser.parse(
                 expected_surface_store,
-                surface_tile_maps,
+                surface_tilemaps,
                 surface_marks)
         
-        assert(surface_store.max_tile_map_cell_size == \
-                expected_surface_store.max_tile_map_cell_size)
-        assert(surface_store.combined_tile_map_rect == \
-                expected_surface_store.combined_tile_map_rect)
+        assert(surface_store.max_tilemap_cell_size == \
+                expected_surface_store.max_tilemap_cell_size)
+        assert(surface_store.combined_tilemap_rect == \
+                expected_surface_store.combined_tilemap_rect)
         
         assert(surface_store.floors.size() == \
                 expected_surface_store.floors.size())
@@ -362,7 +362,7 @@ func save_platform_graphs() -> void:
 func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     return {
         level_id = level_id,
-        surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
+        surfaces_tilemap_ids = _get_surfaces_tilemap_ids(),
         surface_marks = _serialize_surface_marks(),
         platform_graph_character_category_names = \
                 _get_character_category_names(),
@@ -372,11 +372,11 @@ func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     }
 
 
-func _get_surfaces_tile_map_ids() -> Array:
+func _get_surfaces_tilemap_ids() -> Array:
     var result := []
-    result.resize(surface_tile_maps.size())
-    for i in surface_tile_maps.size():
-        result[i] = surface_tile_maps[i].id
+    result.resize(surface_tilemaps.size())
+    for i in surface_tilemaps.size():
+        result[i] = surface_tilemaps[i].id
     return result
 
 

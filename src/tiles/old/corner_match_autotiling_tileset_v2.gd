@@ -1,6 +1,6 @@
 tool
 class_name CornerMatchTileset
-extends SurfacesTileSet
+extends SurfacesTileset
 
 
 # FIXME: LEFT OFF HERE: ----------------------------------

@@ -55,7 +55,7 @@ var is_npc_navigation_destination_shown := false
 var is_npc_nav_pulse_shown := true
 
 const PLACEHOLDER_SURFACES_TILE_SET_PATH := \
-        "res://addons/surfacer/src/tiles/tile_set_with_many_angles.tres"
+        "res://addons/surfacer/src/tiles/tileset_with_many_angles.tres"
 
 var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
     groups = {
@@ -189,7 +189,7 @@ var is_intro_choreography_shown: bool
 # Dictionary<String, Script>
 var behaviors: Dictionary
 
-var default_tile_set: TileSet
+var default_tileset: TileSet
 
 var path_drag_update_throttle_interval := 0.2
 var path_beat_update_throttle_interval := 0.2
@@ -267,9 +267,9 @@ var non_surface_parser_metric_keys := [
 ]
 
 var surface_parser_metric_keys := [
-    "validate_tile_set",
-    "parse_tile_set",
-    "parse_tile_map_cells_into_surfaces",
+    "validate_tileset",
+    "parse_tileset",
+    "parse_tilemap_cells_into_surfaces",
     "remove_internal_surfaces",
     "merge_continuous_surfaces",
     "get_surface_list_from_map",
@@ -348,8 +348,8 @@ func _register_app_manifest(app_manifest: Dictionary) -> void:
             manifest.uses_threads_for_platform_graph_calculation
     self.debug_params = manifest.debug_params
     
-    if manifest.has("default_tile_set"):
-        self.default_tile_set = manifest.default_tile_set
+    if manifest.has("default_tileset"):
+        self.default_tileset = manifest.default_tileset
     
     self.is_precomputing_platform_graphs = \
             manifest.has("precompute_platform_graph_for_levels") and \

@@ -35,7 +35,7 @@ static func find_closest_surface_in_direction(
             false)
     if collision.empty():
         return null
-    assert(collision.collider is SurfacesTileMap)
+    assert(collision.collider is SurfacesTilemap)
     
     calculate_collision_surface(
             collision_surface_result,
@@ -291,16 +291,16 @@ static func calculate_collision_surface(
         is_nested_call := false) -> void:
     var half_cell_size := tile_map.cell_size / 2.0
     var used_rect := tile_map.get_used_rect()
-    var tile_map_top_left_position_world_coord := \
+    var tilemap_top_left_position_world_coord := \
             tile_map.position - used_rect.position * tile_map.cell_size
-    var position_relative_to_tile_map := \
-            collision_position - tile_map_top_left_position_world_coord
+    var position_relative_to_tilemap := \
+            collision_position - tilemap_top_left_position_world_coord
     
     var cell_width_mod := abs(fmod(
-            position_relative_to_tile_map.x,
+            position_relative_to_tilemap.x,
             tile_map.cell_size.x))
     var cell_height_mod := abs(fmod(
-            position_relative_to_tile_map.y,
+            position_relative_to_tilemap.y,
             tile_map.cell_size.y))
     
     var is_between_cells_horizontally := \
@@ -340,7 +340,7 @@ static func calculate_collision_surface(
     
     if is_between_cells_horizontally and \
             is_between_cells_vertically:
-        var top_left_cell_coord: Vector2 = Sc.geometry.world_to_tile_map(
+        var top_left_cell_coord: Vector2 = Sc.geometry.world_to_tilemap(
                 Vector2(collision_position.x - half_cell_size.x,
                         collision_position.y - half_cell_size.y),
                 tile_map)
@@ -355,16 +355,16 @@ static func calculate_collision_surface(
                 top_left_cell_coord.y + 1)
         
         var top_left_cell_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
+                Sc.geometry.get_tilemap_index_from_grid_coord(
                         top_left_cell_coord, tile_map)
         var top_right_cell_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
+                Sc.geometry.get_tilemap_index_from_grid_coord(
                         top_right_cell_coord, tile_map)
         var bottom_left_cell_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
+                Sc.geometry.get_tilemap_index_from_grid_coord(
                         bottom_left_cell_coord, tile_map)
         var bottom_right_cell_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
+                Sc.geometry.get_tilemap_index_from_grid_coord(
                         bottom_right_cell_coord, tile_map)
         
         var is_there_a_floor_at_top_left := surface_store.get_surface_for_tile(
@@ -630,7 +630,7 @@ static func calculate_collision_surface(
                     "(horizontally/vertically between cells)")
         
     elif is_between_cells_vertically:
-        var top_cell_coord: Vector2 = Sc.geometry.world_to_tile_map(
+        var top_cell_coord: Vector2 = Sc.geometry.world_to_tilemap(
                 Vector2(collision_position.x,
                         collision_position.y - half_cell_size.y),
                 tile_map)
@@ -639,10 +639,10 @@ static func calculate_collision_surface(
                 top_cell_coord.y + 1)
         
         var top_cell_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
+                Sc.geometry.get_tilemap_index_from_grid_coord(
                         top_cell_coord, tile_map)
         var bottom_cell_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
+                Sc.geometry.get_tilemap_index_from_grid_coord(
                         bottom_cell_coord, tile_map)
         
         var is_there_a_floor_at_top := surface_store.get_surface_for_tile(
@@ -736,7 +736,7 @@ static func calculate_collision_surface(
                     "(vertically between cells)")
         
     elif is_between_cells_horizontally:
-        var left_cell_coord: Vector2 = Sc.geometry.world_to_tile_map(
+        var left_cell_coord: Vector2 = Sc.geometry.world_to_tilemap(
                 Vector2(collision_position.x - half_cell_size.x,
                         collision_position.y),
                 tile_map)
@@ -745,10 +745,10 @@ static func calculate_collision_surface(
                 left_cell_coord.y)
         
         var left_cell_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
+                Sc.geometry.get_tilemap_index_from_grid_coord(
                         left_cell_coord, tile_map)
         var right_cell_index: int = \
-                Sc.geometry.get_tile_map_index_from_grid_coord(
+                Sc.geometry.get_tilemap_index_from_grid_coord(
                         right_cell_coord, tile_map)
         
         var is_there_a_floor_at_left := surface_store.get_surface_for_tile(
@@ -843,10 +843,10 @@ static func calculate_collision_surface(
         
     # In cell interior (not between cells).
     else:
-        var cell_coord: Vector2 = Sc.geometry.world_to_tile_map(
+        var cell_coord: Vector2 = Sc.geometry.world_to_tilemap(
                 collision_position,
                 tile_map)
-        var cell_index: int = Sc.geometry.get_tile_map_index_from_grid_coord(
+        var cell_index: int = Sc.geometry.get_tilemap_index_from_grid_coord(
                 cell_coord, tile_map)
         
         var is_there_a_floor := surface_store.get_surface_for_tile(
@@ -911,7 +911,7 @@ static func calculate_collision_surface(
     var cell_index := -1
     var surface: Surface = null
     if tile_coord != Vector2.INF:
-        cell_index = Sc.geometry.get_tile_map_index_from_grid_coord(
+        cell_index = Sc.geometry.get_tilemap_index_from_grid_coord(
                 tile_coord, tile_map)
         surface = surface_store.get_surface_for_tile(
                 tile_map,
@@ -920,8 +920,8 @@ static func calculate_collision_surface(
     
     result.surface = surface
     result.surface_side = surface_side
-    result.tile_map_coord = tile_coord
-    result.tile_map_index = cell_index
+    result.tilemap_coord = tile_coord
+    result.tilemap_index = cell_index
     result.flipped_sides_for_nested_call = is_nested_call
     result.error_message = error_message
     
