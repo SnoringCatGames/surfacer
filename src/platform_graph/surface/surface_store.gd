@@ -30,12 +30,12 @@ var all_walls := []
 # Array<SurfaceMark>
 var marks: Array
 
-var max_tile_map_cell_size: Vector2
-var combined_tile_map_rect: Rect2
+var max_tilemap_cell_size: Vector2
+var combined_tilemap_rect: Rect2
 
 # This supports mapping a cell in a TileMap to its corresponding surface.
-# Dictionary<SurfacesTileMap, Dictionary<int, Dictionary<int, Surface>>>
-var _tile_map_index_to_surface_maps := {}
+# Dictionary<SurfacesTilemap, Dictionary<int, Dictionary<int, Surface>>>
+var _tilemap_index_to_surface_maps := {}
 
 var _collision_surface_result := CollisionSurfaceResult.new()
 
@@ -43,13 +43,13 @@ var _collision_surface_result := CollisionSurfaceResult.new()
 # Gets the surface corresponding to the given side of the given tile in the
 # given TileMap.
 func get_surface_for_tile(
-        tile_map: SurfacesTileMap,
-        tile_map_index: int,
+        tile_map: SurfacesTilemap,
+        tilemap_index: int,
         side: int) -> Surface:
-    var _tile_map_index_to_surfaces: Dictionary = \
-            _tile_map_index_to_surface_maps[tile_map][side]
-    if _tile_map_index_to_surfaces.has(tile_map_index):
-        return _tile_map_index_to_surfaces[tile_map_index]
+    var _tilemap_index_to_surfaces: Dictionary = \
+            _tilemap_index_to_surface_maps[tile_map][side]
+    if _tilemap_index_to_surfaces.has(tilemap_index):
+        return _tilemap_index_to_surfaces[tilemap_index]
     else:
         return null
 
@@ -101,9 +101,9 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary,
         surface_parser) -> void:
-    var tile_maps: Array = context.id_to_tile_map.values()
-    surface_parser._calculate_max_tile_map_cell_size(self, tile_maps)
-    surface_parser._calculate_combined_tile_map_rect(self, tile_maps)
+    var tilemaps: Array = context.id_to_tilemap.values()
+    surface_parser._calculate_max_tilemap_cell_size(self, tilemaps)
+    surface_parser._calculate_combined_tilemap_rect(self, tilemaps)
     
     floors = _json_object_to_surface_array(json_object.floors, context)
     ceilings = _json_object_to_surface_array(json_object.ceilings, context)
@@ -112,7 +112,7 @@ func load_from_json_object(
             _json_object_to_surface_array(json_object.right_walls, context)
     
     # TODO: This is broken with multiple tilemaps.
-    surface_parser._populate_derivative_collections(self, tile_maps[0])
+    surface_parser._populate_derivative_collections(self, tilemaps[0])
     
     for i in floors.size():
         floors[i].load_references_from_json_context(

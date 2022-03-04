@@ -2,7 +2,7 @@ class_name TileShapeData
 extends Reference
 
 
-var tile_set_index: int
+var tileset_index: int
 
 # Array<Vector2>
 var top_vertices: Array

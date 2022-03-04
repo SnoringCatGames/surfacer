@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://addons/surfacer/src/tiles/surfaces_tile_map.gd" type="Script" id=1]
+[ext_resource path="res://addons/surfacer/src/tiles/surfaces_tilemap.gd" type="Script" id=1]
 
-[node name="SurfacesTileMap" type="TileMap" groups=[
+[node name="SurfacesTilemap" type="TileMap" groups=[
 "desaturatables",
 ]]
 cell_size = Vector2( 32, 32 )

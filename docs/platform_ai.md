@@ -4,7 +4,7 @@
 
 ## The platform graph: Pre-parsing the world
 
-Surfacer depends on the level being represented as a [`TileMap`](https://docs.godotengine.org/en/stable/classes/class_tilemap.html#class-tilemap).
+Surfacer depends on the level being represented as a [`TileMap`](https://docs.godotengine.org/en/stable/classes/class_tilemap.html#class-tile_map).
 
 In order for our AI to traverse our world, we first need to parse the world into a platform graph. We do this up-front, when the level is loaded, so that we can efficiently search the graph at run time. Dynamic updates to the graph can be performed at runtime, but these could be expensive if not done with care.
 

@@ -407,10 +407,10 @@ static func check_frame_for_collision(
         #     detected in the previous frame.
         surface_collision.time_from_start_of_frame = 0.0
     
-    var tile_map: SurfacesTileMap = kinematic_collision.collider
+    var tile_map: SurfacesTilemap = kinematic_collision.collider
     var surface_side: int = \
             Sc.geometry.get_surface_side_for_normal(kinematic_collision.normal)
-    var tile_map_result := CollisionSurfaceResult.new()
+    var tilemap_result := CollisionSurfaceResult.new()
     
     # Is this collision with a surface that we're actually moving away from?
     var is_moving_away_from_surface: bool
@@ -511,7 +511,7 @@ static func check_frame_for_collision(
             
             if expected_surface_side_for_displacement != SurfaceSide.NONE:
                 SurfaceFinder.calculate_collision_surface(
-                        tile_map_result,
+                        tilemap_result,
                         collision_params.surface_store,
                         most_likely_collision_point,
                         expected_surface_side_for_displacement,
@@ -519,11 +519,11 @@ static func check_frame_for_collision(
                         false,
                         true)
     
-    if tile_map_result.surface == null:
+    if tilemap_result.surface == null:
         # Consider the default collision point returned from move_and_collide.
-        tile_map_result.reset()
+        tilemap_result.reset()
         SurfaceFinder.calculate_collision_surface(
-                tile_map_result,
+                tilemap_result,
                 collision_params.surface_store,
                 kinematic_collision.position,
                 kinematic_collision.normal,
@@ -531,7 +531,7 @@ static func check_frame_for_collision(
                 true,
                 true)
     
-    if tile_map_result.surface == null:
+    if tilemap_result.surface == null:
         # Invalid collision state.
         # -   This probably means that there was a pre-existing collision at
         #     the start of the frame.
@@ -545,8 +545,8 @@ static func check_frame_for_collision(
         surface_collision.is_valid_collision_state = false
         return surface_collision
     
-    var surface := tile_map_result.surface
-    surface_side = tile_map_result.surface_side
+    var surface := tilemap_result.surface
+    surface_side = tilemap_result.surface_side
     
     surface_collision.surface = surface
     surface_collision.is_valid_collision_state = true

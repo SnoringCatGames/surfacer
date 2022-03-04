@@ -115,8 +115,8 @@ var grab_position := Vector2.INF
 var grab_normal := Vector2.INF
 var previous_grab_position := Vector2.INF
 var previous_grab_normal := Vector2.INF
-var grab_position_tile_map_coord := Vector2.INF
-var grabbed_tile_map: SurfacesTileMap
+var grab_position_tilemap_coord := Vector2.INF
+var grabbed_tilemap: SurfacesTilemap
 var grabbed_surface: Surface
 var previous_grabbed_surface: Surface
 var center_position_along_surface := PositionAlongSurface.new()
@@ -125,8 +125,8 @@ var last_position_along_surface := PositionAlongSurface.new()
 var velocity := Vector2.ZERO
 
 var just_changed_surface := false
-var just_changed_tile_map := false
-var just_changed_tile_map_coord := false
+var just_changed_tilemap := false
+var just_changed_tilemap_coord := false
 var just_changed_grab_position := false
 var just_entered_air := false
 var just_left_air := false
@@ -194,8 +194,8 @@ func clear_just_changed_state() -> void:
     just_left_air = false
     
     just_changed_surface = false
-    just_changed_tile_map = false
-    just_changed_tile_map_coord = false
+    just_changed_tilemap = false
+    just_changed_tilemap_coord = false
     just_changed_grab_position = false
 
 
@@ -469,20 +469,20 @@ func _calculate_surface_contact_from_collision(
         collision: KinematicCollision2DCopy) -> SurfaceContact:
     var contact_position := collision.position
     var collision_normal := collision.normal
-    var contacted_tile_map: SurfacesTileMap = collision.collider
+    var contacted_tilemap: SurfacesTilemap = collision.collider
     
     SurfaceFinder.calculate_collision_surface(
             _collision_surface_result,
             character.surface_store,
             contact_position,
             collision_normal,
-            contacted_tile_map,
+            contacted_tilemap,
             true,
             true)
     
     var contacted_surface := _collision_surface_result.surface
-    var contact_tile_map_coord := _collision_surface_result.tile_map_coord
-    var contact_tile_map_index := _collision_surface_result.tile_map_index
+    var contact_tilemap_coord := _collision_surface_result.tilemap_coord
+    var contact_tilemap_index := _collision_surface_result.tilemap_index
     
     if !is_instance_valid(contacted_surface):
         # -  Godot's collision engine has generated an invalid collision value.
@@ -511,12 +511,12 @@ func _calculate_surface_contact_from_collision(
                 center_position)
     if centered_contact_position != contact_position:
         contact_position = centered_contact_position
-        contact_tile_map_coord = Sc.geometry.world_to_tile_map(
+        contact_tilemap_coord = Sc.geometry.world_to_tilemap(
                 contact_position,
-                contacted_tile_map)
-        contact_tile_map_index = Sc.geometry.get_tile_map_index_from_grid_coord(
-                contact_tile_map_coord,
-                contacted_tile_map)
+                contacted_tilemap)
+        contact_tilemap_index = Sc.geometry.get_tilemap_index_from_grid_coord(
+                contact_tilemap_coord,
+                contacted_tilemap)
     
     var contact_normal: Vector2 = Sc.geometry.get_surface_normal_at_point(
             contacted_surface, contact_position)
@@ -532,8 +532,8 @@ func _calculate_surface_contact_from_collision(
     surface_contact.surface = contacted_surface
     surface_contact.contact_position = contact_position
     surface_contact.contact_normal = contact_normal
-    surface_contact.tile_map_coord = contact_tile_map_coord
-    surface_contact.tile_map_index = contact_tile_map_index
+    surface_contact.tilemap_coord = contact_tilemap_coord
+    surface_contact.tilemap_index = contact_tilemap_index
     surface_contact.position_along_surface.match_current_grab(
             contacted_surface, center_position)
     surface_contact.just_started = just_started
@@ -859,8 +859,8 @@ func _update_surface_contact_for_explicit_grab(
             false)
     
     assert(_collision_surface_result.surface == surface)
-    var tile_map_coord := _collision_surface_result.tile_map_coord
-    var tile_map_index := _collision_surface_result.tile_map_index
+    var tilemap_coord := _collision_surface_result.tilemap_coord
+    var tilemap_index := _collision_surface_result.tilemap_index
     var contact_normal: Vector2 = Sc.geometry.get_surface_normal_at_point(
             surface, contact_position)
     
@@ -878,8 +878,8 @@ func _update_surface_contact_for_explicit_grab(
     surface_contact.surface = surface
     surface_contact.contact_position = contact_position
     surface_contact.contact_normal = contact_normal
-    surface_contact.tile_map_coord = tile_map_coord
-    surface_contact.tile_map_index = tile_map_index
+    surface_contact.tilemap_coord = tilemap_coord
+    surface_contact.tilemap_index = tilemap_index
     surface_contact.just_started = just_started
     surface_contact._is_still_touching = true
     
@@ -1583,8 +1583,8 @@ func _update_grab_state() -> void:
 
 
 func _update_grab_contact() -> void:
-    var previous_grabbed_tile_map := grabbed_tile_map
-    var previous_grab_position_tile_map_coord := grab_position_tile_map_coord
+    var previous_grabbed_tilemap := grabbed_tilemap
+    var previous_grab_position_tilemap_coord := grab_position_tilemap_coord
     
     surface_grab = null
     
@@ -1595,8 +1595,8 @@ func _update_grab_contact() -> void:
         var next_grabbed_surface := surface_grab.surface
         var next_grab_position := surface_grab.contact_position
         var next_grab_normal := surface_grab.contact_normal
-        grabbed_tile_map = surface_grab.surface.tile_map
-        grab_position_tile_map_coord = surface_grab.tile_map_coord
+        grabbed_tilemap = surface_grab.surface.tile_map
+        grab_position_tilemap_coord = surface_grab.tilemap_coord
         PositionAlongSurface.copy(
                 center_position_along_surface,
                 surface_grab.position_along_surface)
@@ -1626,22 +1626,22 @@ func _update_grab_contact() -> void:
         grab_position = next_grab_position
         grab_normal = next_grab_normal
         
-        just_changed_tile_map = \
-                just_changed_tile_map or \
+        just_changed_tilemap = \
+                just_changed_tilemap or \
                 just_left_air or \
-                grabbed_tile_map != previous_grabbed_tile_map
+                grabbed_tilemap != previous_grabbed_tilemap
         
-        just_changed_tile_map_coord = \
-                just_changed_tile_map_coord or \
+        just_changed_tilemap_coord = \
+                just_changed_tilemap_coord or \
                 just_left_air or \
-                grab_position_tile_map_coord != \
-                    previous_grab_position_tile_map_coord
+                grab_position_tilemap_coord != \
+                    previous_grab_position_tilemap_coord
         
     else:
         if just_entered_air:
             just_changed_grab_position = true
-            just_changed_tile_map = true
-            just_changed_tile_map_coord = true
+            just_changed_tilemap = true
+            just_changed_tilemap_coord = true
             just_changed_surface = true
             previous_grabbed_surface = \
                     grabbed_surface if \
@@ -1659,8 +1659,8 @@ func _update_grab_contact() -> void:
         surface_grab = null
         grab_position = Vector2.INF
         grab_normal = Vector2.INF
-        grabbed_tile_map = null
-        grab_position_tile_map_coord = Vector2.INF
+        grabbed_tilemap = null
+        grab_position_tilemap_coord = Vector2.INF
         grabbed_surface = null
         center_position_along_surface.reset()
 
@@ -1878,14 +1878,14 @@ func clear_current_state() -> void:
             0.00001)
     grab_position = Vector2.INF
     grab_normal = Vector2.INF
-    grab_position_tile_map_coord = Vector2.INF
-    grabbed_tile_map = null
+    grab_position_tilemap_coord = Vector2.INF
+    grabbed_tilemap = null
     grabbed_surface = null
     center_position_along_surface.reset()
     
     just_changed_surface = false
-    just_changed_tile_map = false
-    just_changed_tile_map_coord = false
+    just_changed_tilemap = false
+    just_changed_tilemap_coord = false
     just_changed_grab_position = false
     just_entered_air = false
     just_left_air = false
@@ -1938,8 +1938,8 @@ func sync_state_for_surface_grab(
     var previous_grab_normal := grab_normal
     var previous_grabbed_surface := grabbed_surface
     var previous_is_grabbing_surface := _get_is_grabbing_surface()
-    var previous_grabbed_tile_map := grabbed_tile_map
-    var previous_grab_position_tile_map_coord := grab_position_tile_map_coord
+    var previous_grabbed_tilemap := grabbed_tilemap
+    var previous_grab_position_tilemap_coord := grab_position_tilemap_coord
     
     clear_current_state()
     
@@ -1964,14 +1964,14 @@ func sync_state_for_surface_grab(
     grab_normal = Sc.geometry.get_surface_normal_at_point(
             surface,
             grab_position)
-    grab_position_tile_map_coord = Sc.geometry.world_to_tile_map(
+    grab_position_tilemap_coord = Sc.geometry.world_to_tilemap(
             grab_position,
             surface.tile_map)
-    grabbed_tile_map = surface.tile_map
-    var grab_position_tile_map_index: int = \
-            Sc.geometry.get_tile_map_index_from_grid_coord(
-                grab_position_tile_map_coord,
-                grabbed_tile_map)
+    grabbed_tilemap = surface.tile_map
+    var grab_position_tilemap_index: int = \
+            Sc.geometry.get_tilemap_index_from_grid_coord(
+                grab_position_tilemap_coord,
+                grabbed_tilemap)
     center_position_along_surface.match_current_grab(surface, center_position)
     PositionAlongSurface.copy(
             last_position_along_surface,
@@ -1982,8 +1982,8 @@ func sync_state_for_surface_grab(
     surface_grab.surface = surface
     surface_grab.contact_position = grab_position
     surface_grab.contact_normal = grab_normal
-    surface_grab.tile_map_coord = grab_position_tile_map_coord
-    surface_grab.tile_map_index = grab_position_tile_map_index
+    surface_grab.tilemap_coord = grab_position_tilemap_coord
+    surface_grab.tilemap_index = grab_position_tilemap_index
     surface_grab.position_along_surface.match_current_grab(
             surface,
             center_position)
@@ -2005,13 +2005,13 @@ func sync_state_for_surface_grab(
     if grab_position != previous_grab_position:
         self.previous_grab_position = previous_grab_position
         self.previous_grab_normal = previous_grab_normal
-    just_changed_tile_map = \
+    just_changed_tilemap = \
             just_left_air or \
-            grabbed_tile_map != previous_grabbed_tile_map
-    just_changed_tile_map_coord = \
+            grabbed_tilemap != previous_grabbed_tilemap
+    just_changed_tilemap_coord = \
             just_left_air or \
-            grab_position_tile_map_coord != \
-                previous_grab_position_tile_map_coord
+            grab_position_tilemap_coord != \
+                previous_grab_position_tilemap_coord
     
     match surface.side:
         SurfaceSide.FLOOR:
@@ -2091,8 +2091,8 @@ func sync_state_for_surface_release(
     
     if just_entered_air:
         just_changed_grab_position = true
-        just_changed_tile_map = true
-        just_changed_tile_map_coord = true
+        just_changed_tilemap = true
+        just_changed_tilemap_coord = true
         just_changed_surface = true
         previous_grabbed_surface = previous_grabbed_surface
         previous_grab_position = previous_grab_position

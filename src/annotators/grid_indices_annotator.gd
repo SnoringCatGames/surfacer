@@ -16,8 +16,8 @@ func _draw() -> void:
 
 
 func _draw_tile_indices(only_render_used_indices := false) -> void:
-    for tile_map in surface_store._tile_map_index_to_surface_maps:
-        Sc.draw.draw_tile_map_indices(
+    for tile_map in surface_store._tilemap_index_to_surface_maps:
+        Sc.draw.draw_tilemap_indices(
                 self,
                 tile_map,
                 TILE_INDICES_COLOR,

@@ -42,8 +42,8 @@ In order to create levels, you'll need to override a few classes from Surfacer.
 _Probably the easiest way to get started with this is to copy/paste/edit the pre-existing level class from the Squirrel Away example app._
 
 -   [`SurfacerLevel`](/src/level/surfacer_level.gd).
--   [`SurfacesTileMap`](/src/platform_graph/surfaces_tile_map.gd):
-    -   You will need to instance `SurfacesTileMap` as a sub-scene in order to define the shape of the collidable surfaces your level.
+-   [`SurfacesTilemap`](/src/platform_graph/surfaces_tilemap.gd):
+    -   You will need to instance `SurfacesTilemap` as a sub-scene in order to define the shape of the collidable surfaces your level.
 -   [`SurfacerLevelConfig`](/src/config/surfacer_level_config.gd):
     -   You will need to sub-class `SurfacerLevelConfig` and reference this in your `app_manifest`.
     -   This defines some metadata for each of the levels in your game. For example:

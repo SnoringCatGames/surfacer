@@ -1,6 +1,6 @@
 tool
-class_name SurfacesTileMap, \
-"res://addons/surfacer/assets/images/editor_icons/surfaces_tile_map.png"
+class_name SurfacesTilemap, \
+"res://addons/surfacer/assets/images/editor_icons/surfaces_tilemap.png"
 extends CornerMatchTilemap
 ## The surfaces that a character can collide with.
 

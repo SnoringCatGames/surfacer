@@ -70,7 +70,7 @@ func _create_annotator(annotator_type: int) -> void:
                 annotation_layer.add_child(path_preselection_annotator)
         AnnotatorType.LEVEL:
             if Sc.level != null:
-                Sc.level.set_tile_map_visibility(true)
+                Sc.level.set_tilemap_visibility(true)
                 Sc.level.set_background_visibility(true)
         _:
             Sc.logger.error("SurfacerAnnotators._create_annotator")
@@ -97,7 +97,7 @@ func _destroy_annotator(annotator_type: int) -> void:
                 path_preselection_annotator = null
         AnnotatorType.LEVEL:
             if Sc.level != null:
-                Sc.level.set_tile_map_visibility(false)
+                Sc.level.set_tilemap_visibility(false)
                 Sc.level.set_background_visibility(false)
         _:
             Sc.logger.error("SurfacerAnnotators._destroy_annotator")
