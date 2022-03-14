@@ -67,7 +67,7 @@ There are two key reasons why good path-finding AI isn't really used in platform
 
 But there are use-cases for which we really benefit from an AI that can accurately immitate the same movement mechanics of the character. One example is if we want to be able to control the character by tapping on locations that they should move toward through the level. Another example is if we want to have a flexible game mode in which an npc can swap in for a player character depending on how many players are present.
 
-## Learn more!
+## 📚 Learn more!
 
 -   **[Extended tutorial on how this AI works](https://levi.dev/platformer-ai)**
 -   [Getting set up](./docs/getting_set_up.md)
@@ -81,7 +81,7 @@ But there are use-cases for which we really benefit from an AI that can accurate
        alt="An animated GIF showing characters moving around with various behaviors and paths.">
 </p>
 
-## Licenses
+## 📃 Licenses
 
 -   All code is published under the [MIT license](LICENSE).
 -   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/config/surfacer_third_party_licenses.gd).
