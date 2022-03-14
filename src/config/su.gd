@@ -286,7 +286,6 @@ var selection_description: SelectionDescription
 var ann_manifest: SurfacerAnnotationsManifest
 var movement: SurfacerMovementManifest
 var surface_properties: SurfacerSurfacePropertiesManifest
-var subtile_manifest: SubtileManifest
 var edge_from_json_factory := EdgeFromJsonFactory.new()
 
 var space_state: Physics2DDirectSpaceState
@@ -441,13 +440,6 @@ func _instantiate_sub_modules() -> void:
     else:
         self.surface_properties = SurfacerSurfacePropertiesManifest.new()
     add_child(self.surface_properties)
-    
-    if manifest.has("subtile_manifest_class"):
-        self.subtile_manifest = manifest.subtile_manifest_class.new()
-        assert(self.subtile_manifest is SubtileManifest)
-    else:
-        self.subtile_manifest = SubtileManifest.new()
-    add_child(self.subtile_manifest)
 
 
 func _configure_sub_modules() -> void:
@@ -458,7 +450,6 @@ func _configure_sub_modules() -> void:
     Sc.characters._derive_movement_parameters()
     Su.surface_properties.register_manifest(
             Su.manifest.surface_properties_manifest)
-    Su.subtile_manifest.register_manifest(Su.manifest.subtile_manifest)
     
     Su.movement._validate_configuration()
     
