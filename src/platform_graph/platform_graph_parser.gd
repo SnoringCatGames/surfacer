@@ -199,24 +199,8 @@ func _defer_calculate_next_platform_graph(last_character_index: int) -> void:
 func _load_platform_graphs(includes_debug_only_state: bool) -> void:
     var platform_graphs_path := _get_path(includes_debug_only_state)
     
-    var file := File.new()
-    var status := file.open(platform_graphs_path, File.READ)
-    if status != OK:
-        Sc.logger.error("Unable to open file: " + platform_graphs_path)
-        return
-    var serialized_string := file.get_as_text()
-    file.close()
-
-    var parse_result := JSON.parse(serialized_string)
-    if parse_result.error != OK:
-        Sc.logger.error("Unable to parse JSON: %s; %s:%s:%s" % [
-            platform_graphs_path,
-            parse_result.error,
-            parse_result.error_line,
-            parse_result.error_string,
-        ])
-        return
-    var json_object: Dictionary = parse_result.result
+    var json_object: Dictionary = \
+            Sc.json.load_file(platform_graphs_path, false, false)
     
     var context := {
         id_to_tilemap = {},
@@ -347,16 +331,8 @@ func save_platform_graphs() -> void:
     
     var includes_debug_only_state := false
     var json_object := to_json_object(includes_debug_only_state)
-    var serialized_string := JSON.print(json_object)
-    
     var path := _get_os_path(includes_debug_only_state)
-    
-    var file := File.new()
-    var status := file.open(path, File.WRITE)
-    if status != OK:
-        Sc.logger.error("Unable to open file: " + path)
-    file.store_string(serialized_string)
-    file.close()
+    Sc.json.save_file(json_object, path, false)
 
 
 func to_json_object(includes_debug_only_state: bool) -> Dictionary:
