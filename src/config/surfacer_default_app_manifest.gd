@@ -878,17 +878,21 @@ var _default_input_map = ScaffolderProjectSettings.DEFAULT_INPUT_MAP
 # ---
 
 
-func _ready() -> void:
-    assert(has_node("/root/Sc") and \
-            has_node("/root/Su"),
-            ("The Sc (Scaffolder) and Su (Surfacer) AutoLoads must be " +
-            "declared first."))
-    
+func _init(
+        framework_display_name: String,
+        framework_addons_folder_name: String,
+        auto_load_name: String,
+        auto_load_deps: Array).(
+        framework_display_name,
+        framework_addons_folder_name,
+        auto_load_name,
+        auto_load_deps) -> void:
+    pass
+
+
+func _on_auto_load_deps_ready() -> void:
     _override_configs_for_app()
     _override_configs_for_current_run()
-    
-    Sc.logger.on_global_init(self, "App")
-    Sc.register_framework_config(self)
 
 
 func _override_configs_for_app() -> void:
