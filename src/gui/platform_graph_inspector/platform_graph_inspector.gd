@@ -126,7 +126,7 @@ func _populate() -> void:
     var dummy := DummyItemController.new(root, self, null)
     
     for graph in graphs:
-        graph_item_controllers[ \
+        graph_item_controllers[
                 graph.movement_params.character_category_name] = \
                     PlatformGraphItemController.new(
                         root,
