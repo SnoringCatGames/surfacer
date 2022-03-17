@@ -2,8 +2,6 @@
 
 I will not lie, **this is a complex framework**! Hopefully it's external API isn't _too_ convoluted, but still, probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel_away), and then adjust it to fit your needs.
 
-> **NOTE:** _If you are adding this to a new project, than than copy/paste/modifying a demo project, you will see a lot of console errors and editor-slowness when in Godot until you have finished configuring the AutoLoads correctly, and Godot has then updated the project manifest afterward. This is unfortunate, but expected!_
-
 -   Set up Scaffolder
     -   https://github.com/snoringcatgames/scaffolder/blob/master/docs/getting_set_up.md
 -   `addons/scaffolder`
@@ -13,16 +11,10 @@ I will not lie, **this is a complex framework**! Hopefully it's external API isn
     -   See the Scaffolder [README](https://github.com/snoringcatgames/scaffolder/blob/master/README.md) for details on setting it up.
 -   `addons/surfacer`
     -   Add the [Surfacer](https://github.com/snoringcatgames/surfacer/) library to your `addons/` folder.
--   `Sc`
-    -   Define `Sc` as an AutoLoad (in Project Settings).
-    -   "Sc" is short for "Scaffolder".
-    -   It should point to the path `res://addons/scaffolder/src/sc.gd`.
-    -   It should be the first AutoLoad in the list.
 -   `Su`
-    -   Define `Su` as an AutoLoad (in Project Settings).
+    -   All of the Surfacer functionality is globally accessible through properties on the `Su` AutoLoad.
+    -   The `Su` AutoLoad is automatically registered.
     -   "Su" is short for "Surfacer".
-    -   It should point to the path `res://addons/surfacer/src/su.gd`.
-    -   It should be the second AutoLoad in the list, just after `Sc`.
 -   `app_manifest`
     -   Define configuration parameters for Scaffolder and Surfacer.
     -   There are a _lot_ of parameters you can adjust here.

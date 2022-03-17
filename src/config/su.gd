@@ -12,6 +12,11 @@ extends FrameworkConfig
 
 # --- Constants ---
 
+const _FRAMEWORK_DISPLAY_NAME := "Surfacer"
+const _FRAMEWORK_ADDONS_FOLDER_NAME := "surfacer"
+const _AUTO_LOAD_NAME := "Su"
+const _AUTO_LOAD_DEPS := []
+
 const WALLS_AND_FLOORS_COLLISION_MASK_BIT := 0
 const FALL_THROUGH_FLOORS_COLLISION_MASK_BIT := 1
 const WALK_THROUGH_WALLS_COLLISION_MASK_BIT := 2
@@ -293,17 +298,19 @@ var space_state: Physics2DDirectSpaceState
 # ---
 
 
-func _ready() -> void:
-    assert(has_node("/root/Sc"),
-            "The Sc (Scaffolder) AutoLoad must be declared first.")
-    
-    Sc.logger.on_global_init(self, "Su")
-    Sc.register_framework_config(self)
-    
+func _init().(
+        _FRAMEWORK_DISPLAY_NAME,
+        _FRAMEWORK_ADDONS_FOLDER_NAME,
+        _AUTO_LOAD_NAME,
+        _AUTO_LOAD_DEPS) -> void:
+    pass
+
+
+func _on_auto_load_deps_ready() -> void:
     Sc._bootstrap = SurfacerBootstrap.new()
 
 
-func _amend_app_manifest(app_manifest: Dictionary) -> void:
+func _amend_manifest(app_manifest: Dictionary) -> void:
     if !app_manifest.has("colors_class"):
         app_manifest.colors_class = SurfacerColors
     if !app_manifest.has("geometry_class"):
@@ -336,7 +343,7 @@ func _amend_app_manifest(app_manifest: Dictionary) -> void:
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
-func _register_app_manifest(app_manifest: Dictionary) -> void:
+func _register_manifest(app_manifest: Dictionary) -> void:
     self.manifest = app_manifest.surfacer_manifest
     
     self.are_oddly_shaped_surfaces_used = \
