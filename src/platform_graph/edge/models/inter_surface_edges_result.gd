@@ -64,7 +64,7 @@ static func merge_results_with_matching_destination_surfaces(
                     new_result
         else:
             var old_result: InterSurfaceEdgesResult = \
-                    inter_surface_edges_results_set[ \
+                    inter_surface_edges_results_set[
                             new_result.destination_surface]
             inter_surface_edges_results.remove(i)
             old_result.merge(new_result)

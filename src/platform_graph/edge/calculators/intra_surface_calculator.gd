@@ -81,12 +81,12 @@ func create(
     if !allows_unexpected_collisions_with_concave_neighbors and \
             edge.trajectory.collided_early:
         var early_collision_position: Vector2 = \
-                edge.trajectory.frame_continuous_positions_from_steps[ \
+                edge.trajectory.frame_continuous_positions_from_steps[
                         edge.trajectory.frame_continuous_positions_from_steps \
                                 .size() - 1] if \
                 !edge.trajectory.frame_continuous_positions_from_steps \
                         .empty() else \
-                edge.trajectory.frame_discrete_positions_from_test[ \
+                edge.trajectory.frame_discrete_positions_from_test[
                         edge.trajectory.frame_discrete_positions_from_test \
                                 .size() - 1] if \
                 !edge.trajectory.frame_discrete_positions_from_test \
@@ -281,11 +281,11 @@ func _update(edge: IntraSurfaceEdge) -> void:
     # (which can form a tight cusp).
     if trajectory.collided_early:
         var early_end := \
-                trajectory.frame_continuous_positions_from_steps[ \
+                trajectory.frame_continuous_positions_from_steps[
                     trajectory \
                         .frame_continuous_positions_from_steps.size() - 1] if \
                 !trajectory.frame_continuous_positions_from_steps.empty() else \
-                trajectory.frame_discrete_positions_from_test[ \
+                trajectory.frame_discrete_positions_from_test[
                     trajectory \
                         .frame_discrete_positions_from_test.size() - 1] if \
                 !trajectory.frame_discrete_positions_from_test.empty() else \
@@ -395,9 +395,9 @@ func _update(edge: IntraSurfaceEdge) -> void:
         var lost_time := previous_duration - duration
         # TODO: These could be inaccurate.
         release_time -= lost_time
-        release_position = trajectory.frame_continuous_positions_from_steps[ \
+        release_position = trajectory.frame_continuous_positions_from_steps[
                 trajectory.position_duplication_start_index]
-        release_velocity = trajectory.frame_continuous_velocities_from_steps[ \
+        release_velocity = trajectory.frame_continuous_velocities_from_steps[
                 trajectory.position_duplication_start_index]
     
     var instructions := _calculate_instructions(

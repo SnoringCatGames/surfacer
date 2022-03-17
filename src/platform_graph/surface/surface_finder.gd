@@ -234,7 +234,7 @@ static func get_closest_surfaces(
                         surface_count)
                 if was_added:
                     next_distance_squared_to_beat = \
-                            closest_surfaces_and_distances[ \
+                            closest_surfaces_and_distances[
                                     surface_count - 1][1] if \
                             closest_surfaces_and_distances.size() == \
                                     surface_count else \
