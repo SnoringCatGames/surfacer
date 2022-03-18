@@ -306,6 +306,27 @@ func _init().(
     pass
 
 
+func _destroy() -> void:
+    ._destroy()
+    
+    manifest = {}
+    precompute_platform_graph_for_levels = []
+    behaviors = {}
+    default_tileset = null
+
+
+func _get_members_to_destroy() -> Array:
+    return [
+        graph_inspector,
+        selection_description,
+        ann_manifest,
+        movement,
+        surface_properties,
+#        edge_from_json_factory,
+        space_state,
+    ]
+
+
 func _on_auto_load_deps_ready() -> void:
     Sc._bootstrap = SurfacerBootstrap.new()
 
