@@ -1,5 +1,5 @@
 tool
-extends FrameworkConfig
+extends FrameworkGlobal
 ## -   This is a global singleton that defines a bunch of Surfacer
 ##     parameters.[br]
 ## -   All of these parameters can be configured when bootstrapping the
@@ -12,7 +12,7 @@ extends FrameworkConfig
 
 # --- Constants ---
 
-const _SCHEMA_CLASS := SurfacerManifestSchema
+const _SCHEMA_CLASS := SurfacerSchema
 
 const WALLS_AND_FLOORS_COLLISION_MASK_BIT := 0
 const FALL_THROUGH_FLOORS_COLLISION_MASK_BIT := 1

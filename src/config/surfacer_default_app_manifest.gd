@@ -1,6 +1,6 @@
 tool
 class_name SurfacerDefaultAppManifest
-extends FrameworkConfig
+extends FrameworkGlobal
 
 
 # ---

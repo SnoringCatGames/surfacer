@@ -1,6 +1,6 @@
 tool
-class_name SurfacerManifestSchema
-extends FrameworkManifestSchema
+class_name SurfacerSchema
+extends FrameworkSchema
 
 
 const _DISPLAY_NAME := "Surfacer"
