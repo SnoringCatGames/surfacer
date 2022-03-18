@@ -17,9 +17,7 @@
 >
 > _**[Extended tutorial on how this AI works](https://levi.dev/platformer-ai)**_
 
-_An **AI and pathfinding** 2D-platformer framework for [Godot](https://godotengine.org/)._
-
-_Enables point-and-click platformers!_
+_**AI and pathfinding** for 2D-platformers in [Godot](https://godotengine.org/)._
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 

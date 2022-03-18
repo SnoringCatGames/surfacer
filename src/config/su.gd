@@ -364,6 +364,16 @@ func _amend_manifest(app_manifest: Dictionary) -> void:
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
+func _register_manifest_TMP(manifest: Dictionary) -> void:
+    # FIXME: LEFT OFF HERE: -------------------------
+    pass
+
+
+func _instantiate_sub_modules_TMP() -> void:
+    # FIXME: LEFT OFF HERE: -------------------------
+    pass
+
+
 func _register_manifest(app_manifest: Dictionary) -> void:
     self.manifest = app_manifest.surfacer_manifest
     
