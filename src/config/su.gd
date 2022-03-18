@@ -12,10 +12,7 @@ extends FrameworkConfig
 
 # --- Constants ---
 
-const _FRAMEWORK_DISPLAY_NAME := "Surfacer"
-const _FRAMEWORK_ADDONS_FOLDER_NAME := "surfacer"
-const _AUTO_LOAD_NAME := "Su"
-const _AUTO_LOAD_DEPS := []
+const _SCHEMA_CLASS := SurfacerManifestSchema
 
 const WALLS_AND_FLOORS_COLLISION_MASK_BIT := 0
 const FALL_THROUGH_FLOORS_COLLISION_MASK_BIT := 1
@@ -298,11 +295,7 @@ var space_state: Physics2DDirectSpaceState
 # ---
 
 
-func _init().(
-        _FRAMEWORK_DISPLAY_NAME,
-        _FRAMEWORK_ADDONS_FOLDER_NAME,
-        _AUTO_LOAD_NAME,
-        _AUTO_LOAD_DEPS) -> void:
+func _init().(_SCHEMA_CLASS) -> void:
     pass
 
 
