@@ -367,8 +367,8 @@ func _instantiate_sub_modules_TMP() -> void:
     pass
 
 
-func _register_manifest(manifest: Dictionary) -> void:
-    self.manifest = manifest.surfacer_manifest
+func _register_manifest(app_manifest: Dictionary) -> void:
+    self.manifest = app_manifest.surfacer_manifest
     
     self.are_oddly_shaped_surfaces_used = \
             manifest.are_oddly_shaped_surfaces_used
@@ -437,7 +437,7 @@ func _register_manifest(manifest: Dictionary) -> void:
     
     self.behaviors = _parse_behaviors(manifest)
     
-    assert(Sc._manifest.metadata.must_restart_level_to_change_settings)
+    assert(Sc.manifest.metadata.must_restart_level_to_change_settings)
 
 
 func _instantiate_sub_modules() -> void:
