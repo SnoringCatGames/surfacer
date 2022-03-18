@@ -324,36 +324,36 @@ func _on_auto_load_deps_ready() -> void:
     Sc._bootstrap = SurfacerBootstrap.new()
 
 
-func _amend_manifest(app_manifest: Dictionary) -> void:
-    if !app_manifest.has("colors_class"):
-        app_manifest.colors_class = SurfacerColors
-    if !app_manifest.has("geometry_class"):
-        app_manifest.geometry_class = SurfacerGeometry
-    if !app_manifest.has("draw_class"):
-        app_manifest.draw_class = SurfacerDrawUtils
-    if !app_manifest.has("ann_params_class"):
-        app_manifest.ann_params_class = SurfacerAnnotationParameters
-    if !app_manifest.has("beats_class"):
-        app_manifest.beats_class = SurfacerBeatTracker
-    if !app_manifest.has("characters_class"):
-        app_manifest.characters_class = SurfacerCharacterManifest
+func _amend_manifest(manifest: Dictionary) -> void:
+    if !manifest.has("colors_class"):
+        manifest.colors_class = SurfacerColors
+    if !manifest.has("geometry_class"):
+        manifest.geometry_class = SurfacerGeometry
+    if !manifest.has("draw_class"):
+        manifest.draw_class = SurfacerDrawUtils
+    if !manifest.has("ann_params_class"):
+        manifest.ann_params_class = SurfacerAnnotationParameters
+    if !manifest.has("beats_class"):
+        manifest.beats_class = SurfacerBeatTracker
+    if !manifest.has("characters_class"):
+        manifest.characters_class = SurfacerCharacterManifest
     
     var is_precomputing_platform_graphs: bool = \
-            app_manifest.surfacer_manifest \
+            manifest.surfacer_manifest \
                     .has("precompute_platform_graph_for_levels") and \
-            !app_manifest.surfacer_manifest \
+            !manifest.surfacer_manifest \
                     .precompute_platform_graph_for_levels.empty()
     if is_precomputing_platform_graphs:
-        app_manifest.metadata.is_splash_skipped = true
+        manifest.metadata.is_splash_skipped = true
     
     # Add Surfacer sounds to the front, so they can be overridden by the app.
     Sc.utils.concat(
-            app_manifest.audio_manifest.sounds_manifest,
+            manifest.audio_manifest.sounds_manifest,
             _surfacer_sounds,
             false)
     
-    if !app_manifest.gui_manifest.has("settings_item_manifest"):
-        app_manifest.gui_manifest.settings_item_manifest = \
+    if !manifest.gui_manifest.has("settings_item_manifest"):
+        manifest.gui_manifest.settings_item_manifest = \
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
@@ -367,8 +367,8 @@ func _instantiate_sub_modules_TMP() -> void:
     pass
 
 
-func _register_manifest(app_manifest: Dictionary) -> void:
-    self.manifest = app_manifest.surfacer_manifest
+func _register_manifest(manifest: Dictionary) -> void:
+    self.manifest = manifest.surfacer_manifest
     
     self.are_oddly_shaped_surfaces_used = \
             manifest.are_oddly_shaped_surfaces_used
