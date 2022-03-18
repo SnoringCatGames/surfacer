@@ -878,15 +878,7 @@ var _default_input_map = ScaffolderProjectSettings.DEFAULT_INPUT_MAP
 # ---
 
 
-func _init(
-        framework_display_name: String,
-        framework_addons_folder_name: String,
-        auto_load_name: String,
-        auto_load_deps: Array).(
-        framework_display_name,
-        framework_addons_folder_name,
-        auto_load_name,
-        auto_load_deps) -> void:
+func _init(schema_class: Script).(schema_class) -> void:
     pass
 
 
