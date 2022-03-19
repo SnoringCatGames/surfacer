@@ -99,7 +99,7 @@ func _init() -> void:
     Sc.logger.on_global_init(self, "SurfacerMovementManifest")
 
 
-func register_manifest(manifest: Dictionary) -> void:
+func _parse_manifest(manifest: Dictionary) -> void:
     self._action_handler_classes = manifest.action_handler_classes
     self._edge_calculator_classes = manifest.edge_calculator_classes
     

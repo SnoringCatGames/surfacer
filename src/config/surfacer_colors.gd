@@ -31,7 +31,7 @@ var _surfacer_defaults := {
 # ---
 
 
-func register_manifest(manifest: Dictionary) -> void:
+func _parse_manifest(manifest: Dictionary) -> void:
     for key in _surfacer_defaults:
         var value = \
                 manifest[key] if \
@@ -39,7 +39,7 @@ func register_manifest(manifest: Dictionary) -> void:
                 _defaults[key]
         self.set(key, value)
     
-    .register_manifest(manifest)
+    ._parse_manifest(manifest)
 
 
 #func _derive_colors() -> void:

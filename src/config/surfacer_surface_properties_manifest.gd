@@ -7,7 +7,7 @@ extends Node
 var properties := {}
 
 
-func register_manifest(manifest: Dictionary) -> void:
+func _parse_manifest(manifest: Dictionary) -> void:
     self.properties.clear()
     for properties_name in manifest:
         var config: Dictionary = manifest[properties_name]
