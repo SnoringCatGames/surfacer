@@ -356,7 +356,7 @@ func _amend_manifest() -> void:
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
-func _register_manifest() -> void:
+func _parse_manifest() -> void:
     self.are_oddly_shaped_surfaces_used = \
             manifest.are_oddly_shaped_surfaces_used
     self.are_loaded_surfaces_deeply_validated = \
@@ -463,10 +463,10 @@ func _instantiate_sub_modules() -> void:
 func _configure_sub_modules() -> void:
     assert(Sc.ann_params is SurfacerAnnotationParameters)
     
-    Su.ann_manifest.register_manifest(Su.manifest.annotations_manifest)
-    Su.movement.register_manifest(Su.manifest.movement_manifest)
+    Su.ann_manifest._parse_manifest(Su.manifest.annotations_manifest)
+    Su.movement._parse_manifest(Su.manifest.movement_manifest)
     Sc.characters._derive_movement_parameters()
-    Su.surface_properties.register_manifest(
+    Su.surface_properties._parse_manifest(
             Su.manifest.surface_properties_manifest)
     
     Su.movement._validate_configuration()

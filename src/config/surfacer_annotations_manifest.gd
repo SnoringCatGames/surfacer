@@ -38,7 +38,7 @@ func _init() -> void:
     Sc.logger.on_global_init(self, "SurfacerAnnotationsManifest")
 
 
-func register_manifest(manifest: Dictionary) -> void:
+func _parse_manifest(manifest: Dictionary) -> void:
     if manifest.has("is_player_slow_mo_trajectory_shown"):
         self.is_player_slow_mo_trajectory_shown = \
                 manifest.is_player_slow_mo_trajectory_shown
