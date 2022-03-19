@@ -174,7 +174,6 @@ var _surfacer_sounds := [
 
 # --- Surfacer global state ---
 
-var manifest: Dictionary
 var are_oddly_shaped_surfaces_used: bool
 var is_inspector_enabled: bool
 var are_loaded_surfaces_deeply_validated: bool
@@ -324,7 +323,7 @@ func _on_auto_load_deps_ready() -> void:
     Sc._bootstrap = SurfacerBootstrap.new()
 
 
-func _amend_manifest(manifest: Dictionary) -> void:
+func _amend_manifest() -> void:
     if !manifest.has("colors_class"):
         manifest.colors_class = SurfacerColors
     if !manifest.has("geometry_class"):
@@ -357,19 +356,7 @@ func _amend_manifest(manifest: Dictionary) -> void:
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
-func _register_manifest_TMP(manifest: Dictionary) -> void:
-    # FIXME: LEFT OFF HERE: -------------------------
-    pass
-
-
-func _instantiate_sub_modules_TMP() -> void:
-    # FIXME: LEFT OFF HERE: -------------------------
-    pass
-
-
-func _register_manifest(app_manifest: Dictionary) -> void:
-    self.manifest = app_manifest.surfacer_manifest
-    
+func _register_manifest() -> void:
     self.are_oddly_shaped_surfaces_used = \
             manifest.are_oddly_shaped_surfaces_used
     self.are_loaded_surfaces_deeply_validated = \
