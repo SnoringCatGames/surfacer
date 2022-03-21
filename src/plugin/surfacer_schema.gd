@@ -187,6 +187,7 @@ const _PROPERTIES := {
     is_debug_only_platform_graph_state_included = false,
     are_reachable_surfaces_per_player_tracked = true,
     are_loaded_surfaces_deeply_validated = true,
+    uses_threads_for_platform_graph_calculation = false,
     
     default_tileset = preload( \
             "res://addons/surfacer/src/tiles/tileset_with_many_angles.tres"),
