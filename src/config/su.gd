@@ -12,7 +12,7 @@ extends FrameworkGlobal
 
 # --- Constants ---
 
-const _SCHEMA_CLASS := SurfacerSchema
+const _SCHEMA_PATH := "res://addons/surfacer/src/plugin/surfacer_schema.gd"
 
 const WALLS_AND_FLOORS_COLLISION_MASK_BIT := 0
 const FALL_THROUGH_FLOORS_COLLISION_MASK_BIT := 1
@@ -294,7 +294,7 @@ var space_state: Physics2DDirectSpaceState
 # ---
 
 
-func _init().(_SCHEMA_CLASS) -> void:
+func _init().(_SCHEMA_PATH) -> void:
     pass
 
 
