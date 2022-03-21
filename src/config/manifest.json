@@ -1,6 +1,8 @@
 {
   "are_oddly_shaped_surfaces_used": true,
-  "precompute_platform_graph_for_levels": null,
+  "precompute_platform_graph_for_levels": [
+
+  ],
   "ignores_platform_graph_save_files": false,
   "ignores_platform_graph_save_file_trajectory_state": false,
   "is_debug_only_platform_graph_state_included": false,
@@ -8,74 +10,78 @@
   "are_loaded_surfaces_deeply_validated": true,
   "uses_threads_for_platform_graph_calculation": false,
   "default_tileset": "$Resource:res://addons/surfacer/src/tiles/tileset_with_many_angles.tres",
-  "path_drag_update_throttle_interval": 0.2,
-  "path_beat_update_throttle_interval": 0.2,
+  "path_drag_update_throttle_interval": null,
+  "path_beat_update_throttle_interval": null,
   "snaps_camera_back_to_character": true,
-  "max_zoom_multiplier_from_pointer": 1.5,
-  "max_pan_distance_from_pointer": 512,
-  "duration_to_max_pan_from_pointer_at_max_control": 0.67,
-  "duration_to_max_zoom_from_pointer_at_max_control": 3,
-  "screen_size_ratio_distance_from_edge_to_start_pan_from_pointer": 0.16,
-  "skip_choreography_framerate_multiplier": 4,
+  "max_zoom_multiplier_from_pointer": null,
+  "max_pan_distance_from_pointer": null,
+  "duration_to_max_pan_from_pointer_at_max_control": null,
+  "duration_to_max_zoom_from_pointer_at_max_control": null,
+  "screen_size_ratio_distance_from_edge_to_start_pan_from_pointer": null,
+  "skip_choreography_framerate_multiplier": null,
   "debug_params": {
 
   },
   "surface_properties_manifest": {
     "default": {
       "can_grab": true,
-      "friction_multiplier": 0.7,
-      "speed_multiplier": 1
+      "friction_multiplier": null,
+      "speed_multiplier": null
     },
     "disabled": {
       "can_grab": false
     },
     "slippery": {
-      "friction_multiplier": 0.05
+      "friction_multiplier": null
     },
     "sticky": {
-      "friction_multiplier": 4
+      "friction_multiplier": null
     },
     "fast": {
-      "speed_multiplier": 4
+      "speed_multiplier": null
     },
     "slow": {
-      "speed_multiplier": 0.2
+      "speed_multiplier": null
     }
   },
   "movement_manifest": {
     "uses_point_and_click_navigation": true,
     "cancels_point_and_click_nav_on_key_press": true,
-    "gravity_default": 5000,
-    "gravity_slow_rise_multiplier_default": 0.38,
-    "gravity_double_jump_slow_rise_multiplier_default": 0.68,
-    "walk_acceleration_default": 8000,
-    "in_air_horizontal_acceleration_default": 2500,
-    "climb_up_speed_default": -230,
-    "climb_down_speed_default": 120,
-    "ceiling_crawl_speed_default": 230,
-    "friction_coeff_with_sideways_input_default": 1,
-    "friction_coeff_without_sideways_input_default": 1.25,
-    "jump_boost_default": -900,
-    "wall_jump_horizontal_boost_default": 200,
-    "wall_fall_horizontal_boost_default": 20,
-    "max_horizontal_speed_default_default": 320,
-    "max_vertical_speed_default": 2800,
-    "min_horizontal_speed": 5,
-    "min_vertical_speed": 0,
-    "dash_speed_multiplier_default": 3,
-    "dash_vertical_boost_default": -300,
-    "dash_duration_default": 0.3,
-    "dash_fade_duration_default": 0.1,
-    "dash_cooldown_default": 1,
-    "additional_edge_weight_offset_default": 0,
-    "walking_edge_weight_multiplier_default": 1.2,
-    "ceiling_crawling_edge_weight_multiplier_default": 2,
-    "climbing_edge_weight_multiplier_default": 1.8,
-    "climb_to_adjacent_surface_edge_weight_multiplier_default": 1,
-    "move_to_collinear_surface_edge_weight_multiplier_default": 0,
-    "air_edge_weight_multiplier_default": 1,
-    "action_handler_classes": null,
-    "edge_calculator_classes": null
+    "gravity_default": null,
+    "gravity_slow_rise_multiplier_default": null,
+    "gravity_double_jump_slow_rise_multiplier_default": null,
+    "walk_acceleration_default": null,
+    "in_air_horizontal_acceleration_default": null,
+    "climb_up_speed_default": null,
+    "climb_down_speed_default": null,
+    "ceiling_crawl_speed_default": null,
+    "friction_coeff_with_sideways_input_default": null,
+    "friction_coeff_without_sideways_input_default": null,
+    "jump_boost_default": null,
+    "wall_jump_horizontal_boost_default": null,
+    "wall_fall_horizontal_boost_default": null,
+    "max_horizontal_speed_default_default": null,
+    "max_vertical_speed_default": null,
+    "min_horizontal_speed": null,
+    "min_vertical_speed": null,
+    "dash_speed_multiplier_default": null,
+    "dash_vertical_boost_default": null,
+    "dash_duration_default": null,
+    "dash_fade_duration_default": null,
+    "dash_cooldown_default": null,
+    "additional_edge_weight_offset_default": null,
+    "walking_edge_weight_multiplier_default": null,
+    "ceiling_crawling_edge_weight_multiplier_default": null,
+    "climbing_edge_weight_multiplier_default": null,
+    "climb_to_adjacent_surface_edge_weight_multiplier_default": null,
+    "move_to_collinear_surface_edge_weight_multiplier_default": null,
+    "air_edge_weight_multiplier_default": null,
+    "action_handler_classes": [
+
+    ],
+    "edge_calculator_classes": [
+
+    ]
   },
   "annotations_manifest": {
     "is_player_preselection_trajectory_shown": true,
@@ -93,10 +99,10 @@
     "is_player_prediction_shown": true,
     "does_npc_nav_pulse_grow": true,
     "is_npc_prediction_shown": true,
-    "nav_selection_prediction_opacity": 0.5,
-    "nav_selection_prediction_tween_duration": 0.15,
-    "new_path_pulse_duration": 0.7,
-    "new_path_pulse_time_length": 1
+    "nav_selection_prediction_opacity": null,
+    "nav_selection_prediction_tween_duration": null,
+    "new_path_pulse_duration": null,
+    "new_path_pulse_time_length": null
   },
   "tileset_manifest": {
     "tilesets": [
