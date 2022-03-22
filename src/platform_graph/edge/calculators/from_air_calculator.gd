@@ -183,7 +183,7 @@ func create_edge_from_part_of_other_edge(
         other_edge: Edge,
         start_time: float,
         character) -> FromAirEdge:
-    var trajectory_start_index := int(start_time / Time.PHYSICS_TIME_STEP)
+    var trajectory_start_index := int(start_time / ScaffolderTime.PHYSICS_TIME_STEP)
     var trajectory_frame_count := \
             other_edge.trajectory.frame_continuous_positions_from_steps.size()
     

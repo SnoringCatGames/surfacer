@@ -391,7 +391,7 @@ func _update(edge: IntraSurfaceEdge) -> void:
         var previous_duration := duration
         duration = \
                 trajectory.frame_continuous_positions_from_steps.size() * \
-                Time.PHYSICS_TIME_STEP
+                ScaffolderTime.PHYSICS_TIME_STEP
         var lost_time := previous_duration - duration
         # TODO: These could be inaccurate.
         release_time -= lost_time
@@ -795,7 +795,7 @@ func _calculate_trajectory(
             movement_params.get_max_surface_speed() * \
             start.surface.properties.speed_multiplier
     
-    var frame_count := int(max(ceil(duration / Time.PHYSICS_TIME_STEP), 1))
+    var frame_count := int(max(ceil(duration / ScaffolderTime.PHYSICS_TIME_STEP), 1))
     var frame_index := 0
     var previous_position := Vector2.INF
     var previous_velocity := Vector2.INF
@@ -905,19 +905,19 @@ func _calculate_trajectory(
         frame_index += 1
         var frame_time := \
                 (frame_index + position_duplication_count) * \
-                Time.PHYSICS_TIME_STEP
+                ScaffolderTime.PHYSICS_TIME_STEP
         var acceleration := \
                 acceleration_with_pressing if \
                 frame_time < release_time else \
                 deceleration_with_friction
         previous_velocity = velocity
-        velocity += acceleration * Time.PHYSICS_TIME_STEP
+        velocity += acceleration * ScaffolderTime.PHYSICS_TIME_STEP
         velocity.x = clamp(
                 velocity.x,
                 velocity_x_min,
                 velocity_x_max)
         previous_position = position
-        position += velocity * Time.PHYSICS_TIME_STEP
+        position += velocity * ScaffolderTime.PHYSICS_TIME_STEP
         position.x = clamp(
                 position.x,
                 position_x_min,

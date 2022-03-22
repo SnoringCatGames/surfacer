@@ -110,9 +110,9 @@ func get_animation_state_at_time(
 func _sync_expected_middle_surface_state(
         surface_state: CharacterSurfaceState,
         edge_time: float) -> void:
-    var edge_frame_index := int(edge_time / Time.PHYSICS_TIME_STEP)
+    var edge_frame_index := int(edge_time / ScaffolderTime.PHYSICS_TIME_STEP)
     var surface_switch_index := \
-            int(time_at_surface_switch / Time.PHYSICS_TIME_STEP)
+            int(time_at_surface_switch / ScaffolderTime.PHYSICS_TIME_STEP)
     var did_just_switch := edge_frame_index == surface_switch_index
     var surface := \
             get_start_surface() if \

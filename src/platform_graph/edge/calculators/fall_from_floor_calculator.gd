@@ -361,9 +361,9 @@ static func _prepend_walk_to_fall_off_portion(
         movement_params: MovementParameters,
         falls_on_left_side: bool) -> void:
     var frame_count_before_fall_off := \
-            floor(time_fall_off / Time.PHYSICS_TIME_STEP)
+            floor(time_fall_off / ScaffolderTime.PHYSICS_TIME_STEP)
     time_fall_off = \
-            frame_count_before_fall_off * Time.PHYSICS_TIME_STEP + \
+            frame_count_before_fall_off * ScaffolderTime.PHYSICS_TIME_STEP + \
             Sc.geometry.FLOAT_EPSILON
     
     # Increment instruction times.
@@ -456,7 +456,7 @@ static func _prepend_walk_to_fall_off_portion(
         
         current_frame_position.x = \
                 current_frame_position.x + \
-                current_frame_velocity.x * Time.PHYSICS_TIME_STEP
+                current_frame_velocity.x * ScaffolderTime.PHYSICS_TIME_STEP
         current_frame_position = Sc.geometry \
                 .project_shape_onto_convex_corner_preserving_tangent_position( \
                         current_frame_position,
@@ -464,7 +464,7 @@ static func _prepend_walk_to_fall_off_portion(
                         start.surface,
                         null)
         
-        current_frame_velocity += acceleration * Time.PHYSICS_TIME_STEP
+        current_frame_velocity += acceleration * ScaffolderTime.PHYSICS_TIME_STEP
         current_frame_velocity.x = clamp(
                 current_frame_velocity.x,
                 -max_surface_speed,

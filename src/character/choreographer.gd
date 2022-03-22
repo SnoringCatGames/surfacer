@@ -26,7 +26,7 @@ signal finished
 #     -   zoom
 #         -   Updates the camera zoom.
 #     -   time_scale
-#         -   Updates the framerate (Time.time_scale).
+#         -   Updates the framerate (ScaffolderTime.time_scale).
 #     -   ease_name
 #         -   A String. See Utils.ease_by_name.
 #     -   is_player_interaction_enabled

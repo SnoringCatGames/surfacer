@@ -225,7 +225,7 @@ var _default_hud_manifest := {
     hud_key_value_list_item_manifest = [
         {
             item_class = TimeControlRow,
-            settings_enablement_label = "Time",
+            settings_enablement_label = "ScaffolderTime",
             enabled_by_default = true,
             settings_group_key = "hud",
         },

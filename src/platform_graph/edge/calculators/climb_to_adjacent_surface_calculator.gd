@@ -174,7 +174,7 @@ func calculate_edge(
                         false)
             if !position_end.is_valid:
                 return null
-            var duration := (positions.size() - 1) * Time.PHYSICS_TIME_STEP
+            var duration := (positions.size() - 1) * ScaffolderTime.PHYSICS_TIME_STEP
             instructions.duration = duration
         else:
             # The collision was too early, so there is no valid edge.
@@ -584,7 +584,7 @@ func _populate_convex_trajectory(
             _:
                 Sc.logger.error("ClimbToAdjacentSurfaceCalculator._populate_convex_trajectory")
     
-    var frame_count := int(ceil(duration / Time.PHYSICS_TIME_STEP))
+    var frame_count := int(ceil(duration / ScaffolderTime.PHYSICS_TIME_STEP))
     
     var positions := []
     positions.resize(frame_count)
@@ -643,7 +643,7 @@ func _populate_convex_trajectory(
                 velocities[frame_index] = velocity
                 
                 frame_index += 1
-                position.y += velocity.y * Time.PHYSICS_TIME_STEP
+                position.y += velocity.y * ScaffolderTime.PHYSICS_TIME_STEP
                 position = Sc.geometry \
                         .project_shape_onto_convex_corner_preserving_tangent_position( \
                             position,
@@ -703,7 +703,7 @@ func _populate_convex_trajectory(
                 velocities[frame_index] = velocity
                 
                 frame_index += 1
-                position.x += velocity.x * Time.PHYSICS_TIME_STEP
+                position.x += velocity.x * ScaffolderTime.PHYSICS_TIME_STEP
                 position = Sc.geometry \
                         .project_shape_onto_convex_corner_preserving_tangent_position( \
                             position,
@@ -712,7 +712,7 @@ func _populate_convex_trajectory(
                             position_start.surface)
                 
                 # Account for acceleration along the floor.
-                velocity.x += acceleration_x * Time.PHYSICS_TIME_STEP
+                velocity.x += acceleration_x * ScaffolderTime.PHYSICS_TIME_STEP
                 velocity.x = clamp(
                         velocity.x,
                         -max_surface_speed,
@@ -783,7 +783,7 @@ func _populate_convex_trajectory(
                 velocities[frame_index] = velocity
                 
                 frame_index += 1
-                position.x += velocity.x * Time.PHYSICS_TIME_STEP
+                position.x += velocity.x * ScaffolderTime.PHYSICS_TIME_STEP
                 position = Sc.geometry \
                         .project_shape_onto_convex_corner_preserving_tangent_position( \
                             position,
@@ -828,7 +828,7 @@ func _populate_convex_trajectory(
                 velocities[frame_index] = velocity
                 
                 frame_index += 1
-                position.y += velocity.y * Time.PHYSICS_TIME_STEP
+                position.y += velocity.y * ScaffolderTime.PHYSICS_TIME_STEP
                 position = Sc.geometry \
                         .project_shape_onto_convex_corner_preserving_tangent_position( \
                             position,

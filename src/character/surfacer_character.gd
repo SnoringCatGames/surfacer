@@ -360,8 +360,8 @@ func _match_expected_edge_trajectory() -> void:
     var playback_elapsed_time: float = \
             navigator.playback.get_elapsed_time_scaled()
     var has_trajectory_index_changed := \
-            int(playback_previous_elapsed_time / Time.PHYSICS_TIME_STEP) != \
-            int(playback_elapsed_time / Time.PHYSICS_TIME_STEP)
+            int(playback_previous_elapsed_time / ScaffolderTime.PHYSICS_TIME_STEP) != \
+            int(playback_elapsed_time / ScaffolderTime.PHYSICS_TIME_STEP)
     
     # Don't re-sync if we already synced for the current index.
     if !has_trajectory_index_changed and \
@@ -406,7 +406,7 @@ func _maintain_collisions() -> void:
         var playback_elapsed_time: float = \
                 navigator.playback.get_elapsed_time_scaled()
         var trajectory_index := \
-                int(playback_elapsed_time / Time.PHYSICS_TIME_STEP)
+                int(playback_elapsed_time / ScaffolderTime.PHYSICS_TIME_STEP)
         var is_at_end_of_edge := \
                 trajectory_index >= \
                 navigator.edge.trajectory \

@@ -77,8 +77,8 @@ func get_animation_state_at_time(
 func _sync_expected_middle_surface_state(
         surface_state: CharacterSurfaceState,
         edge_time: float) -> void:
-    var edge_frame_index := int(edge_time / Time.PHYSICS_TIME_STEP)
-    var fall_off_index := int(time_fall_off / Time.PHYSICS_TIME_STEP)
+    var edge_frame_index := int(edge_time / ScaffolderTime.PHYSICS_TIME_STEP)
+    var fall_off_index := int(time_fall_off / ScaffolderTime.PHYSICS_TIME_STEP)
     var is_on_start_floor := edge_frame_index < fall_off_index
     var did_just_release := edge_frame_index == fall_off_index
     var position := get_position_at_time(edge_time)

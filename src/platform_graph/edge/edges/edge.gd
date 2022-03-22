@@ -89,7 +89,7 @@ func _init(
     #     earlier than expected.
     # -   Too many frames probably means a bug in our calculations.
     var expected_frame_count_for_duration := \
-            int(duration / Time.PHYSICS_TIME_STEP)
+            int(duration / ScaffolderTime.PHYSICS_TIME_STEP)
     assert(trajectory == null or \
             trajectory.frame_continuous_positions_from_steps.empty() or \
             (trajectory.frame_continuous_positions_from_steps.size() >= \
@@ -316,7 +316,7 @@ func populate_trajectory(collision_params: CollisionCalcParams) -> void:
 
 func get_position_at_time(edge_time: float) -> Vector2:
     if is_instance_valid(trajectory):
-        var index := int(edge_time / Time.PHYSICS_TIME_STEP)
+        var index := int(edge_time / ScaffolderTime.PHYSICS_TIME_STEP)
         if index >= trajectory.frame_continuous_positions_from_steps.size():
             return end_position_along_surface.target_point
         return trajectory.frame_continuous_positions_from_steps[index]
@@ -326,7 +326,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
 
 func get_velocity_at_time(edge_time: float) -> Vector2:
     if is_instance_valid(trajectory):
-        var index := int(edge_time / Time.PHYSICS_TIME_STEP)
+        var index := int(edge_time / ScaffolderTime.PHYSICS_TIME_STEP)
         if index >= trajectory.frame_continuous_velocities_from_steps.size():
             return _get_post_trajectory_velocity_for_triggering_grab()
         return trajectory.frame_continuous_velocities_from_steps[index]
@@ -361,7 +361,7 @@ func get_animation_state_at_time(
 func sync_expected_surface_state(
         surface_state: CharacterSurfaceState,
         edge_time: float) -> void:
-    var edge_frame_index := int(edge_time / Time.PHYSICS_TIME_STEP)
+    var edge_frame_index := int(edge_time / ScaffolderTime.PHYSICS_TIME_STEP)
     var is_at_start_of_edge := edge_frame_index == 0
     var is_at_end_of_edge := \
             !is_instance_valid(trajectory) or \
@@ -426,7 +426,7 @@ func _sync_expected_middle_surface_state(
             "Surface-bound edges must override " +
             "_sync_expected_middle_surface_state")
     
-    var edge_frame_index := int(edge_time / Time.PHYSICS_TIME_STEP)
+    var edge_frame_index := int(edge_time / ScaffolderTime.PHYSICS_TIME_STEP)
     var did_just_release := edge_frame_index == 1
     var position := get_position_at_time(edge_time)
     var velocity := get_velocity_at_time(edge_time)

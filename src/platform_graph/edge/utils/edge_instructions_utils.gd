@@ -14,9 +14,9 @@ extends Reference
 #   that mechanism?
 # - Though I may need to always at least have _some_ small value here...
 # FIXME: Tweak this.
-const JUMP_DURATION_INCREASE_EPSILON := Time.PHYSICS_TIME_STEP * 0.5
+const JUMP_DURATION_INCREASE_EPSILON := ScaffolderTime.PHYSICS_TIME_STEP * 0.5
 const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := \
-        Time.PHYSICS_TIME_STEP * 2.5
+        ScaffolderTime.PHYSICS_TIME_STEP * 2.5
 
 
 # Translates movement data from a form that is more useful when calculating
@@ -110,7 +110,7 @@ static func convert_calculation_steps_to_movement_instructions(
                 true)
         var release := EdgeInstruction.new(
                 input_key,
-                Time.PHYSICS_TIME_STEP - 0.001,
+                ScaffolderTime.PHYSICS_TIME_STEP - 0.001,
                 false)
         instructions.push_front(release)
         instructions.push_front(press)
@@ -134,7 +134,7 @@ static func convert_calculation_steps_to_movement_instructions(
                         time_instruction_start,
                         vertical_step.time_step_start + \
                                 duration - \
-                                Time.PHYSICS_TIME_STEP * 2.0 - \
+                                ScaffolderTime.PHYSICS_TIME_STEP * 2.0 - \
                                 0.0001),
                 0.0)
         

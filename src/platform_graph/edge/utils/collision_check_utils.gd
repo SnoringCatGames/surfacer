@@ -19,7 +19,7 @@ static func check_instructions_discrete_trajectory_state(
     var movement_params := edge_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: EdgeInstruction = instructions.instructions[0]
-    var delta := Time.PHYSICS_TIME_STEP
+    var delta := ScaffolderTime.PHYSICS_TIME_STEP
     var is_first_jump := true
     var previous_time: float = instructions.instructions[0].time
     var current_time := previous_time + delta
@@ -47,7 +47,7 @@ static func check_instructions_discrete_trajectory_state(
     while current_time < end_time:
         # Update position for this frame, according to the velocity from the
         # previous frame.
-        delta = Time.PHYSICS_TIME_STEP
+        delta = ScaffolderTime.PHYSICS_TIME_STEP
         displacement = velocity * delta
         
         # Iterate through the horizontal steps in order to calculate what the
@@ -229,7 +229,7 @@ static func check_continuous_horizontal_step_for_collision(
     var collision_params := edge_calc_params.collision_params
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
-    var delta := Time.PHYSICS_TIME_STEP
+    var delta := ScaffolderTime.PHYSICS_TIME_STEP
     var previous_time := horizontal_step.time_step_start
     var current_time := previous_time + delta
     var step_end_time := horizontal_step.time_step_end
@@ -396,7 +396,7 @@ static func check_frame_for_collision(
             (kinematic_collision.travel.y / displacement.y if \
             abs(displacement.y) > abs(displacement.x) else \
             kinematic_collision.travel.x / displacement.x) * \
-            Time.PHYSICS_TIME_STEP
+            ScaffolderTime.PHYSICS_TIME_STEP
     
     if surface_collision.time_from_start_of_frame < 0.0:
         # -   This happens frequently.
