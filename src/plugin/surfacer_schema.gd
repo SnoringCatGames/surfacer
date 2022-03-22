@@ -183,7 +183,9 @@ const _movement_manifest := {
 const _PROPERTIES := {
     are_oddly_shaped_surfaces_used = true,
     
-    precompute_platform_graph_for_levels = [],
+    precompute_platform_graph_for_levels = [
+        [TYPE_STRING, ""],
+    ],
     ignores_platform_graph_save_files = false,
     ignores_platform_graph_save_file_trajectory_state = false,
     is_debug_only_platform_graph_state_included = false,

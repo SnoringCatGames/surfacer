@@ -324,35 +324,33 @@ func _on_auto_load_deps_ready() -> void:
 
 
 func _amend_manifest() -> void:
-    if !Su.manifest.has("colors_class"):
-        Su.manifest.colors_class = SurfacerColors
-    if !Su.manifest.has("geometry_class"):
-        Su.manifest.geometry_class = SurfacerGeometry
-    if !Su.manifest.has("draw_class"):
-        Su.manifest.draw_class = SurfacerDrawUtils
-    if !Su.manifest.has("ann_params_class"):
-        Su.manifest.ann_params_class = SurfacerAnnotationParameters
-    if !Su.manifest.has("beats_class"):
-        Su.manifest.beats_class = SurfacerBeatTracker
-    if !Su.manifest.has("characters_class"):
-        Su.manifest.characters_class = SurfacerCharacterManifest
+    if !Sc.manifest.has("colors_class"):
+        Sc.manifest.colors_class = SurfacerColors
+    if !Sc.manifest.has("geometry_class"):
+        Sc.manifest.geometry_class = SurfacerGeometry
+    if !Sc.manifest.has("draw_class"):
+        Sc.manifest.draw_class = SurfacerDrawUtils
+    if !Sc.manifest.has("ann_params_class"):
+        Sc.manifest.ann_params_class = SurfacerAnnotationParameters
+    if !Sc.manifest.has("beats_class"):
+        Sc.manifest.beats_class = SurfacerBeatTracker
+    if !Sc.manifest.has("characters_class"):
+        Sc.manifest.characters_class = SurfacerCharacterManifest
     
     var is_precomputing_platform_graphs: bool = \
-            Su.manifest.surfacer_manifest \
-                    .has("precompute_platform_graph_for_levels") and \
-            !Su.manifest.surfacer_manifest \
-                    .precompute_platform_graph_for_levels.empty()
+            manifest.has("precompute_platform_graph_for_levels") and \
+            !manifest.precompute_platform_graph_for_levels.empty()
     if is_precomputing_platform_graphs:
-        Su.manifest.metadata.is_splash_skipped = true
+        Sc.manifest.metadata.is_splash_skipped = true
     
     # Add Surfacer sounds to the front, so they can be overridden by the app.
     Sc.utils.concat(
-            Su.manifest.audio_manifest.sounds_manifest,
+            Sc.manifest.audio_manifest.sounds_manifest,
             _surfacer_sounds,
             false)
     
-    if !Su.manifest.gui_manifest.has("settings_item_manifest"):
-        Su.manifest.gui_manifest.settings_item_manifest = \
+    if !Sc.manifest.gui_manifest.has("settings_item_manifest"):
+        Sc.manifest.gui_manifest.settings_item_manifest = \
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
