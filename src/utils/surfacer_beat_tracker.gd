@@ -69,16 +69,16 @@ static func calculate_path_beat_hashes(
                                 edge, false)
                 var index_before_hash := \
                         int((path_time_of_next_beat - edge_start_time) / \
-                                Time.PHYSICS_TIME_STEP)
+                                ScaffolderTime.PHYSICS_TIME_STEP)
                 if index_before_hash < edge_vertices.size() - 1:
                     var time_of_index_before := \
                             edge_start_time + \
-                            index_before_hash * Time.PHYSICS_TIME_STEP
+                            index_before_hash * ScaffolderTime.PHYSICS_TIME_STEP
                     position_before = edge_vertices[index_before_hash]
                     position_after = edge_vertices[index_before_hash + 1]
                     weight = \
                             (path_time_of_next_beat - time_of_index_before) / \
-                            Time.PHYSICS_TIME_STEP
+                            ScaffolderTime.PHYSICS_TIME_STEP
                 else:
                     position_before = edge_vertices[edge_vertices.size() - 1]
                     position_after = position_before

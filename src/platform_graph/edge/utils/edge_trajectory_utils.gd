@@ -123,7 +123,7 @@ static func sub_trajectory(
             base_trajectory.frame_continuous_positions_from_steps.size() == \
             base_trajectory.frame_continuous_velocities_from_steps.size())
     
-    var start_index := int(start_time / Time.PHYSICS_TIME_STEP)
+    var start_index := int(start_time / ScaffolderTime.PHYSICS_TIME_STEP)
     
     var frame_continuous_positions_from_steps: PoolVector2Array = \
                 Sc.utils.sub_pool_vector2_array(
@@ -162,7 +162,7 @@ static func create_trajectory_placeholder_hack(edge: Edge) -> EdgeTrajectory:
     var velocity_start := edge.velocity_start
     var velocity_end := edge.velocity_end
     var frame_count := \
-            int(ceil(edge.duration / Time.PHYSICS_TIME_STEP))
+            int(ceil(edge.duration / ScaffolderTime.PHYSICS_TIME_STEP))
     
     var positions := PoolVector2Array()
     if edge.movement_params.includes_continuous_trajectory_positions:

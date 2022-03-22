@@ -478,14 +478,14 @@ func draw_path_duration_segment(
             if edge.trajectory != null:
                 index_before_segment = \
                         int((segment_time_start - edge_start_time) / \
-                                Time.PHYSICS_TIME_STEP)
+                                ScaffolderTime.PHYSICS_TIME_STEP)
                 index_before_segment = \
                         min(index_before_segment, edge_vertices.size() - 1)
                 time_of_index_before = \
                         edge_start_time + \
-                        index_before_segment * Time.PHYSICS_TIME_STEP
+                        index_before_segment * ScaffolderTime.PHYSICS_TIME_STEP
                 time_of_index_after = \
-                        time_of_index_before + Time.PHYSICS_TIME_STEP
+                        time_of_index_before + ScaffolderTime.PHYSICS_TIME_STEP
             else:
                 index_before_segment = 0
                 time_of_index_before = edge_start_time
@@ -513,14 +513,14 @@ func draw_path_duration_segment(
             if edge.trajectory != null:
                 index_after_segment = \
                         int((segment_time_end - edge_start_time) / \
-                                Time.PHYSICS_TIME_STEP) + 1
+                                ScaffolderTime.PHYSICS_TIME_STEP) + 1
                 index_after_segment = \
                         min(index_after_segment, edge_vertices.size() - 1)
                 time_of_index_after = \
                         edge_start_time + \
-                        index_after_segment * Time.PHYSICS_TIME_STEP
+                        index_after_segment * ScaffolderTime.PHYSICS_TIME_STEP
                 time_of_index_before = \
-                        time_of_index_after - Time.PHYSICS_TIME_STEP
+                        time_of_index_after - ScaffolderTime.PHYSICS_TIME_STEP
             else:
                 index_after_segment = 1
                 time_of_index_before = edge_start_time
