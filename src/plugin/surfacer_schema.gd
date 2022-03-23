@@ -3,18 +3,11 @@ class_name SurfacerSchema
 extends FrameworkSchema
 
 
-const _DISPLAY_NAME := "Surfacer"
-const _FOLDER_NAME := "surfacer"
-const _AUTO_LOAD_NAME := "Su"
-const _AUTO_LOAD_DEPS := ["Sc"]
-const _AUTO_LOAD_PATH := "res://addons/surfacer/src/config/su.gd"
-const _MANIFEST_PATH := "res://addons/surfacer/src/config/manifest.json"
-const _PLUGIN_ICON_DIRECTORY_PATH := \
-        "res://addons/surfacer/assets/images/editor_icons/plugin/"
+const _METADATA_SCRIPT := SurfacerMetadata
 
-const _surfacer_debug_params := {}
+var _surfacer_debug_params := {}
 
-const _annotations_manifest := {
+var _annotations_manifest := {
     is_player_preselection_trajectory_shown = true,
     
     is_player_slow_mo_trajectory_shown = false,
@@ -41,7 +34,7 @@ const _annotations_manifest := {
     new_path_pulse_time_length = 1.0,
 }
 
-const _surface_properties_manifest := {
+var _surface_properties_manifest := {
     "default": {
         can_grab = true,
         friction_multiplier = 0.7,
@@ -66,7 +59,7 @@ const _surface_properties_manifest := {
 
 # FIXME: LEFT OFF HERE: --------------------------------------------
 # - Use this in Surfacer.
-const _tileset_manifest := {
+var _tileset_manifest := {
     tilesets = [
         {
             tiles = [
@@ -137,7 +130,7 @@ const _tileset_manifest := {
     ],
 }
 
-const _movement_manifest := {
+var _movement_manifest := {
     uses_point_and_click_navigation = true,
     cancels_point_and_click_nav_on_key_press = true,
     
@@ -180,7 +173,7 @@ const _movement_manifest := {
             SurfacerMovementManifest.DEFAULT_EDGE_CALCULATOR_CLASSES,
 }
 
-const _PROPERTIES := {
+var _properties := {
     are_oddly_shaped_surfaces_used = true,
     
     precompute_platform_graph_for_levels = [
@@ -217,13 +210,5 @@ const _PROPERTIES := {
 }
 
 
-func _init().(
-        _DISPLAY_NAME,
-        _FOLDER_NAME,
-        _AUTO_LOAD_NAME,
-        _AUTO_LOAD_DEPS,
-        _AUTO_LOAD_PATH,
-        _MANIFEST_PATH,
-        _PLUGIN_ICON_DIRECTORY_PATH,
-        _PROPERTIES) -> void:
+func _init().(_METADATA_SCRIPT, _properties) -> void:
     pass

@@ -1,4 +1,5 @@
 tool
+class_name SuInterface
 extends FrameworkGlobal
 ## -   This is a global singleton that defines a bunch of Surfacer
 ##     parameters.[br]
