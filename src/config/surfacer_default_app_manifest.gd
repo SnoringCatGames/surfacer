@@ -5,15 +5,6 @@ extends FrameworkGlobal
 
 # ---
 
-# This method is useful for defining parameters that are likely to change
-# between builds or between development and production environments.
-func _override_configs_for_current_run() -> void:
-    Sc.logger.error(
-            "Abstract SurfacerDefaultAppManifest" +
-            "._override_configs_for_current_run " +
-            "is not implemented")
-
-
 func _derive_overrides_according_to_debug_or_playtest(
         manifest: Dictionary) -> void:
     var metadata: Dictionary = manifest.metadata
@@ -307,25 +298,3 @@ var _default_input_map = ScaffolderProjectSettings.DEFAULT_INPUT_MAP
 
 func _init(schema_class).(schema_class) -> void:
     pass
-
-
-func _on_auto_load_deps_ready() -> void:
-    _override_configs_for_app()
-    _override_configs_for_current_run()
-
-
-func _override_configs_for_app() -> void:
-    pass
-
-
-func _override_manifest(
-        original: Dictionary,
-        overrides: Dictionary) -> void:
-    for key in overrides:
-        var override_value = overrides[key]
-        if override_value is Dictionary:
-            if !original.has(key):
-                original[key] = {}
-            _override_manifest(original[key], override_value)
-        else:
-            original[key] = override_value
