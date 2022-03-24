@@ -1,6 +1,6 @@
 tool
 class_name SurfacerBootstrap
-extends ScaffolderBootstrap
+extends FrameworkBootstrap
 
 
 func _init().("SurfacerBootstrap") -> void:
