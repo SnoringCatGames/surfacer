@@ -12,6 +12,7 @@ const PLUGIN_ICON_PATH_PREFIX := \
         "res://addons/surfacer/assets/images/editor_icons/plugin/surfacer"
 const SCHEMA_PATH := "res://addons/surfacer/src/plugin/surfacer_schema.gd"
 const MANIFEST_PATH := "res://addons/surfacer/src/config/manifest.json"
+const MODES := {}
 
 
 func _init().(
@@ -22,5 +23,6 @@ func _init().(
         AUTO_LOAD_PATH,
         PLUGIN_ICON_PATH_PREFIX,
         SCHEMA_PATH,
-        MANIFEST_PATH) -> void:
+        MANIFEST_PATH,
+        MODES) -> void:
     pass
