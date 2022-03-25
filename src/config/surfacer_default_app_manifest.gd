@@ -136,75 +136,6 @@ func _set_common_overrides_for_annotations_mode() -> void:
 
 const BACKGROUND_COLOR_TO_EMPHASIZE_ANNOTATIONS := Color("20222A")
 
-var _default_settings_item_manifest := {
-    groups = {
-        main = {
-            label = "",
-            is_collapsible = false,
-            item_classes = [
-                MusicControlRow,
-                SoundEffectsControlRow,
-                HapticFeedbackControlRow,
-            ],
-        },
-        annotations = {
-            label = "Rendering",
-            is_collapsible = true,
-            item_classes = [
-                RulerAnnotatorControlRow,
-                PlayerPreselectionTrajectoryAnnotatorControlRow,
-                PlayerSlowMoTrajectoryAnnotatorControlRow,
-                PlayerNonSlowMoTrajectoryAnnotatorControlRow,
-                PlayerPreviousTrajectoryAnnotatorControlRow,
-                PlayerNavigationDestinationAnnotatorControlRow,
-                NpcSlowMoTrajectoryAnnotatorControlRow,
-                NpcNonSlowMoTrajectoryAnnotatorControlRow,
-                NpcPreviousTrajectoryAnnotatorControlRow,
-                NpcNavigationDestinationAnnotatorControlRow,
-                RecentMovementAnnotatorControlRow,
-                SurfacesAnnotatorControlRow,
-                CharacterPositionAnnotatorControlRow,
-                CharacterAnnotatorControlRow,
-                LevelAnnotatorControlRow,
-            ],
-        },
-        hud = {
-            label = "HUD",
-            is_collapsible = true,
-            item_classes = [
-                InspectorEnabledControlRow,
-                DebugPanelControlRow,
-            ],
-        },
-        miscellaneous = {
-            label = "Miscellaneous",
-            is_collapsible = true,
-            item_classes = [
-                ButtonControlsControlRow,
-                WelcomePanelControlRow,
-                IntroChoreographyControlRow,
-                CameraZoomControlRow,
-                TimeScaleControlRow,
-                MetronomeControlRow,
-            ],
-        },
-    },
-}
-
-var _default_pause_item_manifest := [
-    LevelControlRow,
-    TimeControlRow,
-]
-
-var _default_game_over_item_manifest := [
-    LevelControlRow,
-    TimeControlRow,
-]
-
-var _default_level_select_item_manifest := [
-    TotalPlaysControlRow,
-]
-
 var _default_hud_manifest := {
     hud_class = SurfacerHud,
     hud_key_value_box_size = \
@@ -223,18 +154,6 @@ var _default_hud_manifest := {
     ],
     is_inspector_enabled_default = false,
     inspector_panel_starts_open = false,
-}
-
-var _default_welcome_panel_manifest := {
-    items = [
-        ["*Auto nav*", "click"],
-        ["Walk/Climb", "arrow key / wasd"],
-        ["Jump", "space / x"],
-    ],
-    header_color = [
-    ],
-    body_color = [
-    ],
 }
 
 var _default_screen_manifest := {
@@ -284,14 +203,6 @@ var _default_screen_manifest := {
     screen_mask_transition_uses_pixel_snap = true,
     screen_mask_transition_smooth_size = 0.0,
 }
-
-var _default_slow_motion_manifest := {
-    time_scale = 0.5,
-    tick_tock_tempo_multiplier = 1,
-    saturation = 0.5,
-}
-
-var _default_input_map = ScaffolderProjectSettings.DEFAULT_INPUT_MAP
 
 # ---
 

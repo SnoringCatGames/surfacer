@@ -209,6 +209,59 @@ var _properties := {
     tileset_manifest = _tileset_manifest
 }
 
+var _overrides := {
+    ScaffolderSchema: {
+        gui_manifest = {
+            # FIXME: LEFT OFF HERE: ------------ Include this in all other frameworks too.
+            third_party_license_text = \
+                    ScaffolderThirdPartyLicenses.TEXT + \
+                    SurfacerThirdPartyLicenses.TEXT,
+            settings_item_manifest = {
+                groups = {
+                    annotations = {
+                        item_classes = [
+                            RulerAnnotatorControlRow,
+                            RecentMovementAnnotatorControlRow,
+                            # FIXME: LEFT OFF HERE: ------------ Include this in surface_parser framework too.
+                            SurfacesAnnotatorControlRow,
+                            # FIXME: LEFT OFF HERE: ------------ Include this in surface_parser framework too.
+                            CharacterPositionAnnotatorControlRow,
+                        ],
+                    },
+                    hud = {
+                        item_classes = [
+                            InspectorEnabledControlRow,
+                        ],
+                    },
+                    miscellaneous = {
+                        item_classes = [
+                            IntroChoreographyControlRow,
+                        ],
+                    },
+                },
+            },
+            hud_manifest = {
+                hud_class = SurfacerHud,
+                is_inspector_enabled_default = false,
+                inspector_panel_starts_open = false,
+            },
+            welcome_panel_manifest = {
+                items = [
+                    ["*Auto nav*", "click"],
+#                    ["Inspect graph", "ctrl + click (x2)"],
+                ],
+            },
+            screen_manifest = {
+                screens = [
+                    preload("res://addons/surfacer/src/gui/screens/precompute_platform_graphs_screen.tscn"),
+                    preload("res://addons/surfacer/src/gui/screens/surfacer_loading_screen.tscn"),
+                ],
+            },
+        },
+        annotators_class = SurfacerAnnotators,
+    },
+}
 
-func _init().(_METADATA_SCRIPT, _properties) -> void:
+
+func _init().(_METADATA_SCRIPT, _properties, _overrides) -> void:
     pass
