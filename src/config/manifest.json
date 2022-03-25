@@ -1,7 +1,7 @@
 {
   "are_oddly_shaped_surfaces_used": true,
   "precompute_platform_graph_for_levels": [
-    ""
+
   ],
   "ignores_platform_graph_save_files": false,
   "ignores_platform_graph_save_file_trajectory_state": false,
