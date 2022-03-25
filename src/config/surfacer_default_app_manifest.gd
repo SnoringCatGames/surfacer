@@ -5,13 +5,13 @@ extends FrameworkGlobal
 
 # ---
 
-func _derive_overrides_according_to_debug_or_playtest(
-        manifest: Dictionary) -> void:
-    var metadata: Dictionary = manifest.metadata
+func _set_common_overrides_for_release_mode() -> void:
+    var metadata: Dictionary = Sc.manifest.metadata
     var is_debug: bool = metadata.debug
     var is_playtest: bool = metadata.playtest
+
     metadata.pauses_on_focus_out = \
-            metadata.pauses_on_focus_out or !is_debug
+            metadata.pauses_on_focus_out and !is_debug
     metadata.are_all_levels_unlocked = \
             metadata.are_all_levels_unlocked and is_debug
     metadata.are_test_levels_included = \
@@ -39,17 +39,17 @@ func _derive_overrides_according_to_debug_or_playtest(
             metadata.also_prints_to_stdout and \
             is_debug
     
-    manifest.gui_manifest.hud_manifest.is_inspector_enabled_default = \
-            manifest.gui_manifest.hud_manifest.is_inspector_enabled_default or \
+    Sc.manifest.gui_manifest.hud_manifest.is_inspector_enabled_default = \
+            Sc.manifest.gui_manifest.hud_manifest.is_inspector_enabled_default or \
             is_debug or \
             is_playtest
 
 
-func _update_to_emphasize_annotations(manifest: Dictionary) -> void:
-    manifest.colors_manifest.background = \
+func _set_common_overrides_for_annotations_mode() -> void:
+    Sc.manifest.colors_manifest.background = \
             BACKGROUND_COLOR_TO_EMPHASIZE_ANNOTATIONS
     
-    var ann_params_man: Dictionary = manifest.annotation_parameters_manifest
+    var ann_params_man: Dictionary = Sc.manifest.annotation_parameters_manifest
     
     ann_params_man.edge_trajectory_width = 2.0
     ann_params_man.edge_waypoint_stroke_width = \
