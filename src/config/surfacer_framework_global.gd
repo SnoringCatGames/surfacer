@@ -58,99 +58,108 @@ func _get_common_overrides_for_annotations_mode() -> Array:
     Sc.manifest.colors_manifest.background = \
             BACKGROUND_COLOR_TO_EMPHASIZE_ANNOTATIONS
     
-    # FIXME: LEFT OFF HERE: --------------
-    # - Sc.ann_params isn't defined until after initialization.
-    # - Sc.manifest.annotation_parameters_manifest doesn't actually contain any
-    #   state from the schema.
-    #   - It is only ever populated here.
-    # - I could potentially create two separate override lifecycle events, one
-    #   before init that acts on the manifest, and one after that acts on the
-    #   global.
-    # - OR, probably much better, I could just hard-code the override values
-    #   here, and not try to re-use the previously defined values from the
-    #  ann-params script file.
-    var overrides := []
-#    var overrides := [
-#        ["Sc.manifest.annotation_parameters_manifest.edge_trajectory_width", 2.0],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_waypoint_stroke_width",
-#                Sc.manifest.annotation_parameters_manifest.edge_trajectory_width],
-#        ["Sc.manifest.annotation_parameters_manifest.path_downbeat_hash_length",
-#                Sc.manifest.annotation_parameters_manifest.edge_trajectory_width * 5.0],
-#        ["Sc.manifest.annotation_parameters_manifest.path_offbeat_hash_length",
-#                Sc.manifest.annotation_parameters_manifest.edge_trajectory_width * 3.0],
-#        ["Sc.manifest.annotation_parameters_manifest.instruction_indicator_stroke_width",
-#                Sc.manifest.annotation_parameters_manifest.edge_trajectory_width],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_instruction_indicator_length",
-#                Sc.manifest.annotation_parameters_manifest.edge_trajectory_width * 24.0],
-#        ["Sc.manifest.annotation_parameters_manifest.surface_alpha_ratio_with_inspector_open", 0.99],
-#
-#        ["Sc.manifest.annotation_parameters_manifest.edge_hue_min", 0.0],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_hue_max", 1.0],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_saturation", 0.8],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_value", 0.9],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_alpha", 0.8],
-##        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_alpha", 0.0],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_saturation", 0.6],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_value", 0.6],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_alpha", 0.8],
-#        ["Sc.manifest.annotation_parameters_manifest.waypoint_hue_min", 0.0],
-#        ["Sc.manifest.annotation_parameters_manifest.waypoint_hue_max", 1.0],
-#        ["Sc.manifest.annotation_parameters_manifest.waypoint_saturation", 0.6],
-#        ["Sc.manifest.annotation_parameters_manifest.waypoint_value", 0.7],
-#        ["Sc.manifest.annotation_parameters_manifest.waypoint_alpha", 0.7],
-#        ["Sc.manifest.annotation_parameters_manifest.instruction_hue_min", 0.0],
-#        ["Sc.manifest.annotation_parameters_manifest.instruction_hue_max", 1.0],
-#        ["Sc.manifest.annotation_parameters_manifest.instruction_saturation", 0.3],
-#        ["Sc.manifest.annotation_parameters_manifest.instruction_value", 0.9],
-#        ["Sc.manifest.annotation_parameters_manifest.instruction_alpha", 0.9],
-##        ["Sc.manifest.annotation_parameters_manifest.instruction_alpha", 0.0],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_color_params",
-#                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
-#                        Sc.manifest.annotation_parameters_manifest.edge_hue_min,
-#                        Sc.manifest.annotation_parameters_manifest.edge_hue_max,
-#                        Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_saturation,
-#                        Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_value,
-#                        Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_alpha)],
-#        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_color_params",
-#                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
-#                        Sc.manifest.annotation_parameters_manifest.edge_hue_min,
-#                        Sc.manifest.annotation_parameters_manifest.edge_hue_max,
-#                        Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_saturation,
-#                        Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_value,
-#                        Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_alpha)],
-#        ["Sc.manifest.annotation_parameters_manifest.waypoint_color_params",
-#                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
-#                        Sc.manifest.annotation_parameters_manifest.waypoint_hue_min,
-#                        Sc.manifest.annotation_parameters_manifest.waypoint_hue_max,
-#                        Sc.manifest.annotation_parameters_manifest.waypoint_saturation,
-#                        Sc.manifest.annotation_parameters_manifest.waypoint_value,
-#                        Sc.manifest.annotation_parameters_manifest.waypoint_alpha)],
-#        ["Sc.manifest.annotation_parameters_manifest.instruction_color_params",
-#                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
-#                        Sc.manifest.annotation_parameters_manifest.instruction_hue_min,
-#                        Sc.manifest.annotation_parameters_manifest.instruction_hue_max,
-#                        Sc.manifest.annotation_parameters_manifest.instruction_saturation,
-#                        Sc.manifest.annotation_parameters_manifest.instruction_value,
-#                        Sc.manifest.annotation_parameters_manifest.instruction_alpha)],
-#
-#        ["Sc.manifest.annotation_parameters_manifest.preselection_min_opacity", 0.8],
-#        ["Sc.manifest.annotation_parameters_manifest.preselection_max_opacity", 1.0],
-#        ["Sc.manifest.annotation_parameters_manifest.preselection_surface_opacity", 0.6],
-#        ["Sc.manifest.annotation_parameters_manifest.preselection_indicator_opacity", 0.6],
-#        ["Sc.manifest.annotation_parameters_manifest.preselection_path_opacity", 0.6],
-#        ["Sc.manifest.annotation_parameters_manifest.preselection_hash_opacity", 0.3],
-##        ["Sc.manifest.annotation_parameters_manifest.preselection_hash_opacity", 0.0],
-#
-#        ["Sc.manifest.annotation_parameters_manifest.recent_movement_opacity_newest", 0.99],
-##        ["Sc.manifest.annotation_parameters_manifest.recent_movement_opacity_newest", 0.0],
-#        ["Sc.manifest.annotation_parameters_manifest.recent_movement_opacity_oldest", 0.0],
-#
-#        ["Sc.manifest.annotation_parameters_manifest.character_position_opacity", 0.0],
-#        ["Sc.manifest.annotation_parameters_manifest.character_collider_opacity", 0.95],
-#        ["Sc.manifest.annotation_parameters_manifest.character_grab_position_opacity", 0.0],
-#        ["Sc.manifest.annotation_parameters_manifest.character_position_along_surface_opacity", 0.0],
-#        ["Sc.manifest.annotation_parameters_manifest.character_grab_tile_border_opacity", 0.0],
-#    ]
+    # NOTE: Keep these in-sync with SurfacerAnnotationParameters.
+    var edge_trajectory_width := 1.0
+    var edge_hue_min := 0.0
+    var edge_hue_max := 1.0
+    var edge_discrete_trajectory_saturation := 0.8
+    var edge_discrete_trajectory_value := 0.9
+    var edge_discrete_trajectory_alpha := 0.8
+    var edge_continuous_trajectory_saturation := 0.6
+    var edge_continuous_trajectory_value := 0.6
+    var edge_continuous_trajectory_alpha := 0.7
+    var waypoint_hue_min := 0.0
+    var waypoint_hue_max := 1.0
+    var waypoint_saturation := 0.6
+    var waypoint_value := 0.7
+    var waypoint_alpha := 0.7
+    var instruction_hue_min := 0.0
+    var instruction_hue_max := 1.0
+    var instruction_saturation := 0.3
+    var instruction_value := 0.9
+    var instruction_alpha := 0.7
+    
+    var overrides := [
+        ["Sc.manifest.annotation_parameters_manifest.edge_trajectory_width", 2.0],
+        ["Sc.manifest.annotation_parameters_manifest.edge_waypoint_stroke_width",
+                edge_trajectory_width],
+        ["Sc.manifest.annotation_parameters_manifest.path_downbeat_hash_length",
+                edge_trajectory_width * 5.0],
+        ["Sc.manifest.annotation_parameters_manifest.path_offbeat_hash_length",
+                edge_trajectory_width * 3.0],
+        ["Sc.manifest.annotation_parameters_manifest.instruction_indicator_stroke_width",
+                edge_trajectory_width],
+        ["Sc.manifest.annotation_parameters_manifest.edge_instruction_indicator_length",
+                edge_trajectory_width * 24.0],
+        ["Sc.manifest.annotation_parameters_manifest.surface_alpha_ratio_with_inspector_open", 0.99],
+
+        ["Sc.manifest.annotation_parameters_manifest.edge_hue_min", 0.0],
+        ["Sc.manifest.annotation_parameters_manifest.edge_hue_max", 1.0],
+        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_saturation", 0.8],
+        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_value", 0.9],
+        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_alpha", 0.8],
+#        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_alpha", 0.0],
+        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_saturation", 0.6],
+        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_value", 0.6],
+        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_alpha", 0.8],
+        ["Sc.manifest.annotation_parameters_manifest.waypoint_hue_min", 0.0],
+        ["Sc.manifest.annotation_parameters_manifest.waypoint_hue_max", 1.0],
+        ["Sc.manifest.annotation_parameters_manifest.waypoint_saturation", 0.6],
+        ["Sc.manifest.annotation_parameters_manifest.waypoint_value", 0.7],
+        ["Sc.manifest.annotation_parameters_manifest.waypoint_alpha", 0.7],
+        ["Sc.manifest.annotation_parameters_manifest.instruction_hue_min", 0.0],
+        ["Sc.manifest.annotation_parameters_manifest.instruction_hue_max", 1.0],
+        ["Sc.manifest.annotation_parameters_manifest.instruction_saturation", 0.3],
+        ["Sc.manifest.annotation_parameters_manifest.instruction_value", 0.9],
+        ["Sc.manifest.annotation_parameters_manifest.instruction_alpha", 0.9],
+#        ["Sc.manifest.annotation_parameters_manifest.instruction_alpha", 0.0],
+        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_color_params",
+                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+                        edge_hue_min,
+                        edge_hue_max,
+                        edge_discrete_trajectory_saturation,
+                        edge_discrete_trajectory_value,
+                        edge_discrete_trajectory_alpha)],
+        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_color_params",
+                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+                        edge_hue_min,
+                        edge_hue_max,
+                        edge_continuous_trajectory_saturation,
+                        edge_continuous_trajectory_value,
+                        edge_continuous_trajectory_alpha)],
+        ["Sc.manifest.annotation_parameters_manifest.waypoint_color_params",
+                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+                        waypoint_hue_min,
+                        waypoint_hue_max,
+                        waypoint_saturation,
+                        waypoint_value,
+                        waypoint_alpha)],
+        ["Sc.manifest.annotation_parameters_manifest.instruction_color_params",
+                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+                        instruction_hue_min,
+                        instruction_hue_max,
+                        instruction_saturation,
+                        instruction_value,
+                        instruction_alpha)],
+
+        ["Sc.manifest.annotation_parameters_manifest.preselection_min_opacity", 0.8],
+        ["Sc.manifest.annotation_parameters_manifest.preselection_max_opacity", 1.0],
+        ["Sc.manifest.annotation_parameters_manifest.preselection_surface_opacity", 0.6],
+        ["Sc.manifest.annotation_parameters_manifest.preselection_indicator_opacity", 0.6],
+        ["Sc.manifest.annotation_parameters_manifest.preselection_path_opacity", 0.6],
+        ["Sc.manifest.annotation_parameters_manifest.preselection_hash_opacity", 0.3],
+#        ["Sc.manifest.annotation_parameters_manifest.preselection_hash_opacity", 0.0],
+
+        ["Sc.manifest.annotation_parameters_manifest.recent_movement_opacity_newest", 0.99],
+#        ["Sc.manifest.annotation_parameters_manifest.recent_movement_opacity_newest", 0.0],
+        ["Sc.manifest.annotation_parameters_manifest.recent_movement_opacity_oldest", 0.0],
+
+        ["Sc.manifest.annotation_parameters_manifest.character_position_opacity", 0.0],
+        ["Sc.manifest.annotation_parameters_manifest.character_collider_opacity", 0.95],
+        ["Sc.manifest.annotation_parameters_manifest.character_grab_position_opacity", 0.0],
+        ["Sc.manifest.annotation_parameters_manifest.character_position_along_surface_opacity", 0.0],
+        ["Sc.manifest.annotation_parameters_manifest.character_grab_tile_border_opacity", 0.0],
+    ]
     for entry in overrides:
         entry.push_back("annotations")
     return overrides
