@@ -54,11 +54,21 @@ func _get_common_overrides_for_release_mode() -> Array:
 func _get_common_overrides_for_annotations_mode() -> Array:
     var are_annotations_emphasized: bool = \
             Sc.modes.get_is_active("annotations", "emphasized")
-            
+    
     Sc.manifest.colors_manifest.background = \
             BACKGROUND_COLOR_TO_EMPHASIZE_ANNOTATIONS
     
-    # FIXME: LEFT OFF HERE: -------------- These aren't true manifest values...
+    # FIXME: LEFT OFF HERE: --------------
+    # - Sc.ann_params isn't defined until after initialization.
+    # - Sc.manifest.annotation_parameters_manifest doesn't actually contain any
+    #   state from the schema.
+    #   - It is only ever populated here.
+    # - I could potentially create two separate override lifecycle events, one
+    #   before init that acts on the manifest, and one after that acts on the
+    #   global.
+    # - OR, probably much better, I could just hard-code the override values
+    #   here, and not try to re-use the previously defined values from the
+    #  ann-params script file.
     var overrides := []
 #    var overrides := [
 #        ["Sc.manifest.annotation_parameters_manifest.edge_trajectory_width", 2.0],
