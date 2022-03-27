@@ -157,17 +157,15 @@ var jump_land_positions_dash_stroke_width := 1.0
 
 ### Path preselection
 
-var preselection_invalid_surface_color := Sc.colors.opacify(
-        Sc.colors.invalid,
-        ScaffolderColors.ALPHA_XFAINT)
-var preselection_invalid_position_indicator_color := Sc.colors.opacify(
-        Sc.colors.invalid,
-        ScaffolderColors.ALPHA_XFAINT)
+var preselection_invalid_surface_color := \
+        ColorFactory.opacify("invalid", ColorConfig.ALPHA_XFAINT)
+var preselection_invalid_position_indicator_color := \
+        ColorFactory.opacify("invalid", ColorConfig.ALPHA_XFAINT)
 
-var preselection_surface_opacity := ScaffolderColors.ALPHA_XFAINT
-var preselection_indicator_opacity := ScaffolderColors.ALPHA_XFAINT
-var preselection_path_opacity := ScaffolderColors.ALPHA_XFAINT
-var preselection_hash_opacity := ScaffolderColors.ALPHA_XFAINT
+var preselection_surface_opacity := ColorConfig.ALPHA_XFAINT
+var preselection_indicator_opacity := ColorConfig.ALPHA_XFAINT
+var preselection_path_opacity := ColorConfig.ALPHA_XFAINT
+var preselection_hash_opacity := ColorConfig.ALPHA_XFAINT
 
 var preselection_min_opacity := 0.5
 var preselection_max_opacity := 1.0
@@ -187,10 +185,9 @@ var preselection_path_back_end_trim_radius := 0.0
 
 ### Clicks
 
-var click_valid_surface_color: Color = Sc.colors.surface_click_selection
-var click_invalid_surface_color: Color = Sc.colors.opacify(
-        Sc.colors.invalid,
-        ScaffolderColors.ALPHA_SOLID)
+var click_valid_surface_color := ColorFactory.palette("surface_click_selection")
+var click_invalid_surface_color: Color = \
+        ColorFactory.opacify("invalid", ColorConfig.ALPHA_SOLID)
 
 var click_surface_duration := 0.4
 
@@ -213,7 +210,7 @@ var navigator_trajectory_offbeat_hash_length := \
 ### Platform graph inspector selector
 
 var inspector_select_origin_surface_color: Color = \
-        Sc.colors.inspector_origin
+        ColorFactory.palette("inspector_origin")
 
 var inspector_select_origin_surface_dash_length := 6.0
 var inspector_select_origin_surface_dash_gap := 8.0
@@ -228,14 +225,14 @@ var inspector_select_delay_for_tree_to_handle_inspector_selection_threshold := \
 
 ### Character position
 
-var character_grab_position_opacity := ScaffolderColors.ALPHA_XXFAINT
+var character_grab_position_opacity := ColorConfig.ALPHA_XXFAINT
 var character_grab_position_line_width := 5.0
 var character_grab_position_line_length := 10.0
 
-var character_grab_tile_border_opacity := ScaffolderColors.ALPHA_XFAINT
+var character_grab_tile_border_opacity := ColorConfig.ALPHA_XFAINT
 var character_grab_tile_border_width := 6.0
 
-var character_position_along_surface_opacity := ScaffolderColors.ALPHA_XXFAINT
+var character_position_along_surface_opacity := ColorConfig.ALPHA_XXFAINT
 var character_position_along_surface_target_point_radius := 4.0
 var character_position_along_surface_t_length_in_surface := 0.0
 var character_position_along_surface_t_length_out_of_surface := 20.0

@@ -2,8 +2,6 @@ class_name GridIndicesAnnotator
 extends Node2D
 
 
-var TILE_INDICES_COLOR: Color = Sc.colors.grid_indices
-
 var surface_store: SurfaceStore
 
 
@@ -20,5 +18,5 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
         Sc.draw.draw_tilemap_indices(
                 self,
                 tile_map,
-                TILE_INDICES_COLOR,
+                ColorFactory.palette("grid_indices"),
                 only_render_used_indices)

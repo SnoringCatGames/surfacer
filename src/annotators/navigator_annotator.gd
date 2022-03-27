@@ -39,18 +39,15 @@ func _init(navigator: SurfaceNavigator) -> void:
             navigator.character.collider.half_width_height.y)
     
     var base_color: Color = navigator.character.navigation_annotation_color
-    current_path_color = Sc.colors.opacify(
-            base_color,
-            ScaffolderColors.ALPHA_XFAINT)
-    previous_path_color = Sc.colors.opacify(
-            base_color,
-            ScaffolderColors.ALPHA_XXFAINT)
-    indicator_fill_color = Sc.colors.opacify(
-            base_color,
-            ScaffolderColors.ALPHA_XXFAINT)
-    indicator_stroke_color = Sc.colors.opacify(
-            base_color,
-            ScaffolderColors.ALPHA_SLIGHTLY_FAINT)
+    current_path_color = \
+        ColorFactory.opacify(base_color, ColorConfig.ALPHA_XFAINT).sample()
+    previous_path_color = \
+        ColorFactory.opacify(base_color, ColorConfig.ALPHA_XXFAINT).sample()
+    indicator_fill_color = \
+        ColorFactory.opacify(base_color, ColorConfig.ALPHA_XXFAINT).sample()
+    indicator_stroke_color = \
+        ColorFactory.opacify(base_color, ColorConfig.ALPHA_SLIGHTLY_FAINT) \
+        .sample()
     pulse_color = Color.from_hsv(
             base_color.h,
             0.3,
