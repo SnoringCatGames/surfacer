@@ -3,12 +3,6 @@ class_name SurfacerColors
 extends ScaffolderColors
 
 
-const WHITE := Color(1.0, 1.0, 1.0)
-const PURPLE := Color(0.734, 0.277, 1.0)
-const TEAL := Color(0.277, 0.973, 1.0)
-const RED := Color(1.0, 0.305, 0.277)
-const ORANGE := Color(1.0, 0.648, 0.277)
-
 # --- Configured colors ---
 
 var surface_click_selection: Color

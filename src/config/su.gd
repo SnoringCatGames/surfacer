@@ -325,8 +325,6 @@ func _on_auto_load_deps_ready() -> void:
 
 
 func _amend_manifest() -> void:
-    if !Sc.manifest.has("colors_class"):
-        Sc.manifest.colors_class = SurfacerColors
     if !Sc.manifest.has("geometry_class"):
         Sc.manifest.geometry_class = SurfacerGeometry
     if !Sc.manifest.has("draw_class"):
@@ -427,7 +425,6 @@ func _parse_manifest() -> void:
 
 
 func _instantiate_sub_modules() -> void:
-    assert(Sc.colors is SurfacerColors)
     assert(Sc.draw is SurfacerDrawUtils)
     assert(Sc.level_config is SurfacerLevelConfig)
     assert(Sc.level_session is SurfacerLevelSession)
