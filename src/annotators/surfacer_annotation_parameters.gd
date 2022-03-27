@@ -305,21 +305,19 @@ var edge_continuous_trajectory_color_params := \
                 edge_continuous_trajectory_alpha)
 
 var default_edge_discrete_trajectory_hue := default_surface_hue
-var default_edge_discrete_trajectory_color_params := \
-        HsvColorParams.new(
-                default_edge_discrete_trajectory_hue,
-                edge_discrete_trajectory_saturation,
-                edge_discrete_trajectory_value,
-                edge_discrete_trajectory_alpha)
+var default_edge_discrete_trajectory_color_params := HsvColorParams.new(
+        default_edge_discrete_trajectory_hue,
+        edge_discrete_trajectory_saturation,
+        edge_discrete_trajectory_value,
+        edge_discrete_trajectory_alpha)
 
 var default_edge_continuous_trajectory_hue := \
         default_edge_discrete_trajectory_hue
-var default_edge_continuous_trajectory_color_params := \
-        HsvColorParams.new(
-                default_edge_continuous_trajectory_hue,
-                edge_continuous_trajectory_saturation,
-                edge_continuous_trajectory_value,
-                edge_continuous_trajectory_alpha)
+var default_edge_continuous_trajectory_color_params := HsvColorParams.new(
+        default_edge_continuous_trajectory_hue,
+        edge_continuous_trajectory_saturation,
+        edge_continuous_trajectory_value,
+        edge_continuous_trajectory_alpha)
 
 var waypoint_color_params := \
         ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
@@ -330,12 +328,11 @@ var waypoint_color_params := \
                 waypoint_alpha)
 
 var default_waypoint_hue := default_edge_continuous_trajectory_hue
-var default_waypoint_color_params := \
-        HsvColorParams.new(
-                default_waypoint_hue,
-                waypoint_saturation,
-                waypoint_value,
-                waypoint_alpha)
+var default_waypoint_color_params := HsvColorParams.new(
+        default_waypoint_hue,
+        waypoint_saturation,
+        waypoint_value,
+        waypoint_alpha)
 
 var instruction_color_params := \
         ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
@@ -346,12 +343,11 @@ var instruction_color_params := \
                 instruction_alpha)
 
 var default_instruction_hue := default_edge_continuous_trajectory_hue
-var default_instruction_color_params := \
-        HsvColorParams.new(
-                default_instruction_hue,
-                instruction_saturation,
-                instruction_value,
-                instruction_alpha)
+var default_instruction_color_params := HsvColorParams.new(
+        default_instruction_hue,
+        instruction_saturation,
+        instruction_value,
+        instruction_alpha)
 
 var failed_edge_attempt_color_params := HsvColorParams.new(
         collision_hue,
