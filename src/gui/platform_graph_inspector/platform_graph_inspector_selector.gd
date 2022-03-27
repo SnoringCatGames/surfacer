@@ -110,7 +110,7 @@ func _draw_selected_origin() -> void:
     Sc.draw.draw_dashed_polyline(
             self,
             first_target.surface.vertices,
-            Sc.ann_params.inspector_select_origin_surface_color,
+            Sc.ann_params.inspector_select_origin_surface_color.sample(),
             Sc.ann_params.inspector_select_origin_surface_dash_length,
             Sc.ann_params.inspector_select_origin_surface_dash_gap,
             0.0,
@@ -119,7 +119,7 @@ func _draw_selected_origin() -> void:
             self,
             first_target.target_point,
             Sc.ann_params.inspector_select_origin_position_radius,
-            Sc.ann_params.inspector_select_origin_surface_color,
+            Sc.ann_params.inspector_select_origin_surface_color.sample(),
             Sc.ann_params.inspector_select_origin_surface_dash_stroke_width)
 
 

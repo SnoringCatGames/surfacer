@@ -2,7 +2,7 @@ class_name CharacterSurfaceAnnotator
 extends Node2D
 
 
-const OPACITY_DEFAULT := ScaffolderColors.ALPHA_XFAINT
+const OPACITY_DEFAULT := ColorConfig.ALPHA_XFAINT
 const OPACITY_WITH_SURFACES_ANNOTATOR_ENABLED := 0.99
 
 var character: SurfacerCharacter

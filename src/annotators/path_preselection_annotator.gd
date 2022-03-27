@@ -46,18 +46,18 @@ func _init(character: SurfacerCharacter) -> void:
     phantom_surface.counter_clockwise_convex_neighbor = \
             phantom_surface_ccw_neighbor
     
-    surface_color = Sc.colors.opacify(
+    surface_color = ColorFactory.opacify(
             character.navigation_annotation_color,
-            Sc.ann_params.preselection_surface_opacity)
-    indicator_color = Sc.colors.opacify(
+            Sc.ann_params.preselection_surface_opacity).sample()
+    indicator_color = ColorFactory.opacify(
             character.navigation_annotation_color,
-            Sc.ann_params.preselection_indicator_opacity)
-    path_color = Sc.colors.opacify(
+            Sc.ann_params.preselection_indicator_opacity).sample()
+    path_color = ColorFactory.opacify(
             character.navigation_annotation_color,
-            Sc.ann_params.preselection_path_opacity)
-    hash_color = Sc.colors.opacify(
+            Sc.ann_params.preselection_path_opacity).sample()
+    hash_color = ColorFactory.opacify(
             character.navigation_annotation_color,
-            Sc.ann_params.preselection_hash_opacity)
+            Sc.ann_params.preselection_hash_opacity).sample()
     
     self.path_front_end_trim_radius = min(
             character.collider.half_width_height.x,
@@ -193,9 +193,10 @@ func _draw() -> void:
             hash_base_color = hash_color
     else:
         surface_base_color = \
-                Sc.ann_params.preselection_invalid_surface_color
+                Sc.ann_params.preselection_invalid_surface_color.sample()
         position_indicator_base_color = \
-                Sc.ann_params.preselection_invalid_position_indicator_color
+                Sc.ann_params.preselection_invalid_position_indicator_color \
+                .sample()
     
     if Su.ann_manifest.is_player_preselection_trajectory_shown:
         # Draw path.
