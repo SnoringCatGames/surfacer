@@ -186,7 +186,7 @@ var preselection_path_back_end_trim_radius := 0.0
 ### Clicks
 
 var click_valid_surface_color := ColorFactory.palette("surface_click_selection")
-var click_invalid_surface_color: Color = \
+var click_invalid_surface_color := \
         ColorFactory.opacify("invalid", ColorConfig.ALPHA_SOLID)
 
 var click_surface_duration := 0.4
@@ -209,7 +209,7 @@ var navigator_trajectory_offbeat_hash_length := \
 
 ### Platform graph inspector selector
 
-var inspector_select_origin_surface_color: Color = \
+var inspector_select_origin_surface_color := \
         ColorFactory.palette("inspector_origin")
 
 var inspector_select_origin_surface_dash_length := 6.0
