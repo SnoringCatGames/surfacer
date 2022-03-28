@@ -12,7 +12,7 @@ var color: Color
 func _init(character: SurfacerCharacter) -> void:
     self.character = character
     self.color = Color.from_hsv(
-            character.position_annotation_color.h,
+            character.position_annotation_color.sample().h,
             0.8,
             0.9,
             OPACITY_DEFAULT)

@@ -12,7 +12,7 @@ func _init(character: SurfacerCharacter) -> void:
     polyline = PoolVector2Array()
     polyline.resize(5)
     self.tile_border_color = Color.from_hsv(
-            character.position_annotation_color.h,
+            character.position_annotation_color.sample().h,
             0.7,
             0.9,
             Sc.ann_params.character_grab_tile_border_opacity)
