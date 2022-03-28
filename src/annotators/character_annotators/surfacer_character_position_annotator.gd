@@ -7,13 +7,15 @@ var position_along_surface_color: Color
 
 
 func _init(character: SurfacerCharacter).(character) -> void:
+    var position_annotation_color: Color = \
+        character.position_annotation_color.sample()
     self.grab_position_color = Color.from_hsv(
-            character.position_annotation_color.h,
+            position_annotation_color.h,
             0.7,
             0.9,
             Sc.ann_params.character_grab_position_opacity)
     self.position_along_surface_color = Color.from_hsv(
-            character.position_annotation_color.h,
+            position_annotation_color.h,
             0.7,
             0.9,
             Sc.ann_params.character_position_along_surface_opacity)

@@ -38,7 +38,8 @@ func _init(navigator: SurfaceNavigator) -> void:
             navigator.character.collider.half_width_height.x,
             navigator.character.collider.half_width_height.y)
     
-    var base_color: Color = navigator.character.navigation_annotation_color
+    var base_color: Color = \
+        navigator.character.navigation_annotation_color.sample()
     current_path_color = \
         ColorFactory.opacify(base_color, ColorConfig.ALPHA_XFAINT).sample()
     previous_path_color = \
