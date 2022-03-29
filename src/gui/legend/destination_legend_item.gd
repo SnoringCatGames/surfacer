@@ -27,7 +27,7 @@ func _draw_shape(
             center.x,
             center.y + length / 2.0)
     var color: Color = \
-            Sc.ann_params.default_waypoint_color_params.get_color()
+            Sc.ann_params.default_waypoint_color_config.sample()
     var surface := Surface.new()
     surface.side = SurfaceSide.FLOOR
     var position := PositionAlongSurface.new()

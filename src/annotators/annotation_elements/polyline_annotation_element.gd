@@ -4,7 +4,7 @@ extends SurfacerAnnotationElement
 
 var legend_item_class_reference
 var vertices: Array
-var color_params: ColorParams
+var color_config: ColorConfig
 var is_filled: bool
 var is_dashed: bool
 var dash_length: float
@@ -16,7 +16,7 @@ func _init(
         type: int,
         legend_item_class_reference,
         vertices: Array,
-        color_params: ColorParams,
+        color_config: ColorConfig,
         is_filled: bool,
         is_dashed: bool,
         dash_length: float,
@@ -26,7 +26,7 @@ func _init(
     assert(!is_filled or !is_dashed)
     self.legend_item_class_reference = legend_item_class_reference
     self.vertices = vertices
-    self.color_params = color_params
+    self.color_config = color_config
     self.is_filled = is_filled
     self.is_dashed = is_dashed
     self.dash_length = dash_length
@@ -35,7 +35,7 @@ func _init(
 
 
 func draw(canvas: CanvasItem) -> void:
-    var color := color_params.get_color()
+    var color := color_config.sample()
     if is_filled:
         canvas.draw_colored_polygon(
                 PoolVector2Array(vertices),
@@ -58,7 +58,7 @@ func draw(canvas: CanvasItem) -> void:
 
 func _create_legend_items() -> Array:
     var legend_item: PolylineLegendItem = legend_item_class_reference.new(
-            color_params,
+            color_config,
             is_filled,
             is_dashed,
             dash_length,

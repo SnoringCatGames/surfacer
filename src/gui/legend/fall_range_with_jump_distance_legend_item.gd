@@ -7,8 +7,8 @@ const TEXT := "Fall range with\njump distance"
 
 
 func _init(
-        color_params := Sc.ann_params \
-                .default_polyline_color_params,
+        color_config := Sc.ann_params \
+                .default_polyline_color_config,
         is_filled := false,
         is_dashed := false,
         dash_length := \
@@ -20,7 +20,7 @@ func _init(
         .(
         TYPE,
         TEXT,
-        color_params,
+        color_config,
         is_filled,
         is_dashed,
         dash_length,

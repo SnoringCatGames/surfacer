@@ -15,17 +15,17 @@ const NORMALIZED_FAKE_POSITIONS := [
 ]
 const SCALE := 0.8
 
-var color_params: ColorParams
+var color_config: ColorConfig
 
 
 func _init(
         type: String,
         text: String,
-        color_params: ColorParams) \
+        color_config: ColorConfig) \
         .(
         type,
         text) -> void:
-    self.color_params = color_params
+    self.color_config = color_config
 
 
 func _draw_shape(
@@ -38,5 +38,5 @@ func _draw_shape(
         positions[i] = NORMALIZED_FAKE_POSITIONS[i] * size * SCALE + offset
     draw_polyline(
             PoolVector2Array(positions),
-            color_params.get_color(),
+            color_config.sample(),
             Sc.ann_params.edge_trajectory_width)

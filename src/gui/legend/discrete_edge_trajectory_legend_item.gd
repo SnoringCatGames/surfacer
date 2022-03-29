@@ -4,12 +4,12 @@ extends ValidEdgeTrajectoryLegendItem
 
 const TYPE := "DISCRETE_EDGE_TRAJECTORY"
 const TEXT := "Edge trajectory\n(discrete)"
-var COLOR_PARAMS: ColorParams = \
-        Sc.ann_params.default_edge_discrete_trajectory_color_params
+var COLOR_CONFIG: ColorConfig = \
+        Sc.ann_params.default_edge_discrete_trajectory_color_config
 
 
 func _init().(
         TYPE,
         TEXT,
-        COLOR_PARAMS) -> void:
+        COLOR_CONFIG) -> void:
     pass

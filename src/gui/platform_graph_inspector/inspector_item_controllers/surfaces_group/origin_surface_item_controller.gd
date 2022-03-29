@@ -340,7 +340,7 @@ func _get_jump_fall_range_annotation_elements(
                 FallRangeWithoutJumpDistanceAnnotationElement.new(
                         fall_range_polygon_without_jump_distance,
                         Sc.ann_params \
-                                .fall_range_polygon_color_params,
+                                .fall_range_polygon_color_config,
                         false,
                         false,
                         Sc.ann_params \
@@ -354,7 +354,7 @@ func _get_jump_fall_range_annotation_elements(
                 FallRangeWithJumpDistanceAnnotationElement.new(
                         fall_range_polygon_with_jump_distance,
                         Sc.ann_params \
-                                .fall_range_polygon_color_params,
+                                .fall_range_polygon_color_config,
                         false,
                         false,
                         Sc.ann_params \
