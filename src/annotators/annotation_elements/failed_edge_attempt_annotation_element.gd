@@ -16,17 +16,17 @@ var includes_surfaces: bool
 
 func _init(
         failed_edge_attempt: FailedEdgeAttempt,
-        end_color_config := Sc.ann_params \
+        end_color_config := Sc.annotators.params \
                 .edge_discrete_trajectory_color_config,
         line_color_config := \
-                Sc.ann_params.failed_edge_attempt_color_config,
+                Sc.annotators.params.failed_edge_attempt_color_config,
         dash_length := \
-                Sc.ann_params.failed_edge_attempt_dash_length,
+                Sc.annotators.params.failed_edge_attempt_dash_length,
         dash_gap := \
-                Sc.ann_params.failed_edge_attempt_dash_gap,
-        dash_stroke_width := Sc.ann_params \
+                Sc.annotators.params.failed_edge_attempt_dash_gap,
+        dash_stroke_width := Sc.annotators.params \
                 .failed_edge_attempt_dash_stroke_width,
-        includes_surfaces := Sc.ann_params \
+        includes_surfaces := Sc.annotators.params \
                 .failed_edge_attempt_includes_surfaces) \
         .(TYPE) -> void:
     assert(failed_edge_attempt != null)
@@ -58,8 +58,8 @@ func draw(canvas: CanvasItem) -> void:
     Sc.draw.draw_x(
             canvas,
             middle,
-            Sc.ann_params.failed_edge_attempt_x_width,
-            Sc.ann_params.failed_edge_attempt_x_height,
+            Sc.annotators.params.failed_edge_attempt_x_width,
+            Sc.annotators.params.failed_edge_attempt_x_height,
             line_color,
             dash_stroke_width)
     Sc.draw.draw_origin_marker(

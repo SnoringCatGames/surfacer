@@ -8,7 +8,7 @@ var recent_actions: PoolIntArray
 
 func _init(character: SurfacerCharacter).(character) -> void:
     self.recent_actions = PoolIntArray()
-    self.recent_actions.resize(Sc.ann_params.recent_positions_buffer_size)
+    self.recent_actions.resize(Sc.annotators.params.recent_positions_buffer_size)
 
 
 func check_for_update() -> void:
@@ -59,7 +59,7 @@ func check_for_update() -> void:
     total_position_count += 1
     current_position_index = \
             (current_position_index + 1) % \
-            Sc.ann_params.recent_positions_buffer_size
+            Sc.annotators.params.recent_positions_buffer_size
     
     # Record the new position for the current frame.
     recent_positions[current_position_index] = \
@@ -83,7 +83,7 @@ func _draw_frame(
             previous_position,
             next_position,
             color,
-            Sc.ann_params.recent_movement_stroke_width)
+            Sc.annotators.params.recent_movement_stroke_width)
     
     var action: int = recent_actions[index]
     if action != CharacterActionType.NONE:
@@ -152,5 +152,5 @@ func _draw_action_indicator(
                 input_key,
                 is_pressed,
                 position,
-                Sc.ann_params.edge_instruction_indicator_length,
+                Sc.annotators.params.edge_instruction_indicator_length,
                 color)

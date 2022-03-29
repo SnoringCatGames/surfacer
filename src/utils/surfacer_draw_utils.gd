@@ -10,7 +10,7 @@ func draw_surface(
         canvas: CanvasItem,
         surface: Surface,
         color: Color,
-        depth: float = Sc.ann_params.surface_depth) -> void:
+        depth: float = Sc.annotators.params.surface_depth) -> void:
     var vertices := surface.vertices
     var vertex_count := vertices.size()
     
@@ -107,7 +107,7 @@ func draw_surface_segment(
             Sc.geometry.get_segment_normal(segment_start, segment_end)
     
     var surface_depth_division_size: float = \
-            depth / Sc.ann_params.surface_depth_divisions_count
+            depth / Sc.annotators.params.surface_depth_divisions_count
     var segment_depth_division_offset := \
             segment_normal * -surface_depth_division_size
     var half_segment_depth_division_offset := \
@@ -172,9 +172,9 @@ func draw_surface_segment(
     # ---
     
     var alpha_start := color.a
-    var alpha_end: float = alpha_start * Sc.ann_params.surface_alpha_end_ratio
+    var alpha_end: float = alpha_start * Sc.annotators.params.surface_alpha_end_ratio
     
-    for i in Sc.ann_params.surface_depth_divisions_count:
+    for i in Sc.annotators.params.surface_depth_divisions_count:
         var current_depth_segment_start: Vector2 = \
                 segment_start + \
                 surface_depth_division_start_delta * i
@@ -183,7 +183,7 @@ func draw_surface_segment(
                 surface_depth_division_end_delta * i
         
         var progress: float = \
-                i / (Sc.ann_params.surface_depth_divisions_count - 1.0)
+                i / (Sc.annotators.params.surface_depth_divisions_count - 1.0)
         progress = Sc.utils.ease_by_name(progress, "ease_out")
         color.a = alpha_start + progress * (alpha_end - alpha_start)
         
@@ -198,13 +198,13 @@ func draw_single_vertex_surface(
         canvas: CanvasItem,
         surface: Surface,
         color: Color,
-        depth: float = Sc.ann_params.surface_depth) -> void:
+        depth: float = Sc.annotators.params.surface_depth) -> void:
     var point: Vector2 = surface.vertices[0]
     
-    var alpha_start: float = Sc.ann_params.surface_alpha_end_ratio
+    var alpha_start: float = Sc.annotators.params.surface_alpha_end_ratio
     var alpha_delta: float = \
             (color.a - alpha_start) / \
-            Sc.ann_params.surface_depth_divisions_count
+            Sc.annotators.params.surface_depth_divisions_count
     
     var color_start := color
     color_start.a = alpha_start
@@ -214,11 +214,11 @@ func draw_single_vertex_surface(
     
     var radius := depth
     var delta_radius: float = \
-            depth / Sc.ann_params.surface_depth_divisions_count
+            depth / Sc.annotators.params.surface_depth_divisions_count
     
     canvas.draw_circle(point, radius, color_start)
     
-    for i in range(1, Sc.ann_params.surface_depth_divisions_count):
+    for i in range(1, Sc.annotators.params.surface_depth_divisions_count):
         radius -= delta_radius
         canvas.draw_circle(point, radius, color_overlay)
         # TODO: This is a quick hack to make the gradient more exponential.
@@ -274,7 +274,7 @@ func draw_origin_marker(
         canvas: CanvasItem,
         target: Vector2,
         color: Color,
-        radius: float = Sc.ann_params.edge_start_radius,
+        radius: float = Sc.annotators.params.edge_start_radius,
         border_width := 1.0,
         sector_arc_length := 3.0) -> void:
     draw_circle_outline(
@@ -291,10 +291,10 @@ func draw_destination_marker(
         destination: PositionAlongSurface,
         is_based_on_target_point: bool,
         color: Color,
-        cone_length: float = Sc.ann_params.edge_end_cone_length,
-        circle_radius: float = Sc.ann_params.edge_end_radius,
+        cone_length: float = Sc.annotators.params.edge_end_cone_length,
+        circle_radius: float = Sc.annotators.params.edge_end_radius,
         is_filled := false,
-        border_width: float = Sc.ann_params.edge_waypoint_stroke_width,
+        border_width: float = Sc.annotators.params.edge_waypoint_stroke_width,
         sector_arc_length := 4.0) -> void:
     if destination.surface != null:
         # Draw a cone pointing toward the surface.
@@ -328,7 +328,7 @@ func draw_destination_marker(
         
         var cone_center_displacement: float = \
                 cone_length * SQRT_TWO / 2.0 * \
-                Sc.ann_params.in_air_destination_indicator_size_ratio
+                Sc.annotators.params.in_air_destination_indicator_size_ratio
         var circle_centers := [
             cone_end_point + Vector2(
                     cone_center_displacement,
@@ -344,17 +344,17 @@ func draw_destination_marker(
                     -cone_center_displacement),
         ]
         
-        for i in Sc.ann_params.in_air_destination_indicator_cone_count:
+        for i in Sc.annotators.params.in_air_destination_indicator_cone_count:
             var circle_offset := Vector2(0.0, -cone_center_displacement) \
                     .rotated((2.0 * PI * i) / \
-                            Sc.ann_params \
+                            Sc.annotators.params \
                             .in_air_destination_indicator_cone_count)
             draw_ice_cream_cone(
                     canvas,
                     cone_end_point,
                     cone_end_point + circle_offset,
                     circle_radius * \
-                                Sc.ann_params \
+                                Sc.annotators.params \
                                 .in_air_destination_indicator_size_ratio,
                     color,
                     is_filled,
@@ -384,14 +384,14 @@ func draw_instruction_indicator(
     var start := position - end_offset_from_mid
     var end := position + end_offset_from_mid
     var head_length: float = \
-            length * Sc.ann_params.instruction_indicator_head_length_ratio
+            length * Sc.annotators.params.instruction_indicator_head_length_ratio
     var head_width: float= \
-            length * Sc.ann_params.instruction_indicator_head_width_ratio
+            length * Sc.annotators.params.instruction_indicator_head_width_ratio
     var strike_through_length: float= \
             INF if \
             is_pressed else \
             length * \
-            Sc.ann_params.instruction_indicator_strike_trough_length_ratio
+            Sc.annotators.params.instruction_indicator_strike_trough_length_ratio
     
     draw_strike_through_arrow(
             canvas,
@@ -401,13 +401,13 @@ func draw_instruction_indicator(
             head_width,
             strike_through_length,
             color,
-            Sc.ann_params.instruction_indicator_stroke_width)
+            Sc.annotators.params.instruction_indicator_stroke_width)
 
 
 func draw_path(
         canvas: CanvasItem,
         path: PlatformGraphPath,
-        stroke_width: float = Sc.ann_params.edge_trajectory_width,
+        stroke_width: float = Sc.annotators.params.edge_trajectory_width,
         color := Color.white,
         trim_front_end_radius := 0.0,
         trim_back_end_radius := 0.0,
@@ -450,7 +450,7 @@ func draw_path_duration_segment(
         path: PlatformGraphPath,
         segment_time_start: float,
         segment_time_end: float,
-        stroke_width: float = Sc.ann_params.edge_trajectory_width,
+        stroke_width: float = Sc.annotators.params.edge_trajectory_width,
         color := Color.white,
         trim_front_end_radius := 0.0,
         trim_back_end_radius := 0.0) -> void:
@@ -677,10 +677,10 @@ func _trim_back_end(
 func draw_beat_hashes(
         canvas: CanvasItem,
         beats: Array,
-        downbeat_hash_length: float = Sc.ann_params.path_downbeat_hash_length,
-        offbeat_hash_length: float = Sc.ann_params.path_offbeat_hash_length,
-        downbeat_stroke_width: float = Sc.ann_params.edge_trajectory_width,
-        offbeat_stroke_width: float = Sc.ann_params.edge_trajectory_width,
+        downbeat_hash_length: float = Sc.annotators.params.path_downbeat_hash_length,
+        offbeat_hash_length: float = Sc.annotators.params.path_offbeat_hash_length,
+        downbeat_stroke_width: float = Sc.annotators.params.edge_trajectory_width,
+        offbeat_stroke_width: float = Sc.annotators.params.edge_trajectory_width,
         downbeat_color := Color.white,
         offbeat_color := Color.white) -> void:
     for beat in beats:
@@ -712,24 +712,24 @@ func draw_beat_hashes(
 func draw_edge(
         canvas: CanvasItem,
         edge: Edge,
-        stroke_width: float = Sc.ann_params.edge_trajectory_width,
+        stroke_width: float = Sc.annotators.params.edge_trajectory_width,
         discrete_trajectory_color := Color.white,
         includes_waypoints := false,
         includes_instruction_indicators := false,
         includes_continuous_positions := true,
         includes_discrete_positions := false) -> void:
     if discrete_trajectory_color == Color.white:
-        discrete_trajectory_color = Sc.ann_params \
+        discrete_trajectory_color = Sc.annotators.params \
                 .edge_discrete_trajectory_color_config.sample()
     
     # Set up colors.
-    var continuous_trajectory_color: Color = Sc.ann_params \
+    var continuous_trajectory_color: Color = Sc.annotators.params \
             .edge_continuous_trajectory_color_config.sample()
     continuous_trajectory_color.h = discrete_trajectory_color.h
-    var waypoint_color: Color = Sc.ann_params \
+    var waypoint_color: Color = Sc.annotators.params \
             .waypoint_color_config.sample()
     waypoint_color.h = discrete_trajectory_color.h
-    var instruction_color: Color = Sc.ann_params \
+    var instruction_color: Color = Sc.annotators.params \
             .instruction_color_config.sample()
     instruction_color.h = discrete_trajectory_color.h
     
@@ -769,7 +769,7 @@ func draw_edge(
             draw_circle_outline(
                     canvas,
                     waypoint_position,
-                    Sc.ann_params.edge_waypoint_radius,
+                    Sc.annotators.params.edge_waypoint_radius,
                     waypoint_color,
                     stroke_width,
                     4.0)
@@ -796,7 +796,7 @@ func draw_edge(
                     instruction.input_key,
                     instruction.is_pressed,
                     instruction.position,
-                    Sc.ann_params.edge_instruction_indicator_length,
+                    Sc.annotators.params.edge_instruction_indicator_length,
                     instruction_color)
         
         # Draw the vertical instruction end position.
@@ -806,7 +806,7 @@ func draw_edge(
                     "j",
                     false,
                     edge.trajectory.jump_instruction_end.position,
-                    Sc.ann_params.edge_instruction_indicator_length,
+                    Sc.annotators.params.edge_instruction_indicator_length,
                     instruction_color)
 
 
@@ -845,7 +845,7 @@ func _remove_too_close_neighbors(
     for index in range(1, vertices.size()):
         var vertex := vertices[index]
         if vertex.distance_squared_to(previous_vertex) > \
-                Sc.ann_params \
+                Sc.annotators.params \
                 .adjacent_vertex_too_close_distance_squared_threshold:
             previous_vertex = vertex
             result[result_size] = previous_vertex

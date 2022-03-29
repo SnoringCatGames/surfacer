@@ -15,15 +15,15 @@ var color_config: ColorConfig
 func _init(
         edge: Edge,
         includes_waypoints := \
-                Sc.ann_params.includes_waypoints,
+                Sc.annotators.params.includes_waypoints,
         includes_instruction_indicators := \
-                Sc.ann_params.includes_instruction_indicators,
+                Sc.annotators.params.includes_instruction_indicators,
         includes_continuous_positions := \
-                Sc.ann_params.includes_continuous_positions,
+                Sc.annotators.params.includes_continuous_positions,
         includes_discrete_positions := \
-                Sc.ann_params.includes_discrete_positions,
+                Sc.annotators.params.includes_discrete_positions,
         color_config := \
-                Sc.ann_params.edge_discrete_trajectory_color_config) \
+                Sc.annotators.params.edge_discrete_trajectory_color_config) \
         .(TYPE) -> void:
     self.edge = edge
     self.includes_waypoints = includes_waypoints
@@ -38,7 +38,7 @@ func draw(canvas: CanvasItem) -> void:
     Sc.draw.draw_edge(
             canvas,
             edge,
-            Sc.ann_params.edge_trajectory_width,
+            Sc.annotators.params.edge_trajectory_width,
             color,
             includes_waypoints,
             includes_instruction_indicators,

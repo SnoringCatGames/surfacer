@@ -22,5 +22,5 @@ func _draw_shape(
             "mr",
             true,
             center,
-            Sc.ann_params.edge_instruction_indicator_length * SCALE,
-            Sc.ann_params.default_instruction_color_config.sample())
+            Sc.annotators.params.edge_instruction_indicator_length * SCALE,
+            Sc.annotators.params.default_instruction_color_config.sample())

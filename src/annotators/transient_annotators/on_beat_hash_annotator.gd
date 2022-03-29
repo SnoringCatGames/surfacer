@@ -16,36 +16,36 @@ var width: float
 
 func _init(
         beat: PathBeatPrediction,
-        downbeat_hash_length := Sc.ann_params.downbeat_hash_length_default,
-        offbeat_hash_length := Sc.ann_params.offbeat_hash_length_default,
-        downbeat_stroke_width := Sc.ann_params.hash_stroke_width_default,
-        offbeat_stroke_width := Sc.ann_params.hash_stroke_width_default,
+        downbeat_hash_length := Sc.annotators.params.downbeat_hash_length_default,
+        offbeat_hash_length := Sc.annotators.params.offbeat_hash_length_default,
+        downbeat_stroke_width := Sc.annotators.params.hash_stroke_width_default,
+        offbeat_stroke_width := Sc.annotators.params.hash_stroke_width_default,
         downbeat_color := Color.white,
         offbeat_color := Color.white
         ).(
-        Sc.ann_params.downbeat_duration if \
+        Sc.annotators.params.downbeat_duration if \
                 beat.is_downbeat else \
-                Sc.ann_params.offbeat_duration) -> void:
+                Sc.annotators.params.offbeat_duration) -> void:
     self.beat = beat
     if beat.is_downbeat:
         self.length_start = \
-                downbeat_hash_length * Sc.ann_params.downbeat_length_scale_start
+                downbeat_hash_length * Sc.annotators.params.downbeat_length_scale_start
         self.length_end = \
-                downbeat_hash_length * Sc.ann_params.downbeat_length_scale_end
+                downbeat_hash_length * Sc.annotators.params.downbeat_length_scale_end
         self.width_start = \
-                downbeat_stroke_width * Sc.ann_params.downbeat_width_scale_start
+                downbeat_stroke_width * Sc.annotators.params.downbeat_width_scale_start
         self.width_end = \
-                downbeat_stroke_width * Sc.ann_params.downbeat_width_scale_end
+                downbeat_stroke_width * Sc.annotators.params.downbeat_width_scale_end
         self.color = downbeat_color
     else:
         self.length_start = \
-                offbeat_hash_length * Sc.ann_params.offbeat_length_scale_start
+                offbeat_hash_length * Sc.annotators.params.offbeat_length_scale_start
         self.length_end = \
-                offbeat_hash_length * Sc.ann_params.offbeat_length_scale_end
+                offbeat_hash_length * Sc.annotators.params.offbeat_length_scale_end
         self.width_start = \
-                offbeat_stroke_width * Sc.ann_params.offbeat_width_scale_start
+                offbeat_stroke_width * Sc.annotators.params.offbeat_width_scale_start
         self.width_end = \
-                offbeat_stroke_width * Sc.ann_params.offbeat_width_scale_end
+                offbeat_stroke_width * Sc.annotators.params.offbeat_width_scale_end
         self.color = offbeat_color
     
     _update()
@@ -57,8 +57,8 @@ func _update() -> void:
     length = lerp(length_start, length_end, progress)
     width = lerp(width_start, width_end, progress)
     color.a = lerp(
-            Sc.ann_params.beat_opacity_start,
-            Sc.ann_params.beat_opacity_end,
+            Sc.annotators.params.beat_opacity_start,
+            Sc.annotators.params.beat_opacity_end,
             progress)
 
 

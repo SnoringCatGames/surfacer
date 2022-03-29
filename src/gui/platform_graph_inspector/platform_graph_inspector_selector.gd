@@ -110,17 +110,17 @@ func _draw_selected_origin() -> void:
     Sc.draw.draw_dashed_polyline(
             self,
             first_target.surface.vertices,
-            Sc.ann_params.inspector_select_origin_surface_color.sample(),
-            Sc.ann_params.inspector_select_origin_surface_dash_length,
-            Sc.ann_params.inspector_select_origin_surface_dash_gap,
+            Sc.annotators.params.inspector_select_origin_surface_color.sample(),
+            Sc.annotators.params.inspector_select_origin_surface_dash_length,
+            Sc.annotators.params.inspector_select_origin_surface_dash_gap,
             0.0,
-            Sc.ann_params.inspector_select_origin_surface_dash_stroke_width)
+            Sc.annotators.params.inspector_select_origin_surface_dash_stroke_width)
     Sc.draw.draw_circle_outline(
             self,
             first_target.target_point,
-            Sc.ann_params.inspector_select_origin_position_radius,
-            Sc.ann_params.inspector_select_origin_surface_color.sample(),
-            Sc.ann_params.inspector_select_origin_surface_dash_stroke_width)
+            Sc.annotators.params.inspector_select_origin_position_radius,
+            Sc.annotators.params.inspector_select_origin_surface_color.sample(),
+            Sc.annotators.params.inspector_select_origin_surface_dash_stroke_width)
 
 
 func _draw_possible_jump_land_positions() -> void:
@@ -141,6 +141,6 @@ func clear() -> void:
 
 func should_selection_have_been_handled_in_tree_by_now() -> bool:
     return selection_time + \
-    Sc.ann_params \
+    Sc.annotators.params \
             .inspector_select_delay_for_tree_to_handle_inspector_selection_threshold < \
             Sc.time.get_play_time()

@@ -39,4 +39,4 @@ func _draw_shape(
     draw_polyline(
             PoolVector2Array(positions),
             color_config.sample(),
-            Sc.ann_params.edge_trajectory_width)
+            Sc.annotators.params.edge_trajectory_width)

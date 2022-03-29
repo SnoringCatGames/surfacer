@@ -408,11 +408,11 @@ func _select_canonical_edge_or_edge_attempt_item_controller(
             land_position == null or \
             jump_position.target_projection_onto_surface \
                     .distance_squared_to(target_projection_start) > \
-                    Sc.ann_params \
+                    Sc.annotators.params \
                     .inspector_select_click_position_distance_squared_threshold or \
             land_position.target_projection_onto_surface \
                     .distance_squared_to(target_projection_end) > \
-                    Sc.ann_params \
+                    Sc.annotators.params \
                     .inspector_select_click_position_distance_squared_threshold:
         
         var metadata := { \

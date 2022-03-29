@@ -44,6 +44,16 @@ func _init().(
     pass
 
 
+func _parse_defaults() -> void:
+    ._parse_defaults()
+    var default_colors := SurfacerDefaultColors.new()
+    for key in default_colors.DEFAULTS:
+        params[key] = default_colors.DEFAULTS[key]
+    var default_ann_params := SurfacerDefaultAnnotationParameters.new()
+    for key in default_ann_params.DEFAULTS:
+        params[key] = default_colors.DEFAULTS[key]
+
+
 func _create_annotator(annotator_type: int) -> void:
     assert(!is_annotator_enabled(annotator_type))
     match annotator_type:
