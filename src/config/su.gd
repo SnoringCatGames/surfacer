@@ -449,7 +449,6 @@ func _instantiate_sub_modules() -> void:
 
 
 func _configure_sub_modules() -> void:
-    Sc.annotators.params._parse_manifest(Su.manifest.annotations_manifest)
     Su.movement._parse_manifest(Su.manifest.movement_manifest)
     Sc.characters._derive_movement_parameters()
     Su.surface_properties._parse_manifest(
