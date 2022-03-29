@@ -178,7 +178,6 @@ var _properties := {
     
     surface_properties_manifest = _surface_properties_manifest,
     movement_manifest = _movement_manifest,
-    annotations_manifest = _annotations_manifest,
     tileset_manifest = _tileset_manifest
 }
 
