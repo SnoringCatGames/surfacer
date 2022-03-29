@@ -18,8 +18,7 @@ func _draw_shape(
     var offset_from_center := size * 0.35
     var start := center - offset_from_center
     var end := center + offset_from_center
-    var color: Color = Sc.annotators.params \
-            .default_jump_land_positions_color_config.sample()
+    var color: Color = Sc.palette.get_color("default_jump_land_positions_color")
     Sc.draw.draw_dashed_line(
             self,
             start,

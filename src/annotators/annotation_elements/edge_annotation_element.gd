@@ -9,7 +9,7 @@ var includes_waypoints: bool
 var includes_instruction_indicators: bool
 var includes_continuous_positions: bool
 var includes_discrete_positions: bool
-var color_config: ColorConfig
+var color: Color
 
 
 func _init(
@@ -22,19 +22,17 @@ func _init(
                 Sc.annotators.params.includes_continuous_positions,
         includes_discrete_positions := \
                 Sc.annotators.params.includes_discrete_positions,
-        color_config := \
-                Sc.annotators.params.edge_discrete_trajectory_color_config) \
+        color := Sc.palette.get_color("edge_discrete_trajectory_color)")) \
         .(TYPE) -> void:
     self.edge = edge
     self.includes_waypoints = includes_waypoints
     self.includes_instruction_indicators = includes_instruction_indicators
     self.includes_continuous_positions = includes_continuous_positions
     self.includes_discrete_positions = includes_discrete_positions
-    self.color_config = color_config
+    self.color = color
 
 
 func draw(canvas: CanvasItem) -> void:
-    var color := color_config.sample()
     Sc.draw.draw_edge(
             canvas,
             edge,

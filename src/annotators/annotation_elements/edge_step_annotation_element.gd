@@ -35,7 +35,7 @@ func _init(
         self.waypoint_stroke_width = \
                 Sc.annotators.params.waypoint_stroke_width_faint
         self.collision_color = \
-                Sc.annotators.params.collision_color_faint
+                Sc.palette.get_color("collision_color_faint")
         self.collision_x_stroke_width = \
                 Sc.annotators.params.collision_x_stroke_width_faint
         self.collision_character_boundary_stroke_width = \
@@ -48,7 +48,7 @@ func _init(
         self.waypoint_stroke_width = \
                 Sc.annotators.params.waypoint_stroke_width_strong
         self.collision_color = \
-                Sc.annotators.params.collision_color_strong
+                Sc.palette.get_color("collision_color_strong")
         self.collision_x_stroke_width = \
                 Sc.annotators.params.collision_x_stroke_width_strong
         self.collision_character_boundary_stroke_width = \
@@ -205,15 +205,15 @@ func _draw_collision(canvas: CanvasItem) -> void:
             _draw_bounding_box_and_margin(
                     canvas,
                     collision_result_metadata.frame_start_position,
-                    Sc.annotators.params.collision_frame_start_color)
+                    Sc.palette.get_color("collision_frame_start_color)"))
             _draw_bounding_box_and_margin(
                     canvas,
                     collision_result_metadata.frame_end_position,
-                    Sc.annotators.params.collision_frame_end_color)
+                    Sc.palette.get_color("collision_frame_end_color)"))
             _draw_bounding_box_and_margin(
                     canvas,
                     collision_result_metadata.frame_previous_position,
-                    Sc.annotators.params.collision_frame_previous_color)
+                    Sc.palette.get_color("collision_frame_previous_color)"))
 
 
 func _draw_bounding_box_and_margin(
@@ -316,7 +316,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             canvas,
             start,
             end,
-            Sc.annotators.params.invalid_edge_color_config.sample(),
+            Sc.palette.get_color("invalid_edge_color"),
             Sc.annotators.params.invalid_edge_dash_length,
             Sc.annotators.params.invalid_edge_dash_gap,
             0.0,
@@ -326,7 +326,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             middle,
             Sc.annotators.params.invalid_edge_x_width,
             Sc.annotators.params.invalid_edge_x_height,
-            Sc.annotators.params.invalid_edge_color_config.sample(),
+            Sc.palette.get_color("invalid_edge_color"),
             Sc.annotators.params.invalid_edge_dash_stroke_width)
 
 

@@ -45,9 +45,7 @@ func _init().(
 
 
 func _parse_defaults(defaults_scripts: Array) -> void:
-    Sc.utils.concat(
-        defaults_scripts,
-        [SurfacerDefaultColors, SurfacerDefaultAnnotationParameters])
+    Sc.utils.concat(defaults_scripts, [SurfacerDefaultAnnotationParameters])
     ._parse_defaults(defaults_scripts)
 
 

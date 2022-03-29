@@ -183,6 +183,8 @@ var _properties := {
 
 var _overrides := {
     ScaffolderSchema: {
+        colors_manifest = \
+            Utils.get_direct_color_properties(SurfacerDefaultColors.new()),
         gui_manifest = {
             # FIXME: LEFT OFF HERE: ------------ Include this in all other frameworks too.
             third_party_license_text = \

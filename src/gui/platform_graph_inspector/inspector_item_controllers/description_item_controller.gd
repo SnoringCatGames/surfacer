@@ -33,8 +33,8 @@ func _init(
     self.get_annotation_elements_funcref = get_annotation_elements_funcref
     self.get_annotation_elements_arg = get_annotation_elements_arg
     if background_color == null:
-        background_color = Sc.annotators.params \
-                    .inspector_description_item_background_color
+        background_color = \
+            Sc.palette.get_color("inspector_description_item_background_color")
     self.tree_item.set_custom_bg_color(
             0,
             background_color)

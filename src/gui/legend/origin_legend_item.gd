@@ -18,7 +18,7 @@ func _init().(
 func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
-    var color: Color = Sc.annotators.params.default_waypoint_color_config.sample()
+    var color: Color = Sc.palette.get_color("default_waypoint_color")
     var radius: float = Sc.annotators.params.edge_start_radius * SCALE * Sc.gui.scale
     Sc.draw.draw_origin_marker(
             self,

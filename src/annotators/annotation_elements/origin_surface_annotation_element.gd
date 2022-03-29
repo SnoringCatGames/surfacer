@@ -11,7 +11,7 @@ func _init(
         .(
         surface,
         depth,
-        Sc.annotators.params.origin_surface_color_config,
+        Sc.palette.get_color("origin_surface_color"),
         true,
         false,
         TYPE) -> void:
