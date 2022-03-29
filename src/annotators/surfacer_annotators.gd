@@ -44,11 +44,6 @@ func _init().(
     pass
 
 
-func _parse_defaults(defaults_scripts: Array) -> void:
-    Sc.utils.concat(defaults_scripts, [SurfacerDefaultAnnotationParameters])
-    ._parse_defaults(defaults_scripts)
-
-
 func _create_annotator(annotator_type: int) -> void:
     assert(!is_annotator_enabled(annotator_type))
     match annotator_type:
