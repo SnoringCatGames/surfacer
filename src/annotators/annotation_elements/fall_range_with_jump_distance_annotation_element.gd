@@ -8,8 +8,7 @@ const LEGEND_ITEM_CLASS_REFERENCE := FallRangeWithJumpDistanceLegendItem
 
 func _init(
         vertices: Array,
-        color_config := Sc.annotators.params \
-                .default_polyline_color_config,
+        color := Sc.palette.get_color("default_polyline_color"),
         is_filled := false,
         is_dashed := false,
         dash_length := \
@@ -22,7 +21,7 @@ func _init(
         TYPE,
         LEGEND_ITEM_CLASS_REFERENCE,
         vertices,
-        color_config,
+        color,
         is_filled,
         is_dashed,
         dash_length,

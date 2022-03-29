@@ -193,10 +193,9 @@ func _draw() -> void:
             hash_base_color = hash_color
     else:
         surface_base_color = \
-                Sc.annotators.params.preselection_invalid_surface_color.sample()
-        position_indicator_base_color = \
-                Sc.annotators.params.preselection_invalid_position_indicator_color \
-                .sample()
+                Sc.palette.get_color("preselection_invalid_surface_color")
+        position_indicator_base_color = Sc.palette.get_color(
+                "preselection_invalid_position_indicator_color")
     
     if Sc.annotators.params.is_player_preselection_trajectory_shown:
         # Draw path.

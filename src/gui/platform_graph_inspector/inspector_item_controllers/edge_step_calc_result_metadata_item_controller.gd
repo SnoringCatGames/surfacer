@@ -162,8 +162,6 @@ static func _calculate_background_color(
             step_ratio
     return Color.from_hsv(
             step_hue,
-            Sc.annotators.params \
-                    .inspector_step_calc_item_background_color.s,
-            Sc.annotators.params \
-                    .inspector_step_calc_item_background_color.v,
+            Sc.palette.get_color("inspector_step_calc_item_background_color").s,
+            Sc.palette.get_color("inspector_step_calc_item_background_color").v,
             1.0)

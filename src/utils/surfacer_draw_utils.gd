@@ -719,18 +719,18 @@ func draw_edge(
         includes_continuous_positions := true,
         includes_discrete_positions := false) -> void:
     if discrete_trajectory_color == Color.white:
-        discrete_trajectory_color = Sc.annotators.params \
-                .edge_discrete_trajectory_color_config.sample()
+        discrete_trajectory_color = \
+                Sc.palette.get_color("edge_discrete_trajectory_color")
     
     # Set up colors.
-    var continuous_trajectory_color: Color = Sc.annotators.params \
-            .edge_continuous_trajectory_color_config.sample()
+    var continuous_trajectory_color: Color = \
+        Sc.palette.get_color("edge_continuous_trajectory_color")
     continuous_trajectory_color.h = discrete_trajectory_color.h
-    var waypoint_color: Color = Sc.annotators.params \
-            .waypoint_color_config.sample()
+    var waypoint_color: Color = \
+        Sc.palette.get_color("waypoint_color")
     waypoint_color.h = discrete_trajectory_color.h
-    var instruction_color: Color = Sc.annotators.params \
-            .instruction_color_config.sample()
+    var instruction_color: Color = \
+        Sc.palette.get_color("instruction_color")
     instruction_color.h = discrete_trajectory_color.h
     
     if includes_continuous_positions:

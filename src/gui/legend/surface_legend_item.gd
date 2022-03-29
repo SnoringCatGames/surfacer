@@ -4,21 +4,20 @@ extends LegendItem
 
 const DEFAULT_TYPE := "SURFACE"
 const DEFAULT_TEXT := "Surface"
-var DEFAULT_COLOR_CONFIG: ColorConfig = \
-        Sc.annotators.params.default_surface_color_config
+var DEFAULT_COLOR: Color = Sc.palette.get_color("default_surface_color")
 const surface_depth := 8.1
 
-var color_config: ColorConfig
+var color: Color
 
 
 func _init(
         type := DEFAULT_TYPE,
         text := DEFAULT_TEXT,
-        color_config := DEFAULT_COLOR_CONFIG) \
+        color := DEFAULT_COLOR) \
         .(
         type,
         text) -> void:
-    self.color_config = color_config
+    self.color = color
 
 
 func _draw_shape(
@@ -50,5 +49,5 @@ func _draw_shape(
     Sc.draw.draw_surface(
             self,
             surface,
-            color_config.sample(),
+            color,
             Sc.annotators.params.surface_depth)

@@ -4,12 +4,12 @@ extends ValidEdgeTrajectoryLegendItem
 
 const TYPE := "CONTINUOUS_EDGE_TRAJECTORY"
 const TEXT := "Edge trajectory\n(continuous)"
-var COLOR_CONFIG: ColorConfig = Sc.annotators.params \
-        .default_edge_continuous_trajectory_color_config
+var COLOR: Color = \
+        Sc.palette.get_color("default_edge_continuous_trajectory_color")
 
 
 func _init().(
         TYPE,
         TEXT,
-        COLOR_CONFIG) -> void:
+        COLOR) -> void:
     pass

@@ -39,9 +39,9 @@ func _draw() -> void:
     if !is_surface_animation_complete and \
             selected_surface != null:
         var color: Color = \
-                Sc.annotators.params.click_valid_surface_color.sample() if \
+                Sc.palette.get_color("click_valid_surface_color") if \
                 is_surface_navigable else \
-                Sc.annotators.params.click_invalid_surface_color.sample()
+                Sc.palette.get_color("click_invalid_surface_color")
         var alpha := color.a * (1 - surface_progress)
         color.a = alpha
         

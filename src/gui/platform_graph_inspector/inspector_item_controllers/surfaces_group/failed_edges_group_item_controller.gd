@@ -116,9 +116,8 @@ func get_annotation_elements() -> Array:
     for failed_edge_attempt in edges_results.failed_edge_attempts:
         var element := FailedEdgeAttemptAnnotationElement.new(
                 failed_edge_attempt,
-                Sc.annotators.params \
-                        .edge_discrete_trajectory_color_config,
-                Sc.annotators.params.failed_edge_attempt_color_config,
+                Sc.palette.get_color("edge_discrete_trajectory_color"),
+                Sc.palette.get_color("failed_edge_attempt_color"),
                 Sc.annotators.params.failed_edge_attempt_dash_length,
                 Sc.annotators.params.failed_edge_attempt_dash_gap,
                 Sc.annotators.params \

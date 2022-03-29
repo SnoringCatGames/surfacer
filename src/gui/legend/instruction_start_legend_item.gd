@@ -23,4 +23,4 @@ func _draw_shape(
             true,
             center,
             Sc.annotators.params.edge_instruction_indicator_length * SCALE,
-            Sc.annotators.params.default_instruction_color_config.sample())
+            Sc.palette.get_color("default_instruction_color"))

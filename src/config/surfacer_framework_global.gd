@@ -54,9 +54,8 @@ func _get_common_overrides_for_release_mode() -> Array:
 func _get_common_overrides_for_annotations_mode() -> Array:
     var are_annotations_emphasized: bool = \
             Sc.modes.get_is_active("annotations", "emphasized")
-    
-    Sc.manifest.colors_manifest.background = \
-            BACKGROUND_COLOR_TO_EMPHASIZE_ANNOTATIONS
+    if !are_annotations_emphasized:
+        return []
     
     # NOTE: Keep these in-sync with SurfacerAnnotationParameters.
     var edge_trajectory_width := 1.0
@@ -80,6 +79,8 @@ func _get_common_overrides_for_annotations_mode() -> Array:
     var instruction_alpha := 0.7
     
     var overrides := [
+        ["Sc.manifest.colors_manifest.background",
+                BACKGROUND_COLOR_TO_EMPHASIZE_ANNOTATIONS],
         ["Sc.manifest.annotation_parameters_manifest.edge_trajectory_width", 2.0],
         ["Sc.manifest.annotation_parameters_manifest.edge_waypoint_stroke_width",
                 edge_trajectory_width],
@@ -113,28 +114,28 @@ func _get_common_overrides_for_annotations_mode() -> Array:
         ["Sc.manifest.annotation_parameters_manifest.instruction_value", 0.9],
         ["Sc.manifest.annotation_parameters_manifest.instruction_alpha", 0.9],
 #        ["Sc.manifest.annotation_parameters_manifest.instruction_alpha", 0.0],
-        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_color_config",
+        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_color",
                 ColorFactory.h_range(
                         edge_hue_min,
                         edge_hue_max,
                         edge_discrete_trajectory_saturation,
                         edge_discrete_trajectory_value,
                         edge_discrete_trajectory_alpha)],
-        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_color_config",
+        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_color",
                 ColorFactory.h_range(
                         edge_hue_min,
                         edge_hue_max,
                         edge_continuous_trajectory_saturation,
                         edge_continuous_trajectory_value,
                         edge_continuous_trajectory_alpha)],
-        ["Sc.manifest.annotation_parameters_manifest.waypoint_color_config",
+        ["Sc.manifest.annotation_parameters_manifest.waypoint_color",
                 ColorFactory.h_range(
                         waypoint_hue_min,
                         waypoint_hue_max,
                         waypoint_saturation,
                         waypoint_value,
                         waypoint_alpha)],
-        ["Sc.manifest.annotation_parameters_manifest.instruction_color_config",
+        ["Sc.manifest.annotation_parameters_manifest.instruction_color",
                 ColorFactory.h_range(
                         instruction_hue_min,
                         instruction_hue_max,

@@ -11,7 +11,7 @@ func _init(
         .(
         surface,
         depth,
-        Sc.annotators.params.destination_surface_color_config,
+        Sc.palette.get_color("destination_surface_color"),
         false,
         true,
         TYPE) -> void:

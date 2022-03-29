@@ -3,7 +3,17 @@ class_name SurfacerDefaultColors
 extends Reference
 
 
-### Surface
+### GUIs
+
+var surface_click_selection := \
+        ColorFactory.opacify("white", ColorConfig.ALPHA_SOLID)
+var grid_indices := ColorFactory.opacify("white", ColorConfig.ALPHA_FAINT)
+var invalid := ColorFactory.palette("red")
+var inspector_origin := ColorFactory.opacify("orange", ColorConfig.ALPHA_FAINT)
+
+### Annotations
+
+# Surface
 
 var surface_hue_min := 0.0
 var surface_hue_max := 1.0
@@ -15,7 +25,7 @@ var default_surface_hue := 0.23
 var origin_surface_hue := 0.11
 var destination_surface_hue := 0.61
 
-### Edge
+# Edge
 
 var edge_hue_min := 0.0
 var edge_hue_max := 1.0
@@ -28,7 +38,7 @@ var edge_continuous_trajectory_saturation := 0.6
 var edge_continuous_trajectory_value := 0.6
 var edge_continuous_trajectory_alpha := 0.7
 
-### Waypoint
+# Waypoint
 
 var waypoint_hue_min := 0.0
 var waypoint_hue_max := 1.0
@@ -36,7 +46,7 @@ var waypoint_saturation := 0.6
 var waypoint_value := 0.7
 var waypoint_alpha := 0.7
 
-### Instruction
+# Instruction
 
 var instruction_hue_min := 0.0
 var instruction_hue_max := 1.0
@@ -44,13 +54,13 @@ var instruction_saturation := 0.3
 var instruction_value := 0.9
 var instruction_alpha := 0.7
 
-### FailedEdgeAttempt
+# FailedEdgeAttempt
 
 var failed_edge_attempt_saturation := 0.6
 var failed_edge_attempt_value := 0.9
 var failed_edge_attempt_opacity := 0.8
 
-### EdgeStepCalcResultMetadata
+# EdgeStepCalcResultMetadata
 
 var step_hue_start := origin_surface_hue
 var step_hue_end := destination_surface_hue
@@ -64,15 +74,14 @@ var collision_frame_start_hue := step_hue_start
 var collision_frame_end_hue := step_hue_end
 var collision_frame_previous_hue := 0.91
 
-### JumpLandPositions
-
+# JumpLandPositions
 var jump_land_positions_hue_min := 0.0
 var jump_land_positions_hue_max := 1.0
 var jump_land_positions_saturation := 0.7
 var jump_land_positions_value := 0.7
 var jump_land_positions_alpha := 0.7
 
-### Path preselection
+# Path preselection
 
 var preselection_invalid_surface_color := \
         ColorFactory.opacify("invalid", ColorConfig.ALPHA_XFAINT)
@@ -87,18 +96,18 @@ var preselection_hash_opacity := ColorConfig.ALPHA_XFAINT
 var preselection_min_opacity := 0.5
 var preselection_max_opacity := 1.0
 
-### Clicks
+# Clicks
 
 var click_valid_surface_color := ColorFactory.palette("surface_click_selection")
 var click_invalid_surface_color := \
         ColorFactory.opacify("invalid", ColorConfig.ALPHA_SOLID)
 
-### Platform graph inspector selector
+# Platform graph inspector selector
 
 var inspector_select_origin_surface_color := \
         ColorFactory.palette("inspector_origin")
 
-### Character position
+# Character position
 
 var character_grab_position_opacity := ColorConfig.ALPHA_XXFAINT
 var character_grab_position_line_width := 5.0
@@ -109,14 +118,14 @@ var character_grab_tile_border_width := 6.0
 
 var character_position_along_surface_opacity := ColorConfig.ALPHA_XXFAINT
 
-### Polyline
+# Polyline
 
 var default_polyline_hue := default_surface_hue
 var default_polyline_saturation := 0.6
 var default_polyline_value := 0.9
 var default_polyline_opacity := 0.8
 
-### Colors
+# Colors
 
 var panel_background_color := Color.from_hsv(0.278, 0.17, 0.07, 1.0)
 var inspector_description_item_background_color := \
@@ -124,23 +133,23 @@ var inspector_description_item_background_color := \
 var inspector_step_calc_item_background_color := \
         Color.from_hsv(0.61, 0.3, 0.2, 1.0)
 
-var surface_color_config := ColorFactory.h_range(
+var surface_color := ColorFactory.h_range(
         surface_hue_min,
         surface_hue_max,
         surface_saturation,
         surface_value,
         surface_alpha)
-var default_surface_color_config := ColorFactory.hsv(
+var default_surface_color := ColorFactory.hsv(
         default_surface_hue,
         surface_saturation,
         surface_value,
         surface_alpha)
-var origin_surface_color_config := ColorFactory.hsv(
+var origin_surface_color := ColorFactory.hsv(
         origin_surface_hue,
         surface_saturation,
         surface_value,
         surface_alpha)
-var destination_surface_color_config := ColorFactory.hsv(
+var destination_surface_color := ColorFactory.hsv(
         destination_surface_hue,
         surface_saturation,
         surface_value,
@@ -149,7 +158,7 @@ var destination_surface_color_config := ColorFactory.hsv(
 # - Lighter, more opaque.
 # - More accurate to what is actually executed.
 # - Less accurate to what is originally calculated.
-var edge_discrete_trajectory_color_config := ColorFactory.h_range(
+var edge_discrete_trajectory_color := ColorFactory.h_range(
         edge_hue_min,
         edge_hue_max,
         edge_discrete_trajectory_saturation,
@@ -158,7 +167,7 @@ var edge_discrete_trajectory_color_config := ColorFactory.h_range(
 # - Darker, more transparent.
 # - More accurate to what is originally calculated.
 # - Less accurate to what is actually executed.
-var edge_continuous_trajectory_color_config := ColorFactory.h_range(
+var edge_continuous_trajectory_color := ColorFactory.h_range(
         edge_hue_min,
         edge_hue_max,
         edge_continuous_trajectory_saturation,
@@ -166,7 +175,7 @@ var edge_continuous_trajectory_color_config := ColorFactory.h_range(
         edge_continuous_trajectory_alpha)
 
 var default_edge_discrete_trajectory_hue := default_surface_hue
-var default_edge_discrete_trajectory_color_config := ColorFactory.hsv(
+var default_edge_discrete_trajectory_color := ColorFactory.hsv(
         default_edge_discrete_trajectory_hue,
         edge_discrete_trajectory_saturation,
         edge_discrete_trajectory_value,
@@ -174,13 +183,13 @@ var default_edge_discrete_trajectory_color_config := ColorFactory.hsv(
 
 var default_edge_continuous_trajectory_hue := \
         default_edge_discrete_trajectory_hue
-var default_edge_continuous_trajectory_color_config := ColorFactory.hsv(
+var default_edge_continuous_trajectory_color := ColorFactory.hsv(
         default_edge_continuous_trajectory_hue,
         edge_continuous_trajectory_saturation,
         edge_continuous_trajectory_value,
         edge_continuous_trajectory_alpha)
 
-var waypoint_color_config := ColorFactory.h_range(
+var waypoint_color := ColorFactory.h_range(
         waypoint_hue_min,
         waypoint_hue_max,
         waypoint_saturation,
@@ -188,13 +197,13 @@ var waypoint_color_config := ColorFactory.h_range(
         waypoint_alpha)
 
 var default_waypoint_hue := default_edge_continuous_trajectory_hue
-var default_waypoint_color_config := ColorFactory.hsv(
+var default_waypoint_color := ColorFactory.hsv(
         default_waypoint_hue,
         waypoint_saturation,
         waypoint_value,
         waypoint_alpha)
 
-var instruction_color_config := ColorFactory.h_range(
+var instruction_color := ColorFactory.h_range(
         instruction_hue_min,
         instruction_hue_max,
         instruction_saturation,
@@ -202,19 +211,19 @@ var instruction_color_config := ColorFactory.h_range(
         instruction_alpha)
 
 var default_instruction_hue := default_edge_continuous_trajectory_hue
-var default_instruction_color_config := ColorFactory.hsv(
+var default_instruction_color := ColorFactory.hsv(
         default_instruction_hue,
         instruction_saturation,
         instruction_value,
         instruction_alpha)
 
-var failed_edge_attempt_color_config := ColorFactory.hsv(
+var failed_edge_attempt_color := ColorFactory.hsv(
         collision_hue,
         failed_edge_attempt_saturation,
         failed_edge_attempt_value,
         failed_edge_attempt_opacity)
 
-var invalid_edge_color_config := ColorFactory.hsv(
+var invalid_edge_color := ColorFactory.hsv(
         collision_hue,
         step_saturation,
         step_value,
@@ -256,7 +265,7 @@ var collision_at_collision_color := Color.from_hsv(
         0.9,
         0.5)
 
-var jump_land_positions_color_config := ColorFactory.h_range(
+var jump_land_positions_color := ColorFactory.h_range(
         jump_land_positions_hue_min,
         jump_land_positions_hue_max,
         jump_land_positions_saturation,
@@ -264,19 +273,19 @@ var jump_land_positions_color_config := ColorFactory.h_range(
         jump_land_positions_alpha)
 
 var default_jump_land_positions_hue := default_edge_continuous_trajectory_hue
-var default_jump_land_positions_color_config := \
+var default_jump_land_positions_color := \
         ColorFactory.hsv(
                 default_jump_land_positions_hue,
                 jump_land_positions_saturation,
                 jump_land_positions_value,
                 jump_land_positions_alpha)
 
-var default_polyline_color_config := ColorFactory.hsv(
+var default_polyline_color := ColorFactory.hsv(
         default_polyline_hue,
         default_polyline_saturation,
         default_polyline_value,
         default_polyline_opacity)
-var fall_range_polygon_color_config := ColorFactory.hsv(
+var fall_range_polygon_color := ColorFactory.hsv(
         destination_surface_hue,
         default_polyline_saturation,
         default_polyline_value,

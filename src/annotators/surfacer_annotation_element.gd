@@ -9,9 +9,8 @@ func _init(type: int).(type) -> void:
 func _draw_from_surface(
         canvas: CanvasItem,
         surface: Surface,
-        color_config: ColorConfig,
+        color: Color,
         depth := Sc.annotators.params.surface_depth) -> void:
-    var color := color_config.sample()
     Sc.draw.draw_surface(
             canvas,
             surface,
