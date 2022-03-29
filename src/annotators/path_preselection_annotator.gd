@@ -66,7 +66,7 @@ func _init(character: SurfacerCharacter) -> void:
     self._predictions_container = Node2D.new()
     _predictions_container.visible = false
     _predictions_container.modulate.a = \
-            Su.ann_manifest.nav_selection_prediction_opacity
+            Sc.annotators.params.nav_selection_prediction_opacity
     add_child(_predictions_container)
     
     Sc.slow_motion.connect(
@@ -198,7 +198,7 @@ func _draw() -> void:
                 Sc.annotators.params.preselection_invalid_position_indicator_color \
                 .sample()
     
-    if Su.ann_manifest.is_player_preselection_trajectory_shown:
+    if Sc.annotators.params.is_player_preselection_trajectory_shown:
         # Draw path.
         if preselection_path != null:
             var path_alpha := \
@@ -251,7 +251,7 @@ func _draw() -> void:
                     surface_color,
                     Sc.annotators.params.preselection_surface_depth)
     
-    if Su.ann_manifest.is_player_navigation_destination_shown:
+    if Sc.annotators.params.is_player_navigation_destination_shown:
         # Draw destination marker.
         var position_indicator_alpha := \
                 position_indicator_base_color.a * alpha_multiplier

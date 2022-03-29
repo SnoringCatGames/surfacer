@@ -223,23 +223,23 @@ func _update_is_enabled() -> void:
     if navigator.character.is_player_character:
         is_active_trajectory_shown = \
                 is_slow_motion_enabled and \
-                Su.ann_manifest.is_player_slow_mo_trajectory_shown or \
+                Sc.annotators.params.is_player_slow_mo_trajectory_shown or \
                 !is_slow_motion_enabled and \
-                Su.ann_manifest.is_player_non_slow_mo_trajectory_shown
+                Sc.annotators.params.is_player_non_slow_mo_trajectory_shown
         is_previous_trajectory_shown = \
-                Su.ann_manifest.is_player_previous_trajectory_shown
+                Sc.annotators.params.is_player_previous_trajectory_shown
         is_destination_shown = \
-                Su.ann_manifest.is_player_navigation_destination_shown
+                Sc.annotators.params.is_player_navigation_destination_shown
     else:
         is_active_trajectory_shown = \
                 is_slow_motion_enabled and \
-                Su.ann_manifest.is_npc_slow_mo_trajectory_shown or \
+                Sc.annotators.params.is_npc_slow_mo_trajectory_shown or \
                 !is_slow_motion_enabled and \
-                Su.ann_manifest.is_npc_non_slow_mo_trajectory_shown
+                Sc.annotators.params.is_npc_non_slow_mo_trajectory_shown
         is_previous_trajectory_shown = \
-                Su.ann_manifest.is_npc_previous_trajectory_shown
+                Sc.annotators.params.is_npc_previous_trajectory_shown
         is_destination_shown = \
-                Su.ann_manifest.is_npc_navigation_destination_shown
+                Sc.annotators.params.is_npc_navigation_destination_shown
     is_enabled = \
             is_active_trajectory_shown or \
             is_previous_trajectory_shown or \
@@ -267,7 +267,7 @@ func _trigger_fade_in(is_fade_in := true) -> void:
             "fade_progress",
             0.0 if is_fade_in else 1.0,
             1.0 if is_fade_in else 0.0,
-            Su.ann_manifest.nav_path_fade_in_duration,
+            Sc.annotators.params.nav_path_fade_in_duration,
             "ease_out",
             0.0,
             TimeType.PLAY_PHYSICS)

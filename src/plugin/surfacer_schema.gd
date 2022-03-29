@@ -7,33 +7,6 @@ const _METADATA_SCRIPT := SurfacerMetadata
 
 var _surfacer_debug_params := {}
 
-var _annotations_manifest := {
-    is_player_preselection_trajectory_shown = true,
-    
-    is_player_slow_mo_trajectory_shown = false,
-    is_player_non_slow_mo_trajectory_shown = true,
-    is_player_previous_trajectory_shown = false,
-    is_player_navigation_destination_shown = true,
-    is_player_nav_pulse_shown = false,
-    
-    is_npc_slow_mo_trajectory_shown = true,
-    is_npc_non_slow_mo_trajectory_shown = false,
-    is_npc_previous_trajectory_shown = false,
-    is_npc_navigation_destination_shown = false,
-    is_npc_nav_pulse_shown = true,
-    
-    does_player_nav_pulse_grow = false,
-    is_player_prediction_shown = true,
-    
-    does_npc_nav_pulse_grow = true,
-    is_npc_prediction_shown = true,
-    
-    nav_selection_prediction_opacity = 0.5,
-    nav_selection_prediction_tween_duration = 0.15,
-    new_path_pulse_duration = 0.7,
-    new_path_pulse_time_length = 1.0,
-}
-
 var _surface_properties_manifest := {
     "default": {
         can_grab = true,

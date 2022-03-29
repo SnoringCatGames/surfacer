@@ -121,9 +121,9 @@ func _ready() -> void:
     if Sc.annotators.is_annotator_enabled(
             AnnotatorType.PATH_PRESELECTION) and \
             (is_player_character and \
-                    Su.ann_manifest.is_player_prediction_shown or \
+                    Sc.annotators.params.is_player_prediction_shown or \
             !is_player_character and \
-                    Su.ann_manifest.is_npc_prediction_shown):
+                    Sc.annotators.params.is_npc_prediction_shown):
         prediction = CharacterPrediction.new()
         prediction.set_up(self)
         _attach_prediction()

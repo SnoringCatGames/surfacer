@@ -29,14 +29,14 @@ func _physics_process(_delta: float) -> void:
             current_path_start_time = Sc.time.get_play_time()
             is_pulse_active = true
             current_path_pulse_delay = \
-                    Su.ann_manifest.nav_path_fade_in_duration * 0.85
+                    Sc.annotators.params.nav_path_fade_in_duration * 0.85
             current_path_pulse_duration = max(
-                    Su.ann_manifest.new_path_pulse_duration,
+                    Sc.annotators.params.new_path_pulse_duration,
                     current_path.duration * 0.5)
             does_pulse_grow = \
-                    Su.ann_manifest.does_player_nav_pulse_grow if \
+                    Sc.annotators.params.does_player_nav_pulse_grow if \
                     navigator.character.is_player_character else \
-                    Su.ann_manifest.does_npc_nav_pulse_grow
+                    Sc.annotators.params.does_npc_nav_pulse_grow
         update()
     
     if Sc.slow_motion.get_is_enabled_or_transitioning() != \
@@ -82,10 +82,10 @@ func _draw() -> void:
         path_segment_time_end = current_path.duration * progress
     else:
         var half_pulse_time_length: float = \
-                Su.ann_manifest.new_path_pulse_time_length / 2.0
+                Sc.annotators.params.new_path_pulse_time_length / 2.0
         var path_duration_with_margin: float = \
                 current_path.duration + \
-                Su.ann_manifest.new_path_pulse_time_length
+                Sc.annotators.params.new_path_pulse_time_length
         var path_segment_time_center := \
                 path_duration_with_margin * progress - half_pulse_time_length
         path_segment_time_start = max(
@@ -113,14 +113,14 @@ func _draw() -> void:
 
 func _get_is_pulse_enabled() -> bool:
     if navigator.character.is_player_character:
-        return Su.ann_manifest.is_player_nav_pulse_shown and \
+        return Sc.annotators.params.is_player_nav_pulse_shown and \
                 (is_slow_motion_enabled and \
-                Su.ann_manifest.is_player_slow_mo_trajectory_shown or \
+                Sc.annotators.params.is_player_slow_mo_trajectory_shown or \
                 !is_slow_motion_enabled and \
-                Su.ann_manifest.is_player_non_slow_mo_trajectory_shown)
+                Sc.annotators.params.is_player_non_slow_mo_trajectory_shown)
     else:
-        return Su.ann_manifest.is_npc_nav_pulse_shown and \
+        return Sc.annotators.params.is_npc_nav_pulse_shown and \
                 (is_slow_motion_enabled and \
-                Su.ann_manifest.is_npc_slow_mo_trajectory_shown or \
+                Sc.annotators.params.is_npc_slow_mo_trajectory_shown or \
                 !is_slow_motion_enabled and \
-                Su.ann_manifest.is_npc_non_slow_mo_trajectory_shown)
+                Sc.annotators.params.is_npc_non_slow_mo_trajectory_shown)
