@@ -5,7 +5,7 @@ extends SurfacerAnnotationElement
 const TYPE := AnnotationElementType.JUMP_LAND_POSITIONS
 
 var jump_land_positions: JumpLandPositions
-var color_params: ColorParams
+var color_config: ColorConfig
 var radius: float
 var dash_length: float
 var dash_gap: float
@@ -14,14 +14,14 @@ var dash_stroke_width: float
 
 func _init(
         jump_land_positions: JumpLandPositions,
-        color_params := Sc.ann_params.jump_land_positions_color_params,
+        color_config := Sc.ann_params.jump_land_positions_color_config,
         dash_length := Sc.ann_params.jump_land_positions_dash_length,
         dash_gap := Sc.ann_params.jump_land_positions_dash_gap,
         dash_stroke_width := \
                 Sc.ann_params.jump_land_positions_dash_stroke_width) \
         .(TYPE) -> void:
     self.jump_land_positions = jump_land_positions
-    self.color_params = color_params
+    self.color_config = color_config
     self.dash_length = dash_length
     self.dash_gap = dash_gap
     self.dash_stroke_width = dash_stroke_width
@@ -29,7 +29,7 @@ func _init(
 
 
 func draw(canvas: CanvasItem) -> void:
-    var color := color_params.get_color()
+    var color := color_config.sample()
     var start := jump_land_positions.jump_position.target_point
     var end := jump_land_positions.land_position.target_point
     Sc.draw.draw_dashed_line(

@@ -316,7 +316,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             canvas,
             start,
             end,
-            Sc.ann_params.invalid_edge_color_params.get_color(),
+            Sc.ann_params.invalid_edge_color_config.sample(),
             Sc.ann_params.invalid_edge_dash_length,
             Sc.ann_params.invalid_edge_dash_gap,
             0.0,
@@ -326,7 +326,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             middle,
             Sc.ann_params.invalid_edge_x_width,
             Sc.ann_params.invalid_edge_x_height,
-            Sc.ann_params.invalid_edge_color_params.get_color(),
+            Sc.ann_params.invalid_edge_color_config.sample(),
             Sc.ann_params.invalid_edge_dash_stroke_width)
 
 

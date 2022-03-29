@@ -4,21 +4,21 @@ extends LegendItem
 
 const DEFAULT_TYPE := "SURFACE"
 const DEFAULT_TEXT := "Surface"
-var DEFAULT_COLOR_PARAMS: ColorParams = \
-        Sc.ann_params.default_surface_color_params
+var DEFAULT_COLOR_CONFIG: ColorConfig = \
+        Sc.ann_params.default_surface_color_config
 const surface_depth := 8.1
 
-var color_params: ColorParams
+var color_config: ColorConfig
 
 
 func _init(
         type := DEFAULT_TYPE,
         text := DEFAULT_TEXT,
-        color_params := DEFAULT_COLOR_PARAMS) \
+        color_config := DEFAULT_COLOR_CONFIG) \
         .(
         type,
         text) -> void:
-    self.color_params = color_params
+    self.color_config = color_config
 
 
 func _draw_shape(
@@ -50,5 +50,5 @@ func _draw_shape(
     Sc.draw.draw_surface(
             self,
             surface,
-            color_params.get_color(),
+            color_config.sample(),
             Sc.ann_params.surface_depth)

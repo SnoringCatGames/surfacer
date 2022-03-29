@@ -4,11 +4,11 @@ extends SurfaceLegendItem
 
 const TYPE := "ORIGIN_SURFACE"
 const TEXT := "Origin\nsurface"
-var COLOR_PARAMS: ColorParams = Sc.ann_params.origin_surface_color_params
+var COLOR_CONFIG: ColorConfig = Sc.ann_params.origin_surface_color_config
 
 
 func _init().(
         TYPE,
         TEXT,
-        COLOR_PARAMS) -> void:
+        COLOR_CONFIG) -> void:
     pass

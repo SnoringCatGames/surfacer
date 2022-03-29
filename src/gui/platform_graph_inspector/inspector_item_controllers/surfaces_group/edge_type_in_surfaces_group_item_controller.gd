@@ -125,7 +125,7 @@ func get_annotation_elements() -> Array:
     for jump_land_positions in edges_results.all_jump_land_positions:
         element = JumpLandPositionsAnnotationElement.new(
                 jump_land_positions,
-                Sc.ann_params.jump_land_positions_color_params,
+                Sc.ann_params.jump_land_positions_color_config,
                 Sc.ann_params.jump_land_positions_dash_length,
                 Sc.ann_params.jump_land_positions_dash_gap,
                 Sc.ann_params \

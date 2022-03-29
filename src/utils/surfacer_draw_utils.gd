@@ -720,17 +720,17 @@ func draw_edge(
         includes_discrete_positions := false) -> void:
     if discrete_trajectory_color == Color.white:
         discrete_trajectory_color = Sc.ann_params \
-                .edge_discrete_trajectory_color_params.get_color()
+                .edge_discrete_trajectory_color_config.sample()
     
     # Set up colors.
     var continuous_trajectory_color: Color = Sc.ann_params \
-            .edge_continuous_trajectory_color_params.get_color()
+            .edge_continuous_trajectory_color_config.sample()
     continuous_trajectory_color.h = discrete_trajectory_color.h
     var waypoint_color: Color = Sc.ann_params \
-            .waypoint_color_params.get_color()
+            .waypoint_color_config.sample()
     waypoint_color.h = discrete_trajectory_color.h
     var instruction_color: Color = Sc.ann_params \
-            .instruction_color_params.get_color()
+            .instruction_color_config.sample()
     instruction_color.h = discrete_trajectory_color.h
     
     if includes_continuous_positions:

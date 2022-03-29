@@ -5,8 +5,8 @@ extends SurfacerAnnotationElement
 const TYPE := AnnotationElementType.FAILED_EDGE_ATTEMPT
 
 var failed_edge_attempt: FailedEdgeAttempt
-var end_color_params: ColorParams
-var line_color_params: ColorParams
+var end_color_config: ColorConfig
+var line_color_config: ColorConfig
 var end_radius: float
 var dash_length: float
 var dash_gap: float
@@ -16,10 +16,10 @@ var includes_surfaces: bool
 
 func _init(
         failed_edge_attempt: FailedEdgeAttempt,
-        end_color_params := Sc.ann_params \
-                .edge_discrete_trajectory_color_params,
-        line_color_params := \
-                Sc.ann_params.failed_edge_attempt_color_params,
+        end_color_config := Sc.ann_params \
+                .edge_discrete_trajectory_color_config,
+        line_color_config := \
+                Sc.ann_params.failed_edge_attempt_color_config,
         dash_length := \
                 Sc.ann_params.failed_edge_attempt_dash_length,
         dash_gap := \
@@ -31,8 +31,8 @@ func _init(
         .(TYPE) -> void:
     assert(failed_edge_attempt != null)
     self.failed_edge_attempt = failed_edge_attempt
-    self.end_color_params = end_color_params
-    self.line_color_params = line_color_params
+    self.end_color_config = end_color_config
+    self.line_color_config = line_color_config
     self.end_radius = end_radius
     self.dash_length = dash_length
     self.dash_gap = dash_gap
@@ -41,8 +41,8 @@ func _init(
 
 
 func draw(canvas: CanvasItem) -> void:
-    var end_color := end_color_params.get_color()
-    var line_color := line_color_params.get_color()
+    var end_color := end_color_config.sample()
+    var line_color := line_color_config.sample()
     var start := failed_edge_attempt.get_start()
     var end := failed_edge_attempt.get_end()
     var middle: Vector2 = start.linear_interpolate(end, 0.5)
@@ -75,11 +75,11 @@ func draw(canvas: CanvasItem) -> void:
         _draw_from_surface(
                 canvas,
                 failed_edge_attempt.get_start_surface(),
-                end_color_params)
+                end_color_config)
         _draw_from_surface(
                 canvas,
                 failed_edge_attempt.get_end_surface(),
-                end_color_params)
+                end_color_config)
 
 
 func _create_legend_items() -> Array:

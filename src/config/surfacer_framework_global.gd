@@ -113,29 +113,29 @@ func _get_common_overrides_for_annotations_mode() -> Array:
         ["Sc.manifest.annotation_parameters_manifest.instruction_value", 0.9],
         ["Sc.manifest.annotation_parameters_manifest.instruction_alpha", 0.9],
 #        ["Sc.manifest.annotation_parameters_manifest.instruction_alpha", 0.0],
-        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_color_params",
-                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+        ["Sc.manifest.annotation_parameters_manifest.edge_discrete_trajectory_color_config",
+                ColorFactory.h_range(
                         edge_hue_min,
                         edge_hue_max,
                         edge_discrete_trajectory_saturation,
                         edge_discrete_trajectory_value,
                         edge_discrete_trajectory_alpha)],
-        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_color_params",
-                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+        ["Sc.manifest.annotation_parameters_manifest.edge_continuous_trajectory_color_config",
+                ColorFactory.h_range(
                         edge_hue_min,
                         edge_hue_max,
                         edge_continuous_trajectory_saturation,
                         edge_continuous_trajectory_value,
                         edge_continuous_trajectory_alpha)],
-        ["Sc.manifest.annotation_parameters_manifest.waypoint_color_params",
-                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+        ["Sc.manifest.annotation_parameters_manifest.waypoint_color_config",
+                ColorFactory.h_range(
                         waypoint_hue_min,
                         waypoint_hue_max,
                         waypoint_saturation,
                         waypoint_value,
                         waypoint_alpha)],
-        ["Sc.manifest.annotation_parameters_manifest.instruction_color_params",
-                ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
+        ["Sc.manifest.annotation_parameters_manifest.instruction_color_config",
+                ColorFactory.h_range(
                         instruction_hue_min,
                         instruction_hue_max,
                         instruction_saturation,

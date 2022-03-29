@@ -11,7 +11,7 @@ const NORMALIZED_FAKE_POSITIONS := [
 ]
 const SCALE := 0.8
 
-var color_params: ColorParams
+var color_config: ColorConfig
 var is_filled: bool
 var is_dashed: bool
 var dash_length: float
@@ -22,7 +22,7 @@ var stroke_width: float
 func _init(
         type: String,
         text: String,
-        color_params: ColorParams,
+        color_config: ColorConfig,
         is_filled: bool,
         is_dashed: bool,
         dash_length: float,
@@ -32,7 +32,7 @@ func _init(
         type,
         text) -> void:
     assert(!is_filled or !is_dashed)
-    self.color_params = color_params
+    self.color_config = color_config
     self.is_filled = is_filled
     self.is_dashed = is_dashed
     self.dash_length = dash_length
@@ -48,7 +48,7 @@ func _draw_shape(
     vertices.resize(NORMALIZED_FAKE_POSITIONS.size())
     for i in NORMALIZED_FAKE_POSITIONS.size():
         vertices[i] = NORMALIZED_FAKE_POSITIONS[i] * size * SCALE + offset
-    var color := color_params.get_color()
+    var color := color_config.sample()
     
     if is_filled:
         draw_colored_polygon(

@@ -25,7 +25,7 @@ func _draw_shape(
     var start := center - offset_from_center
     var end := center + offset_from_center
     var color: Color = Sc.ann_params \
-            .failed_edge_attempt_color_params.get_color()
+            .failed_edge_attempt_color_config.sample()
     Sc.draw.draw_dashed_line(
             self,
             start,

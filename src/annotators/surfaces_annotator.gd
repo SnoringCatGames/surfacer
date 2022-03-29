@@ -3,7 +3,7 @@ extends Node2D
 
 
 var surface_store: SurfaceStore
-var color_params: ColorParams = Sc.ann_params.surface_color_params
+var color_config: ColorConfig = Sc.ann_params.surface_color_config
 var alpha_with_inspector_closed := 0.9
 var alpha_with_inspector_open: float = \
         alpha_with_inspector_closed * \
@@ -24,7 +24,7 @@ func _init(surface_store: SurfaceStore) -> void:
     self.surface_store = surface_store
     
     for surface in surface_store.all_surfaces:
-        _surface_to_color[surface] = color_params.get_color()
+        _surface_to_color[surface] = color_config.sample()
 
 
 func _process(_delta: float) -> void:

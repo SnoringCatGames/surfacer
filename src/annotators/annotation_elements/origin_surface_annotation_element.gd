@@ -11,7 +11,7 @@ func _init(
         .(
         surface,
         depth,
-        Sc.ann_params.origin_surface_color_params,
+        Sc.ann_params.origin_surface_color_config,
         true,
         false,
         TYPE) -> void:
