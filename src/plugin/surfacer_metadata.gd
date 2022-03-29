@@ -11,7 +11,7 @@ const AUTO_LOAD_PATH := "res://addons/surfacer/src/config/su.gd"
 const PLUGIN_ICON_PATH_PREFIX := \
         "res://addons/surfacer/assets/images/editor_icons/plugin/surfacer"
 const SCHEMA_PATH := "res://addons/surfacer/src/plugin/surfacer_schema.gd"
-const MANIFEST_PATH := "res://addons/surfacer/src/config/manifest.json"
+const MANIFEST_PATH_OVERRIDE := ""
 const MODES := {}
 
 
@@ -23,6 +23,6 @@ func _init().(
         AUTO_LOAD_PATH,
         PLUGIN_ICON_PATH_PREFIX,
         SCHEMA_PATH,
-        MANIFEST_PATH,
+        MANIFEST_PATH_OVERRIDE,
         MODES) -> void:
     pass
