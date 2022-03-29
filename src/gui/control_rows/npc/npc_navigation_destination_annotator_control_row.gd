@@ -14,14 +14,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Su.ann_manifest.is_npc_navigation_destination_shown = pressed
+    Sc.annotators.params.is_npc_navigation_destination_shown = pressed
     Sc.save_state.set_setting(
             Su.NPC_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Su.ann_manifest.is_npc_navigation_destination_shown
+    return Sc.annotators.params.is_npc_navigation_destination_shown
 
 
 func get_is_enabled() -> bool:

@@ -5,6 +5,34 @@ extends Reference
 ##       SurfacerDefaultColors.
 
 
+### Navigation
+
+var is_player_preselection_trajectory_shown := true
+
+var is_player_slow_mo_trajectory_shown := false
+var is_player_non_slow_mo_trajectory_shown := true
+var is_player_previous_trajectory_shown := false
+var is_player_navigation_destination_shown := true
+var is_player_nav_pulse_shown := false
+
+var is_npc_slow_mo_trajectory_shown := true
+var is_npc_non_slow_mo_trajectory_shown := false
+var is_npc_previous_trajectory_shown := false
+var is_npc_navigation_destination_shown := false
+var is_npc_nav_pulse_shown := true
+
+var does_player_nav_pulse_grow := false
+var is_player_prediction_shown := true
+
+var does_npc_nav_pulse_grow := true
+var is_npc_prediction_shown := true
+
+var nav_selection_prediction_opacity := 0.5
+var nav_selection_prediction_tween_duration := 0.15
+var nav_path_fade_in_duration := 0.2
+var new_path_pulse_duration := 0.7
+var new_path_pulse_time_length := 1.0
+
 ### Surface
 
 var surface_alpha_ratio_with_inspector_open := 0.2

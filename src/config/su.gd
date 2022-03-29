@@ -285,7 +285,6 @@ var surface_parser_metric_keys := [
 
 var graph_inspector: PlatformGraphInspector
 var selection_description: SelectionDescription
-var ann_manifest: SurfacerAnnotationsManifest
 var movement: SurfacerMovementManifest
 var surface_properties: SurfacerSurfacePropertiesManifest
 var edge_from_json_factory := EdgeFromJsonFactory.new()
@@ -312,7 +311,6 @@ func _get_members_to_destroy() -> Array:
     return [
         graph_inspector,
         selection_description,
-        ann_manifest,
         movement,
         surface_properties,
 #        edge_from_json_factory,
@@ -435,13 +433,6 @@ func _instantiate_sub_modules() -> void:
     Sc.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
     Sc.profiler.preregister_metric_keys(surface_parser_metric_keys)
     
-    if manifest.has("surfacer_annotations_manifest_class"):
-        self.ann_manifest = manifest.surfacer_annotations_manifest_class.new()
-        assert(self.ann_manifest is SurfacerAnnotationsManifest)
-    else:
-        self.ann_manifest = SurfacerAnnotationsManifest.new()
-    add_child(self.ann_manifest)
-    
     if manifest.has("surfacer_movement_manifest_class"):
         self.movement = manifest.surfacer_movement_manifest_class.new()
         assert(self.movement is SurfacerMovementManifest)
@@ -458,7 +449,7 @@ func _instantiate_sub_modules() -> void:
 
 
 func _configure_sub_modules() -> void:
-    Su.ann_manifest._parse_manifest(Su.manifest.annotations_manifest)
+    Sc.annotators.params._parse_manifest(Su.manifest.annotations_manifest)
     Su.movement._parse_manifest(Su.manifest.movement_manifest)
     Sc.characters._derive_movement_parameters()
     Su.surface_properties._parse_manifest(
@@ -473,43 +464,43 @@ func _configure_sub_modules() -> void:
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
             true)
     
-    self.ann_manifest.is_player_slow_mo_trajectory_shown = \
+    Sc.annotators.params.is_player_slow_mo_trajectory_shown = \
             Sc.save_state.get_setting(
                     PLAYER_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest.is_player_slow_mo_trajectory_shown)
-    self.ann_manifest.is_player_non_slow_mo_trajectory_shown = \
+                    Sc.annotators.params.is_player_slow_mo_trajectory_shown)
+    Sc.annotators.params.is_player_non_slow_mo_trajectory_shown = \
             Sc.save_state.get_setting(
                     PLAYER_NON_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest.is_player_non_slow_mo_trajectory_shown)
-    self.ann_manifest.is_player_previous_trajectory_shown = \
+                    Sc.annotators.params.is_player_non_slow_mo_trajectory_shown)
+    Sc.annotators.params.is_player_previous_trajectory_shown = \
             Sc.save_state.get_setting(
                     PLAYER_PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest.is_player_previous_trajectory_shown)
-    self.ann_manifest.is_player_preselection_trajectory_shown = \
+                    Sc.annotators.params.is_player_previous_trajectory_shown)
+    Sc.annotators.params.is_player_preselection_trajectory_shown = \
             Sc.save_state.get_setting(
                     PLAYER_PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest.is_player_preselection_trajectory_shown)
-    self.ann_manifest.is_player_navigation_destination_shown = \
+                    Sc.annotators.params.is_player_preselection_trajectory_shown)
+    Sc.annotators.params.is_player_navigation_destination_shown = \
             Sc.save_state.get_setting(
                     PLAYER_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest.is_player_navigation_destination_shown)
+                    Sc.annotators.params.is_player_navigation_destination_shown)
     
-    self.ann_manifest.is_npc_slow_mo_trajectory_shown = \
+    Sc.annotators.params.is_npc_slow_mo_trajectory_shown = \
             Sc.save_state.get_setting(
                     NPC_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest.is_npc_slow_mo_trajectory_shown)
-    self.ann_manifest.is_npc_non_slow_mo_trajectory_shown = \
+                    Sc.annotators.params.is_npc_slow_mo_trajectory_shown)
+    Sc.annotators.params.is_npc_non_slow_mo_trajectory_shown = \
             Sc.save_state.get_setting(
                     NPC_NON_SLOW_MO_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest.is_npc_non_slow_mo_trajectory_shown)
-    self.ann_manifest.is_npc_previous_trajectory_shown = \
+                    Sc.annotators.params.is_npc_non_slow_mo_trajectory_shown)
+    Sc.annotators.params.is_npc_previous_trajectory_shown = \
             Sc.save_state.get_setting(
                     NPC_PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest.is_npc_previous_trajectory_shown)
-    self.ann_manifest.is_npc_navigation_destination_shown = \
+                    Sc.annotators.params.is_npc_previous_trajectory_shown)
+    Sc.annotators.params.is_npc_navigation_destination_shown = \
             Sc.save_state.get_setting(
                     NPC_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
-                    self.ann_manifest.is_npc_navigation_destination_shown)
+                    Sc.annotators.params.is_npc_navigation_destination_shown)
 
 
 func _parse_behaviors(manifest: Dictionary) -> Dictionary:
