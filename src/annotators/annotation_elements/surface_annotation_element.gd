@@ -13,9 +13,9 @@ var is_destination: bool
 
 func _init(
         surface: Surface,
-        depth := Sc.ann_params.surface_depth,
+        depth := Sc.annotators.params.surface_depth,
         color_config: ColorConfig = \
-                Sc.ann_params.surface_color_config,
+                Sc.annotators.params.surface_color_config,
         is_origin := false,
         is_destination := false,
         type := DEFAULT_TYPE) \

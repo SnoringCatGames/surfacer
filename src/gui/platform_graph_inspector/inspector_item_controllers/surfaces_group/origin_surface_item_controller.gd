@@ -339,13 +339,13 @@ func _get_jump_fall_range_annotation_elements(
         var fall_range_without_jump_distance_element := \
                 FallRangeWithoutJumpDistanceAnnotationElement.new(
                         fall_range_polygon_without_jump_distance,
-                        Sc.ann_params \
+                        Sc.annotators.params \
                                 .fall_range_polygon_color_config,
                         false,
                         false,
-                        Sc.ann_params \
+                        Sc.annotators.params \
                                 .default_polyline_dash_length,
-                        Sc.ann_params.default_polyline_dash_gap,
+                        Sc.annotators.params.default_polyline_dash_gap,
                         4.0)
         elements.push_back(fall_range_without_jump_distance_element)
     
@@ -353,13 +353,13 @@ func _get_jump_fall_range_annotation_elements(
         var fall_range_with_jump_distance_element := \
                 FallRangeWithJumpDistanceAnnotationElement.new(
                         fall_range_polygon_with_jump_distance,
-                        Sc.ann_params \
+                        Sc.annotators.params \
                                 .fall_range_polygon_color_config,
                         false,
                         false,
-                        Sc.ann_params \
+                        Sc.annotators.params \
                                 .default_polyline_dash_length,
-                        Sc.ann_params.default_polyline_dash_gap,
+                        Sc.annotators.params.default_polyline_dash_gap,
                         1.0)
         elements.push_back(fall_range_with_jump_distance_element)
     

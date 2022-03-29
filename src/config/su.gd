@@ -331,8 +331,6 @@ func _amend_manifest() -> void:
         Sc.manifest.geometry_class = SurfacerGeometry
     if !Sc.manifest.has("draw_class"):
         Sc.manifest.draw_class = SurfacerDrawUtils
-    if !Sc.manifest.has("ann_params_class"):
-        Sc.manifest.ann_params_class = SurfacerAnnotationParameters
     if !Sc.manifest.has("beats_class"):
         Sc.manifest.beats_class = SurfacerBeatTracker
     if !Sc.manifest.has("characters_class"):
@@ -460,8 +458,6 @@ func _instantiate_sub_modules() -> void:
 
 
 func _configure_sub_modules() -> void:
-    assert(Sc.ann_params is SurfacerAnnotationParameters)
-    
     Su.ann_manifest._parse_manifest(Su.manifest.annotations_manifest)
     Su.movement._parse_manifest(Su.manifest.movement_manifest)
     Sc.characters._derive_movement_parameters()

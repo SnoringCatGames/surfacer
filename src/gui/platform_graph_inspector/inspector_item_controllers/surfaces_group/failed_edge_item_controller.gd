@@ -79,10 +79,10 @@ func get_has_children() -> bool:
 func get_annotation_elements() -> Array:
     var element := FailedEdgeAttemptAnnotationElement.new(
             failed_edge_attempt,
-            Sc.ann_params.edge_discrete_trajectory_color_config,
-            Sc.ann_params.failed_edge_attempt_color_config,
-            Sc.ann_params.failed_edge_attempt_dash_length,
-            Sc.ann_params.failed_edge_attempt_dash_gap,
-            Sc.ann_params.failed_edge_attempt_dash_stroke_width,
+            Sc.annotators.params.edge_discrete_trajectory_color_config,
+            Sc.annotators.params.failed_edge_attempt_color_config,
+            Sc.annotators.params.failed_edge_attempt_dash_length,
+            Sc.annotators.params.failed_edge_attempt_dash_gap,
+            Sc.annotators.params.failed_edge_attempt_dash_stroke_width,
             false)
     return [element]

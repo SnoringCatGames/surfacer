@@ -15,9 +15,9 @@ func _init(
         ).(
         click_position,
         max(max(
-                Sc.ann_params.click_inner_duration,
-                Sc.ann_params.click_outer_duration),
-                Sc.ann_params.click_surface_duration)
+                Sc.annotators.params.click_inner_duration,
+                Sc.annotators.params.click_outer_duration),
+                Sc.annotators.params.click_surface_duration)
         ) -> void:
     self.selected_surface = selected_surface
     self.is_surface_navigable = is_surface_navigable
@@ -29,7 +29,7 @@ func _update() -> void:
     
     surface_progress = \
             (current_time - start_time) / \
-            Sc.ann_params.click_surface_duration
+            Sc.annotators.params.click_surface_duration
     surface_progress = Sc.utils.ease_by_name(surface_progress, "ease_out")
 
 
@@ -39,9 +39,9 @@ func _draw() -> void:
     if !is_surface_animation_complete and \
             selected_surface != null:
         var color: Color = \
-                Sc.ann_params.click_valid_surface_color.sample() if \
+                Sc.annotators.params.click_valid_surface_color.sample() if \
                 is_surface_navigable else \
-                Sc.ann_params.click_invalid_surface_color.sample()
+                Sc.annotators.params.click_invalid_surface_color.sample()
         var alpha := color.a * (1 - surface_progress)
         color.a = alpha
         

@@ -15,7 +15,7 @@ func _init(character: SurfacerCharacter) -> void:
             character.position_annotation_color.sample().h,
             0.7,
             0.9,
-            Sc.ann_params.character_grab_tile_border_opacity)
+            Sc.annotators.params.character_grab_tile_border_opacity)
 
 
 func _draw() -> void:
@@ -35,7 +35,7 @@ func _draw_tile_border() -> void:
             cell_size / 2.0,
             false,
             tile_border_color,
-            Sc.ann_params.character_grab_tile_border_width)
+            Sc.annotators.params.character_grab_tile_border_width)
 
 
 func check_for_update() -> void:

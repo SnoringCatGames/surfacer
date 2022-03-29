@@ -3,11 +3,11 @@ extends Node2D
 
 
 var surface_store: SurfaceStore
-var color_config: ColorConfig = Sc.ann_params.surface_color_config
+var color_config: ColorConfig = Sc.annotators.params.surface_color_config
 var alpha_with_inspector_closed := 0.9
 var alpha_with_inspector_open: float = \
         alpha_with_inspector_closed * \
-        Sc.ann_params.surface_alpha_ratio_with_inspector_open
+        Sc.annotators.params.surface_alpha_ratio_with_inspector_open
 
 var was_inspector_open := false
 
