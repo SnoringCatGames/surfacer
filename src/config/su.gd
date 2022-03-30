@@ -60,61 +60,6 @@ var is_npc_nav_pulse_shown := true
 const PLACEHOLDER_SURFACES_TILE_SET_PATH := \
         "res://addons/surfacer/src/tiles/tileset_with_many_angles.tres"
 
-var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
-    groups = {
-        main = {
-            label = "",
-            is_collapsible = false,
-            item_classes = [
-                MusicControlRow,
-                SoundEffectsControlRow,
-                HapticFeedbackControlRow,
-            ],
-        },
-        annotations = {
-            label = "Rendering",
-            is_collapsible = true,
-            item_classes = [
-                RulerAnnotatorControlRow,
-                PlayerPreselectionTrajectoryAnnotatorControlRow,
-                PlayerSlowMoTrajectoryAnnotatorControlRow,
-                PlayerNonSlowMoTrajectoryAnnotatorControlRow,
-                PlayerPreviousTrajectoryAnnotatorControlRow,
-                PlayerNavigationDestinationAnnotatorControlRow,
-                NpcSlowMoTrajectoryAnnotatorControlRow,
-                NpcNonSlowMoTrajectoryAnnotatorControlRow,
-                NpcPreviousTrajectoryAnnotatorControlRow,
-                NpcNavigationDestinationAnnotatorControlRow,
-                RecentMovementAnnotatorControlRow,
-                SurfacesAnnotatorControlRow,
-                CharacterPositionAnnotatorControlRow,
-                CharacterAnnotatorControlRow,
-                LevelAnnotatorControlRow,
-            ],
-        },
-        hud = {
-            label = "HUD",
-            is_collapsible = true,
-            item_classes = [
-                InspectorEnabledControlRow,
-                DebugPanelControlRow,
-            ],
-        },
-        miscellaneous = {
-            label = "Miscellaneous",
-            is_collapsible = true,
-            item_classes = [
-                ButtonControlsControlRow,
-                WelcomePanelControlRow,
-                IntroChoreographyControlRow,
-                CameraZoomControlRow,
-                TimeScaleControlRow,
-                MetronomeControlRow,
-            ],
-        },
-    },
-}
-
 var DEFAULT_BEHAVIOR_CLASSES := [
     ChoreographyBehavior,
     ClimbAdjacentSurfacesBehavior,
@@ -126,51 +71,6 @@ var DEFAULT_BEHAVIOR_CLASSES := [
     RunAwayBehavior,
     PlayerNavigationBehavior,
     WanderBehavior,
-]
-
-# --- Scaffolder manifest additions ---
-
-var _surfacer_sounds := [
-    {
-        name = "nav_select_fail",
-        volume_db = 0.0,
-        path_prefix = "res://addons/surfacer/assets/sounds/",
-    },
-    {
-        name = "nav_select_success",
-        volume_db = 0.0,
-        path_prefix = "res://addons/surfacer/assets/sounds/",
-    },
-    {
-        name = "slow_down",
-        volume_db = 0.0,
-        path_prefix = "res://addons/surfacer/assets/sounds/",
-    },
-    {
-        name = "speed_up",
-        volume_db = 0.0,
-        path_prefix = "res://addons/surfacer/assets/sounds/",
-    },
-    {
-        name = "tick",
-        volume_db = -6.0,
-        path_prefix = "res://addons/surfacer/assets/sounds/",
-    },
-    {
-        name = "tock_low",
-        volume_db = -6.0,
-        path_prefix = "res://addons/surfacer/assets/sounds/",
-    },
-    {
-        name = "tock_high",
-        volume_db = -6.0,
-        path_prefix = "res://addons/surfacer/assets/sounds/",
-    },
-    {
-        name = "tock_higher",
-        volume_db = -6.0,
-        path_prefix = "res://addons/surfacer/assets/sounds/",
-    },
 ]
 
 # --- Surfacer global state ---
@@ -323,30 +223,11 @@ func _on_auto_load_deps_ready() -> void:
 
 
 func _amend_manifest() -> void:
-    if !Sc.manifest.has("geometry_class"):
-        Sc.manifest.geometry_class = SurfacerGeometry
-    if !Sc.manifest.has("draw_class"):
-        Sc.manifest.draw_class = SurfacerDrawUtils
-    if !Sc.manifest.has("beats_class"):
-        Sc.manifest.beats_class = SurfacerBeatTracker
-    if !Sc.manifest.has("characters_class"):
-        Sc.manifest.characters_class = SurfacerCharacterManifest
-    
     var is_precomputing_platform_graphs: bool = \
             manifest.has("precompute_platform_graph_for_levels") and \
             !manifest.precompute_platform_graph_for_levels.empty()
     if is_precomputing_platform_graphs:
         Sc.manifest.metadata.is_splash_skipped = true
-    
-    # Add Surfacer sounds to the front, so they can be overridden by the app.
-    Sc.utils.concat(
-            Sc.manifest.audio_manifest.sounds_manifest,
-            _surfacer_sounds,
-            false)
-    
-    if !Sc.manifest.gui_manifest.has("settings_item_manifest"):
-        Sc.manifest.gui_manifest.settings_item_manifest = \
-                DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
 func _parse_manifest() -> void:
