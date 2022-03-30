@@ -290,7 +290,20 @@ var _additive_overrides := {
     },
 }
 
-var _subtractive_overrides := {}
+var _subtractive_overrides := {
+    ScaffolderSchema: {
+        gui_manifest = {
+            settings_item_manifest = {
+                groups = {
+                    annotations = {
+                        item_classes = [
+                        ],
+                    },
+                },
+            },
+        },
+    },
+}
 
 
 func _init().(
