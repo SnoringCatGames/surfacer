@@ -221,7 +221,7 @@ var _properties := {
     
     surface_properties_manifest = _surface_properties_manifest,
     movement_manifest = _movement_manifest,
-    tileset_manifest = _tileset_manifest
+    tileset_manifest = _tileset_manifest,
     behavior_classes = _behavior_classes,
 }
 

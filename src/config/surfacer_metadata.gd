@@ -7,7 +7,7 @@ const DISPLAY_NAME := "Surfacer"
 const FOLDER_NAME := "surfacer"
 const AUTO_LOAD_NAME := "Su"
 const AUTO_LOAD_DEPS := ["Sc"]
-const AUTO_LOAD_PATH := "res://addons/surfacer/src/config/su.gd"
+const AUTO_LOAD_PATH := "res://addons/surfacer/src/global/su.gd"
 const PLUGIN_ICON_PATH_PREFIX := \
         "res://addons/surfacer/assets/images/editor_icons/plugin/surfacer"
 const SCHEMA_PATH := "res://addons/surfacer/src/config/surfacer_schema.gd"
