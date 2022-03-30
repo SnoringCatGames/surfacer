@@ -3,42 +3,6 @@ class_name SurfacerMovementManifest
 extends Node
 
 
-# ---
-
-const DEFAULT_ACTION_HANDLER_CLASSES := [
-    preload("res://addons/surfacer/src/character/action/action_handlers/air_dash_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/air_default_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/air_jump_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/all_default_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/cap_velocity_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_crawl_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_default_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_fall_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/ceiling_jump_down_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/floor_dash_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/floor_default_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/fall_through_floor_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/floor_friction_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/floor_jump_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/floor_walk_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/wall_climb_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/wall_dash_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/wall_default_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/wall_fall_action.gd"),
-    preload("res://addons/surfacer/src/character/action/action_handlers/wall_jump_action.gd"),
-]
-
-const DEFAULT_EDGE_CALCULATOR_CLASSES := [
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/from_air_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/climb_to_adjacent_surface_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_floor_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_wall_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/intra_surface_calculator.gd"),
-    preload("res://addons/surfacer/src/platform_graph/edge/calculators/jump_from_surface_calculator.gd"),
-]
-
-# ---
-
 var uses_point_and_click_navigation := true
 var cancels_point_and_click_nav_on_key_press := true
 
