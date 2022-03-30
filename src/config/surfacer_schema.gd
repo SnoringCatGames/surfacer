@@ -30,30 +30,12 @@ var _surface_properties_manifest := {
     },
 }
 
-# FIXME: LEFT OFF HERE: --------------------------------------------
+# FIXME: LEFT OFF HERE: ---------------------------------------------
 # - Use this in Surfacer.
 var _tileset_manifest := {
     tilesets = [
         {
             tiles = [
-                {
-                    name = "old_0_tile_with_90s",
-                    angle = CellAngleType.A90,
-                    properties = "",
-                    is_collidable = true,
-                },
-                {
-                    name = "old_1_tile_with_45s",
-                    angle = CellAngleType.A45,
-                    properties = "",
-                    is_collidable = true,
-                },
-                {
-                    name = "old_2_tile_with_27s",
-                    angle = CellAngleType.A27,
-                    properties = "",
-                    is_collidable = true,
-                },
                 {
                     name = "ungrabbable_tile",
                     angle = CellAngleType.A90,
@@ -82,20 +64,6 @@ var _tileset_manifest := {
                     name = "slow_tile",
                     angle = CellAngleType.A90,
                     properties = "slow",
-                    is_collidable = true,
-                },
-                
-                # FIXME: ----------------- REMOVE
-                {
-                    name = "old_0_tile_with_90s_old",
-                    angle = CellAngleType.A90,
-                    properties = "",
-                    is_collidable = true,
-                },
-                {
-                    name = "old_1_tile_with_45s_old",
-                    angle = CellAngleType.A45,
-                    properties = "",
                     is_collidable = true,
                 },
             ],
@@ -225,6 +193,9 @@ var _properties := {
     behavior_classes = _behavior_classes,
 }
 
+const WELCOME_PANEL_ITEM_AUTO_NAV := ["*Auto nav*", "click"]
+const WELCOME_PANEL_ITEM_INSPECT_GRAPH := ["Inspect graph", "ctrl + click (x2)"]
+
 var _additive_overrides := {
     ScaffolderSchema: {
         colors_manifest = \
@@ -274,15 +245,15 @@ var _additive_overrides := {
             },
         ],
         gui_manifest = {
-            # FIXME: LEFT OFF HERE: ------------ Include this in all other frameworks too.
             third_party_license_text = \
                     ScaffolderThirdPartyLicenses.TEXT + \
+                    SurfaceTilerThirdPartyLicenses.TEXT + \
                     SurfacerThirdPartyLicenses.TEXT,
             settings_item_manifest = {
                 groups = {
                     annotations = {
                         item_classes = [
-                            # FIXME: LEFT OFF HERE: ------------ Include some of these in the surface_parser framework too.
+                            # FIXME: ------------ Include some of these in the surface_parser framework too.
                             PlayerPreselectionTrajectoryAnnotatorControlRow,
                             PlayerSlowMoTrajectoryAnnotatorControlRow,
                             PlayerNonSlowMoTrajectoryAnnotatorControlRow,
@@ -315,8 +286,8 @@ var _additive_overrides := {
             },
             welcome_panel_manifest = {
                 items = [
-                    ["*Auto nav*", "click"],
-#                    ["Inspect graph", "ctrl + click (x2)"],
+                    WELCOME_PANEL_ITEM_AUTO_NAV,
+#                    WELCOME_PANEL_ITEM_INSPECT_GRAPH,
                 ],
             },
             screen_manifest = {
