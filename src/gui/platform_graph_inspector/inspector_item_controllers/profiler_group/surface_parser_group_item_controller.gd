@@ -40,7 +40,7 @@ func find_and_expand_controller(
 
 
 func _create_children_inner() -> void:
-    for metric in Su.surface_parser_metric_keys:
+    for metric in SurfacerMetadata.SURFACE_PARSER_METRIC_KEYS:
         if Sc.profiler.is_timing(metric):
             ProfilerTimingItemController.new(
                     tree_item,

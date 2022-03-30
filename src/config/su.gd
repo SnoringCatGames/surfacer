@@ -135,54 +135,6 @@ var skip_choreography_framerate_multiplier := 10.0
 #}
 var debug_params: Dictionary
 
-var non_surface_parser_metric_keys := [
-    "find_surfaces_in_jump_fall_range_from_surface",
-    "edge_calc_broad_phase_check",
-    "calculate_jump_land_positions_for_surface_pair",
-    "narrow_phase_edge_calculation",
-    "check_continuous_horizontal_step_for_collision",
-    
-    "calculate_jump_from_surface_edge",
-    "fall_from_floor_walk_to_fall_off_point_calculation",
-    "find_surfaces_in_fall_range_from_point",
-    "find_landing_trajectory_between_positions",
-    "calculate_land_positions_on_surface",
-    "create_edge_calc_params",
-    "calculate_vertical_step",
-    "calculate_jump_from_surface_steps",
-    "convert_calculation_steps_to_movement_instructions",
-    "calculate_trajectory_from_calculation_steps",
-    "calculate_horizontal_step",
-    "calculate_waypoints_around_surface",
-    
-    # Counts
-    "invalid_collision_state_in_calculate_steps_between_waypoints",
-    "collision_in_calculate_steps_between_waypoints",
-    "calculate_steps_between_waypoints_without_backtracking_on_height",
-    "calculate_steps_between_waypoints_with_backtracking_on_height",
-    
-    "navigator_navigate_path",
-    "navigator_find_path",
-    "navigator_optimize_edges_for_approach",
-    "navigator_ensure_edges_have_trajectory_state",
-    "navigator_start_edge",
-]
-
-var surface_parser_metric_keys := [
-    "validate_tileset",
-    "parse_tileset",
-    "parse_tilemap_cells_into_surfaces",
-    "remove_internal_surfaces",
-    "merge_continuous_surfaces",
-    "get_surface_list_from_map",
-    "remove_internal_collinear_vertices_duration",
-    "store_surfaces_duration",
-    "populate_derivative_collections",
-    "assign_neighbor_surfaces_duration",
-    "calculate_shape_bounding_boxes_for_surfaces_duration",
-    "assert_surfaces_fully_calculated_duration",
-]
-
 var graph_inspector: PlatformGraphInspector
 var selection_description: SelectionDescription
 var movement: SurfacerMovementManifest
@@ -307,9 +259,6 @@ func _instantiate_sub_modules() -> void:
     assert(Sc.level_session is SurfacerLevelSession)
     assert(Sc.geometry is SurfacerGeometry)
     assert(Sc.characters is SurfacerCharacterManifest)
-    
-    Sc.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
-    Sc.profiler.preregister_metric_keys(surface_parser_metric_keys)
     
     if manifest.has("surfacer_movement_manifest_class"):
         self.movement = manifest.surfacer_movement_manifest_class.new()
