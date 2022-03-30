@@ -13,7 +13,7 @@ extends FrameworkGlobal
 
 # --- Constants ---
 
-const _SCHEMA_PATH := "res://addons/surfacer/src/plugin/surfacer_schema.gd"
+const _SCHEMA_PATH := "res://addons/surfacer/src/config/surfacer_schema.gd"
 
 const WALLS_AND_FLOORS_COLLISION_MASK_BIT := 0
 const FALL_THROUGH_FLOORS_COLLISION_MASK_BIT := 1

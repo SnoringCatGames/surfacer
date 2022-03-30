@@ -10,7 +10,7 @@ const AUTO_LOAD_DEPS := ["Sc"]
 const AUTO_LOAD_PATH := "res://addons/surfacer/src/config/su.gd"
 const PLUGIN_ICON_PATH_PREFIX := \
         "res://addons/surfacer/assets/images/editor_icons/plugin/surfacer"
-const SCHEMA_PATH := "res://addons/surfacer/src/plugin/surfacer_schema.gd"
+const SCHEMA_PATH := "res://addons/surfacer/src/config/surfacer_schema.gd"
 const MANIFEST_PATH_OVERRIDE := ""
 const MODES := {}
 
