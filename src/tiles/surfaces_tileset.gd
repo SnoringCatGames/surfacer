@@ -20,8 +20,6 @@ func _parse_tiles_manifest(tiles_manifest: Array) -> void:
         assert(entry is Dictionary)
         assert(entry.has("name") and entry.name is String)
         assert(entry.has("is_collidable") and entry.is_collidable is bool)
-        assert(!entry.is_collidable or \
-                entry.has("angle") and entry.angle is int)
         assert(!entry.has("properties") or entry.properties is String)
         var tile_id := find_tile_by_name(entry.name)
         assert(tile_id != TileMap.INVALID_CELL)
@@ -36,7 +34,6 @@ func _parse_tiles_manifest(tiles_manifest: Array) -> void:
                 id = tile_id,
                 name = tile_name,
                 is_collidable = true,
-                angle = CellAngleType.A90,
                 properties = "",
             }
     
