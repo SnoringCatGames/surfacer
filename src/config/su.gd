@@ -43,35 +43,8 @@ const NPC_PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := \
 const NPC_NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
         "is_npc_navigation_destination_shown"
 
-var is_player_preselection_trajectory_shown := true
-
-var is_player_slow_mo_trajectory_shown := false
-var is_player_non_slow_mo_trajectory_shown := true
-var is_player_previous_trajectory_shown := false
-var is_player_navigation_destination_shown := true
-var is_player_nav_pulse_shown := false
-
-var is_npc_slow_mo_trajectory_shown := true
-var is_npc_non_slow_mo_trajectory_shown := false
-var is_npc_previous_trajectory_shown := false
-var is_npc_navigation_destination_shown := false
-var is_npc_nav_pulse_shown := true
-
 const PLACEHOLDER_SURFACES_TILE_SET_PATH := \
         "res://addons/surfacer/src/tiles/tileset_with_many_angles.tres"
-
-var DEFAULT_BEHAVIOR_CLASSES := [
-    ChoreographyBehavior,
-    ClimbAdjacentSurfacesBehavior,
-    CollideBehavior,
-    FollowBehavior,
-    MoveBackAndForthBehavior,
-    DefaultBehavior,
-    ReturnBehavior,
-    RunAwayBehavior,
-    PlayerNavigationBehavior,
-    WanderBehavior,
-]
 
 # --- Surfacer global state ---
 
@@ -330,11 +303,7 @@ func _configure_sub_modules() -> void:
 
 
 func _parse_behaviors(manifest: Dictionary) -> Dictionary:
-    var behavior_classes: Array = \
-            manifest.behaviors if \
-            manifest.has("behavior_classes") else \
-            DEFAULT_BEHAVIOR_CLASSES
     var behavior_name_to_script := {}
-    for behavior_class in behavior_classes:
+    for behavior_class in manifest.behavior_classes:
         behavior_name_to_script[behavior_class.NAME] = behavior_class
     return behavior_name_to_script
