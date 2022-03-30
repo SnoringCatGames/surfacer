@@ -82,7 +82,11 @@ But there are use-cases for which we really benefit from an AI that can accurate
 ## 📃 Licenses
 
 -   All code is published under the [MIT license](LICENSE).
--   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/config/surfacer_third_party_licenses.gd).
+-   All art assets (files under `assets/images/`, `assets/music/`, and `assets/sounds/`) are published under the [CC0 1.0 Universal license](https://creativecommons.org/publicdomain/zero/1.0/deed.en).
+-   This project depends on various pieces of third-party code that are licensed separately. Here are lists of these third-party licenses:
+    -   [addons/scaffolder/src/config/scaffolder_third_party_licenses.gd](https://github.com/SnoringCatGames/scaffolder/blob/master/src/config/scaffolder_third_party_licenses.gd)
+    -   [addons/surfacer/src/global/surfacer_third_party_licenses.gd](https://github.com/SnoringCatGames/surfacer/blob/master/src/global/surfacer_third_party_licenses.gd)
+    -   [addons/surface_tiler/src/global/surface_tiler_third_party_licenses.gd](https://github.com/SnoringCatGames/surface_tiler/blob/master/src/global/surface_tiler_third_party_licenses.gd)
 
 <p align="center">
   <img src="assets/images/device_icons/icon_128.png"
