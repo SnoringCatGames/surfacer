@@ -30,43 +30,11 @@ var _surface_properties_manifest := {
     },
 }
 
-# FIXME: LEFT OFF HERE: ---------------------------------------------
+# FIXME: LEFT OFF HERE: ----------------------------------------------
 # - Use this in Surfacer.
 var _tileset_manifest := {
     tilesets = [
         {
-            tiles = [
-                {
-                    name = "ungrabbable_tile",
-                    angle = CellAngleType.A90,
-                    properties = "disabled",
-                    is_collidable = true,
-                },
-                {
-                    name = "slippery_tile",
-                    angle = CellAngleType.A90,
-                    properties = "slippery",
-                    is_collidable = true,
-                },
-                {
-                    name = "sticky_tile",
-                    angle = CellAngleType.A90,
-                    properties = "sticky",
-                    is_collidable = true,
-                },
-                {
-                    name = "fast_tile",
-                    angle = CellAngleType.A90,
-                    properties = "fast",
-                    is_collidable = true,
-                },
-                {
-                    name = "slow_tile",
-                    angle = CellAngleType.A90,
-                    properties = "slow",
-                    is_collidable = true,
-                },
-            ],
         },
     ],
 }
@@ -196,6 +164,52 @@ var _properties := {
 const WELCOME_PANEL_ITEM_AUTO_NAV := ["*Auto nav*", "click"]
 const WELCOME_PANEL_ITEM_INSPECT_GRAPH := ["Inspect graph", "ctrl + click (x2)"]
 
+const DEFAULT_TILESET_CONFIG := {
+    recalculate_tileset = [TYPE_CUSTOM, RecalculateTilesetCustomProperty],
+    tile_set = preload("res://addons/surfacer/src/tiles/demo_tileset.tres"),
+    quadrant_size = 16,
+    corner_match_tiles = [
+        {
+            outer_autotile_name = "autotile",
+            inner_autotile_name = "__inner_autotile__",
+            tileset_quadrants_path = \
+                "res://addons/surface_tiler/assets/images/tileset_quadrants.png",
+            tile_corner_type_annotations_path = \
+                "res://addons/surface_tiler/assets/images/tileset_corner_type_annotations.png",
+            subtile_collision_margin = 3.0,
+            are_45_degree_subtiles_used = true,
+            are_27_degree_subtiles_used = false,
+        },
+    ],
+    non_corner_match_tiles = [
+        {
+            name = "ungrabbable_tile",
+            properties = "disabled",
+            is_collidable = true,
+        },
+        {
+            name = "slippery_tile",
+            properties = "slippery",
+            is_collidable = true,
+        },
+        {
+            name = "sticky_tile",
+            properties = "sticky",
+            is_collidable = true,
+        },
+        {
+            name = "fast_tile",
+            properties = "fast",
+            is_collidable = true,
+        },
+        {
+            name = "slow_tile",
+            properties = "slow",
+            is_collidable = true,
+        },
+    ],
+}
+
 var _additive_overrides := {
     ScaffolderSchema: {
         colors_manifest = \
@@ -303,6 +317,11 @@ var _additive_overrides := {
         beats_class = SurfacerBeatTracker,
         characters_class = SurfacerCharacterManifest,
     },
+    SurfaceTilerSchema: {
+        tilesets = [
+            DEFAULT_TILESET_CONFIG,
+        ],
+    },
 }
 
 var _subtractive_overrides := {
@@ -317,6 +336,11 @@ var _subtractive_overrides := {
                 },
             },
         },
+    },
+    SurfaceTilerSchema: {
+        tilesets = [
+            SurfaceTilerSchema.DEFAULT_TILESET_CONFIG,
+        ],
     },
 }
 
