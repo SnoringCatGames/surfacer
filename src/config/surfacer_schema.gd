@@ -146,6 +146,19 @@ var _movement_manifest := {
             SurfacerMovementManifest.DEFAULT_EDGE_CALCULATOR_CLASSES,
 }
 
+var _behavior_classes := [
+    ChoreographyBehavior,
+    ClimbAdjacentSurfacesBehavior,
+    CollideBehavior,
+    FollowBehavior,
+    MoveBackAndForthBehavior,
+    DefaultBehavior,
+    ReturnBehavior,
+    RunAwayBehavior,
+    PlayerNavigationBehavior,
+    WanderBehavior,
+]
+
 var _properties := {
     are_oddly_shaped_surfaces_used = true,
     
@@ -179,6 +192,7 @@ var _properties := {
     surface_properties_manifest = _surface_properties_manifest,
     movement_manifest = _movement_manifest,
     tileset_manifest = _tileset_manifest
+    behavior_classes = _behavior_classes,
 }
 
 var _additive_overrides := {
