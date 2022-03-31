@@ -33,6 +33,7 @@ func _load() -> void:
     graph_parser.parse(
             Sc.level_session.id,
             Su.is_debug_only_platform_graph_state_included)
+    _check_on_removing_surface_marks()
 
 
 func _start() -> void:
@@ -92,6 +93,18 @@ func _on_initial_input() -> void:
 
 #func on_unpause() -> void:
 #    .on_unpause()
+
+
+func _check_on_removing_surface_marks() -> void:
+    var should_remove_surface_marks: bool = \
+            !Engine.editor_hint and \
+            graph_parser.is_loaded_from_file and \
+            !Su.are_loaded_surfaces_deeply_validated
+    if should_remove_surface_marks:
+        var surface_marks: Array = Sc.utils.get_all_nodes_in_group(
+                SurfaceMark.GROUP_NAME_SURFACE_MARKS)
+        for mark in surface_marks:
+            mark.queue_free()
 
 
 func _update_editor_configuration() -> void:
