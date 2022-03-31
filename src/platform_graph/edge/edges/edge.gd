@@ -402,7 +402,7 @@ func _sync_expected_end_surface_state(
     var velocity := velocity_end
     var surface := get_end_surface()
     var facing_left := \
-            trajectory.frame_continuous_velocities_from_steps[
+            trajectory.frame_continuous_velocities_from_steps[ \
                 trajectory.frame_continuous_velocities_from_steps \
                     .size() - 1].x < 0.0 if \
             !trajectory.frame_continuous_velocities_from_steps.empty() else \

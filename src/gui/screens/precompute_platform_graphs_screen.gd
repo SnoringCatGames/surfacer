@@ -75,7 +75,7 @@ func _initialize_metrics() -> void:
 
 func _initialize_next() -> void:
     Sc.profiler.start("initialize")
-    level_id = Su.precompute_platform_graph_for_levels[
+    level_id = Su.precompute_platform_graph_for_levels[ \
             precompute_level_index]
     level = Sc.utils.add_scene(
             null,
@@ -165,7 +165,7 @@ func _on_graph_parse_progress(
             Sc.level_config.get_level_config(level_id) \
                 .platform_graph_character_category_names[character_index]
     var label_1 := "Level %s (%s of %s)" % [
-        Su.precompute_platform_graph_for_levels[
+        Su.precompute_platform_graph_for_levels[ \
                 precompute_level_index],
         precompute_level_index + 1,
         Su.precompute_platform_graph_for_levels.size(),
@@ -233,7 +233,7 @@ func _on_stage_progress(
         }[step]
         
         label_1 = "Level %s (%s of %s)" % [
-            Su.precompute_platform_graph_for_levels[
+            Su.precompute_platform_graph_for_levels[ \
                     precompute_level_index],
             precompute_level_index + 1,
             Su.precompute_platform_graph_for_levels.size(),

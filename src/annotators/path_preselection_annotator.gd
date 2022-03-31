@@ -308,7 +308,7 @@ func _update_phantom_surface() -> void:
                         .vertices.size() > 1 else \
                 preselection_destination.surface.clockwise_neighbor \
                         .clockwise_neighbor.vertices
-        var preceding_point := preceding_neighbor_vertices[
+        var preceding_point := preceding_neighbor_vertices[ \
                 preceding_neighbor_vertices.size() - 2]
         var following_point := following_neighbor_vertices[1]
         
