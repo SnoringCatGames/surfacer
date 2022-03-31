@@ -36,8 +36,6 @@ func _create_tiles_to_properties() -> Dictionary:
 func _is_tile_bound(
         drawn_id: int,
         neighbor_id: int) -> bool:
-    if ._is_tile_bound(drawn_id, neighbor_id):
-        return true
     if neighbor_id == TileMap.INVALID_CELL:
         return false
     return _tile_id_to_config[drawn_id].is_collidable and \
