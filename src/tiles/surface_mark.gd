@@ -26,8 +26,6 @@ var include_exclusively := true setget _set_include_exclusively
 ## If true, then all surfaces are included unless they are marked.
 var exclude := false setget _set_exclude
 
-var should_be_removed := false
-
 # Dictionary<Surface, bool>
 var _marked_surfaces := {}
 
@@ -56,14 +54,6 @@ func _init() -> void:
             usage = Sc.utils.PROPERTY_USAGE_EXPORTED_ITEM,
         },
     ]
-    
-    self.should_be_removed = \
-            !Engine.editor_hint and \
-            !Su.is_precomputing_platform_graphs and \
-            !Su.are_loaded_surfaces_deeply_validated
-    if should_be_removed:
-        clear()
-        queue_free()
 
 
 func _enter_tree() -> void:

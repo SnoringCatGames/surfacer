@@ -1,6 +1,6 @@
 tool
 class_name SurfacerMetadata
-extends PluginMetadata
+extends FrameworkMetadata
 
 
 const DISPLAY_NAME := "Surfacer"
