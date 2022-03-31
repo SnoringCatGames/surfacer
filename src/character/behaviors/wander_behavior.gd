@@ -75,7 +75,7 @@ func _attempt_inter_surface_navigation() -> bool:
     # Get a shuffled list of all inter-surface nodes that are reachable from
     # the character's current surface.
     var possible_destinations := []
-    for origin in character.graph.surfaces_to_outbound_nodes[
+    for origin in character.graph.surfaces_to_outbound_nodes[ \
             latest_move_start_surface]:
         Sc.utils.concat(
                 possible_destinations,

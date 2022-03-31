@@ -45,9 +45,9 @@ func sync_position_rotation_for_contact_normal(
                             grabbed_surface.counter_clockwise_neighbor.normal
                 else:
                     normal_before_vertex = Sc.geometry.get_segment_normal(
-                            previous_surface_vertices[
+                            previous_surface_vertices[ \
                                     previous_surface_vertices.size() - 2],
-                            previous_surface_vertices[
+                            previous_surface_vertices[ \
                                     previous_surface_vertices.size() - 1])
             else:
                 normal_before_vertex = Sc.geometry.get_segment_normal(

@@ -894,13 +894,13 @@ static func _remove_internal_single_vertex_surfaces(
                             bottom_neighbor_index) else \
                         null
                 var bottom_left_neighbor: _TmpSurface = \
-                        tilemap_index_to_floor[
+                        tilemap_index_to_floor[ \
                             bottom_left_neighbor_index] if \
                         tilemap_index_to_floor.has(
                             bottom_left_neighbor_index) else \
                         null
                 var bottom_right_neighbor: _TmpSurface = \
-                        tilemap_index_to_floor[
+                        tilemap_index_to_floor[ \
                             bottom_right_neighbor_index] if \
                         tilemap_index_to_floor.has(
                             bottom_right_neighbor_index) else \
@@ -963,13 +963,13 @@ static func _remove_internal_single_vertex_surfaces(
                             right_neighbor_index) else \
                         null
                 var top_right_neighbor: _TmpSurface = \
-                        tilemap_index_to_right_wall[
+                        tilemap_index_to_right_wall[ \
                             top_right_neighbor_index] if \
                         tilemap_index_to_right_wall.has(
                             top_right_neighbor_index) else \
                         null
                 var bottom_right_neighbor: _TmpSurface = \
-                        tilemap_index_to_right_wall[
+                        tilemap_index_to_right_wall[ \
                             bottom_right_neighbor_index] if \
                         tilemap_index_to_right_wall.has(
                             bottom_right_neighbor_index) else \
@@ -1032,13 +1032,13 @@ static func _remove_internal_single_vertex_surfaces(
                             left_neighbor_index) else \
                         null
                 var top_left_neighbor: _TmpSurface = \
-                        tilemap_index_to_left_wall[
+                        tilemap_index_to_left_wall[ \
                             top_left_neighbor_index] if \
                         tilemap_index_to_left_wall.has(
                             top_left_neighbor_index) else \
                         null
                 var bottom_left_neighbor: _TmpSurface = \
-                        tilemap_index_to_left_wall[
+                        tilemap_index_to_left_wall[ \
                             bottom_left_neighbor_index] if \
                         tilemap_index_to_left_wall.has(
                             bottom_left_neighbor_index) else \
@@ -1142,31 +1142,31 @@ static func _remove_internal_multi_vertex_surfaces(
                     bottom_neighbor_grid_coord.x, bottom_neighbor_grid_coord.y)
             
             var current_tile_shape_data: TileShapeData = \
-                    tile_id_to_coord_to_shape_data[current_tile_id][
+                    tile_id_to_coord_to_shape_data[current_tile_id][ \
                         current_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
                         current_tile_id) else \
                     null
             var left_neighbor_tile_shape_data: TileShapeData = \
-                    tile_id_to_coord_to_shape_data[left_neighbor_tile_id][
+                    tile_id_to_coord_to_shape_data[left_neighbor_tile_id][ \
                         left_neighbor_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
                         left_neighbor_tile_id) else \
                     null
             var right_neighbor_tile_shape_data: TileShapeData = \
-                    tile_id_to_coord_to_shape_data[right_neighbor_tile_id][
+                    tile_id_to_coord_to_shape_data[right_neighbor_tile_id][ \
                         right_neighbor_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
                         right_neighbor_tile_id) else \
                     null
             var top_neighbor_tile_shape_data: TileShapeData = \
-                    tile_id_to_coord_to_shape_data[top_neighbor_tile_id][
+                    tile_id_to_coord_to_shape_data[top_neighbor_tile_id][ \
                         top_neighbor_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
                         top_neighbor_tile_id) else \
                     null
             var bottom_neighbor_tile_shape_data: TileShapeData = \
-                    tile_id_to_coord_to_shape_data[bottom_neighbor_tile_id][
+                    tile_id_to_coord_to_shape_data[bottom_neighbor_tile_id][ \
                         bottom_neighbor_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
                         bottom_neighbor_tile_id) else \
@@ -1786,7 +1786,7 @@ static func _merge_continuous_surfaces(
                         Sc.utils.concat(
                                 current_surface.tilemap_indices,
                                 bottom_left_surface.tilemap_indices)
-                        tilemap_index_to_ceiling[
+                        tilemap_index_to_ceiling[ \
                                 bottom_left_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_left_surface,
@@ -1822,7 +1822,7 @@ static func _merge_continuous_surfaces(
                         Sc.utils.concat(
                                 current_surface.tilemap_indices,
                                 bottom_right_surface.tilemap_indices)
-                        tilemap_index_to_ceiling[
+                        tilemap_index_to_ceiling[ \
                                 bottom_right_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_right_surface,
@@ -1890,7 +1890,7 @@ static func _merge_continuous_surfaces(
                         Sc.utils.concat(
                                 current_surface.tilemap_indices,
                                 bottom_left_surface.tilemap_indices)
-                        tilemap_index_to_left_wall[
+                        tilemap_index_to_left_wall[ \
                                 bottom_left_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_left_surface,
@@ -1911,7 +1911,7 @@ static func _merge_continuous_surfaces(
                 var current_surface: _TmpSurface = \
                         tilemap_index_to_left_wall[tilemap_index]
                 var bottom_right_surface: _TmpSurface = \
-                        tilemap_index_to_left_wall[
+                        tilemap_index_to_left_wall[ \
                             bottom_right_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         current_surface.vertices_array.back(),
@@ -1926,7 +1926,7 @@ static func _merge_continuous_surfaces(
                         Sc.utils.concat(
                                 current_surface.tilemap_indices,
                                 bottom_right_surface.tilemap_indices)
-                        tilemap_index_to_left_wall[
+                        tilemap_index_to_left_wall[ \
                                 bottom_right_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_right_surface,
@@ -1983,7 +1983,7 @@ static func _merge_continuous_surfaces(
                 var current_surface: _TmpSurface = \
                         tilemap_index_to_right_wall[tilemap_index]
                 var bottom_left_surface: _TmpSurface = \
-                        tilemap_index_to_right_wall[
+                        tilemap_index_to_right_wall[ \
                             bottom_left_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_left_surface.vertices_array.back(),
@@ -2000,7 +2000,7 @@ static func _merge_continuous_surfaces(
                         Sc.utils.concat(
                                 current_surface.tilemap_indices,
                                 bottom_left_surface.tilemap_indices)
-                        tilemap_index_to_right_wall[
+                        tilemap_index_to_right_wall[ \
                                 bottom_left_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_left_surface,
@@ -2021,7 +2021,7 @@ static func _merge_continuous_surfaces(
                 var current_surface: _TmpSurface = \
                         tilemap_index_to_right_wall[tilemap_index]
                 var bottom_right_surface: _TmpSurface = \
-                        tilemap_index_to_right_wall[
+                        tilemap_index_to_right_wall[ \
                             bottom_right_neighbor_index]
                 if Sc.geometry.are_points_equal_with_epsilon(
                         bottom_right_surface.vertices_array.back(),
@@ -2038,7 +2038,7 @@ static func _merge_continuous_surfaces(
                         Sc.utils.concat(
                                 current_surface.tilemap_indices,
                                 bottom_right_surface.tilemap_indices)
-                        tilemap_index_to_right_wall[
+                        tilemap_index_to_right_wall[ \
                                 bottom_right_neighbor_index] = current_surface
                         _replace_surface(
                                 bottom_right_surface,
