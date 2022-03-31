@@ -12,3 +12,4 @@ export var id: String
 
 func _ready() -> void:
     add_to_group(GROUP_NAME_SURFACES, true)
+    assert(tile_set is SurfacesTileset)

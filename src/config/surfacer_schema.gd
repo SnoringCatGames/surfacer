@@ -179,6 +179,8 @@ const DEFAULT_TILESET_CONFIG := {
             subtile_collision_margin = 3.0,
             are_45_degree_subtiles_used = true,
             are_27_degree_subtiles_used = false,
+            properties = "default",
+            is_collidable = true,
         },
     ],
     non_corner_match_tiles = [
@@ -338,6 +340,8 @@ var _subtractive_overrides := {
         },
     },
     SurfaceTilerSchema: {
+        tileset_initializer_class = preload(
+            "res://addons/surface_tiler/src/calculators/corner_match_tileset_initializer.gd"),
         tilesets = [
             SurfaceTilerSchema.DEFAULT_TILESET_CONFIG,
         ],

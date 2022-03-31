@@ -6,43 +6,10 @@ extends CornerMatchTileset
 const INVALID_BITMASK := -1
 
 # Dictionary<int, Dictionary>
-var _tile_id_to_config: Dictionary
+var _tile_id_to_config := {}
 
 # Dictionary<String, Dictionary<String,SurfaceProperties>>
-var _tile_name_to_properties: Dictionary
-
-
-func _parse_tiles_manifest(tiles_manifest: Array) -> void:
-    _tile_id_to_config = {}
-    
-    # Create a mapping from each explicitly registered tile name to tile config.
-    for entry in tiles_manifest:
-        assert(entry is Dictionary)
-        assert(entry.has("name") and entry.name is String)
-        assert(entry.has("is_collidable") and entry.is_collidable is bool)
-        assert(!entry.has("properties") or entry.properties is String)
-        var tile_id := find_tile_by_name(entry.name)
-        assert(tile_id != TileMap.INVALID_CELL)
-        entry.id = tile_id
-        _tile_id_to_config[tile_id] = entry
-    
-    # Add default mappings for all tiles that weren't explicitly registered.
-    for tile_id in get_tiles_ids():
-        var tile_name := tile_get_name(tile_id)
-        if !_tile_id_to_config.has(tile_id):
-            _tile_id_to_config[tile_id] = {
-                id = tile_id,
-                name = tile_name,
-                is_collidable = true,
-                properties = "",
-            }
-    
-    # Ensure at least one tile is configured as collidable.
-    var is_at_least_one_tile_collidable := false
-    for entry in _tile_id_to_config.values():
-        is_at_least_one_tile_collidable = \
-                is_at_least_one_tile_collidable or entry.is_collidable
-    assert(is_at_least_one_tile_collidable)
+var _tile_name_to_properties := {}
 
 
 func get_tile_properties(tile_name: String) -> SurfaceProperties:
