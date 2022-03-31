@@ -30,15 +30,6 @@ var _surface_properties_manifest := {
     },
 }
 
-# FIXME: LEFT OFF HERE: ----------------------------------------------
-# - Use this in Surfacer.
-var _tileset_manifest := {
-    tilesets = [
-        {
-        },
-    ],
-}
-
 const DEFAULT_ACTION_HANDLER_CLASSES := [
     preload("res://addons/surfacer/src/character/action/action_handlers/air_dash_action.gd"),
     preload("res://addons/surfacer/src/character/action/action_handlers/air_default_action.gd"),
@@ -157,7 +148,6 @@ var _properties := {
     
     surface_properties_manifest = _surface_properties_manifest,
     movement_manifest = _movement_manifest,
-    tileset_manifest = _tileset_manifest,
     behavior_classes = _behavior_classes,
 }
 
@@ -320,6 +310,7 @@ var _additive_overrides := {
         characters_class = SurfacerCharacterManifest,
     },
     SurfaceTilerSchema: {
+        tileset_initializer_class = SurfacesTilesetInitializer,
         tilesets = [
             DEFAULT_TILESET_CONFIG,
         ],
@@ -340,8 +331,6 @@ var _subtractive_overrides := {
         },
     },
     SurfaceTilerSchema: {
-        tileset_initializer_class = preload(
-            "res://addons/surface_tiler/src/calculators/corner_match_tileset_initializer.gd"),
         tilesets = [
             SurfaceTilerSchema.DEFAULT_TILESET_CONFIG,
         ],
