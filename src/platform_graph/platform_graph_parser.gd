@@ -57,7 +57,8 @@ func _record_tilemaps() -> void:
         assert(surface_tilemaps.size() > 0)
         var tilemap_ids := {}
         for tile_map in surface_tilemaps:
-            assert(tile_map is SurfacesTilemap)
+            assert(tile_map is SurfacesTilemap or \
+                    tile_map is CornerMatchInnerTilemap)
             assert(tile_map.id != "" or surface_tilemaps.size() == 1)
             assert(!tilemap_ids.has(tile_map.id))
             tilemap_ids[tile_map.id] = true

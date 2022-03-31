@@ -47,8 +47,13 @@ func _is_tile_bound(
 func get_collidable_tiles_ids() -> Array:
     var collidable_tiles_ids := []
     for tile_id in get_tiles_ids():
-        collidable_tiles_ids.push_back(tile_id)
+        if _tile_id_to_config[tile_id].is_collidable:
+            collidable_tiles_ids.push_back(tile_id)
     return collidable_tiles_ids
+
+
+func get_is_tile_collidable(tile_id: int) -> bool:
+    return _tile_id_to_config[tile_id].is_collidable
 
 
 func get_cell_autotile_bitmask(

@@ -38,19 +38,25 @@ func parse(
 func _validate_tilemap_collection(tilemaps: Array) -> void:
     assert(!tilemaps.empty(),
             "Collidable TileMap collection must not be empty.")
+    # FIXME: -------------------
+    # - Maybe just print a warning that surfaces from multiple tilemaps won't
+    #   be merged?
     # TODO: Add support for more than one collidable TileMap.
-    assert(tilemaps.size() == 1,
-            "Surfacer currently does not support multiple collidable " +
-            "Tilemaps per level.")
+#    assert(tilemaps.size() == 1,
+#            "Surfacer currently does not support multiple collidable " +
+#            "Tilemaps per level.")
     var cell_size: Vector2 = tilemaps[0].cell_size
     assert(cell_size == Sc.level_session.config.cell_size,
             "TileMap.cell_size does not match level config.")
     for tile_map in tilemaps:
-        assert(tile_map.cell_size == cell_size,
-                "All collidable Tilemaps must use the same cell size.")
+        # FIXME: -------------------
+        # - Inner tilemaps are half size...
+#        assert(tile_map.cell_size == cell_size,
+#                "All collidable Tilemaps must use the same cell size.")
         assert(tile_map.position == Vector2.ZERO,
                 "Tilemaps must be positioned at (0,0).")
-        assert(tile_map is SurfacesTilemap)
+        assert(tile_map is SurfacesTilemap or \
+                tile_map is CornerMatchInnerTilemap)
 
 
 func _calculate_max_tilemap_cell_size(
@@ -294,7 +300,7 @@ func _populate_derivative_collections(
 static func _validate_tileset(tile_map: SurfacesTilemap) -> void:
     var cell_size := tile_map.cell_size
     
-    var tile_set := tile_map.tile_set
+    var tile_set: SurfacesTileset = tile_map.tile_set
     assert(is_instance_valid(tile_set))
     assert(tile_set is SurfacesTileset,
             "Tilesets attached to a collidable TileMap must be assigned " +
@@ -375,7 +381,7 @@ static func _validate_tileset(tile_map: SurfacesTilemap) -> void:
 
 
 static func _parse_tileset(tile_map: SurfacesTilemap) -> Dictionary:
-    var tile_set := tile_map.tile_set
+    var tile_set: SurfacesTileset = tile_map.tile_set
     var cell_size := tile_map.cell_size
     var tile_id_to_coord_to_shape_data := {}
     for tile_id in tile_set.get_collidable_tiles_ids():
@@ -664,24 +670,29 @@ static func _parse_tilemap_cells_into_surfaces(
         tilemap_index_to_right_wall: Dictionary,
         tilemap_index_to_ceiling: Dictionary,
         tile_id_to_coord_to_shape_data: Dictionary,
-        tile_map: TileMap) -> void:
+        tile_map: SurfacesTilemap) -> void:
     var cell_size := tile_map.cell_size
     var used_cells := tile_map.get_used_cells()
+    var tile_set: SurfacesTileset = tile_map.tile_set
     
     for tilemap_position in used_cells:
         var cell_position_world_coords: Vector2 = tilemap_position * cell_size
-        var tilemap_index: int = \
-                Sc.geometry.get_tilemap_index_from_grid_coord(
-                        tilemap_position,
-                        tile_map)
+        var tilemap_index: int = Sc.geometry.get_tilemap_index_from_grid_coord(
+                    tilemap_position,
+                    tile_map)
         var tile_id := tile_map.get_cellv(tilemap_position)
-        var tile_name := tile_map.tile_set.tile_get_name(tile_id)
+        
+        if !tile_set.get_is_tile_collidable(tile_id):
+            # Ignore non-collidable tiles.
+            continue
+        
+        var tile_name := tile_set.tile_get_name(tile_id)
         var tile_coord := tile_map.get_cell_autotile_coord(
                 tilemap_position.x, tilemap_position.y)
         var tile_shape_data: TileShapeData = \
                 tile_id_to_coord_to_shape_data[tile_id][tile_coord]
         var surface_properties: SurfaceProperties = \
-                tile_map.tile_set.get_tile_properties(tile_name)
+                tile_set.get_tile_properties(tile_name)
         
         # Transform tile shapes into world coordinates.
         var floor_vertices_world_coords := \

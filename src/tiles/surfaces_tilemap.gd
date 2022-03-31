@@ -7,9 +7,10 @@ extends CornerMatchTilemap
 
 const GROUP_NAME_SURFACES := "surfaces"
 
-export var id: String
-
 
 func _ready() -> void:
-    add_to_group(GROUP_NAME_SURFACES, true)
+    self.add_to_group(GROUP_NAME_SURFACES, true)
+    if is_instance_valid(inner_tilemap):
+        inner_tilemap.add_to_group(GROUP_NAME_SURFACES, true)
+        inner_tilemap.id = self.id + "_inner"
     assert(tile_set is SurfacesTileset)
