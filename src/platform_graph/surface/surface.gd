@@ -16,7 +16,7 @@ var side := SurfaceSide.NONE
 
 var properties: SurfaceProperties
 
-var tile_map: SurfacesTilemap
+var tile_map: TileMap
 
 # Array<int>
 var tilemap_indices: Array

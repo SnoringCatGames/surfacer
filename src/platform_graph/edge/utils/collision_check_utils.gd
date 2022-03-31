@@ -407,7 +407,7 @@ static func check_frame_for_collision(
         #     detected in the previous frame.
         surface_collision.time_from_start_of_frame = 0.0
     
-    var tile_map: SurfacesTilemap = kinematic_collision.collider
+    var tile_map: TileMap = kinematic_collision.collider
     var surface_side: int = \
             Sc.geometry.get_surface_side_for_normal(kinematic_collision.normal)
     var tilemap_result := CollisionSurfaceResult.new()

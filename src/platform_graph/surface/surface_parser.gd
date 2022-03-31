@@ -96,7 +96,7 @@ func _calculate_combined_tilemap_rect(
 # - The given TileMap only uses tiles with convex collision boundaries.
 func _parse_tilemap(
         surface_store: SurfaceStore,
-        tile_map: SurfacesTilemap) -> void:
+        tile_map: TileMap) -> void:
     Sc.profiler.start("validate_tileset")
     _validate_tileset(tile_map)
     Sc.profiler.stop("validate_tileset")
@@ -191,7 +191,7 @@ func _parse_tilemap(
 
 func _store_surfaces(
         surface_store: SurfaceStore,
-        tile_map: SurfacesTilemap,
+        tile_map: TileMap,
         floors: Array,
         ceilings: Array,
         left_walls: Array,
@@ -230,7 +230,7 @@ func _store_surfaces(
 
 func _populate_derivative_collections(
         surface_store: SurfaceStore,
-        tile_map: SurfacesTilemap) -> void:
+        tile_map: TileMap) -> void:
     # TODO: This is broken with multiple tilemaps.
     surface_store.all_surfaces = []
     Sc.utils.concat(
@@ -297,7 +297,7 @@ func _populate_derivative_collections(
     }
 
 
-static func _validate_tileset(tile_map: SurfacesTilemap) -> void:
+static func _validate_tileset(tile_map: TileMap) -> void:
     var cell_size := tile_map.cell_size
     
     var tile_set: SurfacesTileset = tile_map.tile_set
@@ -380,7 +380,7 @@ static func _validate_tileset(tile_map: SurfacesTilemap) -> void:
                         "the cell-size of the corresponding TileMap.")
 
 
-static func _parse_tileset(tile_map: SurfacesTilemap) -> Dictionary:
+static func _parse_tileset(tile_map: TileMap) -> Dictionary:
     var tile_set: SurfacesTileset = tile_map.tile_set
     var cell_size := tile_map.cell_size
     var tile_id_to_coord_to_shape_data := {}
@@ -670,7 +670,7 @@ static func _parse_tilemap_cells_into_surfaces(
         tilemap_index_to_right_wall: Dictionary,
         tilemap_index_to_ceiling: Dictionary,
         tile_id_to_coord_to_shape_data: Dictionary,
-        tile_map: SurfacesTilemap) -> void:
+        tile_map: TileMap) -> void:
     var cell_size := tile_map.cell_size
     var used_cells := tile_map.get_used_cells()
     var tile_set: SurfacesTileset = tile_map.tile_set
@@ -1144,27 +1144,32 @@ static func _remove_internal_multi_vertex_surfaces(
             var current_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[current_tile_id][
                         current_tile_coord] if \
-                    current_tile_id != TileMap.INVALID_CELL else \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        current_tile_id) else \
                     null
             var left_neighbor_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[left_neighbor_tile_id][
                         left_neighbor_tile_coord] if \
-                    left_neighbor_tile_id != TileMap.INVALID_CELL else \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        left_neighbor_tile_id) else \
                     null
             var right_neighbor_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[right_neighbor_tile_id][
                         right_neighbor_tile_coord] if \
-                    right_neighbor_tile_id != TileMap.INVALID_CELL else \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        right_neighbor_tile_id) else \
                     null
             var top_neighbor_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[top_neighbor_tile_id][
                         top_neighbor_tile_coord] if \
-                    top_neighbor_tile_id != TileMap.INVALID_CELL else \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        top_neighbor_tile_id) else \
                     null
             var bottom_neighbor_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[bottom_neighbor_tile_id][
                         bottom_neighbor_tile_coord] if \
-                    bottom_neighbor_tile_id != TileMap.INVALID_CELL else \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        bottom_neighbor_tile_id) else \
                     null
             
             var is_there_a_non_single_floor_to_ceiling_match: bool = \
@@ -2537,7 +2542,7 @@ static func _free_objects(objects: Array) -> void:
 class _TmpSurface extends Object:
     # Array<Vector2>
     var vertices_array: Array
-    var tile_map: SurfacesTilemap
+    var tile_map: TileMap
     # Array<int>
     var tilemap_indices: Array
     var properties: SurfaceProperties

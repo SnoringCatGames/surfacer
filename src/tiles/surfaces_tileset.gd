@@ -53,7 +53,8 @@ func get_collidable_tiles_ids() -> Array:
 
 
 func get_is_tile_collidable(tile_id: int) -> bool:
-    return _tile_id_to_config[tile_id].is_collidable
+    return tile_id != TileMap.INVALID_CELL and \
+            _tile_id_to_config[tile_id].is_collidable
 
 
 func get_cell_autotile_bitmask(
