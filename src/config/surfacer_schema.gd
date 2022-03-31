@@ -206,50 +206,55 @@ var _additive_overrides := {
     ScaffolderSchema: {
         colors_manifest = \
             Utils.get_direct_color_properties(SurfacerDefaultColors.new()),
-        annotation_parameters_manifest = Utils.get_direct_non_color_properties(
-            SurfacerDefaultAnnotationParameters.new()),
-        sounds_manifest = [
-            {
-                name = "nav_select_fail",
-                volume_db = 0.0,
-                path_prefix = "res://addons/surfacer/assets/sounds/",
-            },
-            {
-                name = "nav_select_success",
-                volume_db = 0.0,
-                path_prefix = "res://addons/surfacer/assets/sounds/",
-            },
-            {
-                name = "slow_down",
-                volume_db = 0.0,
-                path_prefix = "res://addons/surfacer/assets/sounds/",
-            },
-            {
-                name = "speed_up",
-                volume_db = 0.0,
-                path_prefix = "res://addons/surfacer/assets/sounds/",
-            },
-            {
-                name = "tick",
-                volume_db = -6.0,
-                path_prefix = "res://addons/surfacer/assets/sounds/",
-            },
-            {
-                name = "tock_low",
-                volume_db = -6.0,
-                path_prefix = "res://addons/surfacer/assets/sounds/",
-            },
-            {
-                name = "tock_high",
-                volume_db = -6.0,
-                path_prefix = "res://addons/surfacer/assets/sounds/",
-            },
-            {
-                name = "tock_higher",
-                volume_db = -6.0,
-                path_prefix = "res://addons/surfacer/assets/sounds/",
-            },
-        ],
+        annotation_parameters_manifest = Sc.utils.merge(
+            Utils.get_direct_non_color_properties(
+                SurfacerDefaultAnnotationParameters.new()),
+            Utils.get_direct_non_color_properties(
+                SurfacerDefaultColors.new())),
+        audio_manifest = {
+            sounds_manifest = [
+                {
+                    name = "nav_select_fail",
+                    volume_db = 0.0,
+                    path_prefix = "res://addons/surfacer/assets/sounds/",
+                },
+                {
+                    name = "nav_select_success",
+                    volume_db = 0.0,
+                    path_prefix = "res://addons/surfacer/assets/sounds/",
+                },
+                {
+                    name = "slow_down",
+                    volume_db = 0.0,
+                    path_prefix = "res://addons/surfacer/assets/sounds/",
+                },
+                {
+                    name = "speed_up",
+                    volume_db = 0.0,
+                    path_prefix = "res://addons/surfacer/assets/sounds/",
+                },
+                {
+                    name = "tick",
+                    volume_db = -6.0,
+                    path_prefix = "res://addons/surfacer/assets/sounds/",
+                },
+                {
+                    name = "tock_low",
+                    volume_db = -6.0,
+                    path_prefix = "res://addons/surfacer/assets/sounds/",
+                },
+                {
+                    name = "tock_high",
+                    volume_db = -6.0,
+                    path_prefix = "res://addons/surfacer/assets/sounds/",
+                },
+                {
+                    name = "tock_higher",
+                    volume_db = -6.0,
+                    path_prefix = "res://addons/surfacer/assets/sounds/",
+                },
+            ],
+        },
         gui_manifest = {
             third_party_license_text = \
                     ScaffolderThirdPartyLicenses.TEXT + \
