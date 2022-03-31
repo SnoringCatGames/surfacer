@@ -315,6 +315,15 @@ static func _validate_tileset(tile_map: TileMap) -> void:
                 ("Tile ID is not recognized by " +
                 "SurfacesTileset.get_tile_properties: %s") % tile_name)
         
+        # FIXME: LEFT OFF HERE: -----------
+        # - Ensure this is the right fix.
+        if tile_set.tile_get_tile_mode(tile_id) == TileSet.AUTO_TILE and \
+                tile_set.autotile_get_size(tile_id) != cell_size:
+            # -   Skip any tiles whose cell-size doesn't match the TileMap.
+            # -   Such tiles are probably meant to be used in the other outer
+            #     or inner TileMap for a corner-match tile.
+            continue
+        
         var shapes := tile_set.tile_get_shapes(tile_id)
         for shape_data in shapes:
             var shape: Shape2D = shape_data.shape
@@ -689,6 +698,12 @@ static func _parse_tilemap_cells_into_surfaces(
         var tile_name := tile_set.tile_get_name(tile_id)
         var tile_coord := tile_map.get_cell_autotile_coord(
                 tilemap_position.x, tilemap_position.y)
+        # FIXME: LEFT OFF HERE: -------------------------
+        # - This shouldn't be needed, because we shouldn't be storing empty
+        #   cells in the tilemap.
+        if !tile_id_to_coord_to_shape_data[tile_id].has(tile_coord):
+            # This is an empty cell, so skip it.
+            continue
         var tile_shape_data: TileShapeData = \
                 tile_id_to_coord_to_shape_data[tile_id][tile_coord]
         var surface_properties: SurfaceProperties = \
@@ -1141,35 +1156,69 @@ static func _remove_internal_multi_vertex_surfaces(
             var bottom_neighbor_tile_coord := tile_map.get_cell_autotile_coord(
                     bottom_neighbor_grid_coord.x, bottom_neighbor_grid_coord.y)
             
+            # FIXME: LEFT OFF HERE: -------------------------
+            # - This shouldn't be needed, because we shouldn't be storing empty
+            #   cells in the tilemap.
+            var is_current_tile_empty: bool = \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        current_tile_id) and \
+                    !tile_id_to_coord_to_shape_data[current_tile_id] \
+                        .has(current_tile_coord)
+            var is_left_tile_empty: bool = \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        left_neighbor_tile_id) and \
+                    !tile_id_to_coord_to_shape_data[left_neighbor_tile_id] \
+                        .has(left_neighbor_tile_coord)
+            var is_right_tile_empty: bool = \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        right_neighbor_tile_id) and \
+                    !tile_id_to_coord_to_shape_data[right_neighbor_tile_id] \
+                        .has(right_neighbor_tile_coord)
+            var is_top_tile_empty: bool = \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        top_neighbor_tile_id) and \
+                    !tile_id_to_coord_to_shape_data[top_neighbor_tile_id] \
+                        .has(top_neighbor_tile_coord)
+            var is_bottom_tile_empty: bool = \
+                    tile_map.tile_set.get_is_tile_collidable(
+                        bottom_neighbor_tile_id) and \
+                    !tile_id_to_coord_to_shape_data[bottom_neighbor_tile_id] \
+                        .has(bottom_neighbor_tile_coord)
+            
             var current_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[current_tile_id][ \
                         current_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
-                        current_tile_id) else \
+                        current_tile_id) and \
+                    !is_current_tile_empty else \
                     null
             var left_neighbor_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[left_neighbor_tile_id][ \
                         left_neighbor_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
-                        left_neighbor_tile_id) else \
+                        left_neighbor_tile_id) and \
+                    !is_left_tile_empty else \
                     null
             var right_neighbor_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[right_neighbor_tile_id][ \
                         right_neighbor_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
-                        right_neighbor_tile_id) else \
+                        right_neighbor_tile_id) and \
+                    !is_right_tile_empty else \
                     null
             var top_neighbor_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[top_neighbor_tile_id][ \
                         top_neighbor_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
-                        top_neighbor_tile_id) else \
+                        top_neighbor_tile_id) and \
+                    !is_top_tile_empty else \
                     null
             var bottom_neighbor_tile_shape_data: TileShapeData = \
                     tile_id_to_coord_to_shape_data[bottom_neighbor_tile_id][ \
                         bottom_neighbor_tile_coord] if \
                     tile_map.tile_set.get_is_tile_collidable(
-                        bottom_neighbor_tile_id) else \
+                        bottom_neighbor_tile_id) and \
+                    !is_bottom_tile_empty else \
                     null
             
             var is_there_a_non_single_floor_to_ceiling_match: bool = \
