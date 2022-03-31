@@ -35,7 +35,7 @@ static func find_closest_surface_in_direction(
             false)
     if collision.empty():
         return null
-    assert(collision.collider is SurfacesTilemap)
+    assert(collision.collider is TileMap)
     
     calculate_collision_surface(
             collision_surface_result,

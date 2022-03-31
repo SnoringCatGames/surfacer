@@ -116,7 +116,7 @@ var grab_normal := Vector2.INF
 var previous_grab_position := Vector2.INF
 var previous_grab_normal := Vector2.INF
 var grab_position_tilemap_coord := Vector2.INF
-var grabbed_tilemap: SurfacesTilemap
+var grabbed_tilemap: TileMap
 var grabbed_surface: Surface
 var previous_grabbed_surface: Surface
 var center_position_along_surface := PositionAlongSurface.new()
@@ -469,7 +469,7 @@ func _calculate_surface_contact_from_collision(
         collision: KinematicCollision2DCopy) -> SurfaceContact:
     var contact_position := collision.position
     var collision_normal := collision.normal
-    var contacted_tilemap: SurfacesTilemap = collision.collider
+    var contacted_tilemap: TileMap = collision.collider
     
     SurfaceFinder.calculate_collision_surface(
             _collision_surface_result,

@@ -34,7 +34,7 @@ var max_tilemap_cell_size: Vector2
 var combined_tilemap_rect: Rect2
 
 # This supports mapping a cell in a TileMap to its corresponding surface.
-# Dictionary<SurfacesTilemap, Dictionary<int, Dictionary<int, Surface>>>
+# Dictionary<TileMap, Dictionary<int, Dictionary<int, Surface>>>
 var _tilemap_index_to_surface_maps := {}
 
 var _collision_surface_result := CollisionSurfaceResult.new()
@@ -43,7 +43,7 @@ var _collision_surface_result := CollisionSurfaceResult.new()
 # Gets the surface corresponding to the given side of the given tile in the
 # given TileMap.
 func get_surface_for_tile(
-        tile_map: SurfacesTilemap,
+        tile_map: TileMap,
         tilemap_index: int,
         side: int) -> Surface:
     var _tilemap_index_to_surfaces: Dictionary = \

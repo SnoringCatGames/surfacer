@@ -15,7 +15,7 @@ const PLATFORM_GRAPHS_DIRECTORY_NAME := "platform_graphs"
 
 var level_id: String
 # The Tilemaps that define the collision boundaries of this level.
-# Array<SurfacesTilemap>
+# Array<TileMap>
 var surface_tilemaps: Array
 # Array<SurfaceMark>
 var surface_marks: Array
