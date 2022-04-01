@@ -87,6 +87,6 @@ static func _get_combined_metric_keys() -> Array:
     for i in non_surface_parser_metric_keys_count:
         combined_keys[i] = NON_SURFACE_PARSER_METRIC_KEYS[i]
     for i in surface_parser_metric_keys_count:
-        combined_keys[i + surface_parser_metric_keys_count] = \
+        combined_keys[i + non_surface_parser_metric_keys_count] = \
                 SURFACE_PARSER_METRIC_KEYS[i]
     return combined_keys
