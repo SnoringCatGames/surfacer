@@ -30,6 +30,10 @@ func parse(
     for tile_map in tilemaps:
         _parse_tilemap(surface_store, tile_map)
     
+    Sc.profiler.start("populate_derivative_collections")
+    _populate_derivative_collections(surface_store, tilemaps)
+    Sc.profiler.stop("populate_derivative_collections")
+    
     for mark in surface_marks:
         _parse_surface_mark(surface_store, mark, tilemaps[0])
     surface_store.marks = surface_marks
@@ -162,10 +166,6 @@ func _parse_tilemap(
             right_walls)
     Sc.profiler.stop("store_surfaces_duration")
     
-    Sc.profiler.start("populate_derivative_collections")
-    _populate_derivative_collections(surface_store, tile_map)
-    Sc.profiler.stop("populate_derivative_collections")
-    
     Sc.profiler.start("assign_neighbor_surfaces_duration")
     _assign_neighbor_surfaces(
             surface_store.floors,
@@ -230,71 +230,71 @@ func _store_surfaces(
 
 func _populate_derivative_collections(
         surface_store: SurfaceStore,
-        tile_map: TileMap) -> void:
-    # TODO: This is broken with multiple tilemaps.
+        tilemaps: Array) -> void:
     surface_store.all_surfaces = []
-    Sc.utils.concat(
-            surface_store.all_surfaces,
-            surface_store.floors)
-    Sc.utils.concat(
-            surface_store.all_surfaces,
-            surface_store.right_walls)
-    Sc.utils.concat(
-            surface_store.all_surfaces,
-            surface_store.left_walls)
-    Sc.utils.concat(
-            surface_store.all_surfaces,
-            surface_store.ceilings)
     surface_store.non_ceiling_surfaces = []
-    Sc.utils.concat(
-            surface_store.non_ceiling_surfaces,
-            surface_store.floors)
-    Sc.utils.concat(
-            surface_store.non_ceiling_surfaces,
-            surface_store.right_walls)
-    Sc.utils.concat(
-            surface_store.non_ceiling_surfaces,
-            surface_store.left_walls)
     surface_store.non_floor_surfaces = []
-    Sc.utils.concat(
-            surface_store.non_floor_surfaces,
-            surface_store.right_walls)
-    Sc.utils.concat(
-            surface_store.non_floor_surfaces,
-            surface_store.left_walls)
-    Sc.utils.concat(
-            surface_store.non_floor_surfaces,
-            surface_store.ceilings)
     surface_store.non_wall_surfaces = []
-    Sc.utils.concat(
-            surface_store.non_wall_surfaces,
-            surface_store.floors)
-    Sc.utils.concat(
-            surface_store.non_wall_surfaces,
-            surface_store.ceilings)
     surface_store.all_walls = []
     Sc.utils.concat(
+            surface_store.all_surfaces,
+            surface_store.floors)
+    Sc.utils.concat(
+            surface_store.all_surfaces,
+            surface_store.right_walls)
+    Sc.utils.concat(
+            surface_store.all_surfaces,
+            surface_store.left_walls)
+    Sc.utils.concat(
+            surface_store.all_surfaces,
+            surface_store.ceilings)
+    Sc.utils.concat(
+            surface_store.non_ceiling_surfaces,
+            surface_store.floors)
+    Sc.utils.concat(
+            surface_store.non_ceiling_surfaces,
+            surface_store.right_walls)
+    Sc.utils.concat(
+            surface_store.non_ceiling_surfaces,
+            surface_store.left_walls)
+    Sc.utils.concat(
+            surface_store.non_floor_surfaces,
+            surface_store.right_walls)
+    Sc.utils.concat(
+            surface_store.non_floor_surfaces,
+            surface_store.left_walls)
+    Sc.utils.concat(
+            surface_store.non_floor_surfaces,
+            surface_store.ceilings)
+    Sc.utils.concat(
+            surface_store.non_wall_surfaces,
+            surface_store.floors)
+    Sc.utils.concat(
+            surface_store.non_wall_surfaces,
+            surface_store.ceilings)
+    Sc.utils.concat(
             surface_store.all_walls,
             surface_store.right_walls)
     Sc.utils.concat(
             surface_store.all_walls,
             surface_store.left_walls)
     
-    var floor_mapping = \
-            _create_tilemap_mapping_from_surfaces(surface_store.floors)
-    var ceiling_mapping = \
-            _create_tilemap_mapping_from_surfaces(surface_store.ceilings)
-    var left_wall_mapping = \
-            _create_tilemap_mapping_from_surfaces(surface_store.left_walls)
-    var right_wall_mapping = \
-            _create_tilemap_mapping_from_surfaces(surface_store.right_walls)
-    
-    surface_store._tilemap_index_to_surface_maps[tile_map] = {
-        SurfaceSide.FLOOR: floor_mapping,
-        SurfaceSide.CEILING: ceiling_mapping,
-        SurfaceSide.LEFT_WALL: left_wall_mapping,
-        SurfaceSide.RIGHT_WALL: right_wall_mapping,
-    }
+    for tile_map in tilemaps:
+        var floor_mapping = _create_tilemap_mapping_from_surfaces(
+                surface_store.floors, tile_map)
+        var ceiling_mapping = _create_tilemap_mapping_from_surfaces(
+                surface_store.ceilings, tile_map)
+        var left_wall_mapping = _create_tilemap_mapping_from_surfaces(
+                surface_store.left_walls, tile_map)
+        var right_wall_mapping = _create_tilemap_mapping_from_surfaces(
+                surface_store.right_walls, tile_map)
+        
+        surface_store._tilemap_index_to_surface_maps[tile_map] = {
+            SurfaceSide.FLOOR: floor_mapping,
+            SurfaceSide.CEILING: ceiling_mapping,
+            SurfaceSide.LEFT_WALL: left_wall_mapping,
+            SurfaceSide.RIGHT_WALL: right_wall_mapping,
+        }
 
 
 static func _validate_tileset(tile_map: TileMap) -> void:
@@ -2575,11 +2575,13 @@ static func _copy_surfaces_to_main_collection(
 
 
 static func _create_tilemap_mapping_from_surfaces(
-        surfaces: Array) -> Dictionary:
+        surfaces: Array,
+        tile_map: TileMap) -> Dictionary:
     var result = {}
     for surface in surfaces:
-        for tilemap_index in surface.tilemap_indices:
-            result[tilemap_index] = surface
+        if surface.tile_map == tile_map:
+            for tilemap_index in surface.tilemap_indices:
+                result[tilemap_index] = surface
     return result
 
 
