@@ -111,9 +111,6 @@ func load_from_json_object(
     right_walls = \
             _json_object_to_surface_array(json_object.right_walls, context)
     
-    # TODO: This is broken with multiple tilemaps.
-    surface_parser._populate_derivative_collections(self, tilemaps[0])
-    
     for i in floors.size():
         floors[i].load_references_from_json_context(
                 json_object.floors[i],
@@ -130,6 +127,8 @@ func load_from_json_object(
         right_walls[i].load_references_from_json_context(
                 json_object.right_walls[i],
                 context)
+    
+    surface_parser._populate_derivative_collections(self, tilemaps)
 
 
 func to_json_object() -> Dictionary:
