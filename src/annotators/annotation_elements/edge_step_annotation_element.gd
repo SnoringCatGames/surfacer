@@ -205,15 +205,15 @@ func _draw_collision(canvas: CanvasItem) -> void:
             _draw_bounding_box_and_margin(
                     canvas,
                     collision_result_metadata.frame_start_position,
-                    Sc.palette.get_color("collision_frame_start_color)"))
+                    Sc.palette.get_color("collision_frame_start_color"))
             _draw_bounding_box_and_margin(
                     canvas,
                     collision_result_metadata.frame_end_position,
-                    Sc.palette.get_color("collision_frame_end_color)"))
+                    Sc.palette.get_color("collision_frame_end_color"))
             _draw_bounding_box_and_margin(
                     canvas,
                     collision_result_metadata.frame_previous_position,
-                    Sc.palette.get_color("collision_frame_previous_color)"))
+                    Sc.palette.get_color("collision_frame_previous_color"))
 
 
 func _draw_bounding_box_and_margin(

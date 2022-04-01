@@ -22,7 +22,7 @@ func _init(
                 Sc.annotators.params.includes_continuous_positions,
         includes_discrete_positions := \
                 Sc.annotators.params.includes_discrete_positions,
-        color := Sc.palette.get_color("edge_discrete_trajectory_color)")) \
+        color := Sc.palette.get_color("edge_discrete_trajectory_color")) \
         .(TYPE) -> void:
     self.edge = edge
     self.includes_waypoints = includes_waypoints
