@@ -934,6 +934,11 @@ func get_max_air_horizontal_speed() -> float:
     return max_horizontal_speed_default * air_horizontal_speed_multiplier
 
 
+func get_smaller_of_max_surface_and_air_horizontal_speed() -> float:
+    return max_horizontal_speed_default * \
+            min(surface_speed_multiplier, air_horizontal_speed_multiplier)
+
+
 func _set_is_instanced_from_bootstrap(value: bool) -> void:
     _is_instanced_from_bootstrap = value
     _set_up()

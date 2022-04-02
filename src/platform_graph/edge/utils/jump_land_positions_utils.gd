@@ -3364,9 +3364,11 @@ static func get_horizontal_velocity_start(
             
             if can_reach_half_max_speed:
                 if is_moving_leftward:
-                    return -movement_params.max_horizontal_speed_default
+                    return -movement_params \
+                            .get_smaller_of_max_surface_and_air_horizontal_speed()
                 else:
-                    return movement_params.max_horizontal_speed_default
+                    return movement_params \
+                            .get_smaller_of_max_surface_and_air_horizontal_speed()
             else:
                 return 0.0
             
