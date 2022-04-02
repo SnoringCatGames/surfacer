@@ -179,6 +179,42 @@ func find_a_landing_trajectory(
             calc_result.vertical_step.time_peak_height)
 
 
+# FIXME: ---------------------
+# - Review this.
+# - Add support for simulating the trajectory collision response when colliding
+#   with a non-grabbable surface.
+const MAX_FALL_DISTANCE_SQUARED_THRESHOLD := 1024.0 * 1024.0
+func create_edge_from_current_fall_trajectory(
+        collision_params: CollisionCalcParams,
+        all_possible_surfaces_set: Dictionary,
+        origin: PositionAlongSurface,
+        velocity_start: Vector2) -> FromAirEdge:
+    # FIXME: LEFT OFF HERE: --------------------------------
+    # - MAX_FALL_DISTANCE_SQUARED_THRESHOLD
+    return null
+    
+    var contact_position_along_surface
+    var contact_velocity
+    var instructions
+    var trajectory
+    var time_peak_height
+    
+#    return FromAirEdge.new(
+#            self,
+#            origin,
+#            contact_position_along_surface,
+#            velocity_start,
+#            contact_velocity,
+#            trajectory.distance_from_continuous_trajectory,
+#            instructions.duration,
+#            false,
+#            collision_params.movement_params,
+#            instructions,
+#            trajectory,
+#            EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
+#            time_peak_height)
+
+
 func create_edge_from_part_of_other_edge(
         other_edge: Edge,
         start_time: float,

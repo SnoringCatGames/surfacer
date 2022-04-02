@@ -246,6 +246,15 @@ func find_path(
                 destination,
                 null)
         
+        # FIXME: --------------------- Review this.
+        if from_air_edge == null:
+            from_air_edge = from_air_calculator \
+                    .create_edge_from_current_fall_trajectory(
+                        graph.collision_params,
+                        graph.surfaces_set,
+                        origin,
+                        start_velocity)
+        
         if from_air_edge == null and \
                 navigation_state.is_currently_navigating and \
                 edge.get_end_surface() != null:
