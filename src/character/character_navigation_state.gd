@@ -2,7 +2,7 @@ class_name CharacterNavigationState
 extends Reference
 
 
-var is_player_character := false
+var character
 
 var is_currently_navigating := false
 var just_ended := false

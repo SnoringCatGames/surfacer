@@ -30,7 +30,7 @@ func _destroy() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
     if !Sc.gui.is_player_interaction_enabled or \
-            !is_instance_valid(Sc.characters.get_player_character()):
+            !is_instance_valid(Sc.characters.get_active_player_character()):
         return
     
     var is_control_pressed: bool = \

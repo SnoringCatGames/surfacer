@@ -5,16 +5,18 @@ extends Node2D
 # TODO: Move predictions out into a separate annotator.
 var _predictions_container: Node2D
 
-var character: SurfacerCharacter
+var last_player_character: SurfacerCharacter
 var player_nav: PlayerNavigationBehavior
 var surface_color: Color
 var indicator_color: Color
 var path_color: Color
 var hash_color: Color
 
+var did_player_character_change := false
+
 var path_front_end_trim_radius: float
 var preselection_destination: PositionAlongSurface = null
-var animation_start_time: float = -Sc.annotators.params.preselection_default_duration
+var animation_start_time: float
 var animation_progress := 1.0
 var phantom_surface := Surface.new(
         [Vector2.INF],
@@ -37,42 +39,58 @@ var preselection_path_beats_time_start: float
 var preselection_path_beats: Array
 
 
-func _init(character: SurfacerCharacter) -> void:
-    self.character = character
-    self.player_nav = character.get_behavior(PlayerNavigationBehavior)
-    
-    phantom_surface.clockwise_convex_neighbor = \
-            phantom_surface_cw_neighbor
-    phantom_surface.counter_clockwise_convex_neighbor = \
-            phantom_surface_ccw_neighbor
-    
-    surface_color = ColorFactory.opacify(
-            character.navigation_annotation_color,
-            Sc.annotators.params.preselection_surface_opacity).sample()
-    indicator_color = ColorFactory.opacify(
-            character.navigation_annotation_color,
-            Sc.annotators.params.preselection_indicator_opacity).sample()
-    path_color = ColorFactory.opacify(
-            character.navigation_annotation_color,
-            Sc.annotators.params.preselection_path_opacity).sample()
-    hash_color = ColorFactory.opacify(
-            character.navigation_annotation_color,
-            Sc.annotators.params.preselection_hash_opacity).sample()
-    
-    self.path_front_end_trim_radius = min(
-            character.collider.half_width_height.x,
-            character.collider.half_width_height.y)
-    
+func _init() -> void:
     self._predictions_container = Node2D.new()
     _predictions_container.visible = false
-    _predictions_container.modulate.a = \
-            Sc.annotators.params.nav_selection_prediction_opacity
     add_child(_predictions_container)
     
     Sc.slow_motion.connect(
             "slow_motion_toggled", self, "_on_slow_motion_toggled")
     Sc.slow_motion.music.connect(
             "tick_tock_beat", self, "_on_slow_motion_tick_tock_beat")
+
+
+func _check_active_player_character() -> void:
+    var current_player_character := Sc.characters.get_active_player_character()
+    if last_player_character == current_player_character:
+        return
+    
+    self.did_player_character_change = true
+    self.last_player_character = current_player_character
+    
+    # FIXME: --------------- Check this
+    self.animation_start_time = \
+            -Sc.annotators.params.preselection_default_duration
+    _predictions_container.modulate.a = \
+            Sc.annotators.params.nav_selection_prediction_opacity
+    
+    if is_instance_valid(current_player_character):
+        self.player_nav = \
+                last_player_character.get_behavior(PlayerNavigationBehavior)
+        
+        phantom_surface.clockwise_convex_neighbor = \
+                phantom_surface_cw_neighbor
+        phantom_surface.counter_clockwise_convex_neighbor = \
+                phantom_surface_ccw_neighbor
+        
+        surface_color = ColorFactory.opacify(
+                last_player_character.navigation_annotation_color,
+                Sc.annotators.params.preselection_surface_opacity).sample()
+        indicator_color = ColorFactory.opacify(
+                last_player_character.navigation_annotation_color,
+                Sc.annotators.params.preselection_indicator_opacity).sample()
+        path_color = ColorFactory.opacify(
+                last_player_character.navigation_annotation_color,
+                Sc.annotators.params.preselection_path_opacity).sample()
+        hash_color = ColorFactory.opacify(
+                last_player_character.navigation_annotation_color,
+                Sc.annotators.params.preselection_hash_opacity).sample()
+        
+        self.path_front_end_trim_radius = min(
+                last_player_character.collider.half_width_height.x,
+                last_player_character.collider.half_width_height.y)
+    else:
+        self.player_nav = null
 
 
 func _on_slow_motion_toggled(is_enabled: bool) -> void:
@@ -94,6 +112,12 @@ func add_prediction(prediction: CharacterPrediction) -> void:
 
 func _process(_delta: float) -> void:
     var current_time: float = Sc.time.get_play_time()
+    
+    _check_active_player_character()
+    if did_player_character_change:
+        update()
+    if !is_instance_valid(last_player_character):
+        return
     
     var did_preselection_change := \
             preselection_destination != \
@@ -128,18 +152,15 @@ func _process(_delta: float) -> void:
             _update_phantom_position_along_surface()
             
             if preselection_path != null:
-                # Update the player-character prediction.
-                if character is SurfacerCharacter:
-                    character.prediction.match_navigator_or_path(
-                            preselection_path,
-                            preselection_path.duration)
-                
-                # Update npc predictions.
-                for surfacer_character in Sc.utils.get_all_nodes_in_group(
+                for character in Sc.utils.get_all_nodes_in_group(
                         Sc.characters.GROUP_NAME_CHARACTERS):
-                    if !surfacer_character.is_player_character:
-                        surfacer_character.prediction.match_navigator_or_path(
-                                surfacer_character.navigator,
+                    if character.is_player_control_active:
+                        character.prediction.match_navigator_or_path(
+                                preselection_path,
+                                preselection_path.duration)
+                    else:
+                        character.prediction.match_navigator_or_path(
+                                character.navigator,
                                 preselection_path.duration)
         else:
             preselection_path = null
@@ -166,7 +187,8 @@ func _process(_delta: float) -> void:
 
 
 func _draw() -> void:
-    if preselection_destination == null:
+    if !is_instance_valid(last_player_character) or \
+            preselection_destination == null:
         # When we don't render anything in this draw call, it clears the draw
         # buffer.
         return
@@ -181,16 +203,10 @@ func _draw() -> void:
     var path_base_color: Color
     var hash_base_color: Color
     if preselection_path != null:
-        if character.is_player_character:
-            surface_base_color = surface_color
-            position_indicator_base_color = indicator_color
-            path_base_color = path_color
-            hash_base_color = hash_color
-        else:
-            surface_base_color = surface_color
-            position_indicator_base_color = indicator_color
-            path_base_color = path_color
-            hash_base_color = hash_color
+        surface_base_color = surface_color
+        position_indicator_base_color = indicator_color
+        path_base_color = path_color
+        hash_base_color = hash_color
     else:
         surface_base_color = \
                 Sc.palette.get_color("preselection_invalid_surface_color")

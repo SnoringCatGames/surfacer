@@ -137,7 +137,8 @@ func update_navigation_state(
             !navigation_state.is_expecting_to_enter_air
     
     navigation_state.just_interrupted_by_player_action = \
-            navigation_state.is_player_character and \
+            Su.movement.do_player_actions_interrupt_navigation and \
+            navigation_state.character.is_player_control_active and \
             PlayerActionSource.get_is_some_player_action_pressed()
     
     navigation_state.just_interrupted = \

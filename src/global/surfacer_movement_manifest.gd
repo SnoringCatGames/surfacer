@@ -4,7 +4,7 @@ extends Node
 
 
 var uses_point_and_click_navigation := true
-var cancels_point_and_click_nav_on_key_press := true
+var do_player_actions_interrupt_navigation := true
 
 var gravity_default := 5000.0
 var gravity_slow_rise_multiplier_default := 0.38
@@ -70,9 +70,9 @@ func _parse_manifest(manifest: Dictionary) -> void:
     if manifest.has("uses_point_and_click_navigation"):
         self.uses_point_and_click_navigation = \
                 manifest.uses_point_and_click_navigation
-    if manifest.has("cancels_point_and_click_nav_on_key_press"):
-        self.cancels_point_and_click_nav_on_key_press = \
-                manifest.cancels_point_and_click_nav_on_key_press
+    if manifest.has("do_player_actions_interrupt_navigation"):
+        self.do_player_actions_interrupt_navigation = \
+                manifest.do_player_actions_interrupt_navigation
     
     if manifest.has("gravity_default"):
         self.gravity_default = \

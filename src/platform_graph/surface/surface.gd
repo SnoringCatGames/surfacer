@@ -64,7 +64,10 @@ func _init(
     if side != SurfaceSide.NONE:
         self.normal = SurfaceSide.get_normal(side)
     if !is_instance_valid(properties):
-        self.properties = Su.surface_properties.properties["default"]
+        self.properties = \
+                Su.surface_properties.properties["default"] if \
+                is_instance_valid(Su.surface_properties) else \
+                SurfaceProperties.new()
 
 
 func to_string(verbose := true) -> String:

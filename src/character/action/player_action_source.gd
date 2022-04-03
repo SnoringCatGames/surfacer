@@ -31,6 +31,8 @@ func update(
         time_scaled: float,
         _delta_scaled: float,
         navigation_state: CharacterNavigationState) -> void:
+    if !character.is_player_control_active:
+        return
     for action in ACTIONS_TO_INPUT_KEYS:
         var input_key: String = ACTIONS_TO_INPUT_KEYS[action]
         var is_pressed: bool = Sc.level_button_input.is_action_pressed(action)

@@ -64,7 +64,7 @@ const DEFAULT_EDGE_CALCULATOR_CLASSES := [
 
 var _movement_manifest := {
     uses_point_and_click_navigation = true,
-    cancels_point_and_click_nav_on_key_press = true,
+    do_player_actions_interrupt_navigation = true,
     
     gravity_default = 5000.0,
     gravity_slow_rise_multiplier_default = 0.38,
