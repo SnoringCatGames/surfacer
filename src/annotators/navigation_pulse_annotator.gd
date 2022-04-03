@@ -35,7 +35,7 @@ func _physics_process(_delta: float) -> void:
                     current_path.duration * 0.5)
             does_pulse_grow = \
                     Sc.annotators.params.does_player_nav_pulse_grow if \
-                    navigator.character.is_player_character else \
+                    navigator.character.is_player_control_active else \
                     Sc.annotators.params.does_npc_nav_pulse_grow
         update()
     
@@ -112,7 +112,7 @@ func _draw() -> void:
 
 
 func _get_is_pulse_enabled() -> bool:
-    if navigator.character.is_player_character:
+    if navigator.character.is_player_control_active:
         return Sc.annotators.params.is_player_nav_pulse_shown and \
                 (is_slow_motion_enabled and \
                 Sc.annotators.params.is_player_slow_mo_trajectory_shown or \

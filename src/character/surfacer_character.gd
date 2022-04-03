@@ -86,6 +86,8 @@ var _action_sources := []
 # Dictionary<String, bool>
 var _previous_actions_handlers_this_frame := {}
 
+var _player_action_source: PlayerActionSource
+
 var _dash_cooldown_timeout: int
 var _dash_fade_tween: ScaffolderTween
 
@@ -105,6 +107,10 @@ func _ready() -> void:
     if Engine.editor_hint:
         return
     
+    if can_be_player_character and \
+            !is_instance_valid(_player_action_source):
+        _initialize_player_character_functionality()
+    
     if movement_params.can_dash:
         # Set up a Tween for the fade-out at the end of a dash.
         _dash_fade_tween = ScaffolderTween.new()
@@ -118,11 +124,10 @@ func _ready() -> void:
         set_collision_mask_bit(
                 Su.WALK_THROUGH_WALLS_COLLISION_MASK_BIT, false)
     
-    if Sc.annotators.is_annotator_enabled(
-            AnnotatorType.PATH_PRESELECTION) and \
-            (is_player_character and \
+    if Sc.annotators.is_annotator_enabled(AnnotatorType.PATH_PRESELECTION) and \
+            (can_be_player_character and \
                     Sc.annotators.params.is_player_prediction_shown or \
-            !is_player_character and \
+            !can_be_player_character and \
                     Sc.annotators.params.is_npc_prediction_shown):
         prediction = CharacterPrediction.new()
         prediction.set_up(self)
@@ -136,9 +141,7 @@ func _ready() -> void:
     
     # Set up some annotators to help with debugging.
     set_is_sprite_visible(false)
-    Sc.annotators.create_character_annotator(
-            self,
-            is_player_character)
+    Sc.annotators.create_character_annotator(self)
 
 
 func _destroy() -> void:
@@ -158,8 +161,7 @@ func _attach_prediction() -> void:
     
     if is_instance_valid(prediction) and \
             is_instance_valid(Sc.annotators.path_preselection_annotator):
-        Sc.annotators.path_preselection_annotator \
-                .add_prediction(prediction)
+        Sc.annotators.path_preselection_annotator.add_prediction(prediction)
 
 
 func _update_editor_configuration_debounced() -> void:
@@ -227,23 +229,32 @@ func _initialize_child_movement_params() -> void:
     movement_params.call_deferred("_parse_shape_from_parent")
 
 
-func set_is_player_character(value: bool) -> void:
-    .set_is_player_character(value)
-    if is_player_character:
-        _init_player_controller_action_source()
-        if Su.movement.uses_point_and_click_navigation:
-            var player_navigation_behavior := \
-                    PlayerNavigationBehavior.new()
-            player_navigation_behavior.cancels_navigation_on_key_press = \
-                    Su.movement.cancels_point_and_click_nav_on_key_press
-            add_behavior(player_navigation_behavior)
-            
-            self.pointer_listener = PlayerPointerListener.new(self)
-            add_child(pointer_listener)
+func set_can_be_player_character(value: bool) -> void:
+    .set_can_be_player_character(value)
+    if can_be_player_character:
+        if _is_ready:
+            _initialize_player_character_functionality()
+
+
+func _initialize_player_character_functionality() -> void:
+    _init_player_controller_action_source()
+    if Su.movement.uses_point_and_click_navigation:
+        assert(get_behavior(PlayerNavigationBehavior) == null)
+        var player_navigation_behavior := PlayerNavigationBehavior.new()
+        add_behavior(player_navigation_behavior)
+        
+        self.pointer_listener = PlayerPointerListener.new(self)
+        add_child(pointer_listener)
+
+
+#func set_is_player_control_active(value: bool) -> void:
+#    .set_is_is_player_control_active(value)
 
 
 func _init_player_controller_action_source() -> void:
-    _action_sources.push_back(PlayerActionSource.new(self, true))
+    assert(!is_instance_valid(_player_action_source))
+    self._player_action_source = PlayerActionSource.new(self, true)
+    _action_sources.push_back(_player_action_source)
 
 
 func _init_platform_graph() -> void:
@@ -304,7 +315,7 @@ func _on_physics_process(delta: float) -> void:
     _update_collision_mask()
     
     if surface_state.did_move_last_frame and \
-            is_player_character:
+            is_instance_valid(pointer_listener):
         pointer_listener.on_character_moved()
 
 
@@ -906,7 +917,8 @@ func _parse_behavior_children() -> void:
     
     for behavior in behaviors:
         var script: Script = behavior.get_script()
-        assert(get_behavior(script) == null)
+        assert(behavior is PlayerNavigationBehavior or \
+                get_behavior(script) == null)
         _behaviors_by_class[script] = behavior
         _behaviors_list.push_back(behavior)
         behavior.is_enabled = true

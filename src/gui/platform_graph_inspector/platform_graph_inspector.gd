@@ -69,7 +69,7 @@ var graphs: Array
 var graph_item_controllers := {}
 
 var last_selected_character_category_name := \
-        Sc.characters.default_character_name
+        Sc.characters.default_player_character_name
 
 var root: TreeItem
 
@@ -561,9 +561,9 @@ static func _find_closest_jump_land_positions(
 # Conditionally prints the given message, depending on the SurfacerCharacter's
 # configuration.
 func _log(message: String) -> void:
-    var player_character: ScaffolderCharacter = \
-            Sc.characters.get_player_character()
-    if !is_instance_valid(player_character):
+    var active_player_character: ScaffolderCharacter = \
+            Sc.characters.get_active_player_character()
+    if !is_instance_valid(active_player_character):
         return
-    if player_character.movement_params.logs_inspector_events:
+    if active_player_character.movement_params.logs_inspector_events:
         Sc.logger.print("[Inpsector] %s" % message)

@@ -4,7 +4,6 @@ extends Node2D
 
 var _character
 var _player_nav: PlayerNavigationBehavior
-var _nearby_surface_distance_squared_threshold: float
 var _is_preselection_path_update_pending := false
 var _throttled_update_preselection_path: FuncRef = Sc.time.throttle(
         funcref(self, "_update_preselection_path"),
@@ -17,24 +16,18 @@ var _last_pointer_drag_position := Vector2.INF
 
 func _init(character) -> void:
     self._character = character
-    self._player_nav = \
-            character.get_behavior(PlayerNavigationBehavior)
-    var nearby_surface_distance_threshold: float = \
-            _character.movement_params.max_upward_jump_distance * \
-            PointerSelectionPosition.SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO
-    self._nearby_surface_distance_squared_threshold = \
-            nearby_surface_distance_threshold * \
-            nearby_surface_distance_threshold
+    self._player_nav = character.get_behavior(PlayerNavigationBehavior)
 
 
 func _process(_delta: float) -> void:
-    if _last_pointer_drag_position != Vector2.INF:
+    if _last_pointer_drag_position != Vector2.INF and \
+            _character.is_player_control_active:
         _throttled_update_preselection_beats.call_func()
 
 
 func _unhandled_input(event: InputEvent) -> void:
     if !Sc.gui.is_player_interaction_enabled or \
-            Sc.characters.get_player_character() != _character:
+            !_character.is_player_control_active:
         return
     
     var pointer_up_position := Vector2.INF
@@ -119,6 +112,8 @@ func _update_preselection_beats() -> void:
 
 
 func _on_pointer_released(pointer_position: Vector2) -> void:
+    if !_character.is_player_control_active:
+        return
     _last_pointer_drag_position = Vector2.INF
     Sc.slow_motion.set_slow_motion_enabled(false)
     _is_preselection_path_update_pending = false
@@ -138,6 +133,8 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
 
 
 func _on_pointer_moved(pointer_position: Vector2) -> void:
+    if !_character.is_player_control_active:
+        return
     _last_pointer_drag_position = pointer_position
     Sc.slow_motion.set_slow_motion_enabled(true)
     _is_preselection_path_update_pending = true
@@ -145,6 +142,7 @@ func _on_pointer_moved(pointer_position: Vector2) -> void:
 
 
 func on_character_moved() -> void:
-    if _last_pointer_drag_position != Vector2.INF:
+    if _last_pointer_drag_position != Vector2.INF and \
+            _character.is_player_control_active:
         Sc.slow_motion.set_slow_motion_enabled(true)
         _throttled_update_preselection_path.call_func()

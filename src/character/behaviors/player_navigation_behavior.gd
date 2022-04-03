@@ -10,8 +10,6 @@ const INCLUDES_MID_MOVEMENT_PAUSE := false
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
 
-var cancels_navigation_on_key_press := true
-
 var new_selection: PointerSelectionPosition
 var last_selection: PointerSelectionPosition
 var pre_selection: PointerSelectionPosition
@@ -61,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
             !character._is_destroyed and \
             Sc.gui.is_player_interaction_enabled and \
             character.navigation_state.is_currently_navigating and \
-            cancels_navigation_on_key_press and \
+            Su.movement.do_player_actions_interrupt_navigation and \
             event is InputEventKey and \
             Sc.project_settings.movement_action_key_set.has(event.scancode):
         _was_last_input_a_touch = false

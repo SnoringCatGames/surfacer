@@ -125,12 +125,12 @@ func _update_editor_configuration() -> void:
 
 # Execute any intro cut-scene or initial navigation.
 func _execute_intro_choreography() -> void:
-    if !is_instance_valid(Sc.level.player_character):
+    if !is_instance_valid(Sc.level.active_player_character):
         _on_intro_choreography_finished()
         return
     
-    intro_choreographer = \
-            Sc.level_config.get_intro_choreographer(Sc.level.player_character)
+    intro_choreographer = Sc.level_config.get_intro_choreographer(
+            Sc.level.active_player_character)
     
     if !is_instance_valid(intro_choreographer):
         _on_intro_choreography_finished()
@@ -143,8 +143,8 @@ func _execute_intro_choreography() -> void:
 
 
 func _on_intro_choreography_finished() -> void:
-    if is_instance_valid(player_character):
-        player_character._log(
+    if is_instance_valid(active_player_character):
+        active_player_character._log(
                 "Choreog done",
                 "",
                 CharacterLogType.DEFAULT,
@@ -155,17 +155,18 @@ func _on_intro_choreography_finished() -> void:
     _show_welcome_panel()
 
 
-func _get_default_character_spawn_position() -> ScaffolderSpawnPosition:
+func _get_default_player_character_spawn_position() -> ScaffolderSpawnPosition:
     # If no spawn position was defined for the default character, then start
     # them at 0,0. 
-    if !spawn_positions.has(Sc.characters.default_character_name):
+    if !spawn_positions.has(Sc.characters.default_player_character_name):
         var spawn_position := ScaffolderSpawnPosition.new()
-        spawn_position.character_name = Sc.characters.default_character_name
+        spawn_position.character_name = \
+                Sc.characters.default_player_character_name
         spawn_position.position = Vector2.ZERO
         spawn_position.surface_attachment = "NONE"
         register_spawn_position(
-                Sc.characters.default_character_name, spawn_position)
-    return spawn_positions[Sc.characters.default_character_name][0]
+                Sc.characters.default_player_character_name, spawn_position)
+    return spawn_positions[Sc.characters.default_player_character_name][0]
 
 
 func _update_character_spawn_state(

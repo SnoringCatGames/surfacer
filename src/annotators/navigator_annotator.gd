@@ -220,7 +220,7 @@ func _draw_beat_hashes(
 
 
 func _update_is_enabled() -> void:
-    if navigator.character.is_player_character:
+    if navigator.character.is_player_control_active:
         is_active_trajectory_shown = \
                 is_slow_motion_enabled and \
                 Sc.annotators.params.is_player_slow_mo_trajectory_shown or \
