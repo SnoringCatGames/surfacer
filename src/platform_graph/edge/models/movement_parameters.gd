@@ -22,6 +22,8 @@ var can_grab_floors := true
 var can_jump := true setget _set_can_jump
 var can_dash := false setget _set_can_dash
 var can_double_jump := false setget _set_can_double_jump
+var can_target_in_air_destinations := true \
+        setget _set_can_target_in_air_destinations
 
 # --- Physics movement ---
 
@@ -966,6 +968,11 @@ func _set_can_dash(value: bool) -> void:
 
 func _set_can_double_jump(value: bool) -> void:
     can_double_jump = value
+    _update_parameters()
+
+
+func _set_can_target_in_air_destinations(value: bool) -> void:
+    can_target_in_air_destinations = value
     _update_parameters()
 
 

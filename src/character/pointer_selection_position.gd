@@ -63,11 +63,14 @@ func update_pointer_position(pointer_position: Vector2) -> void:
             # The selection is close enough to a surface, so we navigate to a
             # target along the surface.
             self.navigation_destination = nearby_positions_along_surface[0]
-        else:
+        elif _character.movement_params.can_target_in_air_destinations:
             # The selection is too far from the surface, so we navigate to an
             # in-air target.
             self.navigation_destination = PositionAlongSurfaceFactory \
                     .create_position_without_surface(pointer_position)
+        else:
+            # The character cannot target in-air destinations.
+            self.navigation_destination = null
     else:
         # The selection was too far from any surface. It's likely that there is
         # no jump-off point that could reach the selection.

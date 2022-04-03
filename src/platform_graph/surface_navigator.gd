@@ -191,6 +191,9 @@ func find_path(
                 null) -> PlatformGraphPath:
     Sc.profiler.start("navigator_find_path")
     
+    assert(destination.surface != null or \
+            movement_params.can_target_in_air_destinations)
+
     # Nudge the destination away from any concave neighbor surfaces, if
     # necessary.
     destination = PositionAlongSurface.new(destination)
