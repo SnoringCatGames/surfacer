@@ -54,6 +54,7 @@ func _init(navigator: SurfaceNavigator) -> void:
             0.3,
             0.99,
             0.4)
+    self.light_mask = 0
     
     self.pulse_annotator = NavigationPulseAnnotator.new(navigator, pulse_color)
     add_child(pulse_annotator)
