@@ -66,11 +66,15 @@ func _init(
 
 func navigate_path(
         path: PlatformGraphPath,
-        is_retry := false) -> bool:
+        is_retry := false,
+        is_triggered_by_player_selection := false) -> bool:
     Sc.profiler.start("navigator_navigate_path")
     
     var previous_navigation_attempt_count := current_navigation_attempt_count
-    _reset()
+    if navigation_state.is_currently_navigating and !is_retry:
+        stop()
+    else:
+        _reset()
     if is_retry:
         current_navigation_attempt_count = previous_navigation_attempt_count
     
@@ -127,6 +131,8 @@ func navigate_path(
     navigation_state.has_reached_destination = false
     navigation_state.path_start_time = Sc.time.get_scaled_play_time()
     navigation_state.last_interruption_position = Vector2.INF
+    navigation_state.is_triggered_by_player_selection = \
+            is_triggered_by_player_selection
     current_navigation_attempt_count += 1
     
     var duration_navigate_to_position: float = \
@@ -176,12 +182,13 @@ func navigate_to_position(
         destination: PositionAlongSurface,
         only_includes_bidirectional_edges := false,
         graph_destination_for_in_air_destination: PositionAlongSurface = null,
-        is_retry := false) -> bool:
+        is_retry := false,
+        is_triggered_by_player_selection := false) -> bool:
     var path := find_path(
             destination,
             only_includes_bidirectional_edges,
             graph_destination_for_in_air_destination)
-    return navigate_path(path, is_retry)
+    return navigate_path(path, is_retry, is_triggered_by_player_selection)
 
 
 func find_path(
@@ -989,7 +996,8 @@ func _handle_interruption(
                     path.destination,
                     false,
                     path.graph_destination_for_in_air_destination,
-                    true)
+                    true,
+                    navigation_state.is_triggered_by_player_selection)
             
         NavigationInterruptionResolution.SKIP_NAV:
             navigation_state.has_interrupted = false
