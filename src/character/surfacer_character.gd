@@ -326,8 +326,7 @@ func _apply_movement() -> void:
     
     # Since move_and_slide automatically accounts for delta, we need to
     # compensate for that in order to support our modified framerate.
-    var modified_velocity: Vector2 = \
-            velocity * Sc.time.get_combined_scale()
+    var modified_velocity: Vector2 = velocity * Sc.time.get_combined_scale()
     
     move_and_slide(
             modified_velocity,
