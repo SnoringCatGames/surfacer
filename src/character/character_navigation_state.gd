@@ -26,6 +26,8 @@ var just_started_edge := false
 var just_reached_end_of_edge := false
 var is_stalling_one_frame_before_reaching_end := false
 
+var is_triggered_by_player_selection := false
+
 var path_start_time := -1.0
 var edge_start_time := -1.0
 
@@ -56,6 +58,8 @@ func reset() -> void:
     self.just_started_edge = false
     self.just_reached_end_of_edge = false
     self.is_stalling_one_frame_before_reaching_end = false
+    
+    self.is_triggered_by_player_selection = false
     
     self.path_start_time = -1.0
     self.edge_start_time = -1.0

@@ -99,7 +99,7 @@ func _move() -> int:
     
     assert(last_selection.get_is_selection_navigable())
     var is_navigation_valid: bool = \
-            character.navigator.navigate_path(last_selection.path)
+            character.navigator.navigate_path(last_selection.path, false, true)
     Sc.audio.play_sound("nav_select_success")
     
     return BehaviorMoveResult.VALID_MOVE if \
