@@ -376,6 +376,9 @@ func _match_expected_edge_trajectory() -> void:
     # Don't re-sync if we already synced for the current index.
     if !has_trajectory_index_changed and \
             playback_elapsed_time != 0:
+        # FIXME: ------------------------------
+        # - Update an animator position offset.
+        # - Lerp position between current trajectory frame and next frame.
         return
     
     if movement_params.syncs_character_position_to_edge_trajectory:
@@ -448,8 +451,7 @@ func _trigger_collision_at_end_of_edge(edge: Edge) -> void:
             Sc.geometry.UP,
             movement_params.stops_on_slope,
             max_slides,
-            Sc.geometry.FLOOR_MAX_ANGLE + \
-                    Sc.geometry.WALL_ANGLE_EPSILON)
+            Sc.geometry.FLOOR_MAX_ANGLE + Sc.geometry.WALL_ANGLE_EPSILON)
     
     _record_collisions()
     
