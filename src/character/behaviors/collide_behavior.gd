@@ -55,8 +55,8 @@ func _init().(
 #    ._on_navigation_ended(did_navigation_finish)
 
 
-func _on_physics_process(delta: float) -> void:
-    ._on_physics_process(delta)
+func _on_physics_process(delta_scaled: float) -> void:
+    ._on_physics_process(delta_scaled)
     if !is_instance_valid(move_target):
         return
     if move_target is ScaffolderCharacter:

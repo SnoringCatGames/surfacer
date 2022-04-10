@@ -266,7 +266,7 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
         _pause_mid_movement()
 
 
-func _on_physics_process(delta: float) -> void:
+func _on_physics_process(delta_scaled: float) -> void:
     _was_already_ready_to_move_this_frame = false
 
 
