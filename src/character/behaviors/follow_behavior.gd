@@ -65,8 +65,8 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
     pass
 
 
-func _on_physics_process(delta: float) -> void:
-    ._on_physics_process(delta)
+func _on_physics_process(delta_scaled: float) -> void:
+    ._on_physics_process(delta_scaled)
     
     if !is_active or \
             get_is_paused():

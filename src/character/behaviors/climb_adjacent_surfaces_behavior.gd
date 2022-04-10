@@ -56,8 +56,8 @@ func _on_active() -> void:
 #    ._on_navigation_ended(did_navigation_finish)
 
 
-#func _on_physics_process(delta: float) -> void:
-#    ._on_physics_process(delta)
+#func _on_physics_process(delta_scaled: float) -> void:
+#    ._on_physics_process(delta_scaled)
 
 
 func _move() -> int:
