@@ -296,7 +296,7 @@ func _on_physics_process(delta: float) -> void:
     _update_surface_state()
     
     for behavior in _behaviors_list:
-        behavior._on_physics_process(delta)
+        behavior._on_physics_process(delta_scaled)
     
     _update_navigator(delta_scaled)
     
@@ -365,37 +365,39 @@ func _match_expected_edge_start_trajectory() -> void:
 
 
 func _match_expected_edge_trajectory() -> void:
-    var playback_previous_elapsed_time: float = \
-            navigator.playback.get_previous_elapsed_time_scaled()
     var playback_elapsed_time: float = \
             navigator.playback.get_elapsed_time_scaled()
-    var has_trajectory_index_changed := \
-            int(playback_previous_elapsed_time / ScaffolderTime.PHYSICS_TIME_STEP) != \
-            int(playback_elapsed_time / ScaffolderTime.PHYSICS_TIME_STEP)
-    
-    # Don't re-sync if we already synced for the current index.
-    if !has_trajectory_index_changed and \
-            playback_elapsed_time != 0:
-        # FIXME: ------------------------------
-        # - Update an animator position offset.
-        # - Lerp position between current trajectory frame and next frame.
-        return
+    var progress_in_current_trajectory_frame := \
+            fmod(playback_elapsed_time, ScaffolderTime.PHYSICS_TIME_STEP) / \
+            ScaffolderTime.PHYSICS_TIME_STEP
     
     if movement_params.syncs_character_position_to_edge_trajectory:
-        var expected_position := navigator.edge.get_position_at_time(
+        var current_trajectory_position := navigator.edge.get_position_at_time(
                 playback_elapsed_time)
+        var next_trajectory_position := navigator.edge.get_position_at_time(
+                playback_elapsed_time + ScaffolderTime.PHYSICS_TIME_STEP)
+        var interpolated_position: Vector2 = lerp(
+                current_trajectory_position,
+                next_trajectory_position,
+                progress_in_current_trajectory_frame)
         var is_movement_beyond_expected_trajectory := \
-                expected_position == Vector2.INF
+                current_trajectory_position == Vector2.INF
         if !is_movement_beyond_expected_trajectory:
-            position = expected_position
+            position = interpolated_position
     
     if movement_params.syncs_character_velocity_to_edge_trajectory:
-        var expected_velocity := navigator.edge.get_velocity_at_time(
+        var current_trajectory_velocity := navigator.edge.get_velocity_at_time(
                 playback_elapsed_time)
+        var next_trajectory_velocity := navigator.edge.get_velocity_at_time(
+                playback_elapsed_time + ScaffolderTime.PHYSICS_TIME_STEP)
+        var interpolated_velocity: Vector2 = lerp(
+                current_trajectory_velocity,
+                next_trajectory_velocity,
+                progress_in_current_trajectory_frame)
         var is_movement_beyond_expected_trajectory := \
-                expected_velocity == Vector2.INF
+                current_trajectory_velocity == Vector2.INF
         if !is_movement_beyond_expected_trajectory:
-            velocity = expected_velocity
+            velocity = interpolated_velocity
 
 
 func _match_expected_navigation_surface_state(
