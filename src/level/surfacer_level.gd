@@ -39,7 +39,8 @@ func _load() -> void:
 func _start() -> void:
     ._start()
     
-    camera_pan_controller = CameraPanController.new()
+    # FIXME: LEFT OFF HERE: -----------------------------------------
+    camera_pan_controller = NavigationPreselectionDragPanController.new()
     add_child(camera_pan_controller)
     
     _execute_intro_choreography()
