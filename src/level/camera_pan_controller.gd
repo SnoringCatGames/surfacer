@@ -18,9 +18,20 @@ var _tween_offset := Vector2.ZERO
 var _tween_zoom_multiplier := 1.0
 
 
-func _init() -> void:
+func _init(previous_pan_controller: CameraPanController = null) -> void:
     _tween = ScaffolderTween.new()
     add_child(_tween)
+    if is_instance_valid(previous_pan_controller):
+        sync_to_pan_controller(previous_pan_controller)
+
+
+func sync_to_pan_controller(
+        previous_pan_controller: CameraPanController) -> void:
+    self._tween_offset = previous_pan_controller._tween_offset
+    self._tween_zoom_multiplier = previous_pan_controller._tween_zoom_multiplier
+    _update_camera(
+            previous_pan_controller._target_offset,
+            previous_pan_controller._target_zoom_multiplier)
 
 
 func _destroy() -> void:
@@ -46,24 +57,28 @@ func _update_camera_from_deltas() -> void:
     var next_offset := _target_offset + _delta_offset
     var next_zoom_multiplier := \
             _target_zoom_multiplier + _delta_zoom_multiplier if \
-            Su.snaps_camera_back_to_character else \
+            Sc.camera.snaps_camera_back_to_character else \
             1.0
     
     # Don't let the pan and zoom exceed their max bounds.
     next_offset.x = clamp(
             next_offset.x,
-            -Su.max_pan_distance_from_pointer,
-            Su.max_pan_distance_from_pointer)
+            -Sc.camera.max_pan_distance_from_pointer,
+            Sc.camera.max_pan_distance_from_pointer)
     next_offset.y = clamp(
             next_offset.y,
-            -Su.max_pan_distance_from_pointer,
-            Su.max_pan_distance_from_pointer)
+            -Sc.camera.max_pan_distance_from_pointer,
+            Sc.camera.max_pan_distance_from_pointer)
     next_zoom_multiplier = clamp(
             next_zoom_multiplier,
             1.0,
-            Su.max_zoom_multiplier_from_pointer)
+            Sc.camera.max_zoom_multiplier_from_pointer)
     
     _update_camera(next_offset, next_zoom_multiplier)
+
+
+func reset() -> void:
+    _update_camera(Vector2.ZERO, 1.0)
 
 
 func _update_camera(

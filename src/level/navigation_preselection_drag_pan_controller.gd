@@ -2,6 +2,11 @@ class_name NavigationPreselectionDragPanController
 extends CameraPanController
 
 
+func _init(previous_pan_controller: CameraPanController = null).(
+        previous_pan_controller) -> void:
+    pass
+
+
 func _unhandled_input(event: InputEvent) -> void:
     if !Sc.gui.is_player_interaction_enabled or \
             !is_instance_valid(Sc.characters.get_active_player_character()):
@@ -36,11 +41,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _validate() -> void:
-    assert(Su.max_zoom_multiplier_from_pointer >= 1.0)
-    assert(Su.max_pan_distance_from_pointer >= 0.0)
-    assert(Su.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer <= \
+    assert(Sc.camera.max_zoom_multiplier_from_pointer >= 1.0)
+    assert(Sc.camera.max_pan_distance_from_pointer >= 0.0)
+    assert(Sc.camera.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer <= \
             0.5 and \
-            Su.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer > \
+            Sc.camera.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer > \
             0.0)
 
 
@@ -51,8 +56,8 @@ func _stop_drag() -> void:
     _delta_offset = Vector2.INF
     _delta_zoom_multiplier = INF
     
-    if Su.snaps_camera_back_to_character:
-        _update_camera(Vector2.ZERO, 1.0)
+    if Sc.camera.snaps_camera_back_to_character:
+        reset()
 
 
 func _update_pan_and_zoom_delta_from_pointer(
@@ -65,11 +70,11 @@ func _update_pan_and_zoom_delta_from_pointer(
     var min_control_bounds_size: Vector2 = \
             pointer_max_control_bounds.size * \
             (1 - \
-            Su.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer * 2)
+            Sc.camera.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer * 2)
     var min_control_bounds_position: Vector2 = \
             pointer_max_control_bounds.position + \
             pointer_max_control_bounds.size * \
-            Su.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer
+            Sc.camera.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer
     var pointer_min_control_bounds := Rect2(
             min_control_bounds_position,
             min_control_bounds_size)
@@ -127,14 +132,14 @@ func _update_pan_and_zoom_delta_from_pointer(
     # Calcute the pan and zoom deltas for the current frame and drag weight.
     var per_frame_pan_ratio: float = \
             _PAN_AND_ZOOM_INTERVAL / \
-            Su.duration_to_max_pan_from_pointer_at_max_control
+            Sc.camera.duration_to_max_pan_from_pointer_at_max_control
     var per_frame_zoom_ratio: float = \
             _PAN_AND_ZOOM_INTERVAL / \
-            Su.duration_to_max_zoom_from_pointer_at_max_control
+            Sc.camera.duration_to_max_zoom_from_pointer_at_max_control
     var max_pan_distance_per_frame: float = \
-            Su.max_pan_distance_from_pointer * per_frame_pan_ratio
+            Sc.camera.max_pan_distance_from_pointer * per_frame_pan_ratio
     var max_zoom_delta_per_frame: float = \
-            Su.max_zoom_multiplier_from_pointer * per_frame_zoom_ratio
+            Sc.camera.max_zoom_multiplier_from_pointer * per_frame_zoom_ratio
     _delta_offset = Vector2(
             pan_zoom_control_weight_x * max_pan_distance_per_frame,
             pan_zoom_control_weight_y * max_pan_distance_per_frame)

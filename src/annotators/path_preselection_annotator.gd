@@ -58,15 +58,15 @@ func _check_active_player_character() -> void:
     self.did_player_character_change = true
     self.last_player_character = current_player_character
     
-    # FIXME: --------------- Check this
     self.animation_start_time = \
             -Sc.annotators.params.preselection_default_duration
-    _predictions_container.modulate.a = \
-            Sc.annotators.params.nav_selection_prediction_opacity
     
     if is_instance_valid(current_player_character):
         self.player_nav = \
                 last_player_character.get_behavior(PlayerNavigationBehavior)
+        
+        _predictions_container.modulate.a = \
+            Sc.annotators.params.nav_selection_prediction_opacity
         
         phantom_surface.clockwise_convex_neighbor = \
                 phantom_surface_cw_neighbor
@@ -91,6 +91,7 @@ func _check_active_player_character() -> void:
                 last_player_character.collider.half_width_height.y)
     else:
         self.player_nav = null
+        _predictions_container.modulate.a = 0.0
 
 
 func _on_slow_motion_toggled(is_enabled: bool) -> void:

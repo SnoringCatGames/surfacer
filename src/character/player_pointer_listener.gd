@@ -20,9 +20,17 @@ func _init(character) -> void:
 
 
 func _process(_delta: float) -> void:
-    if _last_pointer_drag_position != Vector2.INF and \
-            _character.is_player_control_active:
-        _throttled_update_preselection_beats.call_func()
+    if _last_pointer_drag_position != Vector2.INF:
+        if _character.is_player_control_active:
+            _throttled_update_preselection_beats.call_func()
+        else:
+            # Reset state.
+            _last_pointer_drag_position = Vector2.INF
+            Sc.slow_motion.set_slow_motion_enabled(false)
+            _is_preselection_path_update_pending = false
+            Sc.time.clear_throttle(_throttled_update_preselection_path)
+            Sc.time.clear_throttle(_throttled_update_preselection_beats)
+            _player_nav.pre_selection.clear()
 
 
 func _unhandled_input(event: InputEvent) -> void:
