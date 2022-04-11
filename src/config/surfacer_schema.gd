@@ -116,6 +116,17 @@ var _behavior_classes := [
     WanderBehavior,
 ]
 
+var _camera_manifest := {
+    default_camera_pan_controller_class = \
+        NavigationPreselectionDragPanController,
+    snaps_camera_back_to_character = true,
+    max_zoom_multiplier_from_pointer = 1.5,
+    max_pan_distance_from_pointer = 512.0,
+    duration_to_max_pan_from_pointer_at_max_control = 0.67,
+    duration_to_max_zoom_from_pointer_at_max_control = 3.0,
+    screen_size_ratio_distance_from_edge_to_start_pan_from_pointer = 0.16,
+}
+
 var _properties := {
     are_oddly_shaped_surfaces_used = true,
     
@@ -133,15 +144,6 @@ var _properties := {
             "res://addons/surfacer/src/tiles/tileset_with_many_angles.tres"),
     path_drag_update_throttle_interval = 0.2,
     path_beat_update_throttle_interval = 0.2,
-    
-    # Params for CameraPanController.
-    default_camera_pan_controller_class = NavigationPreselectionDragPanController,
-    snaps_camera_back_to_character = true,
-    max_zoom_multiplier_from_pointer = 1.5,
-    max_pan_distance_from_pointer = 512.0,
-    duration_to_max_pan_from_pointer_at_max_control = 0.67,
-    duration_to_max_zoom_from_pointer_at_max_control = 3.0,
-    screen_size_ratio_distance_from_edge_to_start_pan_from_pointer = 0.16,
     
     skip_choreography_framerate_multiplier = 4.0,
     
@@ -309,11 +311,13 @@ var _additive_overrides := {
                 ],
             },
         },
+        camera_manifest = _camera_manifest,
         geometry_class = SurfacerGeometry,
         draw_class = SurfacerDrawUtils,
         annotators_class = SurfacerAnnotators,
         beats_class = SurfacerBeatTracker,
         characters_class = SurfacerCharacterManifest,
+        camera_manifest_class = SurfacerCameraManifest,
     },
     SurfaceTilerSchema: {
         tileset_initializer_class = SurfacesTilesetInitializer,

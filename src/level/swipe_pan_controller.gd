@@ -13,6 +13,11 @@ extends CameraPanController
 #   CameraPanController as needed.
 
 
+func _init(previous_pan_controller: CameraPanController = null).(
+        previous_pan_controller) -> void:
+    pass
+
+
 func _validate() -> void:
     pass
 
