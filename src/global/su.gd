@@ -70,6 +70,7 @@ var path_drag_update_throttle_interval := 0.2
 var path_beat_update_throttle_interval := 0.2
 
 # Params for CameraPanController.
+var default_camera_pan_controller_class: Script
 var snaps_camera_back_to_character := true
 var max_zoom_multiplier_from_pointer := 1.5
 var max_pan_distance_from_pointer := 512.0
@@ -196,6 +197,9 @@ func _parse_manifest() -> void:
         self.path_beat_update_throttle_interval = \
                 manifest.path_beat_update_throttle_interval
     
+    if manifest.has("default_camera_pan_controller_class"):
+        self.default_camera_pan_controller_class = \
+                manifest.default_camera_pan_controller_class
     if manifest.has("snaps_camera_back_to_character"):
         self.snaps_camera_back_to_character = \
                 manifest.snaps_camera_back_to_character

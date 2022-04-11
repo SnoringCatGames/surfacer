@@ -135,6 +135,7 @@ var _properties := {
     path_beat_update_throttle_interval = 0.2,
     
     # Params for CameraPanController.
+    default_camera_pan_controller_class = NavigationPreselectionDragPanController,
     snaps_camera_back_to_character = true,
     max_zoom_multiplier_from_pointer = 1.5,
     max_pan_distance_from_pointer = 512.0,

@@ -2,7 +2,7 @@ class_name SwipePanController
 extends CameraPanController
 
 
-# FIXME: LEFT OFF HERE: ------------------------------------
+# FIXME: LEFT OFF HERE: --------------------------------------
 # - Implement touch-based drag pan.
 # - Add momentum and friction to drag.
 # - Implement multi-touch pinch-zoom.
@@ -14,4 +14,8 @@ extends CameraPanController
 
 
 func _validate() -> void:
+    pass
+
+
+func _unhandled_input(event: InputEvent) -> void:
     pass
