@@ -43,14 +43,11 @@ func _update_camera_from_deltas() -> void:
     assert(!is_inf(_delta_zoom_multiplier))
     
     # Calculate the next values.
-    var next_offset: Vector2
-    var next_zoom_multiplier: float
-    if Su.snaps_camera_back_to_character:
-        next_offset = _target_offset + _delta_offset
-        next_zoom_multiplier = _target_zoom_multiplier + _delta_zoom_multiplier
-    else:
-        next_offset = _target_offset + _delta_offset
-        next_zoom_multiplier = 1.0
+    var next_offset := _target_offset + _delta_offset
+    var next_zoom_multiplier := \
+            _target_zoom_multiplier + _delta_zoom_multiplier if \
+            Su.snaps_camera_back_to_character else \
+            1.0
     
     # Don't let the pan and zoom exceed their max bounds.
     next_offset.x = clamp(

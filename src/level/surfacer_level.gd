@@ -39,10 +39,6 @@ func _load() -> void:
 func _start() -> void:
     ._start()
     
-    # FIXME: LEFT OFF HERE: -----------------------------------------
-    camera_pan_controller = NavigationPreselectionDragPanController.new()
-    add_child(camera_pan_controller)
-    
     _execute_intro_choreography()
     
     call_deferred("_initialize_annotators")
@@ -52,8 +48,8 @@ func _start() -> void:
 #    ._on_started()
 
 
-#func _add_player_character() -> void:
-#    ._add_player_character()
+#func _add_default_player_character() -> void:
+#    ._add_default_player_character()
 
 
 #func _add_npcs() -> void:
@@ -94,6 +90,21 @@ func _on_initial_input() -> void:
 
 #func on_unpause() -> void:
 #    .on_unpause()
+
+
+func _set_default_camera() -> void:
+    if Sc.characters.default_player_character_name == "" or \
+            !Sc.characters.is_camera_auto_assigned_to_player_character:
+        _set_non_player_camera()
+    else:
+        # The camera is created by the character in this case.
+        
+        if is_instance_valid(Su.default_camera_pan_controller_class):
+            camera_pan_controller = Su.default_camera_pan_controller_class.new()
+            assert(self.camera_pan_controller is CameraPanController)
+            add_child(camera_pan_controller)
+        else:
+            camera_pan_controller = null
 
 
 func _check_on_removing_surface_marks() -> void:
