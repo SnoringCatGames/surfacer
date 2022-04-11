@@ -13,6 +13,8 @@ var graph_parser: PlatformGraphParser
 var surface_store: SurfaceStore
 var intro_choreographer: Choreographer
 
+var surfaces_bounds: Rect2
+
 
 func _init() -> void:
     graph_parser = PlatformGraphParser.new()
@@ -22,6 +24,10 @@ func _init() -> void:
 
 func _enter_tree() -> void:
     Su.space_state = self.get_world_2d().direct_space_state
+
+
+func _ready() -> void:
+    surfaces_bounds = _get_combined_surfaces_region()
 
 
 func _load() -> void:
@@ -243,3 +249,17 @@ func _set_level_id(value: String) -> void:
         assert(Sc.level_session.id == level_id)
     _update_editor_configuration()
     _update_session_in_editor()
+
+
+func _get_combined_surfaces_region() -> Rect2:
+    var tile_maps := \
+            get_tree().get_nodes_in_group(SurfacesTilemap.GROUP_NAME_SURFACES)
+    assert(!tile_maps.empty())
+    var tile_map: TileMap = tile_maps[0]
+    var tile_map_region: Rect2 = \
+            Sc.geometry.get_tilemap_bounds_in_world_coordinates(tile_map)
+    for i in range(1, tile_maps.size()):
+        tile_map = tile_maps[i]
+        tile_map_region = tile_map_region.merge(
+                Sc.geometry.get_tilemap_bounds_in_world_coordinates(tile_map))
+    return tile_map_region

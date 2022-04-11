@@ -17,6 +17,8 @@ var _last_pointer_drag_position := Vector2.INF
 func _init(character) -> void:
     self._character = character
     self._player_nav = character.get_behavior(PlayerNavigationBehavior)
+    Sc.level.pointer_listener.connect("dragged", self, "_on_pointer_moved")
+    Sc.level.pointer_listener.connect("released", self, "_on_pointer_released")
 
 
 func _process(_delta: float) -> void:
@@ -31,80 +33,6 @@ func _process(_delta: float) -> void:
             Sc.time.clear_throttle(_throttled_update_preselection_path)
             Sc.time.clear_throttle(_throttled_update_preselection_beats)
             _player_nav.pre_selection.clear()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-    if !Sc.gui.is_player_interaction_enabled or \
-            !_character.is_player_control_active:
-        return
-    
-    var pointer_up_position := Vector2.INF
-    var pointer_drag_position := Vector2.INF
-    var event_type := "UNKNOWN_INP"
-    
-    # NOTE: Shouldn't need to handle mouse events, since we should be emulating
-    #       touch events.
-    
-#    # Mouse-up: Position selection.
-#    if event is InputEventMouseButton and \
-#            event.button_index == BUTTON_LEFT and \
-#            !event.pressed and \
-#            !event.control:
-#        event_type = "MOUSE_UP   "
-#        pointer_up_position = Sc.utils.get_level_touch_position(event)
-#
-#    # Mouse-down: Position pre-selection.
-#    if event is InputEventMouseButton and \
-#            event.button_index == BUTTON_LEFT and \
-#            event.pressed and \
-#            !event.control:
-#        event_type = "MOUSE_DOWN "
-#        pointer_drag_position = \
-#                Sc.utils.get_level_touch_position(event)
-#
-#    # Mouse-move: Position pre-selection.
-#    if event is InputEventMouseMotion and \
-#            _last_pointer_drag_position != Vector2.INF:
-#        event_type = "MOUSE_DRAG "
-#        pointer_drag_position = \
-#                Sc.utils.get_level_touch_position(event)
-    
-    var is_control_pressed: bool = \
-            Sc.level_button_input.is_key_pressed(KEY_CONTROL) or \
-            Sc.level_button_input.is_key_pressed(KEY_META)
-    
-    # Touch-up: Position selection.
-    if event is InputEventScreenTouch and \
-            !event.pressed and \
-            !is_control_pressed:
-        event_type = "TOUCH_UP   "
-        pointer_up_position = Sc.utils.get_level_touch_position(event)
-    
-    # Touch-down: Position pre-selection.
-    if event is InputEventScreenTouch and \
-            event.pressed and \
-            !is_control_pressed:
-        event_type = "TOUCH_DOWN "
-        pointer_drag_position = Sc.utils.get_level_touch_position(event)
-    
-    # Touch-move: Position pre-selection.
-    if event is InputEventScreenDrag and \
-            !is_control_pressed:
-        event_type = "TOUCH_DRAG "
-        pointer_drag_position = Sc.utils.get_level_touch_position(event)
-    
-#    if pointer_up_position != Vector2.INF or \
-#            pointer_drag_position != Vector2.INF:
-#        _character._log(
-#                event_type,
-#                "",
-#                CharacterLogType.ACTION,
-#                true)
-    
-    if pointer_up_position != Vector2.INF:
-        _on_pointer_released(pointer_up_position)
-    elif pointer_drag_position != Vector2.INF:
-        _on_pointer_moved(pointer_drag_position)
 
 
 func _update_preselection_path() -> void:
