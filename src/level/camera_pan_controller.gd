@@ -113,10 +113,12 @@ func _update_camera(
 func _update_pan(offset: Vector2) -> void:
     var delta := offset - self._tween_offset
     self._tween_offset = offset
-    Sc.camera_controller.offset += delta
+    Sc.camera_controller.set_camera_pan_controller_offset(
+            Sc.camera_controller._camera_pan_controller_offset + delta)
 
 
 func _update_zoom(zoom_multiplier: float) -> void:
     var delta := zoom_multiplier - self._tween_zoom_multiplier
     self._tween_zoom_multiplier = zoom_multiplier
-    Sc.camera_controller.zoom_factor += delta
+    Sc.camera_controller.set_camera_pan_controller_zoom(
+            Sc.camera_controller._camera_pan_controller_zoom + delta)
