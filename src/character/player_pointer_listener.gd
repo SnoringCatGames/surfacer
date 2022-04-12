@@ -47,7 +47,9 @@ func _update_preselection_beats() -> void:
         _player_nav.pre_selection.update_beats()
 
 
-func _on_pointer_released(pointer_position: Vector2) -> void:
+func _on_pointer_released(
+        pointer_screen_position: Vector2,
+        pointer_level_position: Vector2) -> void:
     if !_character.is_player_control_active:
         return
     _last_pointer_drag_position = Vector2.INF
@@ -55,7 +57,7 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
     _is_preselection_path_update_pending = false
     Sc.time.clear_throttle(_throttled_update_preselection_path)
     Sc.time.clear_throttle(_throttled_update_preselection_beats)
-    _player_nav.new_selection.update_pointer_position(pointer_position)
+    _player_nav.new_selection.update_pointer_position(pointer_level_position)
     
     var selected_surface: Surface = \
             _player_nav.new_selection.navigation_destination.surface if \
@@ -63,15 +65,17 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
             null
     var is_surface_navigable: bool = _player_nav.new_selection.path != null
     Sc.annotators.add_transient(SurfacerClickAnnotator.new(
-            pointer_position,
+            pointer_level_position,
             selected_surface,
             is_surface_navigable))
 
 
-func _on_pointer_moved(pointer_position: Vector2) -> void:
+func _on_pointer_moved(
+        pointer_screen_position: Vector2,
+        pointer_level_position: Vector2) -> void:
     if !_character.is_player_control_active:
         return
-    _last_pointer_drag_position = pointer_position
+    _last_pointer_drag_position = pointer_level_position
     Sc.slow_motion.set_slow_motion_enabled(true)
     _is_preselection_path_update_pending = true
     _throttled_update_preselection_path.call_func()
