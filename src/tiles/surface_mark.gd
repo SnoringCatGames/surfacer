@@ -57,7 +57,7 @@ func _init() -> void:
 
 
 func _enter_tree() -> void:
-    cell_size = Sc.level_session.config.cell_size / 2.0
+    cell_size = Sc.levels.session.config.cell_size / 2.0
     position = -cell_size / 2.0
     collision_layer = 0
     collision_mask = 0

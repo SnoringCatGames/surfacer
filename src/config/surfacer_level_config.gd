@@ -32,7 +32,7 @@ func _sanitize_level_config(config: Dictionary) -> void:
 
 
 func get_intro_choreographer(character: SurfacerCharacter) -> Choreographer:
-    var config := get_level_config(Sc.level_session.id)
+    var config := get_level_config(Sc.levels.session.id)
     if !config.has("intro_choreography"):
         return null
     var sequence: Array = config.intro_choreography
