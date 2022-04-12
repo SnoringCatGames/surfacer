@@ -4,40 +4,8 @@ extends CameraPanController
 
 func _init(previous_pan_controller: CameraPanController = null).(
         previous_pan_controller) -> void:
-    pass
-
-
-func _unhandled_input(event: InputEvent) -> void:
-    if !Sc.gui.is_player_interaction_enabled or \
-            !is_instance_valid(Sc.characters.get_active_player_character()):
-        return
-    
-    var is_control_pressed: bool = \
-            Sc.level_button_input.is_key_pressed(KEY_CONTROL) or \
-            Sc.level_button_input.is_key_pressed(KEY_META)
-    
-    if is_control_pressed:
-        _stop_drag()
-    
-    # Touch-up: Position selection.
-    if event is InputEventScreenTouch and \
-            !event.pressed:
-        _stop_drag()
-    
-    var pointer_drag_position := Vector2.INF
-    
-    # Touch-down: Position pre-selection.
-    if event is InputEventScreenTouch and \
-            event.pressed:
-        pointer_drag_position = Sc.utils.get_level_touch_position(event)
-    
-    # Touch-move: Position pre-selection.
-    if event is InputEventScreenDrag:
-        pointer_drag_position = Sc.utils.get_level_touch_position(event)
-    
-    if pointer_drag_position != Vector2.INF:
-        _update_pan_and_zoom_delta_from_pointer(pointer_drag_position)
-        _update()
+    Sc.level.pointer_listener.connect("dragged", self, "_on_dragged")
+    Sc.level.pointer_listener.connect("released", self, "_on_released")
 
 
 func _validate() -> void:
@@ -47,6 +15,19 @@ func _validate() -> void:
             0.5 and \
             Sc.camera.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer > \
             0.0)
+
+
+func _on_dragged(pointer_position: Vector2) -> void:
+    if !is_instance_valid(Sc.characters.get_active_player_character()) or \
+            Sc.level.pointer_listener.get_is_control_pressed():
+        _stop_drag()
+        return
+    _update_pan_and_zoom_delta_from_pointer(pointer_position)
+    _update()
+
+
+func _on_released(pointer_position: Vector2) -> void:
+    _stop_drag()
 
 
 func _stop_drag() -> void:
