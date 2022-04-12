@@ -96,7 +96,8 @@ func _update_camera_from_deltas() -> void:
 func _update_pan_and_zoom_delta_from_pointer(
         pointer_position: Vector2) -> void:
     # Calculate the camera bounds and the region that controls pan and zoom.
-    var pointer_max_control_bounds: Rect2 = Sc.camera.controller.get_bounds()
+    var pointer_max_control_bounds: Rect2 = \
+            Sc.camera.controller.get_visible_region()
     var camera_center := \
             pointer_max_control_bounds.position + \
             pointer_max_control_bounds.size / 2.0
@@ -180,3 +181,11 @@ func _update_pan_and_zoom_delta_from_pointer(
             max(abs(pan_zoom_control_weight_x),
                 abs(pan_zoom_control_weight_y)) * \
             max_zoom_delta_per_frame
+
+
+func _get_camera_parent_position() -> Vector2:
+    var character: ScaffolderCharacter = \
+            Sc.characters.get_active_player_character()
+    return character.position if \
+            is_instance_valid(character) else \
+            Vector2.ZERO
