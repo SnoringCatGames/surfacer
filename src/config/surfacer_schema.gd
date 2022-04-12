@@ -120,7 +120,7 @@ var _camera_manifest := {
     default_camera_pan_controller_class = \
         NavigationPreselectionDragPanController,
     snaps_camera_back_to_character = true,
-    max_zoom_multiplier_from_pointer = 1.5,
+    max_zoom_from_pointer = 1.5,
     max_pan_distance_from_pointer = 512.0,
     duration_to_max_pan_from_pointer_at_max_control = 0.67,
     duration_to_max_zoom_from_pointer_at_max_control = 3.0,
