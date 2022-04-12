@@ -2,20 +2,15 @@ class_name CameraPanController
 extends Node2D
 
 
-const _PAN_AND_ZOOM_INTERVAL := 0.05
 const _TWEEN_DURATION := 0.1
 
-var _interval_id := -1
 var _tween: ScaffolderTween
 
-var _delta_offset := Vector2.INF
-var _delta_zoom_multiplier := INF
-
 var _target_offset := Vector2.ZERO
-var _target_zoom_multiplier := 1.0
+var _target_zoom := 1.0
 
 var _tween_offset := Vector2.ZERO
-var _tween_zoom_multiplier := 1.0
+var _tween_zoom := 1.0
 
 
 func _init(previous_pan_controller: CameraPanController = null) -> void:
@@ -28,53 +23,18 @@ func _init(previous_pan_controller: CameraPanController = null) -> void:
 func sync_to_pan_controller(
         previous_pan_controller: CameraPanController) -> void:
     self._tween_offset = previous_pan_controller._tween_offset
-    self._tween_zoom_multiplier = previous_pan_controller._tween_zoom_multiplier
+    self._tween_zoom = previous_pan_controller._tween_zoom
     _update_camera(
             previous_pan_controller._target_offset,
-            previous_pan_controller._target_zoom_multiplier)
+            previous_pan_controller._target_zoom)
 
 
 func _destroy() -> void:
-    Sc.time.clear_interval(_interval_id)
+    pass
 
 
 func _validate() -> void:
     Sc.logger.error("Abstract CameraPanController._validate is not implemented")
-
-
-func _update() -> void:
-    if _interval_id < 0:
-        _interval_id = Sc.time.set_interval(
-                funcref(self, "_update_camera_from_deltas"),
-                _PAN_AND_ZOOM_INTERVAL)
-
-
-func _update_camera_from_deltas() -> void:
-    assert(_delta_offset != Vector2.INF)
-    assert(!is_inf(_delta_zoom_multiplier))
-    
-    # Calculate the next values.
-    var next_offset := _target_offset + _delta_offset
-    var next_zoom_multiplier := \
-            _target_zoom_multiplier + _delta_zoom_multiplier if \
-            Sc.camera.snaps_camera_back_to_character else \
-            1.0
-    
-    # Don't let the pan and zoom exceed their max bounds.
-    next_offset.x = clamp(
-            next_offset.x,
-            -Sc.camera.max_pan_distance_from_pointer,
-            Sc.camera.max_pan_distance_from_pointer)
-    next_offset.y = clamp(
-            next_offset.y,
-            -Sc.camera.max_pan_distance_from_pointer,
-            Sc.camera.max_pan_distance_from_pointer)
-    next_zoom_multiplier = clamp(
-            next_zoom_multiplier,
-            1.0,
-            Sc.camera.max_zoom_multiplier_from_pointer)
-    
-    _update_camera(next_offset, next_zoom_multiplier)
 
 
 func reset() -> void:
@@ -83,19 +43,21 @@ func reset() -> void:
 
 func _update_camera(
         next_offset: Vector2,
-        next_zoom_multiplier: float) -> void:
-    _target_offset = next_offset
-    _target_zoom_multiplier = next_zoom_multiplier
+        next_zoom: float) -> void:
+    var previous_target_offset := _target_offset
+    var previous_target_zoom := _target_zoom
     
-    _tween.stop_all()
+    _target_offset = next_offset
+    _target_zoom = next_zoom
     
     if Sc.geometry.are_points_equal_with_epsilon(
-                _tween_offset, next_offset) and \
+                previous_target_offset, _target_offset) and \
             Sc.geometry.are_floats_equal_with_epsilon(
-                _tween_zoom_multiplier, next_zoom_multiplier):
+                previous_target_zoom, _target_zoom):
         return
     
     # Transition to the new values.
+    _tween.stop_all()
     _tween.interpolate_method(
             self,
             "_update_pan",
@@ -108,8 +70,8 @@ func _update_camera(
     _tween.interpolate_method(
             self,
             "_update_zoom",
-            _tween_zoom_multiplier,
-            next_zoom_multiplier,
+            _tween_zoom,
+            next_zoom,
             _TWEEN_DURATION,
             "linear",
             0.0,
@@ -118,14 +80,10 @@ func _update_camera(
 
 
 func _update_pan(offset: Vector2) -> void:
-    var delta := offset - self._tween_offset
     self._tween_offset = offset
-    Sc.camera.controller.set_camera_pan_controller_offset(
-            Sc.camera.controller._camera_pan_controller_offset + delta)
+    Sc.camera.controller.set_camera_pan_controller_offset(offset)
 
 
-func _update_zoom(zoom_multiplier: float) -> void:
-    var delta := zoom_multiplier - self._tween_zoom_multiplier
-    self._tween_zoom_multiplier = zoom_multiplier
-    Sc.camera.controller.set_camera_pan_controller_zoom(
-            Sc.camera.controller._camera_pan_controller_zoom + delta)
+func _update_zoom(zoom: float) -> void:
+    self._tween_zoom = zoom
+    Sc.camera.controller.set_camera_pan_controller_zoom(zoom)
