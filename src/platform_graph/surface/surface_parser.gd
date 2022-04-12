@@ -50,7 +50,7 @@ func _validate_tilemap_collection(tilemaps: Array) -> void:
 #            "Surfacer currently does not support multiple collidable " +
 #            "Tilemaps per level.")
     var cell_size: Vector2 = tilemaps[0].cell_size
-    assert(cell_size == Sc.level_session.config.cell_size,
+    assert(cell_size == Sc.levels.session.config.cell_size,
             "TileMap.cell_size does not match level config.")
     for tile_map in tilemaps:
         # FIXME: -------------------

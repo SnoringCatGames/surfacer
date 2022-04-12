@@ -5,16 +5,10 @@ extends CameraPanController
 # FIXME: LEFT OFF HERE: --------------------------------------
 # 
 # - Implement zoom/pan boundaries, and standardize with other controller.
-# - Implement touch-based drag pan.
-# - Add momentum and friction to drag.
-# - Implement multi-touch pinch-zoom.
-# - Add momentum and friction to pinch-zoom.
-# - Look through NavigationPreselectionDragPanController and make sure all the
-#   corresponding state is used and reset in this class too.
-# - Update SurfacerLevel, or whereever, to swap-out the correct
-#   CameraPanController as needed.
+#   - Sc.level.level_bounds
 # 
-# - Sc.level.surfaces_bounds
+# - Add momentum and friction to drag.
+# - Add momentum and friction to pinch-zoom.
 
 
 const _PAN_SPEED_MULTIPLIER := 1.5

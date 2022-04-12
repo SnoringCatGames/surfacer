@@ -79,11 +79,11 @@ func _initialize_next() -> void:
             precompute_level_index]
     level = Sc.utils.add_scene(
             null,
-            Sc.level_config.get_level_config(level_id).scene_path,
+            Sc.levels.get_level_config(level_id).scene_path,
             false,
             true)
     Sc.level = level
-    Sc.level_session.reset(level_id)
+    Sc.levels.session.reset(level_id)
     $VBoxContainer/LevelWrapper/Viewport.add_child(level)
     Sc.profiler.stop("initialize")
     _on_stage_progress("initialize")
@@ -162,7 +162,7 @@ func _on_graph_parse_progress(
             100.0
     
     var character_category_name: String = \
-            Sc.level_config.get_level_config(level_id) \
+            Sc.levels.get_level_config(level_id) \
                 .platform_graph_character_category_names[character_index]
     var label_1 := "Level %s (%s of %s)" % [
         Su.precompute_platform_graph_for_levels[ \

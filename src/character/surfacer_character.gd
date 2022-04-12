@@ -156,7 +156,7 @@ func _on_annotators_ready() -> void:
 
 
 func _attach_prediction() -> void:
-    if !Sc.level_session.has_started:
+    if !Sc.levels.session.has_started:
         return
     
     if is_instance_valid(prediction) and \

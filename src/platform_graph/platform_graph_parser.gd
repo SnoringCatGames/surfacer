@@ -358,7 +358,7 @@ func _get_surfaces_tilemap_ids() -> Array:
 
 
 func _get_character_category_names() -> Array:
-    return Sc.level_config.get_level_config(level_id) \
+    return Sc.levels.get_level_config(level_id) \
             .platform_graph_character_category_names
 
 

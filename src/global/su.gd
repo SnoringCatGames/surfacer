@@ -199,8 +199,8 @@ func _parse_manifest() -> void:
 
 func _instantiate_sub_modules() -> void:
     assert(Sc.draw is SurfacerDrawUtils)
-    assert(Sc.level_config is SurfacerLevelConfig)
-    assert(Sc.level_session is SurfacerLevelSession)
+    assert(Sc.levels is SurfacerLevelConfig)
+    assert(Sc.levels.session is SurfacerLevelSession)
     assert(Sc.geometry is SurfacerGeometry)
     assert(Sc.characters is SurfacerCharacterManifest)
     

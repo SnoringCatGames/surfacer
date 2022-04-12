@@ -13,8 +13,6 @@ var graph_parser: PlatformGraphParser
 var surface_store: SurfaceStore
 var intro_choreographer: Choreographer
 
-var surfaces_bounds: Rect2
-
 
 func _init() -> void:
     graph_parser = PlatformGraphParser.new()
@@ -26,17 +24,13 @@ func _enter_tree() -> void:
     Su.space_state = self.get_world_2d().direct_space_state
 
 
-func _ready() -> void:
-    surfaces_bounds = _get_combined_surfaces_region()
-
-
 func _load() -> void:
     ._load()
     
     Sc.gui.hud.create_inspector()
     
     graph_parser.parse(
-            Sc.level_session.id,
+            Sc.levels.session.id,
             Su.is_debug_only_platform_graph_state_included)
     _check_on_removing_surface_marks()
 
@@ -128,7 +122,7 @@ func _execute_intro_choreography() -> void:
         _on_intro_choreography_finished()
         return
     
-    intro_choreographer = Sc.level_config.get_intro_choreographer(
+    intro_choreographer = Sc.levels.get_intro_choreographer(
             Sc.level.active_player_character)
     
     if !is_instance_valid(intro_choreographer):
@@ -231,10 +225,10 @@ func _update_session_in_editor() -> void:
     if !Engine.editor_hint:
         return
     
-    Sc.level_session.reset(level_id)
+    Sc.levels.session.reset(level_id)
     
     var tilemaps: Array = Sc.utils.get_children_by_type(self, SurfacesTilemap)
-    Sc.level_session.config.cell_size = \
+    Sc.levels.session.config.cell_size = \
             Vector2.INF if \
             tilemaps.empty() else \
             tilemaps[0].cell_size
@@ -246,9 +240,23 @@ func _set_level_id(value: String) -> void:
     level_id = value
     if !Engine.editor_hint and \
             !Su.is_precomputing_platform_graphs:
-        assert(Sc.level_session.id == level_id)
+        assert(Sc.levels.session.id == level_id)
     _update_editor_configuration()
     _update_session_in_editor()
+
+
+func _establish_boundaries() -> void:
+    level_bounds = _get_combined_surfaces_region()
+    camera_bounds = level_bounds.grow_individual(
+            Sc.levels.default_camera_bounds_level_margin.left,
+            Sc.levels.default_camera_bounds_level_margin.top,
+            Sc.levels.default_camera_bounds_level_margin.right,
+            Sc.levels.default_camera_bounds_level_margin.bottom)
+    character_bounds = level_bounds.grow_individual(
+            Sc.levels.default_character_bounds_level_margin.left,
+            Sc.levels.default_character_bounds_level_margin.top,
+            Sc.levels.default_character_bounds_level_margin.right,
+            Sc.levels.default_character_bounds_level_margin.bottom)
 
 
 func _get_combined_surfaces_region() -> Rect2:
