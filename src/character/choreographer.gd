@@ -65,7 +65,7 @@ var _initial_is_npc_navigation_destination_shown: bool
 
 var _initial_zoom: float
 var _initial_time_scale: float
-var _current_zoom_multiplier: float
+var _current_zoom: float
 var _current_time_scale: float
 
 
@@ -116,7 +116,7 @@ func start() -> void:
     
     _initial_zoom = Sc.camera.controller._manual_zoom
     _initial_time_scale = Sc.time.time_scale
-    _current_zoom_multiplier = 1.0
+    _current_zoom = 1.0
     _current_time_scale = _initial_time_scale
     
     _execute_next_step()
@@ -195,12 +195,12 @@ func _execute_next_step() -> void:
                 var is_navigation_valid := \
                         character.navigate_as_choreographed(destination)
                 assert(is_navigation_valid)
-            "zoom_multiplier":
-                _current_zoom_multiplier = \
-                        step.zoom_multiplier if \
-                        !is_inf(step.zoom_multiplier) else \
+            "zoom":
+                _current_zoom = \
+                        step.zoom if \
+                        !is_inf(step.zoom) else \
                         1.0
-                var current_zoom := _initial_zoom * _current_zoom_multiplier
+                var current_zoom := _initial_zoom * _current_zoom
                 if is_step_immediate:
                     Sc.camera.controller._set_manual_zoom(current_zoom)
                 else:
@@ -293,6 +293,6 @@ func skip() -> void:
     #       immediately.
     if Sc.time.time_scale != _current_time_scale:
         Sc.time.time_scale = _current_time_scale
-    var current_zoom := _initial_zoom * _current_zoom_multiplier
+    var current_zoom := _initial_zoom * _current_zoom
     if Sc.camera.controller._manual_zoom != current_zoom:
         Sc.camera.controller._set_manual_zoom(current_zoom)
