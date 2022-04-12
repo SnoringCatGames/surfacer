@@ -87,8 +87,15 @@ func _update_camera(
     _target_offset = next_offset
     _target_zoom_multiplier = next_zoom_multiplier
     
-    # Transition to the new values.
     _tween.stop_all()
+    
+    if Sc.geometry.are_points_equal_with_epsilon(
+                _tween_offset, next_offset) and \
+            Sc.geometry.are_floats_equal_with_epsilon(
+                _tween_zoom_multiplier, next_zoom_multiplier):
+        return
+    
+    # Transition to the new values.
     _tween.interpolate_method(
             self,
             "_update_pan",

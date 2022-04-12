@@ -23,7 +23,14 @@ extends CameraPanController
 
 func _init(previous_pan_controller: CameraPanController = null).(
         previous_pan_controller) -> void:
-    pass
+    Sc.level.pointer_listener \
+            .connect("dragged", self, "_on_dragged")
+    Sc.level.pointer_listener \
+            .connect("released", self, "_on_released")
+    Sc.level.pointer_listener \
+            .connect("pinch_changed", self, "_on_pinch_changed")
+    Sc.level.pointer_listener \
+            .connect("pinch_finished", self, "_on_pinch_finished")
 
 
 func _validate() -> void:
@@ -31,6 +38,25 @@ func _validate() -> void:
     assert(Sc.gui.is_player_interaction_enabled)
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _on_dragged(pointer_position: Vector2) -> void:
+    if Sc.level.pointer_listener.get_is_control_pressed():
+        return
+    # FIXME: LEFT OFF HERE: --------------------------------------
+    pass
+
+
+func _on_released(pointer_position: Vector2) -> void:
+    if Sc.level.pointer_listener.get_is_control_pressed():
+        return
+    # FIXME: LEFT OFF HERE: --------------------------------------
+    pass
+
+
+func _on_pinch_changed(pinch_distance: float, pinch_angle: float) -> void:
+    # FIXME: LEFT OFF HERE: --------------------------------------
+    pass
+
+
+func _on_pinch_finished() -> void:
     # FIXME: LEFT OFF HERE: --------------------------------------
     pass
