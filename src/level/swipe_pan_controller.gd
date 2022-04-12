@@ -5,7 +5,7 @@ extends CameraPanController
 # FIXME: LEFT OFF HERE: --------------------------------------
 # 
 # - Implement zoom/pan boundaries, and standardize with other controller.
-#   - Sc.level.level_bounds
+#   - Sc.level.camera_bounds
 # 
 # - Add momentum and friction to drag.
 # - Add momentum and friction to pinch-zoom.
@@ -78,3 +78,7 @@ func _on_pinch_changed(
 
 func _on_pinch_finished() -> void:
     _reset()
+
+
+func _get_camera_parent_position() -> Vector2:
+    return Vector2.ZERO
