@@ -114,7 +114,7 @@ func start() -> void:
             Sc.annotators.params.is_npc_navigation_destination_shown
     Sc.annotators.params.is_npc_navigation_destination_shown = false
     
-    _initial_zoom = Sc.camera_controller._manual_zoom
+    _initial_zoom = Sc.camera.controller._manual_zoom
     _initial_time_scale = Sc.time.time_scale
     _current_zoom_multiplier = 1.0
     _current_time_scale = _initial_time_scale
@@ -148,7 +148,7 @@ func _on_finished() -> void:
     Sc.annotators.params.is_npc_navigation_destination_shown = \
             _initial_is_npc_navigation_destination_shown
     
-    Sc.camera_controller._set_manual_zoom(_initial_zoom)
+    Sc.camera.controller._set_manual_zoom(_initial_zoom)
     Sc.time.time_scale = _initial_time_scale
     emit_signal("finished")
 
@@ -202,12 +202,12 @@ func _execute_next_step() -> void:
                         1.0
                 var current_zoom := _initial_zoom * _current_zoom_multiplier
                 if is_step_immediate:
-                    Sc.camera_controller._set_manual_zoom(current_zoom)
+                    Sc.camera.controller._set_manual_zoom(current_zoom)
                 else:
                     _tween.interpolate_method(
-                            Sc.camera_controller,
+                            Sc.camera.controller,
                             "_set_manual_zoom",
-                            Sc.camera_controller._manual_zoom,
+                            Sc.camera.controller._manual_zoom,
                             current_zoom,
                             duration,
                             ease_name)
@@ -294,5 +294,5 @@ func skip() -> void:
     if Sc.time.time_scale != _current_time_scale:
         Sc.time.time_scale = _current_time_scale
     var current_zoom := _initial_zoom * _current_zoom_multiplier
-    if Sc.camera_controller._manual_zoom != current_zoom:
-        Sc.camera_controller._set_manual_zoom(current_zoom)
+    if Sc.camera.controller._manual_zoom != current_zoom:
+        Sc.camera.controller._set_manual_zoom(current_zoom)

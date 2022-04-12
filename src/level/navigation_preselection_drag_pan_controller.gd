@@ -44,7 +44,7 @@ func _stop_drag() -> void:
 func _update_pan_and_zoom_delta_from_pointer(
         pointer_position: Vector2) -> void:
     # Calculate the camera bounds and the region that controls pan and zoom.
-    var pointer_max_control_bounds: Rect2 = Sc.camera_controller.get_bounds()
+    var pointer_max_control_bounds: Rect2 = Sc.camera.controller.get_bounds()
     var camera_center := \
             pointer_max_control_bounds.position + \
             pointer_max_control_bounds.size / 2.0
