@@ -57,18 +57,22 @@ func _unhandled_input(event: InputEvent) -> void:
                     _target_zoom / CameraController._MANUAL_ZOOM_STEP_RATIO if \
                     event.button_index == BUTTON_WHEEL_UP else \
                     _target_zoom * CameraController._MANUAL_ZOOM_STEP_RATIO
-            
             var cursor_level_position: Vector2 = \
                     Sc.utils.get_level_touch_position(event)
-            var camera_level_position: Vector2 = \
-                    _get_camera_parent_position() + Sc.camera.controller.offset
-            var cursor_camera_position := \
-                    cursor_level_position - camera_level_position
-            var delta_offset := \
-                    cursor_camera_position * (1 - zoom / _target_zoom)
-            var offset := _target_offset + delta_offset
-            
-            _update_camera(offset, zoom)
+            _zoom_to_position(zoom, cursor_level_position)
+
+
+func _zoom_to_position(
+        zoom: float,
+        zoom_target_level_position: Vector2) -> void:
+    var camera_level_position: Vector2 = \
+            _get_camera_parent_position() + Sc.camera.controller.offset
+    var cursor_camera_position := \
+            zoom_target_level_position - camera_level_position
+    var delta_offset := \
+            cursor_camera_position * (1 - zoom / _target_zoom)
+    var offset := _target_offset + delta_offset
+    _update_camera(offset, zoom)
 
 
 func _update_camera(

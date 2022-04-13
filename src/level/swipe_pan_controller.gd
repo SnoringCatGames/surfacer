@@ -73,7 +73,8 @@ func _on_pinch_changed(
     else:
         distance_ratio = 1.0 - (1.0 - distance_ratio) * _ZOOM_SPEED_MULTIPLIER
     var zoom: float = _target_zoom / distance_ratio
-    _update_camera(_target_offset, zoom)
+    _zoom_to_position(
+            zoom, Sc.level.pointer_listener.current_pinch_center_level_position)
 
 
 func _on_pinch_finished() -> void:
