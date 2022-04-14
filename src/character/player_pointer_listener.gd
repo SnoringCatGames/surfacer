@@ -17,8 +17,10 @@ var _last_pointer_drag_position := Vector2.INF
 func _init(character) -> void:
     self._character = character
     self._player_nav = character.get_behavior(PlayerNavigationBehavior)
-    Sc.level.pointer_listener.connect("dragged", self, "_on_pointer_moved")
-    Sc.level.pointer_listener.connect("released", self, "_on_pointer_released")
+    Sc.level.pointer_listener.connect(
+            "single_touch_dragged", self, "_on_pointer_moved")
+    Sc.level.pointer_listener.connect(
+            "single_touch_released", self, "_on_pointer_released")
 
 
 func _process(_delta: float) -> void:

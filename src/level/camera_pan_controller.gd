@@ -5,6 +5,8 @@ extends Node2D
 const _TWEEN_DURATION := 0.1
 const _MIN_CAMERA_ZOOM := 0.01
 
+const _SCROLL_ZOOM_SPEED_MULTIPLIER := 1.08
+
 var _tween: ScaffolderTween
 
 var _target_offset := Vector2.ZERO
@@ -54,9 +56,9 @@ func _unhandled_input(event: InputEvent) -> void:
                 event.button_index == BUTTON_WHEEL_DOWN:
             # Zoom toward the cursor.
             var zoom := \
-                    _target_zoom / CameraController._MANUAL_ZOOM_STEP_RATIO if \
+                    _target_zoom / _SCROLL_ZOOM_SPEED_MULTIPLIER if \
                     event.button_index == BUTTON_WHEEL_UP else \
-                    _target_zoom * CameraController._MANUAL_ZOOM_STEP_RATIO
+                    _target_zoom * _SCROLL_ZOOM_SPEED_MULTIPLIER
             var cursor_level_position: Vector2 = \
                     Sc.utils.get_level_touch_position(event)
             _zoom_to_position(zoom, cursor_level_position)
@@ -64,7 +66,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _zoom_to_position(
         zoom: float,
-        zoom_target_level_position: Vector2) -> void:
+        zoom_target_level_position: Vector2,
+        includes_tween := true) -> void:
     var camera_level_position: Vector2 = \
             _get_camera_parent_position() + Sc.camera.controller.offset
     var cursor_camera_position := \
@@ -72,12 +75,13 @@ func _zoom_to_position(
     var delta_offset := \
             cursor_camera_position * (1 - zoom / _target_zoom)
     var offset := _target_offset + delta_offset
-    _update_camera(offset, zoom)
+    _update_camera(offset, zoom, includes_tween)
 
 
 func _update_camera(
         next_offset: Vector2,
-        next_zoom: float) -> void:
+        next_zoom: float,
+        includes_tween := true) -> void:
     var previous_target_offset := _target_offset
     var previous_target_zoom := _target_zoom
     
@@ -110,33 +114,38 @@ func _update_camera(
     _target_offset = next_offset
     _target_zoom = next_zoom
     
-    if Sc.geometry.are_points_equal_with_epsilon(
-                previous_target_offset, _target_offset) and \
-            Sc.geometry.are_floats_equal_with_epsilon(
-                previous_target_zoom, _target_zoom):
-        return
-    
-    # Transition to the new values.
-    _tween.stop_all()
-    _tween.interpolate_method(
-            self,
-            "_update_pan",
-            _tween_offset,
-            next_offset,
-            _TWEEN_DURATION,
-            "linear",
-            0.0,
-            TimeType.PLAY_PHYSICS)
-    _tween.interpolate_method(
-            self,
-            "_update_zoom",
-            _tween_zoom,
-            next_zoom,
-            _TWEEN_DURATION,
-            "linear",
-            0.0,
-            TimeType.PLAY_PHYSICS)
-    _tween.start()
+    if !includes_tween:
+        _tween.stop_all()
+        _update_pan(_target_offset)
+        _update_zoom(_target_zoom)
+    else:
+        if Sc.geometry.are_points_equal_with_epsilon(
+                    previous_target_offset, _target_offset) and \
+                Sc.geometry.are_floats_equal_with_epsilon(
+                    previous_target_zoom, _target_zoom):
+            return
+        
+        # Transition to the new values.
+        _tween.stop_all()
+        _tween.interpolate_method(
+                self,
+                "_update_pan",
+                _tween_offset,
+                next_offset,
+                _TWEEN_DURATION,
+                "linear",
+                0.0,
+                TimeType.PLAY_PHYSICS)
+        _tween.interpolate_method(
+                self,
+                "_update_zoom",
+                _tween_zoom,
+                next_zoom,
+                _TWEEN_DURATION,
+                "linear",
+                0.0,
+                TimeType.PLAY_PHYSICS)
+        _tween.start()
 
 
 func _update_pan(offset: Vector2) -> void:

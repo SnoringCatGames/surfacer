@@ -12,8 +12,10 @@ var _delta_zoom := INF
 
 func _init(previous_pan_controller: CameraPanController = null).(
         previous_pan_controller) -> void:
-    Sc.level.pointer_listener.connect("dragged", self, "_on_dragged")
-    Sc.level.pointer_listener.connect("released", self, "_on_released")
+    Sc.level.pointer_listener.connect(
+            "single_touch_dragged", self, "_on_dragged")
+    Sc.level.pointer_listener.connect(
+            "single_touch_released", self, "_on_released")
 
 
 func _destroy() -> void:
