@@ -118,12 +118,12 @@ func _update_editor_configuration() -> void:
 
 # Execute any intro cut-scene or initial navigation.
 func _execute_intro_choreography() -> void:
-    if !is_instance_valid(Sc.level.active_player_character):
+    if !is_instance_valid(_active_player_character):
         _on_intro_choreography_finished()
         return
     
     intro_choreographer = Sc.levels.get_intro_choreographer(
-            Sc.level.active_player_character)
+            _active_player_character)
     
     if !is_instance_valid(intro_choreographer):
         _on_intro_choreography_finished()
@@ -136,8 +136,8 @@ func _execute_intro_choreography() -> void:
 
 
 func _on_intro_choreography_finished() -> void:
-    if is_instance_valid(active_player_character):
-        active_player_character._log(
+    if is_instance_valid(_active_player_character):
+        _active_player_character._log(
                 "Choreog done",
                 "",
                 CharacterLogType.DEFAULT,
