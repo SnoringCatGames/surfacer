@@ -1,4 +1,4 @@
-class_name NavigationPreselectionDragPanController
+class_name NavigationPreselectionCamera
 extends ScaffolderCamera
 
 
@@ -8,6 +8,8 @@ var _interval_id := -1
 
 var _delta_offset := Vector2.INF
 var _delta_zoom := INF
+
+var target_character: ScaffolderCharacter
 
 
 func _init() -> void:
@@ -29,6 +31,21 @@ func _validate() -> void:
             0.5 and \
             Sc.camera.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer > \
             0.0)
+
+
+func _set_is_active(value: bool) -> void:
+    ._set_is_active(value)
+    assert(is_instance_valid(target_character))
+
+
+func _physics_process(delta: float) -> void:
+    var old_misc_offset := _misc_offset
+    if is_instance_valid(target_character):
+        _misc_offset = target_character.position
+    else:
+        _misc_offset = Vector2.ZERO
+    if _misc_offset != old_misc_offset:
+        _update_offset_and_zoom()
 
 
 func _on_dragged(

@@ -117,7 +117,7 @@ var _behavior_classes := [
 ]
 
 var _camera_manifest := {
-    default_camera_class = NavigationPreselectionDragPanController,
+    default_camera_class = NavigationPreselectionCamera,
     snaps_camera_back_to_character = true,
     max_zoom_from_pointer = 1.5,
     max_pan_distance_from_pointer = 512.0,
