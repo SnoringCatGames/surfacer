@@ -17,9 +17,9 @@ var _last_pointer_drag_position := Vector2.INF
 func _init(character) -> void:
     self._character = character
     self._player_nav = character.get_behavior(PlayerNavigationBehavior)
-    Sc.level.pointer_listener.connect(
+    Sc.level.touch_listener.connect(
             "single_touch_dragged", self, "_on_pointer_moved")
-    Sc.level.pointer_listener.connect(
+    Sc.level.touch_listener.connect(
             "single_touch_released", self, "_on_pointer_released")
 
 
@@ -51,7 +51,8 @@ func _update_preselection_beats() -> void:
 
 func _on_pointer_released(
         pointer_screen_position: Vector2,
-        pointer_level_position: Vector2) -> void:
+        pointer_level_position: Vector2,
+        has_corresponding_touch_down: bool) -> void:
     if !_character.is_player_control_active:
         return
     _last_pointer_drag_position = Vector2.INF
@@ -74,7 +75,8 @@ func _on_pointer_released(
 
 func _on_pointer_moved(
         pointer_screen_position: Vector2,
-        pointer_level_position: Vector2) -> void:
+        pointer_level_position: Vector2,
+        has_corresponding_touch_down: bool) -> void:
     if !_character.is_player_control_active:
         return
     _last_pointer_drag_position = pointer_level_position

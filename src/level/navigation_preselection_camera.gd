@@ -13,9 +13,9 @@ var target_character: ScaffolderCharacter
 
 
 func _init() -> void:
-    Sc.level.pointer_listener.connect(
+    Sc.level.touch_listener.connect(
             "single_touch_dragged", self, "_on_dragged")
-    Sc.level.pointer_listener.connect(
+    Sc.level.touch_listener.connect(
             "single_touch_released", self, "_on_released")
 
 
@@ -35,7 +35,8 @@ func _validate() -> void:
 
 func _set_is_active(value: bool) -> void:
     ._set_is_active(value)
-    assert(is_instance_valid(target_character))
+    if value:
+        assert(is_instance_valid(target_character))
 
 
 func _physics_process(delta: float) -> void:
@@ -50,9 +51,10 @@ func _physics_process(delta: float) -> void:
 
 func _on_dragged(
         pointer_screen_position: Vector2,
-        pointer_level_position: Vector2) -> void:
+        pointer_level_position: Vector2,
+        has_corresponding_touch_down: bool) -> void:
     if !is_instance_valid(Sc.characters.get_active_player_character()) or \
-            Sc.level.pointer_listener.get_is_control_pressed():
+            Sc.level.touch_listener.get_is_control_pressed():
         _stop_drag()
         return
     _update_pan_and_zoom_delta_from_pointer(pointer_level_position)
@@ -61,7 +63,8 @@ func _on_dragged(
 
 func _on_released(
         pointer_screen_position: Vector2,
-        pointer_level_position: Vector2) -> void:
+        pointer_level_position: Vector2,
+        has_corresponding_touch_down: bool) -> void:
     _stop_drag()
 
 
@@ -108,7 +111,7 @@ func _update_camera_from_deltas() -> void:
             1.0,
             Sc.camera.max_zoom_from_pointer)
     
-    _update_camera(next_offset, next_zoom)
+    _update_controller_pan_and_zoom(next_offset, next_zoom)
 
 
 func _update_pan_and_zoom_delta_from_pointer(

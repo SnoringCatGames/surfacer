@@ -70,7 +70,7 @@ var graph: PlatformGraph
 var surface_store: SurfaceStore
 var navigator: SurfaceNavigator
 var prediction: CharacterPrediction
-var pointer_listener: PlayerPointerListener
+var touch_listener: PlayerPointerListener
 
 var behavior: Behavior
 var default_behavior: Behavior
@@ -243,8 +243,8 @@ func _initialize_player_character_functionality() -> void:
         var player_navigation_behavior := PlayerNavigationBehavior.new()
         add_behavior(player_navigation_behavior)
         
-        self.pointer_listener = PlayerPointerListener.new(self)
-        add_child(pointer_listener)
+        self.touch_listener = PlayerPointerListener.new(self)
+        add_child(touch_listener)
 
 
 #func set_is_player_control_active(value: bool) -> void:
@@ -315,8 +315,8 @@ func _on_physics_process(delta: float) -> void:
     _update_collision_mask()
     
     if surface_state.did_move_last_frame and \
-            is_instance_valid(pointer_listener):
-        pointer_listener.on_character_moved()
+            is_instance_valid(touch_listener):
+        touch_listener.on_character_moved()
 
 
 func _apply_movement() -> void:
