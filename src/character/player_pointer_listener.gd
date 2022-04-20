@@ -90,3 +90,7 @@ func on_character_moved() -> void:
             _character.is_player_control_active:
         Sc.slow_motion.set_slow_motion_enabled(true)
         _throttled_update_preselection_path.call_func()
+
+
+func get_is_drag_active() -> bool:
+    return _last_pointer_drag_position != Vector2.INF

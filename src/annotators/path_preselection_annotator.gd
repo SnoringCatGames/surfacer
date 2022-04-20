@@ -37,6 +37,7 @@ var phantom_position_along_surface := PositionAlongSurface.new()
 var preselection_path: PlatformGraphPath
 var preselection_path_beats_time_start: float
 var preselection_path_beats: Array
+var invalid_destination_position := PositionAlongSurface.new()
 
 
 func _init() -> void:
@@ -185,11 +186,22 @@ func _process(_delta: float) -> void:
         animation_progress = fmod((current_time - animation_start_time) / \
                 preselection_duration, 1.0)
         update()
+    
+    if !player_nav.pre_selection.get_is_selection_navigable() and \
+            !player_nav.new_selection.get_has_selection() and \
+            last_player_character.touch_listener.get_is_drag_active():
+        if Sc.level.touch_listener.current_drag_level_position != \
+                invalid_destination_position.target_point:
+            update()
+        invalid_destination_position.target_point = \
+                Sc.level.touch_listener.current_drag_level_position
+    else:
+        invalid_destination_position.target_point = Vector2.INF
 
 
 func _draw() -> void:
     if !is_instance_valid(last_player_character) or \
-            preselection_destination == null:
+            !last_player_character.touch_listener.get_is_drag_active():
         # When we don't render anything in this draw call, it clears the draw
         # buffer.
         return
@@ -214,7 +226,8 @@ func _draw() -> void:
         position_indicator_base_color = Sc.palette.get_color(
                 "preselection_invalid_position_indicator_color")
     
-    if Sc.annotators.params.is_player_preselection_trajectory_shown:
+    if preselection_destination != null and \
+            Sc.annotators.params.is_player_preselection_trajectory_shown:
         # Draw path.
         if preselection_path != null:
             var path_alpha := \
@@ -279,9 +292,13 @@ func _draw() -> void:
         var cone_length: float = \
                 Sc.annotators.params.preselection_position_indicator_length - \
                 Sc.annotators.params.preselection_position_indicator_radius
+        var position_along_surface := \
+                phantom_position_along_surface if \
+                preselection_destination != null else \
+                invalid_destination_position
         Sc.draw.draw_destination_marker(
                 self,
-                phantom_position_along_surface,
+                position_along_surface,
                 false,
                 position_indicator_color,
                 cone_length,
