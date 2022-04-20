@@ -34,6 +34,7 @@ func _validate() -> void:
 
 
 func _set_is_active(value: bool) -> void:
+    _sync_to_character_position()
     ._set_is_active(value)
     _stop_drag()
     if value:
@@ -43,6 +44,10 @@ func _set_is_active(value: bool) -> void:
 func _physics_process(delta: float) -> void:
     if !_get_is_active():
         return
+    _sync_to_character_position()
+
+
+func _sync_to_character_position() -> void:
     var old_misc_offset := _misc_offset
     if is_instance_valid(target_character):
         _misc_offset = target_character.position
