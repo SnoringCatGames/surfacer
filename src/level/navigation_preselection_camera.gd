@@ -35,11 +35,14 @@ func _validate() -> void:
 
 func _set_is_active(value: bool) -> void:
     ._set_is_active(value)
+    _stop_drag()
     if value:
         assert(is_instance_valid(target_character))
 
 
 func _physics_process(delta: float) -> void:
+    if !_get_is_active():
+        return
     var old_misc_offset := _misc_offset
     if is_instance_valid(target_character):
         _misc_offset = target_character.position
@@ -53,6 +56,8 @@ func _on_dragged(
         pointer_screen_position: Vector2,
         pointer_level_position: Vector2,
         has_corresponding_touch_down: bool) -> void:
+    if !_get_is_active():
+        return
     if !is_instance_valid(Sc.characters.get_active_player_character()) or \
             Sc.level.touch_listener.get_is_control_pressed():
         _stop_drag()
@@ -65,6 +70,8 @@ func _on_released(
         pointer_screen_position: Vector2,
         pointer_level_position: Vector2,
         has_corresponding_touch_down: bool) -> void:
+    if !_get_is_active():
+        return
     _stop_drag()
 
 
