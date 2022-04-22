@@ -190,11 +190,12 @@ func _process(_delta: float) -> void:
     if !player_nav.pre_selection.get_is_selection_navigable() and \
             !player_nav.new_selection.get_has_selection() and \
             last_player_character.touch_listener.get_is_drag_active():
-        if Sc.level.touch_listener.current_drag_level_position != \
+        if Sc.level.touch_listener \
+                    .current_drag_level_position_with_current_camera_pan != \
                 invalid_destination_position.target_point:
             update()
-        invalid_destination_position.target_point = \
-                Sc.level.touch_listener.current_drag_level_position
+        invalid_destination_position.target_point = Sc.level.touch_listener \
+                .current_drag_level_position_with_current_camera_pan
     else:
         invalid_destination_position.target_point = Vector2.INF
 
