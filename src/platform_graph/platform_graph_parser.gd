@@ -82,13 +82,15 @@ func _instantiate_platform_graphs(
     if is_loaded_from_file:
         emit_signal("load_started")
         Sc.time.set_timeout(
-                funcref(self, "_load_platform_graphs"),
+                self,
+                "_load_platform_graphs",
                 0.01,
                 [includes_debug_only_state])
     else:
         emit_signal("calculation_started")
         Sc.time.set_timeout(
-                funcref(self, "_calculate_platform_graphs"),
+                self,
+                "_calculate_platform_graphs",
                 0.01)
 
 
@@ -192,7 +194,8 @@ func _on_graph_calculation_finished(
 
 func _defer_calculate_next_platform_graph(last_character_index: int) -> void:
     Sc.time.set_timeout(
-            funcref(self, "_calculate_next_platform_graph"),
+            self,
+            "_calculate_next_platform_graph",
             0.01,
             [last_character_index + 1])
 

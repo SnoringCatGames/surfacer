@@ -59,8 +59,7 @@ func _init(navigator: SurfaceNavigator) -> void:
     self.pulse_annotator = NavigationPulseAnnotator.new(navigator, pulse_color)
     add_child(pulse_annotator)
     
-    self.fade_tween = ScaffolderTween.new()
-    add_child(fade_tween)
+    self.fade_tween = ScaffolderTween.new(self)
 
 
 func _process(_delta: float) -> void:

@@ -40,7 +40,7 @@ func _on_transition_in_ended(previous_screen: Screen) -> void:
     ._on_transition_in_ended(previous_screen)
     if Sc.device.get_is_browser_app():
         Sc.audio.stop_music()
-    Sc.time.set_timeout(funcref(self, "_load_level"), 0.05)
+    Sc.time.set_timeout(self, "_load_level", 0.05)
 
 
 func _load_level() -> void:

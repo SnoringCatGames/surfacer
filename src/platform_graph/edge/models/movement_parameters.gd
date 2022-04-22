@@ -573,9 +573,7 @@ func _ready() -> void:
 func _set_up() -> void:
     _is_ready = true
     _debounced_update_parameters = Sc.time.debounce(
-            funcref(self, "_update_parameters_debounced"),
-            0.02,
-            true)
+            self, "_update_parameters_debounced", 0.02, true)
 
 
 func _parse_shape_from_parent() -> void:

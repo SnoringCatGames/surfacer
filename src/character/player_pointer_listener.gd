@@ -6,10 +6,12 @@ var _character
 var _player_nav: PlayerNavigationBehavior
 var _is_preselection_path_update_pending := false
 var _throttled_update_preselection_path: FuncRef = Sc.time.throttle(
-        funcref(self, "_update_preselection_path"),
+        self,
+        "_update_preselection_path",
         Su.path_drag_update_throttle_interval)
 var _throttled_update_preselection_beats: FuncRef = Sc.time.throttle(
-        funcref(self, "_update_preselection_beats"),
+        self,
+        "_update_preselection_beats",
         Su.path_beat_update_throttle_interval)
 var _last_pointer_drag_position := Vector2.INF
 
