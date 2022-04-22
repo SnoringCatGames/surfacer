@@ -559,8 +559,8 @@ func _calculate_inter_surface_edges_for_next_origin(
         emit_signal("calculation_progressed", origin_index, surfaces.size())
         if !was_last_iteration:
             Sc.time.set_timeout(
-                    funcref(self,
-                            "_calculate_inter_surface_edges_for_next_origin"),
+                    self,
+                    "_calculate_inter_surface_edges_for_next_origin",
                     0.1,
                     [
                         origin_index + 1,

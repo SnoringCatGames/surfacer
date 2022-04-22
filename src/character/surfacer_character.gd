@@ -113,8 +113,7 @@ func _ready() -> void:
     
     if movement_params.can_dash:
         # Set up a Tween for the fade-out at the end of a dash.
-        _dash_fade_tween = ScaffolderTween.new()
-        add_child(_dash_fade_tween)
+        _dash_fade_tween = ScaffolderTween.new(self)
     
     if movement_params.bypasses_runtime_physics:
         set_collision_mask_bit(
@@ -808,7 +807,8 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     
     Sc.time.clear_timeout(_dash_cooldown_timeout)
     _dash_cooldown_timeout = Sc.time.set_timeout(
-            funcref(self, "set"),
+            self,
+            "set",
             movement_params.dash_cooldown,
             ["_can_dash", true])
     

@@ -70,8 +70,7 @@ var _current_time_scale: float
 
 
 func _ready() -> void:
-    _tween = ScaffolderTween.new()
-    add_child(_tween)
+    _tween = ScaffolderTween.new(self)
 
 
 func configure(
@@ -265,7 +264,8 @@ func _execute_next_step() -> void:
             # start any other events that would otherwise trigger the next step
             # after they complete.
             Sc.time.set_timeout(
-                    funcref(self, "_execute_next_step"),
+                    self,
+                    "_execute_next_step",
                     step.duration + 0.0001,
                     [],
                     TimeType.PLAY_PHYSICS)

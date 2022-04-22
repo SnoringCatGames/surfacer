@@ -94,8 +94,7 @@ func _stop_drag() -> void:
 func _update() -> void:
     if _interval_id < 0:
         _interval_id = Sc.time.set_interval(
-                funcref(self, "_update_camera_from_deltas"),
-                _PAN_AND_ZOOM_INTERVAL)
+                self, "_update_camera_from_deltas", _PAN_AND_ZOOM_INTERVAL)
 
 
 func _update_camera_from_deltas() -> void:

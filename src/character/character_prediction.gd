@@ -17,8 +17,7 @@ func set_up(character) -> void:
             character.animator.filename)
     animator.is_desaturatable = false
     
-    _tween = ScaffolderTween.new()
-    add_child(_tween)
+    _tween = ScaffolderTween.new(self)
 
 
 func match_navigator_or_path(

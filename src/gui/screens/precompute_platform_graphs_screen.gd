@@ -37,7 +37,7 @@ func _ready() -> void:
 
 func _on_transition_in_ended(previous_screen: Screen) -> void:
     ._on_transition_in_ended(previous_screen) 
-    Sc.time.set_timeout(funcref(self, "_compute"), 0.2)
+    Sc.time.set_timeout(self, "_compute", 0.2)
 
 
 func _compute() -> void:
@@ -137,7 +137,7 @@ func _clean_up_next() -> void:
 
 
 func defer(method: String) -> void:
-    Sc.time.set_timeout(funcref(self, method), 0.01)
+    Sc.time.set_timeout(self, method, 0.01)
 
 
 func _on_graph_parse_progress(
@@ -318,4 +318,4 @@ func _on_OpenFolderButton_pressed() -> void:
 
 
 func _on_CloseButton_pressed() -> void:
-    Sc.time.set_timeout(funcref(Sc.nav, "close_app"), 0.4)
+    Sc.time.set_timeout(Sc.nav, "close_app", 0.4)

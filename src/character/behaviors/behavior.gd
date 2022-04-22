@@ -383,7 +383,8 @@ func _pause_mid_movement() -> void:
     var delay := _get_mid_movement_pause_time()
     if delay > 0.0:
         _mid_movement_pause_timeout_id = Sc.time.set_timeout(
-                funcref(self, "_on_mid_movement_pause_finished"),
+                self,
+                "_on_mid_movement_pause_finished",
                 delay)
     else:
         _on_mid_movement_pause_finished()
@@ -394,7 +395,8 @@ func _pause_post_movement() -> void:
     var delay := _get_post_movement_pause_time()
     if delay > 0.0:
         _post_movement_pause_timeout_id = Sc.time.set_timeout(
-                funcref(self, "_on_post_movement_pause_finished"),
+                self,
+                "_on_post_movement_pause_finished",
                 delay)
     else:
         _on_post_movement_pause_finished()
