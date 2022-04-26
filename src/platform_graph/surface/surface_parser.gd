@@ -2,7 +2,7 @@ class_name SurfaceParser
 extends Reference
 
 
-# TODO: Map the TileMap into an RTree or QuadTree.
+# TODO: Map the TileMap into an RTree or BVH.
 
 const SURFACES_TILE_MAPS_COLLISION_LAYER := 1
 
