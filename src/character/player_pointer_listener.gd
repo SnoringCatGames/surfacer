@@ -14,6 +14,7 @@ var _throttled_update_preselection_beats: FuncRef = Sc.time.throttle(
         "_update_preselection_beats",
         Su.path_beat_update_throttle_interval)
 var _last_pointer_drag_position := Vector2.INF
+var _ignore_next_pointer_release := false
 
 
 func _init(character) -> void:
@@ -55,6 +56,9 @@ func _on_pointer_released(
         pointer_screen_position: Vector2,
         pointer_level_position: Vector2,
         has_corresponding_touch_down: bool) -> void:
+    if _ignore_next_pointer_release:
+        _ignore_next_pointer_release = false
+        return
     if !_character.is_player_control_active:
         return
     _last_pointer_drag_position = Vector2.INF
@@ -92,6 +96,11 @@ func on_character_moved() -> void:
             _character.is_player_control_active:
         Sc.slow_motion.set_slow_motion_enabled(true)
         _throttled_update_preselection_path.call_func()
+
+
+func on_character_player_control_activated(
+        was_activated_on_touch_down: bool) -> void:
+    _ignore_next_pointer_release = was_activated_on_touch_down
 
 
 func get_is_drag_active() -> bool:

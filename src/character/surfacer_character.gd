@@ -91,6 +91,8 @@ var _player_action_source: PlayerActionSource
 var _dash_cooldown_timeout: int
 var _dash_fade_tween: ScaffolderTween
 
+var _was_activated_on_touch_down := false
+
 
 func _init() -> void:
     self.add_to_group(Sc.characters.GROUP_NAME_CHARACTERS)
@@ -246,8 +248,17 @@ func _initialize_player_character_functionality() -> void:
         add_child(touch_listener)
 
 
-#func set_is_player_control_active(value: bool) -> void:
-#    .set_is_is_player_control_active(value)
+func set_is_player_control_active(
+        value: bool,
+        should_also_update_level := true) -> void:
+    var is_new_activation: bool = \
+            value and Sc.level.active_player_character != self
+    .set_is_player_control_active(value, should_also_update_level)
+    if !value:
+        _was_activated_on_touch_down = false
+    if is_new_activation:
+        touch_listener.on_character_player_control_activated(
+                _was_activated_on_touch_down)
 
 
 func _init_player_controller_action_source() -> void:
