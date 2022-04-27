@@ -83,6 +83,8 @@ func _on_pointer_moved(
         pointer_screen_position: Vector2,
         pointer_level_position: Vector2,
         has_corresponding_touch_down: bool) -> void:
+    if _ignore_next_pointer_release:
+        return
     if !_character.is_player_control_active:
         return
     _last_pointer_drag_position = pointer_level_position
@@ -92,6 +94,8 @@ func _on_pointer_moved(
 
 
 func on_character_moved() -> void:
+    if _ignore_next_pointer_release:
+        return
     if _last_pointer_drag_position != Vector2.INF and \
             _character.is_player_control_active:
         Sc.slow_motion.set_slow_motion_enabled(true)
