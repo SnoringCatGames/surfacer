@@ -23,7 +23,7 @@ func _init(character) -> void:
     Sc.level.touch_listener.connect(
             "single_touch_dragged", self, "_on_pointer_moved")
     Sc.level.touch_listener.connect(
-            "single_touch_released", self, "_on_pointer_released")
+            "single_unhandled_touch_released", self, "_on_pointer_released")
 
 
 func _process(_delta: float) -> void:
