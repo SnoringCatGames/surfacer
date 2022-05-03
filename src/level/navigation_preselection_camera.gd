@@ -149,7 +149,7 @@ func _update_camera_from_deltas() -> void:
     else:
         next_zoom = _target_controller_zoom
     
-    _update_controller_pan_and_zoom(next_offset, next_zoom)
+    _update_controller_offset_and_zoom(next_offset, next_zoom)
 
 
 func _update_pan_and_zoom_delta_from_pointer(
