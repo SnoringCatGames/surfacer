@@ -14,6 +14,8 @@ var target_character: ScaffolderCharacter
 
 func _init() -> void:
     Sc.level.touch_listener.connect(
+            "single_touch_down", self, "_on_dragged")
+    Sc.level.touch_listener.connect(
             "single_touch_dragged", self, "_on_dragged")
     Sc.level.touch_listener.connect(
             "single_touch_released", self, "_on_released")
@@ -82,7 +84,7 @@ func match_camera(other: ScaffolderCamera) -> void:
 func _on_dragged(
         pointer_screen_position: Vector2,
         pointer_level_position: Vector2,
-        has_corresponding_touch_down: bool) -> void:
+        has_corresponding_touch_down := false) -> void:
     if !_get_is_active():
         return
     if !is_instance_valid(Sc.characters.get_active_player_character()) or \
@@ -126,14 +128,8 @@ func _update_camera_from_deltas() -> void:
     assert(_delta_offset != Vector2.INF)
     assert(!is_inf(_delta_zoom))
     
-    # Calculate the next values.
-    var next_offset := _target_controller_offset + _delta_offset
-    var next_zoom := \
-            _target_controller_zoom + _delta_zoom if \
-            Sc.camera.snaps_camera_back_to_character else \
-            1.0
-    
     # Don't let the pan and zoom exceed their max bounds.
+    var next_offset := _target_controller_offset + _delta_offset
     next_offset.x = clamp(
             next_offset.x,
             -Sc.camera.max_pan_distance_from_pointer,
@@ -142,10 +138,16 @@ func _update_camera_from_deltas() -> void:
             next_offset.y,
             -Sc.camera.max_pan_distance_from_pointer,
             Sc.camera.max_pan_distance_from_pointer)
-    next_zoom = clamp(
-            next_zoom,
-            1.0,
-            Sc.camera.max_zoom_from_pointer)
+    
+    var next_zoom: float
+    if Sc.camera.snaps_camera_back_to_character:
+        next_zoom = _target_controller_zoom + _delta_zoom
+        next_zoom = clamp(
+                next_zoom,
+                _target_controller_zoom,
+                Sc.camera.max_zoom_from_pointer)
+    else:
+        next_zoom = _target_controller_zoom
     
     _update_controller_pan_and_zoom(next_offset, next_zoom)
 

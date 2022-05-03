@@ -21,6 +21,8 @@ func _init(character) -> void:
     self._character = character
     self._player_nav = character.get_behavior(PlayerNavigationBehavior)
     Sc.level.touch_listener.connect(
+            "single_touch_down", self, "_on_pointer_moved")
+    Sc.level.touch_listener.connect(
             "single_touch_dragged", self, "_on_pointer_moved")
     Sc.level.touch_listener.connect(
             "single_unhandled_touch_released", self, "_on_pointer_released")
@@ -82,7 +84,7 @@ func _on_pointer_released(
 func _on_pointer_moved(
         pointer_screen_position: Vector2,
         pointer_level_position: Vector2,
-        has_corresponding_touch_down: bool) -> void:
+        has_corresponding_touch_down := false) -> void:
     if _ignore_next_pointer_release:
         return
     if !_character.is_player_control_active:
