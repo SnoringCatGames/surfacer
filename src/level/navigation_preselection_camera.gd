@@ -33,12 +33,22 @@ func _validate() -> void:
             0.0)
 
 
+func reset(emits_signal := true) -> void:
+    .reset(emits_signal)
+    if is_instance_valid(target_character):
+        _misc_offset = target_character.position
+    else:
+        _misc_offset = Vector2.ZERO
+    _update_offset_and_zoom(true, emits_signal)
+
+
 func _set_is_active(value: bool) -> void:
     _sync_to_character_position()
     ._set_is_active(value)
-    _stop_drag()
     if value:
         assert(is_instance_valid(target_character))
+    else:
+        _stop_drag()
 
 
 func _physics_process(delta: float) -> void:
@@ -55,6 +65,17 @@ func _sync_to_character_position() -> void:
         _misc_offset = Vector2.ZERO
     if _misc_offset != old_misc_offset:
         _update_offset_and_zoom()
+
+
+func match_camera(other: ScaffolderCamera) -> void:
+    reset(false)
+    _target_controller_offset = \
+            other._target_controller_offset + other._misc_offset - _misc_offset
+    _target_controller_zoom = \
+            other._target_controller_zoom * other._misc_zoom
+    _controller_offset = _target_controller_offset
+    _controller_zoom = _target_controller_zoom
+    _update_offset_and_zoom(true, false)
 
 
 func _on_dragged(
@@ -88,7 +109,10 @@ func _stop_drag() -> void:
     _delta_zoom = INF
     
     if Sc.camera.snaps_camera_back_to_character:
-        reset()
+        var previous_offset := get_camera_screen_center()
+        var previous_zoom := zoom.x
+        reset(false)
+        _transition_from_offset_and_zoom(previous_offset, previous_zoom)
 
 
 func _update() -> void:
@@ -102,9 +126,9 @@ func _update_camera_from_deltas() -> void:
     assert(!is_inf(_delta_zoom))
     
     # Calculate the next values.
-    var next_offset := _target_offset + _delta_offset
+    var next_offset := _target_controller_offset + _delta_offset
     var next_zoom := \
-            _target_zoom + _delta_zoom if \
+            _target_controller_zoom + _delta_zoom if \
             Sc.camera.snaps_camera_back_to_character else \
             1.0
     
