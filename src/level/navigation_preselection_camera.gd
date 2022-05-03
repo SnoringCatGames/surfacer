@@ -75,6 +75,7 @@ func match_camera(other: ScaffolderCamera) -> void:
             other._target_controller_zoom * other._misc_zoom
     _controller_offset = _target_controller_offset
     _controller_zoom = _target_controller_zoom
+    _extra_zoom = other._extra_zoom
     _update_offset_and_zoom(true, false)
 
 
