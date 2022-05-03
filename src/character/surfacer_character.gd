@@ -70,7 +70,7 @@ var graph: PlatformGraph
 var surface_store: SurfaceStore
 var navigator: SurfaceNavigator
 var prediction: CharacterPrediction
-var touch_listener: PlayerPointerListener
+var touch_listener: PlayerTouchListener
 
 var behavior: Behavior
 var default_behavior: Behavior
@@ -244,7 +244,7 @@ func _initialize_player_character_functionality() -> void:
         var player_navigation_behavior := PlayerNavigationBehavior.new()
         add_behavior(player_navigation_behavior)
         
-        self.touch_listener = PlayerPointerListener.new(self)
+        self.touch_listener = PlayerTouchListener.new(self)
         add_child(touch_listener)
 
 

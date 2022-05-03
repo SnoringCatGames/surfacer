@@ -1,4 +1,4 @@
-class_name PlayerPointerListener
+class_name PlayerTouchListener
 extends Node2D
 
 
