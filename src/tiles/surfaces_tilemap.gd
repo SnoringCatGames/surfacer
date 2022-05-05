@@ -14,3 +14,5 @@ func _ready() -> void:
         inner_tilemap.add_to_group(GROUP_NAME_SURFACES, true)
         inner_tilemap.id = self.id + "_inner"
     assert(tile_set is SurfacesTileset)
+    self.add_to_group(Sc.slow_motion.GROUP_NAME_DESATURATABLES)
+    inner_tilemap.add_to_group(Sc.slow_motion.GROUP_NAME_DESATURATABLES)
