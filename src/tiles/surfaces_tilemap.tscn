@@ -1,11 +1,11 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://addons/surfacer/src/tiles/surfaces_tilemap.gd" type="Script" id=1]
+[ext_resource path="res://addons/surfacer/src/tiles/tileset_with_many_angles.tres" type="TileSet" id=2]
 
-[node name="SurfacesTilemap" type="TileMap" groups=[
-"desaturatables",
-]]
-cell_size = Vector2( 32, 32 )
+[node name="SurfacesTilemap" type="TileMap" groups=["desaturatables", "surfaces"]]
+tile_set = ExtResource( 2 )
+cell_size = Vector2( -2.14748e+09, -2.14748e+09 )
 cell_quadrant_size = 8
 cell_custom_transform = Transform2D( 32, 0, 0, 32, 0, 0 )
 format = 1
