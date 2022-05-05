@@ -176,15 +176,7 @@ func _process(_delta: float) -> void:
         update()
     
     if preselection_destination != null:
-        var preselection_duration: float = \
-                Sc.slow_motion.music \
-                        .tick_tock_beat_duration_unscaled * \
-                    Sc.slow_motion.tick_tock_tempo_multiplier * \
-                    2.0 if \
-                Sc.slow_motion.is_enabled else \
-                Sc.annotators.params.preselection_default_duration
-        animation_progress = fmod((current_time - animation_start_time) / \
-                preselection_duration, 1.0)
+        _update_animation_progress()
         update()
     
     if !player_nav.pre_selection.get_is_selection_navigable() and \
@@ -196,8 +188,22 @@ func _process(_delta: float) -> void:
             update()
         invalid_destination_position.target_point = Sc.level.touch_listener \
                 .current_drag_level_position_with_current_camera_pan
+        _update_animation_progress()
     else:
         invalid_destination_position.target_point = Vector2.INF
+
+
+func _update_animation_progress() -> void:
+    var preselection_duration: float = \
+            Sc.slow_motion.music \
+                    .tick_tock_beat_duration_unscaled * \
+                Sc.slow_motion.tick_tock_tempo_multiplier * \
+                2.0 if \
+            Sc.slow_motion.is_enabled else \
+            Sc.annotators.params.preselection_default_duration
+    animation_progress = \
+            fmod((Sc.time.get_play_time() - animation_start_time) / \
+            preselection_duration, 1.0)
 
 
 func _draw() -> void:
