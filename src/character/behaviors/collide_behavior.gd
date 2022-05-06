@@ -90,7 +90,7 @@ func on_collided() -> void:
     
     if character.navigation_state.is_currently_navigating and \
             is_active:
-        character.navigator.stop()
+        character.navigator.stop(false)
 
 
 func _move() -> int:

@@ -842,7 +842,7 @@ func force_boost(boost: Vector2) -> void:
     surface_state.center_position_along_surface \
             .match_current_grab(null, position)
     
-    navigator.stop()
+    navigator.stop(true)
 
 
 func navigate_as_choreographed(destination: PositionAlongSurface) -> bool:
