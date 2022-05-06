@@ -10,6 +10,10 @@ const ANNOTATOR_ROW_HEIGHT := 21.0
 const CHECK_BOX_SCALE := 0.5
 const SLIDER_WIDTH := 64.0
 
+const FOOTER_BUTTON_RADIUS := 32.0
+const FOOTER_MARGIN_TOP := 20.0
+
+
 var is_open := false setget _set_is_open
 var tree_font_size := "Xs" setget _set_tree_font_size
 
@@ -40,8 +44,6 @@ var _annotator_control_item_classes := [
 func _ready() -> void:
     $ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper/XButton \
             .texture_scale = Vector2(2.0, 2.0)
-    $Footer/GearButton.texture_scale = Vector2(4.0, 4.0)
-    $Footer/PauseButton.texture_scale = Vector2(4.0, 4.0)
     
     _set_tree_font_size(tree_font_size)
     
@@ -82,6 +84,16 @@ func _ready() -> void:
         _initialize_annotator_checkboxes()
     
     _on_gui_scale_changed()
+    
+    $GearButton.normal_modulate = ColorFactory.palette("button_hover")
+    $GearButton.hover_modulate = ColorFactory.palette("white")
+    $GearButton.pressed_modulate = ColorFactory.palette("button_pressed")
+    $GearButton.disabled_modulate = ColorFactory.palette("button_disabled")
+    
+    $PauseButton.normal_modulate = ColorFactory.palette("button_hover")
+    $PauseButton.hover_modulate = ColorFactory.palette("white")
+    $PauseButton.pressed_modulate = ColorFactory.palette("button_pressed")
+    $PauseButton.disabled_modulate = ColorFactory.palette("button_disabled")
 
 
 func _destroy() -> void:
@@ -128,6 +140,20 @@ func _deferred_on_gui_scale_changed() -> void:
             $ScaffolderPanelContainer.get_stylebox("panel")
     if panel_stylebox is StyleBoxFlatScalable:
         panel_stylebox.border_width_top = 0.0
+    
+    var container_size: Vector2 = $ScaffolderPanelContainer.rect_size
+    var level_control_button_position_y := \
+            container_size.y + \
+            (FOOTER_MARGIN_TOP + FOOTER_BUTTON_RADIUS) * Sc.gui.scale
+    $PauseButton.position.y = level_control_button_position_y
+    $GearButton.position.y = level_control_button_position_y
+    $PauseButton.position.x = \
+            container_size.x - FOOTER_BUTTON_RADIUS * Sc.gui.scale
+    $GearButton.position.x = \
+            container_size.x - \
+            (FOOTER_BUTTON_RADIUS * 3.0 + PANEL_MARGIN_RIGHT) * Sc.gui.scale
+    $PauseButton.shape_circle_radius = FOOTER_BUTTON_RADIUS * Sc.gui.scale
+    $GearButton.shape_circle_radius = FOOTER_BUTTON_RADIUS * Sc.gui.scale
 
 
 func _initialize_annotator_checkboxes() -> void:
@@ -232,21 +258,20 @@ func _toggle_open() -> void:
 
 
 func _set_footer_visibility(is_visible: bool) -> void:
-    $Spacer.visible = is_visible
-    $Footer.visible = is_visible
-    rect_size.y = \
-            $ScaffolderPanelContainer.rect_size.y + \
-                    $Spacer.rect_size.y + \
-                    $Footer.rect_size.y if \
-            is_visible else \
-            $ScaffolderPanelContainer.rect_size.y
+    $GearButton.visible = is_visible
+    $PauseButton.visible = is_visible
+    rect_size.y = $ScaffolderPanelContainer.rect_size.y
 
 
-func _on_GearButton_pressed() -> void:
+func _on_GearButton_touch_down(
+        level_position: Vector2,
+        is_already_handled: bool) -> void:
     _toggle_open()
 
 
-func _on_FooterPauseButton_pressed() -> void:
+func _on_FooterPauseButton_touch_down(
+        level_position: Vector2,
+        is_already_handled: bool) -> void:
     Sc.level.pause()
 
 

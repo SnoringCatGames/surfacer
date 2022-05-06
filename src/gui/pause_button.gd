@@ -6,17 +6,35 @@ extends Node2D
 
 func _ready() -> void:
     _on_gui_scale_changed()
+    
+    $SpriteModulationButton.normal_modulate = \
+        ColorFactory.palette("button_hover")
+    $SpriteModulationButton.hover_modulate = \
+        ColorFactory.palette("white")
+    $SpriteModulationButton.pressed_modulate = \
+        ColorFactory.palette("button_pressed")
+    $SpriteModulationButton.disabled_modulate = \
+        ColorFactory.palette("button_disabled")
 
 
 func _on_gui_scale_changed() -> bool:
-    $ScaffolderTextureButton._on_gui_scale_changed()
     position.x = \
-            Sc.device.get_viewport_size().x - \
-            $ScaffolderTextureButton.rect_size.x - \
-            InspectorPanel.PANEL_MARGIN_RIGHT * Sc.gui.scale
-    position.y = InspectorPanel.PANEL_MARGIN_RIGHT * Sc.gui.scale
+        Sc.device.get_viewport_size().x - \
+        (InspectorPanel.FOOTER_BUTTON_RADIUS + \
+        InspectorPanel.PANEL_MARGIN_RIGHT) * \
+        Sc.gui.scale
+    position.y = \
+        (InspectorPanel.FOOTER_MARGIN_TOP + \
+        InspectorPanel.FOOTER_BUTTON_RADIUS) * \
+        Sc.gui.scale
+    
+    $SpriteModulationButton.shape_circle_radius = \
+        InspectorPanel.FOOTER_BUTTON_RADIUS * Sc.gui.scale
+    
     return true
 
 
-func _on_ScaffolderTextureButton_pressed() -> void:
+func _on_SpriteModulationButton_touch_down(
+        level_position: Vector2,
+        is_already_handled: bool) -> void:
     Sc.level.pause()

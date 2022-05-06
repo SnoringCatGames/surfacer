@@ -1,22 +1,25 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_texture_button.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/scaffolder/src/gui/level_button/sprite_modulation_button.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/pause_circle_normal.png" type="Texture" id=3]
 [ext_resource path="res://addons/surfacer/src/gui/pause_button.gd" type="Script" id=5]
 
 [node name="PauseButton" type="Node2D"]
-modulate = Color( 1, 1, 1, 0.498039 )
-position = Vector2( 3756, 20 )
+position = Vector2( 3788, 52 )
 script = ExtResource( 5 )
 
-[node name="ScaffolderTextureButton" parent="." instance=ExtResource( 1 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_right = 64.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 64, 64 )
-texture_key = "pause_circle"
-expands_texture = false
-texture_scale = Vector2( 4, 4 )
-size_override = Vector2( 64, 64 )
+[node name="SpriteModulationButton" parent="." instance=ExtResource( 2 )]
+shape_is_rectangular = false
+shape_rectangle_extents = Vector2( -1, -1 )
+shape_circle_radius = 32.0
+texture = ExtResource( 3 )
+normal_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"button_hover","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"button_hover","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
 
-[connection signal="pressed" from="ScaffolderTextureButton" to="." method="_on_ScaffolderTextureButton_pressed"]
+hover_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"white","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"white","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
+
+pressed_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"button_pressed","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"button_pressed","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
+
+disabled_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"button_disabled","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"button_disabled","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
+
+
+[connection signal="touch_down" from="SpriteModulationButton" to="." method="_on_SpriteModulationButton_touch_down"]
