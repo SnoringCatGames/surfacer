@@ -52,6 +52,7 @@ var are_oddly_shaped_surfaces_used: bool
 var is_inspector_enabled: bool
 var are_loaded_surfaces_deeply_validated: bool
 var uses_threads_for_platform_graph_calculation: bool
+var cancel_active_player_control_on_invalid_nav_selection: bool
 var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
 var ignores_platform_graph_save_file_trajectory_state := false
@@ -154,6 +155,8 @@ func _parse_manifest() -> void:
             manifest.are_loaded_surfaces_deeply_validated
     self.uses_threads_for_platform_graph_calculation = \
             manifest.uses_threads_for_platform_graph_calculation
+    self.cancel_active_player_control_on_invalid_nav_selection = \
+            manifest.cancel_active_player_control_on_invalid_nav_selection
     self.debug_params = manifest.debug_params
     
     if manifest.has("default_tileset"):
