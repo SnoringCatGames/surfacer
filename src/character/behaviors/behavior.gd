@@ -319,7 +319,7 @@ func _attempt_move() -> void:
                                 character.surface_state.center_position),
                     ])
         BehaviorMoveResult.REACHED_MAX_DISTANCE:
-            character.navigator.stop()
+            character.navigator.stop(false)
             _on_reached_max_distance()
         BehaviorMoveResult.VALID_MOVE:
             # Do nothing.

@@ -63,7 +63,7 @@ func _unhandled_input(event: InputEvent) -> void:
             event is InputEventKey and \
             Sc.project_settings.movement_action_key_set.has(event.scancode):
         _was_last_input_a_touch = false
-        character.navigator.stop()
+        character.navigator.stop(true)
         trigger(false)
 
 

@@ -101,7 +101,7 @@ func _on_physics_process(delta_scaled: float) -> void:
         if is_close_enough_to_stop_moving and \
                 character.surface_state.is_grabbing_surface:
             # We are navigating, and we are close enough to the leader.
-            character.navigator.stop()
+            character.navigator.stop(false)
             
         elif character.navigation_state.just_reached_end_of_edge and \
                     character.surface_state.just_left_air:
@@ -152,7 +152,7 @@ func on_detached() -> void:
     
     if character.navigation_state.is_currently_navigating and \
             is_active:
-        character.navigator.stop()
+        character.navigator.stop(false)
     
     _pause_post_movement()
 

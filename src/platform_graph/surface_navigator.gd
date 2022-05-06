@@ -677,7 +677,16 @@ func try_to_end_path_with_a_jump(path: PlatformGraphPath) -> bool:
     return false
 
 
-func stop() -> void:
+func stop(cancels_nav_playback_immediately := true) -> void:
+    if !cancels_nav_playback_immediately:
+        if !surface_state.is_grabbing_surface:
+            navigation_state.stopping_at_next_surface = true
+            return
+        else:
+            # Ensure the character doesn't accidentally fall-off the edge while
+            # slowing to a stop.
+            character.velocity = Vector2.ZERO
+    
     var was_navigating := navigation_state.is_currently_navigating
     var had_canceled := navigation_state.has_canceled
     var had_just_canceled := navigation_state.just_canceled
@@ -1043,16 +1052,17 @@ func _handle_reached_end_of_edge(starts_current_edge: bool) -> void:
             Sc.time.get_scaled_play_time())
     playback = null
     
-    if !starts_current_edge:
-        return
-    
     # Check for the next edge to navigate.
     var current_edge_index := edge_index + 1
     var was_last_edge := path.edges.size() == current_edge_index
     if was_last_edge:
         _set_reached_destination()
     else:
-        _start_edge(current_edge_index)
+        if navigation_state.stopping_at_next_surface:
+            assert(surface_state.is_grabbing_surface)
+            stop(true)
+        elif starts_current_edge:
+            _start_edge(current_edge_index)
 
 
 func predict_animation_state(
