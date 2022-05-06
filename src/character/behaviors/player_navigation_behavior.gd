@@ -88,6 +88,8 @@ func _handle_pointer_selections() -> void:
         trigger(false)
     else:
         Sc.audio.play_sound("nav_select_fail")
+        if Su.cancel_active_player_control_on_invalid_nav_selection:
+            character.set_is_player_control_active(false)
     
     new_selection.clear()
     pre_selection.clear()

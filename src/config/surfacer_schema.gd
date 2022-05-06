@@ -139,6 +139,8 @@ var _properties := {
     are_loaded_surfaces_deeply_validated = true,
     uses_threads_for_platform_graph_calculation = false,
     
+    cancel_active_player_control_on_invalid_nav_selection = false,
+    
     default_tileset = preload( \
             "res://addons/surfacer/src/tiles/tileset_with_many_angles.tres"),
     path_drag_update_throttle_interval = 0.2,
