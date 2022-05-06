@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=2]
+[gd_scene load_steps=66 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/inspector_panel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/spacer.tscn" type="PackedScene" id=2]
@@ -8,32 +8,32 @@
 [ext_resource path="res://addons/scaffolder/src/gui/style_box_texture_scalable.gd" type="Script" id=6]
 [ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_m.tres" type="DynamicFont" id=7]
 [ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_xs.tres" type="DynamicFont" id=8]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/focus_border.png" type="Texture" id=9]
+[ext_resource path="res://assets/images/gui/nine_patch/button_normal.png" type="Texture" id=9]
 [ext_resource path="res://addons/surfacer/src/gui/selection_description.tscn" type="PackedScene" id=10]
 [ext_resource path="res://addons/scaffolder/src/gui/legend.tscn" type="PackedScene" id=11]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/scroll_grabber_hover.png" type="Texture" id=12]
+[ext_resource path="res://assets/images/gui/nine_patch/overlay_panel.png" type="Texture" id=12]
 [ext_resource path="res://addons/surfacer/src/gui/platform_graph_inspector/platform_graph_inspector.tscn" type="PackedScene" id=13]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_texture_button.tscn" type="PackedScene" id=14]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/button_hover.png" type="Texture" id=15]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/scroll_grabber_normal.png" type="Texture" id=16]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/overlay_panel.png" type="Texture" id=17]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/button_pressed.png" type="Texture" id=18]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/button_normal.png" type="Texture" id=19]
+[ext_resource path="res://assets/images/gui/nine_patch/dropdown_normal.png" type="Texture" id=15]
+[ext_resource path="res://assets/images/gui/nine_patch/button_hover.png" type="Texture" id=16]
+[ext_resource path="res://assets/images/gui/nine_patch/scroll_grabber_pressed.png" type="Texture" id=17]
+[ext_resource path="res://assets/images/gui/nine_patch/dropdown_hover.png" type="Texture" id=18]
+[ext_resource path="res://assets/images/gui/nine_patch/dropdown_pressed.png" type="Texture" id=19]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_label.tscn" type="PackedScene" id=20]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_pressed.png" type="Texture" id=21]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/scroll_track.png" type="Texture" id=22]
+[ext_resource path="res://assets/images/gui/nine_patch/slider_track.png" type="Texture" id=21]
+[ext_resource path="res://assets/images/gui/nine_patch/button_pressed.png" type="Texture" id=22]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_h_separator.tscn" type="PackedScene" id=23]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_normal.png" type="Texture" id=24]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/scroll_grabber_pressed.png" type="Texture" id=25]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/dropdown_hover.png" type="Texture" id=26]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/nine_patch/slider_track.png" type="Texture" id=27]
+[ext_resource path="res://assets/images/gui/nine_patch/scroll_track.png" type="Texture" id=24]
+[ext_resource path="res://assets/images/gui/nine_patch/focus_border.png" type="Texture" id=25]
+[ext_resource path="res://assets/images/gui/nine_patch/scroll_grabber_hover.png" type="Texture" id=26]
+[ext_resource path="res://assets/images/gui/nine_patch/scroll_grabber_normal.png" type="Texture" id=27]
 
 [sub_resource type="StyleBoxTexture" id=1]
 content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 15 )
+texture = ExtResource( 16 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -46,7 +46,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 9 )
+texture = ExtResource( 25 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -63,7 +63,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 15 )
+texture = ExtResource( 16 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -76,7 +76,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 19 )
+texture = ExtResource( 9 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -89,7 +89,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 18 )
+texture = ExtResource( 22 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -126,7 +126,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 16 )
+texture = ExtResource( 27 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -139,7 +139,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 12 )
+texture = ExtResource( 26 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -152,7 +152,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 25 )
+texture = ExtResource( 17 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -165,7 +165,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 22 )
+texture = ExtResource( 24 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -186,7 +186,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 27 )
+texture = ExtResource( 21 )
 region_rect = Rect2( 0, 0, 4, 4 )
 margin_left = 1.5
 margin_right = 1.5
@@ -199,7 +199,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 26 )
+texture = ExtResource( 18 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -212,7 +212,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 9 )
+texture = ExtResource( 25 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -229,7 +229,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 26 )
+texture = ExtResource( 18 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -242,7 +242,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 24 )
+texture = ExtResource( 15 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -255,7 +255,7 @@ content_margin_left = 16.0
 content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-texture = ExtResource( 21 )
+texture = ExtResource( 19 )
 region_rect = Rect2( 0, 0, 9, 9 )
 margin_left = 3.5
 margin_right = 3.5
@@ -264,11 +264,11 @@ margin_bottom = 3.5
 script = ExtResource( 6 )
 
 [sub_resource type="StyleBoxFlat" id=24]
-bg_color = Color( 0.12549, 0.133333, 0.164706, 1 )
+bg_color = Color( 0.0431373, 0.0117647, 0.105882, 1 )
 script = ExtResource( 5 )
 
 [sub_resource type="StyleBoxFlat" id=25]
-bg_color = Color( 0.12549, 0.133333, 0.164706, 1 )
+bg_color = Color( 0.0431373, 0.0117647, 0.105882, 1 )
 script = ExtResource( 5 )
 
 [sub_resource type="StyleBoxTexture" id=26]
@@ -276,7 +276,7 @@ content_margin_left = 3.0
 content_margin_right = 3.0
 content_margin_top = 3.0
 content_margin_bottom = 3.0
-texture = ExtResource( 17 )
+texture = ExtResource( 12 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -297,7 +297,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 16 )
+texture = ExtResource( 27 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -310,7 +310,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 12 )
+texture = ExtResource( 26 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -323,7 +323,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 25 )
+texture = ExtResource( 17 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -336,7 +336,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 22 )
+texture = ExtResource( 24 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -357,7 +357,7 @@ content_margin_left = 0.0
 content_margin_right = 0.0
 content_margin_top = 0.0
 content_margin_bottom = 0.0
-texture = ExtResource( 27 )
+texture = ExtResource( 21 )
 region_rect = Rect2( 0, 0, 4, 4 )
 margin_left = 1.5
 margin_right = 1.5
@@ -399,7 +399,7 @@ Panel/styles/panel = SubResource( 24 )
 PanelContainer/styles/panel = SubResource( 25 )
 PopupMenu/colors/font_color = Color( 0.933333, 0.933333, 0.933333, 1 )
 PopupMenu/styles/panel = SubResource( 26 )
-TooltipLabel/colors/font_color = Color( 0.270588, 0.239216, 0.188235, 1 )
+TooltipLabel/colors/font_color = Color( 0.0431373, 0.0117647, 0.105882, 1 )
 TooltipLabel/fonts/font = ExtResource( 8 )
 TooltipPanel/styles/panel = SubResource( 27 )
 Tree/colors/font_color = Color( 0.933333, 0.933333, 0.933333, 1 )
@@ -413,7 +413,11 @@ VSlider/styles/grabber_area_highlight = SubResource( 34 )
 VSlider/styles/slider = SubResource( 35 )
 
 [sub_resource type="StyleBoxTexture" id=37]
-texture = ExtResource( 17 )
+content_margin_left = 3.0
+content_margin_right = 3.0
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+texture = ExtResource( 12 )
 region_rect = Rect2( 0, 0, 7, 7 )
 margin_left = 3.5
 margin_right = 3.5
@@ -422,19 +426,9 @@ margin_bottom = 3.5
 script = ExtResource( 6 )
 
 [sub_resource type="StyleBoxFlat" id=38]
-content_margin_left = 0.0
-content_margin_right = 0.0
-content_margin_top = 0.0
-content_margin_bottom = 0.0
-bg_color = Color( 0.270588, 0.239216, 0.188235, 1 )
-script = ExtResource( 5 )
-
-[sub_resource type="StyleBoxFlat" id=39]
-content_margin_left = 0.0
-content_margin_right = 0.0
-content_margin_top = 0.0
-content_margin_bottom = 0.0
-bg_color = Color( 0.270588, 0.239216, 0.188235, 1 )
+content_margin_left = 3.0
+content_margin_right = 3.0
+bg_color = Color( 0.0431373, 0.0117647, 0.105882, 1 )
 script = ExtResource( 5 )
 
 [node name="InspectorPanel" type="VBoxContainer"]
@@ -447,7 +441,6 @@ theme = SubResource( 36 )
 custom_constants/separation = 0
 script = ExtResource( 1 )
 __meta__ = {
-"_edit_use_anchors_": false,
 "sc_rect_min_size": Vector2( 360, 0 ),
 "sc_rect_size": Vector2( 360, 684 )
 }
@@ -462,39 +455,44 @@ mouse_filter = 1
 size_flags_horizontal = 4
 size_flags_vertical = 4
 custom_styles/panel = SubResource( 37 )
+__meta__ = {
+"_edit_use_anchors_": false,
+"sc_rect_min_size": Vector2( 360, 600 ),
+"sc_rect_size": Vector2( 360, 600 )
+}
 style = 1
 is_unique = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScaffolderPanelContainer"]
-margin_left = 3.5
-margin_top = 3.5
-margin_right = 356.5
-margin_bottom = 596.5
+margin_left = 3.0
+margin_top = 3.0
+margin_right = 357.0
+margin_bottom = 597.0
 custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false,
-"sc_rect_size": Vector2( 354, 594 ),
+"sc_rect_size": Vector2( 353, 593 ),
 "sc_separation": 0
 }
 
 [node name="Spacer" parent="ScaffolderPanelContainer/VBoxContainer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 176.0
-margin_right = 176.0
+margin_left = 177.0
+margin_right = 177.0
 margin_bottom = 8.0
 rect_min_size = Vector2( 0, 8 )
 size = Vector2( 0, 8 )
 
 [node name="Header" type="HBoxContainer" parent="ScaffolderPanelContainer/VBoxContainer"]
 margin_top = 8.0
-margin_right = 353.0
+margin_right = 354.0
 margin_bottom = 44.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
 custom_constants/separation = 0
 __meta__ = {
-"sc_rect_size": Vector2( 354, 36 ),
+"sc_rect_size": Vector2( 353, 36 ),
 "sc_separation": 0
 }
 
@@ -526,14 +524,14 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 148.0
 margin_top = 18.0
-margin_right = 353.0
+margin_right = 354.0
 margin_bottom = 18.0
 size_flags_horizontal = 3
 
 [node name="XButtonWrapper" type="Control" parent="ScaffolderPanelContainer/VBoxContainer/Header"]
-margin_left = 353.0
+margin_left = 354.0
 margin_top = 18.0
-margin_right = 353.0
+margin_right = 354.0
 margin_bottom = 18.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -544,6 +542,10 @@ margin_top = -12.0
 margin_right = -6.0
 margin_bottom = 12.0
 rect_min_size = Vector2( 24, 24 )
+__meta__ = {
+"_edit_use_anchors_": false,
+"sc_rect_position": Vector2( -30, -12 )
+}
 texture_key = "close"
 texture_scale = Vector2( 2, 2 )
 size_override = Vector2( 24, 24 )
@@ -551,27 +553,27 @@ size_override = Vector2( 24, 24 )
 [node name="Spacer6" parent="ScaffolderPanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 353.0
+margin_left = 354.0
 margin_top = 18.0
-margin_right = 353.0
+margin_right = 354.0
 margin_bottom = 18.0
 
 [node name="Sections" type="VBoxContainer" parent="ScaffolderPanelContainer/VBoxContainer"]
 margin_top = 44.0
-margin_right = 353.0
-margin_bottom = 593.0
+margin_right = 354.0
+margin_bottom = 594.0
 size_flags_vertical = 3
 custom_constants/separation = 0
 __meta__ = {
-"sc_rect_size": Vector2( 354, 550 ),
+"sc_rect_size": Vector2( 353, 549 ),
 "sc_separation": 0
 }
 
 [node name="Spacer" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 176.0
-margin_right = 176.0
+margin_left = 177.0
+margin_right = 177.0
 margin_bottom = 4.0
 rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
@@ -580,20 +582,28 @@ size = Vector2( 0, 4 )
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 4.0
-margin_right = 353.0
+margin_right = 354.0
 margin_bottom = 44.0
 size_flags_vertical = 4
 custom_constants/margin_right = 8
 custom_constants/margin_top = 12
 custom_constants/margin_left = 8
 custom_constants/margin_bottom = 8
+__meta__ = {
+"_edit_use_anchors_": false,
+"sc_margin_bottom": 8,
+"sc_margin_left": 8,
+"sc_margin_right": 8,
+"sc_margin_top": 12,
+"sc_rect_size": Vector2( 353, 40 )
+}
 
 [node name="Spacer8" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 176.0
+margin_left = 177.0
 margin_top = 44.0
-margin_right = 176.0
+margin_right = 177.0
 margin_bottom = 48.0
 rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
@@ -602,10 +612,14 @@ size = Vector2( 0, 4 )
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 48.0
-margin_right = 353.0
+margin_right = 354.0
 margin_bottom = 71.0
 size_flags_vertical = 4
 custom_styles/panel = SubResource( 38 )
+__meta__ = {
+"_edit_use_anchors_": false,
+"sc_rect_size": Vector2( 353, 23 )
+}
 style = 3
 is_unique = true
 content_margin_left_override = 3
@@ -614,7 +628,8 @@ content_margin_right_override = 3
 [node name="LegendHeader" parent="ScaffolderPanelContainer/VBoxContainer/Sections/ScaffolderPanelContainer" instance=ExtResource( 20 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 353.0
+margin_left = 3.0
+margin_right = 351.0
 margin_bottom = 23.0
 custom_fonts/font = ExtResource( 4 )
 text = "Legend"
@@ -624,48 +639,56 @@ font_size = "S"
 [node name="Spacer9" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 176.0
+margin_left = 177.0
 margin_top = 71.0
-margin_right = 176.0
+margin_right = 177.0
 margin_bottom = 75.0
 rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
 
 [node name="Legend" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 11 )]
 margin_top = 75.0
-margin_right = 353.0
+margin_right = 354.0
 margin_bottom = 95.0
 size_flags_vertical = 4
+__meta__ = {
+"_edit_use_anchors_": false,
+"sc_rect_size": Vector2( 353, 20 )
+}
 
 [node name="Spacer10" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 176.0
+margin_left = 177.0
 margin_top = 95.0
-margin_right = 176.0
+margin_right = 177.0
 margin_bottom = 99.0
 rect_min_size = Vector2( 0, 4 )
 size = Vector2( 0, 4 )
 
 [node name="InspectorContainer" type="VBoxContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections"]
 margin_top = 99.0
-margin_right = 353.0
-margin_bottom = 537.0
+margin_right = 354.0
+margin_bottom = 538.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
 __meta__ = {
-"sc_rect_size": Vector2( 354, 439 ),
+"sc_rect_size": Vector2( 353, 438 ),
 "sc_separation": 0
 }
 
 [node name="ScaffolderPanelContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections/InspectorContainer" instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 353.0
+margin_right = 354.0
 margin_bottom = 23.0
 size_flags_vertical = 4
-custom_styles/panel = SubResource( 39 )
+custom_styles/panel = SubResource( 38 )
+__meta__ = {
+"_edit_use_anchors_": false,
+"sc_rect_size": Vector2( 353, 23 )
+}
 style = 3
 is_unique = true
 content_margin_left_override = 3
@@ -674,7 +697,8 @@ content_margin_right_override = 3
 [node name="InspectorHeader" parent="ScaffolderPanelContainer/VBoxContainer/Sections/InspectorContainer/ScaffolderPanelContainer" instance=ExtResource( 20 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 353.0
+margin_left = 3.0
+margin_right = 351.0
 margin_bottom = 23.0
 custom_fonts/font = ExtResource( 4 )
 text = "Platform graph inspector"
@@ -685,23 +709,27 @@ font_size = "S"
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 23.0
-margin_right = 353.0
-margin_bottom = 438.0
+margin_right = 354.0
+margin_bottom = 439.0
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 8 )
 hide_root = true
+__meta__ = {
+"_edit_use_anchors_": false,
+"sc_rect_size": Vector2( 353, 415 )
+}
 
 [node name="ScaffolderHSeparator" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 23 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 537.0
-margin_right = 353.0
-margin_bottom = 541.0
+margin_top = 538.0
+margin_right = 354.0
+margin_bottom = 542.0
 
 [node name="MarginContainer" type="MarginContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections"]
-margin_top = 541.0
-margin_right = 353.0
-margin_bottom = 549.0
+margin_top = 542.0
+margin_right = 354.0
+margin_bottom = 550.0
 custom_constants/margin_right = 4
 custom_constants/margin_top = 4
 custom_constants/margin_left = 4
@@ -711,13 +739,13 @@ __meta__ = {
 "sc_margin_left": 4,
 "sc_margin_right": 4,
 "sc_margin_top": 4,
-"sc_rect_size": Vector2( 354, 8 )
+"sc_rect_size": Vector2( 353, 8 )
 }
 
 [node name="Annotators" type="GridContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections/MarginContainer"]
 margin_left = 4.0
 margin_top = 4.0
-margin_right = 349.0
+margin_right = 350.0
 margin_bottom = 4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -725,7 +753,7 @@ custom_constants/vseparation = 2
 custom_constants/hseparation = 16
 columns = 2
 __meta__ = {
-"sc_rect_size": Vector2( 346, 0 )
+"sc_rect_size": Vector2( 345, 0 )
 }
 
 [node name="Spacer" parent="." instance=ExtResource( 2 )]
@@ -739,6 +767,7 @@ rect_min_size = Vector2( 0, 20 )
 size = Vector2( 0, 20 )
 
 [node name="Footer" type="HBoxContainer" parent="."]
+modulate = Color( 1, 1, 1, 0.498039 )
 margin_left = 180.0
 margin_top = 620.0
 margin_right = 360.0
