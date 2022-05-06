@@ -271,3 +271,8 @@ func _get_combined_surfaces_region() -> Rect2:
         tile_map_region = tile_map_region.merge(
                 Sc.geometry.get_tilemap_bounds_in_world_coordinates(tile_map))
     return tile_map_region
+
+
+func _on_active_player_character_changed() -> void:
+    ._on_active_player_character_changed()
+    Sc.gui.hud.fade(!is_instance_valid(_active_player_character))
