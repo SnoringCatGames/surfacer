@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=2]
+[gd_scene load_steps=69 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/inspector_panel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/spacer.tscn" type="PackedScene" id=2]
@@ -27,6 +27,9 @@
 [ext_resource path="res://assets/images/gui/nine_patch/focus_border.png" type="Texture" id=25]
 [ext_resource path="res://assets/images/gui/nine_patch/scroll_grabber_hover.png" type="Texture" id=26]
 [ext_resource path="res://assets/images/gui/nine_patch/scroll_grabber_normal.png" type="Texture" id=27]
+[ext_resource path="res://addons/scaffolder/src/gui/level_button/sprite_modulation_button.tscn" type="PackedScene" id=28]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/pause_circle_normal.png" type="Texture" id=29]
+[ext_resource path="res://addons/scaffolder/assets/images/gui/icons/gear_circle_normal.png" type="Texture" id=30]
 
 [sub_resource type="StyleBoxTexture" id=1]
 content_margin_left = 16.0
@@ -435,14 +438,14 @@ script = ExtResource( 5 )
 margin_left = 3460.0
 margin_top = -601.0
 margin_right = 3820.0
-margin_bottom = 83.0
+margin_bottom = -1.0
 rect_min_size = Vector2( 360, 0 )
 theme = SubResource( 36 )
 custom_constants/separation = 0
 script = ExtResource( 1 )
 __meta__ = {
 "sc_rect_min_size": Vector2( 360, 0 ),
-"sc_rect_size": Vector2( 360, 684 )
+"sc_rect_size": Vector2( 360, 600 )
 }
 
 [node name="ScaffolderPanelContainer" parent="." instance=ExtResource( 3 )]
@@ -471,7 +474,7 @@ margin_bottom = 597.0
 custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false,
-"sc_rect_size": Vector2( 353, 593 ),
+"sc_rect_size": Vector2( 354, 594 ),
 "sc_separation": 0
 }
 
@@ -492,7 +495,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 custom_constants/separation = 0
 __meta__ = {
-"sc_rect_size": Vector2( 353, 36 ),
+"sc_rect_size": Vector2( 354, 36 ),
 "sc_separation": 0
 }
 
@@ -565,7 +568,7 @@ margin_bottom = 594.0
 size_flags_vertical = 3
 custom_constants/separation = 0
 __meta__ = {
-"sc_rect_size": Vector2( 353, 549 ),
+"sc_rect_size": Vector2( 354, 550 ),
 "sc_separation": 0
 }
 
@@ -595,7 +598,7 @@ __meta__ = {
 "sc_margin_left": 8,
 "sc_margin_right": 8,
 "sc_margin_top": 12,
-"sc_rect_size": Vector2( 353, 40 )
+"sc_rect_size": Vector2( 354, 40 )
 }
 
 [node name="Spacer8" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
@@ -618,7 +621,7 @@ size_flags_vertical = 4
 custom_styles/panel = SubResource( 38 )
 __meta__ = {
 "_edit_use_anchors_": false,
-"sc_rect_size": Vector2( 353, 23 )
+"sc_rect_size": Vector2( 354, 23 )
 }
 style = 3
 is_unique = true
@@ -653,7 +656,7 @@ margin_bottom = 95.0
 size_flags_vertical = 4
 __meta__ = {
 "_edit_use_anchors_": false,
-"sc_rect_size": Vector2( 353, 20 )
+"sc_rect_size": Vector2( 354, 20 )
 }
 
 [node name="Spacer10" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
@@ -674,7 +677,7 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
 __meta__ = {
-"sc_rect_size": Vector2( 353, 438 ),
+"sc_rect_size": Vector2( 354, 439 ),
 "sc_separation": 0
 }
 
@@ -687,7 +690,7 @@ size_flags_vertical = 4
 custom_styles/panel = SubResource( 38 )
 __meta__ = {
 "_edit_use_anchors_": false,
-"sc_rect_size": Vector2( 353, 23 )
+"sc_rect_size": Vector2( 354, 23 )
 }
 style = 3
 is_unique = true
@@ -716,7 +719,7 @@ custom_fonts/font = ExtResource( 8 )
 hide_root = true
 __meta__ = {
 "_edit_use_anchors_": false,
-"sc_rect_size": Vector2( 353, 415 )
+"sc_rect_size": Vector2( 354, 416 )
 }
 
 [node name="ScaffolderHSeparator" parent="ScaffolderPanelContainer/VBoxContainer/Sections" instance=ExtResource( 23 )]
@@ -739,7 +742,7 @@ __meta__ = {
 "sc_margin_left": 4,
 "sc_margin_right": 4,
 "sc_margin_top": 4,
-"sc_rect_size": Vector2( 353, 8 )
+"sc_rect_size": Vector2( 354, 8 )
 }
 
 [node name="Annotators" type="GridContainer" parent="ScaffolderPanelContainer/VBoxContainer/Sections/MarginContainer"]
@@ -753,86 +756,42 @@ custom_constants/vseparation = 2
 custom_constants/hseparation = 16
 columns = 2
 __meta__ = {
-"sc_rect_size": Vector2( 345, 0 )
+"sc_rect_size": Vector2( 346, 0 )
 }
 
-[node name="Spacer" parent="." instance=ExtResource( 2 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 180.0
-margin_top = 600.0
-margin_right = 180.0
-margin_bottom = 620.0
-rect_min_size = Vector2( 0, 20 )
-size = Vector2( 0, 20 )
+[node name="GearButton" parent="." instance=ExtResource( 28 )]
+position = Vector2( 244, 652 )
+screen_radius = 0.0
+shape_is_rectangular = false
+shape_rectangle_extents = Vector2( -1, -1 )
+shape_circle_radius = 32.0
+texture = ExtResource( 30 )
+normal_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"button_hover","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"button_hover","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
 
-[node name="Footer" type="HBoxContainer" parent="."]
-modulate = Color( 1, 1, 1, 0.498039 )
-margin_left = 180.0
-margin_top = 620.0
-margin_right = 360.0
-margin_bottom = 684.0
-mouse_filter = 2
-size_flags_horizontal = 8
-size_flags_vertical = 4
-custom_constants/separation = 0
-__meta__ = {
-"_edit_use_anchors_": false,
-"sc_rect_size": Vector2( 180, 64 ),
-"sc_separation": 0
-}
+hover_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"white","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"white","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
 
-[node name="Spacer" parent="Footer" instance=ExtResource( 2 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_top = 32.0
-margin_right = 32.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 32, 0 )
-size_flags_horizontal = 3
-size = Vector2( 32, 0 )
+pressed_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"button_pressed","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"button_pressed","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
 
-[node name="GearButton" parent="Footer" instance=ExtResource( 14 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 32.0
-margin_right = 96.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 64, 64 )
-texture_key = "gear_circle"
-texture_scale = Vector2( 4, 4 )
-size_override = Vector2( 64, 64 )
+disabled_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"button_disabled","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"button_disabled","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
 
-[node name="Spacer13" parent="Footer" instance=ExtResource( 2 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 96.0
-margin_top = 32.0
-margin_right = 116.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 20, 0 )
-size = Vector2( 20, 0 )
 
-[node name="PauseButton" parent="Footer" instance=ExtResource( 14 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 116.0
-margin_right = 180.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 64, 64 )
-texture_key = "pause_circle"
-texture_scale = Vector2( 4, 4 )
-size_override = Vector2( 64, 64 )
+[node name="PauseButton" parent="." instance=ExtResource( 28 )]
+position = Vector2( 328, 652 )
+screen_radius = 0.0
+shape_is_rectangular = false
+shape_rectangle_extents = Vector2( -1, -1 )
+shape_circle_radius = 32.0
+texture = ExtResource( 29 )
+normal_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"button_hover","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"button_hover","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
 
-[node name="Spacer4" parent="Footer" instance=ExtResource( 2 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 180.0
-margin_top = 32.0
-margin_right = 180.0
-margin_bottom = 32.0
+hover_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"white","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"white","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
+
+pressed_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"button_pressed","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"button_pressed","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
+
+disabled_modulate = Object(Reference,"script":Resource( "res://addons/scaffolder/src/config/color_config/palette_color_config.gd" ),"h":0.0,"s":0.0,"v":0.0,"a":0.0,"key":"button_disabled","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0,"override_color":Color( -1, -2, -2, -1 ),"delta_color":Color( 0, 0, 0, 0 ),"key":"button_disabled","_h_override":-1.0,"_s_override":-1.0,"_v_override":-1.0,"_a_override":-1.0,"h_delta":0.0,"s_delta":0.0,"v_delta":0.0,"a_delta":0.0)
+
 
 [connection signal="pressed" from="ScaffolderPanelContainer/VBoxContainer/Header/PauseButton" to="." method="_on_HeaderPauseButton_pressed"]
 [connection signal="pressed" from="ScaffolderPanelContainer/VBoxContainer/Header/XButtonWrapper/XButton" to="." method="_on_HeaderXButton_pressed"]
-[connection signal="pressed" from="Footer/GearButton" to="." method="_on_GearButton_pressed"]
-[connection signal="pressed" from="Footer/PauseButton" to="." method="_on_FooterPauseButton_pressed"]
+[connection signal="touch_down" from="GearButton" to="." method="_on_GearButton_touch_down"]
+[connection signal="touch_down" from="PauseButton" to="." method="_on_FooterPauseButton_touch_down"]
