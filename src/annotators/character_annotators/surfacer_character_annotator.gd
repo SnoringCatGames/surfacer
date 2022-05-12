@@ -12,6 +12,8 @@ func _init(character: SurfacerCharacter).(character) -> void:
 
 
 func _physics_process(_delta: float) -> void:
+    if !is_instance_valid(character):
+        return
     if character.did_move_last_frame:
         if is_instance_valid(surface_annotator):
             surface_annotator.check_for_update()
