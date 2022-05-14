@@ -32,7 +32,7 @@ func _unhandled_input(event: InputEvent) -> void:
         # The player is ctrl+clicking.
         
         var click_position: Vector2 = \
-                Sc.utils.get_level_touch_position(event)
+                Sc.utils.get_level_position_for_screen_event(event)
         
         # TODO: Update SurfaceStore APIs to not need the character to be given.
         if !is_instance_valid(Sc.level.active_player_character):
