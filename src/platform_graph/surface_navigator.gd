@@ -68,8 +68,6 @@ func navigate_path(
         path: PlatformGraphPath,
         is_retry := false,
         is_triggered_by_player_selection := false) -> bool:
-    Sc.profiler.start("navigator_navigate_path")
-    
     var previous_navigation_attempt_count := current_navigation_attempt_count
     if navigation_state.is_currently_navigating and !is_retry:
         stop()
@@ -77,6 +75,8 @@ func navigate_path(
         _reset()
     if is_retry:
         current_navigation_attempt_count = previous_navigation_attempt_count
+    
+    Sc.profiler.start("navigator_navigate_path")
     
     if path != null and \
             !Sc.geometry.are_points_equal_with_epsilon(
