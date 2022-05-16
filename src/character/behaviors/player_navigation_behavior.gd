@@ -113,12 +113,14 @@ func _on_navigation_ended(did_navigation_finish: bool) -> void:
     # NOTE: This replaces the default behavior, rather than extending it.
 #    ._on_navigation_ended(did_navigation_finish)
     
-    # This is called when the user clicks a manual keypress while a
-    # tap-navigation is active.
-    pass
+    if !is_active:
+        return
+    
+    # Don't call _pause_post_movement when returning, since it probably
+    # isn't normally desirable, and it would be more complex to configure
+    # the pause timing.
+    _on_finished()
 
 
-func _on_finished() -> void:
-    # NOTE: This replaces the default behavior, rather than extending it.
+#func _on_finished() -> void:
 #    ._on_finished()
-    Sc.logger.warning("PlayerNavigationBehavior should always be active.")

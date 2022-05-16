@@ -254,8 +254,13 @@ func set_is_player_control_active(
     var is_new_activation: bool = \
             value and Sc.level.active_player_character != self
     .set_is_player_control_active(value, should_also_update_level)
+    
+    if value and !(behavior is PlayerNavigationBehavior):
+        get_behavior(PlayerNavigationBehavior).is_active = true
+    
     if !value:
         _was_activated_on_touch_down = false
+    
     if is_new_activation:
         touch_listener.on_character_player_control_activated(
                 _was_activated_on_touch_down)
