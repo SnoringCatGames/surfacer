@@ -171,12 +171,14 @@ func _get_movement_distance_unsigned() -> float:
 
 func _get_movement_distance_signed() -> float:
     var t := randf()
-    t = \
-            -t * 2.0 if \
-            t < 0.5 else \
-            (t - 0.5) * 2.0
-    return t * (max_distance_per_movement - min_distance_per_movement) + \
-            min_distance_per_movement
+    if t <= 0.5:
+        t = t * 2.0
+        return -t * (max_distance_per_movement - min_distance_per_movement) - \
+                min_distance_per_movement
+    else:
+        t = (t - 0.5) * 2.0
+        return t * (max_distance_per_movement - min_distance_per_movement) + \
+                min_distance_per_movement
 
 
 func _get_should_leave_surface_if_available() -> bool:
