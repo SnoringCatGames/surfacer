@@ -640,6 +640,43 @@ static func calculate_distance_to_stop_from_friction_with_turn_around(
     else:
         friction_deceleration *= -1.0
     
+    # From a basic equation of motion:
+    #     v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
+    #     v_1 = 0
+    # Algebra...:
+    #     (s_1 - s_0) = -(v_0^2) / 2 / a
+    var displacement_to_end_of_turn_around := \
+        -velocity_start * velocity_start / 2.0 / walk_acceleration
+    
+    var max_horizontal_speed := \
+        movement_params.get_max_surface_speed() * \
+        surface_properties.speed_multiplier
+    
+    # From a basic equation of motion:
+    #     v^2 = v_0^2 + 2*a*(s - s_0)
+    #     v_0 = 0
+    # Algebra...:
+    #     (s - s_0) = v^2 / 2 / a
+    var distance_from_turn_around_to_max_horizontal_speed := \
+        max_horizontal_speed * max_horizontal_speed / 2.0 / walk_acceleration
+    
+    var distance_from_turn_around_to_destination := \
+        abs(displacement - displacement_to_end_of_turn_around)
+    
+    var stopping_distance_from_max_speed := \
+        calculate_distance_to_stop_from_friction(
+            movement_params,
+            surface_properties,
+            max_horizontal_speed)
+    
+    var is_there_enough_room_to_slow_from_max_speed := \
+            distance_from_turn_around_to_destination > \
+            distance_from_turn_around_to_max_horizontal_speed + \
+                stopping_distance_from_max_speed
+    
+    if is_there_enough_room_to_slow_from_max_speed:
+        return stopping_distance_from_max_speed
+    
     # There are two parts of the motion:
     # 1.  Constant acceleration from pressing forward.
     # 2.  Constant deceleration from friction.
@@ -657,6 +694,7 @@ static func calculate_distance_to_stop_from_friction_with_turn_around(
             (velocity_start * velocity_start / 2.0 + \
                 displacement * friction_deceleration) / \
             (friction_deceleration - walk_acceleration)
-    var stopping_displacement := displacement - displacement_to_instruction_end
+    var stopping_displacement := \
+        displacement - displacement_to_instruction_end
     
     return abs(stopping_displacement)
