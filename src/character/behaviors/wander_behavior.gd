@@ -11,6 +11,8 @@ const INCLUDES_MID_MOVEMENT_PAUSE := true
 const INCLUDES_POST_MOVEMENT_PAUSE := false
 const COULD_RETURN_TO_START_POSITION := false
 
+const ALREADY_AT_END_DISTANCE_THRESHOLD := 4.0
+
 
 ## The minimum distance to travel during each navigation.
 export var min_distance_per_movement := 32.0
@@ -143,7 +145,7 @@ func _attempt_intra_surface_navigation() -> int:
     # If we cannot move further in the chosen direction, then let's try the
     # other direction.
     if Sc.geometry.are_floats_equal_with_epsilon(
-            target_coord, current_coord, 0.1):
+            target_coord, current_coord, ALREADY_AT_END_DISTANCE_THRESHOLD):
         target_coord = current_coord - target_distance_signed
         target_coord = max(target_coord, min_coord)
         target_coord = min(target_coord, max_coord)
