@@ -94,6 +94,8 @@ var _dash_fade_tween: ScaffolderTween
 
 var _was_activated_on_touch_down := false
 
+var is_waiting_to_stop_on_surface := false
+
 
 func _init() -> void:
     self.add_to_group(Sc.characters.GROUP_NAME_CHARACTERS)
@@ -324,6 +326,10 @@ func _on_physics_process(delta: float) -> void:
         behavior._on_physics_process(delta_scaled)
     
     _update_navigator(delta_scaled)
+    
+    if surface_state.just_left_air and \
+            is_waiting_to_stop_on_surface:
+        _stop_nav_immediately()
     
     actions.log_new_presses_and_releases(self)
     
@@ -767,7 +773,7 @@ func _on_behavior_finished(behavior: Behavior) -> void:
     # - Not sure why behavior.next_behavior could be null, but let's fix it
     #   later.
     if !is_instance_valid(behavior.next_behavior):
-        behavior.next_behavior = get_behavior(DefaultBehavior)
+        behavior.next_behavior = get_behavior(StaticBehavior)
     
     if behavior != behavior.next_behavior:
         behavior.next_behavior.trigger(false)
@@ -860,15 +866,26 @@ func force_boost(boost: Vector2) -> void:
     navigator.stop(true)
 
 
-func navigate_as_choreographed(destination: PositionAlongSurface) -> bool:
-    var choreography_behavior: ChoreographyBehavior = \
-            get_behavior(ChoreographyBehavior)
-    if !is_instance_valid(choreography_behavior):
-        choreography_behavior = ChoreographyBehavior.new()
-        add_behavior(choreography_behavior)
-    choreography_behavior.destination = destination
-    choreography_behavior.trigger(false)
+## Triggers navigation and replaces preexisting behavior.
+func navigate_imperatively(destination: PositionAlongSurface) -> bool:
+    var navigation_override_behavior: NavigationOverrideBehavior = \
+            get_behavior(NavigationOverrideBehavior)
+    if !is_instance_valid(navigation_override_behavior):
+        navigation_override_behavior = NavigationOverrideBehavior.new()
+        add_behavior(navigation_override_behavior)
+    navigation_override_behavior.destination = destination
+    navigation_override_behavior.trigger(false)
     return navigation_state.is_currently_navigating
+
+
+func stop_on_surface() -> void:
+    is_waiting_to_stop_on_surface = true
+    if surface_state.is_grabbing_surface:
+        _stop_nav_immediately()
+
+
+func _stop_nav_immediately() -> void:
+    navigator.stop(false)
 
 
 func set_start_attachment_surface_side_or_position(
@@ -955,10 +972,10 @@ func _parse_behavior_children() -> void:
             default_behavior = behavior
         _add_return_behavior_if_needed(behavior)
     
-    # Automatically add a DefaultBehavior if no other behavior has been
+    # Automatically add a StaticBehavior if no other behavior has been
     # configured as active-at-start.
     if default_behavior == null:
-        default_behavior = DefaultBehavior.new()
+        default_behavior = StaticBehavior.new()
         default_behavior.is_active_at_start = true
         add_behavior(default_behavior)
     
@@ -977,12 +994,12 @@ func add_behavior(
     if is_default:
         behavior.is_active_at_start = true
         if is_instance_valid(default_behavior):
-            assert(default_behavior is DefaultBehavior)
+            assert(default_behavior is StaticBehavior)
             for b in _behaviors_list:
                 if b.next_behavior == default_behavior:
                     b.next_behavior = behavior
             default_behavior.queue_free()
-        remove_behavior(DefaultBehavior)
+        remove_behavior(StaticBehavior)
     behavior.is_enabled = true
     add_child(behavior)
     _add_return_behavior_if_needed(behavior)

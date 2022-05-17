@@ -1,9 +1,9 @@
 tool
-class_name ChoreographyBehavior
+class_name NavigationOverrideBehavior
 extends Behavior
 
 
-const NAME := "choreography"
+const NAME := "nav_override"
 const IS_ADDED_MANUALLY := false
 const USES_MOVE_TARGET := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false

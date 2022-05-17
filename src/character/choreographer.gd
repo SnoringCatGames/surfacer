@@ -192,7 +192,7 @@ func _execute_next_step() -> void:
                                 SurfaceReachability.REACHABLE)
                 assert(is_instance_valid(destination))
                 var is_navigation_valid := \
-                        character.navigate_as_choreographed(destination)
+                        character.navigate_imperatively(destination)
                 assert(is_navigation_valid)
             "zoom":
                 _current_zoom = \
