@@ -104,12 +104,12 @@ var _movement_manifest := {
 }
 
 var _behavior_classes := [
-    ChoreographyBehavior,
+    NavigationOverrideBehavior,
     ClimbAdjacentSurfacesBehavior,
     CollideBehavior,
     FollowBehavior,
     MoveBackAndForthBehavior,
-    DefaultBehavior,
+    StaticBehavior,
     ReturnBehavior,
     RunAwayBehavior,
     PlayerNavigationBehavior,

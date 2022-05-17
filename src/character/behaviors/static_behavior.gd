@@ -1,11 +1,11 @@
 tool
-class_name DefaultBehavior
+class_name StaticBehavior
 extends Behavior
 ## This behavior is automatically added no other behavior is configured with
 ## `is_active_at_start` on the player.
 
 
-const NAME := "default"
+const NAME := "static"
 const IS_ADDED_MANUALLY := false
 const USES_MOVE_TARGET := false
 const INCLUDES_MID_MOVEMENT_PAUSE := false
