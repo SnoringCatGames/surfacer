@@ -234,7 +234,7 @@ func _initialize_child_movement_params() -> void:
     
     movement_params = ReadonlyMovementParametersProxy.new()
     add_child(movement_params)
-    movement_params.set_backing_params(backing_movement_params)
+    movement_params.set_backer(backing_movement_params)
     movement_params.call_deferred("_parse_shape_from_parent")
 
 
@@ -281,16 +281,18 @@ func _init_player_controller_action_source() -> void:
 
 
 func _init_platform_graph() -> void:
-    var graph: PlatformGraph = \
+    var backer_graph: PlatformGraph = \
             Sc.level.graph_parser.platform_graphs[character_name]
-    assert(graph != null)
+    assert(backer_graph != null)
+    graph = ReadonlyPlatformGraphProxy.new()
+    graph.set_backer(backer_graph)
+    graph.movement_params_override = movement_params
     graph.connect(
             "surface_exclusion_changed",
             self,
             "_on_surface_exclusion_changed")
-    self.graph = graph
-    self.surface_store = Sc.level.surface_store
-    self.possible_surfaces_set = graph.surfaces_set
+    surface_store = Sc.level.surface_store
+    possible_surfaces_set = graph.surfaces_set
 
 
 func _init_navigator() -> void:
@@ -1025,6 +1027,7 @@ func _set_behavior(value: Behavior) -> void:
     var previous_behavior := behavior
     behavior = value
     if behavior != previous_behavior:
+        self.previous_behavior = previous_behavior
         movement_params.additional_surface_speed_multiplier = \
             behavior.surface_speed_multiplier
 

@@ -597,7 +597,6 @@ func _set_is_active(value: bool) -> void:
             if is_instance_valid(character.behavior) and \
                     character.behavior != self:
                 character.behavior.is_active = false
-            character.previous_behavior = character.behavior
             character.behavior = self
             _update_start_positions(true)
             _log_transition()
