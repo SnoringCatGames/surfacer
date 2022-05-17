@@ -22,7 +22,7 @@ export var is_bouncy := false
 ## current surface-contact normal.
 export var rotates_to_match_surface_normal := true
 
-var movement_params: MovementParameters
+var movement_params: ReadonlyMovementParametersProxy
 # Dictionary<Surface, Surface>
 var possible_surfaces_set: Dictionary
 
@@ -72,7 +72,8 @@ var navigator: SurfaceNavigator
 var prediction: CharacterPrediction
 var touch_listener: PlayerTouchListener
 
-var behavior: Behavior
+var behavior: Behavior setget _set_behavior
+
 var default_behavior: Behavior
 var previous_behavior: Behavior
 
@@ -225,8 +226,15 @@ func _update_editor_configuration_debounced() -> void:
 func _initialize_child_movement_params() -> void:
     if is_instance_valid(movement_params):
         return
+    
     # Get MovementParameters from the scene configuration.
-    movement_params = Su.movement.character_movement_params[character_name]
+    var backing_movement_params: MovementParameters = \
+        Su.movement.character_movement_params[character_name]
+    backing_movement_params.call_deferred("_parse_shape_from_parent")
+    
+    movement_params = ReadonlyMovementParametersProxy.new()
+    add_child(movement_params)
+    movement_params.set_backing_params(backing_movement_params)
     movement_params.call_deferred("_parse_shape_from_parent")
 
 
@@ -1011,6 +1019,14 @@ func has_behavior(behavior_class_or_name) -> bool:
             behavior_class_or_name is Script else \
             Su.behaviors[behavior_class_or_name]
     return _behaviors_by_class.has(behavior_class)
+
+
+func _set_behavior(value: Behavior) -> void:
+    var previous_behavior := behavior
+    behavior = value
+    if behavior != previous_behavior:
+        movement_params.additional_surface_speed_multiplier = \
+            behavior.surface_speed_multiplier
 
 
 func _on_surface_exclusion_changed() -> void:

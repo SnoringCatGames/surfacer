@@ -59,6 +59,9 @@ export var start_jump_boost_multiplier := 1.0 \
 export var ends_with_a_jump := false \
         setget _set_ends_with_a_jump
 
+export var surface_speed_multiplier := 1.0 \
+        setget _set_surface_speed_multiplier
+
 ## -   If true, the character will return to their starting position after this
 ##     behavior has finished.
 ## -   If true, then `only_navigates_reversible_paths` must also be true.
@@ -663,6 +666,11 @@ func _set_start_jump_boost_multiplier(value: float) -> void:
 
 func _set_ends_with_a_jump(value: bool) -> void:
     ends_with_a_jump = value
+    _update_parameters()
+
+
+func _set_surface_speed_multiplier(value: float) -> void:
+    surface_speed_multiplier = value
     _update_parameters()
 
 
