@@ -14,12 +14,12 @@ var pause_button: PauseButton
 func create_inspector() -> void:
     if Su.is_inspector_enabled:
         inspector_panel = Sc.utils.add_scene(
-                self,
+                fadable_container,
                 INSPECTOR_PANEL_SCENE)
         Sc.gui.hud.inspector_panel = inspector_panel
     else:
         pause_button = Sc.utils.add_scene(
-                self,
+                fadable_container,
                 PAUSE_BUTTON_SCENE)
 
 
