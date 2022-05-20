@@ -26,7 +26,7 @@ var just_started_edge := false
 var just_reached_end_of_edge := false
 var is_stalling_one_frame_before_reaching_end := false
 
-var is_triggered_by_player_selection := false
+var triggered_by_player := false
 
 var stopping_at_next_surface := false
 
@@ -61,7 +61,7 @@ func reset() -> void:
     self.just_reached_end_of_edge = false
     self.is_stalling_one_frame_before_reaching_end = false
     
-    self.is_triggered_by_player_selection = false
+    self.triggered_by_player = false
     
     self.stopping_at_next_surface = false
     
