@@ -4,11 +4,11 @@ extends Reference
 ## graph to a destination position.
 
 
-signal navigation_started(is_retry)
+signal navigation_started(is_retry, triggered_by_player)
 signal destination_reached
 signal navigation_interrupted(interruption_resolution_mode)
 signal navigation_canceled
-signal navigation_ended(did_reach_destination)
+signal navigation_ended(did_reach_destination, triggered_by_player)
 
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
@@ -67,7 +67,7 @@ func _init(
 func navigate_path(
         path: PlatformGraphPath,
         is_retry := false,
-        is_triggered_by_player_selection := false) -> bool:
+        triggered_by_player := false) -> bool:
     var previous_navigation_attempt_count := current_navigation_attempt_count
     if navigation_state.is_currently_navigating and !is_retry:
         stop()
@@ -131,8 +131,8 @@ func navigate_path(
     navigation_state.has_reached_destination = false
     navigation_state.path_start_time = Sc.time.get_scaled_play_time()
     navigation_state.last_interruption_position = Vector2.INF
-    navigation_state.is_triggered_by_player_selection = \
-            is_triggered_by_player_selection
+    navigation_state.triggered_by_player = \
+            triggered_by_player
     current_navigation_attempt_count += 1
     
     var duration_navigate_to_position: float = \
@@ -172,7 +172,8 @@ func navigate_path(
             0,
             is_retry)
     
-    emit_signal("navigation_started", is_retry)
+    emit_signal(
+        "navigation_started", is_retry, navigation_state.triggered_by_player)
     
     return true
 
@@ -183,12 +184,12 @@ func navigate_to_position(
         only_includes_bidirectional_edges := false,
         graph_destination_for_in_air_destination: PositionAlongSurface = null,
         is_retry := false,
-        is_triggered_by_player_selection := false) -> bool:
+        triggered_by_player := false) -> bool:
     var path := find_path(
             destination,
             only_includes_bidirectional_edges,
             graph_destination_for_in_air_destination)
-    return navigate_path(path, is_retry, is_triggered_by_player_selection)
+    return navigate_path(path, is_retry, triggered_by_player)
 
 
 func find_path(
@@ -700,7 +701,8 @@ func stop(cancels_nav_playback_immediately := true) -> void:
         navigation_state.just_ended = true
         
         emit_signal("navigation_canceled")
-        emit_signal("navigation_ended", false)
+        emit_signal(
+            "navigation_ended", false, navigation_state.triggered_by_player)
     else:
         # Preserve pre-existing state.
         navigation_state.has_canceled = had_canceled
@@ -736,13 +738,19 @@ func _set_reached_destination() -> void:
             ],
             false)
     
+    var was_triggered_by_player_selection := \
+            navigation_state.triggered_by_player
+    
     _reset()
+    
     navigation_state.has_reached_destination = true
     navigation_state.just_reached_destination = true
     navigation_state.just_ended = true
+    navigation_state.triggered_by_player = \
+        was_triggered_by_player_selection
     
     emit_signal("destination_reached")
-    emit_signal("navigation_ended", true)
+    emit_signal("navigation_ended", true, navigation_state.triggered_by_player)
 
 
 func _reset() -> void:
@@ -998,7 +1006,8 @@ func _handle_interruption(
             navigation_state.has_interrupted = true
             navigation_state.just_interrupted = true
             navigation_state.just_ended = true
-            emit_signal("navigation_ended", false)
+            emit_signal(
+                "navigation_ended", false, navigation_state.triggered_by_player)
             
         NavigationInterruptionResolution.RETRY_NAV:
             navigate_to_position(
@@ -1006,7 +1015,7 @@ func _handle_interruption(
                     false,
                     path.graph_destination_for_in_air_destination,
                     true,
-                    navigation_state.is_triggered_by_player_selection)
+                    navigation_state.triggered_by_player)
             
         NavigationInterruptionResolution.SKIP_NAV:
             navigation_state.has_interrupted = false

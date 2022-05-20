@@ -761,7 +761,8 @@ func _update_collision_mask() -> void:
 
 
 func _on_surfacer_character_navigation_ended(
-        did_navigation_finish: bool) -> void:
+        did_navigation_finish: bool,
+        triggered_by_player: bool) -> void:
     for behavior in _behaviors_list:
         behavior._on_navigation_ended(did_navigation_finish)
 
