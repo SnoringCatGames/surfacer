@@ -1,6 +1,6 @@
 # Getting set up
 
-I will not lie, **this is a complex framework**! Hopefully it's external API isn't _too_ convoluted, but still, probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel_away), and then adjust it to fit your needs.
+I will not lie, **this is a complex framework**! Hopefully it's external API isn't _too_ convoluted, but still, probably the easiest way to get set up is to copy the [example app](https://github.com/snoringcatgames/exampler), and then adjust it to fit your needs.
 
 -   Set up Scaffolder
     -   https://github.com/snoringcatgames/scaffolder/blob/master/docs/getting_set_up.md
@@ -77,3 +77,7 @@ _Probably the easiest way to get started with this is to copy/paste/edit a pre-e
     -   This defines how your character will move.
     -   There are a _lot_ of parameters you can adjust here.
     -   You can adjust these parameters within the editor's inspector panel.
+
+## Still not working?
+
+See the `Still not working?` section of Scaffolder's [getting set up](https://github.com/SnoringCatGames/scaffolder/blob/master/docs/getting_set_up.md).
