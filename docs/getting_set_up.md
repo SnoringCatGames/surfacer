@@ -80,4 +80,4 @@ _Probably the easiest way to get started with this is to copy/paste/edit a pre-e
 
 ## Still not working?
 
-See the `Still not working?` section of Scaffolder's [getting set up](https://github.com/SnoringCatGames/scaffolder/blob/master/docs/getting_set_up.md).
+See the Scaffolder's [Still not working?](https://github.com/SnoringCatGames/scaffolder/blob/master/docs/getting_set_up.md#still-not-working) docs.
