@@ -22,7 +22,8 @@ func _draw() -> void:
     if character.surface_state.is_grabbing_surface:
         if is_instance_valid(Sc.annotators) and \
                 is_instance_valid(Sc.annotators.surfaces_annotator) and \
-                Sc.annotators.is_annotator_enabled(AnnotatorType.SURFACES):
+                Sc.annotators.is_annotator_enabled(
+                    ScaffolderAnnotatorTypes.SURFACES):
             color.a = OPACITY_WITH_SURFACES_ANNOTATOR_ENABLED
         else:
             color.a = OPACITY_DEFAULT

@@ -171,7 +171,8 @@ func _process(_delta: float) -> void:
         
         _predictions_container.visible = \
                 preselection_path != null and \
-                Sc.annotators.is_annotator_enabled(AnnotatorType.CHARACTER)
+                Sc.annotators.is_annotator_enabled(
+                    ScaffolderAnnotatorTypes.CHARACTER)
         
         update()
     

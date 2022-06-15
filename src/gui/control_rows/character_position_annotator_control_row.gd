@@ -5,8 +5,8 @@ extends CheckboxControlRow
 const LABEL := "Char. positions"
 const DESCRIPTION := ""
 
-var annotator_type := AnnotatorType.CHARACTER_POSITION
-var settings_key := AnnotatorType.get_settings_key(annotator_type)
+var annotator_type := ScaffolderAnnotatorTypes.CHARACTER_POSITION
+var settings_key := ScaffolderAnnotatorTypes.get_settings_key(annotator_type)
 
 
 func _init(__ = null).(

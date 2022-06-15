@@ -128,7 +128,8 @@ func _ready() -> void:
         set_collision_mask_bit(
                 Su.WALK_THROUGH_WALLS_COLLISION_MASK_BIT, false)
     
-    if Sc.annotators.is_annotator_enabled(AnnotatorType.PATH_PRESELECTION) and \
+    if Sc.annotators.is_annotator_enabled(
+                ScaffolderAnnotatorTypes.PATH_PRESELECTION) and \
             (can_be_player_character and \
                     Sc.annotators.params.is_player_prediction_shown or \
             !can_be_player_character and \
