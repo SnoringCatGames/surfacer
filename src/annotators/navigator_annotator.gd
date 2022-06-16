@@ -16,6 +16,11 @@ var is_destination_shown := false
 var is_enabled := false
 var is_slow_motion_enabled := false
 
+var excludes_beat_hashes := false
+var excludes_previous_path := false
+var excludes_slow_motion_consideration := false \
+    setget _set_excludes_slow_motion_consideration
+
 var is_fade_in_progress := false
 var previous_fade_progress := 0.0
 var fade_progress := 0.0
@@ -62,6 +67,11 @@ func _init(navigator: SurfaceNavigator) -> void:
     self.fade_tween = ScaffolderTween.new(self)
 
 
+func _ready() -> void:
+    if excludes_slow_motion_consideration:
+        _update_is_enabled()
+
+
 func _process(_delta: float) -> void:
     is_fade_in_progress = fade_progress != previous_fade_progress
     previous_fade_progress = fade_progress
@@ -80,7 +90,8 @@ func _process(_delta: float) -> void:
         update()
     
     if Sc.slow_motion.get_is_enabled_or_transitioning() != \
-            is_slow_motion_enabled:
+            is_slow_motion_enabled and \
+            !excludes_slow_motion_consideration:
         is_slow_motion_enabled = \
                 Sc.slow_motion.get_is_enabled_or_transitioning()
         _update_is_enabled()
@@ -189,6 +200,8 @@ func _draw_current_path_destination(current_path: PlatformGraphPath) -> void:
 
 
 func _draw_previous_path() -> void:
+    if excludes_previous_path:
+        return
     Sc.draw.draw_path(
             self,
             previous_path,
@@ -208,6 +221,8 @@ func _draw_previous_path() -> void:
 func _draw_beat_hashes(
         beats: Array,
         color: Color) -> void:
+    if excludes_beat_hashes:
+        return
     Sc.draw.draw_beat_hashes(
             self,
             beats,
@@ -220,7 +235,11 @@ func _draw_beat_hashes(
 
 
 func _update_is_enabled() -> void:
-    if navigator.character.is_player_control_active:
+    if excludes_slow_motion_consideration:
+        is_active_trajectory_shown = true
+        is_previous_trajectory_shown = !excludes_previous_path
+        is_destination_shown = true
+    elif navigator.character.is_player_control_active:
         is_active_trajectory_shown = \
                 is_slow_motion_enabled and \
                 Sc.annotators.params.is_player_slow_mo_trajectory_shown or \
@@ -286,3 +305,8 @@ func _trigger_beat_hash_animation(beat: PathBeatPrediction) -> void:
             Sc.annotators.params.navigator_trajectory_stroke_width,
             beat_color,
             beat_color))
+
+
+func _set_excludes_slow_motion_consideration(value: bool) -> void:
+    excludes_slow_motion_consideration = value
+    pulse_annotator.excludes_slow_motion_consideration = value

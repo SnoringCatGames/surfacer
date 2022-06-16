@@ -14,12 +14,19 @@ var is_enabled := false
 var is_pulse_active := false
 var does_pulse_grow := false
 
+var excludes_slow_motion_consideration := false
+
 
 func _init(
         navigator: SurfaceNavigator,
         color: Color) -> void:
     self.navigator = navigator
     self.color = color
+
+
+func _ready() -> void:
+    if excludes_slow_motion_consideration:
+        is_enabled = _get_is_pulse_enabled()
 
 
 func _physics_process(_delta: float) -> void:
@@ -40,7 +47,8 @@ func _physics_process(_delta: float) -> void:
         update()
     
     if Sc.slow_motion.get_is_enabled_or_transitioning() != \
-            is_slow_motion_enabled:
+            is_slow_motion_enabled and \
+            !excludes_slow_motion_consideration:
         is_slow_motion_enabled = \
                 Sc.slow_motion.get_is_enabled_or_transitioning()
         is_enabled = _get_is_pulse_enabled()
@@ -112,7 +120,9 @@ func _draw() -> void:
 
 
 func _get_is_pulse_enabled() -> bool:
-    if navigator.character.is_player_control_active:
+    if excludes_slow_motion_consideration:
+        return true
+    elif navigator.character.is_player_control_active:
         return Sc.annotators.params.is_player_nav_pulse_shown and \
                 (is_slow_motion_enabled and \
                 Sc.annotators.params.is_player_slow_mo_trajectory_shown or \
