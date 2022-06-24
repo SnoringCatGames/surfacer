@@ -887,6 +887,7 @@ func stop_on_surface() -> void:
 
 
 func _stop_nav_immediately() -> void:
+    is_waiting_to_stop_on_surface = false
     navigator.stop(false)
 
 
