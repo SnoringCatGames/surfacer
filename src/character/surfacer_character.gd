@@ -14,6 +14,8 @@ extends ScaffolderCharacter
 ##     -   (Optional) ProximityDetector[br]
 
 
+signal behavior_changed(behavior, previous_behavior)
+
 ## -   If true, then the character's movement will include jumps in place of
 ##     walking, when possible.
 export var is_bouncy := false
@@ -1050,6 +1052,14 @@ func _set_behavior(value: Behavior) -> void:
         self.previous_behavior = previous_behavior
         movement_params.additional_surface_speed_multiplier = \
             behavior.surface_speed_multiplier
+        emit_signal("behavior_changed", behavior, previous_behavior)
+        _on_behavior_changed(behavior, previous_behavior)
+
+
+func _on_behavior_changed(
+        behavior: Behavior,
+        previous_behavior: Behavior) -> void:
+    pass
 
 
 func _on_surface_exclusion_changed() -> void:
