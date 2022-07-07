@@ -95,7 +95,7 @@ func _init(
             (trajectory.frame_continuous_positions_from_steps.size() >= \
                     expected_frame_count_for_duration - 10 and \
             trajectory.frame_continuous_positions_from_steps.size() <= \
-                    expected_frame_count_for_duration + 4))
+                    expected_frame_count_for_duration + 6))
 
 
 func update_navigation_state(
