@@ -1453,18 +1453,22 @@ func _update_grab_state() -> void:
             !next_is_grabbing_floor and \
             !next_is_grabbing_ceiling
     
-    var next_is_grabbing_left_wall := \
-            next_is_grabbing_wall and \
-            ((is_rounding_corner and \
-                center_position.x >= rounding_corner_position.x) or \
-            (!is_rounding_corner and \
-                is_touching_left_wall))
-    var next_is_grabbing_right_wall := \
-            next_is_grabbing_wall and \
-            ((is_rounding_corner and \
-                center_position.x <= rounding_corner_position.x) or \
-            (!is_rounding_corner and \
-                is_touching_right_wall))
+    var next_is_grabbing_left_wall: bool
+    var next_is_grabbing_right_wall: bool
+    if next_is_grabbing_wall:
+        if is_rounding_corner:
+            next_is_grabbing_left_wall = \
+                is_touching_left_wall and !is_touching_right_wall or \
+                center_position.x >= rounding_corner_position.x
+            next_is_grabbing_right_wall = \
+                is_touching_right_wall and !is_touching_left_wall or \
+                center_position.x <= rounding_corner_position.x
+        else:
+            next_is_grabbing_left_wall = is_touching_left_wall
+            next_is_grabbing_right_wall = is_touching_right_wall
+    else:
+        next_is_grabbing_left_wall = false
+        next_is_grabbing_right_wall = false
     
     var next_is_grabbing_surface := \
             next_is_grabbing_floor or \
