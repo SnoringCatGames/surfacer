@@ -1489,6 +1489,8 @@ func _ensure_edges_have_trajectory_state(
                     .create_trajectory_placeholder_hack(edge)
             path.edges[i].trajectory = placeholder_trajectory_hack
         else:
+            path.edges[i] = edge_with_trajectory
+            
             var do_edges_match: bool = \
                     edge_with_trajectory != null and \
                     Sc.geometry.are_floats_equal_with_epsilon(
@@ -1529,7 +1531,6 @@ func _ensure_edges_have_trajectory_state(
             # **Did you change the tile map or movement params and forget to
             #   update the platform graph??**
             assert(do_edges_match)
-            path.edges[i] = edge_with_trajectory
     
     Sc.profiler.stop("navigator_ensure_edges_have_trajectory_state")
 
