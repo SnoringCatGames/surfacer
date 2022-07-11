@@ -1499,15 +1499,23 @@ func _ensure_edges_have_trajectory_state(
                             edge_with_trajectory.distance,
                             edge.distance,
                             1.2)
-            # FIXME:
-            # - Remove.
-            # - Another reason this has happened in the past is that
-            #   CollisionCheckUtils.check_frame_for_collision >
-            #   crash_test_dummy.move_and_collide inconsistently detects a
-            #   collision during the last frame of an edge.
-            #   - It detects the collision at build time, but not at run time.
-            #   - So the run-time trajectory has one extra frame, and a bit
-            #     more distance for that frame.
+            
+            if !do_edges_match:
+                if Sc.geometry.are_floats_equal_with_epsilon(
+                        edge_with_trajectory.duration,
+                        edge.duration + Sc.time.PHYSICS_TIME_STEP,
+                        0.001):
+                    # - Sometimes CollisionCheckUtils.check_frame_for_collision >
+                    #   crash_test_dummy.move_and_collide inconsistently detects
+                    #   a collision during the last frame of an edge.
+                    #   - It detects the collision at build time, but not at run
+                    #     time.
+                    #   - So the run-time trajectory has one extra frame, and a
+                    #     bit more distance for that frame.
+                    # - This shouldn't be a problem.
+                    continue
+            
+            # FIXME: Remove.
 #            if !do_edges_match:
 #                edge_with_trajectory = edge.calculator.calculate_edge(
 #                        null,
@@ -1517,6 +1525,7 @@ func _ensure_edges_have_trajectory_state(
 #                        edge.velocity_start,
 #                        edge.includes_extra_jump_duration,
 #                        edge.includes_extra_wall_land_horizontal_speed)
+            
             # **Did you change the tile map or movement params and forget to
             #   update the platform graph??**
             assert(do_edges_match)
