@@ -257,8 +257,12 @@ func _initialize_player_character_functionality() -> void:
         var player_navigation_behavior := PlayerNavigationBehavior.new()
         add_behavior(player_navigation_behavior)
         
-        self.touch_listener = PlayerTouchListener.new(self)
-        add_child(touch_listener)
+        _initialize_touch_listener()
+
+
+func _initialize_touch_listener() -> void:
+    self.touch_listener = PlayerTouchListener.new(self)
+    add_child(touch_listener)
 
 
 func set_is_player_control_active(
