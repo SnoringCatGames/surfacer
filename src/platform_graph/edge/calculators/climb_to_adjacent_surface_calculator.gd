@@ -134,7 +134,7 @@ func calculate_edge(
         var positions: PoolVector2Array = \
                 trajectory.frame_continuous_positions_from_steps if \
                 !trajectory.frame_continuous_positions_from_steps.empty() else \
-                trajectory.frame_discrete_positions_from_test.empty()
+                trajectory.frame_discrete_positions_from_test
         var early_end := \
                 positions[positions.size() - 1] if \
                 !positions.empty() else \
