@@ -44,19 +44,6 @@ var jump_count := 0
 
 var is_dashing: bool setget ,_get_is_dashing
 
-var current_surface_max_horizontal_speed: float \
-        setget ,_get_current_surface_max_horizontal_speed
-var current_air_max_horizontal_speed: float \
-        setget ,_get_current_air_max_horizontal_speed
-var current_walk_acceleration: float \
-        setget ,_get_current_walk_acceleration
-var current_climb_up_speed: float \
-        setget ,_get_current_climb_up_speed
-var current_climb_down_speed: float \
-        setget ,_get_current_climb_down_speed
-var current_ceiling_crawl_speed: float \
-        setget ,_get_current_ceiling_crawl_speed
-
 var _current_max_horizontal_speed_multiplier := 1.0
 var _can_dash := true
 
@@ -834,7 +821,7 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     _current_max_horizontal_speed_multiplier = \
             movement_params.dash_speed_multiplier
     
-    velocity.x = current_air_max_horizontal_speed * horizontal_acceleration_sign
+    velocity.x = get_current_air_max_horizontal_speed() * horizontal_acceleration_sign
     velocity.y += movement_params.dash_vertical_boost
     
     _dash_fade_tween.stop_all()
@@ -1092,7 +1079,7 @@ func _get_is_dashing() -> bool:
             _dash_fade_tween.is_active()
 
 
-func _get_current_surface_max_horizontal_speed() -> float:
+func get_current_surface_max_horizontal_speed() -> float:
     return movement_params.max_horizontal_speed_default * \
             movement_params.surface_speed_multiplier * \
             _current_max_horizontal_speed_multiplier * \
@@ -1101,34 +1088,34 @@ func _get_current_surface_max_horizontal_speed() -> float:
             1.0)
 
 
-func _get_current_air_max_horizontal_speed() -> float:
+func get_current_air_max_horizontal_speed() -> float:
     return movement_params.max_horizontal_speed_default * \
             movement_params.air_horizontal_speed_multiplier * \
             _current_max_horizontal_speed_multiplier
 
 
-func _get_current_walk_acceleration() -> float:
+func get_current_walk_acceleration() -> float:
     return movement_params.walk_acceleration * \
             (surface_state.grabbed_surface.properties.speed_multiplier if \
             surface_state.is_grabbing_surface else \
             1.0)
 
 
-func _get_current_climb_up_speed() -> float:
+func get_current_climb_up_speed() -> float:
     return movement_params.climb_up_speed * \
             (surface_state.grabbed_surface.properties.speed_multiplier if \
             surface_state.is_grabbing_surface else \
             1.0)
 
 
-func _get_current_climb_down_speed() -> float:
+func get_current_climb_down_speed() -> float:
     return movement_params.climb_down_speed * \
             (surface_state.grabbed_surface.properties.speed_multiplier if \
             surface_state.is_grabbing_surface else \
             1.0)
 
 
-func _get_current_ceiling_crawl_speed() -> float:
+func get_current_ceiling_crawl_speed() -> float:
     return movement_params.ceiling_crawl_speed * \
             (surface_state.grabbed_surface.properties.speed_multiplier if \
             surface_state.is_grabbing_surface else \

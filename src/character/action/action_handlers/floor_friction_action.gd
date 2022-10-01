@@ -43,7 +43,7 @@ func process(character) -> bool:
             # NOTE: Keep this logic in-sync with
             #       MovementUtils.get_walking_acceleration_with_friction_magnitude.
             var default_move_offset: float = \
-                    character.current_walk_acceleration * \
+                    character.get_current_walk_acceleration() * \
                     character.actions.delta_scaled
             var friction_factor: float = \
                     character.movement_params \
