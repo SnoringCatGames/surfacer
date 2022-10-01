@@ -22,10 +22,10 @@ func process(character) -> bool:
     if !character.processed_action(CeilingJumpDownAction.NAME) and \
             !character.processed_action(CeilingFallAction.NAME):
         if character.actions.pressed_left:
-            character.velocity.x = -character.current_ceiling_crawl_speed
+            character.velocity.x = -character.get_current_ceiling_crawl_speed()
             return true
         elif character.actions.pressed_right:
-            character.velocity.x = character.current_ceiling_crawl_speed
+            character.velocity.x = character.get_current_ceiling_crawl_speed()
             return true
     
     return false
