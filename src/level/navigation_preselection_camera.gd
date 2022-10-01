@@ -69,18 +69,6 @@ func _sync_to_character_position() -> void:
         _update_offset_and_zoom()
 
 
-func match_camera(other: ScaffolderCamera) -> void:
-    reset(false)
-    _target_controller_offset = \
-            other._target_controller_offset + other._misc_offset - _misc_offset
-    _target_controller_zoom = \
-            other._target_controller_zoom * other._misc_zoom
-    _controller_offset = _target_controller_offset
-    _controller_zoom = _target_controller_zoom
-    _extra_zoom = other._extra_zoom
-    _update_offset_and_zoom(true, false)
-
-
 func _on_dragged(
         pointer_screen_position: Vector2,
         pointer_level_position: Vector2,
