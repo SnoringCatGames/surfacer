@@ -4,6 +4,7 @@ extends CharacterActionHandler
 
 const NAME := "AirDefaultAction"
 const TYPE := SurfaceType.AIR
+const IS_JUMP := false
 const USES_RUNTIME_PHYSICS := true
 const PRIORITY := 410
 
@@ -13,6 +14,7 @@ const BOUNCE_OFF_CEILING_VELOCITY := 15.0
 func _init().(
         NAME,
         TYPE,
+        IS_JUMP,
         USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass

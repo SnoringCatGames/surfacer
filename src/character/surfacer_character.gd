@@ -615,7 +615,11 @@ func _process_actions() -> void:
     for action_handler in movement_params.action_handlers:
         var is_action_relevant_for_surface: bool = \
                 action_handler.type == surface_state.surface_type or \
-                action_handler.type == SurfaceType.OTHER
+                action_handler.type == SurfaceType.OTHER or \
+                (action_handler.is_jump and \
+                actions.just_pressed_jump and \
+                action_handler.type == \
+                    surface_state.get_previous_surface_type())
         var is_action_relevant_for_physics_mode: bool = \
                 !movement_params.bypasses_runtime_physics or \
                 !action_handler.uses_runtime_physics

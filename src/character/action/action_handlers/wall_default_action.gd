@@ -4,6 +4,7 @@ extends CharacterActionHandler
 
 const NAME := "WallDefaultAction"
 const TYPE := SurfaceType.WALL
+const IS_JUMP := false
 const USES_RUNTIME_PHYSICS := true
 const PRIORITY := 110
 
@@ -11,6 +12,7 @@ const PRIORITY := 110
 func _init().(
         NAME,
         TYPE,
+        IS_JUMP,
         USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass
