@@ -69,7 +69,8 @@ func _create_annotator(annotator_type: String) -> void:
                         Sc.level.surface_store)
                 annotation_layer.add_child(grid_indices_annotator)
         ScaffolderAnnotatorTypes.PATH_PRESELECTION:
-            if Sc.characters.can_include_player_characters:
+            if Sc.characters.can_include_player_characters and \
+                    Su.manifest.movement_manifest.uses_point_and_click_navigation:
                 path_preselection_annotator = PathPreselectionAnnotator.new()
                 annotation_layer.add_child(path_preselection_annotator)
         ScaffolderAnnotatorTypes.LEVEL:
