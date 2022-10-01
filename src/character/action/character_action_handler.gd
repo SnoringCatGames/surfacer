@@ -9,6 +9,7 @@ extends Reference
 var name: String
 # SurfaceType
 var type: int
+var is_jump: bool
 var uses_runtime_physics: bool
 var priority: int
 
@@ -16,10 +17,12 @@ var priority: int
 func _init(
         name: String,
         type: int,
+        is_jump: bool,
         uses_runtime_physics: bool,
         priority: int) -> void:
     self.name = name
     self.type = type
+    self.is_jump = is_jump
     self.uses_runtime_physics = uses_runtime_physics
     self.priority = priority
 

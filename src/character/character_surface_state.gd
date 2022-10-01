@@ -1659,6 +1659,52 @@ func _update_grab_contact() -> void:
                     grab_normal if \
                     grab_normal != Vector2.INF else \
                     previous_grab_normal
+            
+            match previous_grabbed_surface.side:
+                SurfaceSide.FLOOR:
+                    just_stopped_touching_floor = \
+                        is_touching_floor or just_stopped_touching_floor
+                    just_stopped_grabbing_floor = \
+                        is_grabbing_floor or just_stopped_grabbing_floor
+                    is_touching_floor = false
+                    is_grabbing_floor = false
+                SurfaceSide.LEFT_WALL:
+                    just_stopped_touching_left_wall = \
+                        is_touching_left_wall or just_stopped_touching_left_wall
+                    just_stopped_grabbing_left_wall = \
+                        is_grabbing_left_wall or just_stopped_grabbing_left_wall
+                    is_touching_left_wall = false
+                    is_grabbing_left_wall = false
+                SurfaceSide.RIGHT_WALL:
+                    just_stopped_touching_right_wall = \
+                        is_touching_right_wall or just_stopped_touching_right_wall
+                    just_stopped_grabbing_right_wall = \
+                        is_grabbing_right_wall or just_stopped_grabbing_right_wall
+                    is_touching_right_wall = false
+                    is_grabbing_right_wall = false
+                SurfaceSide.CEILING:
+                    just_stopped_touching_ceiling = \
+                        is_touching_ceiling or just_stopped_touching_ceiling
+                    just_stopped_grabbing_ceiling = \
+                        is_grabbing_ceiling or just_stopped_grabbing_ceiling
+                    is_touching_ceiling = false
+                    is_grabbing_ceiling = false
+                _:
+                    Sc.logger.error(
+                        "CharacterSurfaceState._update_grab_contact")
+            
+            just_stopped_touching_surface = \
+                just_stopped_touching_floor or \
+                just_stopped_touching_left_wall or \
+                just_stopped_touching_right_wall or \
+                just_stopped_touching_ceiling
+            just_stopped_grabbing_surface = \
+                just_stopped_grabbing_floor or \
+                just_stopped_grabbing_left_wall or \
+                just_stopped_grabbing_right_wall or \
+                just_stopped_grabbing_ceiling
+            
+            surfaces_to_contacts.erase(previous_grabbed_surface)
         
         surface_grab = null
         grab_position = Vector2.INF
@@ -1667,6 +1713,20 @@ func _update_grab_contact() -> void:
         grab_position_tilemap_coord = Vector2.INF
         grabbed_surface = null
         center_position_along_surface.reset()
+
+
+func get_previous_surface_type() -> int:
+    match previous_grabbed_surface.side:
+        SurfaceSide.FLOOR:
+            return SurfaceType.FLOOR
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            return SurfaceType.WALL
+        SurfaceSide.CEILING:
+            return SurfaceType.CEILING
+        _:
+            Sc.logger.error("CharacterSurfaceState.get_previous_surface_type")
+            return SurfaceType.OTHER
 
 
 func _get_is_touching_wall() -> bool:
@@ -2058,74 +2118,74 @@ func sync_state_for_surface_grab(
 func sync_state_for_surface_release(
         surface: Surface,
         center_position: Vector2) -> void:
-    var next_just_stopped_touching_floor := false
-    var next_just_stopped_grabbing_floor := false
-    var next_just_stopped_touching_left_wall := false
-    var next_just_stopped_grabbing_left_wall := false
-    var next_just_stopped_touching_right_wall := false
-    var next_just_stopped_grabbing_right_wall := false
-    var next_just_stopped_touching_ceiling := false
-    var next_just_stopped_grabbing_ceiling := false
-    match surface.side:
-        SurfaceSide.FLOOR:
-            next_just_stopped_touching_floor = is_touching_floor
-            next_just_stopped_grabbing_floor = is_grabbing_floor
-        SurfaceSide.LEFT_WALL:
-            next_just_stopped_touching_left_wall = is_touching_left_wall
-            next_just_stopped_grabbing_left_wall = is_grabbing_left_wall
-        SurfaceSide.RIGHT_WALL:
-            next_just_stopped_touching_right_wall = is_touching_right_wall
-            next_just_stopped_grabbing_right_wall = is_grabbing_right_wall
-        SurfaceSide.CEILING:
-            next_just_stopped_touching_ceiling = is_touching_ceiling
-            next_just_stopped_grabbing_ceiling = is_grabbing_ceiling
-        _:
-            Sc.logger.error("CharacterSurfaceState.sync_state_for_surface_release")
-    
-    var previous_grab_position := grab_position
-    var previous_grab_normal := grab_normal
-    var previous_grabbed_surface := grabbed_surface
-    var previous_is_grabbing_surface := _get_is_grabbing_surface()
-    
-    # TODO: Call this?
-#    clear_current_state()
-    
-    just_entered_air = previous_is_grabbing_surface
-    just_left_air = false
-    
-    if just_entered_air:
-        just_changed_grab_position = true
-        just_changed_tilemap = true
-        just_changed_tilemap_coord = true
-        just_changed_surface = true
-        previous_grabbed_surface = previous_grabbed_surface
-        previous_grab_position = previous_grab_position
-        previous_grab_normal = previous_grab_normal
-    
-    match surface.side:
-        SurfaceSide.FLOOR:
-            is_touching_floor = false
-            is_grabbing_floor = false
-            just_stopped_touching_floor = next_just_stopped_touching_floor
-            just_stopped_grabbing_floor = next_just_stopped_grabbing_floor
-        SurfaceSide.LEFT_WALL:
-            is_touching_left_wall = false
-            is_grabbing_left_wall = false
-            just_stopped_touching_left_wall = \
-                    next_just_stopped_touching_left_wall
-            just_stopped_grabbing_left_wall = \
-                    next_just_stopped_grabbing_left_wall
-        SurfaceSide.RIGHT_WALL:
-            is_touching_right_wall = false
-            is_grabbing_right_wall = false
-            just_stopped_touching_right_wall = \
-                    next_just_stopped_touching_right_wall
-            just_stopped_grabbing_right_wall = \
-                    next_just_stopped_grabbing_right_wall
-        SurfaceSide.CEILING:
-            is_touching_ceiling = false
-            is_grabbing_ceiling = false
-            just_stopped_touching_ceiling = next_just_stopped_touching_ceiling
-            just_stopped_grabbing_ceiling = next_just_stopped_grabbing_ceiling
-        _:
-            Sc.logger.error("CharacterSurfaceState.sync_state_for_surface_release")
+        var next_just_stopped_touching_floor := false
+        var next_just_stopped_grabbing_floor := false
+        var next_just_stopped_touching_left_wall := false
+        var next_just_stopped_grabbing_left_wall := false
+        var next_just_stopped_touching_right_wall := false
+        var next_just_stopped_grabbing_right_wall := false
+        var next_just_stopped_touching_ceiling := false
+        var next_just_stopped_grabbing_ceiling := false
+        match surface.side:
+            SurfaceSide.FLOOR:
+                next_just_stopped_touching_floor = is_touching_floor
+                next_just_stopped_grabbing_floor = is_grabbing_floor
+            SurfaceSide.LEFT_WALL:
+                next_just_stopped_touching_left_wall = is_touching_left_wall
+                next_just_stopped_grabbing_left_wall = is_grabbing_left_wall
+            SurfaceSide.RIGHT_WALL:
+                next_just_stopped_touching_right_wall = is_touching_right_wall
+                next_just_stopped_grabbing_right_wall = is_grabbing_right_wall
+            SurfaceSide.CEILING:
+                next_just_stopped_touching_ceiling = is_touching_ceiling
+                next_just_stopped_grabbing_ceiling = is_grabbing_ceiling
+            _:
+                Sc.logger.error("CharacterSurfaceState.sync_state_for_surface_release")
+        
+        var previous_grab_position := grab_position
+        var previous_grab_normal := grab_normal
+        var previous_grabbed_surface := grabbed_surface
+        var previous_is_grabbing_surface := _get_is_grabbing_surface()
+        
+        # TODO: Call this?
+    #    clear_current_state()
+        
+        just_entered_air = previous_is_grabbing_surface
+        just_left_air = false
+        
+        if just_entered_air:
+            just_changed_grab_position = true
+            just_changed_tilemap = true
+            just_changed_tilemap_coord = true
+            just_changed_surface = true
+            previous_grabbed_surface = previous_grabbed_surface
+            previous_grab_position = previous_grab_position
+            previous_grab_normal = previous_grab_normal
+        
+        match surface.side:
+            SurfaceSide.FLOOR:
+                is_touching_floor = false
+                is_grabbing_floor = false
+                just_stopped_touching_floor = next_just_stopped_touching_floor
+                just_stopped_grabbing_floor = next_just_stopped_grabbing_floor
+            SurfaceSide.LEFT_WALL:
+                is_touching_left_wall = false
+                is_grabbing_left_wall = false
+                just_stopped_touching_left_wall = \
+                        next_just_stopped_touching_left_wall
+                just_stopped_grabbing_left_wall = \
+                        next_just_stopped_grabbing_left_wall
+            SurfaceSide.RIGHT_WALL:
+                is_touching_right_wall = false
+                is_grabbing_right_wall = false
+                just_stopped_touching_right_wall = \
+                        next_just_stopped_touching_right_wall
+                just_stopped_grabbing_right_wall = \
+                        next_just_stopped_grabbing_right_wall
+            SurfaceSide.CEILING:
+                is_touching_ceiling = false
+                is_grabbing_ceiling = false
+                just_stopped_touching_ceiling = next_just_stopped_touching_ceiling
+                just_stopped_grabbing_ceiling = next_just_stopped_grabbing_ceiling
+            _:
+                Sc.logger.error("CharacterSurfaceState.sync_state_for_surface_release")

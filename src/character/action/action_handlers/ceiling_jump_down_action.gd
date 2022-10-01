@@ -4,6 +4,7 @@ extends CharacterActionHandler
 
 const NAME := "CeilingJumpDownAction"
 const TYPE := SurfaceType.CEILING
+const IS_JUMP := true
 const USES_RUNTIME_PHYSICS := true
 const PRIORITY := 320
 
@@ -11,6 +12,7 @@ const PRIORITY := 320
 func _init().(
         NAME,
         TYPE,
+        IS_JUMP,
         USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass

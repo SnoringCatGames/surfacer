@@ -4,6 +4,7 @@ extends CharacterActionHandler
 
 const NAME := "CapVelocityAction"
 const TYPE := SurfaceType.OTHER
+const IS_JUMP := false
 const USES_RUNTIME_PHYSICS := true
 const PRIORITY := 10020
 
@@ -11,6 +12,7 @@ const PRIORITY := 10020
 func _init().(
         NAME,
         TYPE,
+        IS_JUMP,
         USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass
