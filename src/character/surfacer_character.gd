@@ -690,7 +690,7 @@ func _process_animation() -> void:
 
 func _process_sounds() -> void:
     if just_triggered_jump:
-        Sc.audio.play_sound("jump")
+        Sc.audio.play_sound("test_character_jump")
     
     if surface_state.just_left_air:
         Sc.audio.play_sound("land")
