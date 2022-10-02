@@ -1530,7 +1530,21 @@ func _ensure_edges_have_trajectory_state(
             
             # **Did you change the tile map or movement params and forget to
             #   update the platform graph??**
-            assert(do_edges_match)
+            if !do_edges_match:
+                var do_edges_match_less_closely: bool = \
+                        edge_with_trajectory != null and \
+                        Sc.geometry.are_floats_equal_with_epsilon(
+                                edge_with_trajectory.duration,
+                                edge.duration,
+                                0.04) and \
+                        Sc.geometry.are_floats_equal_with_epsilon(
+                                edge_with_trajectory.distance,
+                                edge.distance,
+                                10.2)
+                assert(do_edges_match_less_closely)
+                Sc.logger.error(
+                    "SurfaceNavigator._ensure_edges_have_trajectory_state",
+                    false)
     
     Sc.profiler.stop("navigator_ensure_edges_have_trajectory_state")
 
