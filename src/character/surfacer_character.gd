@@ -607,7 +607,10 @@ func _process_actions() -> void:
                 (action_handler.is_jump and \
                 actions.just_pressed_jump and \
                 action_handler.type == \
-                    surface_state.get_previous_surface_type())
+                    surface_state.get_previous_surface_type() and \
+                Sc.time.get_scaled_play_time() <= \
+                    surface_state.last_in_air_toggle_time + \
+                    ScaffolderTime.PHYSICS_TIME_STEP)
         var is_action_relevant_for_physics_mode: bool = \
                 !movement_params.bypasses_runtime_physics or \
                 !action_handler.uses_runtime_physics
