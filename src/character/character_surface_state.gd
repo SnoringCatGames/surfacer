@@ -149,6 +149,8 @@ var character: ScaffolderCharacter
 
 var _collision_surface_result := CollisionSurfaceResult.new()
 
+var last_in_air_toggle_time := INF
+
 
 func _init(character: ScaffolderCharacter) -> void:
     self.character = character
@@ -1549,6 +1551,8 @@ func _update_grab_state() -> void:
             next_just_left_air or \
             just_left_air and \
             !next_just_entered_air
+    if just_entered_air or just_left_air:
+        last_in_air_toggle_time = Sc.time.get_scaled_play_time()
     
     if is_grabbing_floor:
         surface_type = SurfaceType.FLOOR
@@ -2057,6 +2061,8 @@ func sync_state_for_surface_grab(
     
     just_entered_air = false
     just_left_air = !previous_is_grabbing_surface
+    if just_entered_air or just_left_air:
+        last_in_air_toggle_time = Sc.time.get_scaled_play_time()
     
     just_changed_surface = \
             just_left_air or \
@@ -2152,6 +2158,8 @@ func sync_state_for_surface_release(
         
         just_entered_air = previous_is_grabbing_surface
         just_left_air = false
+        if just_entered_air or just_left_air:
+            last_in_air_toggle_time = Sc.time.get_scaled_play_time()
         
         if just_entered_air:
             just_changed_grab_position = true
