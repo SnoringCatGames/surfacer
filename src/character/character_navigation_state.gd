@@ -36,6 +36,9 @@ var edge_start_time := -1.0
 var edge_start_frame := -1
 var edge_frame_count := 0
 
+var start_time := -1.0
+var end_time := -1.0
+
 var last_interruption_position := Vector2.INF
 
 var expected_position_along_surface := PositionAlongSurface.new()
@@ -70,6 +73,9 @@ func reset() -> void:
     
     self.edge_start_frame = -1
     self.edge_frame_count = 0
+    
+#    self.start_time = -1.0
+#    self.end_time = -1.0
     
     self.last_interruption_position = Vector2.INF
     

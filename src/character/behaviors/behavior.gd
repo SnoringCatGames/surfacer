@@ -383,7 +383,21 @@ func _find_path(
 
 func _pause_mid_movement() -> void:
     _clear_timeouts()
-    var delay := _get_mid_movement_pause_time()
+    
+    var delay: float
+    
+    # FIXME: LEFT OFF HERE: -----------
+    # - Remove this hack, and fix the underlying cause of this happening.
+    var was_last_nav_stuck_with_start_and_end_in_the_same_frame: bool = \
+        character.navigation_state.start_time == \
+        character.navigation_state.end_time and \
+        character.navigation_state.start_time > 0
+    
+    if was_last_nav_stuck_with_start_and_end_in_the_same_frame:
+        delay = 999999999
+    else:
+        delay = _get_mid_movement_pause_time()
+    
     if delay > 0.0:
         _mid_movement_pause_timeout_id = Sc.time.set_timeout(
                 self,
