@@ -407,6 +407,18 @@ func _update(edge: IntraSurfaceEdge) -> void:
             release_time,
             is_pressing_left)
     
+    # FIXME: ---------------------------------------
+    # - HACK: not sure why the underlying problem is happening,
+    #   but this seems to patch the leak.
+    if is_inf(release_time) or is_inf(duration):
+        if is_backtracking:
+            edge.is_backtracking = false
+            _update(edge)
+        else:
+            Sc.logger.error("IntraSurfaceCalculator.update")
+        return
+    # -----------------------------------------------
+    
     assert(!is_inf(release_time))
     assert(!is_inf(duration))
     assert(!Sc.geometry.is_point_partial_inf(release_position))

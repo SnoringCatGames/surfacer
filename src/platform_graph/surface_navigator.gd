@@ -168,6 +168,8 @@ func navigate_path(
                 false,
                 false)
     
+    navigation_state.start_time = Sc.time.get_scaled_play_time()
+    
     _start_edge(
             0,
             is_retry)
@@ -699,6 +701,7 @@ func stop(cancels_nav_playback_immediately := true) -> void:
         navigation_state.has_canceled = true
         navigation_state.just_canceled = true
         navigation_state.just_ended = true
+        navigation_state.end_time = Sc.time.get_scaled_play_time()
         
         emit_signal("navigation_canceled")
         emit_signal(
@@ -746,6 +749,7 @@ func _set_reached_destination() -> void:
     navigation_state.has_reached_destination = true
     navigation_state.just_reached_destination = true
     navigation_state.just_ended = true
+    navigation_state.end_time = Sc.time.get_scaled_play_time()
     navigation_state.triggered_by_player = \
         was_triggered_by_player_selection
     
@@ -1006,6 +1010,7 @@ func _handle_interruption(
             navigation_state.has_interrupted = true
             navigation_state.just_interrupted = true
             navigation_state.just_ended = true
+            navigation_state.end_time = Sc.time.get_scaled_play_time()
             emit_signal(
                 "navigation_ended", false, navigation_state.triggered_by_player)
             
