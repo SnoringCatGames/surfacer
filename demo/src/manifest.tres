@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="Manifest" load_steps=10 format=3 uid="uid://diqdv1fn7q7ai"]
+
+[ext_resource type="Script" uid="uid://i4q7p22q60vs" path="res://addons/scaffolder2/src/config/canvas_layer_config.gd" id="1_rh4yd"]
+[ext_resource type="Script" uid="uid://ctpkusaxuuelx" path="res://addons/scaffolder2/src/config/manifest.gd" id="2_h5d7k"]
+[ext_resource type="AudioStream" uid="uid://bu201qxw2pgtb" path="res://addons/scaffolder2/assets/sfx/game_load.tres" id="3_jrmap"]
+[ext_resource type="AudioStream" uid="uid://ccywymppbqvq2" path="res://addons/scaffolder2/assets/sfx/level_start.tres" id="4_443y3"]
+[ext_resource type="AudioStream" uid="uid://ix3if7cq1a8q" path="res://addons/scaffolder2/assets/sfx/level_success.tres" id="5_aakyk"]
+[ext_resource type="AudioStream" uid="uid://dre3xa4dff13l" path="res://addons/scaffolder2/assets/sfx/level_failure.tres" id="6_e8rv8"]
+[ext_resource type="AudioStream" uid="uid://bdcxfq7hd0iak" path="res://addons/scaffolder2/assets/sfx/pause.tres" id="7_co1yd"]
+[ext_resource type="AudioStream" uid="uid://coe3qd5rsfkhp" path="res://addons/scaffolder2/assets/sfx/unpause.tres" id="8_ctocv"]
+[ext_resource type="AudioStream" uid="uid://d4buaef6wotn2" path="res://addons/scaffolder2/assets/sfx/menu_click.tres" id="9_rt1qq"]
+
+[resource]
+script = ExtResource("2_h5d7k")
+god_mode = false
+debug_time_scale = 1.0
+dev_mode = true
+skip_main_menu_in_dev_mode = false
+pauses_on_focus_out = true
+render_debug_annotations = false
+show_hud = true
+log_surfacer_events = false
+log_surfacer_events_verbose = false
+log_scaffolder_events = false
+log_scaffolder_events_verbose = false
+screens = Dictionary[String, PackedScene]({})
+canvas_layers = Array[ExtResource("1_rh4yd")]([])
+sfxs = Dictionary[String, AudioStream]({
+"game_load": ExtResource("3_jrmap"),
+"level_failure": ExtResource("6_e8rv8"),
+"level_start": ExtResource("4_443y3"),
+"level_success": ExtResource("5_aakyk"),
+"pause": ExtResource("7_co1yd"),
+"unpause": ExtResource("8_ctocv"),
+"widget_click": ExtResource("9_rt1qq")
+})
+metadata/_custom_type_script = ExtResource("2_h5d7k")

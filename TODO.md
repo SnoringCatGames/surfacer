@@ -3,11 +3,37 @@
 
 ### Next
 
-- Figured out how to set up the Surfacer manifest.
+- Setup Scaffolder2 as a submodule (of the demo app).
+- Figure out how to set up the Surfacer manifest.
   - This should be accessible from C++.
   - So does this need to be _defined_ from C++?
   - This will be separate from the Scaffolder manifest, which is a plain .tres file.
-- 
+- Review Godot's default Navigation APIs. And other engine APIs.
+- Finish thinking about the high-level API design from the user's perspective.
+- Review Surfacer v1 logic.
+- Finish thinking about the high-level algorithm design, and what parts to preserve and change from Surfacer v1.
+- Address some of the FIXMEs from porting over the current Scaffolder logic.
+- Set up annotations system.
+- Set up surface parsing.
+  - Just use vanilla tilemaps for now.
+  - BUT, make sure I'll be able to support custom level geometry later (with custom vertices, marching squares, and destructible terrain!).
+  - Use threading.
+- Set up basic jump-trajectory calculations between surfaces.
+  - Use threading.
+- And fall-trajectory calculations.
+- Implement template calculations.
+  - Use threading.
+- Implement pre-calculation of templates based on movement-parameters.
+- Implement saving and loading of templates.
+- Implement change-detection of pre-calculated templates with latest movement-parameters, and re-calculation and saving of templates as needed, at app-start time.
+  - Use checksums? Or some custom equality checks, with recorded movement-parameters metadata associated with the template?
+- Ensure templates are included in git and included in exported builds.
+- Implement pathfinding.
+- Implement path traversal.
+- Implement surface-state tracking.
+- Implement a new choreographer system.
+  - Auto-play this in a simple test level.
+
 
 ### High-level
 

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://48ej5xloh5ng" path="res://src/main.gd" id="1_0xm2m"]
 [ext_resource type="Texture2D" uid="uid://dbx66sovxd1" path="res://icon.svg" id="1_ig7tw"]
-[ext_resource type="Resource" uid="uid://diqdv1fn7q7ai" path="res://manifest.tres" id="2_5q4o7"]
+[ext_resource type="Resource" uid="uid://diqdv1fn7q7ai" path="res://src/manifest.tres" id="2_5q4o7"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_0xm2m")
@@ -10,7 +10,7 @@ manifest = ExtResource("2_5q4o7")
 
 [node name="GDExample" type="GDExample" parent="."]
 amplitude = 100.0
-position = Vector2(127.42, 16.1939)
+position = Vector2(184.147, 173.169)
 texture = ExtResource("1_ig7tw")
 centered = false
 

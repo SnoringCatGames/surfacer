@@ -15,9 +15,13 @@ run/main_scene="uid://dd6yp3qtgdlum"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="res://src/default_bus_layout.tres"
+
 [autoload]
 
-S="*res://scaffolder/src/core/s.gd"
+S="*res://addons/scaffolder2/src/core/s.gd"
 G="*res://src/demo_globals.gd"
 
 [native_extensions]

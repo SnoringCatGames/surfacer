@@ -1,7 +1,0 @@
-[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://db6q4u28t21ub"]
-
-[ext_resource type="FontFile" uid="uid://lbxktcs3l63k" path="res://assets/fonts/Roboto/Roboto-Bold.ttf" id="1_ehvww"]
-
-[resource]
-font = ExtResource("1_ehvww")
-font_size = 64
