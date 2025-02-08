@@ -1,0 +1,7 @@
+[gd_resource type="AudioStreamRandomizer" load_steps=2 format=3 uid="uid://bdcxfq7hd0iak"]
+
+[ext_resource type="AudioStream" uid="uid://cvvxohb34nbsq" path="res://scaffolder/assets/sfx/raw/menu_select.wav" id="1_2w8cp"]
+
+[resource]
+streams_count = 1
+stream_0/stream = ExtResource("1_2w8cp")

@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://r84x8ri638dh"]
+
+[ext_resource type="Script" uid="uid://cm4a5fwb0h26g" path="res://scaffolder/src/ui/widgets/scaffolder_option_button.gd" id="1_whqh5"]
+
+[node name="ClickOptionButton" type="OptionButton"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+script = ExtResource("1_whqh5")
+
+[connection signal="item_selected" from="." to="." method="_on_item_selected"]
+[connection signal="pressed" from="." to="." method="_on_pressed"]

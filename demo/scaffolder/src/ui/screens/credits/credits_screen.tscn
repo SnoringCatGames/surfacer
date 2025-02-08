@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3 uid="uid://cfb2gmm7xhvgn"]
+
+[ext_resource type="Script" uid="uid://dbkefobdmwgw3" path="res://scaffolder/src/ui/screens/credits/credits_screen.gd" id="1_o8oc3"]
+[ext_resource type="Script" uid="uid://bpc7dvcqlnfon" path="res://scaffolder/src/ui/screens/screen.gd" id="2_81t8e"]
+[ext_resource type="PackedScene" uid="uid://cncbapiuueajh" path="res://scaffolder/src/ui/widgets/scaffolder_header.tscn" id="3_q0r67"]
+[ext_resource type="FontFile" uid="uid://lbxktcs3l63k" path="res://scaffolder/assets/fonts/Roboto/Roboto-Bold.ttf" id="4_1bnol"]
+[ext_resource type="Script" uid="uid://bd3h5ejvvhpxo" path="res://scaffolder/src/ui/widgets/scaffolder_link_button.gd" id="4_ydbyg"]
+[ext_resource type="PackedScene" uid="uid://cxufkavj6vxo3" path="res://scaffolder/src/ui/widgets/close_button.tscn" id="5_nyg0c"]
+
+[node name="CreditsScreen" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_o8oc3")
+metadata/_custom_type_script = ExtResource("2_81t8e")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="Header" parent="CenterContainer/VBoxContainer" instance=ExtResource("3_q0r67")]
+layout_mode = 2
+text = "Credits"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
+theme_override_constants/separation = 48
+
+[node name="LeviRow" type="VBoxContainer" parent="CenterContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/VBoxContainer/LeviRow"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_1bnol")
+text = "Levi Lindsey"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ClickLinkButton" type="LinkButton" parent="CenterContainer/VBoxContainer/VBoxContainer/LeviRow"]
+layout_mode = 2
+size_flags_vertical = 4
+text = "https://levi.dev"
+uri = "https://levi.dev"
+script = ExtResource("4_ydbyg")
+metadata/_custom_type_script = ExtResource("4_ydbyg")
+
+[node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="CloseButton" parent="CenterContainer/VBoxContainer" instance=ExtResource("5_nyg0c")]
+layout_mode = 2
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]

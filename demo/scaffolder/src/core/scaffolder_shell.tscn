@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://cabuqalxveq14"]
+
+[ext_resource type="Script" uid="uid://dtjpaieqs4dx2" path="res://scaffolder/src/core/scaffolder_shell.gd" id="1_vjd0h"]
+
+[node name="ScaffolderShell" type="Container"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vjd0h")

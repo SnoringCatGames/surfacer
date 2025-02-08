@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://ca0m2myf065ep"]
+
+[ext_resource type="Script" uid="uid://cyeui10ssuvpw" path="res://scaffolder/src/ui/widgets/settings_row/checkbox_settings_row.gd" id="1_ubqyx"]
+[ext_resource type="Script" uid="uid://bgp2ve8pv0jny" path="res://scaffolder/src/ui/widgets/settings_row/settings_row.gd" id="2_pyq1a"]
+[ext_resource type="PackedScene" uid="uid://bu3fd6mxubjj3" path="res://scaffolder/src/ui/widgets/scaffolder_check_box.tscn" id="3_hccmo"]
+
+[node name="CheckboxSettingsRow" type="HBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+size_flags_horizontal = 3
+script = ExtResource("1_ubqyx")
+metadata/_custom_type_script = ExtResource("2_pyq1a")
+
+[node name="Label" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ClickCheckBox" parent="." instance=ExtResource("3_hccmo")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[connection signal="toggled" from="ClickCheckBox" to="." method="_on_click_check_box_toggled"]

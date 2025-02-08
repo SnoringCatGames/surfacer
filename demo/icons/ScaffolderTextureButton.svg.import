@@ -2,16 +2,17 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bp6qo5ab7ufyj"
-path="res://.godot/imported/Node.svg-e341975a9c56304d1df4dfb565056e72.ctex"
+uid="uid://c3x2jpuhojnnk"
+path="res://.godot/imported/ScaffolderTextureButton.svg-cc07555bb3a4609550a3e9497d61792b.ctex"
 metadata={
+"has_editor_variant": true,
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://icons/Node.svg"
-dest_files=["res://.godot/imported/Node.svg-e341975a9c56304d1df4dfb565056e72.ctex"]
+source_file="res://icons/ScaffolderTextureButton.svg"
+dest_files=["res://.godot/imported/ScaffolderTextureButton.svg-cc07555bb3a4609550a3e9497d61792b.ctex"]
 
 [params]
 
@@ -33,5 +34,5 @@ process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
 svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
+editor/scale_with_editor_scale=true
+editor/convert_colors_with_editor_theme=true

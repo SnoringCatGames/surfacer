@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 4.2333332 4.2333333"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   sodipodi:docname="ClickTextureButton.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="28.963094"
+     inkscape:cx="9.7883189"
+     inkscape:cy="10.87591"
+     inkscape:window-width="1920"
+     inkscape:window-height="1010"
+     inkscape:window-x="1913"
+     inkscape:window-y="-5"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path28594"
+       d="m 2.1166666,0.26457662 v 0.52917 h 1.5875 V 3.4395766 h -1.058333 v 0.52917 h 1.5875 V 0.26457662 Z m -1.32291669,0.26459 V 1.3580466 l -0.382402,-0.25528 -0.29352899,0.4403 0.79374999,0.52916 c 0.08887,0.0592 0.20464799,0.0592 0.29352899,0 l 0.7937497,-0.52916 -0.2935287,-0.4403 -0.382402,0.25528 V 0.52916662 Z M 2.6458336,1.5874966 v 0.26458 h -0.264584 v 0.26459 h -0.264583 v 0.26458 h 0.264583 v 0.52917 h 0.529167 0.529167 v -0.52917 h -0.264584 v -0.52917 h -0.264583 v -0.26458 z m -1.98437469,1.05833 c -0.219869,0 -0.396875,0.17701 -0.396875,0.39688 v 0.13229 0.26458 H -8.5e-8 v 0.52917 H 2.1166666 v -0.52917 h -0.264583 v -0.26458 -0.13229 c 0,-0.21987 -0.1770057,-0.39688 -0.3968747,-0.39688 z"
+       inkscape:connector-curvature="0"
+       style="fill:#ffe345;fill-opacity:1;stroke-width:0.264583"
+       inkscape:export-xdpi="192.05"
+       inkscape:export-ydpi="192.05"
+       inkscape:export-filename="C:\Users\lsl\Repositories\meteor_power\addons\scaffolder\assets\images\editor_icons\sprite_modulation_button.png" />
+  </g>
+</svg>

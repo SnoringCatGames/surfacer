@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Settings" load_steps=2 format=3 uid="uid://bnmo2q4ssxhtb"]
+
+[ext_resource type="Script" uid="uid://brtvhj1ukyb5l" path="res://scaffolder/src/config/settings.gd" id="1_wjfq4"]
+
+[resource]
+script = ExtResource("1_wjfq4")
+music_volume = 0.5
+sfx_volume = 0.5
+audio_input = "Default"
+mic_magnitude_lower_threshold = 0.0001
+mic_magnitude_upper_threshold = 0.03

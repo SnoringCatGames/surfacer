@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://cn5n2vl7vmqeg"]
+
+[ext_resource type="Script" uid="uid://c6d0ukylg7pwq" path="res://scaffolder/src/ui/screens/settings/settings_screen.gd" id="1_hrw35"]
+[ext_resource type="PackedScene" uid="uid://ca0m2myf065ep" path="res://scaffolder/src/ui/widgets/settings_row/checkbox_settings_row.tscn" id="2_5v06f"]
+[ext_resource type="PackedScene" uid="uid://cncbapiuueajh" path="res://scaffolder/src/ui/widgets/scaffolder_header.tscn" id="2_fawyf"]
+[ext_resource type="Script" uid="uid://bpc7dvcqlnfon" path="res://scaffolder/src/ui/screens/screen.gd" id="2_hbrsy"]
+[ext_resource type="PackedScene" uid="uid://b7otnhjg4qhfw" path="res://scaffolder/src/ui/widgets/settings_row/slider_settings_row.tscn" id="3_yyact"]
+[ext_resource type="PackedScene" uid="uid://cxufkavj6vxo3" path="res://scaffolder/src/ui/widgets/close_button.tscn" id="4_hbrsy"]
+
+[node name="SettingsScreen" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hrw35")
+checkbox_row_scene = ExtResource("2_5v06f")
+slider_row_scene = ExtResource("3_yyact")
+metadata/_custom_type_script = ExtResource("2_hbrsy")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="Header" parent="CenterContainer/VBoxContainer" instance=ExtResource("2_fawyf")]
+layout_mode = 2
+text = "Settings"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="SettingsRows" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+
+[node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="CloseButton" parent="CenterContainer/VBoxContainer" instance=ExtResource("4_hbrsy")]
+layout_mode = 2
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]

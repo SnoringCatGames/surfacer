@@ -1,0 +1,7 @@
+[gd_resource type="AudioStreamRandomizer" load_steps=2 format=3 uid="uid://76fvr4nvmx6c"]
+
+[ext_resource type="AudioStream" uid="uid://d10kfs384ffi7" path="res://scaffolder/assets/sfx/raw/jump.wav" id="1_fl057"]
+
+[resource]
+streams_count = 1
+stream_0/stream = ExtResource("1_fl057")

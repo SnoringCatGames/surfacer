@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 4.2333332 4.2333333"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   sodipodi:docname="ClickHSlider.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="28.963094"
+     inkscape:cx="9.7710555"
+     inkscape:cy="10.87591"
+     inkscape:window-width="1920"
+     inkscape:window-height="1010"
+     inkscape:window-x="1913"
+     inkscape:window-y="-5"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path913-5"
+       d="m 0.53293033,0.7937467 c -0.146124,0 -0.264583,0.11846 -0.264583,0.26458 v 0.52917 c 0,0.14612 0.118459,0.26458 0.264583,0.26458 0.146125,0 0.264584,-0.11846 0.264584,-0.26458 v -0.52917 c 0,-0.14612 -0.118459,-0.26458 -0.264584,-0.26458 z m 3.17499997,0 c -0.146124,0 -0.264583,0.11846 -0.264583,0.26458 v 0.52917 c 0,0.14612 0.118459,0.26458 0.264583,0.26458 0.146125,0 0.264584,-0.11846 0.264584,-0.26458 v -0.52917 c 0,-0.14612 -0.118459,-0.26458 -0.264584,-0.26458 z m -1.5875,0.26458 c -0.146124,0 -0.264583,0.11846 -0.264583,0.26459 0,0.14612 0.118459,0.26458 0.264583,0.26458 0.146125,0 0.264584,-0.11846 0.264584,-0.26458 0,-0.14613 -0.118459,-0.26459 -0.264584,-0.26459 z m 1.322917,1.32292 c -0.292259,0 -0.529167,0.23692 -0.529167,0.52917 0,0.29226 0.236916,0.52916 0.529167,0.52916 0.267203,-9e-5 0.492416,-0.19936 0.525039,-0.46458 0.01059,-0.0426 0.01041,-0.0872 -5.29e-4,-0.12971 -0.03282,-0.26479 -0.257672,-0.46373 -0.52451,-0.46405 z m -2.91041697,0.26458 c -0.357796,-0.005 -0.357796,0.53422 0,0.52917 H 2.4196483 c -0.02266,-0.0864 -0.03429,-0.17528 -0.03462,-0.26458 5e-4,-0.0893 0.01231,-0.17823 0.03514,-0.26459 z"
+       inkscape:connector-curvature="0"
+       style="fill:#ffe345;fill-opacity:1;stroke-width:0.264583"
+       inkscape:export-xdpi="192.05"
+       inkscape:export-ydpi="192.05"
+       inkscape:export-filename="C:\Users\lsl\Repositories\exampler\addons\scaffolder\assets\images\editor_icons\slider.png" />
+  </g>
+</svg>

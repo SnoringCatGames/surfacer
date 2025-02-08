@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3 uid="uid://1t038urjp73n"]
+
+[ext_resource type="Script" uid="uid://cm68p8ixbp1t8" path="res://scaffolder/src/ui/screens/game_over/game_over_screen.gd" id="1_bko5b"]
+[ext_resource type="Script" uid="uid://bpc7dvcqlnfon" path="res://scaffolder/src/ui/screens/screen.gd" id="2_klv2i"]
+[ext_resource type="PackedScene" uid="uid://cncbapiuueajh" path="res://scaffolder/src/ui/widgets/scaffolder_header.tscn" id="3_u2unf"]
+[ext_resource type="PackedScene" uid="uid://dcisa6xson4x6" path="res://scaffolder/src/ui/widgets/scaffolder_button.tscn" id="4_mnaib"]
+[ext_resource type="PackedScene" uid="uid://bt0tqy0i2sf0j" path="res://scaffolder/src/ui/widgets/top_bar.tscn" id="5_v4snt"]
+
+[node name="GameOverScreen" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bko5b")
+metadata/_custom_type_script = ExtResource("2_klv2i")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="Header" parent="CenterContainer/VBoxContainer" instance=ExtResource("3_u2unf")]
+layout_mode = 2
+text = "Game Over"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayButton" parent="CenterContainer/VBoxContainer" instance=ExtResource("4_mnaib")]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+text = "Play Again"
+
+[node name="TopBar" parent="." instance=ExtResource("5_v4snt")]
+layout_mode = 2
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]

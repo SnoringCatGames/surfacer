@@ -1,0 +1,58 @@
+[gd_scene load_steps=5 format=3 uid="uid://bt0tqy0i2sf0j"]
+
+[ext_resource type="Script" uid="uid://cp5clichq860i" path="res://scaffolder/src/ui/widgets/top_bar.gd" id="1_vakm5"]
+[ext_resource type="PackedScene" uid="uid://b1xl7km0tvbi6" path="res://scaffolder/src/ui/widgets/scaffolder_texture_button.tscn" id="2_k8w21"]
+[ext_resource type="Texture2D" uid="uid://d0cl04clpwy5t" path="res://scaffolder/assets/icons/help.png" id="3_2dvok"]
+[ext_resource type="Texture2D" uid="uid://bj7nga3w608bi" path="res://scaffolder/assets/icons/settings.png" id="4_tq0yo"]
+
+[node name="TopBar" type="MarginContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 80.0
+grow_horizontal = 2
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+script = ExtResource("1_vakm5")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 20
+
+[node name="Credits" parent="HBoxContainer" instance=ExtResource("2_k8w21")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+texture_normal = ExtResource("3_2dvok")
+texture_pressed = ExtResource("3_2dvok")
+texture_hover = ExtResource("3_2dvok")
+texture_disabled = ExtResource("3_2dvok")
+texture_focused = ExtResource("3_2dvok")
+ignore_texture_size = true
+stretch_mode = 5
+master_texture = ExtResource("3_2dvok")
+
+[node name="Spacer" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Settings" parent="HBoxContainer" instance=ExtResource("2_k8w21")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+texture_normal = ExtResource("4_tq0yo")
+texture_pressed = ExtResource("4_tq0yo")
+texture_hover = ExtResource("4_tq0yo")
+texture_disabled = ExtResource("4_tq0yo")
+texture_focused = ExtResource("4_tq0yo")
+ignore_texture_size = true
+stretch_mode = 5
+master_texture = ExtResource("4_tq0yo")
+
+[connection signal="pressed" from="HBoxContainer/Credits" to="." method="_on_credits_pressed"]
+[connection signal="pressed" from="HBoxContainer/Settings" to="." method="_on_settings_pressed"]

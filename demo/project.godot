@@ -10,10 +10,15 @@ config_version=5
 
 [application]
 
-config/name="Surfacer Test"
+config/name="Surfacer Demo"
 run/main_scene="uid://dd6yp3qtgdlum"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+S="*res://scaffolder/src/core/s.gd"
+G="*res://src/demo_globals.gd"
 
 [native_extensions]
 

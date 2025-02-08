@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://bu3fd6mxubjj3"]
+
+[ext_resource type="Script" uid="uid://cvhb12a44d4fh" path="res://scaffolder/src/ui/widgets/scaffolder_check_box.gd" id="1_ej806"]
+
+[node name="ClickCheckBox" type="CheckBox"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_default_cursor_shape = 2
+script = ExtResource("1_ej806")
+
+[connection signal="toggled" from="." to="." method="_on_toggled"]

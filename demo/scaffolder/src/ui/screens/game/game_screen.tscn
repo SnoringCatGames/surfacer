@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://blwby8enw3e2c"]
+
+[ext_resource type="Script" uid="uid://lpmpeu53enf4" path="res://scaffolder/src/ui/screens/game/game_screen.gd" id="1_gqhyb"]
+[ext_resource type="Script" uid="uid://bpc7dvcqlnfon" path="res://scaffolder/src/ui/screens/screen.gd" id="2_ibojm"]
+
+[node name="GameScreen" type="PanelContainer"]
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("1_gqhyb")
+canvas_layer = "game"
+pauses_game_when_open = false
+metadata/_custom_type_script = ExtResource("2_ibojm")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control"]
+layout_mode = 2
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 2
+
+[node name="SubViewport" type="SubViewport" parent="Control/SubViewportContainer"]
+unique_name_in_owner = true
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+audio_listener_enable_2d = true
+physics_object_picking = true
+physics_object_picking_sort = true
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
