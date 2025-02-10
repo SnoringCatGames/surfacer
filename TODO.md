@@ -3,7 +3,6 @@
 
 ### Next
 
-- Setup Scaffolder2 as a submodule (of the demo app).
 - Figure out how to set up the Surfacer manifest.
   - This should be accessible from C++.
   - So does this need to be _defined_ from C++?
