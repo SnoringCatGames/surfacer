@@ -3,15 +3,14 @@
 
 ### Next
 
+- Address some of the FIXMEs from porting over the current Scaffolder logic.
+
+- Start implementing "First steps"! :)
+
 - Figure out how to set up the Surfacer manifest.
   - This should be accessible from C++.
   - So does this need to be _defined_ from C++?
   - This will be separate from the Scaffolder manifest, which is a plain .tres file.
-- Review Godot's default Navigation APIs. And other engine APIs.
-- Finish thinking about the high-level API design from the user's perspective.
-- Review Surfacer v1 logic.
-- Finish thinking about the high-level algorithm design, and what parts to preserve and change from Surfacer v1.
-- Address some of the FIXMEs from porting over the current Scaffolder logic.
 - Set up annotations system.
 - Set up surface parsing.
   - Just use vanilla tilemaps for now.
@@ -32,6 +31,11 @@
 - Implement surface-state tracking.
 - Implement a new choreographer system.
   - Auto-play this in a simple test level.
+- Make surface-parsing only happen lazily and locally to the agent.
+  - This should let us handle enormous levels.
+  - Cache recently parsed surfaces.
+  - Clear cached surfaces when the level changes.
+  - Store a timestamp with cached surfaces, update the timestamp when a surface is accessed, and clear cached surfaces when they become old.
 
 
 ### High-level
@@ -44,19 +48,67 @@
 
 ### API design
 
-- Configure movement parameters globally, removed from character definitions.
+#### First steps
+
+- Port surface parsing.
+- Create a jump template calculator (C++).
+  - Per MovementProfile.
+    - Rename MovementParameters to be MovementProfile.
+  - Separate template for jumping from a floor vs a wall.
+    - TODO for walls.
+- Have MovementProfile be a type of resource, and register it in Project Settings.
+- Create a PlatformGraph (C++).
+  - Add a function for calculating reachable surfaces from a surface for a given MovementProfile.
+    - Add support for different edge types (WalkAlongSurfaceEdge, ClimbToAdjacentSurfaceEdge, ...) (everything from Surfacer 1.0).
+      - TODO for all edge types other than jumps.
+    - For JumpFromSurfaceEdge, use the new jump template.
+    - Use a modified A* star to calculate paths.
+      - Include a max-depth parameter. As soon as the search hits that depth, return the path to that latest closest node.
+- Create SurfacerAgent.
+  - Keep this up-to-date frame-by-frame.
+- Create SurfaceState.
+  - Keep this up-to-date frame-by-frame.
+
+#### Eventually
+
+- Configure things using custom additions to ProjectSettings.
+  - ProjectSettings.add_property_info
+    - There should also be a way in C++ to add and access...
+  - The supported MovementParameters.
+  - Other Scaffolder and Surfacer Manifest properties.
+  - Annotation colors and parameters.
+- Add a custom debug "monitor" for analyzing performance.
+  - How long surface-parsing takes.
+  - How long path-finding takes (avg across agents as well as cumulative total per-frame across all agents).
+  - How many agents.
+  - Number of navigation errors (unable to find path, unexpected state when navigating, ...).
+  - Total time spent on navigation-related processing per frame.
+  - Number of surfaces.
+  - Number of NavigationLinks.
+- Configure movement parameters globally, removed from agent definitions.
   - Encourage a limited set of movement parameters.
   - Have the user provide a Resource that extends our parent MovementParameters.
   - Have the user pass this Resource to Su.set_up, among other things!
-  - Define SurfacerCharacter (extends CharacterBody2D). The user extends this for any node that use Surfacer navigation.
+  - Define SurfacerAgent (Agent is the standard AI entity term) (extends Node). The user extends this for any node that use Surfacer navigation.
+    - Rather than having SurfacerAgent extend CharacterBody2D, use composition.
+    - Let the consumer do whatever CharacterBody2D logic they want, but they then can create a SurfacerAgent, and use a couple important APIs on it:
+      - SurfacerAgent.set_up(host: Node2D)
+      - SurfacerAgent.is_driving_movement
+        - When true, the SurfacerAgent will override movement properties on the character.
+      - SurfacerAgent will then check the host every tick and update surface_state, navigation progress, and trigger any new pathfinding as needed.
   - Similar to Surfacer v1, try to apply movement and position state using the underlying vanilla Godot APIs (actually set velocity, position, move_and_slide (or whatever it is now), record collisions, etc.). So users should be able to rely on all the usual tools they're familiar with.
   - 
 - Use multi-threading.
 - Include whatever weird deps I want in the demo/ app.
   - These won't be included in the resulting compiled GDExtension.
   - So it should be safe to include external Surfacer and Behavior tree plugins from there.
-- LEFT OFF HERE
 
+#### Scratch notes
+
+- `target_position`
+- `is_navigating`
+- `path_postprocessing`
+- 
 
 ### Pathfinding algorithm
 
@@ -68,8 +120,26 @@
   - No more storing static, pre-calculated platform graphs.
   - _Maybe_ cache recently calculated jumps, for quick lookups later.
   - Support more fudging of accurate trajectories.
-    - Forcing characters to reach expected positions at expected times.
+    - Forcing agents to reach expected positions at expected times.
 - LEFT OFF HERE
+
+
+### Follow-up features
+
+- Support annotating and/or excluding individual surfaces with custom"NavigationLayers".
+- Fall-through floors.
+  - 
+- Custom "NavigationLinks" to support moving platforms and ladders.
+  - Doors
+  - Moving platforms
+    - In editor, define the start and end position for the platform.
+    - Then, the platform internally creates a NavigationLink with start and end positions that match.
+    - Then, agent pathfinding can consider that there is a platform at the start and end positions and that there is an intra-surface edge from start to end.
+    - Then, agent path-following can know to stop and wait at the jump-off point before the start position until the platform is in range.
+    - Then, need to also support sticking to the platform as it moves (or walking to the other side, if needed).
+  - Ladders should be easy.
+- Agent avoidance.
+  - Consider the upcoming path and/or velocity of other agents.
 
 
 ### OLD NOTES: Jump-range templates per-player in place of a platform graph
