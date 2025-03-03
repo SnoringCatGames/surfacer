@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ScaffolderManifest" load_steps=19 format=3 uid="uid://diqdv1fn7q7ai"]
+[gd_resource type="Resource" script_class="ScaffolderManifest" load_steps=20 format=3 uid="uid://diqdv1fn7q7ai"]
 
 [ext_resource type="PackedScene" uid="uid://cfrdnhuypky8j" path="res://src/demo_level.tscn" id="2_00yko"]
 [ext_resource type="Script" uid="uid://ctpkusaxuuelx" path="res://addons/scaffolder2/src/config/manifest.gd" id="2_h5d7k"]
@@ -18,6 +18,7 @@
 [ext_resource type="AudioStream" uid="uid://d4buaef6wotn2" path="res://addons/scaffolder2/assets/sfx/menu_click.tres" id="9_rt1qq"]
 [ext_resource type="PackedScene" uid="uid://cn5n2vl7vmqeg" path="res://addons/scaffolder2/src/ui/screens/settings/settings_screen.tscn" id="10_ay283"]
 [ext_resource type="PackedScene" uid="uid://cabuqalxveq14" path="res://addons/scaffolder2/src/core/scaffolder_shell.tscn" id="13_yuaqf"]
+[ext_resource type="PackedScene" uid="uid://cttwbnovsef3h" path="res://addons/scaffolder2/src/ui/hud/super_hud.tscn" id="19_pwtdj"]
 
 [resource]
 script = ExtResource("2_h5d7k")
@@ -26,9 +27,10 @@ dev_mode = true
 skip_main_menu_in_dev_mode = false
 pauses_on_focus_out = true
 show_hud = true
+main_theme = ExtResource("2_nnvfo")
 dev_mode_level = ExtResource("2_00yko")
 main_level = ExtResource("2_00yko")
-main_theme = ExtResource("2_nnvfo")
+hud_scene = ExtResource("3_mae31")
 screens = Dictionary[String, PackedScene]({
 "credits": ExtResource("5_fxhmy"),
 "game": ExtResource("7_gfii5"),
@@ -53,6 +55,6 @@ log_surfacer_events = false
 log_surfacer_events_verbose = false
 log_scaffolder_events = false
 log_scaffolder_events_verbose = false
-hud_scene = ExtResource("3_mae31")
+super_hud_scene = ExtResource("19_pwtdj")
 shell_scene = ExtResource("13_yuaqf")
 metadata/_custom_type_script = ExtResource("2_h5d7k")

@@ -36,9 +36,18 @@ Run the following command to download godot-cpp:
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
 env.Append(CPPPATH=["src/"])
-sources = Glob("src/*.cpp")
 
-if env["target"] in ["editor", "template_debug"]:
+sources = (
+    Glob("src/*.cpp") +
+    Glob("src/annotations/*.cpp") +
+    Glob("src/surface/*.cpp")
+)
+
+# Levi added this in order to prevent the linker from complaining about trying
+# to generate a doc_data.*.obj file that already exists.
+hack = True
+
+if env["target"] in ["editor", "template_debug"] and not hack:
     try:
         doc_data = env.GodotCPPDocData("src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
         sources.append(doc_data)
