@@ -9,6 +9,9 @@
 - Compiling the docs:
 `godot --doctool ../ --gdextension-docs`
 (from the `demo/` directory)
+- Running the editor:
+`godot demo\project.godot`
+(from the project root directory)
 - GDExtension docs:
 https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextension_cpp_example.html
 - https://github.com/godotengine/godot-cpp-template
@@ -16,6 +19,7 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 - 
 
 ### Next
+
 
 - FIXME: Figure out how to hook-up and use the auto-formatter (per-file, and across codebase).
 - FIXME: Figure out how to hook-up "Run and Debug" in VSCode.

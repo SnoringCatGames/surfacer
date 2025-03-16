@@ -57,6 +57,35 @@ void Surface::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_counter_clockwise_convex_neighbor"), &Surface::get_counter_clockwise_convex_neighbor);
     ClassDB::bind_method(D_METHOD("get_counter_clockwise_concave_neighbor"), &Surface::get_counter_clockwise_concave_neighbor);
     ClassDB::bind_method(D_METHOD("get_counter_clockwise_collinear_neighbor"), &Surface::get_counter_clockwise_collinear_neighbor);
+
+    ClassDB::bind_static_method("Surface", D_METHOD("get_normal_from_side", "side"), &Surface::get_normal_from_side);
+
+	BIND_ENUM_CONSTANT(UNKNOWN_SIDE);
+	BIND_ENUM_CONSTANT(FLOOR);
+	BIND_ENUM_CONSTANT(CEILING);
+	BIND_ENUM_CONSTANT(LEFT_WALL);
+	BIND_ENUM_CONSTANT(RIGHT_WALL);
+
+	BIND_ENUM_CONSTANT(UNKNOWN_CURVATURE);
+	BIND_ENUM_CONSTANT(COLLINEAR);
+	BIND_ENUM_CONSTANT(CONVEX);
+	BIND_ENUM_CONSTANT(CONCAVE);
+}
+
+Vector2 Surface::get_normal_from_side(Side p_side)
+{
+    switch (p_side)
+    {
+        case Side::FLOOR: return Vector2Up;
+        case Side::CEILING: return Vector2Down;
+        case Side::LEFT_WALL: return Vector2Right;
+        case Side::RIGHT_WALL: return Vector2Left;
+        case Side::UNKNOWN_SIDE:
+        default:
+        {
+            return Vector2NaN;
+        }
+    }
 }
 
 Surface::Surface() {

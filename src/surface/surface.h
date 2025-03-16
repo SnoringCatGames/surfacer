@@ -1,23 +1,16 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include "surface/surface_side.h"
+#include "internal_utils.h"
+#include "enums/neighbor_curvature.h"
+#include "enums/surface_side.h"
 
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/tile_map.hpp>
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/variant/rect2.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
-
-namespace godot {
-enum NeighborCurvature {
-	UNKNOWN,
-	COLLINEAR,
-	CONVEX,
-	CONCAVE,
-};
-}
-VARIANT_ENUM_CAST(NeighborCurvature);
+#include <godot_cpp/variant/vector2.hpp>
 
 namespace godot {
 
@@ -26,8 +19,54 @@ class SurfaceChunk;
 class Surface : public RefCounted {
 	GDCLASS(Surface, RefCounted)
 
+public:
+	enum Side
+	{
+		UNKNOWN_SIDE,
+		FLOOR,
+		CEILING,
+		LEFT_WALL,
+		RIGHT_WALL,
+		_SurfaceSide_COUNT,
+	};
 private:
-	SurfaceSide side = SurfaceSide::NONE;
+	static constexpr char* _surface_side_strings[Side::_SurfaceSide_COUNT] = {
+		"UNKNOWN",
+		"FLOOR",
+		"CEILING",
+		"LEFT_WALL",
+		"RIGHT_WALL",
+	};
+public:
+	static String surface_side_to_string(Side p_side)
+	{
+		return _surface_side_strings[p_side];
+	}
+
+public:
+	enum NeighborCurvature
+	{
+		UNKNOWN_CURVATURE,
+		COLLINEAR,
+		CONVEX,
+		CONCAVE,
+		_NeighborCurvature_COUNT,
+	};
+private:
+	static constexpr char* _neighbor_curvature_strings[NeighborCurvature::_NeighborCurvature_COUNT] = {
+		"UNKNOWN",
+		"COLLINEAR",
+		"CONVEX",
+		"CONCAVE",
+	};
+public:
+	static String neighbor_curvature_to_string(NeighborCurvature p_side)
+	{
+		return _neighbor_curvature_strings[p_side];
+	}
+
+private:
+	Side side = Side::UNKNOWN_SIDE;
 	
 	PackedVector2Array vertices;
 	Rect2 bounding_box;
@@ -37,21 +76,23 @@ private:
 	TileMap* tile_map;
 	PackedInt32Array tile_map_indices;
 
-	NeighborCurvature clockwise_neighbor_curvature = NeighborCurvature::UNKNOWN;
+	NeighborCurvature clockwise_neighbor_curvature = NeighborCurvature::UNKNOWN_CURVATURE;
 	Ref<Surface> clockwise_neighbor;
 	
-	NeighborCurvature counter_clockwise_neighbor_curvature = NeighborCurvature::UNKNOWN;
+	NeighborCurvature counter_clockwise_neighbor_curvature = NeighborCurvature::UNKNOWN_CURVATURE;
 	Ref<Surface> counter_clockwise_neighbor;
 
 protected:
 	static void _bind_methods();
 
 public:
+	static Vector2 get_normal_from_side(Side p_side);
+
 	Surface();
 	~Surface();
 
-	void set_side(SurfaceSide p_side) { side = p_side; }
-	SurfaceSide get_side() const { return side; }
+	void set_side(Side p_side) { side = p_side; }
+	Side get_side() const { return side; }
 
 	void set_vertices(PackedVector2Array p_vertices) { vertices = p_vertices; }
 	PackedVector2Array get_vertices() const { return vertices; }
@@ -82,9 +123,7 @@ public:
 
 	Vector2 get_normal() const
 	{
-		// FIXME: LEFT OFF HERE: ----------------------------		
-		// FIXME: Figure out where to put static functions for exposure to GDScript! Then, call a shared get_normal(side) from here.
-		return Vector2(0,1);
+		return get_normal_from_side(side);
 	}
 
 	Ref<Surface> get_clockwise_convex_neighbor() const
@@ -115,5 +154,8 @@ public:
 };
 
 }
+
+VARIANT_ENUM_CAST(Surface::Side);
+VARIANT_ENUM_CAST(Surface::NeighborCurvature);
 
 #endif
