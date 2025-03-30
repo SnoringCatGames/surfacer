@@ -4,7 +4,7 @@
 ### Notes
 
 - Compiling the plugin:
-`scons platform=windows dev_build=true debug_symbols=yes target=template_debug`
+`scons platform=windows dev_build=true dev_mode=true`
 (from the project root directory)
   - dev_build lets us use C++ breakpoints.
     - But changes the editor path (in launch.json) from `godot/bin/godot.windows.editor.x86_64.exe` to `godot/bin/godot.windows.editor.dev.x86_64.exe`.
