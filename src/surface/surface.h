@@ -2,8 +2,6 @@
 #define SURFACE_H
 
 #include "internal_utils.h"
-#include "enums/neighbor_curvature.h"
-#include "enums/surface_side.h"
 
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/tile_map.hpp>
@@ -27,10 +25,10 @@ public:
 		CEILING,
 		LEFT_WALL,
 		RIGHT_WALL,
-		_SurfaceSide_COUNT,
+		_Side_COUNT,
 	};
 private:
-	static constexpr char* _surface_side_strings[Side::_SurfaceSide_COUNT] = {
+	static constexpr char* _side_strings[Side::_Side_COUNT] = {
 		"UNKNOWN",
 		"FLOOR",
 		"CEILING",
@@ -38,9 +36,9 @@ private:
 		"RIGHT_WALL",
 	};
 public:
-	static String surface_side_to_string(Side p_side)
+	static String side_to_string(Side p_side)
 	{
-		return _surface_side_strings[p_side];
+		return _side_strings[p_side];
 	}
 
 public:
