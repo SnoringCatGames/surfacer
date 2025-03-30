@@ -11,7 +11,7 @@ func _ready() -> void:
     S.set_up(manifest)
     # FIXME: REMOVE
     var foo: Surface
-    var side: Surface.SurfaceSide
+    var side: Surface.Side
     Surface.get_normal_from_side(side)
 
 

@@ -8,6 +8,6 @@ script = ExtResource("1_hnx8y")
 
 [node name="GDExample" type="GDExample" parent="."]
 amplitude = 100.0
-position = Vector2(5.11191, 1.15079)
+position = Vector2(181.208, 0.278273)
 texture = ExtResource("2_7tc87")
 centered = false
