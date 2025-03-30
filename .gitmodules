@@ -5,3 +5,6 @@
 [submodule "demo/addons/scaffolder2"]
 	path = demo/addons/scaffolder2
 	url = https://github.com/SnoringCatGames/scaffolder2
+[submodule "godot"]
+	path = godot
+	url = https://github.com/godotengine/godot.git
