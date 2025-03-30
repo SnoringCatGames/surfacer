@@ -9,7 +9,6 @@ class SurfacerAgent : public RefCounted {
 	GDCLASS(SurfacerAgent, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -18,6 +17,6 @@ public:
 	~SurfacerAgent();
 };
 
-}
+} //namespace godot
 
 #endif

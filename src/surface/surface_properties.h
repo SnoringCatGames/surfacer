@@ -9,7 +9,6 @@ class SurfaceProperties : public RefCounted {
 	GDCLASS(SurfaceProperties, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -18,6 +17,6 @@ public:
 	~SurfaceProperties();
 };
 
-}
+} //namespace godot
 
 #endif

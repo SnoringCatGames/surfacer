@@ -9,7 +9,6 @@ class Annotation : public RefCounted {
 	GDCLASS(Annotation, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -18,6 +17,6 @@ public:
 	~Annotation();
 };
 
-}
+} //namespace godot
 
 #endif

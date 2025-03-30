@@ -9,7 +9,6 @@ class PathAnnotation : public RefCounted {
 	GDCLASS(PathAnnotation, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -18,6 +17,6 @@ public:
 	~PathAnnotation();
 };
 
-}
+} //namespace godot
 
 #endif

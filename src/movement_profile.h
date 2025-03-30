@@ -10,7 +10,6 @@ class MovementProfile : public RefCounted {
 	GDCLASS(MovementProfile, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -19,6 +18,6 @@ public:
 	~MovementProfile();
 };
 
-}
+} //namespace godot
 
 #endif

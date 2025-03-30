@@ -9,7 +9,6 @@ class SurfaceGraph : public RefCounted {
 	GDCLASS(SurfaceGraph, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -18,6 +17,6 @@ public:
 	~SurfaceGraph();
 };
 
-}
+} //namespace godot
 
 #endif

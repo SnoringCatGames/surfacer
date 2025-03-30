@@ -9,7 +9,6 @@ class SurfaceStore : public RefCounted {
 	GDCLASS(SurfaceStore, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -18,6 +17,6 @@ public:
 	~SurfaceStore();
 };
 
-}
+} //namespace godot
 
 #endif

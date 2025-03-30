@@ -30,6 +30,6 @@ public:
 	Rect2 get_bounding_box() const { return bounding_box; }
 };
 
-}
+} //namespace godot
 
 #endif

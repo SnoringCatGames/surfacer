@@ -9,7 +9,6 @@ class AgentSurfaceState : public RefCounted {
 	GDCLASS(AgentSurfaceState, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -18,6 +17,6 @@ public:
 	~AgentSurfaceState();
 };
 
-}
+} //namespace godot
 
 #endif

@@ -6,8 +6,8 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/tile_map.hpp>
 #include <godot_cpp/core/binder_common.hpp>
-#include <godot_cpp/variant/rect2.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
+#include <godot_cpp/variant/rect2.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 
 namespace godot {
@@ -18,8 +18,7 @@ class Surface : public RefCounted {
 	GDCLASS(Surface, RefCounted)
 
 public:
-	enum Side
-	{
+	enum Side {
 		UNKNOWN_SIDE,
 		FLOOR,
 		CEILING,
@@ -27,56 +26,57 @@ public:
 		RIGHT_WALL,
 		_Side_COUNT,
 	};
+
 private:
-	static constexpr char* _side_strings[Side::_Side_COUNT] = {
+	static constexpr char *_side_strings[Side::_Side_COUNT] = {
 		"UNKNOWN",
 		"FLOOR",
 		"CEILING",
 		"LEFT_WALL",
 		"RIGHT_WALL",
 	};
+
 public:
-	static String side_to_string(Side p_side)
-	{
+	static String side_to_string(Side p_side) {
 		return _side_strings[p_side];
 	}
 
 public:
-	enum NeighborCurvature
-	{
+	enum NeighborCurvature {
 		UNKNOWN_CURVATURE,
 		COLLINEAR,
 		CONVEX,
 		CONCAVE,
 		_NeighborCurvature_COUNT,
 	};
+
 private:
-	static constexpr char* _neighbor_curvature_strings[NeighborCurvature::_NeighborCurvature_COUNT] = {
+	static constexpr char *_neighbor_curvature_strings[NeighborCurvature::_NeighborCurvature_COUNT] = {
 		"UNKNOWN",
 		"COLLINEAR",
 		"CONVEX",
 		"CONCAVE",
 	};
+
 public:
-	static String neighbor_curvature_to_string(NeighborCurvature p_side)
-	{
+	static String neighbor_curvature_to_string(NeighborCurvature p_side) {
 		return _neighbor_curvature_strings[p_side];
 	}
 
 private:
 	Side side = Side::UNKNOWN_SIDE;
-	
+
 	PackedVector2Array vertices;
 	Rect2 bounding_box;
 
 	Ref<SurfaceChunk> chunk;
-	
-	TileMap* tile_map;
+
+	TileMap *tile_map;
 	PackedInt32Array tile_map_indices;
 
 	NeighborCurvature clockwise_neighbor_curvature = NeighborCurvature::UNKNOWN_CURVATURE;
 	Ref<Surface> clockwise_neighbor;
-	
+
 	NeighborCurvature counter_clockwise_neighbor_curvature = NeighborCurvature::UNKNOWN_CURVATURE;
 	Ref<Surface> counter_clockwise_neighbor;
 
@@ -101,8 +101,8 @@ public:
 	void set_chunk(Ref<SurfaceChunk> p_chunk);
 	Ref<SurfaceChunk> get_chunk() const;
 
-	void set_tile_map(TileMap* p_tile_map) { tile_map = p_tile_map; }
-	TileMap* get_tile_map() const { return tile_map; }
+	void set_tile_map(TileMap *p_tile_map) { tile_map = p_tile_map; }
+	TileMap *get_tile_map() const { return tile_map; }
 
 	void set_tile_map_indices(PackedInt32Array p_tile_map_indices) { tile_map_indices = p_tile_map_indices; }
 	PackedInt32Array get_tile_map_indices() const { return tile_map_indices; }
@@ -119,39 +119,32 @@ public:
 	void set_counter_clockwise_neighbor(Ref<Surface> p_counter_clockwise_neighbor) { counter_clockwise_neighbor = p_counter_clockwise_neighbor; }
 	Ref<Surface> get_counter_clockwise_neighbor() const { return counter_clockwise_neighbor; }
 
-	Vector2 get_normal() const
-	{
+	Vector2 get_normal() const {
 		return get_normal_from_side(side);
 	}
 
-	Ref<Surface> get_clockwise_convex_neighbor() const
-	{
+	Ref<Surface> get_clockwise_convex_neighbor() const {
 		return clockwise_neighbor_curvature == NeighborCurvature::CONVEX ? clockwise_neighbor : nullptr;
 	}
-	Ref<Surface> get_clockwise_concave_neighbor() const
-	{
+	Ref<Surface> get_clockwise_concave_neighbor() const {
 		return clockwise_neighbor_curvature == NeighborCurvature::CONCAVE ? clockwise_neighbor : nullptr;
 	}
-	Ref<Surface> get_clockwise_collinear_neighbor() const
-	{
+	Ref<Surface> get_clockwise_collinear_neighbor() const {
 		return clockwise_neighbor_curvature == NeighborCurvature::COLLINEAR ? clockwise_neighbor : nullptr;
 	}
 
-	Ref<Surface> get_counter_clockwise_convex_neighbor() const
-	{
+	Ref<Surface> get_counter_clockwise_convex_neighbor() const {
 		return counter_clockwise_neighbor_curvature == NeighborCurvature::CONVEX ? counter_clockwise_neighbor : nullptr;
 	}
-	Ref<Surface> get_counter_clockwise_concave_neighbor() const
-	{
+	Ref<Surface> get_counter_clockwise_concave_neighbor() const {
 		return counter_clockwise_neighbor_curvature == NeighborCurvature::CONCAVE ? counter_clockwise_neighbor : nullptr;
 	}
-	Ref<Surface> get_counter_clockwise_collinear_neighbor() const
-	{
+	Ref<Surface> get_counter_clockwise_collinear_neighbor() const {
 		return counter_clockwise_neighbor_curvature == NeighborCurvature::COLLINEAR ? counter_clockwise_neighbor : nullptr;
 	}
 };
 
-}
+} //namespace godot
 
 VARIANT_ENUM_CAST(Surface::Side);
 VARIANT_ENUM_CAST(Surface::NeighborCurvature);

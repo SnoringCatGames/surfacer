@@ -37,6 +37,6 @@ public:
 	Vector2 get_target_position() const { return target_position; }
 };
 
-}
+} //namespace godot
 
 #endif

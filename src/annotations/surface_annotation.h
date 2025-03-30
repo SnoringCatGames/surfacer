@@ -9,7 +9,6 @@ class SurfaceAnnotation : public RefCounted {
 	GDCLASS(SurfaceAnnotation, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -18,6 +17,6 @@ public:
 	~SurfaceAnnotation();
 };
 
-}
+} //namespace godot
 
 #endif

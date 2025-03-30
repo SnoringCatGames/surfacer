@@ -23,13 +23,13 @@ public:
 
 	virtual void _process(double delta) override;
 
-    void set_amplitude(double p_amplitude);
-    double get_amplitude() const;
+	void set_amplitude(double p_amplitude);
+	double get_amplitude() const;
 
-    void set_speed(double p_speed);
-    double get_speed() const;
+	void set_speed(double p_speed);
+	double get_speed() const;
 };
 
-}
+} //namespace godot
 
 #endif

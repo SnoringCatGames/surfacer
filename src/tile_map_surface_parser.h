@@ -9,7 +9,6 @@ class TileMapSurfaceParser : public RefCounted {
 	GDCLASS(TileMapSurfaceParser, RefCounted)
 
 private:
-
 protected:
 	static void _bind_methods();
 
@@ -18,6 +17,6 @@ public:
 	~TileMapSurfaceParser();
 };
 
-}
+} //namespace godot
 
 #endif
