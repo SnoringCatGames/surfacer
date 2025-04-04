@@ -9,7 +9,7 @@ func _ready() -> void:
     G.main = self
 
     S.set_up(manifest)
-    # FIXME: REMOVE
+    # TODO: REMOVE
     var foo: Surface
     var side: Surface.Side
     Surface.get_normal_from_side(side)

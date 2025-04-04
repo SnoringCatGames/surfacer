@@ -2,6 +2,7 @@
 #define INTERNAL_UTILS_H
 
 #include <godot_cpp/core/error_macros.hpp>
+#include <godot_cpp/variant/variant.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 
 // TODO: Update this when no longer debugging Surfacer.
@@ -48,12 +49,6 @@
 #endif
 
 namespace godot {
-static const Vector2 Vector2Up = Vector2(0, -1);
-static const Vector2 Vector2Down = Vector2(0, 1);
-static const Vector2 Vector2Left = Vector2(-1, 0);
-static const Vector2 Vector2Right = Vector2(1, 0);
-static const Vector2 Vector2Zero = Vector2(0, 0);
-static const Vector2 Vector2NaN = Vector2(Math_NAN, Math_NAN);
 } //namespace godot
 
 #endif

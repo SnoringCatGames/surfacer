@@ -27,4 +27,4 @@ android.release.arm64 = "res://bin/android/libSurfacer.android.template_release.
 
 [icons]
 
-GDExample = "res://icons/Node.svg"
+GDExample = "res://addons/scaffolder2/assets/editor_icons/ScaffolderNode.svg"

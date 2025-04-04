@@ -22,13 +22,24 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 
 ### Next
 
+- Port-over scaffolder_geometry, and copy them to scaffolder2 directly.
+  - And other utils?
+  - As I do this, port to C++ all functionality that I'll need to access from C++, and then update the corresponding scaffolder2 GDScript logic to reference this new C++ logic.
 
-- FIXME: Figure out how to hook-up and use the auto-formatter (per-file, and across codebase).
-- FIXME: Figure out how to hook-up "Run and Debug" in VSCode.
+- Test writing unit tests!
+  - Write tests for all utility functionality I've ported over.
+  - Write tests for Surface.
 
-- Address some of the FIXMEs from porting over the current Scaffolder logic.
+- Finish implementing surface.
 
-- Start implementing "First steps"! :)
+- Test doc comments on header method declarations.
+- Test doc comments on class header declarations.
+
+- Port-over other basic classes and implementations of those classes.
+
+- Implement surface_parser with Godot 4.4 TileMap and collision APIs.
+
+- Implement stuff from "First steps"! :)
 
 - Figure out how to set up the Surfacer manifest.
   - This should be accessible from C++.
@@ -59,6 +70,8 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
   - Cache recently parsed surfaces.
   - Clear cached surfaces when the level changes.
   - Store a timestamp with cached surfaces, update the timestamp when a surface is accessed, and clear cached surfaces when they become old.
+
+- Address some of the TODOs from porting over the current Scaffolder logic.
 
 
 ### High-level

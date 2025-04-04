@@ -5,7 +5,8 @@
 ### General config, applies to all languages ###
 BasedOnStyle:  LLVM
 AccessModifierOffset: -4
-AlignAfterOpenBracket: DontAlign
+# NOTE: Levi changed this (originally DontAlign).
+AlignAfterOpenBracket: AlwaysBreak
 # AlignArrayOfStructures: None
 # AlignConsecutiveMacros: None
 # AlignConsecutiveAssignments: None
@@ -30,7 +31,8 @@ AllowAllParametersOfDeclarationOnNextLine: false
 # AttributeMacros:
 #   - __capability
 # BinPackArguments: true
-# BinPackParameters: true
+# NOTE: Levi changed this (originally true).
+BinPackParameters: false
 # BraceWrapping:
 #   AfterCaseLabel:  false
 #   AfterClass:      false
@@ -59,7 +61,8 @@ AllowAllParametersOfDeclarationOnNextLine: false
 # BreakConstructorInitializersBeforeComma: false
 BreakConstructorInitializers: AfterColon
 # BreakStringLiterals: true
-ColumnLimit:     0
+# NOTE: Levi changed this (originally 0).
+ColumnLimit:     80
 # CommentPragmas:  '^ IWYU pragma:'
 # QualifierAlignment: Leave
 # CompactNamespaces: false
@@ -72,7 +75,7 @@ Cpp11BracedListStyle: false
 # EmptyLineAfterAccessModifier: Never
 # EmptyLineBeforeAccessModifier: LogicalBlock
 # ExperimentalAutoDetectBinPacking: false
-# PackConstructorInitializers: BinPack
+PackConstructorInitializers: BinPack
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 # AllowAllConstructorInitializersOnNextLine: true
 # FixNamespaceComments: true
@@ -118,7 +121,8 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 # PenaltyBreakString: 1000
 # PenaltyBreakTemplateDeclaration: 10
 # PenaltyExcessCharacter: 1000000
-# PenaltyReturnTypeOnItsOwnLine: 60
+# NOTE: Levi changed this (originally 60).
+PenaltyReturnTypeOnItsOwnLine: 6000
 # PenaltyIndentedWhitespace: 0
 # PointerAlignment: Right
 # PPIndentWidth:   -1
