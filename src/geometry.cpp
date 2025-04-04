@@ -1,4 +1,4 @@
-#include "surface/geometry.h"
+#include "geometry.h"
 
 #include "internal_utils.h"
 
@@ -8,6 +8,8 @@
 #include <godot_cpp/classes/shape2d.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/math.hpp>
+#include <godot_cpp/variant/rect2i.hpp>
+#include <godot_cpp/variant/vector2i.hpp>
 
 using namespace godot;
 
@@ -240,6 +242,12 @@ void Geometry::_bind_methods() {
 			D_METHOD("get_tilemap_bounds_in_world_coordinates", "tile_map"),
 			&Geometry::get_tilemap_bounds_in_world_coordinates);
 	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("get_vector2_array_front", "vertices"),
+			&Geometry::get_vector2_array_front);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("get_vector2_array_back", "vertices"),
+			&Geometry::get_vector2_array_back);
+	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("get_vector_string", "vector", "decimal_place_count"),
 			&Geometry::get_vector_string);
@@ -296,8 +304,8 @@ float Geometry::get_distance_squared_from_rect_to_rect(
 		const Rect2 &p_b) {
 	const float min_x = MIN(p_a.position.x, p_b.position.x);
 	const float min_y = MIN(p_a.position.y, p_b.position.y);
-	const float max_x = MAX(p_a.end().x, p_b.end().x);
-	const float max_y = MAX(p_a.end().y, p_b.end().y);
+	const float max_x = MAX(p_a.get_end().x, p_b.get_end().x);
+	const float max_y = MAX(p_a.get_end().y, p_b.get_end().y);
 
 	const float inner_width =
 			MAX(0.0f, (max_x - min_x) - p_a.size.x - p_b.size.x);
@@ -321,10 +329,12 @@ Vector2 Geometry::get_closest_point_on_segment_to_point(
 		// segment.
 		return p_segment_a;
 	} else if (vv <= uv) {
-		// The projection of the point lies after the last point in the segment.
+		// The projection of the point lies after the last point in the
+		// segment.
 		return p_segment_b;
 	} else {
-		// The projection of the point lies within the bounds of the segment.
+		// The projection of the point lies within the bounds of the
+		// segment.
 		const float t = uv / vv;
 		return p_segment_a + v * t;
 	}
@@ -369,7 +379,7 @@ Vector2 Geometry::get_closest_point_on_polyline_to_polyline(
 	}
 
 	Vector2 closest_point = vector2_invalid;
-	float closest_distance_squared = std::numeric_limits<float>::infinity();
+	float closest_distance_squared = Math_INF;
 
 	for (const auto &vertex_b : p_b) {
 		Vector2 current_point =
@@ -402,8 +412,8 @@ Vector2 Geometry::get_intersection_of_segments(
 		const float t1_numerator = (p_segment_1_a - p_segment_2_a).dot(s);
 		if ((0 <= t0_numerator && t0_numerator <= r.dot(r)) ||
 			(0 <= t1_numerator && t1_numerator <= s.dot(s))) {
-			// The segments overlap. Return one of the segment endpoints that
-			// lies within the overlap region.
+			// The segments overlap. Return one of the segment endpoints
+			// that lies within the overlap region.
 			if ((p_segment_1_a.x >= p_segment_2_a.x &&
 				 p_segment_1_a.x <= p_segment_2_b.x) ||
 				(p_segment_1_a.x <= p_segment_2_a.x &&
@@ -476,7 +486,7 @@ Vector2 Geometry::get_intersection_of_segment_and_circle(
 		// The collinear line of the segment does not intersect the circle.
 		return vector2_invalid;
 	} else {
-		const float discriminant_sqrt = std::sqrt(discriminant);
+		const float discriminant_sqrt = Math::sqrt(discriminant);
 
 		// t1 represents the intersection closer to segment_a.
 		const float t1 = (-b - discriminant_sqrt) / (2.0f * a);
@@ -501,7 +511,8 @@ Vector2 Geometry::get_intersection_of_segment_and_circle(
 			}
 		}
 
-		// The collinear line intersects the circle, but the segment does not.
+		// The collinear line intersects the circle, but the segment does
+		// not.
 		return vector2_invalid;
 	}
 }
@@ -619,8 +630,8 @@ bool Geometry::do_segment_and_rectangle_intersect(
 	if ((is_segment_left_of_corner_1 == is_segment_left_of_corner_2) &&
 		(is_segment_left_of_corner_1 == is_segment_left_of_corner_3) &&
 		(is_segment_left_of_corner_1 == is_segment_left_of_corner_4)) {
-		// If all rectangle corners are on the same side of the line, then there
-		// is no intersection.
+		// If all rectangle corners are on the same side of the line, then
+		// there is no intersection.
 		return false;
 	}
 
@@ -670,8 +681,8 @@ bool Geometry::do_segment_and_polygon_intersect(
 		const Vector2 &p_segment_b,
 		const PackedVector2Array &p_polygon) {
 	// -------------------------------------------------------------------------
-	// Based on the "parametric line-clipping" approach described by Dan Sunday
-	// at http://geomalgorithms.com/a13-_intersect-4.html.
+	// Based on the "parametric line-clipping" approach described by Dan
+	// Sunday at http://geomalgorithms.com/a13-_intersect-4.html.
 	//
 	// Copyright 2001 softSurfer, 2012 Dan Sunday
 	// This code may be freely used and modified for any purpose
@@ -681,9 +692,11 @@ bool Geometry::do_segment_and_polygon_intersect(
 	// Users of this code must verify correctness for their application.
 	// -------------------------------------------------------------------------
 
-	ENSURE(p_polygon.front() == p_polygon.back(),
+	ENSURE(get_vector2_array_front(p_polygon) ==
+				   get_vector2_array_back(p_polygon),
 		   vformat("Polygon is not closed: front=%s, back=%s",
-				   p_polygon.front(), p_polygon.back()));
+				   get_vector2_array_front(p_polygon),
+				   get_vector2_array_back(p_polygon)));
 
 	const Vector2 segment_diff = p_segment_b - p_segment_a;
 	float t_entering = 0.0f;
@@ -723,8 +736,9 @@ bool Geometry::do_segment_and_polygon_intersect(
 		}
 	}
 
-	// Possible point of intersection 1: segment_a + t_entering * segment_diff
-	// Possible point of intersection 2: segment_a + t_leaving * segment_diff
+	// Possible point of intersection 1: segment_a + t_entering *
+	// segment_diff Possible point of intersection 2: segment_a + t_leaving
+	// * segment_diff
 
 	return true;
 }
@@ -803,9 +817,11 @@ bool Geometry::is_polygon_convex(
 		float p_epsilon) {
 	const int vertex_count = p_vertices.size();
 
-	ENSURE(p_polygon.front() == p_polygon.back(),
-		   vformat("Polygon is closed: front=%s, back=%s", p_polygon.front(),
-				   p_polygon.back()));
+	ENSURE(get_vector2_array_front(p_vertices) ==
+				   get_vector2_array_back(p_vertices),
+		   vformat("Polygon is closed: front=%s, back=%s",
+				   get_vector2_array_front(p_vertices),
+				   get_vector2_array_back(p_vertices)));
 
 	if (vertex_count < 3) {
 		return true;
@@ -933,7 +949,7 @@ bool Geometry::do_point_and_segment_intersect(
 
 Rect2 Geometry::get_bounding_box_for_points(
 		const PackedVector2Array &p_points) {
-	ENSURE(!p_points.is_empty());
+	ENSURE_SIMPLE(!p_points.is_empty());
 
 	Vector2 min = p_points[0];
 	Vector2 max = p_points[0];
@@ -946,14 +962,14 @@ Rect2 Geometry::get_bounding_box_for_points(
 		max.y = MAX(max.y, point.y);
 	}
 
-	return Rect2(min, max - min_point);
+	return Rect2(min, max - min);
 }
 
 float Geometry::distance_squared_from_point_to_rect(
 		const Vector2 &p_point,
 		const Rect2 &p_rect) {
 	const Vector2 rect_min = p_rect.position;
-	const Vector2 rect_max = p_rect.end();
+	const Vector2 rect_max = p_rect.get_end();
 
 	if (p_point.x < rect_min.x) {
 		if (p_point.y < rect_min.y) {
@@ -1130,7 +1146,8 @@ bool Geometry::do_shapes_match(
 	} else {
 		ENSURE(false,
 			   vformat("Invalid Shape2D provided for do_shapes_match: %s. "
-					   "Supported shapes are: CircleShape2D, CapsuleShape2D, "
+					   "Supported shapes are: CircleShape2D, "
+					   "CapsuleShape2D, "
 					   "RectangleShape2D.",
 					   p_shape_a->to_string()));
 	}
@@ -1158,7 +1175,8 @@ Vector2 Geometry::calculate_half_width_height(
 	} else {
 		ENSURE(false,
 			   vformat("Invalid Shape2D provided to "
-					   "calculate_half_width_height: %s. Supported shapes are: "
+					   "calculate_half_width_height: %s. Supported shapes "
+					   "are: "
 					   "CircleShape2D, CapsuleShape2D, RectangleShape2D.",
 					   p_shape->to_string()));
 	}
@@ -1172,9 +1190,10 @@ Vector2 Geometry::calculate_half_width_height(
 
 Vector2 Geometry::world_to_tilemap(
 		const Vector2 &p_position,
-		const Ref<TileMap> &p_tile_map) {
+		const TileMap *p_tile_map) {
 	const Vector2 position_map_coord =
-			(p_position - p_tile_map->position) / p_tile_map->cell_size;
+			(p_position - p_tile_map->get_position()) /
+			p_tile_map->get_tileset()->get_tile_size();
 	return Vector2(
 			Math::floor(position_map_coord.x),
 			Math::floor(position_map_coord.y));
@@ -1182,13 +1201,14 @@ Vector2 Geometry::world_to_tilemap(
 
 Vector2 Geometry::tilemap_to_world(
 		const Vector2 &p_position,
-		const Ref<TileMap> &p_tile_map) {
-	return p_tile_map->position + p_position * p_tile_map->cell_size;
+		const TileMap *p_tile_map) {
+	return p_tile_map->get_position() +
+			p_position * p_tile_map->get_tileset()->get_tile_size();
 }
 
 int Geometry::get_tilemap_index_from_world_coord(
 		const Vector2 &p_position,
-		const Ref<TileMap> &p_tile_map) {
+		const TileMap *p_tile_map) {
 	const Vector2 position_grid_coord =
 			world_to_tilemap(p_position, p_tile_map);
 	return get_tilemap_index_from_grid_coord(position_grid_coord, p_tile_map);
@@ -1196,10 +1216,10 @@ int Geometry::get_tilemap_index_from_world_coord(
 
 int Geometry::get_tilemap_index_from_grid_coord(
 		const Vector2 &p_position,
-		const Ref<TileMap> &p_tile_map) {
-	const Rect2 used_rect = p_tile_map->get_used_rect();
-	const Vector2 tilemap_start(used_rect.x, used_rect.y);
-	const int tilemap_width = static_cast<int>(used_rect.width);
+		const TileMap *p_tile_map) {
+	const Rect2i used_rect = p_tile_map->get_used_rect();
+	const Vector2 tilemap_start(used_rect.position.x, used_rect.position.y);
+	const int tilemap_width = static_cast<int>(used_rect.size.x);
 	const Vector2 tilemap_position = p_position - tilemap_start;
 	return static_cast<int>(tilemap_position.y) * tilemap_width +
 			static_cast<int>(tilemap_position.x);
@@ -1207,12 +1227,13 @@ int Geometry::get_tilemap_index_from_grid_coord(
 
 Vector2 Geometry::get_grid_coord_from_tilemap_index(
 		int p_index,
-		const Ref<TileMap> &p_tile_map) {
-	const Rect2 used_rect = p_tile_map->get_used_rect();
+		const TileMap *p_tile_map) {
+	const Rect2i used_rect = p_tile_map->get_used_rect();
+	const Vector2i tile_size = p_tile_map->get_tileset()->get_tile_size();
 	const Vector2 tilemap_grid_offset(
-			used_rect.x / p_tile_map->cell_size.x,
-			used_rect.y / p_tile_map->cell_size.y);
-	const int tilemap_width = static_cast<int>(used_rect.width);
+			used_rect.position.x / tile_size.x,
+			used_rect.position.y / tile_size.y);
+	const int tilemap_width = static_cast<int>(used_rect.size.x);
 	const int tilemap_position_x = p_index % tilemap_width;
 	const int tilemap_position_y = p_index / tilemap_width;
 	return Vector2(tilemap_position_x, tilemap_position_y) +
@@ -1220,18 +1241,33 @@ Vector2 Geometry::get_grid_coord_from_tilemap_index(
 }
 
 Rect2 Geometry::get_tilemap_bounds_in_world_coordinates(
-		const Ref<TileMap> &p_tile_map) {
-	const Rect2 used_rect = p_tile_map->get_used_rect();
-	const Vector2 cell_size = p_tile_map.cell_size;
+		const TileMap *p_tile_map) {
+	const Rect2i used_rect = p_tile_map->get_used_rect();
+	const Vector2i tile_size = p_tile_map->get_tileset()->get_tile_size();
 	return Rect2(
-			p_tile_map->position.x + used_rect.x * cell_size.x,
-			p_tile_map->position.y + used_rect.y * cell_size.y,
-			used_rect.width * cell_size.x, used_rect.height * cell_size.y);
+			p_tile_map->get_position().x + used_rect.position.x * tile_size.x,
+			p_tile_map->get_position().y + used_rect.position.y * tile_size.y,
+			used_rect.size.x * tile_size.x, used_rect.size.y * tile_size.y);
+}
+
+Vector2 Geometry::get_vector2_array_front(
+		const PackedVector2Array &p_vertices) {
+	if (p_vertices.is_empty()) {
+		return vector2_invalid;
+	}
+	return p_vertices[0];
+}
+
+Vector2 Geometry::get_vector2_array_back(const PackedVector2Array &p_vertices) {
+	if (p_vertices.is_empty()) {
+		return vector2_invalid;
+	}
+	return p_vertices[p_vertices.size() - 1];
 }
 
 String Geometry::get_vector_string(
 		const Vector2 &p_vector,
-		int p_decimal_place_count = 2) {
+		int p_decimal_place_count) {
 	return vformat(
 			"(%.*f,%.*f)", p_decimal_place_count, p_vector.x,
 			p_decimal_place_count, p_vector.y);

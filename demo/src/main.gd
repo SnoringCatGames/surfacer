@@ -13,6 +13,7 @@ func _ready() -> void:
     var foo: Surface
     var side: Surface.Side
     Surface.get_normal_from_side(side)
+    foo.get_last_point()
 
 
 func _on_gd_example_position_changed(node: Object, new_pos: Vector2) -> void:

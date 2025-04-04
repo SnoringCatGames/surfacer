@@ -1,7 +1,7 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include "geometry_utils.h"
+#include "geometry.h"
 #include "surface/surface_chunk.h"
 #include "surface/surface_properties.h"
 
@@ -70,14 +70,14 @@ public:
 private:
 	Side side = Side::UNKNOWN_SIDE;
 
-	SurfaceProperties properties;
+	Ref<SurfaceProperties> properties;
 
 	PackedVector2Array vertices;
 	Rect2 bounding_box;
 
 	Ref<SurfaceChunk> chunk;
 
-	TileMap *tile_map;
+	TileMap *tile_map = nullptr;
 	PackedInt32Array tile_map_indices;
 
 	NeighborCurvature clockwise_neighbor_curvature =
@@ -100,7 +100,7 @@ public:
 	void set_side(Side p_side) { side = p_side; }
 	Side get_side() const { return side; }
 
-	void set_properties(const SurfaceProperties &p_properties) {
+	void set_properties(const Ref<SurfaceProperties> &p_properties) {
 		properties = p_properties;
 	}
 	Ref<SurfaceProperties> get_properties() const { return properties; }
@@ -116,8 +116,8 @@ public:
 	void set_chunk(Ref<SurfaceChunk> p_chunk) { chunk = p_chunk; }
 	Ref<SurfaceChunk> get_chunk() const { return chunk; }
 
-	void set_tile_map(Ref<TileMap> &p_tile_map) { tile_map = p_tile_map; }
-	Ref<TileMap> get_tile_map() const { return tile_map; }
+	void set_tile_map(TileMap *p_tile_map) { tile_map = p_tile_map; }
+	TileMap *get_tile_map() const { return tile_map; }
 
 	void set_tile_map_indices(const PackedInt32Array &p_tile_map_indices) {
 		tile_map_indices = p_tile_map_indices;
@@ -190,19 +190,8 @@ public:
 				: nullptr;
 	}
 
-	Vector2 get_first_point() const {
-		if (vertices.is_empty()) {
-			return vector2_invalid;
-		}
-		return vertices[0];
-	}
-
-	Vector2 get_last_point() const {
-		if (vertices.is_empty()) {
-			return vector2_invalid;
-		}
-		return vertices[vertices.size() - 1];
-	}
+	Vector2 get_first_point() const;
+	Vector2 get_last_point() const;
 
 	bool get_is_single_vertex() const { return vertices.size() == 1; }
 

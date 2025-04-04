@@ -215,25 +215,29 @@ public:
 	// cell boundaries, so we use a custom utility.
 	static Vector2 world_to_tilemap(
 			const Vector2 &p_position,
-			const Ref<TileMap> &p_tile_map);
+			const TileMap *p_tile_map);
 	static Vector2 tilemap_to_world(
 			const Vector2 &p_position,
-			const Ref<TileMap> &p_tile_map);
+			const TileMap *p_tile_map);
 	// Calculates the TileMap(grid - based) coordinates of the given position,
 	// relative to the origin of the TileMap's bounding box.
 	static int get_tilemap_index_from_world_coord(
 			const Vector2 &p_position,
-			const Ref<TileMap> &p_tile_map);
+			const TileMap *p_tile_map);
 	// Calculates the TileMap(grid - based) coordinates of the given position,
 	// relative to the origin of the TileMap's bounding box.
 	static int get_tilemap_index_from_grid_coord(
 			const Vector2 &p_position,
-			const Ref<TileMap> &p_tile_map);
+			const TileMap *p_tile_map);
 	static Vector2 get_grid_coord_from_tilemap_index(
 			int p_index,
-			const Ref<TileMap> &p_tile_map);
+			const TileMap *p_tile_map);
 	static Rect2 get_tilemap_bounds_in_world_coordinates(
-			const Ref<TileMap> &p_tile_map);
+			const TileMap *p_tile_map);
+
+	static Vector2 get_vector2_array_front(
+			const PackedVector2Array &p_vertices);
+	static Vector2 get_vector2_array_back(const PackedVector2Array &p_vertices);
 
 	static String get_vector_string(
 			const Vector2 &p_vector,
