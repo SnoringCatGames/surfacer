@@ -1,4 +1,4 @@
-#include "surface/surface.h"
+#include "surface.h"
 
 #include "geometry.h"
 
@@ -39,12 +39,14 @@ void Surface::_bind_methods() {
 	ADD_PROPERTY(
 			PropertyInfo(Variant::OBJECT, "chunk"), "set_chunk", "get_chunk");
 
-	ClassDB::bind_method(D_METHOD("get_tile_map"), &Surface::get_tile_map);
 	ClassDB::bind_method(
-			D_METHOD("set_tile_map", "tile_map"), &Surface::set_tile_map);
+			D_METHOD("get_tile_map_layer"), &Surface::get_tile_map_layer);
+	ClassDB::bind_method(
+			D_METHOD("set_tile_map_layer", "tile_map_layer"),
+			&Surface::set_tile_map_layer);
 	ADD_PROPERTY(
-			PropertyInfo(Variant::OBJECT, "tile_map"), "set_tile_map",
-			"get_tile_map");
+			PropertyInfo(Variant::OBJECT, "tile_map_layer"),
+			"set_tile_map_layer", "get_tile_map_layer");
 
 	ClassDB::bind_method(
 			D_METHOD("get_tile_map_indices"), &Surface::get_tile_map_indices);

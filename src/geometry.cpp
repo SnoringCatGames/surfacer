@@ -216,31 +216,37 @@ void Geometry::_bind_methods() {
 					"is_rotated_90_degrees"),
 			&Geometry::calculate_half_width_height);
 	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("world_to_tilemap", "position", "tile_map"),
-			&Geometry::world_to_tilemap);
+			"Geometry",
+			D_METHOD("world_to_tile_map", "position", "tile_map_layer"),
+			&Geometry::world_to_tile_map_layer);
 	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("tilemap_to_world", "position", "tile_map"),
-			&Geometry::tilemap_to_world);
+			"Geometry",
+			D_METHOD("tile_map_to_world", "position", "tile_map_layer"),
+			&Geometry::tile_map_layer_to_world);
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD(
-					"get_tilemap_index_from_world_coord", "position",
-					"tile_map"),
-			&Geometry::get_tilemap_index_from_world_coord);
+					"get_tile_map_index_from_world_coord", "position",
+					"tile_map_layer"),
+			&Geometry::get_tile_map_layer_index_from_world_coord);
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD(
-					"get_tilemap_index_from_grid_coord", "position",
-					"tile_map"),
-			&Geometry::get_tilemap_index_from_grid_coord);
+					"get_tile_map_index_from_grid_coord", "position",
+					"tile_map_layer"),
+			&Geometry::get_tile_map_layer_index_from_grid_coord);
 	ClassDB::bind_static_method(
 			"Geometry",
-			D_METHOD("get_grid_coord_from_tilemap_index", "index", "tile_map"),
-			&Geometry::get_grid_coord_from_tilemap_index);
+			D_METHOD(
+					"get_grid_coord_from_tile_map_index", "index",
+					"tile_map_layer"),
+			&Geometry::get_grid_coord_from_tile_map_layer_index);
 	ClassDB::bind_static_method(
 			"Geometry",
-			D_METHOD("get_tilemap_bounds_in_world_coordinates", "tile_map"),
-			&Geometry::get_tilemap_bounds_in_world_coordinates);
+			D_METHOD(
+					"get_tile_map_bounds_in_world_coordinates",
+					"tile_map_layer"),
+			&Geometry::get_tile_map_layer_bounds_in_world_coordinates);
 	ClassDB::bind_static_method(
 			"Geometry", D_METHOD("get_vector2_array_front", "vertices"),
 			&Geometry::get_vector2_array_front);
@@ -1188,65 +1194,70 @@ Vector2 Geometry::calculate_half_width_height(
 	return half_width_height;
 }
 
-Vector2 Geometry::world_to_tilemap(
+Vector2 Geometry::world_to_tile_map_layer(
 		const Vector2 &p_position,
-		const TileMap *p_tile_map) {
+		const TileMapLayer *p_tile_map_layer) {
 	const Vector2 position_map_coord =
-			(p_position - p_tile_map->get_position()) /
-			p_tile_map->get_tileset()->get_tile_size();
+			(p_position - p_tile_map_layer->get_position()) /
+			p_tile_map_layer->get_tile_set()->get_tile_size();
 	return Vector2(
 			Math::floor(position_map_coord.x),
 			Math::floor(position_map_coord.y));
 }
 
-Vector2 Geometry::tilemap_to_world(
+Vector2 Geometry::tile_map_layer_to_world(
 		const Vector2 &p_position,
-		const TileMap *p_tile_map) {
-	return p_tile_map->get_position() +
-			p_position * p_tile_map->get_tileset()->get_tile_size();
+		const TileMapLayer *p_tile_map_layer) {
+	return p_tile_map_layer->get_position() +
+			p_position * p_tile_map_layer->get_tile_set()->get_tile_size();
 }
 
-int Geometry::get_tilemap_index_from_world_coord(
+int Geometry::get_tile_map_layer_index_from_world_coord(
 		const Vector2 &p_position,
-		const TileMap *p_tile_map) {
+		const TileMapLayer *p_tile_map_layer) {
 	const Vector2 position_grid_coord =
-			world_to_tilemap(p_position, p_tile_map);
-	return get_tilemap_index_from_grid_coord(position_grid_coord, p_tile_map);
+			world_to_tile_map_layer(p_position, p_tile_map_layer);
+	return get_tile_map_layer_index_from_grid_coord(
+			position_grid_coord, p_tile_map_layer);
 }
 
-int Geometry::get_tilemap_index_from_grid_coord(
+int Geometry::get_tile_map_layer_index_from_grid_coord(
 		const Vector2 &p_position,
-		const TileMap *p_tile_map) {
-	const Rect2i used_rect = p_tile_map->get_used_rect();
-	const Vector2 tilemap_start(used_rect.position.x, used_rect.position.y);
-	const int tilemap_width = static_cast<int>(used_rect.size.x);
-	const Vector2 tilemap_position = p_position - tilemap_start;
-	return static_cast<int>(tilemap_position.y) * tilemap_width +
-			static_cast<int>(tilemap_position.x);
+		const TileMapLayer *p_tile_map_layer) {
+	const Rect2i used_rect = p_tile_map_layer->get_used_rect();
+	const Vector2 tile_map_start(used_rect.position.x, used_rect.position.y);
+	const int tile_map_width = static_cast<int>(used_rect.size.x);
+	const Vector2 tile_map_position = p_position - tile_map_start;
+	return static_cast<int>(tile_map_position.y) * tile_map_width +
+			static_cast<int>(tile_map_position.x);
 }
 
-Vector2 Geometry::get_grid_coord_from_tilemap_index(
+Vector2 Geometry::get_grid_coord_from_tile_map_layer_index(
 		int p_index,
-		const TileMap *p_tile_map) {
-	const Rect2i used_rect = p_tile_map->get_used_rect();
-	const Vector2i tile_size = p_tile_map->get_tileset()->get_tile_size();
-	const Vector2 tilemap_grid_offset(
+		const TileMapLayer *p_tile_map_layer) {
+	const Rect2i used_rect = p_tile_map_layer->get_used_rect();
+	const Vector2i tile_size =
+			p_tile_map_layer->get_tile_set()->get_tile_size();
+	const Vector2 tile_map_grid_offset(
 			used_rect.position.x / tile_size.x,
 			used_rect.position.y / tile_size.y);
-	const int tilemap_width = static_cast<int>(used_rect.size.x);
-	const int tilemap_position_x = p_index % tilemap_width;
-	const int tilemap_position_y = p_index / tilemap_width;
-	return Vector2(tilemap_position_x, tilemap_position_y) +
-			tilemap_grid_offset;
+	const int tile_map_width = static_cast<int>(used_rect.size.x);
+	const int tile_map_position_x = p_index % tile_map_width;
+	const int tile_map_position_y = p_index / tile_map_width;
+	return Vector2(tile_map_position_x, tile_map_position_y) +
+			tile_map_grid_offset;
 }
 
-Rect2 Geometry::get_tilemap_bounds_in_world_coordinates(
-		const TileMap *p_tile_map) {
-	const Rect2i used_rect = p_tile_map->get_used_rect();
-	const Vector2i tile_size = p_tile_map->get_tileset()->get_tile_size();
+Rect2 Geometry::get_tile_map_layer_bounds_in_world_coordinates(
+		const TileMapLayer *p_tile_map_layer) {
+	const Rect2i used_rect = p_tile_map_layer->get_used_rect();
+	const Vector2i tile_size =
+			p_tile_map_layer->get_tile_set()->get_tile_size();
 	return Rect2(
-			p_tile_map->get_position().x + used_rect.position.x * tile_size.x,
-			p_tile_map->get_position().y + used_rect.position.y * tile_size.y,
+			p_tile_map_layer->get_position().x +
+					used_rect.position.x * tile_size.x,
+			p_tile_map_layer->get_position().y +
+					used_rect.position.y * tile_size.y,
 			used_rect.size.x * tile_size.x, used_rect.size.y * tile_size.y);
 }
 

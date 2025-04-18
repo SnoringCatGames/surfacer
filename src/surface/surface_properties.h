@@ -13,7 +13,8 @@ private:
 
 	// TODO:
 	// - Add some way of checking fall - through / walk - through state.
-	// - And add a way to validate that this matches the normal TileSet encoding.
+	// - And add a way to validate that this matches the normal TileSet
+	// encoding.
 
 	String name;
 	bool can_grab = true;
@@ -33,14 +34,14 @@ public:
 	void set_can_grab(bool p_can_grab) { can_grab = p_can_grab; }
 	bool get_can_grab() const { return can_grab; }
 
-	void set_friction_multiplier(float p_friction_multiplier) { friction_multiplier = p_friction_multiplier; }
+	void set_friction_multiplier(float p_friction_multiplier) {
+		friction_multiplier = p_friction_multiplier;
+	}
 	float get_friction_multiplier() const { return friction_multiplier; }
 
-	// - This affects the character's speed while moving along the surface.
-	// - This does not affect jump start/end velocities or in-air velocities.
-	// - This will modify both acceleration and max-speed.
-	// - This is similar to MovementParameters.surface_speed_multiplier.
-	void set_speed_multiplier(float p_speed_multiplier) { speed_multiplier = p_speed_multiplier; }
+	void set_speed_multiplier(float p_speed_multiplier) {
+		speed_multiplier = p_speed_multiplier;
+	}
 	float get_speed_multiplier() const { return speed_multiplier; }
 };
 

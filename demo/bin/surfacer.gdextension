@@ -1,7 +1,7 @@
 [configuration]
 
 entry_symbol = "surfacer_extension_init"
-compatibility_minimum = "4.3"
+compatibility_minimum = "4.4"
 reloadable = true
 
 [libraries]
@@ -12,7 +12,9 @@ ios.debug = "res://bin/ios/ios.framework/libSurfacer.ios.template_debug"
 ios.release = "res://bin/ios/ios.framework/libSurfacer.ios.template_release"
 windows.debug.x86_32 = "res://bin/windows/libSurfacer.windows.template_debug.x86_32.dll"
 windows.release.x86_32 = "res://bin/windows/libSurfacer.windows.template_release.x86_32.dll"
-windows.debug.x86_64 = "res://bin/windows/libSurfacer.windows.template_debug.x86_64.dll"
+; TODO: Toggle the .dev version when not compiling with debug symbols.
+windows.debug.x86_64 = "res://bin/windows/libSurfacer.windows.template_debug.dev.x86_64.dll"
+; windows.debug.x86_64 = "res://bin/windows/libSurfacer.windows.template_debug.x86_64.dll"
 windows.release.x86_64 = "res://bin/windows/libSurfacer.windows.template_release.x86_64.dll"
 linux.debug.x86_64 = "res://bin/linux/libSurfacer.linux.template_debug.x86_64.so"
 linux.release.x86_64 = "res://bin/linux/libSurfacer.linux.template_release.x86_64.so"

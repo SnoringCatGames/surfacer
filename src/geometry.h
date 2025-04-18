@@ -2,7 +2,7 @@
 #define GEOMETRY_H
 
 #include <godot_cpp/classes/ref.hpp>
-#include <godot_cpp/classes/tile_map.hpp>
+#include <godot_cpp/classes/tile_map_layer.hpp>
 #include <godot_cpp/core/object.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
 #include <godot_cpp/variant/rect2.hpp>
@@ -211,29 +211,29 @@ public:
 			const Ref<Shape2D> &p_shape,
 			bool p_is_rotated_90_degrees);
 
-	// The built - in TileMap.world_to_map generates incorrect results around
-	// cell boundaries, so we use a custom utility.
-	static Vector2 world_to_tilemap(
+	// The built-in TileMapLayer.world_to_map generates incorrect results
+	// around cell boundaries, so we use a custom utility.
+	static Vector2 world_to_tile_map_layer(
 			const Vector2 &p_position,
-			const TileMap *p_tile_map);
-	static Vector2 tilemap_to_world(
+			const TileMapLayer *p_tile_map_layer);
+	static Vector2 tile_map_layer_to_world(
 			const Vector2 &p_position,
-			const TileMap *p_tile_map);
-	// Calculates the TileMap(grid - based) coordinates of the given position,
-	// relative to the origin of the TileMap's bounding box.
-	static int get_tilemap_index_from_world_coord(
+			const TileMapLayer *p_tile_map_layer);
+	// Calculates the TileMapLayer(grid-based) coordinates of the given
+	// position, relative to the origin of the TileMapLayer's bounding box.
+	static int get_tile_map_layer_index_from_world_coord(
 			const Vector2 &p_position,
-			const TileMap *p_tile_map);
-	// Calculates the TileMap(grid - based) coordinates of the given position,
-	// relative to the origin of the TileMap's bounding box.
-	static int get_tilemap_index_from_grid_coord(
+			const TileMapLayer *p_tile_map_layer);
+	// Calculates the TileMapLayer(grid-based) coordinates of the given
+	// position, relative to the origin of the TileMapLayer's bounding box.
+	static int get_tile_map_layer_index_from_grid_coord(
 			const Vector2 &p_position,
-			const TileMap *p_tile_map);
-	static Vector2 get_grid_coord_from_tilemap_index(
+			const TileMapLayer *p_tile_map_layer);
+	static Vector2 get_grid_coord_from_tile_map_layer_index(
 			int p_index,
-			const TileMap *p_tile_map);
-	static Rect2 get_tilemap_bounds_in_world_coordinates(
-			const TileMap *p_tile_map);
+			const TileMapLayer *p_tile_map_layer);
+	static Rect2 get_tile_map_layer_bounds_in_world_coordinates(
+			const TileMapLayer *p_tile_map_layer);
 
 	static Vector2 get_vector2_array_front(
 			const PackedVector2Array &p_vertices);

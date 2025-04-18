@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Surface" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_bounds_center" qualifiers="const">
+			<return type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_clockwise_collinear_neighbor" qualifiers="const">
+			<return type="Surface" />
+			<description>
+			</description>
+		</method>
+		<method name="get_clockwise_concave_neighbor" qualifiers="const">
+			<return type="Surface" />
+			<description>
+			</description>
+		</method>
+		<method name="get_clockwise_convex_neighbor" qualifiers="const">
+			<return type="Surface" />
+			<description>
+			</description>
+		</method>
+		<method name="get_counter_clockwise_collinear_neighbor" qualifiers="const">
+			<return type="Surface" />
+			<description>
+			</description>
+		</method>
+		<method name="get_counter_clockwise_concave_neighbor" qualifiers="const">
+			<return type="Surface" />
+			<description>
+			</description>
+		</method>
+		<method name="get_counter_clockwise_convex_neighbor" qualifiers="const">
+			<return type="Surface" />
+			<description>
+			</description>
+		</method>
+		<method name="get_first_point" qualifiers="const">
+			<return type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_is_single_vertex" qualifiers="const">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="get_last_point" qualifiers="const">
+			<return type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_normal_from_side" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="side" type="int" enum="Surface.Side" />
+			<description>
+			</description>
+		</method>
+		<method name="to_string" qualifiers="const">
+			<return type="String" />
+			<param index="0" name="_unnamed_arg0" type="bool" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="bounding_box" type="Rect2" setter="set_bounding_box" getter="get_bounding_box" default="Rect2(0, 0, 0, 0)">
+		</member>
+		<member name="chunk" type="SurfaceChunk" setter="set_chunk" getter="get_chunk">
+		</member>
+		<member name="clockwise_neighbor" type="Surface" setter="set_clockwise_neighbor" getter="get_clockwise_neighbor">
+		</member>
+		<member name="clockwise_neighbor_curvature" type="int" setter="set_clockwise_neighbor_curvature" getter="get_clockwise_neighbor_curvature" enum="Surface.NeighborCurvature" default="0">
+		</member>
+		<member name="counter_clockwise_neighbor" type="Surface" setter="set_counter_clockwise_neighbor" getter="get_counter_clockwise_neighbor">
+		</member>
+		<member name="counter_clockwise_neighbor_curvature" type="int" setter="set_counter_clockwise_neighbor_curvature" getter="get_counter_clockwise_neighbor_curvature" enum="Surface.NeighborCurvature" default="0">
+		</member>
+		<member name="normal" type="Vector2" setter="" getter="get_normal" default="Vector2(inf, inf)">
+		</member>
+		<member name="properties" type="SurfaceProperties" setter="set_properties" getter="get_properties">
+		</member>
+		<member name="side" type="int" setter="set_side" getter="get_side" enum="Surface.Side" default="0">
+		</member>
+		<member name="tile_map_indices" type="PackedInt32Array" setter="set_tile_map_indices" getter="get_tile_map_indices" default="PackedInt32Array()">
+		</member>
+		<member name="tile_map_layer" type="TileMapLayer" setter="set_tile_map_layer" getter="get_tile_map_layer">
+		</member>
+		<member name="vertices" type="PackedVector2Array" setter="set_vertices" getter="get_vertices" default="PackedVector2Array()">
+		</member>
+	</members>
+	<constants>
+		<constant name="UNKNOWN_SIDE" value="0" enum="Side">
+		</constant>
+		<constant name="FLOOR" value="1" enum="Side">
+		</constant>
+		<constant name="CEILING" value="2" enum="Side">
+		</constant>
+		<constant name="LEFT_WALL" value="3" enum="Side">
+		</constant>
+		<constant name="RIGHT_WALL" value="4" enum="Side">
+		</constant>
+		<constant name="UNKNOWN_CURVATURE" value="0" enum="NeighborCurvature">
+		</constant>
+		<constant name="COLLINEAR" value="1" enum="NeighborCurvature">
+		</constant>
+		<constant name="CONVEX" value="2" enum="NeighborCurvature">
+		</constant>
+		<constant name="CONCAVE" value="3" enum="NeighborCurvature">
+		</constant>
+	</constants>
+</class>

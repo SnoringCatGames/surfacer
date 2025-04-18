@@ -2,11 +2,11 @@
 #define SURFACE_H
 
 #include "geometry.h"
-#include "surface/surface_chunk.h"
-#include "surface/surface_properties.h"
+#include "surface_chunk.h"
+#include "surface_properties.h"
 
 #include <godot_cpp/classes/ref_counted.hpp>
-#include <godot_cpp/classes/tile_map.hpp>
+#include <godot_cpp/classes/tile_map_layer.hpp>
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
@@ -77,7 +77,7 @@ private:
 
 	Ref<SurfaceChunk> chunk;
 
-	TileMap *tile_map = nullptr;
+	TileMapLayer *tile_map_layer = nullptr;
 	PackedInt32Array tile_map_indices;
 
 	NeighborCurvature clockwise_neighbor_curvature =
@@ -116,8 +116,10 @@ public:
 	void set_chunk(Ref<SurfaceChunk> p_chunk) { chunk = p_chunk; }
 	Ref<SurfaceChunk> get_chunk() const { return chunk; }
 
-	void set_tile_map(TileMap *p_tile_map) { tile_map = p_tile_map; }
-	TileMap *get_tile_map() const { return tile_map; }
+	void set_tile_map_layer(TileMapLayer *p_tile_map_layer) {
+		tile_map_layer = p_tile_map_layer;
+	}
+	TileMapLayer *get_tile_map_layer() const { return tile_map_layer; }
 
 	void set_tile_map_indices(const PackedInt32Array &p_tile_map_indices) {
 		tile_map_indices = p_tile_map_indices;

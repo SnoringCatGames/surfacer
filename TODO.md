@@ -9,11 +9,17 @@
   - dev_build lets us use C++ breakpoints.
     - But changes the editor path (in launch.json) from `godot/bin/godot.windows.editor.x86_64.exe` to `godot/bin/godot.windows.editor.dev.x86_64.exe`.
 - Compiling the docs:
-`godot --doctool ../ --gdextension-docs`
+❌ `godot --doctool ../ --gdextension-docs`
 (from the `demo/` directory)
+    - ❌ `"C:\Users\lsl\Repositories\surfacer2\godot\bin\godot.windows.editor.dev.x86_64.exe" --doctool ../ --gdextension-docs`
+    - ✔️ `"C:\Program Files\Godot\Godot_v4.4.1-stable_win64.exe" --doctool ../ --gdextension-docs`
+    - Sometimes multiple attempts are needed    
 - Running the editor:
 `godot demo\project.godot`
 (from the project root directory)
+- ? `godot --dump-extension-api`
+- When NOT compiling with debug symbols:
+  - `surfacer.gdextension` Toggle the .dev version.
 - GDExtension docs:
 https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextension_cpp_example.html
 - https://github.com/godotengine/godot-cpp-template

@@ -1,4 +1,4 @@
-#include "surface/surface_properties.h"
+#include "surface_properties.h"
 
 #include <godot_cpp/core/class_db.hpp>
 
@@ -27,8 +27,8 @@ void SurfaceProperties::_bind_methods() {
 			D_METHOD("set_friction_multiplier", "p_friction_multiplier"),
 			&SurfaceProperties::set_friction_multiplier);
 	ADD_PROPERTY(
-			PropertyInfo(Variant::FLOAT, "speed_multiplier"),
-			"set_speed_multiplier", "get_speed_multiplier");
+			PropertyInfo(Variant::FLOAT, "friction_multiplier"),
+			"set_friction_multiplier", "get_friction_multiplier");
 
 	ClassDB::bind_method(
 			D_METHOD("get_speed_multiplier"),
