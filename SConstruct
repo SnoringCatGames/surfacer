@@ -5,6 +5,7 @@ import sys
 from methods import print_error
 
 
+# NOTE: Levi updated this.
 libname = "Surfacer"
 projectdir = "demo"
 
@@ -39,10 +40,17 @@ env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
 env.Append(CPPPATH=["src/"])
 
+# NOTE: Levi added this.
+if "tests" in env:
+    excludeList = []
+else:
+    excludeList = ["test_*"]
+
+# NOTE: Levi updated this.
 sources = (
-    Glob("src/*.cpp") +
-    Glob("src/annotations/*.cpp") +
-    Glob("src/surface/*.cpp")
+    Glob("src/*.cpp", exclude=excludeList) +
+    Glob("src/annotations/*.cpp", exclude=excludeList) +
+    Glob("src/surface/*.cpp", exclude=excludeList)
 )
 
 if env["target"] in ["editor", "template_debug"]:
