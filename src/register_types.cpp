@@ -17,6 +17,7 @@
 #include "surface/surface_properties.h"
 #include "surface/surface_store.h"
 #include "surface_graph.h"
+#include "surfacer.h"
 #include "surfacer_agent.h"
 #include "tile_map_surface_parser.h"
 
@@ -47,6 +48,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(SurfaceChunk);
 	GDREGISTER_CLASS(SurfaceGraph);
 	GDREGISTER_CLASS(SurfaceProperties);
+	GDREGISTER_CLASS(Surfacer);
 	GDREGISTER_CLASS(SurfacerAgent);
 	GDREGISTER_CLASS(SurfacerAgentAnnotation);
 	GDREGISTER_CLASS(SurfaceStore);

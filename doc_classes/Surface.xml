@@ -85,10 +85,6 @@
 		</member>
 		<member name="normal" type="Vector2" setter="" getter="get_normal" default="Vector2(inf, inf)">
 		</member>
-		<member name="properties" type="SurfaceProperties" setter="set_properties" getter="get_properties">
-		</member>
-		<member name="side" type="int" setter="set_side" getter="get_side" enum="Surface.Side" default="0">
-		</member>
 		<member name="tile_map_indices" type="PackedInt32Array" setter="set_tile_map_indices" getter="get_tile_map_indices" default="PackedInt32Array()">
 		</member>
 		<member name="tile_map_layer" type="TileMapLayer" setter="set_tile_map_layer" getter="get_tile_map_layer">

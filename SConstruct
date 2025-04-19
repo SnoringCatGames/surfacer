@@ -38,19 +38,23 @@ Run the following command to download godot-cpp:
 
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-env.Append(CPPPATH=["src/"])
-
-# NOTE: Levi added this.
-if "tests" in env:
-    excludeList = []
+# NOTE: Levi added this, to enable C++20, to support the Godot-SFT test-runner library.
+if env.get("is_msvc", False):
+    env["CXXFLAGS"].remove("/std:c++17")
+    env["CXXFLAGS"].insert(0, "/std:c++20")
+    env["CXXFLAGS"].insert(0, "/Zc:preprocessor")
 else:
-    excludeList = ["test_*"]
+    env["CXXFLAGS"].remove("-std=c++17")
+    env["CXXFLAGS"].insert(0, "-std=c++20")
+
+# NOTE: Levi updated this.
+env.Append(CPPPATH=["src/", "godot-sft/"])
 
 # NOTE: Levi updated this.
 sources = (
-    Glob("src/*.cpp", exclude=excludeList) +
-    Glob("src/annotations/*.cpp", exclude=excludeList) +
-    Glob("src/surface/*.cpp", exclude=excludeList)
+    Glob("src/*.cpp") +
+    Glob("src/annotations/*.cpp") +
+    Glob("src/surface/*.cpp")
 )
 
 if env["target"] in ["editor", "template_debug"]:

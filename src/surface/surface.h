@@ -31,10 +31,10 @@ public:
 	};
 
 private:
-	static constexpr char *_side_strings[Side::_Side_COUNT] = {
+	static constexpr const char *_side_strings[Side::_Side_COUNT] = {
 		"UNKNOWN", "FLOOR", "CEILING", "LEFT_WALL", "RIGHT_WALL",
 	};
-	static constexpr char *_side_prefix_strings[Side::_Side_COUNT] = {
+	static constexpr const char *_side_prefix_strings[Side::_Side_COUNT] = {
 		"U", "F", "C", "L", "R",
 	};
 
@@ -54,7 +54,7 @@ public:
 	};
 
 private:
-	static constexpr char *_neighbor_curvature_strings
+	static constexpr const char *_neighbor_curvature_strings
 			[NeighborCurvature::_NeighborCurvature_COUNT] = {
 				"UNKNOWN",
 				"COLLINEAR",

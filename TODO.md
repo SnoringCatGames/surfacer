@@ -28,16 +28,19 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 
 ### Next
 
+- Test writing unit tests!
+  - https://github.com/dementive/Godot-SFT
+  - Write tests for all utility functionality I've ported over.
+  - Write tests for Surface.
+
+- Configure tests to run as presubmits! (See SFT README)
+- Fix CI/CD.
+
 - Fix custom doc edits not actually being used in editor (maybe it'll magically work in a future update?).
 
 - Port-over scaffolder_geometry, and copy them to scaffolder2 directly.
   - And other utils?
   - As I do this, port to C++ all functionality that I'll need to access from C++, and then update the corresponding scaffolder2 GDScript logic to reference this new C++ logic.
-
-- Test writing unit tests!
-  - https://docs.godotengine.org/en/latest/contributing/development/core_and_modules/unit_testing.html#doc-unit-testing
-  - Write tests for all utility functionality I've ported over.
-  - Write tests for Surface.
 
 - Finish implementing surface.
 
