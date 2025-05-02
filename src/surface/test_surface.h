@@ -1,15 +1,30 @@
+#ifndef TEST_SURFACE_H
+#define TEST_SURFACE_H
+
 // FIXME: LEFT OFF HERE: --------------------------------
+// - Use describe() and it() from tester.h, to auto-register the tests.
 // - Update this file to test Surface logic.
+
+#include "tester.h"
 
 #include "godot_cpp/classes/packed_scene.hpp"
 #include "godot_cpp/classes/resource_loader.hpp"
 #include "godot_cpp/variant/utility_functions.hpp"
 
-#include "SFT.hpp"
-
-namespace TestSurface {
-
 // clang-format off
+
+describe("Hello test suite!", [](){
+    it("Hello test case!", [](){
+        TESTS(
+            "Hello test",
+            1 == 1,
+            2 == 2,
+            3 == 3,
+            4 == 4
+        )
+    });
+});
+
 // void test_dictionary() {
 //     godot::Dictionary map;
 //     map["Hello"] = 0;
@@ -63,10 +78,4 @@ namespace TestSurface {
 
 // clang-format on
 
-void run() {
-	// test_dictionary();
-	// test_custom_object();
-	// test_custom_scene();
-}
-
-} //namespace TestSurface
+#endif

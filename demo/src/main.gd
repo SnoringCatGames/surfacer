@@ -9,12 +9,14 @@ func _ready() -> void:
     G.main = self
 
     S.set_up(manifest)
+
     # TODO: REMOVE
     var foo := Surface.new()
     var side: Surface.Side
     Surface.get_normal_from_side(side)
     foo.get_last_point()
     Geometry.are_colors_equal_with_epsilon(Color.WHITE, Color.BLACK, 0.0001)
+    S.log.print(foo.to_string(false))
 
     _run_tests()
 

@@ -28,6 +28,9 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 
 ### Next
 
+- Write some custom test macros:
+  - 
+
 - Test writing unit tests!
   - https://github.com/dementive/Godot-SFT
   - Write tests for all utility functionality I've ported over.

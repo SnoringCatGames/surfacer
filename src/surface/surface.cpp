@@ -136,7 +136,7 @@ void Surface::_bind_methods() {
 			D_METHOD("get_is_single_vertex"), &Surface::get_is_single_vertex);
 	ClassDB::bind_method(
 			D_METHOD("get_bounds_center"), &Surface::get_bounds_center);
-	ClassDB::bind_method(D_METHOD("to_string"), &Surface::to_string);
+	ClassDB::bind_method(D_METHOD("to_string", "verbose"), &Surface::to_string);
 
 	ClassDB::bind_static_method(
 			"Surface", D_METHOD("get_normal_from_side", "side"),
