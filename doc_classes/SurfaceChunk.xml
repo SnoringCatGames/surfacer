@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SurfaceChunk" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="bounding_box" type="Rect2" setter="set_bounding_box" getter="get_bounding_box" default="Rect2(0, 0, 0, 0)">
+		</member>
+		<member name="surfaces" type="Surface[]" setter="set_surfaces" getter="get_surfaces" default="[]">
+		</member>
+	</members>
+</class>

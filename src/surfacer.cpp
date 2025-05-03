@@ -1,6 +1,8 @@
 #include "surfacer.h"
 
-#include "tester.h"
+#include "test_runner.h"
+
+#include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;
 
@@ -10,7 +12,7 @@ void Surfacer::_bind_methods() {
 }
 
 void Surfacer::run_tests() {
-	// FIXME: Swap these.
-	// Tester::run_tests();
-	Tester::run_tests_and_print_all();
+	// TODO: Swap these.
+	// TestRunner::run_tests();
+	TestRunner::run_tests_and_print_all();
 }

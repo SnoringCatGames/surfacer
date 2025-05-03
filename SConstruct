@@ -66,7 +66,9 @@ if env["target"] in ["editor", "template_debug"]:
 
 # .dev doesn't inhibit compatibility, so we don't need to key it.
 # .universal just means "compatible with all relevant arches" so we don't need to key it.
-suffix = env['suffix'].replace(".dev", "").replace(".universal", "")
+# NOTE: Levi updated this.
+# suffix = env['suffix'].replace(".dev", "").replace(".universal", "")
+suffix = env['suffix']
 
 lib_filename = "{}{}{}{}".format(env.subst('$SHLIBPREFIX'), libname, suffix, env.subst('$SHLIBSUFFIX'))
 

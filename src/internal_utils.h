@@ -20,35 +20,34 @@
 #endif
 
 // Ensures `m_cond` is true.
-// - If `m_cond` is true, this prints `m_msg`, pauses execution, and evaluates to true.
+// - If `m_cond` is true, this prints `m_msg`, pauses execution, and evaluates
+// to true.
 // - If `m_cond` is false, this evaluates to false.
 #ifdef DEBUG_ENABLED
-#define ENSURE(m_cond, m_msg)                                                                                                                                  \
-	(                                                                                                                                                          \
-			unlikely(!(m_cond)) ? (                                                                                                                            \
-										  ::godot::_err_print_error(FUNCTION_STR, __FILE__, __LINE__, "ENSURE failed  \"" _STR(m_cond) "\" is false.", m_msg), \
-										  ::godot::_err_flush_stdout(),                                                                                        \
-										  DEBUG_BREAK(),                                                                                                       \
-										  false)                                                                                                               \
-								: true)
+#define ENSURE(m_cond, m_msg)                                                  \
+	(unlikely(!(m_cond))                                                       \
+			 ? (::godot::_err_print_error(                                     \
+						FUNCTION_STR, __FILE__, __LINE__,                      \
+						"ENSURE failed  \"" _STR(m_cond) "\" is false.",       \
+						m_msg),                                                \
+				::godot::_err_flush_stdout(), DEBUG_BREAK(), false)            \
+			 : true)
 #else
 #define ENSURE(m_cond, m_msg) (m_cond)
 #endif
 
 #ifdef DEBUG_ENABLED
-#define ENSURE_SIMPLE(m_cond)                                                                                                                           \
-	(                                                                                                                                                   \
-			unlikely(!(m_cond)) ? (                                                                                                                     \
-										  ::godot::_err_print_error(FUNCTION_STR, __FILE__, __LINE__, "ENSURE failed  \"" _STR(m_cond) "\" is false."), \
-										  ::godot::_err_flush_stdout(),                                                                                 \
-										  DEBUG_BREAK(),                                                                                                \
-										  false)                                                                                                        \
-								: true)
+#define ENSURE_SIMPLE(m_cond)                                                  \
+	(unlikely(!(m_cond))                                                       \
+			 ? (::godot::_err_print_error(                                     \
+						FUNCTION_STR, __FILE__, __LINE__,                      \
+						"ENSURE failed  \"" _STR(m_cond) "\" is false."),      \
+				::godot::_err_flush_stdout(), DEBUG_BREAK(), false)            \
+			 : true)
 #else
 #define ENSURE_SIMPLE(m_cond) (m_cond)
 #endif
 
-namespace godot {
-} //namespace godot
+namespace godot {} //namespace godot
 
 #endif

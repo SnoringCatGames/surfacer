@@ -1,27 +1,19 @@
-#ifndef TEST_SURFACE_H
-#define TEST_SURFACE_H
+#ifdef DEBUG_ENABLED
 
 // FIXME: LEFT OFF HERE: --------------------------------
-// - Use describe() and it() from tester.h, to auto-register the tests.
 // - Update this file to test Surface logic.
 
-#include "tester.h"
+#include "test_runner.h"
 
-#include "godot_cpp/classes/packed_scene.hpp"
-#include "godot_cpp/classes/resource_loader.hpp"
 #include "godot_cpp/variant/utility_functions.hpp"
 
 // clang-format off
 
-describe("Hello test suite!", [](){
-    it("Hello test case!", [](){
-        TESTS(
-            "Hello test",
-            1 == 1,
-            2 == 2,
-            3 == 3,
-            4 == 4
-        )
+using namespace TestRunner;
+
+describe("Hello test suite!", []() {
+    it("Hello test case!", []() {
+        Expect(1 + 1, 2);
     });
 });
 
@@ -78,4 +70,4 @@ describe("Hello test suite!", [](){
 
 // clang-format on
 
-#endif
+#endif // DEBUG_ENABLED

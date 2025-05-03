@@ -28,8 +28,7 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 
 ### Next
 
-- Write some custom test macros:
-  - 
+- Remove the SFT submodule.
 
 - Test writing unit tests!
   - https://github.com/dementive/Godot-SFT
