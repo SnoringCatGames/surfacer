@@ -38,17 +38,17 @@ void xdescribe_internal(
 } //namespace Internal
 
 #define LOCATION_TEMPLATE                                                      \
-	"[color=gray]%s:%s[/color] - "                                             \
+	"[[color=gray]%s:%s[/color]] "                                             \
 	"[color=yellow]actual:[/color] [code]%s[/code], "                          \
 	"[color=yellow]expected:[/color] [code]%s[/code]"
-#define FAIL_TEMPLATE "[color=red]Failed[/color] - " LOCATION_TEMPLATE
-#define PASS_TEMPLATE "[color=green]Passed[/color] - " LOCATION_TEMPLATE
+#define FAIL_TEMPLATE "[color=red]Failed[/color] " LOCATION_TEMPLATE
+#define PASS_TEMPLATE "[color=green]Passed[/color] " LOCATION_TEMPLATE
 
 #define RAINBOW_BAR                                                            \
 	"[color=red]=[/color][color=orange]=[/color][color=yellow]=[/color]"       \
 	"[color=green]=[/color][color=blue]=[/color][color=purple]=[/color]"
-#define CHECKMARK "[color=green]✓[/color]"
-#define X_MARK "[color=red]✗[/color]"
+#define CHECKMARK "[color=green]PASS[/color]"
+#define X_MARK "[color=red]FAIL[/color]"
 
 #define PRINT_EXPECT_RESULT(template, actual, expected)                        \
 	godot::UtilityFunctions::print_rich(                                       \

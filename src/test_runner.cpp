@@ -93,7 +93,7 @@ struct Suite : public TestRunner::Focusable,
 		}
 
 		// Execute specs for this suite.
-		for (const Spec &spec : specs) {
+		for (Spec &spec : specs) {
 			if (spec.should_run()) {
 				// Execute any before_each.
 				for (const TestRunner::Callable &callable : before_eaches) {
@@ -102,7 +102,7 @@ struct Suite : public TestRunner::Focusable,
 
 				is_spec_running = true;
 
-				spec.callback();
+				spec.run();
 
 				is_spec_running = false;
 
@@ -223,11 +223,11 @@ void run_all_tests() {
 
 	if (is_current_suite_passing) {
 		godot::UtilityFunctions::print_rich(
-				"[color=green]All tests passed![/color]\n");
+				"\n[color=green]All tests passed![/color]\n");
 	} else {
 		godot::UtilityFunctions::print_rich(
 				godot::vformat(
-						"[color=red]%d specs failed![/color]\n",
+						"\n[color=red]%d specs failed![/color]\n",
 						failing_spec_count));
 	}
 }
