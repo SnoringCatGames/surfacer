@@ -148,7 +148,7 @@ void Spec::run() {
 		}
 		godot::UtilityFunctions::print_rich(
 				godot::vformat(
-						"%s: [color=red]%s[/color]", X_MARK,
+						"%s: [color=purple]%s[/color]", X_MARK,
 						description.c_str()));
 	} else if (print_passing_units) {
 		godot::UtilityFunctions::print_rich(
