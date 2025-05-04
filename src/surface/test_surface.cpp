@@ -14,6 +14,7 @@ using namespace TestRunner;
 describe("Hello test suite!", []() {
     it("Hello test case!", []() {
         Expect(1 + 1, 2);
+        Expect(2 + 2, 3);
     });
 });
 

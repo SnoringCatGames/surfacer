@@ -7,7 +7,8 @@ namespace TestRunner {
 namespace Internal {
 
 bool are_any_tests_focused = false;
-bool print_all_results = false;
+bool print_passing_units = false;
+bool print_passing_expects = false;
 
 int compiling_suite_count = 0;
 int running_suite_count = 0;
@@ -82,7 +83,7 @@ struct Suite : public TestRunner::Focusable,
 		const bool was_parent_suite_passing = is_current_suite_passing;
 		is_current_suite_passing = true;
 
-		if (print_all_results) {
+		if (print_passing_units) {
 			godot::UtilityFunctions::print_rich(
 					get_combined_rich_description());
 		}
@@ -139,7 +140,7 @@ void Spec::run() {
 
 	if (!is_current_spec_passing) {
 		// Print the suite path, if we aren't already printing all results.
-		if (!print_all_results) {
+		if (!print_passing_units) {
 			godot::UtilityFunctions::print_rich(
 					godot::vformat(
 							"%s [color=white]>[/color]",
@@ -147,13 +148,13 @@ void Spec::run() {
 		}
 		godot::UtilityFunctions::print_rich(
 				godot::vformat(
-						"[color=red]%s[/color]: %s", description.c_str(),
-						X_MARK));
-	} else if (print_all_results) {
+						"%s: [color=red]%s[/color]", X_MARK,
+						description.c_str()));
+	} else if (print_passing_units) {
 		godot::UtilityFunctions::print_rich(
 				godot::vformat(
-						"[color=white]%s[/color]: %s", description.c_str(),
-						CHECKMARK));
+						"%s: [color=purple]%s[/color]", CHECKMARK,
+						description.c_str()));
 	}
 
 	is_spec_running = false;
@@ -214,7 +215,7 @@ void create_spec(
 
 void run_all_tests() {
 	godot::UtilityFunctions::print_rich(
-			"\n" RAINBOW_BAR
+			"\n" REVERSE_RAINBOW_BAR
 			" [color=white]Running tests[/color] " RAINBOW_BAR);
 
 	failing_spec_count = 0;
@@ -309,12 +310,20 @@ void after_all(const std::function<void()> &p_callback) {
 }
 
 void run_tests() {
-	print_all_results = false;
+	print_passing_units = false;
+	print_passing_expects = false;
 	run_all_tests();
 }
 
-void run_tests_and_print_all() {
-	print_all_results = true;
+void run_tests_verbose() {
+	print_passing_units = true;
+	print_passing_expects = false;
+	run_all_tests();
+}
+
+void run_tests_very_verbose() {
+	print_passing_units = true;
+	print_passing_expects = true;
 	run_all_tests();
 }
 

@@ -16,7 +16,8 @@ namespace TestRunner {
 namespace Internal {
 
 extern bool are_any_tests_focused;
-extern bool print_all_results;
+extern bool print_passing_units;
+extern bool print_passing_expects;
 
 extern int compiling_suite_count;
 extern int running_suite_count;
@@ -38,7 +39,7 @@ void xdescribe_internal(
 } //namespace Internal
 
 #define LOCATION_TEMPLATE                                                      \
-	"[[color=gray]%s:%s[/color]] "                                             \
+	"[lb][color=gray]%s:%s[/color][rb] "                                       \
 	"[color=yellow]actual:[/color] [code]%s[/code], "                          \
 	"[color=yellow]expected:[/color] [code]%s[/code]"
 #define FAIL_TEMPLATE "[color=red]Failed[/color] " LOCATION_TEMPLATE
@@ -47,6 +48,9 @@ void xdescribe_internal(
 #define RAINBOW_BAR                                                            \
 	"[color=red]=[/color][color=orange]=[/color][color=yellow]=[/color]"       \
 	"[color=green]=[/color][color=blue]=[/color][color=purple]=[/color]"
+#define REVERSE_RAINBOW_BAR                                                    \
+	"[color=purple]=[/color][color=blue]=[/color][color=green]=[/color]"       \
+	"[color=yellow]=[/color][color=orange]=[/color][color=red]=[/color]"
 #define CHECKMARK "[color=green]PASS[/color]"
 #define X_MARK "[color=red]FAIL[/color]"
 
@@ -64,7 +68,7 @@ void xdescribe_internal(
 			TestRunner::Internal::is_current_suite_passing = false;            \
 			TestRunner::Internal::failing_spec_count++;                        \
 			PRINT_EXPECT_RESULT(FAIL_TEMPLATE, #actual, #expected);            \
-		} else if (TestRunner::Internal::print_all_results) {                  \
+		} else if (TestRunner::Internal::print_passing_expects) {              \
 			PRINT_EXPECT_RESULT(PASS_TEMPLATE, #actual, #expected);            \
 		}                                                                      \
 	} while (0)
@@ -88,7 +92,8 @@ void before_all(const std::function<void()> &p_callback);
 void after_all(const std::function<void()> &p_callback);
 
 void run_tests();
-void run_tests_and_print_all();
+void run_tests_verbose();
+void run_tests_very_verbose();
 
 struct DescribeHack {
 	DescribeHack(

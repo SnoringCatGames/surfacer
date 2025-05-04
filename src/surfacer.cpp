@@ -14,5 +14,5 @@ void Surfacer::_bind_methods() {
 void Surfacer::run_tests() {
 	// TODO: Swap these.
 	// TestRunner::run_tests();
-	TestRunner::run_tests_and_print_all();
+	TestRunner::run_tests_verbose();
 }
