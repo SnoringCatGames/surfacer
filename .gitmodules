@@ -9,6 +9,3 @@
 	path = godot
 	url = https://github.com/godotengine/godot.git
 	branch = 4.4
-[submodule "godot-sft"]
-	path = godot-sft
-	url = https://github.com/dementive/Godot-SFT
