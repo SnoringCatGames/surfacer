@@ -3,19 +3,25 @@
 // FIXME: LEFT OFF HERE: --------------------------------
 // - Update this file to test Surface logic.
 
+#include "surface.h"
 #include "test_runner.h"
-
-#include "godot_cpp/variant/utility_functions.hpp"
 
 // clang-format off
 
-using namespace TestRunner;
+test_space([]() {
 
-describe("Hello test suite!", []() {
-    it("Hello test case!", []() {
-        Expect(1 + 1, 2);
-        Expect(2 + 2, 3);
+describe("Surface", []() {
+    describe("Foo", []() {
+        it("get_normal_from_side", []() {
+            Expect(Surface::get_normal_from_side(Surface::Side::FLOOR), Vector2(0, -1));
+            Expect(Surface::get_normal_from_side(Surface::Side::CEILING), Vector2(0, 1));
+            Expect(Surface::get_normal_from_side(Surface::Side::LEFT_WALL), Vector2(1, 0));
+            Expect(Surface::get_normal_from_side(Surface::Side::RIGHT_WALL), Vector2(-1, 0));
+            Expect(Surface::get_normal_from_side(Surface::Side::UNKNOWN_SIDE), vector2_invalid);
+        });
     });
+});
+
 });
 
 // void test_dictionary() {

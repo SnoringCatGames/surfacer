@@ -2,6 +2,8 @@
 
 #ifdef DEBUG_ENABLED
 
+namespace godot {
+
 namespace TestRunner {
 
 namespace Internal {
@@ -69,7 +71,9 @@ struct Suite : public TestRunner::Focusable,
 			// Skip the empty root description.
 			if (!current_suite->description.empty()) {
 				combined_description = godot::vformat(
-						"[color=cyan]%s[/color] [color=white]>[/color] %s",
+						"[color=dark_slate_gray]%s[/color] "
+						"[color=white]>[/color] "
+						"%s",
 						current_suite->description.c_str(),
 						combined_description);
 			}
@@ -184,12 +188,13 @@ void create_suite(
 	suite.is_excluded = p_is_excluded || compiling_suite->is_excluded;
 	suite.parent_suite = compiling_suite;
 
-	compiling_suite = &suite;
-
-	suite.callback();
-
-	compiling_suite = suite.parent_suite;
 	compiling_suite->suites.push_back(std::move(suite));
+
+	compiling_suite = &compiling_suite->suites.back();
+
+	compiling_suite->callback();
+
+	compiling_suite = compiling_suite->parent_suite;
 
 	compiling_suite_count--;
 }
@@ -224,30 +229,32 @@ void run_all_tests() {
 
 	if (is_current_suite_passing) {
 		godot::UtilityFunctions::print_rich(
-				"\n[color=green]All tests passed![/color]\n");
+				"\n" REVERSE_RAINBOW_BAR
+				" [color=green]All tests passed![/color] " RAINBOW_BAR "\n");
 	} else {
 		godot::UtilityFunctions::print_rich(
 				godot::vformat(
-						"\n[color=red]%d specs failed![/color]\n",
+						"\n" REVERSE_RAINBOW_BAR
+						"[color=red]%d specs failed![/color] " RAINBOW_BAR "\n",
 						failing_spec_count));
 	}
 }
 
 } //namespace
 
-void Internal::describe_internal(
+void describe(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
 	create_suite(p_description, p_callback, false, false);
 }
 
-void Internal::fdescribe_internal(
+void fdescribe(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
 	create_suite(p_description, p_callback, true, false);
 }
 
-void Internal::xdescribe_internal(
+void xdescribe(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
 	create_suite(p_description, p_callback, false, true);
@@ -328,5 +335,7 @@ void run_tests_very_verbose() {
 }
 
 } //namespace TestRunner
+
+} //namespace godot
 
 #endif // DEBUG_ENABLED

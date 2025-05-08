@@ -11,6 +11,8 @@
 #include <godot_cpp/variant/string.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
+namespace godot {
+
 namespace TestRunner {
 
 namespace Internal {
@@ -26,22 +28,12 @@ extern bool is_spec_running;
 extern bool is_current_suite_passing;
 extern bool is_current_spec_passing;
 
-void describe_internal(
-		const std::string &p_description,
-		const std::function<void()> &p_callback);
-void fdescribe_internal(
-		const std::string &p_description,
-		const std::function<void()> &p_callback);
-void xdescribe_internal(
-		const std::string &p_description,
-		const std::function<void()> &p_callback);
-
 } //namespace Internal
 
 #define LOCATION_TEMPLATE                                                      \
 	"[lb][color=gray]%s:%s[/color][rb] "                                       \
 	"[color=yellow]actual:[/color] [code]%s[/code], "                          \
-	"[color=yellow]expected:[/color] [code]%s[/code]"
+	"[color=yellow]expected:[/color] [code]%s[/code], [lb]Expect(%s, %s)[rb]"
 #define FAIL_TEMPLATE "[color=red]Failed[/color] " LOCATION_TEMPLATE
 #define PASS_TEMPLATE "[color=green]Passed[/color] " LOCATION_TEMPLATE
 
@@ -54,9 +46,13 @@ void xdescribe_internal(
 #define CHECKMARK "[color=green]PASS[/color]"
 #define X_MARK "[color=red]FAIL[/color]"
 
-#define PRINT_EXPECT_RESULT(template, actual, expected)                        \
+#define PRINT_EXPECT_RESULT(                                                   \
+		template, actual_value, expected_value, actual_source,                 \
+		expected_source)                                                       \
 	godot::UtilityFunctions::print_rich(                                       \
-			godot::vformat(template, __FILE__, __LINE__, actual, expected))
+			godot::vformat(                                                    \
+					template, __FILE__, __LINE__, actual_value,                \
+					expected_value, actual_source, expected_source))
 
 #define Expect(actual, expected)                                               \
 	do {                                                                       \
@@ -67,15 +63,29 @@ void xdescribe_internal(
 			TestRunner::Internal::is_current_spec_passing = false;             \
 			TestRunner::Internal::is_current_suite_passing = false;            \
 			TestRunner::Internal::failing_spec_count++;                        \
-			PRINT_EXPECT_RESULT(FAIL_TEMPLATE, #actual, #expected);            \
+			PRINT_EXPECT_RESULT(                                               \
+					FAIL_TEMPLATE, Variant(actual).stringify(),                \
+					Variant(expected).stringify(), #actual, #expected);        \
 		} else if (TestRunner::Internal::print_passing_expects) {              \
-			PRINT_EXPECT_RESULT(PASS_TEMPLATE, #actual, #expected);            \
+			PRINT_EXPECT_RESULT(                                               \
+					PASS_TEMPLATE, Variant(actual).stringify(),                \
+					Variant(expected).stringify(), #actual, #expected);        \
 		}                                                                      \
 	} while (0)
 
 #define ExpectTrue(condition) Expect(condition, true)
 
 #define Fail() Expect(true, false)
+
+void describe(
+		const std::string &p_description,
+		const std::function<void()> &p_callback);
+void fdescribe(
+		const std::string &p_description,
+		const std::function<void()> &p_callback);
+void xdescribe(
+		const std::string &p_description,
+		const std::function<void()> &p_callback);
 
 void it(const std::string &p_description,
 		const std::function<void()> &p_callback);
@@ -95,44 +105,20 @@ void run_tests();
 void run_tests_verbose();
 void run_tests_very_verbose();
 
-struct DescribeHack {
-	DescribeHack(
-			const std::string &p_description,
-			const std::function<void()> &p_callback) {
-		Internal::describe_internal(p_description, p_callback);
-	}
+struct TestSpaceHack {
+	TestSpaceHack(const std::function<void()> &p_callback) { p_callback(); }
 };
 
-struct FDescribeHack {
-	FDescribeHack(
-			const std::string &p_description,
-			const std::function<void()> &p_callback) {
-		Internal::fdescribe_internal(p_description, p_callback);
-	}
-};
-
-struct XDescribeHack {
-	XDescribeHack(
-			const std::string &p_description,
-			const std::function<void()> &p_callback) {
-		Internal::xdescribe_internal(p_description, p_callback);
-	}
-};
-
-#define describe(description, callback)                                        \
+#define test_space(callback)                                                   \
+	using namespace godot;                                                     \
+	using namespace godot::TestRunner;                                         \
 	namespace {                                                                \
-	static DescribeHack hack(description, callback);                           \
-	}
-#define fdescribe(description, callback)                                       \
-	namespace {                                                                \
-	static FDescribeHack hack(description, callback);                          \
-	}
-#define xdescribe(description, callback)                                       \
-	namespace {                                                                \
-	static XDescribeHack hack(description, callback);                          \
-	}
+	static TestSpaceHack hack(callback);                                       \
+	} //namespace TestRunner
 
 } //namespace TestRunner
+
+} //namespace godot
 
 #endif // DEBUG_ENABLED
 #endif // TESTRUNNER_H
