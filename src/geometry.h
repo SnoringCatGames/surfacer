@@ -27,9 +27,6 @@ constexpr float float_epsilon = 0.00001f;
 class Geometry : public Object {
 	GDCLASS(Geometry, Object)
 
-protected:
-	static void _bind_methods();
-
 public:
 	static float get_distance_squared_from_point_to_segment(
 			const Vector2 &p_point,
@@ -242,6 +239,9 @@ public:
 	static String get_vector_string(
 			const Vector2 &p_vector,
 			int p_decimal_place_count = 2);
+
+protected:
+	static void _bind_methods();
 };
 
 } //namespace godot

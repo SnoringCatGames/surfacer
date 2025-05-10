@@ -8,13 +8,14 @@ namespace godot {
 class SurfaceGraph : public RefCounted {
 	GDCLASS(SurfaceGraph, RefCounted)
 
-private:
+public:
+	SurfaceGraph() = default;
+	~SurfaceGraph() = default;
+
 protected:
 	static void _bind_methods();
 
-public:
-	SurfaceGraph();
-	~SurfaceGraph();
+private:
 };
 
 } //namespace godot

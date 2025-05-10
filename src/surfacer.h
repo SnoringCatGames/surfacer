@@ -8,11 +8,11 @@ namespace godot {
 class Surfacer : public Object {
 	GDCLASS(Surfacer, Object)
 
-protected:
-	static void _bind_methods();
-
 public:
 	static void run_tests();
+
+protected:
+	static void _bind_methods();
 };
 
 } //namespace godot

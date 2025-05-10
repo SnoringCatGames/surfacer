@@ -67,35 +67,11 @@ public:
 		return _neighbor_curvature_strings[p_side];
 	}
 
-private:
-	Side side = Side::UNKNOWN_SIDE;
-
-	Ref<SurfaceProperties> properties;
-
-	PackedVector2Array vertices;
-	Rect2 bounding_box;
-
-	Ref<SurfaceChunk> chunk;
-
-	TileMapLayer *tile_map_layer = nullptr;
-	PackedInt32Array tile_map_indices;
-
-	NeighborCurvature clockwise_neighbor_curvature =
-			NeighborCurvature::UNKNOWN_CURVATURE;
-	Ref<Surface> clockwise_neighbor;
-
-	NeighborCurvature counter_clockwise_neighbor_curvature =
-			NeighborCurvature::UNKNOWN_CURVATURE;
-	Ref<Surface> counter_clockwise_neighbor;
-
-protected:
-	static void _bind_methods();
-
 public:
 	static Vector2 get_normal_from_side(Side p_side);
 
-	Surface();
-	~Surface();
+	Surface() = default;
+	~Surface() = default;
 
 	void set_side(Side p_side) { side = p_side; }
 	Side get_side() const { return side; }
@@ -200,6 +176,30 @@ public:
 	Vector2 get_bounds_center() const { return bounding_box.get_center(); }
 
 	String to_string(bool p_verbose = true) const;
+
+protected:
+	static void _bind_methods();
+
+private:
+	Side side = Side::UNKNOWN_SIDE;
+
+	Ref<SurfaceProperties> properties;
+
+	PackedVector2Array vertices;
+	Rect2 bounding_box;
+
+	Ref<SurfaceChunk> chunk;
+
+	TileMapLayer *tile_map_layer = nullptr;
+	PackedInt32Array tile_map_indices;
+
+	NeighborCurvature clockwise_neighbor_curvature =
+			NeighborCurvature::UNKNOWN_CURVATURE;
+	Ref<Surface> clockwise_neighbor;
+
+	NeighborCurvature counter_clockwise_neighbor_curvature =
+			NeighborCurvature::UNKNOWN_CURVATURE;
+	Ref<Surface> counter_clockwise_neighbor;
 };
 
 } //namespace godot

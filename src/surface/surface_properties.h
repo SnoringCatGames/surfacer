@@ -8,25 +8,9 @@ namespace godot {
 class SurfaceProperties : public RefCounted {
 	GDCLASS(SurfaceProperties, RefCounted)
 
-private:
-	// TODO: Use these.
-
-	// TODO:
-	// - Add some way of checking fall - through / walk - through state.
-	// - And add a way to validate that this matches the normal TileSet
-	// encoding.
-
-	String name;
-	bool can_grab = true;
-	float friction_multiplier = 1.0f;
-	float speed_multiplier = 1.0f;
-
-protected:
-	static void _bind_methods();
-
 public:
-	SurfaceProperties();
-	~SurfaceProperties();
+	SurfaceProperties() = default;
+	~SurfaceProperties() = default;
 
 	void set_name(String p_name) { name = p_name; }
 	String get_name() const { return name; }
@@ -43,6 +27,22 @@ public:
 		speed_multiplier = p_speed_multiplier;
 	}
 	float get_speed_multiplier() const { return speed_multiplier; }
+
+protected:
+	static void _bind_methods();
+
+private:
+	// TODO: Use these.
+
+	// TODO:
+	// - Add some way of checking fall - through / walk - through state.
+	// - And add a way to validate that this matches the normal TileSet
+	// encoding.
+
+	String name;
+	bool can_grab = true;
+	float friction_multiplier = 1.0f;
+	float speed_multiplier = 1.0f;
 };
 
 } //namespace godot

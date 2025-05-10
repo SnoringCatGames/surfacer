@@ -6,11 +6,4 @@ using namespace godot;
 
 // TODO: Implement.
 
-void SurfaceGraph::_bind_methods() {
-}
-
-SurfaceGraph::SurfaceGraph() {
-}
-
-SurfaceGraph::~SurfaceGraph() {
-}
+void SurfaceGraph::_bind_methods() {}

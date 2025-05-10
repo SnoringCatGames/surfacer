@@ -6,11 +6,4 @@ using namespace godot;
 
 // TODO: Implement.
 
-void MovementProfile::_bind_methods() {
-}
-
-MovementProfile::MovementProfile() {
-}
-
-MovementProfile::~MovementProfile() {
-}
+void MovementProfile::_bind_methods() {}

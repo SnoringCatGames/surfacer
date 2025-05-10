@@ -8,13 +8,14 @@ namespace godot {
 class AgentSurfaceState : public RefCounted {
 	GDCLASS(AgentSurfaceState, RefCounted)
 
-private:
+public:
+	AgentSurfaceState() = default;
+	~AgentSurfaceState() = default;
+
 protected:
 	static void _bind_methods();
 
-public:
-	AgentSurfaceState();
-	~AgentSurfaceState();
+private:
 };
 
 } //namespace godot

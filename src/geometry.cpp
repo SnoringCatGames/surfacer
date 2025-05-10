@@ -13,252 +13,6 @@
 
 using namespace godot;
 
-void Geometry::_bind_methods() {
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_distance_squared_from_point_to_segment", "point",
-					"segment_a", "segment_b"),
-			&Geometry::get_distance_squared_from_point_to_segment);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_distance_squared_from_point_to_polyline", "point",
-					"polyline"),
-			&Geometry::get_distance_squared_from_point_to_polyline);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_distance_squared_between_non_intersecting_segments",
-					"segment_1_a", "segment_1_b", "segment_2_a", "segment_2_b"),
-			&Geometry::get_distance_squared_between_non_intersecting_segments);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("get_distance_squared_from_rect_to_rect", "a", "b"),
-			&Geometry::get_distance_squared_from_rect_to_rect);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_closest_point_on_segment_to_point", "point",
-					"segment_a", "segment_b"),
-			&Geometry::get_closest_point_on_segment_to_point);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_closest_point_on_polyline_to_point", "point",
-					"polyline"),
-			&Geometry::get_closest_point_on_polyline_to_point);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("get_closest_point_on_polyline_to_polyline", "a", "b"),
-			&Geometry::get_closest_point_on_polyline_to_polyline);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_intersection_of_segments", "segment_1_a",
-					"segment_1_b", "segment_2_a", "segment_2_b"),
-			&Geometry::get_intersection_of_segments);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_intersection_of_segment_and_polyline", "segment_a",
-					"segment_b", "vertices"),
-			&Geometry::get_intersection_of_segment_and_polyline);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_intersection_of_segment_and_circle", "segment_a",
-					"segment_b", "center", "radius",
-					"uses_first_possible_intersection"),
-			&Geometry::get_intersection_of_segment_and_circle);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("is_point_in_triangle", "point", "a", "b", "c"),
-			&Geometry::is_point_in_triangle);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"is_point_in_rectangle", "point", "rectangle_min",
-					"rectangle_max"),
-			&Geometry::is_point_in_rectangle);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"do_rectangles_intersect", "a_min", "a_max", "b_min",
-					"b_max"),
-			&Geometry::do_rectangles_intersect);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"does_rectangle_and_circle_intersect", "rectangle_min",
-					"rectangle_max", "circle_center", "circle_radius"),
-			&Geometry::does_rectangle_and_circle_intersect);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"do_segment_and_rectangle_intersect", "segment_a",
-					"segment_b", "rectangle_min", "rectangle_max"),
-			&Geometry::do_segment_and_rectangle_intersect);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"do_segment_and_triangle_intersect", "segment_a",
-					"segment_b", "triangle_a", "triangle_b", "triangle_c"),
-			&Geometry::do_segment_and_triangle_intersect);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"do_segment_and_polygon_intersect", "segment_a",
-					"segment_b", "polygon"),
-			&Geometry::do_segment_and_polygon_intersect);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"do_polyline_and_rectangle_intersect", "vertices",
-					"rectangle_min", "rectangle_max"),
-			&Geometry::do_polyline_and_rectangle_intersect);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"do_polyline_and_triangle_intersect", "vertices",
-					"triangle_a", "triangle_b", "triangle_c"),
-			&Geometry::do_polyline_and_triangle_intersect);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"do_polyline_and_polygon_intersect", "vertices", "polygon"),
-			&Geometry::do_polyline_and_polygon_intersect);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("is_polygon_clockwise", "vertices"),
-			&Geometry::is_polygon_clockwise);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("are_three_points_clockwise", "a", "b", "c"),
-			&Geometry::are_three_points_clockwise);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("is_polygon_convex", "vertices", "epsilon"),
-			&Geometry::is_polygon_convex);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("are_points_collinear", "p1", "p2", "p3", "epsilon"),
-			&Geometry::are_points_collinear);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"do_point_and_segment_intersect", "point", "segment_a",
-					"segment_b", "epsilon"),
-			&Geometry::do_point_and_segment_intersect);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("get_bounding_box_for_points", "points"),
-			&Geometry::get_bounding_box_for_points);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("distance_squared_from_point_to_rect", "point", "rect"),
-			&Geometry::distance_squared_from_point_to_rect);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("calculate_manhattan_distance", "a", "b"),
-			&Geometry::calculate_manhattan_distance);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("is_point_inf", "point"),
-			&Geometry::is_point_inf);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("is_point_partial_inf", "point"),
-			&Geometry::is_point_partial_inf);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("are_floats_equal_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::are_floats_equal_with_epsilon);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("are_points_equal_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::are_points_equal_with_epsilon);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("are_rects_equal_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::are_rects_equal_with_epsilon);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("are_colors_equal_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::are_colors_equal_with_epsilon);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"is_float_integer_aligned_with_epsilon", "number",
-					"epsilon"),
-			&Geometry::is_float_integer_aligned_with_epsilon);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("is_float_gte_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::is_float_gte_with_epsilon);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("is_float_lte_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::is_float_lte_with_epsilon);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"clamp_vector_length", "vector", "min_length",
-					"max_length"),
-			&Geometry::clamp_vector_length);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("snap_float_to_integer", "number", "epsilon"),
-			&Geometry::snap_float_to_integer);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("snap_vector2_to_integers", "point", "epsilon"),
-			&Geometry::snap_vector2_to_integers);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("do_shapes_match", "shape_a", "shape_b"),
-			&Geometry::do_shapes_match);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"calculate_half_width_height", "shape",
-					"is_rotated_90_degrees"),
-			&Geometry::calculate_half_width_height);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("world_to_tile_map", "position", "tile_map_layer"),
-			&Geometry::world_to_tile_map_layer);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("tile_map_to_world", "position", "tile_map_layer"),
-			&Geometry::tile_map_layer_to_world);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_tile_map_index_from_world_coord", "position",
-					"tile_map_layer"),
-			&Geometry::get_tile_map_layer_index_from_world_coord);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_tile_map_index_from_grid_coord", "position",
-					"tile_map_layer"),
-			&Geometry::get_tile_map_layer_index_from_grid_coord);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_grid_coord_from_tile_map_index", "index",
-					"tile_map_layer"),
-			&Geometry::get_grid_coord_from_tile_map_layer_index);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD(
-					"get_tile_map_bounds_in_world_coordinates",
-					"tile_map_layer"),
-			&Geometry::get_tile_map_layer_bounds_in_world_coordinates);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("get_vector2_array_front", "vertices"),
-			&Geometry::get_vector2_array_front);
-	ClassDB::bind_static_method(
-			"Geometry", D_METHOD("get_vector2_array_back", "vertices"),
-			&Geometry::get_vector2_array_back);
-	ClassDB::bind_static_method(
-			"Geometry",
-			D_METHOD("get_vector_string", "vector", "decimal_place_count"),
-			&Geometry::get_vector_string);
-}
-
 float Geometry::get_distance_squared_from_point_to_segment(
 		const Vector2 &p_point,
 		const Vector2 &p_segment_a,
@@ -1282,4 +1036,250 @@ String Geometry::get_vector_string(
 	return vformat(
 			"(%.*f,%.*f)", p_decimal_place_count, p_vector.x,
 			p_decimal_place_count, p_vector.y);
+}
+
+void Geometry::_bind_methods() {
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_distance_squared_from_point_to_segment", "point",
+					"segment_a", "segment_b"),
+			&Geometry::get_distance_squared_from_point_to_segment);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_distance_squared_from_point_to_polyline", "point",
+					"polyline"),
+			&Geometry::get_distance_squared_from_point_to_polyline);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_distance_squared_between_non_intersecting_segments",
+					"segment_1_a", "segment_1_b", "segment_2_a", "segment_2_b"),
+			&Geometry::get_distance_squared_between_non_intersecting_segments);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("get_distance_squared_from_rect_to_rect", "a", "b"),
+			&Geometry::get_distance_squared_from_rect_to_rect);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_closest_point_on_segment_to_point", "point",
+					"segment_a", "segment_b"),
+			&Geometry::get_closest_point_on_segment_to_point);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_closest_point_on_polyline_to_point", "point",
+					"polyline"),
+			&Geometry::get_closest_point_on_polyline_to_point);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("get_closest_point_on_polyline_to_polyline", "a", "b"),
+			&Geometry::get_closest_point_on_polyline_to_polyline);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_intersection_of_segments", "segment_1_a",
+					"segment_1_b", "segment_2_a", "segment_2_b"),
+			&Geometry::get_intersection_of_segments);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_intersection_of_segment_and_polyline", "segment_a",
+					"segment_b", "vertices"),
+			&Geometry::get_intersection_of_segment_and_polyline);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_intersection_of_segment_and_circle", "segment_a",
+					"segment_b", "center", "radius",
+					"uses_first_possible_intersection"),
+			&Geometry::get_intersection_of_segment_and_circle);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("is_point_in_triangle", "point", "a", "b", "c"),
+			&Geometry::is_point_in_triangle);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"is_point_in_rectangle", "point", "rectangle_min",
+					"rectangle_max"),
+			&Geometry::is_point_in_rectangle);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"do_rectangles_intersect", "a_min", "a_max", "b_min",
+					"b_max"),
+			&Geometry::do_rectangles_intersect);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"does_rectangle_and_circle_intersect", "rectangle_min",
+					"rectangle_max", "circle_center", "circle_radius"),
+			&Geometry::does_rectangle_and_circle_intersect);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"do_segment_and_rectangle_intersect", "segment_a",
+					"segment_b", "rectangle_min", "rectangle_max"),
+			&Geometry::do_segment_and_rectangle_intersect);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"do_segment_and_triangle_intersect", "segment_a",
+					"segment_b", "triangle_a", "triangle_b", "triangle_c"),
+			&Geometry::do_segment_and_triangle_intersect);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"do_segment_and_polygon_intersect", "segment_a",
+					"segment_b", "polygon"),
+			&Geometry::do_segment_and_polygon_intersect);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"do_polyline_and_rectangle_intersect", "vertices",
+					"rectangle_min", "rectangle_max"),
+			&Geometry::do_polyline_and_rectangle_intersect);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"do_polyline_and_triangle_intersect", "vertices",
+					"triangle_a", "triangle_b", "triangle_c"),
+			&Geometry::do_polyline_and_triangle_intersect);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"do_polyline_and_polygon_intersect", "vertices", "polygon"),
+			&Geometry::do_polyline_and_polygon_intersect);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("is_polygon_clockwise", "vertices"),
+			&Geometry::is_polygon_clockwise);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("are_three_points_clockwise", "a", "b", "c"),
+			&Geometry::are_three_points_clockwise);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("is_polygon_convex", "vertices", "epsilon"),
+			&Geometry::is_polygon_convex);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("are_points_collinear", "p1", "p2", "p3", "epsilon"),
+			&Geometry::are_points_collinear);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"do_point_and_segment_intersect", "point", "segment_a",
+					"segment_b", "epsilon"),
+			&Geometry::do_point_and_segment_intersect);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("get_bounding_box_for_points", "points"),
+			&Geometry::get_bounding_box_for_points);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("distance_squared_from_point_to_rect", "point", "rect"),
+			&Geometry::distance_squared_from_point_to_rect);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("calculate_manhattan_distance", "a", "b"),
+			&Geometry::calculate_manhattan_distance);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("is_point_inf", "point"),
+			&Geometry::is_point_inf);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("is_point_partial_inf", "point"),
+			&Geometry::is_point_partial_inf);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("are_floats_equal_with_epsilon", "a", "b", "epsilon"),
+			&Geometry::are_floats_equal_with_epsilon);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("are_points_equal_with_epsilon", "a", "b", "epsilon"),
+			&Geometry::are_points_equal_with_epsilon);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("are_rects_equal_with_epsilon", "a", "b", "epsilon"),
+			&Geometry::are_rects_equal_with_epsilon);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("are_colors_equal_with_epsilon", "a", "b", "epsilon"),
+			&Geometry::are_colors_equal_with_epsilon);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"is_float_integer_aligned_with_epsilon", "number",
+					"epsilon"),
+			&Geometry::is_float_integer_aligned_with_epsilon);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("is_float_gte_with_epsilon", "a", "b", "epsilon"),
+			&Geometry::is_float_gte_with_epsilon);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("is_float_lte_with_epsilon", "a", "b", "epsilon"),
+			&Geometry::is_float_lte_with_epsilon);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"clamp_vector_length", "vector", "min_length",
+					"max_length"),
+			&Geometry::clamp_vector_length);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("snap_float_to_integer", "number", "epsilon"),
+			&Geometry::snap_float_to_integer);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("snap_vector2_to_integers", "point", "epsilon"),
+			&Geometry::snap_vector2_to_integers);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("do_shapes_match", "shape_a", "shape_b"),
+			&Geometry::do_shapes_match);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"calculate_half_width_height", "shape",
+					"is_rotated_90_degrees"),
+			&Geometry::calculate_half_width_height);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("world_to_tile_map", "position", "tile_map_layer"),
+			&Geometry::world_to_tile_map_layer);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("tile_map_to_world", "position", "tile_map_layer"),
+			&Geometry::tile_map_layer_to_world);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_tile_map_index_from_world_coord", "position",
+					"tile_map_layer"),
+			&Geometry::get_tile_map_layer_index_from_world_coord);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_tile_map_index_from_grid_coord", "position",
+					"tile_map_layer"),
+			&Geometry::get_tile_map_layer_index_from_grid_coord);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_grid_coord_from_tile_map_index", "index",
+					"tile_map_layer"),
+			&Geometry::get_grid_coord_from_tile_map_layer_index);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD(
+					"get_tile_map_bounds_in_world_coordinates",
+					"tile_map_layer"),
+			&Geometry::get_tile_map_layer_bounds_in_world_coordinates);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("get_vector2_array_front", "vertices"),
+			&Geometry::get_vector2_array_front);
+	ClassDB::bind_static_method(
+			"Geometry", D_METHOD("get_vector2_array_back", "vertices"),
+			&Geometry::get_vector2_array_back);
+	ClassDB::bind_static_method(
+			"Geometry",
+			D_METHOD("get_vector_string", "vector", "decimal_place_count"),
+			&Geometry::get_vector_string);
 }

@@ -6,6 +6,50 @@
 
 using namespace godot;
 
+// FIXME: REVIEW ALL BINDINGS FOR DEFAULT VALUES (Use DEFVAL()).
+
+Vector2 Surface::get_normal_from_side(Side p_side) {
+	switch (p_side) {
+		case Side::FLOOR:
+			return vector2_up;
+		case Side::CEILING:
+			return vector2_down;
+		case Side::LEFT_WALL:
+			return vector2_right;
+		case Side::RIGHT_WALL:
+			return vector2_left;
+		case Side::UNKNOWN_SIDE:
+		default: {
+			return vector2_invalid;
+		}
+	}
+}
+
+void Surface::set_vertices(const PackedVector2Array &p_vertices) {
+	vertices = p_vertices;
+	bounding_box = Geometry::get_bounding_box_for_points(vertices);
+}
+
+Vector2 Surface::get_first_point() const {
+	return Geometry::get_vector2_array_front(vertices);
+}
+
+Vector2 Surface::get_last_point() const {
+	return Geometry::get_vector2_array_back(vertices);
+}
+
+String Surface::to_string(bool p_verbose) const {
+	if (p_verbose) {
+		return vformat(
+				"Surface{ %s, [ %s, %s ] }", side_to_string(side),
+				get_first_point(), get_last_point());
+	} else {
+		return vformat(
+				"%s%s", side_to_prefix_string(side),
+				Geometry::get_vector_string(get_first_point(), 1));
+	}
+}
+
 void Surface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_side"), &Surface::get_side);
 	ClassDB::bind_method(D_METHOD("set_side", "side"), &Surface::set_side);
@@ -152,50 +196,4 @@ void Surface::_bind_methods() {
 	BIND_ENUM_CONSTANT(COLLINEAR);
 	BIND_ENUM_CONSTANT(CONVEX);
 	BIND_ENUM_CONSTANT(CONCAVE);
-}
-
-Vector2 Surface::get_normal_from_side(Side p_side) {
-	switch (p_side) {
-		case Side::FLOOR:
-			return vector2_up;
-		case Side::CEILING:
-			return vector2_down;
-		case Side::LEFT_WALL:
-			return vector2_right;
-		case Side::RIGHT_WALL:
-			return vector2_left;
-		case Side::UNKNOWN_SIDE:
-		default: {
-			return vector2_invalid;
-		}
-	}
-}
-
-Surface::Surface() {}
-
-Surface::~Surface() {}
-
-void Surface::set_vertices(const PackedVector2Array &p_vertices) {
-	vertices = p_vertices;
-	bounding_box = Geometry::get_bounding_box_for_points(vertices);
-}
-
-Vector2 Surface::get_first_point() const {
-	return Geometry::get_vector2_array_front(vertices);
-}
-
-Vector2 Surface::get_last_point() const {
-	return Geometry::get_vector2_array_back(vertices);
-}
-
-String Surface::to_string(bool p_verbose) const {
-	if (p_verbose) {
-		return vformat(
-				"Surface{ %s, [ %s, %s ] }", side_to_string(side),
-				get_first_point(), get_last_point());
-	} else {
-		return vformat(
-				"%s%s", side_to_prefix_string(side),
-				Geometry::get_vector_string(get_first_point(), 1));
-	}
 }

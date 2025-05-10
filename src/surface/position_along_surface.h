@@ -1,6 +1,7 @@
 #ifndef POSITION_ALONG_SURFACE_H
 #define POSITION_ALONG_SURFACE_H
 
+#include "geometry.h"
 #include "surface/surface.h"
 
 #include <godot_cpp/classes/ref.hpp>
@@ -9,7 +10,7 @@
 
 namespace godot {
 
-// FIXME: LEFT OFF HERE: ---------------
+class RotatedShape;
 
 // - Represents a position along a surface.
 // - Rather than considering polyline length, this only specifies the position
@@ -19,22 +20,60 @@ namespace godot {
 class PositionAlongSurface : public RefCounted {
 	GDCLASS(PositionAlongSurface, RefCounted)
 
-private:
-	Ref<Surface> surface;
-	Vector2 target_position;
-
-protected:
-	static void _bind_methods();
-
 public:
-	PositionAlongSurface();
-	~PositionAlongSurface();
+	PositionAlongSurface() = default;
+	~PositionAlongSurface() = default;
 
 	void set_surface(Ref<Surface> p_surface) { surface = p_surface; }
 	Ref<Surface> get_surface() const { return surface; }
 
-	void set_target_position(Vector2 p_target_position) { target_position = p_target_position; }
+	void set_target_position(Vector2 p_target_position) {
+		target_position = p_target_position;
+	}
 	Vector2 get_target_position() const { return target_position; }
+
+	Surface::Side get_side() const;
+
+	bool is_valid() const;
+
+	void reset();
+
+	void match_current_grab(
+			Ref<Surface> surface,
+			const Vector2 &character_center);
+
+	void match_surface_target_and_collider(
+			Ref<Surface> surface,
+			const Vector2 &target_point,
+			Ref<RotatedShape> collider,
+			bool clips_to_surface_bounds = false,
+			bool matches_target_to_character_dimensions = true,
+			bool rejects_non_overlapping_results = true);
+
+	void update_target_projection_onto_surface();
+
+	String to_string(bool verbose = true, bool includes_projection = false)
+			const;
+
+	static void copy(
+			Ref<PositionAlongSurface> destination,
+			const Ref<PositionAlongSurface> source);
+
+protected:
+	static void _bind_methods();
+
+private:
+	Ref<Surface> surface;
+	Vector2 target_position = vector2_invalid;
+	Vector2 target_projection_onto_surface = vector2_invalid;
+
+	void _clip_and_project_target_point_for_center_of_collider(
+			Ref<Surface> surface,
+			Vector2 target_point,
+			Ref<RotatedShape> collider,
+			bool clips_to_surface_bounds,
+			bool matches_target_to_character_dimensions,
+			bool rejects_non_overlapping_results);
 };
 
 } //namespace godot

@@ -40,7 +40,3 @@ void SurfaceProperties::_bind_methods() {
 			PropertyInfo(Variant::FLOAT, "speed_multiplier"),
 			"set_speed_multiplier", "get_speed_multiplier");
 }
-
-SurfaceProperties::SurfaceProperties() {}
-
-SurfaceProperties::~SurfaceProperties() {}

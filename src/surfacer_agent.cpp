@@ -6,11 +6,4 @@ using namespace godot;
 
 // TODO: Implement.
 
-void SurfacerAgent::_bind_methods() {
-}
-
-SurfacerAgent::SurfacerAgent() {
-}
-
-SurfacerAgent::~SurfacerAgent() {
-}
+void SurfacerAgent::_bind_methods() {}

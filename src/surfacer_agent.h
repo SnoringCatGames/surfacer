@@ -8,13 +8,14 @@ namespace godot {
 class SurfacerAgent : public RefCounted {
 	GDCLASS(SurfacerAgent, RefCounted)
 
-private:
+public:
+	SurfacerAgent() = default;
+	~SurfacerAgent() = default;
+
 protected:
 	static void _bind_methods();
 
-public:
-	SurfacerAgent();
-	~SurfacerAgent();
+private:
 };
 
 } //namespace godot

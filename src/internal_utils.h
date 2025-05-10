@@ -48,6 +48,30 @@
 #define ENSURE_SIMPLE(m_cond) (m_cond)
 #endif
 
+#ifdef DEBUG_ENABLED
+#define LOG_PRINT(m_msg)                                                       \
+	godot::UtilityFunctions::print_rich(                                       \
+			godot::vformat("[color=white]%s[/color]", m_msg))
+#else
+#define LOG_PRINT(m_msg) (m_cond)
+#endif
+
+#ifdef DEBUG_ENABLED
+#define LOG_WARNING(m_msg)                                                     \
+	godot::UtilityFunctions::print_rich(                                       \
+			godot::vformat("[color=yellow]WARNING: %s[/color]", m_msg))
+#else
+#define LOG_WARNING(m_msg) (m_cond)
+#endif
+
+#ifdef DEBUG_ENABLED
+#define LOG_ERROR(m_msg)                                                       \
+	godot::UtilityFunctions::print_rich(                                       \
+			godot::vformat("[color=red]ERROR: %s[/color]", m_msg))
+#else
+#define LOG_ERROR(m_msg) (m_cond)
+#endif
+
 namespace godot {} //namespace godot
 
 #endif

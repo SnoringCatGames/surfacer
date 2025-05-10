@@ -8,13 +8,14 @@ namespace godot {
 class TileMapSurfaceParser : public RefCounted {
 	GDCLASS(TileMapSurfaceParser, RefCounted)
 
-private:
+public:
+	TileMapSurfaceParser() = default;
+	~TileMapSurfaceParser() = default;
+
 protected:
 	static void _bind_methods();
 
-public:
-	TileMapSurfaceParser();
-	~TileMapSurfaceParser();
+private:
 };
 
 } //namespace godot

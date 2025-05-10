@@ -6,11 +6,4 @@ using namespace godot;
 
 // TODO: Implement.
 
-void TileMapSurfaceParser::_bind_methods() {
-}
-
-TileMapSurfaceParser::TileMapSurfaceParser() {
-}
-
-TileMapSurfaceParser::~TileMapSurfaceParser() {
-}
+void TileMapSurfaceParser::_bind_methods() {}

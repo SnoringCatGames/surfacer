@@ -9,13 +9,14 @@ namespace godot {
 class MovementProfile : public RefCounted {
 	GDCLASS(MovementProfile, RefCounted)
 
-private:
+public:
+	MovementProfile() = default;
+	~MovementProfile() = default;
+
 protected:
 	static void _bind_methods();
 
-public:
-	MovementProfile();
-	~MovementProfile();
+private:
 };
 
 } //namespace godot

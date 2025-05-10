@@ -26,6 +26,12 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 - https://github.com/godotengine/godot-cpp
 - 
 
+### Limitations:
+
+- Breakpoint debugging when using the editor requires re-attaching the debugger to the project process when running the game through the editor (https://godotforums.org/d/32073-debug-c-gdextension/20).
+- GDExtension does not support arguments to constructors (https://github.com/godotengine/godot-cpp/issues/953).
+- `doctool` does not support automatically parsing code comments.
+
 ### Next
 
 - Remove the SFT submodule.

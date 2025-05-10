@@ -6,11 +6,4 @@ using namespace godot;
 
 // TODO: Implement.
 
-void AgentSurfaceState::_bind_methods() {
-}
-
-AgentSurfaceState::AgentSurfaceState() {
-}
-
-AgentSurfaceState::~AgentSurfaceState() {
-}
+void AgentSurfaceState::_bind_methods() {}

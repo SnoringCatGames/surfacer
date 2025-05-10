@@ -6,11 +6,4 @@ using namespace godot;
 
 // TODO: Implement.
 
-void SurfaceStore::_bind_methods() {
-}
-
-SurfaceStore::SurfaceStore() {
-}
-
-SurfaceStore::~SurfaceStore() {
-}
+void SurfaceStore::_bind_methods() {}

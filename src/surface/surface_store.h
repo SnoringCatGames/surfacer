@@ -8,13 +8,14 @@ namespace godot {
 class SurfaceStore : public RefCounted {
 	GDCLASS(SurfaceStore, RefCounted)
 
-private:
+public:
+	SurfaceStore() = default;
+	~SurfaceStore() = default;
+
 protected:
 	static void _bind_methods();
 
-public:
-	SurfaceStore();
-	~SurfaceStore();
+private:
 };
 
 } //namespace godot
