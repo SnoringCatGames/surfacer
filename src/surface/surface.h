@@ -1,7 +1,7 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include "geometry.h"
+#include "scaffolder/geometry.h"
 #include "surface_chunk.h"
 #include "surface_properties.h"
 

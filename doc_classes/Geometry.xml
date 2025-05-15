@@ -70,6 +70,15 @@
 			<description>
 			</description>
 		</method>
+		<method name="check_for_shape_to_rect_intersection" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="p_shape_position" type="Vector2" />
+			<param index="1" name="p_shape" type="RotatedShape" />
+			<param index="2" name="p_rect" type="Rect2" />
+			<param index="3" name="p_epsilon" type="float" default="0.0" />
+			<description>
+			</description>
+		</method>
 		<method name="clamp_vector_length" qualifiers="static">
 			<return type="Vector2" />
 			<param index="0" name="vector" type="Vector2" />
@@ -229,6 +238,14 @@
 			<description>
 			</description>
 		</method>
+		<method name="get_furthest_shape_boundary_point_in_direction" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_shape_position" type="Vector2" />
+			<param index="1" name="p_shape" type="RotatedShape" />
+			<param index="2" name="p_direction" type="Vector2" />
+			<description>
+			</description>
+		</method>
 		<method name="get_grid_coord_from_tile_map_index" qualifiers="static">
 			<return type="Vector2" />
 			<param index="0" name="index" type="int" />
@@ -260,6 +277,18 @@
 			<param index="1" name="segment_1_b" type="Vector2" />
 			<param index="2" name="segment_2_a" type="Vector2" />
 			<param index="3" name="segment_2_b" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_perpendicular_vector" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="vector" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_radius" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="shape" type="Shape2D" />
 			<description>
 			</description>
 		</method>
@@ -364,6 +393,12 @@
 			<return type="bool" />
 			<param index="0" name="vertices" type="PackedVector2Array" />
 			<param index="1" name="epsilon" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="is_vector_valid" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="vector" type="Vector2" />
 			<description>
 			</description>
 		</method>

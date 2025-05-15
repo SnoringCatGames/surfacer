@@ -34,12 +34,20 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 
 ### Next
 
-- Remove the SFT submodule.
+- Refactor test_runner.
+  - It shouldn't use this static hack.
+  - Instead, create my own macro wrapper around GDREGISTER_CLASS, which requires the standard GDExtension param, as well as a reference to the test suite for the class.
+  - Each class then _must_ have a test suite file. It can be empty.
+
+- Write more tests.
+
+- Finish porting surfacer_geometry.
+- Port surface_parser.
+
+- Port all remaining bits needed for surface parsing.
 
 - Test writing unit tests!
-  - https://github.com/dementive/Godot-SFT
-  - Write tests for all utility functionality I've ported over.
-  - Write tests for Surface.
+  - Write tests for geometry and surfacer_geometry.
 
 - Configure tests to run as presubmits! (See SFT README)
 - Fix CI/CD.

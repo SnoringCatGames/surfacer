@@ -1,6 +1,6 @@
 #include "surface.h"
 
-#include "geometry.h"
+#include "scaffolder/geometry.h"
 
 #include <godot_cpp/core/class_db.hpp>
 

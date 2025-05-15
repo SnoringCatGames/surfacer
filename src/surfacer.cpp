@@ -1,6 +1,6 @@
 #include "surfacer.h"
 
-#include "test_runner.h"
+#include "scaffolder/test_runner.h"
 
 #include <godot_cpp/core/class_db.hpp>
 
@@ -13,6 +13,6 @@ void Surfacer::_bind_methods() {
 
 void Surfacer::run_tests() {
 	// TODO: Swap these.
-	// TestRunner::run_tests();
-	TestRunner::run_tests_verbose();
+	// test_runner::run_tests();
+	test_runner::run_tests_verbose();
 }

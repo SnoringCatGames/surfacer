@@ -8,17 +8,31 @@
 #include "annotations/surface_annotation.h"
 #include "annotations/surfacer_agent_annotation.h"
 #include "gdexample.h"
-#include "geometry.h"
 #include "movement_profile.h"
+#include "scaffolder/geometry.h"
+#include "scaffolder/rotated_shape.h"
+#include "scaffolder/test_geometry.h"
+#include "scaffolder/test_rotated_shape.h"
+#include "scaffolder/test_runner.h"
 #include "surface/agent_surface_state.h"
 #include "surface/position_along_surface.h"
 #include "surface/surface.h"
 #include "surface/surface_chunk.h"
 #include "surface/surface_properties.h"
 #include "surface/surface_store.h"
+#include "surface/surfacer_geometry.h"
+#include "surface/test_agent_surface_state.h"
+#include "surface/test_position_along_surface.h"
+#include "surface/test_surface.h"
+#include "surface/test_surface_store.h"
+#include "surface/test_surfacer_geometry.h"
 #include "surface_graph.h"
 #include "surfacer.h"
 #include "surfacer_agent.h"
+#include "test_movement_profile.h"
+#include "test_surface_graph.h"
+#include "test_surfacer_agent.h"
+#include "test_tile_map_surface_parser.h"
 #include "tile_map_surface_parser.h"
 
 #include <gdextension_interface.h>
@@ -32,6 +46,20 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+
+	// FIXME: LEFT OFF HERE: Use REGISTER_SCAFFOLDER_CLASS for everything.
+
+	REGISTER_SCAFFOLDER_CLASS(AgentSurfaceState);
+	REGISTER_SCAFFOLDER_CLASS(Geometry);
+	REGISTER_SCAFFOLDER_CLASS(MovementProfile);
+	REGISTER_SCAFFOLDER_CLASS(PositionAlongSurface);
+	REGISTER_SCAFFOLDER_CLASS(RotatedShape);
+	REGISTER_SCAFFOLDER_CLASS(Surface);
+	REGISTER_SCAFFOLDER_CLASS(SurfaceGraph);
+	REGISTER_SCAFFOLDER_CLASS(SurfacerAgent);
+	REGISTER_SCAFFOLDER_CLASS(SurfacerGeometry);
+	REGISTER_SCAFFOLDER_CLASS(SurfaceStore);
+	REGISTER_SCAFFOLDER_CLASS(TileMapSurfaceParser);
 
 	GDREGISTER_CLASS(AgentSurfaceState);
 	GDREGISTER_VIRTUAL_CLASS(Annotation);

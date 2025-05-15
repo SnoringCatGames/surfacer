@@ -1,7 +1,7 @@
 #ifndef POSITION_ALONG_SURFACE_H
 #define POSITION_ALONG_SURFACE_H
 
-#include "geometry.h"
+#include "scaffolder/geometry.h"
 #include "surface/surface.h"
 
 #include <godot_cpp/classes/ref.hpp>
@@ -39,25 +39,25 @@ public:
 	void reset();
 
 	void match_current_grab(
-			Ref<Surface> surface,
-			const Vector2 &character_center);
+			Ref<Surface> p_surface,
+			const Vector2 &p_character_center);
 
 	void match_surface_target_and_collider(
-			Ref<Surface> surface,
-			const Vector2 &target_point,
-			Ref<RotatedShape> collider,
-			bool clips_to_surface_bounds = false,
-			bool matches_target_to_character_dimensions = true,
-			bool rejects_non_overlapping_results = true);
+			Ref<Surface> p_surface,
+			const Vector2 &p_target_point,
+			Ref<RotatedShape> p_collider,
+			bool p_clips_to_surface_bounds = false,
+			bool p_matches_target_to_character_dimensions = true,
+			bool p_rejects_non_overlapping_results = true);
 
 	void update_target_projection_onto_surface();
 
-	String to_string(bool verbose = true, bool includes_projection = false)
+	String to_string(bool p_verbose = true, bool p_includes_projection = false)
 			const;
 
 	static void copy(
-			Ref<PositionAlongSurface> destination,
-			const Ref<PositionAlongSurface> source);
+			Ref<PositionAlongSurface> r_destination,
+			const Ref<PositionAlongSurface> p_source);
 
 protected:
 	static void _bind_methods();
@@ -67,13 +67,13 @@ private:
 	Vector2 target_position = vector2_invalid;
 	Vector2 target_projection_onto_surface = vector2_invalid;
 
-	void _clip_and_project_target_point_for_center_of_collider(
-			Ref<Surface> surface,
-			Vector2 target_point,
-			Ref<RotatedShape> collider,
-			bool clips_to_surface_bounds,
-			bool matches_target_to_character_dimensions,
-			bool rejects_non_overlapping_results);
+	void clip_and_project_target_point_for_center_of_collider(
+			Ref<Surface> p_surface,
+			Vector2 p_target_point,
+			Ref<RotatedShape> p_collider,
+			bool p_clips_to_surface_bounds,
+			bool p_matches_target_to_character_dimensions,
+			bool p_rejects_non_overlapping_results);
 };
 
 } //namespace godot

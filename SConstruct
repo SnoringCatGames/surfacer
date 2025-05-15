@@ -54,6 +54,7 @@ env.Append(CPPPATH=["src/", "godot-sft/"])
 sources = (
     Glob("src/*.cpp") +
     Glob("src/annotations/*.cpp") +
+    Glob("src/scaffolder/*.cpp") +
     Glob("src/surface/*.cpp")
 )
 

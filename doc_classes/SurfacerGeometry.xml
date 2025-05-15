@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SurfacerGeometry" inherits="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="are_position_wrappers_equal_with_epsilon" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="p_a" type="PositionAlongSurface" />
+			<param index="1" name="p_b" type="PositionAlongSurface" />
+			<param index="2" name="p_epsilon" type="float" default="1e-06" />
+			<description>
+			</description>
+		</method>
+		<method name="calculate_circular_displacement_x_for_vertical_distance_past_edge" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="p_distance_past_edge" type="float" />
+			<param index="1" name="p_radius" type="float" />
+			<param index="2" name="p_is_left_wall" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="calculate_circular_displacement_y_for_horizontal_distance_past_edge" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="p_distance_past_edge" type="float" />
+			<param index="1" name="p_radius" type="float" />
+			<param index="2" name="p_is_floor" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="calculate_displacement_x_for_vertical_distance_past_edge" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="p_distance_past_edge" type="float" />
+			<param index="1" name="p_is_left_wall" type="bool" />
+			<param index="2" name="p_collider" type="RotatedShape" />
+			<description>
+			</description>
+		</method>
+		<method name="calculate_displacement_y_for_horizontal_distance_past_edge" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="p_distance_past_edge" type="float" />
+			<param index="1" name="p_is_floor" type="bool" />
+			<param index="2" name="p_collider" type="RotatedShape" />
+			<description>
+			</description>
+		</method>
+		<method name="check_for_shape_to_surface_overlap" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="p_shape_position" type="Vector2" />
+			<param index="1" name="p_shape" type="RotatedShape" />
+			<param index="2" name="p_surface" type="Surface" />
+			<param index="3" name="p_epsilon" type="float" default="4.0" />
+			<description>
+			</description>
+		</method>
+		<method name="do_surface_and_rectangle_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="p_surface" type="Surface" />
+			<param index="1" name="p_rectangle_min" type="Vector2" />
+			<param index="2" name="p_rectangle_max" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_closest_point_on_surface_to_shape" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_surface" type="Surface" />
+			<param index="1" name="p_shape_position" type="Vector2" />
+			<param index="2" name="p_shape" type="RotatedShape" />
+			<description>
+			</description>
+		</method>
+		<method name="get_concave_neighbor_projection_side_override" qualifiers="static">
+			<return type="int" enum="Surface.Side" />
+			<param index="0" name="p_surface" type="Surface" />
+			<param index="1" name="p_is_clockwise" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="get_segment_normal" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_segment_start" type="Vector2" />
+			<param index="1" name="p_segment_end" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_surface_normal_at_point" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_surface" type="Surface" />
+			<param index="1" name="p_point" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_surface_segment_at_point" qualifiers="static">
+			<return type="PackedVector2Array" />
+			<param index="0" name="p_surface" type="Surface" />
+			<param index="1" name="p_point" type="Vector2" />
+			<param index="2" name="p_uses_end_segment_if_outside_bounds" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="get_surface_side_for_normal" qualifiers="static">
+			<return type="int" enum="Surface.Side" />
+			<param index="0" name="p_normal" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_vertices_around_range" qualifiers="static">
+			<return type="PackedVector2Array" />
+			<param index="0" name="p_surface" type="Surface" />
+			<param index="1" name="p_range_min_x" type="float" />
+			<param index="2" name="p_range_max_x" type="float" />
+			<param index="3" name="p_range_min_y" type="float" />
+			<param index="4" name="p_range_max_y" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="nudge_point_along_axially_aligned_segment_toward_shape_center" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_point" type="Vector2" />
+			<param index="1" name="p_surface" type="Surface" />
+			<param index="2" name="p_shape_position" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="project_away_from_concave_neighbor" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_position" type="Vector2" />
+			<param index="1" name="p_neighbor" type="Surface" />
+			<param index="2" name="p_neighbor_normal_side_override" type="int" enum="Surface.Side" />
+			<param index="3" name="p_shape" type="RotatedShape" />
+			<description>
+			</description>
+		</method>
+		<method name="project_point_onto_surface" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_point" type="Vector2" />
+			<param index="1" name="p_surface" type="Surface" />
+			<param index="2" name="p_side_override" type="int" enum="Surface.Side" default="0" />
+			<description>
+			</description>
+		</method>
+		<method name="project_shape_onto_convex_corner_preserving_tangent_position" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_shape_position" type="Vector2" />
+			<param index="1" name="p_shape" type="RotatedShape" />
+			<param index="2" name="p_origin_surface" type="Surface" />
+			<param index="3" name="p_destination_surface" type="Surface" />
+			<description>
+			</description>
+		</method>
+		<method name="project_shape_onto_segment" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_shape_position" type="Vector2" />
+			<param index="1" name="p_shape" type="RotatedShape" />
+			<param index="2" name="p_surface_side" type="int" enum="Surface.Side" />
+			<param index="3" name="p_segment_start" type="Vector2" />
+			<param index="4" name="p_segment_end" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="project_shape_onto_segment_and_away_from_concave_neighbors" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_shape_position" type="Vector2" />
+			<param index="1" name="p_shape" type="RotatedShape" />
+			<param index="2" name="p_surface" type="Surface" />
+			<param index="3" name="p_uses_end_segment_if_outside_bounds" type="bool" default="true" />
+			<param index="4" name="p_rejects_non_overlapping_results" type="bool" default="true" />
+			<param index="5" name="p_side_override" type="int" enum="Surface.Side" default="0" />
+			<description>
+			</description>
+		</method>
+		<method name="project_shape_onto_surface" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_shape_position" type="Vector2" />
+			<param index="1" name="p_shape" type="RotatedShape" />
+			<param index="2" name="p_surface" type="Surface" />
+			<param index="3" name="p_uses_end_segment_if_outside_bounds" type="bool" default="true" />
+			<param index="4" name="p_side_override" type="int" enum="Surface.Side" default="0" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

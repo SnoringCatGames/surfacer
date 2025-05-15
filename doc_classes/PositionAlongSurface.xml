@@ -6,10 +6,64 @@
 	</description>
 	<tutorials>
 	</tutorials>
+	<methods>
+		<method name="copy" qualifiers="static">
+			<return type="void" />
+			<param index="0" name="destination" type="PositionAlongSurface" />
+			<param index="1" name="source" type="PositionAlongSurface" />
+			<description>
+			</description>
+		</method>
+		<method name="get_side" qualifiers="const">
+			<return type="int" enum="Surface.Side" />
+			<description>
+			</description>
+		</method>
+		<method name="is_valid" qualifiers="const">
+			<return type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="match_current_grab">
+			<return type="void" />
+			<param index="0" name="surface" type="Surface" />
+			<param index="1" name="character_center" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="match_surface_target_and_collider">
+			<return type="void" />
+			<param index="0" name="surface" type="Surface" />
+			<param index="1" name="target_point" type="Vector2" />
+			<param index="2" name="collider" type="RotatedShape" />
+			<param index="3" name="clips_to_surface_bounds" type="bool" default="false" />
+			<param index="4" name="matches_target_to_character_dimensions" type="bool" default="true" />
+			<param index="5" name="rejects_non_overlapping_results" type="bool" default="true" />
+			<description>
+			</description>
+		</method>
+		<method name="reset">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="to_string" qualifiers="const">
+			<return type="String" />
+			<param index="0" name="verbose" type="bool" default="true" />
+			<param index="1" name="includes_projection" type="bool" default="false" />
+			<description>
+			</description>
+		</method>
+		<method name="update_target_projection_onto_surface">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
 	<members>
 		<member name="surface" type="Surface" setter="set_surface" getter="get_surface">
 		</member>
-		<member name="target_position" type="Vector2" setter="set_target_position" getter="get_target_position" default="Vector2(0, 0)">
+		<member name="target_position" type="Vector2" setter="set_target_position" getter="get_target_position" default="Vector2(inf, inf)">
 		</member>
 	</members>
 </class>
