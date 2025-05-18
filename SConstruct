@@ -39,13 +39,13 @@ Run the following command to download godot-cpp:
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
 # NOTE: Levi added this, to enable C++20, to support the Godot-SFT test-runner library.
-if env.get("is_msvc", False):
-    env["CXXFLAGS"].remove("/std:c++17")
-    env["CXXFLAGS"].insert(0, "/std:c++20")
-    env["CXXFLAGS"].insert(0, "/Zc:preprocessor")
-else:
-    env["CXXFLAGS"].remove("-std=c++17")
-    env["CXXFLAGS"].insert(0, "-std=c++20")
+# if env.get("is_msvc", False):
+#     env["CXXFLAGS"].remove("/std:c++17")
+#     env["CXXFLAGS"].insert(0, "/std:c++20")
+#     env["CXXFLAGS"].insert(0, "/Zc:preprocessor")
+# else:
+#     env["CXXFLAGS"].remove("-std=c++17")
+#     env["CXXFLAGS"].insert(0, "-std=c++20")
 
 # NOTE: Levi updated this.
 env.Append(CPPPATH=["src/", "godot-sft/"])
