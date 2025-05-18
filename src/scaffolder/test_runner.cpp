@@ -9,7 +9,7 @@ namespace godot {
 
 namespace test_runner {
 
-namespace internal {
+namespace internal_temp {
 
 bool are_any_tests_focused = false;
 bool print_passing_units = false;
@@ -24,9 +24,9 @@ bool is_current_spec_passing = true;
 
 std::vector<TestModule> test_modules = {};
 
-} //namespace internal
+} //namespace internal_temp
 
-using namespace internal;
+using namespace internal_temp;
 
 namespace {
 struct Suite;
@@ -232,7 +232,7 @@ void run_all_tests() {
 
 	// Register the top-level describes.
 	for (const godot::test_runner::TestModule &module :
-		 godot::test_runner::internal::test_modules) {
+		 godot::test_runner::internal_temp::test_modules) {
 		module.callback();
 	}
 

@@ -17,7 +17,7 @@ namespace test_runner {
 
 struct TestModule;
 
-namespace internal {
+namespace internal_temp {
 
 extern bool are_any_tests_focused;
 extern bool print_passing_units;
@@ -32,7 +32,7 @@ extern bool is_current_spec_passing;
 
 extern std::vector<TestModule> test_modules;
 
-} //namespace internal
+} //namespace internal_temp
 
 #define LOCATION_TEMPLATE                                                      \
 	"[lb][color=gray]%s:%s[/color][rb] "                                       \
@@ -60,17 +60,17 @@ extern std::vector<TestModule> test_modules;
 
 #define HandleExpectResult(actual, expected, check)                            \
 	do {                                                                       \
-		ENSURE(test_runner::internal::is_spec_running,                         \
+		ENSURE(test_runner::internal_temp::is_spec_running,                    \
 			   "Expect() called outside of it().");                            \
 		const bool passed = (check);                                           \
 		if (!passed) {                                                         \
-			test_runner::internal::is_current_spec_passing = false;            \
-			test_runner::internal::is_current_suite_passing = false;           \
-			test_runner::internal::failing_spec_count++;                       \
+			test_runner::internal_temp::is_current_spec_passing = false;       \
+			test_runner::internal_temp::is_current_suite_passing = false;      \
+			test_runner::internal_temp::failing_spec_count++;                  \
 			PRINT_EXPECT_RESULT(                                               \
 					FAIL_TEMPLATE, Variant(actual).stringify(),                \
 					Variant(expected).stringify(), #actual, #expected);        \
-		} else if (test_runner::internal::print_passing_expects) {             \
+		} else if (test_runner::internal_temp::print_passing_expects) {        \
 			PRINT_EXPECT_RESULT(                                               \
 					PASS_TEMPLATE, Variant(actual).stringify(),                \
 					Variant(expected).stringify(), #actual, #expected);        \
@@ -142,7 +142,7 @@ struct TestModule {
 // clang-format on
 
 #define REGISTER_SCAFFOLDER_TEST_SUITE(m_test)                                 \
-	test_runner::internal::test_modules.push_back(m_test)
+	test_runner::internal_temp::test_modules.push_back(m_test)
 
 #define REGISTER_SCAFFOLDER_CLASS(m_class)                                     \
 	do {                                                                       \
