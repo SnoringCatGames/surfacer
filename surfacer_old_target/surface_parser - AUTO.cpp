@@ -1,21 +1,9 @@
 #include "surface_parser.h"
 
-#include <godot_cpp/classes/convex_polygon_shape2d.hpp>
-#include <godot_cpp/classes/engine.hpp>
-#include <godot_cpp/classes/tile_data.hpp> // For Godot 4 TileSet interactions
 #include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/variant/utility_functions.hpp>
 
-// Assuming definitions for SurfaceStore, SurfaceMark, SurfacesTilemap, etc. are
-// included. For example:
-#include "corner_match_inner_tilemap.h" // Assuming this exists
-#include "surface.h" // Assuming this exists
-#include "surface_mark.h" // Assuming this exists
-#include "surface_properties.h" // Assuming this exists
-#include "surface_store.h" // Assuming this exists
-#include "surfaces_tilemap.h" // Assuming this exists, extending TileMap
-#include "surfaces_tileset.h" // Assuming this exists, extending TileSet
-#include "tile_shape_data.h" // Assuming this exists
+#include <godot_cpp/classes/convex_polygon_shape2d.hpp>
+#include <godot_cpp/classes/tile_data.hpp> // For Godot 4 TileSet interactions
 
 // Placeholder initializations for Sc and Su statics
 // These need to be properly defined and initialized in your project.

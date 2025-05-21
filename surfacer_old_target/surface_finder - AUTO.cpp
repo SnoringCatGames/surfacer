@@ -1,18 +1,9 @@
 #include "surface_finder.h"
 
+#include <godot_cpp/core/class_db.hpp>
+
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/world2d.hpp> // Required for get_direct_space_state from world
-#include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/variant/utility_functions.hpp>
-
-// Include headers for your custom classes
-#include "character.h" // Assuming definition
-#include "collision_surface_result.h" // Assuming definition
-#include "position_along_surface.h" // Assuming definition
-#include "surface.h" // Assuming definition
-#include "surface_store.h" // Assuming definition
-
-#include <cmath> // For INFINITY, fmod, abs
 
 using namespace godot;
 

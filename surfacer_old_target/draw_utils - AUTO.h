@@ -1,11 +1,13 @@
 #ifndef SCAFFOLDER_DRAW_UTILS_H
 #define SCAFFOLDER_DRAW_UTILS_H
 
+#include "scaffolder/rotated_shape.h"
+
 #include <godot_cpp/classes/canvas_item.hpp>
 #include <godot_cpp/classes/capsule_shape2d.hpp>
 #include <godot_cpp/classes/circle_shape2d.hpp>
-#include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/rectangle_shape2d.hpp>
+#include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/shape2d.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/math.hpp>
@@ -15,60 +17,14 @@
 
 namespace godot {
 
-// Helper class for RotatedShape concept, mirroring potential GDScript structure
-class RotatedShapeData : public RefCounted {
-	GDCLASS(RotatedShapeData, RefCounted);
-
-private:
-	Ref<Shape2D> shape;
-	bool _is_rotated_90_degrees = false;
-
-protected:
-	static void _bind_methods() {
-		ClassDB::bind_method(
-				D_METHOD("set_shape", "p_shape"), &RotatedShapeData::set_shape);
-		ClassDB::bind_method(
-				D_METHOD("get_shape"), &RotatedShapeData::get_shape);
-		ClassDB::bind_method(
-				D_METHOD("set_is_rotated_90_degrees", "p_rotated"),
-				&RotatedShapeData::set_is_rotated_90_degrees);
-		ClassDB::bind_method(
-				D_METHOD("get_is_rotated_90_degrees"),
-				&RotatedShapeData::get_is_rotated_90_degrees);
-		ADD_PROPERTY(
-				PropertyInfo(
-						Variant::OBJECT, "shape", PROPERTY_HINT_RESOURCE_TYPE,
-						"Shape2D"),
-				"set_shape", "get_shape");
-		ADD_PROPERTY(
-				PropertyInfo(Variant::BOOL, "is_rotated_90_degrees"),
-				"set_is_rotated_90_degrees", "get_is_rotated_90_degrees");
-	}
-
-public:
-	RotatedShapeData() = default;
-	RotatedShapeData(Ref<Shape2D> p_shape, bool p_is_rotated) :
-			shape(p_shape), _is_rotated_90_degrees(p_is_rotated) {}
-
-	void set_shape(const Ref<Shape2D> &p_s) { shape = p_s; }
-	Ref<Shape2D> get_shape() const { return shape; }
-	void set_is_rotated_90_degrees(bool p_rotated) {
-		_is_rotated_90_degrees = p_rotated;
-	}
-	bool get_is_rotated_90_degrees() const { return _is_rotated_90_degrees; }
-};
-
-class ScaffolderDrawUtils : public Node {
-	GDCLASS(ScaffolderDrawUtils, Node);
+class ScaffolderDrawUtils : public RefCounted {
+	GDCLASS(ScaffolderDrawUtils, RefCounted);
 
 public:
 	static constexpr double STRIKE_THROUGH_ANGLE = -Math_PI / 3.0;
 	static constexpr double EXCLAMATION_MARK_GAP_LENGTH_TO_WIDTH_RATIO = 0.5;
 	static constexpr double EXCLAMATION_MARK_BODY_LOWER_END_WIDTH_RATIO = 0.5;
 	static constexpr double EXCLAMATION_MARK_DOT_WIDTH_RATIO = 1.0;
-
-protected:
-	static void _bind_methods();
 
 public:
 	ScaffolderDrawUtils();
@@ -276,6 +232,9 @@ public:
 			bool p_is_filled,
 			double p_stroke_width,
 			double p_sector_arc_length = 4.0) const;
+
+protected:
+	static void _bind_methods();
 };
 
 } // namespace godot

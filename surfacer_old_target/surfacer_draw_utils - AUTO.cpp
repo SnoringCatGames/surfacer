@@ -1,20 +1,6 @@
 #include "surfacer_draw_utils.h"
 
-#include <godot_cpp/core/error_macros.hpp> // For CRASH_COND_MSG etc.
-#include <godot_cpp/variant/utility_functions.hpp>
-
-// Include headers for Surface, PositionAlongSurface, PlatformGraphPath, Edge,
-// etc.
-#include "beat.h" // Assuming Beat is a defined type
-#include "edge.h"
-#include "instruction.h" // Assuming Trajectory has Instructions
-#include "platform_graph_path.h"
-#include "position_along_surface.h"
-#include "surface.h"
-#include "trajectory.h" // Assuming Edge has a Trajectory
-
-SurfacerDrawUtils::SurfacerDrawUtils() {}
-SurfacerDrawUtils::~SurfacerDrawUtils() {}
+#include <godot_cpp/core/class_db.hpp>
 
 void SurfacerDrawUtils::draw_surface(
 		godot::CanvasItem *p_canvas,

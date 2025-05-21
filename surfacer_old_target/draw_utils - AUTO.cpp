@@ -1,7 +1,6 @@
 #include "scaffolder_draw_utils.h"
-#include <cmath> // For std::abs, std::ceil, std::fmod, std::asin, std::acos, std::floor
-#include <godot_cpp/core/error_macros.hpp>
-#include <godot_cpp/variant/utility_functions.hpp> // For UtilityFunctions::print_error, etc.
+
+#include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;
 

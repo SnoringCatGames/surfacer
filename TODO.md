@@ -39,7 +39,16 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 - Finish porting surfacer_geometry.
 - Port surface_parser.
 
+- Port SurfaceMark.
+
+- Port SurfaceStore::get_surface_set.
+
 - Port all remaining bits needed for surface parsing.
+
+- Refactor SurfaceStore to return iterables for C++ usage of all collections other than the vanilla floors,ceilings,left_walls,right_walls collections.
+  - Store sets rather than arrays.
+  - Use private methods for creating arrays on-demand for use in GDScript.
+  - Add a signal for when the overall collection of surfaces in SurfaceStore has changed.
 
 - Test writing unit tests!
   - Write tests for geometry and surfacer_geometry.

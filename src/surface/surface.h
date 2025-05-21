@@ -5,6 +5,7 @@
 #include "surface_chunk.h"
 #include "surface_properties.h"
 
+#include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/tile_map_layer.hpp>
 #include <godot_cpp/core/binder_common.hpp>
@@ -30,18 +31,16 @@ public:
 		_Side_COUNT,
 	};
 
-private:
-	static constexpr const char *_side_strings[Side::_Side_COUNT] = {
+	static constexpr const char *side_strings[Side::_Side_COUNT] = {
 		"UNKNOWN", "FLOOR", "CEILING", "LEFT_WALL", "RIGHT_WALL",
 	};
-	static constexpr const char *_side_prefix_strings[Side::_Side_COUNT] = {
+	static constexpr const char *side_prefix_strings[Side::_Side_COUNT] = {
 		"U", "F", "C", "L", "R",
 	};
 
-public:
-	static String side_to_string(Side p_side) { return _side_strings[p_side]; }
+	static String side_to_string(Side p_side) { return side_strings[p_side]; }
 	static String side_to_prefix_string(Side p_side) {
-		return _side_prefix_strings[p_side];
+		return side_prefix_strings[p_side];
 	}
 
 public:
@@ -53,8 +52,7 @@ public:
 		_NeighborCurvature_COUNT,
 	};
 
-private:
-	static constexpr const char *_neighbor_curvature_strings
+	static constexpr const char *neighbor_curvature_strings
 			[NeighborCurvature::_NeighborCurvature_COUNT] = {
 				"UNKNOWN",
 				"COLLINEAR",
@@ -62,9 +60,8 @@ private:
 				"CONCAVE",
 			};
 
-public:
 	static String neighbor_curvature_to_string(NeighborCurvature p_side) {
-		return _neighbor_curvature_strings[p_side];
+		return neighbor_curvature_strings[p_side];
 	}
 
 public:

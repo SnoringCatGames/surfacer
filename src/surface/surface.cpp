@@ -53,7 +53,11 @@ String Surface::to_string(bool p_verbose) const {
 void Surface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_side"), &Surface::get_side);
 	ClassDB::bind_method(D_METHOD("set_side", "side"), &Surface::set_side);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "side"), "set_side", "get_side");
+	ADD_PROPERTY(
+			PropertyInfo(
+					Variant::INT, "side", PROPERTY_HINT_ENUM,
+					String::join(side_strings)),
+			"set_side", "get_side");
 
 	ClassDB::bind_method(D_METHOD("get_properties"), &Surface::get_properties);
 	ClassDB::bind_method(
@@ -110,7 +114,10 @@ void Surface::_bind_methods() {
 					"clockwise_neighbor_curvature"),
 			&Surface::set_clockwise_neighbor_curvature);
 	ADD_PROPERTY(
-			PropertyInfo(Variant::INT, "clockwise_neighbor_curvature"),
+			PropertyInfo(
+					Variant::INT, "clockwise_neighbor_curvature",
+					PROPERTY_HINT_ENUM,
+					String::join(neighbor_curvature_strings)),
 			"set_clockwise_neighbor_curvature",
 			"get_clockwise_neighbor_curvature");
 
@@ -133,7 +140,10 @@ void Surface::_bind_methods() {
 					"counter_clockwise_neighbor_curvature"),
 			&Surface::set_counter_clockwise_neighbor_curvature);
 	ADD_PROPERTY(
-			PropertyInfo(Variant::INT, "counter_clockwise_neighbor_curvature"),
+			PropertyInfo(
+					Variant::INT, "counter_clockwise_neighbor_curvature",
+					PROPERTY_HINT_ENUM,
+					String::join(neighbor_curvature_strings)),
 			"set_counter_clockwise_neighbor_curvature",
 			"get_counter_clockwise_neighbor_curvature");
 

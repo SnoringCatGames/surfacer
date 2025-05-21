@@ -15,6 +15,7 @@
 #include "scaffolder/test_rotated_shape.h"
 #include "scaffolder/test_runner.h"
 #include "surface/agent_surface_state.h"
+#include "surface/collision_surface_result.h"
 #include "surface/position_along_surface.h"
 #include "surface/surface.h"
 #include "surface/surface_chunk.h"
@@ -22,10 +23,15 @@
 #include "surface/surface_store.h"
 #include "surface/surfacer_geometry.h"
 #include "surface/test_agent_surface_state.h"
+#include "surface/test_collision_surface_result.h"
 #include "surface/test_position_along_surface.h"
 #include "surface/test_surface.h"
+#include "surface/test_surface_chunk.h"
+#include "surface/test_surface_properties.h"
 #include "surface/test_surface_store.h"
 #include "surface/test_surfacer_geometry.h"
+#include "surface/test_tile_shape_data.h"
+#include "surface/tile_shape_data.h"
 #include "surface_graph.h"
 #include "surfacer.h"
 #include "surfacer_agent.h"
@@ -50,37 +56,30 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	// FIXME: LEFT OFF HERE: Use REGISTER_SCAFFOLDER_CLASS for everything.
 
 	REGISTER_SCAFFOLDER_CLASS(AgentSurfaceState);
+	REGISTER_SCAFFOLDER_CLASS(CollisionSurfaceResult);
 	REGISTER_SCAFFOLDER_CLASS(Geometry);
 	REGISTER_SCAFFOLDER_CLASS(MovementProfile);
 	REGISTER_SCAFFOLDER_CLASS(PositionAlongSurface);
 	REGISTER_SCAFFOLDER_CLASS(RotatedShape);
 	REGISTER_SCAFFOLDER_CLASS(Surface);
+	REGISTER_SCAFFOLDER_CLASS(SurfaceChunk);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceGraph);
+	REGISTER_SCAFFOLDER_CLASS(SurfaceProperties);
 	REGISTER_SCAFFOLDER_CLASS(SurfacerAgent);
 	REGISTER_SCAFFOLDER_CLASS(SurfacerGeometry);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceStore);
 	REGISTER_SCAFFOLDER_CLASS(TileMapSurfaceParser);
+	REGISTER_SCAFFOLDER_CLASS(TileShapeData);
 
-	GDREGISTER_CLASS(AgentSurfaceState);
 	GDREGISTER_VIRTUAL_CLASS(Annotation);
 	GDREGISTER_CLASS(AnnotationsManager);
 	GDREGISTER_CLASS(GDExample);
-	GDREGISTER_CLASS(Geometry);
 	GDREGISTER_CLASS(JumpAnnotation);
-	GDREGISTER_CLASS(MovementProfile);
 	GDREGISTER_CLASS(PathAnnotation);
-	GDREGISTER_CLASS(PositionAlongSurface);
 	GDREGISTER_CLASS(PositionAlongSurfaceAnnotation);
-	GDREGISTER_CLASS(Surface);
 	GDREGISTER_CLASS(SurfaceAnnotation);
-	GDREGISTER_CLASS(SurfaceChunk);
-	GDREGISTER_CLASS(SurfaceGraph);
-	GDREGISTER_CLASS(SurfaceProperties);
 	GDREGISTER_CLASS(Surfacer);
-	GDREGISTER_CLASS(SurfacerAgent);
 	GDREGISTER_CLASS(SurfacerAgentAnnotation);
-	GDREGISTER_CLASS(SurfaceStore);
-	GDREGISTER_CLASS(TileMapSurfaceParser);
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
