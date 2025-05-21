@@ -8,9 +8,3 @@ using namespace godot;
 
 void JumpAnnotation::_bind_methods() {
 }
-
-JumpAnnotation::JumpAnnotation() {
-}
-
-JumpAnnotation::~JumpAnnotation() {
-}

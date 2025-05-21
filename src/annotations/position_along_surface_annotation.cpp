@@ -8,9 +8,3 @@ using namespace godot;
 
 void PositionAlongSurfaceAnnotation::_bind_methods() {
 }
-
-PositionAlongSurfaceAnnotation::PositionAlongSurfaceAnnotation() {
-}
-
-PositionAlongSurfaceAnnotation::~PositionAlongSurfaceAnnotation() {
-}

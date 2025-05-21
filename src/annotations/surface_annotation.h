@@ -8,13 +8,12 @@ namespace godot {
 class SurfaceAnnotation : public RefCounted {
 	GDCLASS(SurfaceAnnotation, RefCounted)
 
-private:
+public:
+	SurfaceAnnotation() {}
+	~SurfaceAnnotation() {}
+	
 protected:
 	static void _bind_methods();
-
-public:
-	SurfaceAnnotation();
-	~SurfaceAnnotation();
 };
 
 } //namespace godot

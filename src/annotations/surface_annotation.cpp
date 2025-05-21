@@ -8,9 +8,3 @@ using namespace godot;
 
 void SurfaceAnnotation::_bind_methods() {
 }
-
-SurfaceAnnotation::SurfaceAnnotation() {
-}
-
-SurfaceAnnotation::~SurfaceAnnotation() {
-}

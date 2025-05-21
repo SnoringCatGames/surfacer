@@ -8,9 +8,3 @@ using namespace godot;
 
 void Annotation::_bind_methods() {
 }
-
-Annotation::Annotation() {
-}
-
-Annotation::~Annotation() {
-}

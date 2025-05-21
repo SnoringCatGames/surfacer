@@ -8,9 +8,3 @@ using namespace godot;
 
 void SurfacerAgentAnnotation::_bind_methods() {
 }
-
-SurfacerAgentAnnotation::SurfacerAgentAnnotation() {
-}
-
-SurfacerAgentAnnotation::~SurfacerAgentAnnotation() {
-}

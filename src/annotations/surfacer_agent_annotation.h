@@ -8,13 +8,13 @@ namespace godot {
 class SurfacerAgentAnnotation : public RefCounted {
 	GDCLASS(SurfacerAgentAnnotation, RefCounted)
 
-private:
+public:
+	SurfacerAgentAnnotation() {}
+	~SurfacerAgentAnnotation() {}
+
 protected:
 	static void _bind_methods();
 
-public:
-	SurfacerAgentAnnotation();
-	~SurfacerAgentAnnotation();
 };
 
 } //namespace godot

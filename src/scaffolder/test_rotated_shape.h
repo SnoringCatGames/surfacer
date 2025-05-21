@@ -9,9 +9,6 @@
 
 START_SCAFFOLDER_TEST(RotatedShape)
 
-// FIXME: I don't like putting these up in the describe() scope. They are kept
-// in memory for too long with the refrence captures.
-
 Ref<RotatedShape> rect_0_degrees;
 Ref<RotatedShape> rect_90_degrees;
 Ref<RotatedShape> rect_270_degrees;

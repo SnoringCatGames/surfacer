@@ -8,9 +8,3 @@ using namespace godot;
 
 void PathAnnotation::_bind_methods() {
 }
-
-PathAnnotation::PathAnnotation() {
-}
-
-PathAnnotation::~PathAnnotation() {
-}

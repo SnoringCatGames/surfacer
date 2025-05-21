@@ -1194,7 +1194,7 @@ void Geometry::_bind_methods() {
 					"get_intersection_of_segment_and_circle", "segment_a",
 					"segment_b", "center", "radius",
 					"uses_first_possible_intersection"),
-			&Geometry::get_intersection_of_segment_and_circle);
+			&Geometry::get_intersection_of_segment_and_circle, DEFVAL(true));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("is_point_in_triangle", "point", "a", "b", "c"),
@@ -1260,7 +1260,7 @@ void Geometry::_bind_methods() {
 			&Geometry::are_three_points_clockwise);
 	ClassDB::bind_static_method(
 			"Geometry", D_METHOD("is_polygon_convex", "vertices", "epsilon"),
-			&Geometry::is_polygon_convex);
+			&Geometry::is_polygon_convex, DEFVAL); // FIXME: LEFT OFF HERE: Adding DEFVAL here. Then add in other files.
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("are_points_collinear", "p1", "p2", "p3", "epsilon"),

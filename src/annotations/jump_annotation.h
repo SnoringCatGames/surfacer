@@ -8,13 +8,12 @@ namespace godot {
 class JumpAnnotation : public RefCounted {
 	GDCLASS(JumpAnnotation, RefCounted)
 
-private:
+public:
+	JumpAnnotation() {}
+	~JumpAnnotation() {}
+	
 protected:
 	static void _bind_methods();
-
-public:
-	JumpAnnotation();
-	~JumpAnnotation();
 };
 
 } //namespace godot

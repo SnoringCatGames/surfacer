@@ -8,13 +8,12 @@ namespace godot {
 class AnnotationsManager : public RefCounted {
 	GDCLASS(AnnotationsManager, RefCounted)
 
-private:
+public:
+	AnnotationsManager() {}
+	~AnnotationsManager() {}
+	
 protected:
 	static void _bind_methods();
-
-public:
-	AnnotationsManager();
-	~AnnotationsManager();
 };
 
 } //namespace godot

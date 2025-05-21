@@ -8,13 +8,12 @@ namespace godot {
 class PositionAlongSurfaceAnnotation : public RefCounted {
 	GDCLASS(PositionAlongSurfaceAnnotation, RefCounted)
 
-private:
+public:
+	PositionAlongSurfaceAnnotation() {}
+	~PositionAlongSurfaceAnnotation() {}
+	
 protected:
 	static void _bind_methods();
-
-public:
-	PositionAlongSurfaceAnnotation();
-	~PositionAlongSurfaceAnnotation();
 };
 
 } //namespace godot
