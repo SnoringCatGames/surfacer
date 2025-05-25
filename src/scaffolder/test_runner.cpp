@@ -4,40 +4,43 @@
 
 namespace godot {
 
-namespace test_runner {
+bool TestRunnerFocusable::should_run() const {
+	return is_focused || (!runner->are_any_tests_focused && !is_excluded);
+}
 
-void Spec::run() {
-	runner.is_spec_running = true;
-	runner.is_current_spec_passing = true;
+void TestRunnerSpec::run() {
+	runner->is_spec_running = true;
+	runner->is_current_spec_passing = true;
 
 	callback();
 
-	if (!runner.is_current_spec_passing) {
-		// Print the suite path, if we aren't already printing all results.
-		if (!runner.print_passing_units) {
+	if (!runner->is_current_spec_passing) {
+		// Print the TestRunnerSuite path, if we aren't already printing all
+		// results.
+		if (!runner->print_passing_units) {
 			godot::UtilityFunctions::print_rich(
 					godot::vformat(
 							"%s [color=white]>[/color]",
-							suite->get_combined_rich_description()));
+							TestRunnerSuite->get_combined_rich_description()));
 		}
 		godot::UtilityFunctions::print_rich(
 				godot::vformat(
 						"%s: [color=purple]%s[/color]", _X_MARK,
 						description.c_str()));
-	} else if (runner.print_passing_units) {
+	} else if (runner->print_passing_units) {
 		godot::UtilityFunctions::print_rich(
 				godot::vformat(
 						"%s: [color=purple]%s[/color]", _CHECKMARK,
 						description.c_str()));
 	}
 
-	runner.is_spec_running = false;
+	runner->is_spec_running = false;
 }
 
-godot::String Suite::get_combined_rich_description() const {
+godot::String TestRunnerSuite::get_combined_rich_description() const {
 	godot::String combined_description =
 			godot::vformat("[color=cyan]%s[/color]", description.c_str());
-	const Suite *current_suite = parent_suite;
+	const TestRunnerSuite *current_suite = parent_suite;
 	while (current_suite) {
 		// Skip the empty root description.
 		if (!current_suite->description.empty()) {
@@ -45,65 +48,63 @@ godot::String Suite::get_combined_rich_description() const {
 					"[color=dark_slate_gray]%s[/color] "
 					"[color=white]>[/color] "
 					"%s",
-					current_suite->description.c_str(),
-					combined_description);
+					current_suite->description.c_str(), combined_description);
 		}
 		current_suite = current_suite->parent_suite;
 	}
 	return combined_description;
 }
 
-void Suite::run() {
-	runner.running_suite_count++;
-	const bool was_parent_suite_passing = runner.is_current_suite_passing;
-	runner.is_current_suite_passing = true;
+void TestRunnerSuite::run() {
+	runner->running_suite_count++;
+	const bool was_parent_suite_passing = runner->is_current_suite_passing;
+	runner->is_current_suite_passing = true;
 
-	if (runner.print_passing_units) {
-		godot::UtilityFunctions::print_rich(
-				get_combined_rich_description());
+	if (runner->print_passing_units) {
+		godot::UtilityFunctions::print_rich(get_combined_rich_description());
 	}
 
 	// Execute any before_all.
-	for (const test_runner::Callable &callable : before_alls) {
-		callable.callback();
+	for (const TestRunnerCallable &TestRunnerCallable : before_alls) {
+		TestRunnerCallable.callback();
 	}
 
-	// Execute specs for this suite.
-	for (Spec &spec : specs) {
-		if (spec.should_run()) {
+	// Execute specs for this TestRunnerSuite.
+	for (TestRunnerSpec &TestRunnerSpec : specs) {
+		if (TestRunnerSpec.should_run()) {
 			// Execute any before_each.
-			for (const test_runner::Callable &callable : before_eaches) {
-				callable.callback();
+			for (const TestRunnerCallable &TestRunnerCallable : before_eaches) {
+				TestRunnerCallable.callback();
 			}
 
-			runner.is_spec_running = true;
+			runner->is_spec_running = true;
 
-			spec.run();
+			TestRunnerSpec.run();
 
-			runner.is_spec_running = false;
+			runner->is_spec_running = false;
 
 			// Execute any after_each.
-			for (const test_runner::Callable &callable : after_eaches) {
-				callable.callback();
+			for (const TestRunnerCallable &TestRunnerCallable : after_eaches) {
+				TestRunnerCallable.callback();
 			}
 		}
 	}
 
 	// Recurse.
-	for (Suite &suite : suites) {
-		if (suite.should_run()) {
-			suite.run();
+	for (TestRunnerSuite &TestRunnerSuite : suites) {
+		if (TestRunnerSuite.should_run()) {
+			TestRunnerSuite.run();
 		}
 	}
 
 	// Execute any after_all.
-	for (const test_runner::Callable &callable : after_alls) {
-		callable.callback();
+	for (const TestRunnerCallable &TestRunnerCallable : after_alls) {
+		TestRunnerCallable.callback();
 	}
 
-	runner.is_current_suite_passing =
-			was_parent_suite_passing && runner.is_current_suite_passing;
-	runner.running_suite_count--;
+	runner->is_current_suite_passing =
+			was_parent_suite_passing && runner->is_current_suite_passing;
+	runner->running_suite_count--;
 }
 
 void TestRunner::create_suite(
@@ -117,15 +118,15 @@ void TestRunner::create_suite(
 		are_any_tests_focused = true;
 	}
 
-	Suite suite;
-	suite.runner = this;
-	suite.description = p_description;
-	suite.callback = p_callback;
-	suite.is_focused = p_is_focused || compiling_suite->is_focused;
-	suite.is_excluded = p_is_excluded || compiling_suite->is_excluded;
-	suite.parent_suite = compiling_suite;
+	TestRunnerSuite TestRunnerSuite;
+	TestRunnerSuite.runner = this;
+	TestRunnerSuite.description = p_description;
+	TestRunnerSuite.callback = p_callback;
+	TestRunnerSuite.is_focused = p_is_focused || compiling_suite->is_focused;
+	TestRunnerSuite.is_excluded = p_is_excluded || compiling_suite->is_excluded;
+	TestRunnerSuite.parent_suite = compiling_suite;
 
-	compiling_suite->suites.push_back(std::move(suite));
+	compiling_suite->suites.push_back(std::move(TestRunnerSuite));
 
 	compiling_suite = &compiling_suite->suites.back();
 
@@ -145,15 +146,15 @@ void TestRunner::create_spec(
 		are_any_tests_focused = true;
 	}
 
-	Spec spec;
-	suite.runner = this;
-	spec.description = p_description;
-	spec.callback = p_callback;
-	spec.is_focused = p_is_focused || compiling_suite->is_focused;
-	spec.is_excluded = p_is_excluded || compiling_suite->is_excluded;
-	spec.suite = compiling_suite;
+	TestRunnerSpec TestRunnerSpec;
+	TestRunnerSpec.runner = this;
+	TestRunnerSpec.description = p_description;
+	TestRunnerSpec.callback = p_callback;
+	TestRunnerSpec.is_focused = p_is_focused || compiling_suite->is_focused;
+	TestRunnerSpec.is_excluded = p_is_excluded || compiling_suite->is_excluded;
+	TestRunnerSpec.TestRunnerSuite = compiling_suite;
 
-	compiling_suite->specs.push_back(std::move(spec));
+	compiling_suite->specs.push_back(std::move(TestRunnerSpec));
 }
 
 void TestRunner::run_all_tests() {
@@ -164,7 +165,7 @@ void TestRunner::run_all_tests() {
 	failing_spec_count = 0;
 
 	// Register the top-level describes.
-	for (const TestModule &module : test_modules) {
+	for (const TestRunnerModule &module : test_modules) {
 		module.callback();
 	}
 
@@ -178,12 +179,11 @@ void TestRunner::run_all_tests() {
 		godot::UtilityFunctions::print_rich(
 				godot::vformat(
 						"\n" _REVERSE_RAINBOW_BAR
-						"[color=red]%d specs failed![/color] " _RAINBOW_BAR "\n",
+						"[color=red]%d specs failed![/color] " _RAINBOW_BAR
+						"\n",
 						failing_spec_count));
 	}
 }
-
-} //namespace test_runner
 
 } //namespace godot
 

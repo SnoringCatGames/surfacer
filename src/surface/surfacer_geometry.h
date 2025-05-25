@@ -120,7 +120,7 @@ public:
 	static bool are_position_wrappers_equal_with_epsilon(
 			const Ref<PositionAlongSurface> &p_a,
 			const Ref<PositionAlongSurface> &p_b,
-			double p_epsilon = 1e-6);
+			double p_epsilon = float_epsilon);
 
 	static Surface::Side get_surface_side_for_normal(const Vector2 &p_normal);
 

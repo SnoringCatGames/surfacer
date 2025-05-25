@@ -30,7 +30,6 @@
 #include "surface/test_surface_properties.h"
 #include "surface/test_surface_store.h"
 #include "surface/test_surfacer_geometry.h"
-#include "surface/test_tile_shape_data.h"
 #include "surface/tile_shape_data.h"
 #include "surface_graph.h"
 #include "surfacer.h"
@@ -69,7 +68,6 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	REGISTER_SCAFFOLDER_CLASS(SurfacerGeometry);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceStore);
 	REGISTER_SCAFFOLDER_CLASS(TileMapSurfaceParser);
-	REGISTER_SCAFFOLDER_CLASS(TileShapeData);
 
 	GDREGISTER_VIRTUAL_CLASS(Annotation);
 	GDREGISTER_CLASS(AnnotationsManager);

@@ -25,7 +25,7 @@ void CollisionSurfaceResult::_bind_methods() {
 	ADD_PROPERTY(
 			PropertyInfo(
 					Variant::INT, "surface_side", PROPERTY_HINT_ENUM,
-					String::join(Surface::side_strings)),
+					Surface::get_side_hint_string()),
 			"set_surface_side", "get_surface_side");
 
 	ClassDB::bind_method(

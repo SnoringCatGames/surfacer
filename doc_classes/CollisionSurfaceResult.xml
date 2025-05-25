@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="CollisionSurfaceResult" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="reset">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="error_message" type="String" setter="set_error_message" getter="get_error_message" default="&quot;&quot;">
+		</member>
+		<member name="flipped_sides_for_nested_call" type="bool" setter="set_flipped_sides_for_nested_call" getter="get_flipped_sides_for_nested_call" default="false">
+		</member>
+		<member name="surface" type="Surface" setter="set_surface" getter="get_surface">
+		</member>
+		<member name="surface_side" type="int" setter="set_surface_side" getter="get_surface_side" enum="Surface.Side" default="0">
+		</member>
+		<member name="tilemap_coord" type="Vector2" setter="set_tilemap_coord" getter="get_tilemap_coord" default="Vector2(inf, inf)">
+		</member>
+		<member name="tilemap_index" type="int" setter="set_tilemap_index" getter="get_tilemap_index" default="-1">
+		</member>
+	</members>
+</class>

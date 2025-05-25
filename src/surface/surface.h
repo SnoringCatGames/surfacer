@@ -2,6 +2,7 @@
 #define SURFACE_H
 
 #include "scaffolder/geometry.h"
+#include "scaffolder/internal_utils.h"
 #include "surface_chunk.h"
 #include "surface_properties.h"
 
@@ -42,6 +43,9 @@ public:
 	static String side_to_prefix_string(Side p_side) {
 		return side_prefix_strings[p_side];
 	}
+	static String get_side_hint_string() {
+		return join_strings(side_strings, Side::_Side_COUNT, ",");
+	}
 
 public:
 	enum NeighborCurvature {
@@ -62,6 +66,11 @@ public:
 
 	static String neighbor_curvature_to_string(NeighborCurvature p_side) {
 		return neighbor_curvature_strings[p_side];
+	}
+	static String get_neighbor_curvature_hint_string() {
+		return join_strings(
+				neighbor_curvature_strings,
+				NeighborCurvature::_NeighborCurvature_COUNT, ",");
 	}
 
 public:
@@ -197,7 +206,7 @@ private:
 	NeighborCurvature counter_clockwise_neighbor_curvature =
 			NeighborCurvature::UNKNOWN_CURVATURE;
 	Ref<Surface> counter_clockwise_neighbor;
-};
+}; //namespace godot
 
 } //namespace godot
 

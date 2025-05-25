@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GDExample" inherits="Sprite2D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="amplitude" type="float" setter="set_amplitude" getter="get_amplitude" default="10.0">
+		</member>
+		<member name="speed" type="float" setter="set_speed" getter="get_speed" default="1.0">
+		</member>
+	</members>
+	<signals>
+		<signal name="position_changed">
+			<param index="0" name="node" type="Object" />
+			<param index="1" name="new_pos" type="Vector2" />
+			<description>
+			</description>
+		</signal>
+	</signals>
+</class>

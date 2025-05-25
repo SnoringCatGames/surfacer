@@ -1125,7 +1125,7 @@ bool Geometry::check_for_shape_to_rect_intersection(
 		const Vector2 &p_shape_position,
 		const Ref<RotatedShape> &p_shape,
 		const Rect2 &p_rect,
-		double p_epsilon) {
+		float p_epsilon) {
 	const Vector2 half_width_height = p_shape->get_half_width_height();
 	return p_rect.position.x <
 			p_shape_position.x + half_width_height.x + p_epsilon &&
@@ -1260,17 +1260,17 @@ void Geometry::_bind_methods() {
 			&Geometry::are_three_points_clockwise);
 	ClassDB::bind_static_method(
 			"Geometry", D_METHOD("is_polygon_convex", "vertices", "epsilon"),
-			&Geometry::is_polygon_convex, DEFVAL); // FIXME: LEFT OFF HERE: Adding DEFVAL here. Then add in other files.
+			&Geometry::is_polygon_convex, DEFVAL(0.001f));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("are_points_collinear", "p1", "p2", "p3", "epsilon"),
-			&Geometry::are_points_collinear);
+			&Geometry::are_points_collinear, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD(
 					"do_point_and_segment_intersect", "point", "segment_a",
 					"segment_b", "epsilon"),
-			&Geometry::do_point_and_segment_intersect);
+			&Geometry::do_point_and_segment_intersect, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry", D_METHOD("get_bounding_box_for_points", "points"),
 			&Geometry::get_bounding_box_for_points);
@@ -1290,33 +1290,34 @@ void Geometry::_bind_methods() {
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("are_floats_equal_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::are_floats_equal_with_epsilon);
+			&Geometry::are_floats_equal_with_epsilon, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("are_points_equal_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::are_points_equal_with_epsilon);
+			&Geometry::are_points_equal_with_epsilon, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("are_rects_equal_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::are_rects_equal_with_epsilon);
+			&Geometry::are_rects_equal_with_epsilon, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("are_colors_equal_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::are_colors_equal_with_epsilon);
+			&Geometry::are_colors_equal_with_epsilon, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD(
 					"is_float_integer_aligned_with_epsilon", "number",
 					"epsilon"),
-			&Geometry::is_float_integer_aligned_with_epsilon);
+			&Geometry::is_float_integer_aligned_with_epsilon,
+			DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("is_float_gte_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::is_float_gte_with_epsilon);
+			&Geometry::is_float_gte_with_epsilon, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("is_float_lte_with_epsilon", "a", "b", "epsilon"),
-			&Geometry::is_float_lte_with_epsilon);
+			&Geometry::is_float_lte_with_epsilon, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD(
@@ -1325,11 +1326,11 @@ void Geometry::_bind_methods() {
 			&Geometry::clamp_vector_length);
 	ClassDB::bind_static_method(
 			"Geometry", D_METHOD("snap_float_to_integer", "number", "epsilon"),
-			&Geometry::snap_float_to_integer);
+			&Geometry::snap_float_to_integer, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("snap_vector2_to_integers", "point", "epsilon"),
-			&Geometry::snap_vector2_to_integers);
+			&Geometry::snap_vector2_to_integers, DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"Geometry", D_METHOD("do_shapes_match", "shape_a", "shape_b"),
 			&Geometry::do_shapes_match);
@@ -1380,7 +1381,7 @@ void Geometry::_bind_methods() {
 	ClassDB::bind_static_method(
 			"Geometry",
 			D_METHOD("get_vector_string", "vector", "decimal_place_count"),
-			&Geometry::get_vector_string);
+			&Geometry::get_vector_string, DEFVAL(2));
 	ClassDB::bind_static_method(
 			"Geometry", D_METHOD("get_perpendicular_vector", "vector"),
 			&Geometry::get_perpendicular_vector);
@@ -1400,5 +1401,5 @@ void Geometry::_bind_methods() {
 			D_METHOD(
 					"check_for_shape_to_rect_intersection", "p_shape_position",
 					"p_shape", "p_rect", "p_epsilon"),
-			&Geometry::check_for_shape_to_rect_intersection, DEFVAL(0.0));
+			&Geometry::check_for_shape_to_rect_intersection, DEFVAL(0.0f));
 }

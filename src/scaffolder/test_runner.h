@@ -1,5 +1,5 @@
-#ifndef TESTRUNNER_H
-#define TESTRUNNER_H
+#ifndef TEST_RUNNER_H
+#define TEST_RUNNER_H
 
 #ifdef DEBUG_ENABLED
 
@@ -13,68 +13,63 @@
 
 namespace godot {
 
-namespace test_runner {
-
-namespace {
-
+class TestRunnerSuite;
 class TestRunner;
 
-// The macro START_SCAFFOLDER_TEST registers a TestModule for the given test file.
-// `callback` should contain invocation(s) of `describe` and will be invoked when running the tests.
-struct TestModule {
+// The macro START_SCAFFOLDER_TEST registers a TestRunnerModule for the given
+// test file. `callback` should contain invocation(s) of `describe` and will be
+// invoked when running the tests.
+struct TestRunnerModule {
 	const std::function<void()> callback;
 };
 
-class Describable {
+class TestRunnerDescribable {
+public:
 	std::string description;
 };
 
-class Callable {
+class TestRunnerCallable {
+public:
 	std::function<void()> callback;
 };
 
-class Focusable {
+class TestRunnerFocusable {
+public:
 	TestRunner *runner;
 	bool is_focused = false;
 	bool is_excluded = false;
 
-	bool should_run() const {
-		return is_focused || (!runner.are_any_tests_focused && !is_excluded);
-	}
+	bool should_run() const;
 };
 
-class Spec : public test_runner::Focusable,
-			  public test_runner::Callable,
-			  public test_runner::Describable {
-	Suite *suite = nullptr;
+class TestRunnerSpec : public TestRunnerFocusable,
+					   public TestRunnerCallable,
+					   public TestRunnerDescribable {
+public:
+	TestRunnerSuite *TestRunnerSuite = nullptr;
 
 	void run();
-
-	friend Suite;
-	friend TestRunner;
 };
 
-class Suite : public test_runner::Focusable,
-			   public test_runner::Callable,
-			   public test_runner::Describable {
-	Suite *parent_suite = nullptr;
-	std::vector<Spec> specs;
-	std::vector<Suite> suites;
-	std::vector<test_runner::Callable> before_eaches;
-	std::vector<test_runner::Callable> after_eaches;
-	std::vector<test_runner::Callable> before_alls;
-	std::vector<test_runner::Callable> after_alls;
+class TestRunnerSuite : public TestRunnerFocusable,
+						public TestRunnerCallable,
+						public TestRunnerDescribable {
+public:
+	TestRunnerSuite *parent_suite = nullptr;
+	std::vector<TestRunnerSpec> specs;
+	std::vector<TestRunnerSuite> suites;
+	std::vector<TestRunnerCallable> before_eaches;
+	std::vector<TestRunnerCallable> after_eaches;
+	std::vector<TestRunnerCallable> before_alls;
+	std::vector<TestRunnerCallable> after_alls;
 
 	godot::String get_combined_rich_description() const;
 
 	void run();
-
-	friend Spec;
-	friend TestRunner;
 };
 
 class TestRunner {
-private:
+public:
 	bool are_any_tests_focused = false;
 	bool print_passing_units = false;
 	bool print_passing_expects = false;
@@ -86,15 +81,14 @@ private:
 	bool is_current_suite_passing = true;
 	bool is_current_spec_passing = true;
 
-	Suite root_suite;
-	Suite *compiling_suite = &root_suite;
+	TestRunnerSuite root_suite;
+	TestRunnerSuite *compiling_suite = &root_suite;
 
-	std::vector<TestModule> test_modules;
+	std::vector<TestRunnerModule> test_modules;
 
-	friend Spec;
-	friend Suite;
+	TestRunner() { root_suite.runner = this; }
+	~TestRunner() {}
 
-public:
 	bool is_compiling_a_suite() { return compiling_suite_count > 0; }
 	bool is_running_a_suite() { return running_suite_count > 0; }
 
@@ -113,49 +107,50 @@ public:
 	void run_all_tests();
 };
 
+namespace {
+
 TestRunner runner;
 
 } //namespace
 
-#define _LOCATION_TEMPLATE                                                      \
+#define _LOCATION_TEMPLATE                                                     \
 	"[lb][color=gray]%s:%s[/color][rb] "                                       \
 	"[color=yellow]actual:[/color] [code]%s[/code], "                          \
 	"[color=yellow]expected:[/color] [code]%s[/code], [lb]Expect(%s, %s)[rb]"
 #define _FAIL_TEMPLATE "[color=red]Failed[/color] " _LOCATION_TEMPLATE
 #define _PASS_TEMPLATE "[color=green]Passed[/color] " _LOCATION_TEMPLATE
 
-#define _RAINBOW_BAR                                                            \
+#define _RAINBOW_BAR                                                           \
 	"[color=red]=[/color][color=orange]=[/color][color=yellow]=[/color]"       \
 	"[color=green]=[/color][color=blue]=[/color][color=purple]=[/color]"
-#define _REVERSE_RAINBOW_BAR                                                    \
+#define _REVERSE_RAINBOW_BAR                                                   \
 	"[color=purple]=[/color][color=blue]=[/color][color=green]=[/color]"       \
 	"[color=yellow]=[/color][color=orange]=[/color][color=red]=[/color]"
 #define _CHECKMARK "[color=green]PASS[/color]"
 #define _X_MARK "[color=red]FAIL[/color]"
 
-#define _PRINT_EXPECT_RESULT(                                                   \
+#define _PRINT_EXPECT_RESULT(                                                  \
 		template, actual_value, expected_value, actual_source,                 \
 		expected_source)                                                       \
-		godot::UtilityFunctions::print_rich(                                       \
+	godot::UtilityFunctions::print_rich(                                       \
 			godot::vformat(                                                    \
 					template, __FILE__, __LINE__, actual_value,                \
 					expected_value, actual_source, expected_source))
 
 #define HandleExpectResult(actual, expected, check)                            \
 	do {                                                                       \
-		ENSURE(runner.is_spec_running,                    \
-			   "Expect() called outside of it().");                            \
+		ENSURE(runner.is_spec_running, "Expect() called outside of it().");    \
 		const bool passed = (check);                                           \
 		if (!passed) {                                                         \
-			runner.is_current_spec_passing = false;       \
-			runner.is_current_suite_passing = false;      \
-			runner.failing_spec_count++;                  \
-			_PRINT_EXPECT_RESULT(                                               \
-					_FAIL_TEMPLATE, Variant(actual).stringify(),                \
+			runner.is_current_spec_passing = false;                            \
+			runner.is_current_suite_passing = false;                           \
+			runner.failing_spec_count++;                                       \
+			_PRINT_EXPECT_RESULT(                                              \
+					_FAIL_TEMPLATE, Variant(actual).stringify(),               \
 					Variant(expected).stringify(), #actual, #expected);        \
-		} else if (runner.print_passing_expects) {        \
-			_PRINT_EXPECT_RESULT(                                               \
-					_PASS_TEMPLATE, Variant(actual).stringify(),                \
+		} else if (runner.print_passing_expects) {                             \
+			_PRINT_EXPECT_RESULT(                                              \
+					_PASS_TEMPLATE, Variant(actual).stringify(),               \
 					Variant(expected).stringify(), #actual, #expected);        \
 		}                                                                      \
 	} while (0)
@@ -173,106 +168,108 @@ TestRunner runner;
 
 #define Fail() Expect(true, false)
 
-void describe(
+_FORCE_INLINE_ void describe(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
 	runner.create_suite(p_description, p_callback, false, false);
 }
 
-void fdescribe(
+_FORCE_INLINE_ void fdescribe(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
 	runner.create_suite(p_description, p_callback, true, false);
 }
 
-void xdescribe(
+_FORCE_INLINE_ void xdescribe(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
 	runner.create_suite(p_description, p_callback, false, true);
 }
 
-void it(const std::string &p_description,
+_FORCE_INLINE_ void it(
+		const std::string &p_description,
 		const std::function<void()> &p_callback) {
 	runner.create_spec(p_description, p_callback, false, false);
 }
 
-void fit(
+_FORCE_INLINE_ void fit(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
 	runner.create_spec(p_description, p_callback, true, false);
 }
 
-void xit(
+_FORCE_INLINE_ void xit(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
 	runner.create_spec(p_description, p_callback, false, true);
 }
 
-void before_each(const std::function<void()> &p_callback) {
+_FORCE_INLINE_ void before_each(const std::function<void()> &p_callback) {
 	ENSURE(runner.is_compiling_a_suite(),
 		   "before_each() called outside of describe().");
 
-	test_runner::Callable callable;
-	callable.callback = p_callback;
+	TestRunnerCallable TestRunnerCallable;
+	TestRunnerCallable.callback = p_callback;
 
-	runner.compiling_suite->before_eaches.push_back(std::move(callable));
+	runner.compiling_suite->before_eaches.push_back(
+			std::move(TestRunnerCallable));
 }
 
-void after_each(const std::function<void()> &p_callback) {
+_FORCE_INLINE_ void after_each(const std::function<void()> &p_callback) {
 	ENSURE(runner.is_compiling_a_suite(),
 		   "after_each() called outside of describe().");
 
-	test_runner::Callable callable;
-	callable.callback = p_callback;
+	TestRunnerCallable TestRunnerCallable;
+	TestRunnerCallable.callback = p_callback;
 
-	runner.compiling_suite->after_eaches.push_back(std::move(callable));
+	runner.compiling_suite->after_eaches.push_back(
+			std::move(TestRunnerCallable));
 }
 
-void before_all(const std::function<void()> &p_callback) {
+_FORCE_INLINE_ void before_all(const std::function<void()> &p_callback) {
 	ENSURE(runner.is_compiling_a_suite(),
 		   "before_all() called outside of describe().");
 
-	test_runner::Callable callable;
-	callable.callback = p_callback;
+	TestRunnerCallable TestRunnerCallable;
+	TestRunnerCallable.callback = p_callback;
 
-	runner.compiling_suite->before_alls.push_back(std::move(callable));
+	runner.compiling_suite->before_alls.push_back(
+			std::move(TestRunnerCallable));
 }
 
-void after_all(const std::function<void()> &p_callback) {
-	ENSURE(runner.is_compiling_a_suite(), "after_all() called outside of describe().");
+_FORCE_INLINE_ void after_all(const std::function<void()> &p_callback) {
+	ENSURE(runner.is_compiling_a_suite(),
+		   "after_all() called outside of describe().");
 
-	test_runner::Callable callable;
-	callable.callback = p_callback;
+	TestRunnerCallable TestRunnerCallable;
+	TestRunnerCallable.callback = p_callback;
 
-	runner.compiling_suite->after_alls.push_back(std::move(callable));
+	runner.compiling_suite->after_alls.push_back(std::move(TestRunnerCallable));
 }
 
-void run_tests() {
-	print_passing_units = false;
-	print_passing_expects = false;
+_FORCE_INLINE_ void run_tests() {
+	runner.print_passing_units = false;
+	runner.print_passing_expects = false;
 	runner.run_all_tests();
 }
 
-void run_tests_verbose() {
-	print_passing_units = true;
-	print_passing_expects = false;
+_FORCE_INLINE_ void run_tests_verbose() {
+	runner.print_passing_units = true;
+	runner.print_passing_expects = false;
 	runner.run_all_tests();
 }
 
-void run_tests_very_verbose() {
-	print_passing_units = true;
-	print_passing_expects = true;
+_FORCE_INLINE_ void run_tests_very_verbose() {
+	runner.print_passing_units = true;
+	runner.print_passing_expects = true;
 	runner.run_all_tests();
 }
-
-} //namespace test_runner
 
 // clang-format off
 
 #define START_SCAFFOLDER_TEST(m_name)                                          \
 	namespace godot {                                                          \
-	using namespace test_runner;                                               \
-	TestModule ScaffolderTest_##m_name = TestModule {                          \
+	TestRunnerModule ScaffolderTest_##m_name = TestRunnerModule {                          \
 		[]() {                                                                 \
 			describe(#m_name, []() {
 
@@ -303,4 +300,4 @@ namespace godot {
 
 #endif // DEBUG_ENABLED
 
-#endif // TESTRUNNER_H
+#endif // TEST_RUNNER_H

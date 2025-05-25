@@ -35,6 +35,20 @@ template <typename T, typename... Args> Ref<T> set_up_ref(Args... args) {
 	return ref;
 }
 
+static String join_strings(
+		const char *const arr[],
+		size_t size,
+		const char *delimiter) {
+	String result;
+	for (size_t i = 0; i < size; ++i) {
+		result += arr[i];
+		if (i < size - 1) {
+			result += delimiter;
+		}
+	}
+	return result;
+}
+
 // Pauses execution if this isn't a release version of the Surfacer framework.
 #if !IS_SURFACER_RELEASE
 #ifdef _MSC_VER

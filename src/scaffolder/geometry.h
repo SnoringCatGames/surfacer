@@ -260,7 +260,7 @@ public:
 			const Vector2 &p_shape_position,
 			const Ref<RotatedShape> &p_shape,
 			const Rect2 &p_rect,
-			double p_epsilon = 0.0);
+			float p_epsilon = 0.0f);
 
 protected:
 	static void _bind_methods();

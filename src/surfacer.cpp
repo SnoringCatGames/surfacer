@@ -13,6 +13,6 @@ void Surfacer::_bind_methods() {
 
 void Surfacer::run_tests() {
 	// TODO: Swap these.
-	// test_runner::run_tests();
-	test_runner::run_tests_verbose();
+	// run_tests();
+	run_tests_verbose();
 }

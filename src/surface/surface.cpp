@@ -6,8 +6,6 @@
 
 using namespace godot;
 
-// FIXME: REVIEW ALL BINDINGS FOR DEFAULT VALUES (Use DEFVAL()).
-
 Vector2 Surface::get_normal_from_side(Side p_side) {
 	switch (p_side) {
 		case Side::FLOOR:
@@ -56,7 +54,7 @@ void Surface::_bind_methods() {
 	ADD_PROPERTY(
 			PropertyInfo(
 					Variant::INT, "side", PROPERTY_HINT_ENUM,
-					String::join(side_strings)),
+					Surface::get_side_hint_string()),
 			"set_side", "get_side");
 
 	ClassDB::bind_method(D_METHOD("get_properties"), &Surface::get_properties);
@@ -117,7 +115,7 @@ void Surface::_bind_methods() {
 			PropertyInfo(
 					Variant::INT, "clockwise_neighbor_curvature",
 					PROPERTY_HINT_ENUM,
-					String::join(neighbor_curvature_strings)),
+					Surface::get_neighbor_curvature_hint_string()),
 			"set_clockwise_neighbor_curvature",
 			"get_clockwise_neighbor_curvature");
 
@@ -143,7 +141,7 @@ void Surface::_bind_methods() {
 			PropertyInfo(
 					Variant::INT, "counter_clockwise_neighbor_curvature",
 					PROPERTY_HINT_ENUM,
-					String::join(neighbor_curvature_strings)),
+					Surface::get_neighbor_curvature_hint_string()),
 			"set_counter_clockwise_neighbor_curvature",
 			"get_counter_clockwise_neighbor_curvature");
 

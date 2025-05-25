@@ -6,6 +6,8 @@
 
 using namespace godot;
 
+// FIXME: LEFT OFF HERE: This is only partially ported.
+
 Ref<Surface> SurfaceStore::get_surface_for_tile(
 		TileMapLayer *p_tile_map,
 		int p_tilemap_index,

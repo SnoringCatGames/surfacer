@@ -1856,7 +1856,7 @@ void SurfacerGeometry::_bind_methods() {
 					"are_position_wrappers_equal_with_epsilon", "p_a", "p_b",
 					"p_epsilon"),
 			&SurfacerGeometry::are_position_wrappers_equal_with_epsilon,
-			DEFVAL(1e-6));
+			DEFVAL(float_epsilon));
 	ClassDB::bind_static_method(
 			"SurfacerGeometry",
 			D_METHOD("get_surface_side_for_normal", "p_normal"),
