@@ -24,10 +24,10 @@
 script = ExtResource("2_h5d7k")
 god_mode = false
 dev_mode = true
-skip_main_menu_in_dev_mode = false
+skip_main_menu_in_dev_mode = true
 full_screen = false
 mute_music = false
-pauses_on_focus_out = true
+pauses_on_focus_out = false
 is_screenshot_hotkey_enabled = true
 show_hud = true
 main_theme = ExtResource("2_nnvfo")

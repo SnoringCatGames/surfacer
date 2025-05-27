@@ -8,31 +8,31 @@ using namespace godot;
 
 // FIXME: LEFT OFF HERE: This is only partially ported.
 
-Ref<Surface> SurfaceStore::get_surface_for_tile(
+// FIXME: Make sure that tile_map_to_side_to_index_to_surface is set-up with a
+// map for each side, even if that map is empty.
+
+Ref<const Surface> SurfaceStore::get_surface_for_tile(
 		TileMapLayer *p_tile_map,
-		int p_tilemap_index,
-		int p_side) {
+		int p_tile_map_index,
+		Surface::Side p_side) const {
 	const uint64_t map_key = p_tile_map->get_instance_id();
 
-	if (!tilemap_index_to_surface_maps.has(map_key)) {
+	if (tile_map_to_side_to_index_to_surface.count(map_key) == 0) {
 		return nullptr;
 	}
-	Dictionary tile_map_data = tilemap_index_to_surface_maps[map_key];
 
-	if (!tile_map_data.has(p_side)) {
-		return nullptr;
-	}
-	Dictionary side_data = tile_map_data[p_side];
+	const std::unordered_map<int, Ref<const Surface>> &index_to_surface =
+			tile_map_to_side_to_index_to_surface.at(map_key).at(p_side);
 
-	if (side_data.has(p_tilemap_index)) {
-		return side_data[p_tilemap_index]; // FIXME: Assumes it stores
-										   // Ref<Surface>
-	} else {
+	if (index_to_surface.count(p_tile_map_index) == 0) {
 		return nullptr;
 	}
+
+	return index_to_surface.at(p_tile_map_index);
 }
 
-Dictionary SurfaceStore::get_surface_set(const MovementProfile *p_profile) {
+Dictionary SurfaceStore::get_surface_set(
+		const MovementProfile *p_profile) const {
 	Dictionary set;
 	// 	if (!p_movement_params)
 	// 		return set; // Guard against null p_movement_params
@@ -159,34 +159,6 @@ void SurfaceStore::_bind_methods() {
 			D_METHOD("get_right_walls"), &SurfaceStore::get_right_walls);
 	ADD_PROPERTY(
 			PropertyInfo(Variant::ARRAY, "right_walls"), "", "get_right_walls");
-
-	ClassDB::bind_method(
-			D_METHOD("get_all_surfaces"), &SurfaceStore::get_all_surfaces);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::ARRAY, "all_surfaces"), "",
-			"get_all_surfaces");
-	ClassDB::bind_method(
-			D_METHOD("get_non_ceiling_surfaces"),
-			&SurfaceStore::get_non_ceiling_surfaces);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::ARRAY, "non_ceiling_surfaces"), "",
-			"get_non_ceiling_surfaces");
-	ClassDB::bind_method(
-			D_METHOD("get_non_floor_surfaces"),
-			&SurfaceStore::get_non_floor_surfaces);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::ARRAY, "non_floor_surfaces"), "",
-			"get_non_floor_surfaces");
-	ClassDB::bind_method(
-			D_METHOD("get_non_wall_surfaces"),
-			&SurfaceStore::get_non_wall_surfaces);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::ARRAY, "non_wall_surfaces"), "",
-			"get_non_wall_surfaces");
-	ClassDB::bind_method(
-			D_METHOD("get_all_walls"), &SurfaceStore::get_all_walls);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::ARRAY, "all_walls"), "", "get_all_walls");
 
 	ClassDB::bind_method(
 			D_METHOD("get_max_tilemap_cell_size"),
