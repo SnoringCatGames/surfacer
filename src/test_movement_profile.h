@@ -1,6 +1,7 @@
 #ifdef DEBUG_ENABLED
 
 #include "movement_profile.h"
+
 #include "scaffolder/test_runner.h"
 
 START_SCAFFOLDER_TEST(MovementProfile)

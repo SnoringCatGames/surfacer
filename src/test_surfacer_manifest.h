@@ -1,10 +1,10 @@
 #ifdef DEBUG_ENABLED
 
-#include "surfacer_geometry.h"
+#include "surfacer_manifest.h"
 
 #include "scaffolder/test_runner.h"
 
-START_SCAFFOLDER_TEST(SurfacerGeometry)
+START_SCAFFOLDER_TEST(SurfacerManifest)
 
 it("TODO", []() {
 	// TODO

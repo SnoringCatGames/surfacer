@@ -87,7 +87,7 @@ public:
 	std::vector<TestRunnerModule> test_modules;
 
 	TestRunner() { root_suite.runner = this; }
-	~TestRunner() {}
+	~TestRunner() { root_suite.runner = nullptr; }
 
 	bool is_compiling_a_suite() { return compiling_suite_count > 0; }
 	bool is_running_a_suite() { return running_suite_count > 0; }

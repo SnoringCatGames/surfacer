@@ -23,8 +23,42 @@ class SurfaceParser;
 class SurfaceStore : public RefCounted {
 	GDCLASS(SurfaceStore, RefCounted);
 
+public:
+	SurfaceStore() = default;
+	~SurfaceStore() = default;
+
+	TypedArray<const Surface> get_floors() const { return floors; }
+
+	TypedArray<const Surface> get_ceilings() const { return ceilings; }
+
+	TypedArray<const Surface> get_left_walls() const { return left_walls; }
+
+	TypedArray<const Surface> get_right_walls() const { return right_walls; }
+
+	// TODO
+	// TypedArray<SurfaceMark> get_marks() const { return marks; }
+
+	Vector2 get_max_tile_map_cell_size() const {
+		return max_tile_map_cell_size;
+	}
+
+	Rect2 get_combined_tile_map_rect() const { return combined_tile_map_rect; }
+
+	Ref<const Surface> get_surface_for_tile(
+			TileMapLayer *p_tile_map,
+			int p_tilemap_index,
+			Surface::Side p_side) const;
+
+	Dictionary get_surface_set(const MovementProfile *p_profile) const;
+
+protected:
+	static void _bind_methods();
+
 private:
 	// TODO: Map the TileMap into an RTree or BVH.
+
+	// FIXME: Remove these constants? Or consolidate with
+	// SurfaceParser/SurfaceFinder?
 
 	static constexpr int SURFACES_TILE_MAPS_COLLISION_LAYER = 1;
 
@@ -83,37 +117,6 @@ private:
 	}
 
 	friend SurfaceParser;
-
-protected:
-	static void _bind_methods();
-
-public:
-	SurfaceStore() {}
-	~SurfaceStore() {}
-
-	TypedArray<const Surface> get_floors() const { return floors; }
-
-	TypedArray<const Surface> get_ceilings() const { return ceilings; }
-
-	TypedArray<const Surface> get_left_walls() const { return left_walls; }
-
-	TypedArray<const Surface> get_right_walls() const { return right_walls; }
-
-	// TODO
-	// TypedArray<SurfaceMark> get_marks() const { return marks; }
-
-	Vector2 get_max_tile_map_cell_size() const {
-		return max_tile_map_cell_size;
-	}
-
-	Rect2 get_combined_tile_map_rect() const { return combined_tile_map_rect; }
-
-	Ref<const Surface> get_surface_for_tile(
-			TileMapLayer *p_tile_map,
-			int p_tilemap_index,
-			Surface::Side p_side) const;
-
-	Dictionary get_surface_set(const MovementProfile *p_profile) const;
 };
 
 } // namespace godot

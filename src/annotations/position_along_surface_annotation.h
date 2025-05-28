@@ -9,9 +9,9 @@ class PositionAlongSurfaceAnnotation : public RefCounted {
 	GDCLASS(PositionAlongSurfaceAnnotation, RefCounted)
 
 public:
-	PositionAlongSurfaceAnnotation() {}
-	~PositionAlongSurfaceAnnotation() {}
-	
+	PositionAlongSurfaceAnnotation() = default;
+	~PositionAlongSurfaceAnnotation() = default;
+
 protected:
 	static void _bind_methods();
 };

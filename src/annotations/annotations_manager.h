@@ -9,9 +9,9 @@ class AnnotationsManager : public RefCounted {
 	GDCLASS(AnnotationsManager, RefCounted)
 
 public:
-	AnnotationsManager() {}
-	~AnnotationsManager() {}
-	
+	AnnotationsManager() = default;
+	~AnnotationsManager() = default;
+
 protected:
 	static void _bind_methods();
 };

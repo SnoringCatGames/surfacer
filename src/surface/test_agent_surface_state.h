@@ -1,6 +1,7 @@
 #ifdef DEBUG_ENABLED
 
 #include "agent_surface_state.h"
+
 #include "scaffolder/test_runner.h"
 
 START_SCAFFOLDER_TEST(AgentSurfaceState)

@@ -9,9 +9,9 @@ class SurfaceAnnotation : public RefCounted {
 	GDCLASS(SurfaceAnnotation, RefCounted)
 
 public:
-	SurfaceAnnotation() {}
-	~SurfaceAnnotation() {}
-	
+	SurfaceAnnotation() = default;
+	~SurfaceAnnotation() = default;
+
 protected:
 	static void _bind_methods();
 };

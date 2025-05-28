@@ -9,11 +9,15 @@
 #include "annotations/surfacer_agent_annotation.h"
 #include "gdexample.h"
 #include "movement_profile.h"
+#include "scaffolder/canvas_layer_config.h"
 #include "scaffolder/geometry.h"
 #include "scaffolder/rotated_shape.h"
+#include "scaffolder/scaffolder_manifest.h"
+#include "scaffolder/test_canvas_layer_config.h"
 #include "scaffolder/test_geometry.h"
 #include "scaffolder/test_rotated_shape.h"
 #include "scaffolder/test_runner.h"
+#include "scaffolder/test_scaffolder_manifest.h"
 #include "surface/agent_surface_state.h"
 #include "surface/collision_surface_result.h"
 #include "surface/position_along_surface.h"
@@ -34,9 +38,11 @@
 #include "surface_graph.h"
 #include "surfacer.h"
 #include "surfacer_agent.h"
+#include "surfacer_manifest.h"
 #include "test_movement_profile.h"
 #include "test_surface_graph.h"
 #include "test_surfacer_agent.h"
+#include "test_surfacer_manifest.h"
 #include "test_tile_map_surface_parser.h"
 #include "tile_map_surface_parser.h"
 
@@ -55,17 +61,20 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	// FIXME: LEFT OFF HERE: Use REGISTER_SCAFFOLDER_CLASS for everything.
 
 	REGISTER_SCAFFOLDER_CLASS(AgentSurfaceState);
+	REGISTER_SCAFFOLDER_CLASS(CanvasLayerConfig);
 	REGISTER_SCAFFOLDER_CLASS(CollisionSurfaceResult);
 	REGISTER_SCAFFOLDER_CLASS(Geometry);
 	REGISTER_SCAFFOLDER_CLASS(MovementProfile);
 	REGISTER_SCAFFOLDER_CLASS(PositionAlongSurface);
 	REGISTER_SCAFFOLDER_CLASS(RotatedShape);
+	REGISTER_SCAFFOLDER_CLASS(ScaffolderManifest);
 	REGISTER_SCAFFOLDER_CLASS(Surface);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceChunk);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceGraph);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceProperties);
 	REGISTER_SCAFFOLDER_CLASS(SurfacerAgent);
 	REGISTER_SCAFFOLDER_CLASS(SurfacerGeometry);
+	REGISTER_SCAFFOLDER_CLASS(SurfacerManifest);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceStore);
 	REGISTER_SCAFFOLDER_CLASS(TileMapSurfaceParser);
 

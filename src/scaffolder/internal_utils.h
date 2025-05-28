@@ -8,6 +8,9 @@
 
 namespace godot {
 
+constexpr char *PROCESS_MODE_HINT_STRING =
+		"INHERIT,PAUSABLE,WHEN_PAUSED,ALWAYS,DISABLED";
+
 // TODO: Update this when no longer debugging Surfacer.
 #define IS_SURFACER_RELEASE false
 

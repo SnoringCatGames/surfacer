@@ -9,9 +9,9 @@ class JumpAnnotation : public RefCounted {
 	GDCLASS(JumpAnnotation, RefCounted)
 
 public:
-	JumpAnnotation() {}
-	~JumpAnnotation() {}
-	
+	JumpAnnotation() = default;
+	~JumpAnnotation() = default;
+
 protected:
 	static void _bind_methods();
 };

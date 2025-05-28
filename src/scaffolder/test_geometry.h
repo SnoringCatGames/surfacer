@@ -1,6 +1,7 @@
 #ifdef DEBUG_ENABLED
 
-#include "geometry.h"
+#include "scaffolder/geometry.h"
+
 #include "scaffolder/test_runner.h"
 
 START_SCAFFOLDER_TEST(Geometry)

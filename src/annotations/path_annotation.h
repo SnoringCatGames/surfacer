@@ -9,9 +9,9 @@ class PathAnnotation : public RefCounted {
 	GDCLASS(PathAnnotation, RefCounted)
 
 public:
-	PathAnnotation() {}
-	~PathAnnotation() {}
-	
+	PathAnnotation() = default;
+	~PathAnnotation() = default;
+
 protected:
 	static void _bind_methods();
 };

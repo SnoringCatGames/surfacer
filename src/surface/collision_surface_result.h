@@ -16,8 +16,8 @@ class CollisionSurfaceResult : public RefCounted {
 	GDCLASS(CollisionSurfaceResult, RefCounted);
 
 public:
-	CollisionSurfaceResult() {}
-	~CollisionSurfaceResult() {}
+	CollisionSurfaceResult() = default;
+	~CollisionSurfaceResult() = default;
 
 	void reset();
 

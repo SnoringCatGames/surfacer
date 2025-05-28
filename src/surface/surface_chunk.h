@@ -13,8 +13,8 @@ class SurfaceChunk : public RefCounted {
 	GDCLASS(SurfaceChunk, RefCounted)
 
 public:
-	SurfaceChunk() {}
-	~SurfaceChunk() {}
+	SurfaceChunk() = default;
+	~SurfaceChunk() = default;
 
 	void set_surfaces(TypedArray<Surface> p_surfaces);
 	TypedArray<Surface> get_surfaces() const;

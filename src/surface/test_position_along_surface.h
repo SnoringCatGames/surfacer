@@ -1,6 +1,7 @@
 #ifdef DEBUG_ENABLED
 
 #include "position_along_surface.h"
+
 #include "scaffolder/test_runner.h"
 
 START_SCAFFOLDER_TEST(PositionAlongSurface)

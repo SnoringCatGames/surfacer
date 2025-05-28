@@ -1,7 +1,8 @@
 #ifdef DEBUG_ENABLED
 
-#include "scaffolder/test_runner.h"
 #include "surface_properties.h"
+
+#include "scaffolder/test_runner.h"
 
 START_SCAFFOLDER_TEST(SurfaceProperties)
 

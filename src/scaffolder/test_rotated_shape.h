@@ -1,6 +1,7 @@
 #ifdef DEBUG_ENABLED
 
 #include "scaffolder/rotated_shape.h"
+
 #include "scaffolder/test_runner.h"
 
 #include <godot_cpp/classes/capsule_shape2d.hpp>
