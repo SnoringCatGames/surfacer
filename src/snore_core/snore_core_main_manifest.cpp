@@ -1,6 +1,6 @@
 #include "snore_core/snore_core_main_manifest.h"
 
-#include "scaffolder/internal_utils.h"
+#include "snore_core/internal_utils.h"
 #include "snore_core/snore_core_main_module.h"
 
 #include <godot_cpp/core/class_db.hpp>

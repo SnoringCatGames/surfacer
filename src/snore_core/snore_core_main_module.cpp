@@ -1,22 +1,26 @@
 #include "snore_core/snore_core_main_module.h"
 
-#include "annotations/annotation.h"
-#include "annotations/annotations_manager.h"
 #include "gdexample.h"
-#include "scaffolder/canvas_layer_config.h"
-#include "scaffolder/geometry.h"
-#include "scaffolder/internal_utils.h"
-#include "scaffolder/rotated_shape.h"
-#include "scaffolder/test_canvas_layer_config.h"
-#include "scaffolder/test_geometry.h"
-#include "scaffolder/test_rotated_shape.h"
-#include "scaffolder/test_runner.h"
+#include "snore_core/annotation.h"
+#include "snore_core/annotations_manager.h"
+#include "snore_core/canvas_layer_config.h"
+#include "snore_core/geometry.h"
+#include "snore_core/internal_utils.h"
+#include "snore_core/rotated_shape.h"
 #include "snore_core/snore_core_main_manifest.h"
 #include "snore_core/snore_core_manifest.h"
 #include "snore_core/snore_core_module.h"
 #include "snore_core/snore_core_module_utils.h"
+#include "snore_core/test_annotation.h"
+#include "snore_core/test_annotations_manager.h"
+#include "snore_core/test_canvas_layer_config.h"
+#include "snore_core/test_geometry.h"
+#include "snore_core/test_rotated_shape.h"
+#include "snore_core/test_runner.h"
 #include "snore_core/test_snore_core_main_manifest.h"
 #include "snore_core/test_snore_core_main_module.h"
+#include "snore_core/test_snore_core_manifest.h"
+#include "snore_core/test_snore_core_module.h"
 
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/time.hpp>
@@ -25,18 +29,17 @@
 using namespace godot;
 
 void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
-	GDREGISTER_ABSTRACT_CLASS(SnoreCoreManifest);
-	GDREGISTER_ABSTRACT_CLASS(SnoreCoreModule);
-	GDREGISTER_VIRTUAL_CLASS(Annotation);
+	REGISTER_SCAFFOLDER_ABSTRACT_CLASS(SnoreCoreManifest);
+	REGISTER_SCAFFOLDER_ABSTRACT_CLASS(SnoreCoreModule);
+	REGISTER_SCAFFOLDER_VIRTUAL_CLASS(Annotation);
 
+	REGISTER_SCAFFOLDER_CLASS(AnnotationsManager);
 	REGISTER_SCAFFOLDER_CLASS(CanvasLayerConfig);
 	REGISTER_SCAFFOLDER_CLASS(Geometry);
 	REGISTER_SCAFFOLDER_CLASS(RotatedShape);
 	REGISTER_SCAFFOLDER_CLASS(SnoreCore);
 	REGISTER_SCAFFOLDER_CLASS(SnoreCoreMainManifest);
 
-	// FIXME: Use REGISTER_SCAFFOLDER_CLASS for everything.
-	GDREGISTER_CLASS(AnnotationsManager);
 	GDREGISTER_CLASS(GDExample);
 
 	SnoreCoreModuleUtils_Internal::RegisterSnoreCoreMainModuleIfNotPresent();
@@ -65,7 +68,6 @@ SnoreCore *SnoreCore::get() {
 
 // FIXME: LEFT OFF HERE: ---------------------------------------------------
 //
-// - Finish porting MovementProfile.
 // - Finish porting SurfaceStore.
 //
 // --- COMMIT AND STABILIZE CURRENT STATE. ---

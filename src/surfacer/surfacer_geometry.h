@@ -1,8 +1,8 @@
 #ifndef SURFACER_GEOMETRY_H
 #define SURFACER_GEOMETRY_H
 
-#include "scaffolder/geometry.h"
-#include "scaffolder/rotated_shape.h"
+#include "snore_core/geometry.h"
+#include "snore_core/rotated_shape.h"
 #include "surfacer/surface/position_along_surface.h"
 #include "surfacer/surface/surface.h"
 

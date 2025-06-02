@@ -1,10 +1,10 @@
 #ifdef DEBUG_ENABLED
 
-#include "surfacer/surface/surface_chunk.h"
+#include "surfacer/annotations/jump_annotation.h"
 
 #include "snore_core/test_runner.h"
 
-START_SCAFFOLDER_TEST(SurfaceChunk)
+START_SCAFFOLDER_TEST(JumpAnnotation)
 
 it("TODO", []() {
 	// TODO

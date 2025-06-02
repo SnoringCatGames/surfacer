@@ -1,7 +1,7 @@
 #ifndef COLLISION_SURFACE_RESULT_H
 #define COLLISION_SURFACE_RESULT_H
 
-#include "scaffolder/internal_utils.h"
+#include "snore_core/internal_utils.h"
 #include "surfacer/surface/surface.h"
 
 #include <godot_cpp/classes/ref.hpp>

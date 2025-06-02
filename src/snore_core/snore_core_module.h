@@ -1,7 +1,7 @@
 #ifndef SNORE_CORE_MODULE_H
 #define SNORE_CORE_MODULE_H
 
-#include "scaffolder/internal_utils.h"
+#include "snore_core/internal_utils.h"
 #include "snore_core/snore_core_manifest.h"
 
 #include <godot_cpp/core/binder_common.hpp>

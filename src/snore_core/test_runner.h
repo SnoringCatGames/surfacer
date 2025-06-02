@@ -3,7 +3,7 @@
 
 #ifdef DEBUG_ENABLED
 
-#include "scaffolder/internal_utils.h"
+#include "snore_core/internal_utils.h"
 
 #include <functional>
 #include <string>
@@ -287,6 +287,18 @@ _FORCE_INLINE_ void run_tests_very_verbose() {
 #define REGISTER_SCAFFOLDER_CLASS(m_class)                                     \
 	do {                                                                       \
 		GDREGISTER_CLASS(m_class);                                             \
+		REGISTER_SCAFFOLDER_TEST_SUITE(ScaffolderTest_##m_class);              \
+	} while (0)
+
+#define REGISTER_SCAFFOLDER_ABSTRACT_CLASS(m_class)                            \
+	do {                                                                       \
+		GDREGISTER_ABSTRACT_CLASS(m_class);                                    \
+		REGISTER_SCAFFOLDER_TEST_SUITE(ScaffolderTest_##m_class);              \
+	} while (0)
+
+#define REGISTER_SCAFFOLDER_VIRTUAL_CLASS(m_class)                             \
+	do {                                                                       \
+		GDREGISTER_VIRTUAL_CLASS(m_class);                                     \
 		REGISTER_SCAFFOLDER_TEST_SUITE(ScaffolderTest_##m_class);              \
 	} while (0)
 

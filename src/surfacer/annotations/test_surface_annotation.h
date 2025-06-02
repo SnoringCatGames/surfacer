@@ -1,10 +1,10 @@
 #ifdef DEBUG_ENABLED
 
-#include "scaffolder/geometry.h"
+#include "surfacer/annotations/surface_annotation.h"
 
-#include "scaffolder/test_runner.h"
+#include "snore_core/test_runner.h"
 
-START_SCAFFOLDER_TEST(Geometry)
+START_SCAFFOLDER_TEST(SurfaceAnnotation)
 
 it("TODO", []() {
 	// TODO

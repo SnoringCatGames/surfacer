@@ -2,7 +2,7 @@
 
 #include "surfacer/tile_map_surface_parser.h"
 
-#include "scaffolder/test_runner.h"
+#include "snore_core/test_runner.h"
 
 START_SCAFFOLDER_TEST(TileMapSurfaceParser)
 

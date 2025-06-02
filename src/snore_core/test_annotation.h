@@ -1,9 +1,10 @@
 #ifdef DEBUG_ENABLED
 
-#include "scaffolder/canvas_layer_config.h"
-#include "scaffolder/test_runner.h"
+#include "snore_core/annotation.h"
 
-START_SCAFFOLDER_TEST(CanvasLayerConfig)
+#include "snore_core/test_runner.h"
+
+START_SCAFFOLDER_TEST(Annotation)
 
 it("TODO", []() {
 	// TODO

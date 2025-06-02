@@ -1,7 +1,7 @@
 #ifndef SNORE_CORE_MAIN_MANIFEST_H
 #define SNORE_CORE_MAIN_MANIFEST_H
 
-#include "scaffolder/canvas_layer_config.h"
+#include "snore_core/canvas_layer_config.h"
 #include "snore_core/snore_core_manifest.h"
 
 #include <godot_cpp/core/binder_common.hpp>

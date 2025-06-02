@@ -1,4 +1,4 @@
-#include "scaffolder/test_runner.h"
+#include "snore_core/test_runner.h"
 
 #ifdef DEBUG_ENABLED
 

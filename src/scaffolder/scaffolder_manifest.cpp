@@ -1,7 +1,7 @@
 #include "scaffolder/scaffolder_manifest.h"
 
-#include "scaffolder/internal_utils.h"
 #include "scaffolder/scaffolder_module.h"
+#include "snore_core/internal_utils.h"
 #include "snore_core/snore_core_main_manifest.h"
 
 #include <godot_cpp/core/class_db.hpp>

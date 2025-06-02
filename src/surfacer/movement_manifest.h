@@ -1,7 +1,7 @@
 #ifndef MOVEMENT_MANIFEST_H
 #define MOVEMENT_MANIFEST_H
 
-#include "scaffolder/geometry.h"
+#include "snore_core/geometry.h"
 #include "snore_core/snore_core_manifest.h"
 
 #include <godot_cpp/core/binder_common.hpp>

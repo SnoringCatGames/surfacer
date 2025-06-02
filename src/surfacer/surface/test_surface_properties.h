@@ -1,8 +1,8 @@
 #ifdef DEBUG_ENABLED
 
-#include "surfacer/surface_properties.h"
+#include "surfacer/surface/surface_properties.h"
 
-#include "scaffolder/test_runner.h"
+#include "snore_core/test_runner.h"
 
 START_SCAFFOLDER_TEST(SurfaceProperties)
 

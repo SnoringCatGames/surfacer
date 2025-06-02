@@ -1,8 +1,8 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include "scaffolder/geometry.h"
-#include "scaffolder/internal_utils.h"
+#include "snore_core/geometry.h"
+#include "snore_core/internal_utils.h"
 #include "surfacer/surface/surface_chunk.h"
 #include "surfacer/surface/surface_properties.h"
 

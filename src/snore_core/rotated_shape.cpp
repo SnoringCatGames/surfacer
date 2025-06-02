@@ -1,6 +1,6 @@
-#include "scaffolder/rotated_shape.h"
+#include "snore_core/rotated_shape.h"
 
-#include "scaffolder/internal_utils.h"
+#include "snore_core/internal_utils.h"
 
 #include <godot_cpp/core/class_db.hpp>
 

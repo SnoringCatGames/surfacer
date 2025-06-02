@@ -1,8 +1,8 @@
 #ifdef DEBUG_ENABLED
 
-#include "surfacer/agent_surface_state.h"
+#include "surfacer/surface/agent_surface_state.h"
 
-#include "scaffolder/test_runner.h"
+#include "snore_core/test_runner.h"
 
 START_SCAFFOLDER_TEST(AgentSurfaceState)
 

@@ -16,6 +16,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 		return;
 	}
 
+	// FIXME:
 	// - FIGURE OUT HOW TO DEFINE SNORE_CORE, SCAFFOLDER, AND SURFACER IN THREE
 	// SEPARATE REPOS AND BUILDS!!
 	// - SnoreCore will need to be includable into either...

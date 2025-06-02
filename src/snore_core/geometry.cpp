@@ -1,7 +1,7 @@
-#include "scaffolder/geometry.h"
+#include "snore_core/geometry.h"
 
 #include "rotated_shape.h"
-#include "scaffolder/internal_utils.h"
+#include "snore_core/internal_utils.h"
 
 #include <godot_cpp/classes/capsule_shape2d.hpp>
 #include <godot_cpp/classes/circle_shape2d.hpp>

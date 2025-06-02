@@ -2,7 +2,7 @@
 
 #include "surfacer/movement_profile.h"
 
-#include "scaffolder/test_runner.h"
+#include "snore_core/test_runner.h"
 
 START_SCAFFOLDER_TEST(MovementProfile)
 

@@ -1,8 +1,8 @@
 #ifdef DEBUG_ENABLED
 
-#include "surfacer/collision_surface_result.h"
+#include "surfacer/surface/collision_surface_result.h"
 
-#include "scaffolder/test_runner.h"
+#include "snore_core/test_runner.h"
 
 START_SCAFFOLDER_TEST(CollisionSurfaceResult)
 

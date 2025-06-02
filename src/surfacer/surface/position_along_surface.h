@@ -1,7 +1,7 @@
 #ifndef POSITION_ALONG_SURFACE_H
 #define POSITION_ALONG_SURFACE_H
 
-#include "scaffolder/geometry.h"
+#include "snore_core/geometry.h"
 #include "surfacer/surface/surface.h"
 
 #include <godot_cpp/classes/ref.hpp>

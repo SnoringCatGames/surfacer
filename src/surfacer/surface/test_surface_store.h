@@ -1,8 +1,8 @@
 #ifdef DEBUG_ENABLED
 
-#include "surfacer/surface_store.h"
+#include "surfacer/surface/surface_store.h"
 
-#include "scaffolder/test_runner.h"
+#include "snore_core/test_runner.h"
 
 START_SCAFFOLDER_TEST(SurfaceStore)
 

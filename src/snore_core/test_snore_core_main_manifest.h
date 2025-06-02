@@ -2,7 +2,7 @@
 
 #include "snore_core/snore_core_main_manifest.h"
 
-#include "scaffolder/test_runner.h"
+#include "snore_core/test_runner.h"
 
 START_SCAFFOLDER_TEST(SnoreCoreMainManifest)
 

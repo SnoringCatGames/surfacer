@@ -1,7 +1,7 @@
 #ifndef ROTATED_SHAPE_H
 #define ROTATED_SHAPE_H
 
-#include "scaffolder/geometry.h"
+#include "snore_core/geometry.h"
 
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/shape2d.hpp>

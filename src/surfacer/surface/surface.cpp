@@ -1,6 +1,6 @@
 #include "surfacer/surface/surface.h"
 
-#include "scaffolder/geometry.h"
+#include "snore_core/geometry.h"
 
 #include <godot_cpp/core/class_db.hpp>
 

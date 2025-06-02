@@ -1,6 +1,6 @@
 #include "surfacer/surfacer_manifest.h"
 
-#include "scaffolder/internal_utils.h"
+#include "snore_core/internal_utils.h"
 #include "surfacer/surfacer_module.h"
 
 #include <godot_cpp/core/class_db.hpp>

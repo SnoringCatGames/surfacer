@@ -1,7 +1,7 @@
 #ifndef SURFACER_MANIFEST_H
 #define SURFACER_MANIFEST_H
 
-#include "scaffolder/geometry.h"
+#include "snore_core/geometry.h"
 #include "snore_core/snore_core_manifest.h"
 #include "surfacer/movement_manifest.h"
 

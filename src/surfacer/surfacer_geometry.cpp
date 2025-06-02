@@ -1,6 +1,6 @@
-#include "surfacer/surface/surfacer_geometry.h"
+#include "surfacer/surfacer_geometry.h"
 
-#include "scaffolder/internal_utils.h"
+#include "snore_core/internal_utils.h"
 #include "surfacer/surfacer_manifest.h"
 
 #include <godot_cpp/classes/capsule_shape2d.hpp>

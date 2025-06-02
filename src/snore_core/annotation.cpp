@@ -1,4 +1,4 @@
-#include "surfacer/annotations/annotation.h"
+#include "snore_core/annotation.h"
 
 #include <godot_cpp/core/class_db.hpp>
 
