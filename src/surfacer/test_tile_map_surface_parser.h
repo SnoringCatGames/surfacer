@@ -1,3 +1,6 @@
+#ifndef TEST_TILE_MAP_SURFACE_PARSER_H
+#define TEST_TILE_MAP_SURFACE_PARSER_H
+
 #ifdef DEBUG_ENABLED
 
 #include "surfacer/tile_map_surface_parser.h"
@@ -15,3 +18,5 @@ it("TODO", []() {
 END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
+
+#endif // TEST_TILE_MAP_SURFACE_PARSER_H

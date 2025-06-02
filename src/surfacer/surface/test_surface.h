@@ -1,3 +1,6 @@
+#ifndef TEST_SURFACE_H
+#define TEST_SURFACE_H
+
 #ifdef DEBUG_ENABLED
 
 #include "surfacer/surface/surface.h"
@@ -21,3 +24,5 @@ it("get_normal_from_side", []() {
 END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
+
+#endif // TEST_SURFACE_H

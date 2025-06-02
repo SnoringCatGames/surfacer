@@ -1,3 +1,6 @@
+#ifndef TEST_AGENT_SURFACE_STATE_H
+#define TEST_AGENT_SURFACE_STATE_H
+
 #ifdef DEBUG_ENABLED
 
 #include "surfacer/surface/agent_surface_state.h"
@@ -15,3 +18,5 @@ it("TODO", []() {
 END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
+
+#endif // TEST_AGENT_SURFACE_STATE_H

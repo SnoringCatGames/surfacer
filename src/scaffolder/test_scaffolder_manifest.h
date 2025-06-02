@@ -1,3 +1,6 @@
+#ifndef TEST_SCAFFOLDER_MANIFEST_H
+#define TEST_SCAFFOLDER_MANIFEST_H
+
 #ifdef DEBUG_ENABLED
 
 #include "scaffolder/scaffolder_manifest.h"
@@ -15,3 +18,5 @@ it("TODO", []() {
 END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
+
+#endif // TEST_SCAFFOLDER_MANIFEST_H

@@ -1,3 +1,6 @@
+#ifndef TEST_SURFACE_GRAPH_H
+#define TEST_SURFACE_GRAPH_H
+
 #ifdef DEBUG_ENABLED
 
 #include "surfacer/surface_graph.h"
@@ -15,3 +18,5 @@ it("TODO", []() {
 END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
+
+#endif // TEST_SURFACE_GRAPH_H

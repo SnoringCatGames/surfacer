@@ -1,3 +1,6 @@
+#ifndef TEST_SNORE_CORE_MANIFEST_H
+#define TEST_SNORE_CORE_MANIFEST_H
+
 #ifdef DEBUG_ENABLED
 
 #include "snore_core/snore_core_manifest.h"
@@ -15,3 +18,5 @@ it("TODO", []() {
 END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
+
+#endif // TEST_SNORE_CORE_MANIFEST_H

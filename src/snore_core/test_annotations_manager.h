@@ -1,3 +1,6 @@
+#ifndef TEST_ANNOTATIONS_MANAGER_H
+#define TEST_ANNOTATIONS_MANAGER_H
+
 #ifdef DEBUG_ENABLED
 
 #include "snore_core/annotations_manager.h"
@@ -15,3 +18,5 @@ it("TODO", []() {
 END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
+
+#endif // TEST_ANNOTATIONS_MANAGER_H

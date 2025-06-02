@@ -1,3 +1,6 @@
+#ifndef TEST_ROTATED_SHAPE_H
+#define TEST_ROTATED_SHAPE_H
+
 #ifdef DEBUG_ENABLED
 
 #include "snore_core/rotated_shape.h"
@@ -87,3 +90,5 @@ it("get_half_width_height", [&]() {
 END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
+
+#endif // TEST_ROTATED_SHAPE_H

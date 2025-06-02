@@ -1,5 +1,8 @@
 #ifdef DEBUG_ENABLED
 
+#ifndef TEST_MOVEMENT_PROFILE_H
+#define TEST_MOVEMENT_PROFILE_H
+
 #include "surfacer/movement_profile.h"
 
 #include "snore_core/test_runner.h"
@@ -15,3 +18,5 @@ it("TODO", []() {
 END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
+
+#endif // TEST_MOVEMENT_PROFILE_H
