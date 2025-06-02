@@ -31,26 +31,26 @@ void SnoreCoreMainManifest::_bind_methods() {
 	ADD_SUBGROUP("Logging", "flag_log_");
 
 	ClassDB::bind_method(
-			D_METHOD("get_log_scaffolder_events"),
-			&SnoreCoreMainManifest::get_log_scaffolder_events);
+			D_METHOD("get_log_snore_core_events"),
+			&SnoreCoreMainManifest::get_log_snore_core_events);
 	ClassDB::bind_method(
-			D_METHOD("set_log_scaffolder_events", "p_value"),
-			&SnoreCoreMainManifest::set_log_scaffolder_events);
+			D_METHOD("set_log_snore_core_events", "p_value"),
+			&SnoreCoreMainManifest::set_log_snore_core_events);
 	ADD_PROPERTY(
-			EXPORTED_PROPERTY_INFO(Variant::BOOL, "flag_log_scaffolder_events"),
-			"set_log_scaffolder_events", "get_log_scaffolder_events");
+			EXPORTED_PROPERTY_INFO(Variant::BOOL, "flag_log_snore_core_events"),
+			"set_log_snore_core_events", "get_log_snore_core_events");
 
 	ClassDB::bind_method(
-			D_METHOD("get_log_scaffolder_events_verbose"),
-			&SnoreCoreMainManifest::get_log_scaffolder_events_verbose);
+			D_METHOD("get_log_snore_core_events_verbose"),
+			&SnoreCoreMainManifest::get_log_snore_core_events_verbose);
 	ClassDB::bind_method(
-			D_METHOD("set_log_scaffolder_events_verbose", "p_value"),
-			&SnoreCoreMainManifest::set_log_scaffolder_events_verbose);
+			D_METHOD("set_log_snore_core_events_verbose", "p_value"),
+			&SnoreCoreMainManifest::set_log_snore_core_events_verbose);
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO(
-					Variant::BOOL, "flag_log_scaffolder_events_verbose"),
-			"set_log_scaffolder_events_verbose",
-			"get_log_scaffolder_events_verbose");
+					Variant::BOOL, "flag_log_snore_core_events_verbose"),
+			"set_log_snore_core_events_verbose",
+			"get_log_snore_core_events_verbose");
 
 	// End subgroup Logging.
 	// End group Flags.
@@ -64,7 +64,7 @@ void SnoreCoreMainManifest::_bind_methods() {
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO_WITH_HINT(
 					Variant::ARRAY, "canvas_layers", PROPERTY_HINT_ARRAY_TYPE,
-					"ScaffolderCanvasLayerConfig"),
+					"SnoreCoreCanvasLayerConfig"),
 			"set_canvas_layers", "get_canvas_layers");
 
 	ClassDB::bind_method(

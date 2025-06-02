@@ -16,7 +16,7 @@ namespace godot {
 class TestRunnerSuite;
 class TestRunner;
 
-// The macro START_SCAFFOLDER_TEST registers a TestRunnerModule for the given
+// The macro START_SNORE_CORE_TEST registers a TestRunnerModule for the given
 // test file. `callback` should contain invocation(s) of `describe` and will be
 // invoked when running the tests.
 struct TestRunnerModule {
@@ -267,13 +267,13 @@ _FORCE_INLINE_ void run_tests_very_verbose() {
 
 // clang-format off
 
-#define START_SCAFFOLDER_TEST(m_name)                                          \
+#define START_SNORE_CORE_TEST(m_name)                                          \
 	namespace godot {                                                          \
-	TestRunnerModule ScaffolderTest_##m_name = TestRunnerModule {                          \
+	TestRunnerModule SnoreCoreTest_##m_name = TestRunnerModule {                          \
 		[]() {                                                                 \
 			describe(#m_name, []() {
 
-#define END_SCAFFOLDER_TEST                                                    \
+#define END_SNORE_CORE_TEST                                                    \
 			});                                                                \
 		}                                                                      \
 	};                                                                         \
@@ -281,25 +281,25 @@ _FORCE_INLINE_ void run_tests_very_verbose() {
 
 // clang-format on
 
-#define REGISTER_SCAFFOLDER_TEST_SUITE(m_test)                                 \
+#define REGISTER_SNORE_CORE_TEST_SUITE(m_test)                                 \
 	runner.test_modules.push_back(m_test)
 
-#define REGISTER_SCAFFOLDER_CLASS(m_class)                                     \
+#define REGISTER_SNORE_CORE_CLASS(m_class)                                     \
 	do {                                                                       \
 		GDREGISTER_CLASS(m_class);                                             \
-		REGISTER_SCAFFOLDER_TEST_SUITE(ScaffolderTest_##m_class);              \
+		REGISTER_SNORE_CORE_TEST_SUITE(SnoreCoreTest_##m_class);               \
 	} while (0)
 
-#define REGISTER_SCAFFOLDER_ABSTRACT_CLASS(m_class)                            \
+#define REGISTER_SNORE_CORE_ABSTRACT_CLASS(m_class)                            \
 	do {                                                                       \
 		GDREGISTER_ABSTRACT_CLASS(m_class);                                    \
-		REGISTER_SCAFFOLDER_TEST_SUITE(ScaffolderTest_##m_class);              \
+		REGISTER_SNORE_CORE_TEST_SUITE(SnoreCoreTest_##m_class);               \
 	} while (0)
 
-#define REGISTER_SCAFFOLDER_VIRTUAL_CLASS(m_class)                             \
+#define REGISTER_SNORE_CORE_VIRTUAL_CLASS(m_class)                             \
 	do {                                                                       \
 		GDREGISTER_VIRTUAL_CLASS(m_class);                                     \
-		REGISTER_SCAFFOLDER_TEST_SUITE(ScaffolderTest_##m_class);              \
+		REGISTER_SNORE_CORE_TEST_SUITE(SnoreCoreTest_##m_class);               \
 	} while (0)
 
 } //namespace godot
@@ -307,7 +307,7 @@ _FORCE_INLINE_ void run_tests_very_verbose() {
 #else // DEBUG_ENABLED
 
 namespace godot {
-#define REGISTER_SCAFFOLDER_CLASS(m_class) GDREGISTER_CLASS(m_class)
+#define REGISTER_SNORE_CORE_CLASS(m_class) GDREGISTER_CLASS(m_class)
 } //namespace godot
 
 #endif // DEBUG_ENABLED

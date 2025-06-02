@@ -20,16 +20,16 @@ public:
 	bool get_dev_mode() const { return dev_mode; }
 	void set_dev_mode(bool p_value) { dev_mode = p_value; }
 
-	bool get_log_scaffolder_events() const { return log_scaffolder_events; }
-	void set_log_scaffolder_events(bool p_value) {
-		log_scaffolder_events = p_value;
+	bool get_log_snore_core_events() const { return log_snore_core_events; }
+	void set_log_snore_core_events(bool p_value) {
+		log_snore_core_events = p_value;
 	}
 
-	bool get_log_scaffolder_events_verbose() const {
-		return log_scaffolder_events_verbose;
+	bool get_log_snore_core_events_verbose() const {
+		return log_snore_core_events_verbose;
 	}
-	void set_log_scaffolder_events_verbose(bool p_value) {
-		log_scaffolder_events_verbose = p_value;
+	void set_log_snore_core_events_verbose(bool p_value) {
+		log_snore_core_events_verbose = p_value;
 	}
 
 	TypedArray<CanvasLayerConfig> get_canvas_layers() const {
@@ -55,8 +55,8 @@ protected:
 private:
 	bool dev_mode = true;
 
-	bool log_scaffolder_events = false;
-	bool log_scaffolder_events_verbose = false;
+	bool log_snore_core_events = false;
+	bool log_snore_core_events_verbose = false;
 
 	TypedArray<CanvasLayerConfig> canvas_layers;
 

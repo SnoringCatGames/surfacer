@@ -35,7 +35,7 @@ template <typename T> Ref<T> instantiate_ref() {
 
 // FIXME: Go through and update classes to use set_up.
 
-// A common pattern in Scaffolder is to use a SetUp method to initialize an
+// A common pattern in SnoreCore is to use a SetUp method to initialize an
 // object with arguments, since GDExtension doesn't currently support
 // constructor arguments.
 //

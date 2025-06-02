@@ -29,16 +29,16 @@
 using namespace godot;
 
 void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
-	REGISTER_SCAFFOLDER_ABSTRACT_CLASS(SnoreCoreManifest);
-	REGISTER_SCAFFOLDER_ABSTRACT_CLASS(SnoreCoreModule);
-	REGISTER_SCAFFOLDER_VIRTUAL_CLASS(Annotation);
+	REGISTER_SNORE_CORE_ABSTRACT_CLASS(SnoreCoreManifest);
+	REGISTER_SNORE_CORE_ABSTRACT_CLASS(SnoreCoreModule);
+	REGISTER_SNORE_CORE_VIRTUAL_CLASS(Annotation);
 
-	REGISTER_SCAFFOLDER_CLASS(AnnotationsManager);
-	REGISTER_SCAFFOLDER_CLASS(CanvasLayerConfig);
-	REGISTER_SCAFFOLDER_CLASS(Geometry);
-	REGISTER_SCAFFOLDER_CLASS(RotatedShape);
-	REGISTER_SCAFFOLDER_CLASS(SnoreCore);
-	REGISTER_SCAFFOLDER_CLASS(SnoreCoreMainManifest);
+	REGISTER_SNORE_CORE_CLASS(AnnotationsManager);
+	REGISTER_SNORE_CORE_CLASS(CanvasLayerConfig);
+	REGISTER_SNORE_CORE_CLASS(Geometry);
+	REGISTER_SNORE_CORE_CLASS(RotatedShape);
+	REGISTER_SNORE_CORE_CLASS(SnoreCore);
+	REGISTER_SNORE_CORE_CLASS(SnoreCoreMainManifest);
 
 	GDREGISTER_CLASS(GDExample);
 
@@ -76,7 +76,6 @@ SnoreCore *SnoreCore::get() {
 // - Also implement and pass-in MovementProfile as a Resource.
 //
 // - Expand on SnoreCore.
-//   - Move everything not-UI related from Scaffolder to SnoreCore.
 //   - Only allow Surfacer to depend on SnoreCore.
 //   - Create a second demo/ app.
 //     - Have one demo use Surfacer and Scaffolder together.
@@ -86,7 +85,6 @@ SnoreCore *SnoreCore::get() {
 //     - The super-manifest will then wrap each framework's sub-manifest.
 //     - Have both demo apps include their own sub-manifest.
 //
-// - Rename "Scaffolder" stuff in internal_utils.h.
 // - Make sure these are exposed as singletons to GDScript.
 // - Make these not actually rely on static logic.
 // - Possibly have SnoreCore expose a single static access point.
@@ -100,6 +98,8 @@ SnoreCore *SnoreCore::get() {
 //
 // - Survey bound properties, and remove any that shouldn't be exposed to either
 //   the properties panel or GDScript.
+//
+// - Move Scaffolder logic from GDScript to C++.
 
 void SnoreCore::set_up() {
 	// Check that we're only set_upping once at the start of the app.

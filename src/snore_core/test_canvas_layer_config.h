@@ -3,7 +3,7 @@
 #include "snore_core/canvas_layer_config.h"
 #include "snore_core/test_runner.h"
 
-START_SCAFFOLDER_TEST(CanvasLayerConfig)
+START_SNORE_CORE_TEST(CanvasLayerConfig)
 
 it("TODO", []() {
 	// TODO
@@ -11,6 +11,6 @@ it("TODO", []() {
 	// 	   Vector2(0, -1));
 });
 
-END_SCAFFOLDER_TEST
+END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED

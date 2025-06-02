@@ -4,7 +4,7 @@
 
 #include "snore_core/test_runner.h"
 
-START_SCAFFOLDER_TEST(Surfacer)
+START_SNORE_CORE_TEST(Surfacer)
 
 it("TODO", []() {
 	// TODO
@@ -12,6 +12,6 @@ it("TODO", []() {
 	// 	   Vector2(0, -1));
 });
 
-END_SCAFFOLDER_TEST
+END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED

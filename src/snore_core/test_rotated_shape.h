@@ -8,7 +8,7 @@
 #include <godot_cpp/classes/circle_shape2d.hpp>
 #include <godot_cpp/classes/rectangle_shape2d.hpp>
 
-START_SCAFFOLDER_TEST(RotatedShape)
+START_SNORE_CORE_TEST(RotatedShape)
 
 Ref<RotatedShape> rect_0_degrees;
 Ref<RotatedShape> rect_90_degrees;
@@ -84,6 +84,6 @@ it("get_half_width_height", [&]() {
 	Expect(circle_90_degrees->get_half_width_height(), Vector2(1, 1));
 });
 
-END_SCAFFOLDER_TEST
+END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
