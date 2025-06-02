@@ -1,7 +1,5 @@
 #include "surfacer/surface/surface_store.h"
 
-#include "surfacer/movement_profile.h"
-
 #include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;

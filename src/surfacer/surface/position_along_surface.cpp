@@ -1,5 +1,6 @@
 #include "surfacer/surface/position_along_surface.h"
 
+#include "snore_core/geometry.h"
 #include "snore_core/rotated_shape.h"
 #include "surfacer/surface/surface.h"
 #include "surfacer/surfacer_geometry.h"
