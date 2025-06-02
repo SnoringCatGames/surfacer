@@ -6,6 +6,12 @@ extends Node
 
 
 func _ready() -> void:
+    # FIXME: LEFT OFF HERE: Implement manifests. ------------------------------
+    var manifests: TypedArray[ScaffolderManifest] = []
+    
+    SnoreCore.connect("set_up_finished", self, "_on_snore_core_set_up_finished")
+    SnoreCore.set_up(manifests)
+
     G.main = self
 
     S.set_up(manifest)
@@ -18,11 +24,11 @@ func _ready() -> void:
     Geometry.are_colors_equal_with_epsilon(Color.WHITE, Color.BLACK, 0.0001)
     S.log.print(foo.to_string(false))
 
-    _run_tests()
+    SnoreCore.run_tests()
 
 
-func _run_tests() -> void:
-    Surfacer.run_tests()
+func _on_snore_core_set_up_finished() -> void:
+    S.log.print("SnoreCore set up finished.")
 
 
 func _on_gd_example_position_changed(node: Object, new_pos: Vector2) -> void:

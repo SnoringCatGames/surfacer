@@ -53,9 +53,13 @@ env.Append(CPPPATH=["src/", "godot-sft/"])
 # NOTE: Levi updated this.
 sources = (
     Glob("src/*.cpp") +
+    # FIXME: LEFT OFF HERE: REMOVE
+    Glob("src/surface/*.cpp") +
     Glob("src/annotations/*.cpp") +
     Glob("src/scaffolder/*.cpp") +
-    Glob("src/surface/*.cpp")
+    Glob("src/snore_core/*.cpp") +
+    Glob("src/surfacer/*.cpp") +
+    Glob("src/surfacer/surface/*.cpp")
 )
 
 if env["target"] in ["editor", "template_debug"]:

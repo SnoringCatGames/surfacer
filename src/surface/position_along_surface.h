@@ -24,7 +24,7 @@ public:
 	PositionAlongSurface() = default;
 	~PositionAlongSurface() = default;
 
-	void set_surface(Ref<Surface> p_surface) { surface = p_surface; }
+	void set_surface(const Ref<Surface> &p_surface) { surface = p_surface; }
 	Ref<Surface> get_surface() const { return surface; }
 
 	void set_target_position(Vector2 p_target_position) {
@@ -39,13 +39,13 @@ public:
 	void reset();
 
 	void match_current_grab(
-			Ref<Surface> p_surface,
+			const Ref<Surface> &p_surface,
 			const Vector2 &p_character_center);
 
 	void match_surface_target_and_collider(
-			Ref<Surface> p_surface,
+			const Ref<Surface> &p_surface,
 			const Vector2 &p_target_point,
-			Ref<RotatedShape> p_collider,
+			const Ref<RotatedShape> &p_collider,
 			bool p_clips_to_surface_bounds = false,
 			bool p_matches_target_to_character_dimensions = true,
 			bool p_rejects_non_overlapping_results = true);
@@ -57,7 +57,7 @@ public:
 
 	static void copy(
 			Ref<PositionAlongSurface> r_destination,
-			const Ref<PositionAlongSurface> p_source);
+			const Ref<PositionAlongSurface> &p_source);
 
 protected:
 	static void _bind_methods();
@@ -68,9 +68,9 @@ private:
 	Vector2 target_projection_onto_surface = vector2_invalid;
 
 	void clip_and_project_target_point_for_center_of_collider(
-			Ref<Surface> p_surface,
-			Vector2 p_target_point,
-			Ref<RotatedShape> p_collider,
+			const Ref<Surface> &p_surface,
+			const Vector2 &p_target_point,
+			const Ref<RotatedShape> &p_collider,
 			bool p_clips_to_surface_bounds,
 			bool p_matches_target_to_character_dimensions,
 			bool p_rejects_non_overlapping_results);

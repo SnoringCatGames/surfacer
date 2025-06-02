@@ -1,23 +1,12 @@
-#include "register_types.h"
+#include "surfacer_module.h"
 
-#include "annotations/annotation.h"
-#include "annotations/annotations_manager.h"
 #include "annotations/jump_annotation.h"
 #include "annotations/path_annotation.h"
 #include "annotations/position_along_surface_annotation.h"
 #include "annotations/surface_annotation.h"
 #include "annotations/surfacer_agent_annotation.h"
-#include "gdexample.h"
-#include "movement_profile.h"
-#include "scaffolder/canvas_layer_config.h"
-#include "scaffolder/geometry.h"
-#include "scaffolder/rotated_shape.h"
-#include "scaffolder/scaffolder_manifest.h"
-#include "scaffolder/test_canvas_layer_config.h"
-#include "scaffolder/test_geometry.h"
-#include "scaffolder/test_rotated_shape.h"
-#include "scaffolder/test_runner.h"
-#include "scaffolder/test_scaffolder_manifest.h"
+#include "movement_manifest.h"
+#include "snore_core/snore_core_module_utils.h"
 #include "surface/agent_surface_state.h"
 #include "surface/collision_surface_result.h"
 #include "surface/position_along_surface.h"
@@ -36,38 +25,31 @@
 #include "surface/test_surfacer_geometry.h"
 #include "surface/tile_shape_data.h"
 #include "surface_graph.h"
-#include "surfacer.h"
 #include "surfacer_agent.h"
 #include "surfacer_manifest.h"
+#include "test_movement_manifest.h"
 #include "test_movement_profile.h"
 #include "test_surface_graph.h"
 #include "test_surfacer_agent.h"
 #include "test_surfacer_manifest.h"
+#include "test_surfacer_module.h"
 #include "test_tile_map_surface_parser.h"
 #include "tile_map_surface_parser.h"
 
-#include <gdextension_interface.h>
+#include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/core/defs.hpp>
-#include <godot_cpp/godot.hpp>
 
 using namespace godot;
 
-void initialize_gdextension_types(ModuleInitializationLevel p_level) {
+void Surfacer::register_gdextension_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
 
-	// FIXME: LEFT OFF HERE: Use REGISTER_SCAFFOLDER_CLASS for everything.
-
 	REGISTER_SCAFFOLDER_CLASS(AgentSurfaceState);
-	REGISTER_SCAFFOLDER_CLASS(CanvasLayerConfig);
 	REGISTER_SCAFFOLDER_CLASS(CollisionSurfaceResult);
-	REGISTER_SCAFFOLDER_CLASS(Geometry);
 	REGISTER_SCAFFOLDER_CLASS(MovementProfile);
 	REGISTER_SCAFFOLDER_CLASS(PositionAlongSurface);
-	REGISTER_SCAFFOLDER_CLASS(RotatedShape);
-	REGISTER_SCAFFOLDER_CLASS(ScaffolderManifest);
 	REGISTER_SCAFFOLDER_CLASS(Surface);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceChunk);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceGraph);
@@ -75,43 +57,43 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	REGISTER_SCAFFOLDER_CLASS(SurfacerAgent);
 	REGISTER_SCAFFOLDER_CLASS(SurfacerGeometry);
 	REGISTER_SCAFFOLDER_CLASS(SurfacerManifest);
+	REGISTER_SCAFFOLDER_CLASS(Surfacer);
+	REGISTER_SCAFFOLDER_CLASS(MovementManifest);
 	REGISTER_SCAFFOLDER_CLASS(SurfaceStore);
 	REGISTER_SCAFFOLDER_CLASS(TileMapSurfaceParser);
 
-	GDREGISTER_VIRTUAL_CLASS(Annotation);
-	GDREGISTER_CLASS(AnnotationsManager);
-	GDREGISTER_CLASS(GDExample);
+	// FIXME: Use REGISTER_SCAFFOLDER_CLASS for everything.
+
 	GDREGISTER_CLASS(JumpAnnotation);
 	GDREGISTER_CLASS(PathAnnotation);
 	GDREGISTER_CLASS(PositionAlongSurfaceAnnotation);
 	GDREGISTER_CLASS(SurfaceAnnotation);
-	GDREGISTER_CLASS(Surfacer);
 	GDREGISTER_CLASS(SurfacerAgentAnnotation);
+
+	REGISTER_SNORE_CORE_MODULE(Surfacer);
 }
 
-void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
+void Surfacer::unregister_gdextension_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+
+	UNREGISTER_SNORE_CORE_MODULE(Surfacer);
 }
 
-extern "C" {
-/**
- * This is the entry point of the GDExtension and will be called on
- * initialization. This function's name must be specified as the 'entry_symbol'
- * in the .gdextension file.
- */
-GDExtensionBool GDE_EXPORT surfacer_extension_init(
-		GDExtensionInterfaceGetProcAddress p_get_proc_address,
-		GDExtensionClassLibraryPtr p_library,
-		GDExtensionInitialization *r_initialization) {
-	GDExtensionBinding::InitObject init_obj(
-			p_get_proc_address, p_library, r_initialization);
-	init_obj.register_initializer(initialize_gdextension_types);
-	init_obj.register_terminator(uninitialize_gdextension_types);
-	init_obj.set_minimum_library_initialization_level(
-			MODULE_INITIALIZATION_LEVEL_SCENE);
+void Surfacer::_bind_methods() { BIND_SNORE_CORE_MODULE_METHODS(Surfacer); }
 
-	return init_obj.init();
+Surfacer *Surfacer::get() {
+	return static_cast<Surfacer *>(
+			Engine::get_singleton()->get_singleton("Surfacer"));
 }
+
+void Surfacer::set_up() {
+	// TODO: Do any initialization that depends on runtime manifest settings.
+	on_set_up_finished();
+}
+
+void Surfacer::reset() {
+	// TODO: Clear state.
+	// TODO: Cancel any in-progress set_up operations.
 }

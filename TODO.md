@@ -89,6 +89,7 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
   - Use threading.
 - Implement pre-calculation of templates based on movement-parameters.
 - Implement saving and loading of templates.
+  - Templates should extend Resource, and use the built-in serialization of them.
 - Implement change-detection of pre-calculated templates with latest movement-parameters, and re-calculation and saving of templates as needed, at app-start time.
   - Use checksums? Or some custom equality checks, with recorded movement-parameters metadata associated with the template?
 - Ensure templates are included in git and included in exported builds.

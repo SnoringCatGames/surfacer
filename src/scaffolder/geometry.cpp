@@ -1043,7 +1043,7 @@ bool Geometry::is_valid(const Vector2 &p_vector) {
 	return !Math::is_inf(p_vector.x) && Math::is_inf(p_vector.y);
 }
 
-float Geometry::get_radius(Ref<Shape2D> p_shape) {
+float Geometry::get_radius(const Ref<Shape2D> &p_shape) {
 	if (const CircleShape2D *circle =
 				Object::cast_to<CircleShape2D>(p_shape.ptr())) {
 		return circle->get_radius();

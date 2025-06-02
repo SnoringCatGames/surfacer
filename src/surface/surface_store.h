@@ -44,7 +44,7 @@ public:
 
 	Rect2 get_combined_tile_map_rect() const { return combined_tile_map_rect; }
 
-	Ref<const Surface> get_surface_for_tile(
+	Ref<Surface> get_surface_for_tile(
 			TileMapLayer *p_tile_map,
 			int p_tilemap_index,
 			Surface::Side p_side) const;
@@ -89,7 +89,7 @@ private:
 	std::unordered_map<
 			uint64_t,
 			std::array<
-					std::unordered_map<int, Ref<const Surface>>,
+					std::unordered_map<int, Ref<Surface>>,
 					Surface::Side::_Side_COUNT - 1>>
 			tile_map_to_side_to_index_to_surface;
 

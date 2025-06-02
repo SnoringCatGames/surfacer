@@ -1,30 +1,26 @@
 #ifndef SCAFFOLDER_MANIFEST_H
 #define SCAFFOLDER_MANIFEST_H
 
-#include "scaffolder/canvas_layer_config.h"
-#include "scaffolder/geometry.h"
+#include "snore_core/snore_core_manifest.h"
 
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/resource.hpp>
-#include <godot_cpp/classes/shape2d.hpp>
 #include <godot_cpp/classes/theme.hpp>
 #include <godot_cpp/core/binder_common.hpp>
-#include <godot_cpp/variant/vector2.hpp>
 
 namespace godot {
 
-class ScaffolderManifest : public Resource {
-	GDCLASS(ScaffolderManifest, Resource)
+class ScaffolderManifest : public SnoreCoreManifest {
+	GDCLASS(ScaffolderManifest, SnoreCoreManifest)
 
 public:
+	static Ref<ScaffolderManifest> get();
+
 	ScaffolderManifest() = default;
 	~ScaffolderManifest() = default;
 
 	bool get_god_mode() const { return god_mode; }
 	void set_god_mode(bool p_value) { god_mode = p_value; }
-
-	bool get_dev_mode() const { return dev_mode; }
-	void set_dev_mode(bool p_value) { dev_mode = p_value; }
 
 	bool get_skip_main_menu_in_dev_mode() const {
 		return skip_main_menu_in_dev_mode;
@@ -54,18 +50,6 @@ public:
 	bool get_show_hud() const { return show_hud; }
 	void set_show_hud(bool p_value) { show_hud = p_value; }
 
-	bool get_log_scaffolder_events() const { return log_scaffolder_events; }
-	void set_log_scaffolder_events(bool p_value) {
-		log_scaffolder_events = p_value;
-	}
-
-	bool get_log_scaffolder_events_verbose() const {
-		return log_scaffolder_events_verbose;
-	}
-	void set_log_scaffolder_events_verbose(bool p_value) {
-		log_scaffolder_events_verbose = p_value;
-	}
-
 	Ref<Theme> get_main_theme() const { return main_theme; }
 	void set_main_theme(const Ref<Theme> &p_theme) { main_theme = p_theme; }
 
@@ -84,13 +68,6 @@ public:
 
 	Dictionary get_screens() const { return screens; }
 	void set_screens(const Dictionary &p_screens) { screens = p_screens; }
-
-	TypedArray<CanvasLayerConfig> get_canvas_layers() const {
-		return canvas_layers;
-	}
-	void set_canvas_layers(const TypedArray<CanvasLayerConfig> &p_layers) {
-		canvas_layers = p_layers;
-	}
 
 	Dictionary get_sfxs() const { return sfxs; }
 	void set_sfxs(const Dictionary &p_sfxs) { sfxs = p_sfxs; }
@@ -124,7 +101,6 @@ protected:
 
 private:
 	bool god_mode = false;
-	bool dev_mode = true;
 	bool skip_main_menu_in_dev_mode = false;
 	bool full_screen = false;
 	bool mute_music = false;
@@ -132,16 +108,12 @@ private:
 	bool is_screenshot_hotkey_enabled = true;
 	bool show_hud = true;
 
-	bool log_scaffolder_events = false;
-	bool log_scaffolder_events_verbose = false;
-
 	Ref<Theme> main_theme;
 	Ref<PackedScene> dev_mode_level;
 	Ref<PackedScene> main_level;
 	Ref<PackedScene> hud_scene;
 
 	Dictionary screens;
-	TypedArray<CanvasLayerConfig> canvas_layers;
 	Dictionary sfxs;
 
 	double debug_time_scale = 1.0;
@@ -153,4 +125,4 @@ private:
 
 } // namespace godot
 
-#endif
+#endif // SCAFFOLDER_MANIFEST_H

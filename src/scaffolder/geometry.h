@@ -249,7 +249,7 @@ public:
 
 	static bool is_valid(const Vector2 &p_vector);
 
-	static float get_radius(Ref<Shape2D> p_shape);
+	static float get_radius(const Ref<Shape2D> &p_shape);
 
 	static Vector2 get_furthest_shape_boundary_point_in_direction(
 			const Vector2 &p_shape_position,

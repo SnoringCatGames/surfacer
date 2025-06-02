@@ -64,8 +64,8 @@ public:
 				"CONCAVE",
 			};
 
-	static String neighbor_curvature_to_string(NeighborCurvature p_side) {
-		return neighbor_curvature_strings[p_side];
+	static String neighbor_curvature_to_string(NeighborCurvature p_curvature) {
+		return neighbor_curvature_strings[p_curvature];
 	}
 	static String get_neighbor_curvature_hint_string() {
 		return join_strings(
@@ -95,7 +95,7 @@ public:
 	}
 	Rect2 get_bounding_box() const { return bounding_box; }
 
-	void set_chunk(Ref<SurfaceChunk> p_chunk) { chunk = p_chunk; }
+	void set_chunk(const Ref<SurfaceChunk> &p_chunk) { chunk = p_chunk; }
 	Ref<SurfaceChunk> get_chunk() const { return chunk; }
 
 	void set_tile_map_layer(TileMapLayer *p_tile_map_layer) {
@@ -116,7 +116,7 @@ public:
 		return clockwise_neighbor_curvature;
 	}
 
-	void set_clockwise_neighbor(Ref<Surface> p_clockwise_neighbor) {
+	void set_clockwise_neighbor(const Ref<Surface> &p_clockwise_neighbor) {
 		clockwise_neighbor = p_clockwise_neighbor;
 	}
 	Ref<Surface> get_clockwise_neighbor() const { return clockwise_neighbor; }
@@ -131,7 +131,7 @@ public:
 	}
 
 	void set_counter_clockwise_neighbor(
-			Ref<Surface> p_counter_clockwise_neighbor) {
+			const Ref<Surface> &p_counter_clockwise_neighbor) {
 		counter_clockwise_neighbor = p_counter_clockwise_neighbor;
 	}
 	Ref<Surface> get_counter_clockwise_neighbor() const {

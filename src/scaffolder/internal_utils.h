@@ -8,14 +8,24 @@
 
 namespace godot {
 
-constexpr char *PROCESS_MODE_HINT_STRING =
-		"INHERIT,PAUSABLE,WHEN_PAUSED,ALWAYS,DISABLED";
-
 // TODO: Update this when no longer debugging Surfacer.
 #define IS_SURFACER_RELEASE false
 
 #define IS_VALID_REF(m_ref) (m_ref.is_valid() && IS_VALID_OBJECT(m_ref.ptr()))
 #define IS_VALID_OBJECT(m_object_ptr) (m_object_ptr != nullptr)
+
+constexpr char *PROCESS_MODE_HINT_STRING =
+		"INHERIT,PAUSABLE,WHEN_PAUSED,ALWAYS,DISABLED";
+
+constexpr uint64_t PROPERTY_USAGE_EXPORTED_ITEM = PROPERTY_USAGE_STORAGE |
+		PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_SCRIPT_VARIABLE;
+
+#define EXPORTED_PROPERTY_INFO(type, name)                                     \
+	PropertyInfo(                                                              \
+			type, name, PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EXPORTED_ITEM)
+#define EXPORTED_PROPERTY_INFO_WITH_HINT(type, name, hint_type, hint_string)   \
+	PropertyInfo(                                                              \
+			type, name, hint_type, hint_string, PROPERTY_USAGE_EXPORTED_ITEM)
 
 template <typename T> Ref<T> instantiate_ref() {
 	Ref<T> ref;
@@ -23,7 +33,7 @@ template <typename T> Ref<T> instantiate_ref() {
 	return ref;
 }
 
-// FIXME: LEFT OFF HERE: Go through and update classes to use set_up.
+// FIXME: Go through and update classes to use set_up.
 
 // A common pattern in Scaffolder is to use a SetUp method to initialize an
 // object with arguments, since GDExtension doesn't currently support
@@ -67,6 +77,7 @@ static String join_strings(
 // - If `m_cond` is true, this prints `m_msg`, pauses execution, and evaluates
 // to true.
 // - If `m_cond` is false, this evaluates to false.
+// - Use `CHECK` instead if the error is unrecoverable.
 #ifdef DEBUG_ENABLED
 #define ENSURE(m_cond, m_msg)                                                  \
 	(unlikely(!(m_cond))                                                       \
@@ -90,6 +101,20 @@ static String join_strings(
 			 : true)
 #else
 #define ENSURE_SIMPLE(m_cond) (m_cond)
+#endif
+
+// This checks whether the condition is true. If not, the program will crash.
+// Use `ENSURE` instead, if the error is recoverable.
+#ifdef DEBUG_ENABLED
+#define CHECK(m_cond, m_msg) CRASH_COND_MSG(!m_cond, m_msg)
+#else
+#define CHECK(m_cond, m_msg)
+#endif
+
+#ifdef DEBUG_ENABLED
+#define CHECK_SIMPLE(m_cond) CRASH_COND(!m_cond)
+#else
+#define CHECK_SIMPLE(m_cond)
 #endif
 
 #ifdef DEBUG_ENABLED

@@ -11,7 +11,7 @@ using namespace godot;
 // FIXME: Make sure that tile_map_to_side_to_index_to_surface is set-up with a
 // map for each side, even if that map is empty.
 
-Ref<const Surface> SurfaceStore::get_surface_for_tile(
+Ref<Surface> SurfaceStore::get_surface_for_tile(
 		TileMapLayer *p_tile_map,
 		int p_tile_map_index,
 		Surface::Side p_side) const {
@@ -21,7 +21,7 @@ Ref<const Surface> SurfaceStore::get_surface_for_tile(
 		return nullptr;
 	}
 
-	const std::unordered_map<int, Ref<const Surface>> &index_to_surface =
+	const std::unordered_map<int, Ref<Surface>> &index_to_surface =
 			tile_map_to_side_to_index_to_surface.at(map_key).at(p_side);
 
 	if (index_to_surface.count(p_tile_map_index) == 0) {
@@ -34,6 +34,7 @@ Ref<const Surface> SurfaceStore::get_surface_for_tile(
 Dictionary SurfaceStore::get_surface_set(
 		const MovementProfile *p_profile) const {
 	// FIXME: LEFT OFF HERE: Add a bit to MovementProfile first, then port this.
+	// ----
 
 	Dictionary set;
 	// 	if (!p_movement_params)

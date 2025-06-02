@@ -26,7 +26,7 @@ void PositionAlongSurface::reset() {
 }
 
 void PositionAlongSurface::match_current_grab(
-		Ref<Surface> p_surface,
+		const Ref<Surface> &p_surface,
 		const Vector2 &p_character_center) {
 	surface = p_surface;
 	target_position = p_character_center;
@@ -37,9 +37,9 @@ void PositionAlongSurface::match_current_grab(
 }
 
 void PositionAlongSurface::match_surface_target_and_collider(
-		Ref<Surface> p_surface,
+		const Ref<Surface> &p_surface,
 		const Vector2 &p_target_position,
-		Ref<RotatedShape> p_collider,
+		const Ref<RotatedShape> &p_collider,
 		bool p_clips_to_surface_bounds,
 		bool p_matches_target_to_character_dimensions,
 		bool p_rejects_non_overlapping_results) {
@@ -57,12 +57,13 @@ void PositionAlongSurface::update_target_projection_onto_surface() {
 }
 
 void PositionAlongSurface::clip_and_project_target_point_for_center_of_collider(
-		Ref<Surface> p_surface,
-		Vector2 p_target_position,
-		Ref<RotatedShape> p_collider,
+		const Ref<Surface> &p_surface,
+		const Vector2 &p_target_position,
+		const Ref<RotatedShape> &p_collider,
 		bool p_clips_to_surface_bounds,
 		bool p_matches_target_to_character_dimensions,
 		bool p_rejects_non_overlapping_results) {
+	target_position = p_target_position;
 	target_projection_onto_surface =
 			SurfacerGeometry::project_point_onto_surface(
 					p_target_position, p_surface);
@@ -73,24 +74,22 @@ void PositionAlongSurface::clip_and_project_target_point_for_center_of_collider(
 
 	if (p_clips_to_surface_bounds) {
 		if (is_surface_horizontal) {
-			p_target_position.x = target_projection_onto_surface.x;
+			target_position.x = target_projection_onto_surface.x;
 		} else {
-			p_target_position.y = target_projection_onto_surface.y;
+			target_position.y = target_projection_onto_surface.y;
 		}
 	}
 
 	if (p_matches_target_to_character_dimensions) {
-		p_target_position = SurfacerGeometry::
+		target_position = SurfacerGeometry::
 				project_shape_onto_segment_and_away_from_concave_neighbors(
-						p_target_position, p_collider, p_surface, true,
+						target_position, p_collider, p_surface, true,
 						p_rejects_non_overlapping_results);
 		target_projection_onto_surface =
 				SurfacerGeometry::project_point_onto_surface(
-						p_target_position, p_surface);
+						target_position, p_surface);
 	}
 	// else: Use the given target point as-is.
-
-	target_position = p_target_position;
 }
 
 String PositionAlongSurface::to_string(bool verbose, bool includes_projection)
@@ -119,7 +118,7 @@ String PositionAlongSurface::to_string(bool verbose, bool includes_projection)
 
 void PositionAlongSurface::copy(
 		Ref<PositionAlongSurface> r_destination,
-		const Ref<PositionAlongSurface> p_source) {
+		const Ref<PositionAlongSurface> &p_source) {
 	r_destination->set_surface(p_source->get_surface());
 	r_destination->set_target_position(p_source->get_target_position());
 	r_destination->target_projection_onto_surface =
