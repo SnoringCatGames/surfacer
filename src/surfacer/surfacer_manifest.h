@@ -4,6 +4,7 @@
 #include "snore_core/geometry.h"
 #include "snore_core/snore_core_manifest.h"
 #include "surfacer/movement_manifest.h"
+#include "surfacer/surface_parser_manifest.h"
 
 #include <godot_cpp/core/binder_common.hpp>
 
@@ -23,6 +24,13 @@ public:
 	}
 	void set_movement_manifest(Ref<MovementManifest> p_value) {
 		movement_manifest = p_value;
+	}
+
+	Ref<SurfaceParserManifest> get_surface_parser_manifest() const {
+		return surface_parser_manifest;
+	}
+	void set_surface_parser_manifest(Ref<SurfaceParserManifest> p_value) {
+		surface_parser_manifest = p_value;
 	}
 
 	bool get_log_surfacer_events() const { return log_surfacer_events; }
@@ -52,6 +60,7 @@ protected:
 
 private:
 	Ref<MovementManifest> movement_manifest;
+	Ref<SurfaceParserManifest> surface_parser_manifest;
 
 	bool log_surfacer_events = false;
 	bool log_surfacer_events_verbose = false;

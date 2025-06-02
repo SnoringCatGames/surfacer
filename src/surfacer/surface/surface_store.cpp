@@ -41,15 +41,14 @@ void SurfaceStore::_bind_methods() {
 			"get_combined_tilemap_rect");
 }
 
-// FIXME: LEFT OFF HERE: This is only partially ported
-
-// FIXME: Make sure that tile_map_to_side_to_index_to_surface is set-up with a
-// map for each side, even if that map is empty.
-
 Ref<Surface> SurfaceStore::get_surface_for_tile(
 		TileMapLayer *p_tile_map,
 		int p_tile_map_index,
 		Surface::Side p_side) const {
+	if (!ENSURE_SIMPLE(p_side != Surface::Side::UNKNOWN_SIDE)) {
+		return nullptr;
+	}
+
 	const uint64_t map_key = p_tile_map->get_instance_id();
 
 	if (tile_map_to_side_to_index_to_surface.count(map_key) == 0) {
@@ -57,7 +56,7 @@ Ref<Surface> SurfaceStore::get_surface_for_tile(
 	}
 
 	const std::unordered_map<int, Ref<Surface>> &index_to_surface =
-			tile_map_to_side_to_index_to_surface.at(map_key).at(p_side);
+			tile_map_to_side_to_index_to_surface.at(map_key).at(p_side - 1);
 
 	if (index_to_surface.count(p_tile_map_index) == 0) {
 		return nullptr;
@@ -68,10 +67,10 @@ Ref<Surface> SurfaceStore::get_surface_for_tile(
 
 Dictionary SurfaceStore::get_surface_set(
 		const MovementProfile *p_profile) const {
-	// FIXME: LEFT OFF HERE: Add a bit to MovementProfile first, then port this.
-	// ----
+	// TODO: Port this
 
 	Dictionary set;
+
 	// 	if (!p_movement_params)
 	// 		return set; // Guard against null p_movement_params
 
@@ -172,5 +171,6 @@ Dictionary SurfaceStore::get_surface_set(
 	// 			}
 	// 		}
 	// 	}
+
 	return set;
 }

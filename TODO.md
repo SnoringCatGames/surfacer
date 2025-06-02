@@ -36,6 +36,8 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 
 FIXME: LEFT OFF HERE: ---------------------------------------------------
 
+- Rename manifest to settings.
+
 - Finish porting SurfaceStore.
 
 - Implement and pass-in manifests from GDScript.
@@ -76,11 +78,14 @@ FIXME: LEFT OFF HERE: ---------------------------------------------------
     - Have both demo apps include their own sub-manifest.
     - Use TODOs heavily in all demos for now.
 
-- Port surface_parser.
+- Port character_category.
 
 - Port SurfaceMark.
 
 - Port SurfaceStore::get_surface_set.
+
+- Port surface_parser.
+  - Make sure that tile_map_to_side_to_index_to_surface is set-up with a map for each side, even if that map is empty.
 
 - Port all remaining bits needed for surface parsing.
 

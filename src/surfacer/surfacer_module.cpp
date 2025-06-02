@@ -28,12 +28,14 @@
 #include "surfacer/surface/test_surface_store.h"
 #include "surfacer/surface/tile_shape_data.h"
 #include "surfacer/surface_graph.h"
+#include "surfacer/surface_parser_manifest.h"
 #include "surfacer/surfacer_agent.h"
 #include "surfacer/surfacer_geometry.h"
 #include "surfacer/surfacer_manifest.h"
 #include "surfacer/test_movement_manifest.h"
 #include "surfacer/test_movement_profile.h"
 #include "surfacer/test_surface_graph.h"
+#include "surfacer/test_surface_parser_manifest.h"
 #include "surfacer/test_surfacer_agent.h"
 #include "surfacer/test_surfacer_geometry.h"
 #include "surfacer/test_surfacer_manifest.h"
@@ -58,6 +60,7 @@ void Surfacer::register_gdextension_types(ModuleInitializationLevel p_level) {
 	REGISTER_SNORE_CORE_CLASS(SurfacerGeometry);
 	REGISTER_SNORE_CORE_CLASS(SurfacerManifest);
 	REGISTER_SNORE_CORE_CLASS(MovementManifest);
+	REGISTER_SNORE_CORE_CLASS(SurfaceParserManifest);
 
 	REGISTER_SNORE_CORE_CLASS(JumpAnnotation);
 	REGISTER_SNORE_CORE_CLASS(PathAnnotation);

@@ -33,7 +33,7 @@ template <typename T> Ref<T> instantiate_ref() {
 	return ref;
 }
 
-// FIXME: Go through and update classes to use set_up.
+// TODO: Go through and update classes to use set_up.
 
 // A common pattern in SnoreCore is to use a SetUp method to initialize an
 // object with arguments, since GDExtension doesn't currently support

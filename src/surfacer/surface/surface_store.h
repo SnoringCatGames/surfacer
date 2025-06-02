@@ -57,21 +57,6 @@ protected:
 private:
 	// TODO: Map the TileMap into an RTree or BVH.
 
-	// FIXME: Remove these constants? Or consolidate with
-	// SurfaceParser/SurfaceFinder?
-
-	static constexpr int SURFACES_TILE_MAPS_COLLISION_LAYER = 1;
-
-	static constexpr float CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET =
-			0.02f;
-	static constexpr float CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET =
-			0.01f;
-
-	// TODO: We might want to instead replace this with a ratio (like 1.1) of
-	//       the KinematicBody2D.get_safe_margin value (defaults to 0.08, but we
-	//       set it higher during graph calculations).
-	static constexpr float COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD = 0.5f;
-
 	// Collections of surfaces.
 	// TypedArray<Surface><Ref<Surface>>
 	TypedArray<const Surface> floors;
