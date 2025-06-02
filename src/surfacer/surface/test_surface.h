@@ -3,6 +3,7 @@
 
 #ifdef DEBUG_ENABLED
 
+#include "snore_core/geometry_constants.h"
 #include "surfacer/surface/surface.h"
 
 #include "snore_core/test_runner.h"

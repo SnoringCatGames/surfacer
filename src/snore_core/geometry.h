@@ -1,6 +1,8 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#include "snore_core/geometry_constants.h"
+
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/tile_map_layer.hpp>
 #include <godot_cpp/core/object.hpp>
@@ -13,19 +15,6 @@ namespace godot {
 
 class RotatedShape;
 class Shape2D;
-
-// Infinity is used rather than NaN to avoid issues with NaN comparisons.
-static const Vector2 vector2_invalid = Vector2(Math_INF, Math_INF);
-static const Vector2 vector2_zero = Vector2(0, 0);
-static const Vector2 vector2_one = Vector2(1, 1);
-static const Vector2 vector2_up = Vector2(0, -1);
-static const Vector2 vector2_down = Vector2(0, 1);
-static const Vector2 vector2_left = Vector2(-1, 0);
-static const Vector2 vector2_right = Vector2(1, 0);
-
-constexpr float float_epsilon = 0.00001f;
-constexpr double HALF_PI = Math_PI / 2.0;
-constexpr double QUARTER_PI = Math_PI / 4.0;
 
 class Geometry : public Object {
 	GDCLASS(Geometry, Object)
@@ -268,4 +257,4 @@ protected:
 
 } //namespace godot
 
-#endif
+#endif // GEOMETRY_H

@@ -1,14 +1,14 @@
 #ifndef SURFACER_SETTINGS_H
 #define SURFACER_SETTINGS_H
 
-#include "snore_core/geometry.h"
 #include "snore_core/snore_core_settings.h"
-#include "surfacer/movement_settings.h"
-#include "surfacer/surface_parser_settings.h"
 
 #include <godot_cpp/core/binder_common.hpp>
 
 namespace godot {
+
+class MovementSettings;
+class SurfaceParserSettings;
 
 class SurfacerSettings : public SnoreCoreSettings {
 	GDCLASS(SurfacerSettings, SnoreCoreSettings)
@@ -16,22 +16,14 @@ class SurfacerSettings : public SnoreCoreSettings {
 public:
 	static Ref<SurfacerSettings> get();
 
-	SurfacerSettings() = default;
-	~SurfacerSettings() = default;
+	SurfacerSettings();
+	~SurfacerSettings();
 
-	Ref<MovementSettings> get_movement_settings() const {
-		return movement_settings;
-	}
-	void set_movement_settings(Ref<MovementSettings> p_value) {
-		movement_settings = p_value;
-	}
+	Ref<MovementSettings> get_movement_settings() const;
+	void set_movement_settings(Ref<MovementSettings> p_value);
 
-	Ref<SurfaceParserSettings> get_surface_parser_settings() const {
-		return surface_parser_settings;
-	}
-	void set_surface_parser_settings(Ref<SurfaceParserSettings> p_value) {
-		surface_parser_settings = p_value;
-	}
+	Ref<SurfaceParserSettings> get_surface_parser_settings() const;
+	void set_surface_parser_settings(Ref<SurfaceParserSettings> p_value);
 
 	bool get_log_surfacer_events() const { return log_surfacer_events; }
 	void set_log_surfacer_events(bool p_value) {

@@ -1,6 +1,8 @@
 #include "surfacer/surfacer_settings.h"
 
 #include "snore_core/internal_utils.h"
+#include "surfacer/movement_settings.h"
+#include "surfacer/surface_parser_settings.h"
 #include "surfacer/surfacer_module.h"
 
 #include <godot_cpp/core/class_db.hpp>
@@ -65,4 +67,30 @@ void SurfacerSettings::_bind_methods() {
 	ADD_PROPERTY(
 			PropertyInfo(Variant::BOOL, "flag_floor_max_angle"),
 			"set_floor_max_angle", "get_floor_max_angle");
+}
+
+SurfacerSettings::SurfacerSettings() {
+	movement_settings = instantiate_ref<MovementSettings>();
+	surface_parser_settings = instantiate_ref<SurfaceParserSettings>();
+}
+
+SurfacerSettings::~SurfacerSettings() {
+	movement_settings.unref();
+	surface_parser_settings.unref();
+}
+
+Ref<MovementSettings> SurfacerSettings::get_movement_settings() const {
+	return movement_settings;
+}
+void SurfacerSettings::set_movement_settings(Ref<MovementSettings> p_value) {
+	movement_settings = p_value;
+}
+
+Ref<SurfaceParserSettings> SurfacerSettings::get_surface_parser_settings()
+		const {
+	return surface_parser_settings;
+}
+void SurfacerSettings::set_surface_parser_settings(
+		Ref<SurfaceParserSettings> p_value) {
+	surface_parser_settings = p_value;
 }

@@ -36,6 +36,8 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 
 FIXME: LEFT OFF HERE: ---------------------------------------------------
 
+- Fix GDScript errors.
+
 - Implement and pass-in settings from GDScript.
 - Also implement and pass-in MovementProfile as a Resource.
 

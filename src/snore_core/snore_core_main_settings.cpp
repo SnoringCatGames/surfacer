@@ -89,3 +89,12 @@ Ref<SnoreCoreMainSettings> SnoreCoreMainSettings::get() {
 	CHECK(snore_core_main, "SnoreCore is not initialized.");
 	return snore_core_main->get_settings();
 }
+
+TypedArray<CanvasLayerConfig> SnoreCoreMainSettings::get_canvas_layers() const {
+	return canvas_layers;
+}
+
+void SnoreCoreMainSettings::set_canvas_layers(
+		const TypedArray<CanvasLayerConfig> &p_layers) {
+	canvas_layers = p_layers;
+}

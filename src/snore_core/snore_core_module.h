@@ -36,8 +36,8 @@ public:
 		FINISHED,
 	};
 
-	SnoreCoreModule() = default;
-	virtual ~SnoreCoreModule() = default;
+	SnoreCoreModule() { settings = instantiate_ref<SettingsType>(); }
+	virtual ~SnoreCoreModule() { settings.unref(); }
 
 	// This is called during game runtime, after settings are loaded.
 	virtual void set_up() = 0;

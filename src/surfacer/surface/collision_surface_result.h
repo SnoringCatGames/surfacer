@@ -1,6 +1,7 @@
 #ifndef COLLISION_SURFACE_RESULT_H
 #define COLLISION_SURFACE_RESULT_H
 
+#include "snore_core/geometry_constants.h"
 #include "snore_core/internal_utils.h"
 #include "surfacer/surface/surface.h"
 

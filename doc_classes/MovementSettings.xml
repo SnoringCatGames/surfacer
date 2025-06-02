@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MovementSettings" inherits="SnoreCoreSettings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="additional_edge_weight_offset_default" type="float" setter="set_additional_edge_weight_offset_default" getter="get_additional_edge_weight_offset_default" default="0.0">
+		</member>
+		<member name="air_edge_weight_multiplier_default" type="float" setter="set_air_edge_weight_multiplier_default" getter="get_air_edge_weight_multiplier_default" default="1.0">
+		</member>
+		<member name="ceiling_crawl_speed_default" type="float" setter="set_ceiling_crawl_speed_default" getter="get_ceiling_crawl_speed_default" default="230.0">
+		</member>
+		<member name="ceiling_crawling_edge_weight_multiplier_default" type="float" setter="set_ceiling_crawling_edge_weight_multiplier_default" getter="get_ceiling_crawling_edge_weight_multiplier_default" default="2.0">
+		</member>
+		<member name="climb_down_speed_default" type="float" setter="set_climb_down_speed_default" getter="get_climb_down_speed_default" default="120.0">
+		</member>
+		<member name="climb_to_adjacent_surface_edge_weight_multiplier_default" type="float" setter="set_climb_to_adjacent_surface_edge_weight_multiplier_default" getter="get_climb_to_adjacent_surface_edge_weight_multiplier_default" default="1.0">
+		</member>
+		<member name="climb_up_speed_default" type="float" setter="set_climb_up_speed_default" getter="get_climb_up_speed_default" default="-230.0">
+		</member>
+		<member name="climbing_edge_weight_multiplier_default" type="float" setter="set_climbing_edge_weight_multiplier_default" getter="get_climbing_edge_weight_multiplier_default" default="1.8">
+		</member>
+		<member name="dash_cooldown_default" type="float" setter="set_dash_cooldown_default" getter="get_dash_cooldown_default" default="1.0">
+		</member>
+		<member name="dash_duration_default" type="float" setter="set_dash_duration_default" getter="get_dash_duration_default" default="0.3">
+		</member>
+		<member name="dash_fade_duration_default" type="float" setter="set_dash_fade_duration_default" getter="get_dash_fade_duration_default" default="0.1">
+		</member>
+		<member name="dash_speed_multiplier_default" type="float" setter="set_dash_speed_multiplier_default" getter="get_dash_speed_multiplier_default" default="3.0">
+		</member>
+		<member name="dash_vertical_boost_default" type="float" setter="set_dash_vertical_boost_default" getter="get_dash_vertical_boost_default" default="-300.0">
+		</member>
+		<member name="do_player_actions_interrupt_navigation" type="bool" setter="set_do_player_actions_interrupt_navigation" getter="get_do_player_actions_interrupt_navigation" default="true">
+		</member>
+		<member name="friction_coeff_with_sideways_input_default" type="float" setter="set_friction_coeff_with_sideways_input_default" getter="get_friction_coeff_with_sideways_input_default" default="1.25">
+		</member>
+		<member name="friction_coeff_without_sideways_input_default" type="float" setter="set_friction_coeff_without_sideways_input_default" getter="get_friction_coeff_without_sideways_input_default" default="1.0">
+		</member>
+		<member name="gravity_default" type="float" setter="set_gravity_default" getter="get_gravity_default" default="5000.0">
+		</member>
+		<member name="gravity_double_jump_slow_rise_multiplier_default" type="float" setter="set_gravity_double_jump_slow_rise_multiplier_default" getter="get_gravity_double_jump_slow_rise_multiplier_default" default="0.68">
+		</member>
+		<member name="gravity_slow_rise_multiplier_default" type="float" setter="set_gravity_slow_rise_multiplier_default" getter="get_gravity_slow_rise_multiplier_default" default="0.38">
+		</member>
+		<member name="in_air_horizontal_acceleration_default" type="float" setter="set_in_air_horizontal_acceleration_default" getter="get_in_air_horizontal_acceleration_default" default="2500.0">
+		</member>
+		<member name="jump_boost_default" type="float" setter="set_jump_boost_default" getter="get_jump_boost_default" default="-900.0">
+		</member>
+		<member name="max_horizontal_speed_default_default" type="float" setter="set_max_horizontal_speed_default_default" getter="get_max_horizontal_speed_default_default" default="320.0">
+		</member>
+		<member name="max_vertical_speed_default" type="float" setter="set_max_vertical_speed_default" getter="get_max_vertical_speed_default" default="2800.0">
+		</member>
+		<member name="min_horizontal_speed" type="float" setter="set_min_horizontal_speed" getter="get_min_horizontal_speed" default="5.0">
+		</member>
+		<member name="min_vertical_speed" type="float" setter="set_min_vertical_speed" getter="get_min_vertical_speed" default="0.0">
+		</member>
+		<member name="move_to_collinear_surface_edge_weight_multiplier_default" type="float" setter="set_move_to_collinear_surface_edge_weight_multiplier_default" getter="get_move_to_collinear_surface_edge_weight_multiplier_default" default="0.0">
+		</member>
+		<member name="uses_point_and_click_navigation" type="bool" setter="set_uses_point_and_click_navigation" getter="get_uses_point_and_click_navigation" default="true">
+		</member>
+		<member name="walk_acceleration_default" type="float" setter="set_walk_acceleration_default" getter="get_walk_acceleration_default" default="8000.0">
+		</member>
+		<member name="walking_edge_weight_multiplier_default" type="float" setter="set_walking_edge_weight_multiplier_default" getter="get_walking_edge_weight_multiplier_default" default="1.2">
+		</member>
+		<member name="wall_fall_horizontal_boost_default" type="float" setter="set_wall_fall_horizontal_boost_default" getter="get_wall_fall_horizontal_boost_default" default="20.0">
+		</member>
+		<member name="wall_jump_horizontal_boost_default" type="float" setter="set_wall_jump_horizontal_boost_default" getter="get_wall_jump_horizontal_boost_default" default="200.0">
+		</member>
+	</members>
+</class>

@@ -1,10 +1,7 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include "snore_core/geometry.h"
 #include "snore_core/internal_utils.h"
-#include "surfacer/surface/surface_chunk.h"
-#include "surfacer/surface/surface_properties.h"
 
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
@@ -18,6 +15,7 @@
 namespace godot {
 
 class SurfaceChunk;
+class SurfaceProperties;
 
 class Surface : public RefCounted {
 	GDCLASS(Surface, RefCounted)
@@ -82,10 +80,8 @@ public:
 	void set_side(Side p_side) { side = p_side; }
 	Side get_side() const { return side; }
 
-	void set_properties(const Ref<SurfaceProperties> &p_properties) {
-		properties = p_properties;
-	}
-	Ref<SurfaceProperties> get_properties() const { return properties; }
+	void set_properties(const Ref<SurfaceProperties> &p_properties);
+	Ref<SurfaceProperties> get_properties() const;
 
 	void set_vertices(const PackedVector2Array &p_vertices);
 	PackedVector2Array get_vertices() const { return vertices; }
@@ -95,8 +91,8 @@ public:
 	}
 	Rect2 get_bounding_box() const { return bounding_box; }
 
-	void set_chunk(const Ref<SurfaceChunk> &p_chunk) { chunk = p_chunk; }
-	Ref<SurfaceChunk> get_chunk() const { return chunk; }
+	void set_chunk(const Ref<SurfaceChunk> &p_chunk);
+	Ref<SurfaceChunk> get_chunk() const;
 
 	void set_tile_map_layer(TileMapLayer *p_tile_map_layer) {
 		tile_map_layer = p_tile_map_layer;

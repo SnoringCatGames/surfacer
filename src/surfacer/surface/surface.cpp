@@ -1,6 +1,8 @@
 #include "surfacer/surface/surface.h"
 
 #include "snore_core/geometry.h"
+#include "surfacer/surface/surface_chunk.h"
+#include "surfacer/surface/surface_properties.h"
 
 #include <godot_cpp/core/class_db.hpp>
 
@@ -27,6 +29,16 @@ void Surface::set_vertices(const PackedVector2Array &p_vertices) {
 	vertices = p_vertices;
 	bounding_box = Geometry::get_bounding_box_for_points(vertices);
 }
+
+void Surface::set_properties(const Ref<SurfaceProperties> &p_properties) {
+	properties = p_properties;
+}
+
+Ref<SurfaceProperties> Surface::get_properties() const { return properties; }
+
+void Surface::set_chunk(const Ref<SurfaceChunk> &p_chunk) { chunk = p_chunk; }
+
+Ref<SurfaceChunk> Surface::get_chunk() const { return chunk; }
 
 Vector2 Surface::get_first_point() const {
 	return Geometry::get_vector2_array_front(vertices);

@@ -1,6 +1,9 @@
 #include "surfacer/surfacer_geometry.h"
 
+#include "snore_core/geometry.h"
 #include "snore_core/internal_utils.h"
+#include "snore_core/rotated_shape.h"
+#include "surfacer/surface/position_along_surface.h"
 #include "surfacer/surfacer_settings.h"
 
 #include <godot_cpp/classes/capsule_shape2d.hpp>

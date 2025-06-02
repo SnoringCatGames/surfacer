@@ -1,7 +1,6 @@
 #ifndef SURFACE_STORE_H
 #define SURFACE_STORE_H
 
-#include "surfacer/movement_profile.h"
 #include "surfacer/surface/surface.h"
 
 #include <godot_cpp/classes/ref.hpp>
@@ -18,6 +17,7 @@
 
 namespace godot {
 
+class MovementProfile;
 class SurfaceParser;
 
 class SurfaceStore : public RefCounted {

@@ -1,12 +1,15 @@
 #ifndef SURFACER_GEOMETRY_H
 #define SURFACER_GEOMETRY_H
 
-#include "snore_core/geometry.h"
-#include "snore_core/rotated_shape.h"
-#include "surfacer/surface/position_along_surface.h"
+#include "snore_core/geometry_constants.h"
 #include "surfacer/surface/surface.h"
 
+#include <godot_cpp/core/object.hpp>
+
 namespace godot {
+
+class PositionAlongSurface;
+class RotatedShape;
 
 class SurfacerGeometry : public Object {
 	GDCLASS(SurfacerGeometry, Object)
