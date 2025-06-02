@@ -2,7 +2,7 @@
 
 #include "scaffolder/scaffolder_module.h"
 #include "snore_core/snore_core_main_module.h"
-#include "surfacer_module.h"
+#include "surfacer/surfacer_module.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>

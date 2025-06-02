@@ -1,15 +1,6 @@
 #include "scaffolder/scaffolder_module.h"
 
-#include "annotations/annotation.h"
-#include "annotations/annotations_manager.h"
-#include "gdexample.h"
-#include "scaffolder/canvas_layer_config.h"
-#include "scaffolder/geometry.h"
-#include "scaffolder/rotated_shape.h"
 #include "scaffolder/scaffolder_manifest.h"
-#include "scaffolder/test_canvas_layer_config.h"
-#include "scaffolder/test_geometry.h"
-#include "scaffolder/test_rotated_shape.h"
 #include "scaffolder/test_scaffolder_manifest.h"
 #include "scaffolder/test_scaffolder_module.h"
 #include "snore_core/snore_core_module_utils.h"
@@ -20,17 +11,8 @@
 using namespace godot;
 
 void Scaffolder::register_gdextension_types(ModuleInitializationLevel p_level) {
-	GDREGISTER_VIRTUAL_CLASS(Annotation);
-
-	REGISTER_SCAFFOLDER_CLASS(CanvasLayerConfig);
-	REGISTER_SCAFFOLDER_CLASS(Geometry);
-	REGISTER_SCAFFOLDER_CLASS(RotatedShape);
-	REGISTER_SCAFFOLDER_CLASS(ScaffolderManifest);
 	REGISTER_SCAFFOLDER_CLASS(Scaffolder);
-
-	// FIXME: Use REGISTER_SCAFFOLDER_CLASS for everything.
-	GDREGISTER_CLASS(AnnotationsManager);
-	GDREGISTER_CLASS(GDExample);
+	REGISTER_SCAFFOLDER_CLASS(ScaffolderManifest);
 
 	REGISTER_SNORE_CORE_MODULE(Scaffolder);
 }
