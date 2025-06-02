@@ -16,17 +16,6 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	// FIXME:
-	// - FIGURE OUT HOW TO DEFINE SNORE_CORE, SCAFFOLDER, AND SURFACER IN THREE
-	// SEPARATE REPOS AND BUILDS!!
-	// - SnoreCore will need to be includable into either...
-	// - DLLs!!
-	//   -
-	//   https://forum.godotengine.org/t/linking-dll-to-gdextension-using-scons/72686/7
-	//   -
-	//   https://learn.microsoft.com/en-us/cpp/build/walkthrough-creating-and-using-a-dynamic-link-library-cpp?view=msvc-170
-	// - Obviously, actually implement the DLL _after_ all pending FIXME work!
-
 	SnoreCore::register_gdextension_types(p_level);
 	Scaffolder::register_gdextension_types(p_level);
 	Surfacer::register_gdextension_types(p_level);

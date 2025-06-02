@@ -12,6 +12,159 @@
 
 using namespace godot;
 
+void SurfacerGeometry::_bind_methods() {
+	// Static methods
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"project_point_onto_surface", "p_point", "p_surface",
+					"p_side_override"),
+			&SurfacerGeometry::project_point_onto_surface,
+			DEFVAL(Surface::Side::UNKNOWN_SIDE));
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD("get_surface_normal_at_point", "p_surface", "p_point"),
+			&SurfacerGeometry::get_surface_normal_at_point);
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD("get_segment_normal", "p_segment_start", "p_segment_end"),
+			&SurfacerGeometry::get_segment_normal);
+
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"project_shape_onto_surface", "p_shape_position", "p_shape",
+					"p_surface", "p_uses_end_segment_if_outside_bounds",
+					"p_side_override"),
+			&SurfacerGeometry::project_shape_onto_surface, DEFVAL(true),
+			DEFVAL(Surface::Side::UNKNOWN_SIDE));
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"project_shape_onto_segment", "p_shape_position", "p_shape",
+					"p_surface_side", "p_segment_start", "p_segment_end"),
+			&SurfacerGeometry::project_shape_onto_segment);
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"project_shape_onto_segment_and_away_from_concave_"
+					"neighbors",
+					"p_shape_position", "p_shape", "p_surface",
+					"p_uses_end_segment_if_outside_bounds",
+					"p_rejects_non_overlapping_results", "p_side_override"),
+			&SurfacerGeometry::
+					project_shape_onto_segment_and_away_from_concave_neighbors,
+			DEFVAL(true), DEFVAL(true), DEFVAL(Surface::Side::UNKNOWN_SIDE));
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"get_concave_neighbor_projection_side_override",
+					"p_surface", "p_is_clockwise"),
+			&SurfacerGeometry::get_concave_neighbor_projection_side_override);
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"project_away_from_concave_neighbor", "p_position",
+					"p_neighbor", "p_neighbor_normal_side_override", "p_shape"),
+			&SurfacerGeometry::project_away_from_concave_neighbor);
+
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"get_closest_point_on_surface_to_shape", "p_surface",
+					"p_shape_position", "p_shape"),
+			&SurfacerGeometry::get_closest_point_on_surface_to_shape);
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"nudge_point_along_axially_aligned_segment_toward_shape_"
+					"center",
+					"p_point", "p_surface", "p_shape_position"),
+			&SurfacerGeometry::
+					nudge_point_along_axially_aligned_segment_toward_shape_center);
+
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"do_surface_and_rectangle_intersect", "p_surface",
+					"p_rectangle_min", "p_rectangle_max"),
+			&SurfacerGeometry::do_surface_and_rectangle_intersect);
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"check_for_shape_to_surface_overlap", "p_shape_position",
+					"p_shape", "p_surface", "p_epsilon"),
+			&SurfacerGeometry::check_for_shape_to_surface_overlap,
+			DEFVAL(shape_overlap_with_concave_surface_epsilon));
+
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"get_surface_segment_at_point", "p_surface", "p_point",
+					"p_uses_end_segment_if_outside_bounds"),
+			&SurfacerGeometry::get_surface_segment_at_point);
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"get_vertices_around_range", "p_surface", "p_range_min_x",
+					"p_range_max_x", "p_range_min_y", "p_range_max_y"),
+			&SurfacerGeometry::get_vertices_around_range);
+
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"are_position_wrappers_equal_with_epsilon", "p_a", "p_b",
+					"p_epsilon"),
+			&SurfacerGeometry::are_position_wrappers_equal_with_epsilon,
+			DEFVAL(float_epsilon));
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD("get_surface_side_for_normal", "p_normal"),
+			&SurfacerGeometry::get_surface_side_for_normal);
+
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"project_shape_onto_convex_corner_preserving_tangent_"
+					"position",
+					"p_shape_position", "p_shape", "p_origin_surface",
+					"p_destination_surface"),
+			&SurfacerGeometry::
+					project_shape_onto_convex_corner_preserving_tangent_position);
+
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"calculate_displacement_x_for_vertical_distance_past_edge",
+					"p_distance_past_edge", "p_is_left_wall", "p_collider"),
+			&SurfacerGeometry::
+					calculate_displacement_x_for_vertical_distance_past_edge);
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"calculate_circular_displacement_x_for_vertical_distance_"
+					"past_edge",
+					"p_distance_past_edge", "p_radius", "p_is_left_wall"),
+			&SurfacerGeometry::
+					calculate_circular_displacement_x_for_vertical_distance_past_edge);
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"calculate_displacement_y_for_horizontal_distance_past_"
+					"edge",
+					"p_distance_past_edge", "p_is_floor", "p_collider"),
+			&SurfacerGeometry::
+					calculate_displacement_y_for_horizontal_distance_past_edge);
+	ClassDB::bind_static_method(
+			"SurfacerGeometry",
+			D_METHOD(
+					"calculate_circular_displacement_y_for_horizontal_distance_"
+					"past_edge",
+					"p_distance_past_edge", "p_radius", "p_is_floor"),
+			&SurfacerGeometry::
+					calculate_circular_displacement_y_for_horizontal_distance_past_edge);
+}
+
 Vector2 SurfacerGeometry::project_point_onto_surface(
 		const Vector2 &p_point,
 		const Ref<Surface> &p_surface,
@@ -1751,157 +1904,4 @@ double SurfacerGeometry::
 			: sqrt(p_radius * p_radius -
 				   p_distance_past_edge * p_distance_past_edge);
 	return p_is_floor ? -distance_y : distance_y;
-}
-
-void SurfacerGeometry::_bind_methods() {
-	// Static methods
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"project_point_onto_surface", "p_point", "p_surface",
-					"p_side_override"),
-			&SurfacerGeometry::project_point_onto_surface,
-			DEFVAL(Surface::Side::UNKNOWN_SIDE));
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD("get_surface_normal_at_point", "p_surface", "p_point"),
-			&SurfacerGeometry::get_surface_normal_at_point);
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD("get_segment_normal", "p_segment_start", "p_segment_end"),
-			&SurfacerGeometry::get_segment_normal);
-
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"project_shape_onto_surface", "p_shape_position", "p_shape",
-					"p_surface", "p_uses_end_segment_if_outside_bounds",
-					"p_side_override"),
-			&SurfacerGeometry::project_shape_onto_surface, DEFVAL(true),
-			DEFVAL(Surface::Side::UNKNOWN_SIDE));
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"project_shape_onto_segment", "p_shape_position", "p_shape",
-					"p_surface_side", "p_segment_start", "p_segment_end"),
-			&SurfacerGeometry::project_shape_onto_segment);
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"project_shape_onto_segment_and_away_from_concave_"
-					"neighbors",
-					"p_shape_position", "p_shape", "p_surface",
-					"p_uses_end_segment_if_outside_bounds",
-					"p_rejects_non_overlapping_results", "p_side_override"),
-			&SurfacerGeometry::
-					project_shape_onto_segment_and_away_from_concave_neighbors,
-			DEFVAL(true), DEFVAL(true), DEFVAL(Surface::Side::UNKNOWN_SIDE));
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"get_concave_neighbor_projection_side_override",
-					"p_surface", "p_is_clockwise"),
-			&SurfacerGeometry::get_concave_neighbor_projection_side_override);
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"project_away_from_concave_neighbor", "p_position",
-					"p_neighbor", "p_neighbor_normal_side_override", "p_shape"),
-			&SurfacerGeometry::project_away_from_concave_neighbor);
-
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"get_closest_point_on_surface_to_shape", "p_surface",
-					"p_shape_position", "p_shape"),
-			&SurfacerGeometry::get_closest_point_on_surface_to_shape);
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"nudge_point_along_axially_aligned_segment_toward_shape_"
-					"center",
-					"p_point", "p_surface", "p_shape_position"),
-			&SurfacerGeometry::
-					nudge_point_along_axially_aligned_segment_toward_shape_center);
-
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"do_surface_and_rectangle_intersect", "p_surface",
-					"p_rectangle_min", "p_rectangle_max"),
-			&SurfacerGeometry::do_surface_and_rectangle_intersect);
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"check_for_shape_to_surface_overlap", "p_shape_position",
-					"p_shape", "p_surface", "p_epsilon"),
-			&SurfacerGeometry::check_for_shape_to_surface_overlap,
-			DEFVAL(shape_overlap_with_concave_surface_epsilon));
-
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"get_surface_segment_at_point", "p_surface", "p_point",
-					"p_uses_end_segment_if_outside_bounds"),
-			&SurfacerGeometry::get_surface_segment_at_point);
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"get_vertices_around_range", "p_surface", "p_range_min_x",
-					"p_range_max_x", "p_range_min_y", "p_range_max_y"),
-			&SurfacerGeometry::get_vertices_around_range);
-
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"are_position_wrappers_equal_with_epsilon", "p_a", "p_b",
-					"p_epsilon"),
-			&SurfacerGeometry::are_position_wrappers_equal_with_epsilon,
-			DEFVAL(float_epsilon));
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD("get_surface_side_for_normal", "p_normal"),
-			&SurfacerGeometry::get_surface_side_for_normal);
-
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"project_shape_onto_convex_corner_preserving_tangent_"
-					"position",
-					"p_shape_position", "p_shape", "p_origin_surface",
-					"p_destination_surface"),
-			&SurfacerGeometry::
-					project_shape_onto_convex_corner_preserving_tangent_position);
-
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"calculate_displacement_x_for_vertical_distance_past_edge",
-					"p_distance_past_edge", "p_is_left_wall", "p_collider"),
-			&SurfacerGeometry::
-					calculate_displacement_x_for_vertical_distance_past_edge);
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"calculate_circular_displacement_x_for_vertical_distance_"
-					"past_edge",
-					"p_distance_past_edge", "p_radius", "p_is_left_wall"),
-			&SurfacerGeometry::
-					calculate_circular_displacement_x_for_vertical_distance_past_edge);
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"calculate_displacement_y_for_horizontal_distance_past_"
-					"edge",
-					"p_distance_past_edge", "p_is_floor", "p_collider"),
-			&SurfacerGeometry::
-					calculate_displacement_y_for_horizontal_distance_past_edge);
-	ClassDB::bind_static_method(
-			"SurfacerGeometry",
-			D_METHOD(
-					"calculate_circular_displacement_y_for_horizontal_distance_"
-					"past_edge",
-					"p_distance_past_edge", "p_radius", "p_is_floor"),
-			&SurfacerGeometry::
-					calculate_circular_displacement_y_for_horizontal_distance_past_edge);
 }

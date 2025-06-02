@@ -76,18 +76,13 @@ SnoreCore *SnoreCore::get() {
 // - Also implement and pass-in MovementProfile as a Resource.
 //
 // - Expand on SnoreCore.
-//   - Only allow Surfacer to depend on SnoreCore.
-//   - Create a second demo/ app.
+//   - Create a second demo/ app (within Surfacer).
 //     - Have one demo use Surfacer and Scaffolder together.
 //     - Have the other use Surfacer without Scaffolder.
 //     - Have SnoreCore expose a super-manifest, and move all of its
 //     properties into a sub-manifest.
 //     - The super-manifest will then wrap each framework's sub-manifest.
 //     - Have both demo apps include their own sub-manifest.
-//
-// - Make sure these are exposed as singletons to GDScript.
-// - Make these not actually rely on static logic.
-// - Possibly have SnoreCore expose a single static access point.
 //
 // - Make sure _bind_methods is always at the top of the cpp file.
 //
@@ -100,6 +95,20 @@ SnoreCore *SnoreCore::get() {
 //   the properties panel or GDScript.
 //
 // - Move Scaffolder logic from GDScript to C++.
+//
+// - DLLs:
+//   - FIGURE OUT HOW TO DEFINE SNORE_CORE, SCAFFOLDER, AND SURFACER IN THREE
+//     SEPARATE REPOS AND BUILDS!!
+//   - SnoreCore will need to be includable into either...
+//   - DLLs!!
+//     -
+//   https://forum.godotengine.org/t/linking-dll-to-gdextension-using-scons/72686/7
+//     -
+//   https://learn.microsoft.com/en-us/cpp/build/walkthrough-creating-and-using-a-dynamic-link-library-cpp?view=msvc-170
+//   - Obviously, actually implement the DLL _after_ all pending FIXME work!
+//
+// - Separate each module into a separate repo, each with their own build and
+//   demo logic.
 
 void SnoreCore::set_up() {
 	// Check that we're only set_upping once at the start of the app.

@@ -11,33 +11,6 @@ using namespace godot;
 // TODO: Update the demo manifest to use the default values from the old
 // manifest.gd.
 
-Ref<ScaffolderManifest> ScaffolderManifest::get() {
-	Scaffolder *scaffolder = Scaffolder::get();
-	CHECK(scaffolder, "Scaffolder is not initialized.");
-	return scaffolder->get_manifest();
-}
-
-String ScaffolderManifest::get_initial_screen() const {
-	if (SnoreCoreMainManifest::get()->get_dev_mode() &&
-		skip_main_menu_in_dev_mode) {
-		return "game";
-	} else {
-		return "main_menu";
-	}
-}
-
-Ref<PackedScene> ScaffolderManifest::get_screen_scene(
-		const String &p_name) const {
-	if (screens.has(p_name)) {
-		return screens[p_name];
-	}
-	return Ref<PackedScene>();
-}
-
-bool ScaffolderManifest::has_screen_scene(const String &p_name) const {
-	return screens.has(p_name);
-}
-
 void ScaffolderManifest::_bind_methods() {
 	ADD_GROUP("Flags", "flag_");
 
@@ -230,4 +203,31 @@ void ScaffolderManifest::_bind_methods() {
 	ClassDB::bind_method(
 			D_METHOD("has_screen_scene", "p_name"),
 			&ScaffolderManifest::has_screen_scene);
+}
+
+Ref<ScaffolderManifest> ScaffolderManifest::get() {
+	Scaffolder *scaffolder = Scaffolder::get();
+	CHECK(scaffolder, "Scaffolder is not initialized.");
+	return scaffolder->get_manifest();
+}
+
+String ScaffolderManifest::get_initial_screen() const {
+	if (SnoreCoreMainManifest::get()->get_dev_mode() &&
+		skip_main_menu_in_dev_mode) {
+		return "game";
+	} else {
+		return "main_menu";
+	}
+}
+
+Ref<PackedScene> ScaffolderManifest::get_screen_scene(
+		const String &p_name) const {
+	if (screens.has(p_name)) {
+		return screens[p_name];
+	}
+	return Ref<PackedScene>();
+}
+
+bool ScaffolderManifest::has_screen_scene(const String &p_name) const {
+	return screens.has(p_name);
 }

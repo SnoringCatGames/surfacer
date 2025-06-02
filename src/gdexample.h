@@ -18,8 +18,8 @@ protected:
 	static void _bind_methods();
 
 public:
-	GDExample();
-	~GDExample();
+	GDExample() = default;
+	~GDExample() = default;
 
 	virtual void _process(double delta) override;
 
@@ -32,4 +32,4 @@ public:
 
 } //namespace godot
 
-#endif
+#endif // GDEXAMPLE_H

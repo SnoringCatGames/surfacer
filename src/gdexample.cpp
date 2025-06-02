@@ -6,30 +6,34 @@ using namespace godot;
 
 void GDExample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_amplitude"), &GDExample::get_amplitude);
-	ClassDB::bind_method(D_METHOD("set_amplitude", "p_amplitude"), &GDExample::set_amplitude);
+	ClassDB::bind_method(
+			D_METHOD("set_amplitude", "p_amplitude"),
+			&GDExample::set_amplitude);
 
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "amplitude"), "set_amplitude", "get_amplitude");
+	ADD_PROPERTY(
+			PropertyInfo(Variant::FLOAT, "amplitude"), "set_amplitude",
+			"get_amplitude");
 
 	ClassDB::bind_method(D_METHOD("get_speed"), &GDExample::get_speed);
-	ClassDB::bind_method(D_METHOD("set_speed", "p_speed"), &GDExample::set_speed);
+	ClassDB::bind_method(
+			D_METHOD("set_speed", "p_speed"), &GDExample::set_speed);
 
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "speed", PROPERTY_HINT_RANGE, "0,20,0.01"), "set_speed", "get_speed");
+	ADD_PROPERTY(
+			PropertyInfo(
+					Variant::FLOAT, "speed", PROPERTY_HINT_RANGE, "0,20,0.01"),
+			"set_speed", "get_speed");
 
-	ADD_SIGNAL(MethodInfo("position_changed", PropertyInfo(Variant::OBJECT, "node"), PropertyInfo(Variant::VECTOR2, "new_pos")));
-}
-
-GDExample::GDExample() {
-}
-
-GDExample::~GDExample() {
+	ADD_SIGNAL(MethodInfo(
+			"position_changed", PropertyInfo(Variant::OBJECT, "node"),
+			PropertyInfo(Variant::VECTOR2, "new_pos")));
 }
 
 void GDExample::_process(double delta) {
 	time_passed += speed * delta;
 
-	Vector2 new_position = Vector2(
-			amplitude + (amplitude * sin(time_passed * 2.0)),
-			amplitude + (amplitude * cos(time_passed * 1.5)));
+	Vector2 new_position =
+			Vector2(amplitude + (amplitude * sin(time_passed * 2.0)),
+					amplitude + (amplitude * cos(time_passed * 1.5)));
 
 	set_position(new_position);
 
@@ -40,18 +44,10 @@ void GDExample::_process(double delta) {
 	}
 }
 
-void GDExample::set_amplitude(double p_amplitude) {
-	amplitude = p_amplitude;
-}
+void GDExample::set_amplitude(double p_amplitude) { amplitude = p_amplitude; }
 
-double GDExample::get_amplitude() const {
-	return amplitude;
-}
+double GDExample::get_amplitude() const { return amplitude; }
 
-void GDExample::set_speed(double p_speed) {
-	speed = p_speed;
-}
+void GDExample::set_speed(double p_speed) { speed = p_speed; }
 
-double GDExample::get_speed() const {
-	return speed;
-}
+double GDExample::get_speed() const { return speed; }

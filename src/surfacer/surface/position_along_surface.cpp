@@ -8,6 +8,54 @@
 
 using namespace godot;
 
+void PositionAlongSurface::_bind_methods() {
+	ClassDB::bind_method(
+			D_METHOD("get_surface"), &PositionAlongSurface::get_surface);
+	ClassDB::bind_method(
+			D_METHOD("set_surface", "p_surface"),
+			&PositionAlongSurface::set_surface);
+
+	ADD_PROPERTY(
+			PropertyInfo(Variant::OBJECT, "surface"), "set_surface",
+			"get_surface");
+
+	ClassDB::bind_method(
+			D_METHOD("get_target_position"),
+			&PositionAlongSurface::get_target_position);
+	ClassDB::bind_method(
+			D_METHOD("set_target_position", "p_target_position"),
+			&PositionAlongSurface::set_target_position);
+
+	ADD_PROPERTY(
+			PropertyInfo(Variant::VECTOR2, "target_position"),
+			"set_target_position", "get_target_position");
+
+	ClassDB::bind_method(D_METHOD("get_side"), &PositionAlongSurface::get_side);
+	ClassDB::bind_method(D_METHOD("is_valid"), &PositionAlongSurface::is_valid);
+
+	ClassDB::bind_method(D_METHOD("reset"), &PositionAlongSurface::reset);
+	ClassDB::bind_method(
+			D_METHOD("match_current_grab", "surface", "character_center"),
+			&PositionAlongSurface::match_current_grab);
+	ClassDB::bind_method(
+			D_METHOD(
+					"match_surface_target_and_collider", "surface",
+					"target_point", "collider", "clips_to_surface_bounds",
+					"matches_target_to_character_dimensions",
+					"rejects_non_overlapping_results"),
+			&PositionAlongSurface::match_surface_target_and_collider,
+			DEFVAL(false), DEFVAL(true), DEFVAL(true));
+	ClassDB::bind_method(
+			D_METHOD("update_target_projection_onto_surface"),
+			&PositionAlongSurface::update_target_projection_onto_surface);
+	ClassDB::bind_method(
+			D_METHOD("to_string", "verbose", "includes_projection"),
+			&PositionAlongSurface::to_string, DEFVAL(true), DEFVAL(false));
+	ClassDB::bind_static_method(
+			"PositionAlongSurface", D_METHOD("copy", "destination", "source"),
+			&PositionAlongSurface::copy);
+}
+
 Surface::Side PositionAlongSurface::get_side() const {
 	if (surface.is_valid()) {
 		return surface->get_side();
@@ -123,52 +171,4 @@ void PositionAlongSurface::copy(
 	r_destination->set_target_position(p_source->get_target_position());
 	r_destination->target_projection_onto_surface =
 			p_source->target_projection_onto_surface;
-}
-
-void PositionAlongSurface::_bind_methods() {
-	ClassDB::bind_method(
-			D_METHOD("get_surface"), &PositionAlongSurface::get_surface);
-	ClassDB::bind_method(
-			D_METHOD("set_surface", "p_surface"),
-			&PositionAlongSurface::set_surface);
-
-	ADD_PROPERTY(
-			PropertyInfo(Variant::OBJECT, "surface"), "set_surface",
-			"get_surface");
-
-	ClassDB::bind_method(
-			D_METHOD("get_target_position"),
-			&PositionAlongSurface::get_target_position);
-	ClassDB::bind_method(
-			D_METHOD("set_target_position", "p_target_position"),
-			&PositionAlongSurface::set_target_position);
-
-	ADD_PROPERTY(
-			PropertyInfo(Variant::VECTOR2, "target_position"),
-			"set_target_position", "get_target_position");
-
-	ClassDB::bind_method(D_METHOD("get_side"), &PositionAlongSurface::get_side);
-	ClassDB::bind_method(D_METHOD("is_valid"), &PositionAlongSurface::is_valid);
-
-	ClassDB::bind_method(D_METHOD("reset"), &PositionAlongSurface::reset);
-	ClassDB::bind_method(
-			D_METHOD("match_current_grab", "surface", "character_center"),
-			&PositionAlongSurface::match_current_grab);
-	ClassDB::bind_method(
-			D_METHOD(
-					"match_surface_target_and_collider", "surface",
-					"target_point", "collider", "clips_to_surface_bounds",
-					"matches_target_to_character_dimensions",
-					"rejects_non_overlapping_results"),
-			&PositionAlongSurface::match_surface_target_and_collider,
-			DEFVAL(false), DEFVAL(true), DEFVAL(true));
-	ClassDB::bind_method(
-			D_METHOD("update_target_projection_onto_surface"),
-			&PositionAlongSurface::update_target_projection_onto_surface);
-	ClassDB::bind_method(
-			D_METHOD("to_string", "verbose", "includes_projection"),
-			&PositionAlongSurface::to_string, DEFVAL(true), DEFVAL(false));
-	ClassDB::bind_static_method(
-			"PositionAlongSurface", D_METHOD("copy", "destination", "source"),
-			&PositionAlongSurface::copy);
 }

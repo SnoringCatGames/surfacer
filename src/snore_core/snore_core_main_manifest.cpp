@@ -10,12 +10,6 @@ using namespace godot;
 // TODO: Update the demo manifest to use the default values from the old
 // manifest.gd.
 
-Ref<SnoreCoreMainManifest> SnoreCoreMainManifest::get() {
-	SnoreCore *snore_core_main = SnoreCore::get();
-	CHECK(snore_core_main, "SnoreCore is not initialized.");
-	return snore_core_main->get_manifest();
-}
-
 void SnoreCoreMainManifest::_bind_methods() {
 	ADD_GROUP("Flags", "flag_");
 
@@ -88,4 +82,10 @@ void SnoreCoreMainManifest::_bind_methods() {
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO(Variant::BOOL, "render_debug_annotations"),
 			"set_render_debug_annotations", "get_render_debug_annotations");
+}
+
+Ref<SnoreCoreMainManifest> SnoreCoreMainManifest::get() {
+	SnoreCore *snore_core_main = SnoreCore::get();
+	CHECK(snore_core_main, "SnoreCore is not initialized.");
+	return snore_core_main->get_manifest();
 }

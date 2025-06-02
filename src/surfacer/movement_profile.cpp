@@ -23,204 +23,6 @@ using namespace godot;
 // specifying multi-selecting from list of registered names, and then add a
 // function for translating string to bit).
 
-void MovementProfile::on_parameter_updated() {
-	// TODO: Port from old MovementParameters._update_parameters_debounced().
-}
-
-float MovementProfile::get_gravity_fast_fall() const {
-	return gravity_multiplier * MovementManifest::get()->get_gravity_default();
-}
-
-float MovementProfile::get_slow_rise_gravity_multiplier() const {
-	return gravity_slow_rise_multiplier_multiplier *
-			MovementManifest::get()->get_gravity_slow_rise_multiplier_default();
-}
-
-float MovementProfile::get_gravity_slow_rise() const {
-	return get_gravity_fast_fall() * get_slow_rise_gravity_multiplier();
-}
-
-float MovementProfile::get_rise_double_jump_gravity_multiplier() const {
-	return gravity_double_jump_slow_rise_multiplier_multiplier *
-			MovementManifest::get()
-					->get_gravity_double_jump_slow_rise_multiplier_default();
-}
-
-float MovementProfile::get_rise_double_jump_gravity() const {
-	return get_gravity_fast_fall() * get_rise_double_jump_gravity_multiplier();
-}
-
-float MovementProfile::get_walk_acceleration() const {
-	return walk_acceleration_multiplier *
-			MovementManifest::get()->get_walk_acceleration_default() *
-			surface_speed_multiplier;
-}
-
-float MovementProfile::get_in_air_horizontal_acceleration() const {
-	return in_air_horizontal_acceleration_multiplier *
-			MovementManifest::get()
-					->get_in_air_horizontal_acceleration_default() *
-			air_horizontal_speed_multiplier;
-}
-
-float MovementProfile::get_climb_up_speed() const {
-	return climb_up_speed_multiplier *
-			MovementManifest::get()->get_climb_up_speed_default() *
-			surface_speed_multiplier;
-}
-
-float MovementProfile::get_climb_down_speed() const {
-	return climb_down_speed_multiplier *
-			MovementManifest::get()->get_climb_down_speed_default() *
-			surface_speed_multiplier;
-}
-
-float MovementProfile::get_ceiling_crawl_speed() const {
-	return ceiling_crawl_speed_multiplier *
-			MovementManifest::get()->get_ceiling_crawl_speed_default() *
-			surface_speed_multiplier;
-}
-
-float MovementProfile::get_friction_coeff_with_sideways_input() const {
-	return friction_coefficient_multiplier *
-			MovementManifest::get()
-					->get_friction_coeff_with_sideways_input_default();
-}
-
-float MovementProfile::get_friction_coeff_without_sideways_input() const {
-	return friction_coefficient_multiplier *
-			MovementManifest::get()
-					->get_friction_coeff_without_sideways_input_default();
-}
-
-float MovementProfile::get_jump_boost() const {
-	return jump_boost_multiplier *
-			MovementManifest::get()->get_jump_boost_default();
-}
-
-float MovementProfile::get_wall_jump_horizontal_boost() const {
-	const float max_air_horizontal_speed = get_max_air_horizontal_speed();
-	const float boost = wall_jump_horizontal_boost_multiplier *
-			MovementManifest::get()->get_wall_jump_horizontal_boost_default() *
-			air_horizontal_speed_multiplier;
-	return Math::clamp(
-			boost, -max_air_horizontal_speed, max_air_horizontal_speed);
-}
-
-float MovementProfile::get_wall_fall_horizontal_boost() const {
-	const float max_air_horizontal_speed = get_max_air_horizontal_speed();
-	const float boost = wall_fall_horizontal_boost_multiplier *
-			MovementManifest::get()->get_wall_fall_horizontal_boost_default() *
-			air_horizontal_speed_multiplier;
-	return Math::clamp(
-			boost, -max_air_horizontal_speed, max_air_horizontal_speed);
-}
-
-float MovementProfile::get_max_horizontal_speed_default() const {
-	return max_horizontal_speed_default_multiplier *
-			MovementManifest::get()->get_max_horizontal_speed_default_default();
-}
-
-float MovementProfile::get_max_vertical_speed() const {
-	return max_vertical_speed_multiplier *
-			MovementManifest::get()->get_max_vertical_speed_default();
-}
-
-float MovementProfile::get_max_possible_speed() const {
-	return Math::max(
-			get_max_horizontal_speed_default(), get_max_vertical_speed());
-}
-
-float MovementProfile::get_dash_speed_multiplier() const {
-	return dash_speed_multiplier_multiplier *
-			MovementManifest::get()->get_dash_speed_multiplier_default();
-}
-
-float MovementProfile::get_dash_vertical_boost() const {
-	return dash_vertical_boost_multiplier *
-			MovementManifest::get()->get_dash_vertical_boost_default();
-}
-
-float MovementProfile::get_dash_duration() const {
-	return dash_duration_multiplier *
-			MovementManifest::get()->get_dash_duration_default();
-}
-
-float MovementProfile::get_dash_fade_duration() const {
-	return dash_fade_duration_multiplier *
-			MovementManifest::get()->get_dash_fade_duration_default();
-}
-
-float MovementProfile::get_dash_cooldown() const {
-	return dash_cooldown_multiplier *
-			MovementManifest::get()->get_dash_cooldown_default();
-}
-
-float MovementProfile::get_additional_edge_weight_offset() const {
-	return additional_edge_weight_offset_override != -1.0
-			? additional_edge_weight_offset_override
-			: MovementManifest::get()
-					  ->get_additional_edge_weight_offset_default();
-}
-
-float MovementProfile::get_walking_edge_weight_multiplier() const {
-	return walking_edge_weight_multiplier_override != -1.0
-			? walking_edge_weight_multiplier_override
-			: MovementManifest::get()
-					  ->get_walking_edge_weight_multiplier_default();
-}
-
-float MovementProfile::get_ceiling_crawling_edge_weight_multiplier() const {
-	return ceiling_crawling_edge_weight_multiplier_override != -1.0
-			? ceiling_crawling_edge_weight_multiplier_override
-			: MovementManifest::get()
-					  ->get_ceiling_crawling_edge_weight_multiplier_default();
-}
-
-float MovementProfile::get_climbing_edge_weight_multiplier() const {
-	return climbing_edge_weight_multiplier_override != -1.0
-			? climbing_edge_weight_multiplier_override
-			: MovementManifest::get()
-					  ->get_climbing_edge_weight_multiplier_default();
-}
-
-float MovementProfile::get_climb_to_adjacent_surface_edge_weight_multiplier()
-		const {
-	return climb_to_adjacent_surface_edge_weight_multiplier_override != -1.0
-			? climb_to_adjacent_surface_edge_weight_multiplier_override
-			: MovementManifest::get()
-					  ->get_climb_to_adjacent_surface_edge_weight_multiplier_default();
-}
-
-float MovementProfile::get_move_to_collinear_surface_edge_weight_multiplier()
-		const {
-	return move_to_collinear_surface_edge_weight_multiplier_override != -1.0
-			? move_to_collinear_surface_edge_weight_multiplier_override
-			: MovementManifest::get()
-					  ->get_move_to_collinear_surface_edge_weight_multiplier_default();
-}
-
-float MovementProfile::get_air_edge_weight_multiplier() const {
-	return air_edge_weight_multiplier_override != -1.0
-			? air_edge_weight_multiplier_override
-			: MovementManifest::get()->get_air_edge_weight_multiplier_default();
-}
-
-float MovementProfile::get_max_surface_speed() const {
-	return get_max_horizontal_speed_default() * surface_speed_multiplier;
-}
-
-float MovementProfile::get_max_air_horizontal_speed() const {
-	return get_max_horizontal_speed_default() * air_horizontal_speed_multiplier;
-}
-
-float MovementProfile::get_smaller_of_max_surface_and_air_horizontal_speed()
-		const {
-	return get_max_horizontal_speed_default() *
-			Math::min(
-					surface_speed_multiplier, air_horizontal_speed_multiplier);
-}
-
 void MovementProfile::_bind_methods() {
 	ADD_GROUP("Movement abilities", "ability_");
 
@@ -1679,4 +1481,202 @@ void MovementProfile::_bind_methods() {
 					"graph_calc_smaller_of_max_surface_and_air_horizontal_"
 					"speed"),
 			"", "get_smaller_of_max_surface_and_air_horizontal_speed");
+}
+
+void MovementProfile::on_parameter_updated() {
+	// TODO: Port from old MovementParameters._update_parameters_debounced().
+}
+
+float MovementProfile::get_gravity_fast_fall() const {
+	return gravity_multiplier * MovementManifest::get()->get_gravity_default();
+}
+
+float MovementProfile::get_slow_rise_gravity_multiplier() const {
+	return gravity_slow_rise_multiplier_multiplier *
+			MovementManifest::get()->get_gravity_slow_rise_multiplier_default();
+}
+
+float MovementProfile::get_gravity_slow_rise() const {
+	return get_gravity_fast_fall() * get_slow_rise_gravity_multiplier();
+}
+
+float MovementProfile::get_rise_double_jump_gravity_multiplier() const {
+	return gravity_double_jump_slow_rise_multiplier_multiplier *
+			MovementManifest::get()
+					->get_gravity_double_jump_slow_rise_multiplier_default();
+}
+
+float MovementProfile::get_rise_double_jump_gravity() const {
+	return get_gravity_fast_fall() * get_rise_double_jump_gravity_multiplier();
+}
+
+float MovementProfile::get_walk_acceleration() const {
+	return walk_acceleration_multiplier *
+			MovementManifest::get()->get_walk_acceleration_default() *
+			surface_speed_multiplier;
+}
+
+float MovementProfile::get_in_air_horizontal_acceleration() const {
+	return in_air_horizontal_acceleration_multiplier *
+			MovementManifest::get()
+					->get_in_air_horizontal_acceleration_default() *
+			air_horizontal_speed_multiplier;
+}
+
+float MovementProfile::get_climb_up_speed() const {
+	return climb_up_speed_multiplier *
+			MovementManifest::get()->get_climb_up_speed_default() *
+			surface_speed_multiplier;
+}
+
+float MovementProfile::get_climb_down_speed() const {
+	return climb_down_speed_multiplier *
+			MovementManifest::get()->get_climb_down_speed_default() *
+			surface_speed_multiplier;
+}
+
+float MovementProfile::get_ceiling_crawl_speed() const {
+	return ceiling_crawl_speed_multiplier *
+			MovementManifest::get()->get_ceiling_crawl_speed_default() *
+			surface_speed_multiplier;
+}
+
+float MovementProfile::get_friction_coeff_with_sideways_input() const {
+	return friction_coefficient_multiplier *
+			MovementManifest::get()
+					->get_friction_coeff_with_sideways_input_default();
+}
+
+float MovementProfile::get_friction_coeff_without_sideways_input() const {
+	return friction_coefficient_multiplier *
+			MovementManifest::get()
+					->get_friction_coeff_without_sideways_input_default();
+}
+
+float MovementProfile::get_jump_boost() const {
+	return jump_boost_multiplier *
+			MovementManifest::get()->get_jump_boost_default();
+}
+
+float MovementProfile::get_wall_jump_horizontal_boost() const {
+	const float max_air_horizontal_speed = get_max_air_horizontal_speed();
+	const float boost = wall_jump_horizontal_boost_multiplier *
+			MovementManifest::get()->get_wall_jump_horizontal_boost_default() *
+			air_horizontal_speed_multiplier;
+	return Math::clamp(
+			boost, -max_air_horizontal_speed, max_air_horizontal_speed);
+}
+
+float MovementProfile::get_wall_fall_horizontal_boost() const {
+	const float max_air_horizontal_speed = get_max_air_horizontal_speed();
+	const float boost = wall_fall_horizontal_boost_multiplier *
+			MovementManifest::get()->get_wall_fall_horizontal_boost_default() *
+			air_horizontal_speed_multiplier;
+	return Math::clamp(
+			boost, -max_air_horizontal_speed, max_air_horizontal_speed);
+}
+
+float MovementProfile::get_max_horizontal_speed_default() const {
+	return max_horizontal_speed_default_multiplier *
+			MovementManifest::get()->get_max_horizontal_speed_default_default();
+}
+
+float MovementProfile::get_max_vertical_speed() const {
+	return max_vertical_speed_multiplier *
+			MovementManifest::get()->get_max_vertical_speed_default();
+}
+
+float MovementProfile::get_max_possible_speed() const {
+	return Math::max(
+			get_max_horizontal_speed_default(), get_max_vertical_speed());
+}
+
+float MovementProfile::get_dash_speed_multiplier() const {
+	return dash_speed_multiplier_multiplier *
+			MovementManifest::get()->get_dash_speed_multiplier_default();
+}
+
+float MovementProfile::get_dash_vertical_boost() const {
+	return dash_vertical_boost_multiplier *
+			MovementManifest::get()->get_dash_vertical_boost_default();
+}
+
+float MovementProfile::get_dash_duration() const {
+	return dash_duration_multiplier *
+			MovementManifest::get()->get_dash_duration_default();
+}
+
+float MovementProfile::get_dash_fade_duration() const {
+	return dash_fade_duration_multiplier *
+			MovementManifest::get()->get_dash_fade_duration_default();
+}
+
+float MovementProfile::get_dash_cooldown() const {
+	return dash_cooldown_multiplier *
+			MovementManifest::get()->get_dash_cooldown_default();
+}
+
+float MovementProfile::get_additional_edge_weight_offset() const {
+	return additional_edge_weight_offset_override != -1.0
+			? additional_edge_weight_offset_override
+			: MovementManifest::get()
+					  ->get_additional_edge_weight_offset_default();
+}
+
+float MovementProfile::get_walking_edge_weight_multiplier() const {
+	return walking_edge_weight_multiplier_override != -1.0
+			? walking_edge_weight_multiplier_override
+			: MovementManifest::get()
+					  ->get_walking_edge_weight_multiplier_default();
+}
+
+float MovementProfile::get_ceiling_crawling_edge_weight_multiplier() const {
+	return ceiling_crawling_edge_weight_multiplier_override != -1.0
+			? ceiling_crawling_edge_weight_multiplier_override
+			: MovementManifest::get()
+					  ->get_ceiling_crawling_edge_weight_multiplier_default();
+}
+
+float MovementProfile::get_climbing_edge_weight_multiplier() const {
+	return climbing_edge_weight_multiplier_override != -1.0
+			? climbing_edge_weight_multiplier_override
+			: MovementManifest::get()
+					  ->get_climbing_edge_weight_multiplier_default();
+}
+
+float MovementProfile::get_climb_to_adjacent_surface_edge_weight_multiplier()
+		const {
+	return climb_to_adjacent_surface_edge_weight_multiplier_override != -1.0
+			? climb_to_adjacent_surface_edge_weight_multiplier_override
+			: MovementManifest::get()
+					  ->get_climb_to_adjacent_surface_edge_weight_multiplier_default();
+}
+
+float MovementProfile::get_move_to_collinear_surface_edge_weight_multiplier()
+		const {
+	return move_to_collinear_surface_edge_weight_multiplier_override != -1.0
+			? move_to_collinear_surface_edge_weight_multiplier_override
+			: MovementManifest::get()
+					  ->get_move_to_collinear_surface_edge_weight_multiplier_default();
+}
+
+float MovementProfile::get_air_edge_weight_multiplier() const {
+	return air_edge_weight_multiplier_override != -1.0
+			? air_edge_weight_multiplier_override
+			: MovementManifest::get()->get_air_edge_weight_multiplier_default();
+}
+
+float MovementProfile::get_max_surface_speed() const {
+	return get_max_horizontal_speed_default() * surface_speed_multiplier;
+}
+
+float MovementProfile::get_max_air_horizontal_speed() const {
+	return get_max_horizontal_speed_default() * air_horizontal_speed_multiplier;
+}
+
+float MovementProfile::get_smaller_of_max_surface_and_air_horizontal_speed()
+		const {
+	return get_max_horizontal_speed_default() *
+			Math::min(
+					surface_speed_multiplier, air_horizontal_speed_multiplier);
 }

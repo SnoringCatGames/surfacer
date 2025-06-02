@@ -4,15 +4,6 @@
 
 using namespace godot;
 
-void CollisionSurfaceResult::reset() {
-	surface_side = Surface::Side::UNKNOWN_SIDE;
-	surface.unref();
-	tilemap_coord = vector2_invalid;
-	tilemap_index = -1;
-	flipped_sides_for_nested_call = false;
-	error_message = "";
-}
-
 void CollisionSurfaceResult::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("reset"), &CollisionSurfaceResult::reset);
 
@@ -79,4 +70,13 @@ void CollisionSurfaceResult::_bind_methods() {
 	ADD_PROPERTY(
 			PropertyInfo(Variant::STRING, "error_message"), "set_error_message",
 			"get_error_message");
+}
+
+void CollisionSurfaceResult::reset() {
+	surface_side = Surface::Side::UNKNOWN_SIDE;
+	surface.unref();
+	tilemap_coord = vector2_invalid;
+	tilemap_index = -1;
+	flipped_sides_for_nested_call = false;
+	error_message = "";
 }
