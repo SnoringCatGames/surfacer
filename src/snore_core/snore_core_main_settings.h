@@ -1,21 +1,21 @@
-#ifndef SNORE_CORE_MAIN_MANIFEST_H
-#define SNORE_CORE_MAIN_MANIFEST_H
+#ifndef SNORE_CORE_MAIN_SETTINGS_H
+#define SNORE_CORE_MAIN_SETTINGS_H
 
 #include "snore_core/canvas_layer_config.h"
-#include "snore_core/snore_core_manifest.h"
+#include "snore_core/snore_core_settings.h"
 
 #include <godot_cpp/core/binder_common.hpp>
 
 namespace godot {
 
-class SnoreCoreMainManifest : public SnoreCoreManifest {
-	GDCLASS(SnoreCoreMainManifest, SnoreCoreManifest)
+class SnoreCoreMainSettings : public SnoreCoreSettings {
+	GDCLASS(SnoreCoreMainSettings, SnoreCoreSettings)
 
 public:
-	static Ref<SnoreCoreMainManifest> get();
+	static Ref<SnoreCoreMainSettings> get();
 
-	SnoreCoreMainManifest() = default;
-	~SnoreCoreMainManifest() = default;
+	SnoreCoreMainSettings() = default;
+	~SnoreCoreMainSettings() = default;
 
 	bool get_dev_mode() const { return dev_mode; }
 	void set_dev_mode(bool p_value) { dev_mode = p_value; }
@@ -66,4 +66,4 @@ private:
 
 } // namespace godot
 
-#endif // SNORE_CORE_MAIN_MANIFEST_H
+#endif // SNORE_CORE_MAIN_SETTINGS_H

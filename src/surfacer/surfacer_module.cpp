@@ -11,7 +11,7 @@
 #include "surfacer/annotations/test_position_along_surface_annotation.h"
 #include "surfacer/annotations/test_surface_annotation.h"
 #include "surfacer/annotations/test_surfacer_agent_annotation.h"
-#include "surfacer/movement_manifest.h"
+#include "surfacer/movement_settings.h"
 #include "surfacer/surface/agent_surface_state.h"
 #include "surfacer/surface/collision_surface_result.h"
 #include "surfacer/surface/position_along_surface.h"
@@ -28,18 +28,18 @@
 #include "surfacer/surface/test_surface_store.h"
 #include "surfacer/surface/tile_shape_data.h"
 #include "surfacer/surface_graph.h"
-#include "surfacer/surface_parser_manifest.h"
+#include "surfacer/surface_parser_settings.h"
 #include "surfacer/surfacer_agent.h"
 #include "surfacer/surfacer_geometry.h"
-#include "surfacer/surfacer_manifest.h"
-#include "surfacer/test_movement_manifest.h"
+#include "surfacer/surfacer_settings.h"
 #include "surfacer/test_movement_profile.h"
+#include "surfacer/test_movement_settings.h"
 #include "surfacer/test_surface_graph.h"
-#include "surfacer/test_surface_parser_manifest.h"
+#include "surfacer/test_surface_parser_settings.h"
 #include "surfacer/test_surfacer_agent.h"
 #include "surfacer/test_surfacer_geometry.h"
-#include "surfacer/test_surfacer_manifest.h"
 #include "surfacer/test_surfacer_module.h"
+#include "surfacer/test_surfacer_settings.h"
 #include "surfacer/test_tile_map_surface_parser.h"
 #include "surfacer/tile_map_surface_parser.h"
 
@@ -58,9 +58,9 @@ void Surfacer::register_gdextension_types(ModuleInitializationLevel p_level) {
 	REGISTER_SNORE_CORE_CLASS(Surfacer);
 	REGISTER_SNORE_CORE_CLASS(SurfacerAgent);
 	REGISTER_SNORE_CORE_CLASS(SurfacerGeometry);
-	REGISTER_SNORE_CORE_CLASS(SurfacerManifest);
-	REGISTER_SNORE_CORE_CLASS(MovementManifest);
-	REGISTER_SNORE_CORE_CLASS(SurfaceParserManifest);
+	REGISTER_SNORE_CORE_CLASS(SurfacerSettings);
+	REGISTER_SNORE_CORE_CLASS(MovementSettings);
+	REGISTER_SNORE_CORE_CLASS(SurfaceParserSettings);
 
 	REGISTER_SNORE_CORE_CLASS(JumpAnnotation);
 	REGISTER_SNORE_CORE_CLASS(PathAnnotation);
@@ -96,7 +96,7 @@ Surfacer *Surfacer::get() {
 }
 
 void Surfacer::set_up() {
-	// TODO: Do any initialization that depends on runtime manifest settings.
+	// TODO: Do any initialization that depends on runtime settings settings.
 	on_set_up_finished();
 }
 

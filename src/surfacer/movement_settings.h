@@ -1,7 +1,7 @@
-#ifndef MOVEMENT_MANIFEST_H
-#define MOVEMENT_MANIFEST_H
+#ifndef MOVEMENT_SETTINGS_H
+#define MOVEMENT_SETTINGS_H
 
-#include "snore_core/snore_core_manifest.h"
+#include "snore_core/snore_core_settings.h"
 
 #include <godot_cpp/core/binder_common.hpp>
 
@@ -11,14 +11,14 @@ namespace godot {
 //       logic.
 // TODO: Port validation and _calculate_dependent_movement_params.
 
-class MovementManifest : public SnoreCoreManifest {
-	GDCLASS(MovementManifest, SnoreCoreManifest)
+class MovementSettings : public SnoreCoreSettings {
+	GDCLASS(MovementSettings, SnoreCoreSettings)
 
 public:
-	static Ref<MovementManifest> get();
+	static Ref<MovementSettings> get();
 
-	MovementManifest() = default;
-	~MovementManifest() = default;
+	MovementSettings() = default;
+	~MovementSettings() = default;
 
 	// --- Navigation settings ---
 
@@ -297,4 +297,4 @@ private:
 
 } // namespace godot
 
-#endif // MOVEMENT_MANIFEST_H
+#endif // MOVEMENT_SETTINGS_H

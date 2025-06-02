@@ -7,20 +7,20 @@
 #include "snore_core/geometry.h"
 #include "snore_core/internal_utils.h"
 #include "snore_core/rotated_shape.h"
-#include "snore_core/snore_core_main_manifest.h"
-#include "snore_core/snore_core_manifest.h"
+#include "snore_core/snore_core_main_settings.h"
 #include "snore_core/snore_core_module.h"
 #include "snore_core/snore_core_module_utils.h"
+#include "snore_core/snore_core_settings.h"
 #include "snore_core/test_annotation.h"
 #include "snore_core/test_annotations_manager.h"
 #include "snore_core/test_canvas_layer_config.h"
 #include "snore_core/test_geometry.h"
 #include "snore_core/test_rotated_shape.h"
 #include "snore_core/test_runner.h"
-#include "snore_core/test_snore_core_main_manifest.h"
 #include "snore_core/test_snore_core_main_module.h"
-#include "snore_core/test_snore_core_manifest.h"
+#include "snore_core/test_snore_core_main_settings.h"
 #include "snore_core/test_snore_core_module.h"
+#include "snore_core/test_snore_core_settings.h"
 
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/time.hpp>
@@ -29,7 +29,7 @@
 using namespace godot;
 
 void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
-	REGISTER_SNORE_CORE_ABSTRACT_CLASS(SnoreCoreManifest);
+	REGISTER_SNORE_CORE_ABSTRACT_CLASS(SnoreCoreSettings);
 	REGISTER_SNORE_CORE_ABSTRACT_CLASS(SnoreCoreModule);
 	REGISTER_SNORE_CORE_VIRTUAL_CLASS(Annotation);
 
@@ -38,7 +38,7 @@ void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
 	REGISTER_SNORE_CORE_CLASS(Geometry);
 	REGISTER_SNORE_CORE_CLASS(RotatedShape);
 	REGISTER_SNORE_CORE_CLASS(SnoreCore);
-	REGISTER_SNORE_CORE_CLASS(SnoreCoreMainManifest);
+	REGISTER_SNORE_CORE_CLASS(SnoreCoreMainSettings);
 
 	GDREGISTER_CLASS(GDExample);
 
@@ -75,7 +75,7 @@ void SnoreCore::set_up() {
 	last_set_up_time_msec = current_time_msec;
 
 	for (SnoreCoreModule *module : modules) {
-		module->set_up_base(manifests);
+		module->set_up_base(settings);
 	}
 }
 

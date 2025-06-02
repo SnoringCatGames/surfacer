@@ -5,11 +5,11 @@
 using namespace godot;
 
 void SnoreCoreModuleInternal::set_up_main_module(
-		const TypedArray<SnoreCoreManifest> &p_manifests) {
+		const TypedArray<SnoreCoreSettings> &p_settings) {
 	SnoreCore *Main = SnoreCore::get();
 	CHECK_SIMPLE(Main);
-	Main->register_all_manifests(p_manifests);
-	Main->set_up_base(p_manifests);
+	Main->register_all_settings(p_settings);
+	Main->set_up_base(p_settings);
 }
 
 void SnoreCoreModuleInternal::notify_main_module_of_module_set_up_finished(

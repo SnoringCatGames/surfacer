@@ -1,13 +1,13 @@
-#ifndef TEST_SURFACE_PARSER_MANIFEST_H
-#define TEST_SURFACE_PARSER_MANIFEST_H
+#ifndef TEST_SNORE_CORE_SETTINGS_H
+#define TEST_SNORE_CORE_SETTINGS_H
 
 #ifdef DEBUG_ENABLED
 
-#include "surfacer/surface_parser_manifest.h"
+#include "snore_core/snore_core_settings.h"
 
 #include "snore_core/test_runner.h"
 
-START_SNORE_CORE_TEST(SurfaceParserManifest)
+START_SNORE_CORE_TEST(SnoreCoreSettings)
 
 it("TODO", []() {
 	// TODO
@@ -19,4 +19,4 @@ END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
 
-#endif // TEST_SURFACE_PARSER_MANIFEST_H
+#endif // TEST_SNORE_CORE_SETTINGS_H

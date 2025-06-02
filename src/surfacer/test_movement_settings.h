@@ -1,13 +1,13 @@
-#ifndef TEST_SURFACER_MANIFEST_H
-#define TEST_SURFACER_MANIFEST_H
+#ifndef TEST_MOVEMENT_SETTINGS_H
+#define TEST_MOVEMENT_SETTINGS_H
 
 #ifdef DEBUG_ENABLED
 
-#include "surfacer/surfacer_manifest.h"
+#include "surfacer/movement_settings.h"
 
 #include "snore_core/test_runner.h"
 
-START_SNORE_CORE_TEST(SurfacerManifest)
+START_SNORE_CORE_TEST(MovementSettings)
 
 it("TODO", []() {
 	// TODO
@@ -19,4 +19,4 @@ END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
 
-#endif // TEST_SURFACER_MANIFEST_H
+#endif // TEST_MOVEMENT_SETTINGS_H

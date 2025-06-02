@@ -1,4 +1,4 @@
-#include "snore_core/snore_core_main_manifest.h"
+#include "snore_core/snore_core_main_settings.h"
 
 #include "snore_core/internal_utils.h"
 #include "snore_core/snore_core_main_module.h"
@@ -7,39 +7,39 @@
 
 using namespace godot;
 
-// TODO: Update the demo manifest to use the default values from the old
+// TODO: Update the demo settings to use the default values from the old
 // manifest.gd.
 
-void SnoreCoreMainManifest::_bind_methods() {
+void SnoreCoreMainSettings::_bind_methods() {
 	ADD_GROUP("Flags", "flag_");
 
 	ClassDB::bind_method(
-			D_METHOD("get_dev_mode"), &SnoreCoreMainManifest::get_dev_mode);
+			D_METHOD("get_dev_mode"), &SnoreCoreMainSettings::get_dev_mode);
 	ClassDB::bind_method(
 			D_METHOD("set_dev_mode", "p_value"),
-			&SnoreCoreMainManifest::set_dev_mode);
+			&SnoreCoreMainSettings::set_dev_mode);
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO(Variant::BOOL, "flag_dev_mode"),
 			"set_dev_mode", "get_dev_mode");
 
-	ADD_SUBGROUP("Logging", "flag_log_");
+	ADD_SUBGROUP("Logging", "flag_");
 
 	ClassDB::bind_method(
 			D_METHOD("get_log_snore_core_events"),
-			&SnoreCoreMainManifest::get_log_snore_core_events);
+			&SnoreCoreMainSettings::get_log_snore_core_events);
 	ClassDB::bind_method(
 			D_METHOD("set_log_snore_core_events", "p_value"),
-			&SnoreCoreMainManifest::set_log_snore_core_events);
+			&SnoreCoreMainSettings::set_log_snore_core_events);
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO(Variant::BOOL, "flag_log_snore_core_events"),
 			"set_log_snore_core_events", "get_log_snore_core_events");
 
 	ClassDB::bind_method(
 			D_METHOD("get_log_snore_core_events_verbose"),
-			&SnoreCoreMainManifest::get_log_snore_core_events_verbose);
+			&SnoreCoreMainSettings::get_log_snore_core_events_verbose);
 	ClassDB::bind_method(
 			D_METHOD("set_log_snore_core_events_verbose", "p_value"),
-			&SnoreCoreMainManifest::set_log_snore_core_events_verbose);
+			&SnoreCoreMainSettings::set_log_snore_core_events_verbose);
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO(
 					Variant::BOOL, "flag_log_snore_core_events_verbose"),
@@ -51,10 +51,10 @@ void SnoreCoreMainManifest::_bind_methods() {
 
 	ClassDB::bind_method(
 			D_METHOD("get_canvas_layers"),
-			&SnoreCoreMainManifest::get_canvas_layers);
+			&SnoreCoreMainSettings::get_canvas_layers);
 	ClassDB::bind_method(
 			D_METHOD("set_canvas_layers", "p_layers"),
-			&SnoreCoreMainManifest::set_canvas_layers);
+			&SnoreCoreMainSettings::set_canvas_layers);
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO_WITH_HINT(
 					Variant::ARRAY, "canvas_layers", PROPERTY_HINT_ARRAY_TYPE,
@@ -63,10 +63,10 @@ void SnoreCoreMainManifest::_bind_methods() {
 
 	ClassDB::bind_method(
 			D_METHOD("get_debug_time_scale"),
-			&SnoreCoreMainManifest::get_debug_time_scale);
+			&SnoreCoreMainSettings::get_debug_time_scale);
 	ClassDB::bind_method(
 			D_METHOD("set_debug_time_scale", "p_scale"),
-			&SnoreCoreMainManifest::set_debug_time_scale);
+			&SnoreCoreMainSettings::set_debug_time_scale);
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO_WITH_HINT(
 					Variant::FLOAT, "debug_time_scale", PROPERTY_HINT_RANGE,
@@ -75,17 +75,17 @@ void SnoreCoreMainManifest::_bind_methods() {
 
 	ClassDB::bind_method(
 			D_METHOD("get_render_debug_annotations"),
-			&SnoreCoreMainManifest::get_render_debug_annotations);
+			&SnoreCoreMainSettings::get_render_debug_annotations);
 	ClassDB::bind_method(
 			D_METHOD("set_render_debug_annotations", "p_value"),
-			&SnoreCoreMainManifest::set_render_debug_annotations);
+			&SnoreCoreMainSettings::set_render_debug_annotations);
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO(Variant::BOOL, "render_debug_annotations"),
 			"set_render_debug_annotations", "get_render_debug_annotations");
 }
 
-Ref<SnoreCoreMainManifest> SnoreCoreMainManifest::get() {
+Ref<SnoreCoreMainSettings> SnoreCoreMainSettings::get() {
 	SnoreCore *snore_core_main = SnoreCore::get();
 	CHECK(snore_core_main, "SnoreCore is not initialized.");
-	return snore_core_main->get_manifest();
+	return snore_core_main->get_settings();
 }

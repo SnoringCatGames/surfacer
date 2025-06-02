@@ -1,13 +1,13 @@
-#ifndef TEST_SCAFFOLDER_MANIFEST_H
-#define TEST_SCAFFOLDER_MANIFEST_H
+#ifndef TEST_SURFACER_SETTINGS_H
+#define TEST_SURFACER_SETTINGS_H
 
 #ifdef DEBUG_ENABLED
 
-#include "scaffolder/scaffolder_manifest.h"
+#include "surfacer/surfacer_settings.h"
 
 #include "snore_core/test_runner.h"
 
-START_SNORE_CORE_TEST(ScaffolderManifest)
+START_SNORE_CORE_TEST(SurfacerSettings)
 
 it("TODO", []() {
 	// TODO
@@ -19,4 +19,4 @@ END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
 
-#endif // TEST_SCAFFOLDER_MANIFEST_H
+#endif // TEST_SURFACER_SETTINGS_H

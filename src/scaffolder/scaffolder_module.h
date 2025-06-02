@@ -1,14 +1,14 @@
 #ifndef SCAFFOLDER_MODULE_H
 #define SCAFFOLDER_MODULE_H
 
-#include "scaffolder/scaffolder_manifest.h"
+#include "scaffolder/scaffolder_settings.h"
 #include "snore_core/snore_core_module.h"
 
 #include <godot_cpp/godot.hpp>
 
 namespace godot {
 
-class Scaffolder : public SnoreCoreModule<ScaffolderManifest> {
+class Scaffolder : public SnoreCoreModule<ScaffolderSettings> {
 	GDCLASS(Scaffolder, SnoreCoreModule)
 
 public:
@@ -21,8 +21,8 @@ public:
 	virtual void reset() override;
 
 	virtual void set_up_from_binding(
-			const TypedArray<SnoreCoreManifest> &p_manifests) override {
-		SnoreCoreModule::set_up_from_binding(p_manifests);
+			const TypedArray<SnoreCoreSettings> &p_settings) override {
+		SnoreCoreModule::set_up_from_binding(p_settings);
 	}
 
 protected:

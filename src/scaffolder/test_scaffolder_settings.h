@@ -1,13 +1,13 @@
-#ifndef TEST_SNORE_CORE_MAIN_MANIFEST_H
-#define TEST_SNORE_CORE_MAIN_MANIFEST_H
+#ifndef TEST_SCAFFOLDER_SETTINGS_H
+#define TEST_SCAFFOLDER_SETTINGS_H
 
 #ifdef DEBUG_ENABLED
 
-#include "snore_core/snore_core_main_manifest.h"
+#include "scaffolder/scaffolder_settings.h"
 
 #include "snore_core/test_runner.h"
 
-START_SNORE_CORE_TEST(SnoreCoreMainManifest)
+START_SNORE_CORE_TEST(ScaffolderSettings)
 
 it("TODO", []() {
 	// TODO
@@ -19,4 +19,4 @@ END_SNORE_CORE_TEST
 
 #endif // DEBUG_ENABLED
 
-#endif // TEST_SNORE_CORE_MAIN_MANIFEST_H
+#endif // TEST_SCAFFOLDER_SETTINGS_H

@@ -1,20 +1,20 @@
-#ifndef SURFACE_PARSER_MANIFEST_H
-#define SURFACE_PARSER_MANIFEST_H
+#ifndef SURFACE_PARSER_SETTINGS_H
+#define SURFACE_PARSER_SETTINGS_H
 
-#include "snore_core/snore_core_manifest.h"
+#include "snore_core/snore_core_settings.h"
 
 #include <godot_cpp/core/binder_common.hpp>
 
 namespace godot {
 
-class SurfaceParserManifest : public SnoreCoreManifest {
-	GDCLASS(SurfaceParserManifest, SnoreCoreManifest)
+class SurfaceParserSettings : public SnoreCoreSettings {
+	GDCLASS(SurfaceParserSettings, SnoreCoreSettings)
 
 public:
-	static Ref<SurfaceParserManifest> get();
+	static Ref<SurfaceParserSettings> get();
 
-	SurfaceParserManifest() = default;
-	~SurfaceParserManifest() = default;
+	SurfaceParserSettings() = default;
+	~SurfaceParserSettings() = default;
 
 	float get_surfaces_tile_maps_collision_layer() const {
 		return surfaces_tile_maps_collision_layer;
@@ -61,4 +61,4 @@ private:
 
 } // namespace godot
 
-#endif // SURFACE_PARSER_MANIFEST_H
+#endif // SURFACE_PARSER_SETTINGS_H

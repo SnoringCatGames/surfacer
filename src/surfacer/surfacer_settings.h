@@ -1,36 +1,36 @@
-#ifndef SURFACER_MANIFEST_H
-#define SURFACER_MANIFEST_H
+#ifndef SURFACER_SETTINGS_H
+#define SURFACER_SETTINGS_H
 
 #include "snore_core/geometry.h"
-#include "snore_core/snore_core_manifest.h"
-#include "surfacer/movement_manifest.h"
-#include "surfacer/surface_parser_manifest.h"
+#include "snore_core/snore_core_settings.h"
+#include "surfacer/movement_settings.h"
+#include "surfacer/surface_parser_settings.h"
 
 #include <godot_cpp/core/binder_common.hpp>
 
 namespace godot {
 
-class SurfacerManifest : public SnoreCoreManifest {
-	GDCLASS(SurfacerManifest, SnoreCoreManifest)
+class SurfacerSettings : public SnoreCoreSettings {
+	GDCLASS(SurfacerSettings, SnoreCoreSettings)
 
 public:
-	static Ref<SurfacerManifest> get();
+	static Ref<SurfacerSettings> get();
 
-	SurfacerManifest() = default;
-	~SurfacerManifest() = default;
+	SurfacerSettings() = default;
+	~SurfacerSettings() = default;
 
-	Ref<MovementManifest> get_movement_manifest() const {
-		return movement_manifest;
+	Ref<MovementSettings> get_movement_settings() const {
+		return movement_settings;
 	}
-	void set_movement_manifest(Ref<MovementManifest> p_value) {
-		movement_manifest = p_value;
+	void set_movement_settings(Ref<MovementSettings> p_value) {
+		movement_settings = p_value;
 	}
 
-	Ref<SurfaceParserManifest> get_surface_parser_manifest() const {
-		return surface_parser_manifest;
+	Ref<SurfaceParserSettings> get_surface_parser_settings() const {
+		return surface_parser_settings;
 	}
-	void set_surface_parser_manifest(Ref<SurfaceParserManifest> p_value) {
-		surface_parser_manifest = p_value;
+	void set_surface_parser_settings(Ref<SurfaceParserSettings> p_value) {
+		surface_parser_settings = p_value;
 	}
 
 	bool get_log_surfacer_events() const { return log_surfacer_events; }
@@ -59,8 +59,8 @@ protected:
 	static void _bind_methods();
 
 private:
-	Ref<MovementManifest> movement_manifest;
-	Ref<SurfaceParserManifest> surface_parser_manifest;
+	Ref<MovementSettings> movement_settings;
+	Ref<SurfaceParserSettings> surface_parser_settings;
 
 	bool log_surfacer_events = false;
 	bool log_surfacer_events_verbose = false;
@@ -71,4 +71,4 @@ private:
 
 } // namespace godot
 
-#endif // SURFACER_MANIFEST_H
+#endif // SURFACER_SETTINGS_H

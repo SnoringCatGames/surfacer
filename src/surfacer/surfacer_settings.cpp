@@ -1,4 +1,4 @@
-#include "surfacer/surfacer_manifest.h"
+#include "surfacer/surfacer_settings.h"
 
 #include "snore_core/internal_utils.h"
 #include "surfacer/surfacer_module.h"
@@ -7,39 +7,39 @@
 
 using namespace godot;
 
-Ref<SurfacerManifest> SurfacerManifest::get() {
+Ref<SurfacerSettings> SurfacerSettings::get() {
 	Surfacer *surfacer = Surfacer::get();
 	CHECK(surfacer, "Surfacer is not initialized.");
-	return surfacer->get_manifest();
+	return surfacer->get_settings();
 }
 
-void SurfacerManifest::_bind_methods() {
+void SurfacerSettings::_bind_methods() {
 	ClassDB::bind_method(
-			D_METHOD("get_movement_manifest"),
-			&SurfacerManifest::get_movement_manifest);
+			D_METHOD("get_movement_settings"),
+			&SurfacerSettings::get_movement_settings);
 	ClassDB::bind_method(
-			D_METHOD("set_movement_manifest", "p_value"),
-			&SurfacerManifest::set_movement_manifest);
+			D_METHOD("set_movement_settings", "p_value"),
+			&SurfacerSettings::set_movement_settings);
 	ADD_PROPERTY(
-			PropertyInfo(Variant::OBJECT, "movement_manifest"),
-			"set_movement_manifest", "get_movement_manifest");
+			PropertyInfo(Variant::OBJECT, "movement_settings"),
+			"set_movement_settings", "get_movement_settings");
 
 	ClassDB::bind_method(
 			D_METHOD("get_log_surfacer_events"),
-			&SurfacerManifest::get_log_surfacer_events);
+			&SurfacerSettings::get_log_surfacer_events);
 	ClassDB::bind_method(
 			D_METHOD("set_log_surfacer_events", "p_value"),
-			&SurfacerManifest::set_log_surfacer_events);
+			&SurfacerSettings::set_log_surfacer_events);
 	ADD_PROPERTY(
 			PropertyInfo(Variant::BOOL, "flag_log_surfacer_events"),
 			"set_log_surfacer_events", "get_log_surfacer_events");
 
 	ClassDB::bind_method(
 			D_METHOD("get_log_surfacer_events_verbose"),
-			&SurfacerManifest::get_log_surfacer_events_verbose);
+			&SurfacerSettings::get_log_surfacer_events_verbose);
 	ClassDB::bind_method(
 			D_METHOD("set_log_surfacer_events_verbose", "p_value"),
-			&SurfacerManifest::set_log_surfacer_events_verbose);
+			&SurfacerSettings::set_log_surfacer_events_verbose);
 	ADD_PROPERTY(
 			PropertyInfo(Variant::BOOL, "flag_log_surfacer_events_verbose"),
 			"set_log_surfacer_events_verbose",
@@ -47,10 +47,10 @@ void SurfacerManifest::_bind_methods() {
 
 	ClassDB::bind_method(
 			D_METHOD("get_are_oddly_shaped_surfaces_used"),
-			&SurfacerManifest::get_are_oddly_shaped_surfaces_used);
+			&SurfacerSettings::get_are_oddly_shaped_surfaces_used);
 	ClassDB::bind_method(
 			D_METHOD("set_are_oddly_shaped_surfaces_used", "p_value"),
-			&SurfacerManifest::set_are_oddly_shaped_surfaces_used);
+			&SurfacerSettings::set_are_oddly_shaped_surfaces_used);
 	ADD_PROPERTY(
 			PropertyInfo(Variant::BOOL, "flag_are_oddly_shaped_surfaces_used"),
 			"set_are_oddly_shaped_surfaces_used",
@@ -58,10 +58,10 @@ void SurfacerManifest::_bind_methods() {
 
 	ClassDB::bind_method(
 			D_METHOD("get_floor_max_angle"),
-			&SurfacerManifest::get_floor_max_angle);
+			&SurfacerSettings::get_floor_max_angle);
 	ClassDB::bind_method(
 			D_METHOD("set_floor_max_angle", "p_value"),
-			&SurfacerManifest::set_floor_max_angle);
+			&SurfacerSettings::set_floor_max_angle);
 	ADD_PROPERTY(
 			PropertyInfo(Variant::BOOL, "flag_floor_max_angle"),
 			"set_floor_max_angle", "get_floor_max_angle");

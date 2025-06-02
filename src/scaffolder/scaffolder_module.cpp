@@ -1,8 +1,8 @@
 #include "scaffolder/scaffolder_module.h"
 
-#include "scaffolder/scaffolder_manifest.h"
-#include "scaffolder/test_scaffolder_manifest.h"
+#include "scaffolder/scaffolder_settings.h"
 #include "scaffolder/test_scaffolder_module.h"
+#include "scaffolder/test_scaffolder_settings.h"
 #include "snore_core/snore_core_module_utils.h"
 
 #include <godot_cpp/classes/engine.hpp>
@@ -12,7 +12,7 @@ using namespace godot;
 
 void Scaffolder::register_gdextension_types(ModuleInitializationLevel p_level) {
 	REGISTER_SNORE_CORE_CLASS(Scaffolder);
-	REGISTER_SNORE_CORE_CLASS(ScaffolderManifest);
+	REGISTER_SNORE_CORE_CLASS(ScaffolderSettings);
 
 	REGISTER_SNORE_CORE_MODULE(Scaffolder);
 }
@@ -34,7 +34,7 @@ Scaffolder *Scaffolder::get() {
 }
 
 void Scaffolder::set_up() {
-	// TODO: Do any initialization that depends on runtime manifest settings.
+	// TODO: Do any initialization that depends on runtime settings settings.
 	on_set_up_finished();
 }
 

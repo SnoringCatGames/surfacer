@@ -2,14 +2,14 @@
 #define SNORE_CORE_MAIN_MODULE_H
 
 #include "snore_core/internal_utils.h"
-#include "snore_core/snore_core_main_manifest.h"
+#include "snore_core/snore_core_main_settings.h"
 #include "snore_core/snore_core_module.h"
 
 #include <godot_cpp/godot.hpp>
 
 namespace godot {
 
-class SnoreCore : public SnoreCoreModule<SnoreCoreMainManifest> {
+class SnoreCore : public SnoreCoreModule<SnoreCoreMainSettings> {
 	GDCLASS(SnoreCore, SnoreCoreModule)
 
 public:
@@ -27,15 +27,15 @@ public:
 	virtual void reset() override;
 
 	virtual void set_up_from_binding(
-			const TypedArray<SnoreCoreManifest> &p_manifests) override {
-		SnoreCoreModule::set_up_from_binding(p_manifests);
+			const TypedArray<SnoreCoreSettings> &p_settings) override {
+		SnoreCoreModule::set_up_from_binding(p_settings);
 	}
 
 	void on_module_set_up_finished();
 
-	void register_all_manifests(
-			const TypedArray<SnoreCoreManifest> &p_manifests) {
-		manifests = p_manifests;
+	void register_all_settings(
+			const TypedArray<SnoreCoreSettings> &p_settings) {
+		settings = p_settings;
 	}
 
 	void register_module(Object *p_module);
@@ -48,7 +48,7 @@ protected:
 
 private:
 	std::vector<SnoreCoreModule *> modules;
-	TypedArray<SnoreCoreManifest> manifests;
+	TypedArray<SnoreCoreSettings> settings;
 
 	uint64_t last_set_up_time_msec = 0;
 };

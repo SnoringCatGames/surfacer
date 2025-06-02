@@ -36,11 +36,7 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 
 FIXME: LEFT OFF HERE: ---------------------------------------------------
 
-- Rename manifest to settings.
-
-- Finish porting SurfaceStore.
-
-- Implement and pass-in manifests from GDScript.
+- Implement and pass-in settings from GDScript.
 - Also implement and pass-in MovementProfile as a Resource.
 
 - Move Scaffolder logic from GDScript to C++.
@@ -72,10 +68,10 @@ FIXME: LEFT OFF HERE: ---------------------------------------------------
   - Create a second demo/ app (within Surfacer).
     - Have one demo use Surfacer and Scaffolder together.
     - Have the other use Surfacer without Scaffolder.
-    - Have SnoreCore expose a super-manifest, and move all of its
-    properties into a sub-manifest.
-    - The super-manifest will then wrap each framework's sub-manifest.
-    - Have both demo apps include their own sub-manifest.
+    - Have SnoreCore expose a super-settings, and move all of its
+    properties into a sub-settings.
+    - The super-settings will then wrap each framework's sub-settings.
+    - Have both demo apps include their own sub-settings.
     - Use TODOs heavily in all demos for now.
 
 - Port character_category.
@@ -117,10 +113,10 @@ FIXME: LEFT OFF HERE: ---------------------------------------------------
 
 - Implement stuff from "First steps"! :)
 
-- Figure out how to set up the Surfacer manifest.
+- Figure out how to set up the Surfacer settings.
   - This should be accessible from C++.
   - So does this need to be _defined_ from C++?
-  - This will be separate from the Scaffolder manifest, which is a plain .tres file.
+  - This will be separate from the Scaffolder settings, which is a plain .tres file.
 - Set up annotations system.
 - Set up surface parsing.
   - Just use vanilla tilemaps for now.
@@ -188,7 +184,7 @@ FIXME: LEFT OFF HERE: ---------------------------------------------------
   - ProjectSettings.add_property_info
     - There should also be a way in C++ to add and access...
   - The supported MovementParameters.
-  - Other Scaffolder and Surfacer Manifest properties.
+  - Other Scaffolder and Surfacer Settings properties.
   - Annotation colors and parameters.
 - Add a custom debug "monitor" for analyzing performance.
   - How long surface-parsing takes.

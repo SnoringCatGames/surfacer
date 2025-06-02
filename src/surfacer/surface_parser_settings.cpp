@@ -1,26 +1,26 @@
-#include "surfacer/surface_parser_manifest.h"
+#include "surfacer/surface_parser_settings.h"
 
 #include "snore_core/internal_utils.h"
-#include "surfacer/surfacer_manifest.h"
+#include "surfacer/surfacer_settings.h"
 
 #include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;
 
-Ref<SurfaceParserManifest> SurfaceParserManifest::get() {
-	Ref<SurfacerManifest> surfacer_manifest = SurfacerManifest::get();
-	return surfacer_manifest.is_valid()
-			? surfacer_manifest->get_surface_parser_manifest()
-			: Ref<SurfaceParserManifest>();
+Ref<SurfaceParserSettings> SurfaceParserSettings::get() {
+	Ref<SurfacerSettings> surfacer_settings = SurfacerSettings::get();
+	return surfacer_settings.is_valid()
+			? surfacer_settings->get_surface_parser_settings()
+			: Ref<SurfaceParserSettings>();
 }
 
-void SurfaceParserManifest::_bind_methods() {
+void SurfaceParserSettings::_bind_methods() {
 	ClassDB::bind_method(
 			D_METHOD("get_surfaces_tile_maps_collision_layer"),
-			&SurfaceParserManifest::get_surfaces_tile_maps_collision_layer);
+			&SurfaceParserSettings::get_surfaces_tile_maps_collision_layer);
 	ClassDB::bind_method(
 			D_METHOD("set_surfaces_tile_maps_collision_layer", "p_value"),
-			&SurfaceParserManifest::set_surfaces_tile_maps_collision_layer);
+			&SurfaceParserSettings::set_surfaces_tile_maps_collision_layer);
 	ADD_PROPERTY(
 			PropertyInfo(Variant::FLOAT, "surfaces_tile_maps_collision_layer"),
 			"set_surfaces_tile_maps_collision_layer",
@@ -28,13 +28,13 @@ void SurfaceParserManifest::_bind_methods() {
 
 	ClassDB::bind_method(
 			D_METHOD("get_corner_target_less_preferred_surface_side_offset"),
-			&SurfaceParserManifest::
+			&SurfaceParserSettings::
 					get_corner_target_less_preferred_surface_side_offset);
 	ClassDB::bind_method(
 			D_METHOD(
 					"set_corner_target_less_preferred_surface_side_offset",
 					"p_value"),
-			&SurfaceParserManifest::
+			&SurfaceParserSettings::
 					set_corner_target_less_preferred_surface_side_offset);
 	ADD_PROPERTY(
 			PropertyInfo(
@@ -45,13 +45,13 @@ void SurfaceParserManifest::_bind_methods() {
 
 	ClassDB::bind_method(
 			D_METHOD("get_corner_target_more_preferred_surface_side_offset"),
-			&SurfaceParserManifest::
+			&SurfaceParserSettings::
 					get_corner_target_more_preferred_surface_side_offset);
 	ClassDB::bind_method(
 			D_METHOD(
 					"set_corner_target_more_preferred_surface_side_offset",
 					"p_value"),
-			&SurfaceParserManifest::
+			&SurfaceParserSettings::
 					set_corner_target_more_preferred_surface_side_offset);
 	ADD_PROPERTY(
 			PropertyInfo(
@@ -62,13 +62,13 @@ void SurfaceParserManifest::_bind_methods() {
 
 	ClassDB::bind_method(
 			D_METHOD("get_collision_between_cells_distance_threshold"),
-			&SurfaceParserManifest::
+			&SurfaceParserSettings::
 					get_collision_between_cells_distance_threshold);
 	ClassDB::bind_method(
 			D_METHOD(
 					"set_collision_between_cells_distance_threshold",
 					"p_value"),
-			&SurfaceParserManifest::
+			&SurfaceParserSettings::
 					set_collision_between_cells_distance_threshold);
 	ADD_PROPERTY(
 			PropertyInfo(

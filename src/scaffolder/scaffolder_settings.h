@@ -1,7 +1,7 @@
-#ifndef SCAFFOLDER_MANIFEST_H
-#define SCAFFOLDER_MANIFEST_H
+#ifndef SCAFFOLDER_SETTINGS_H
+#define SCAFFOLDER_SETTINGS_H
 
-#include "snore_core/snore_core_manifest.h"
+#include "snore_core/snore_core_settings.h"
 
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/resource.hpp>
@@ -10,14 +10,14 @@
 
 namespace godot {
 
-class ScaffolderManifest : public SnoreCoreManifest {
-	GDCLASS(ScaffolderManifest, SnoreCoreManifest)
+class ScaffolderSettings : public SnoreCoreSettings {
+	GDCLASS(ScaffolderSettings, SnoreCoreSettings)
 
 public:
-	static Ref<ScaffolderManifest> get();
+	static Ref<ScaffolderSettings> get();
 
-	ScaffolderManifest() = default;
-	~ScaffolderManifest() = default;
+	ScaffolderSettings() = default;
+	~ScaffolderSettings() = default;
 
 	bool get_god_mode() const { return god_mode; }
 	void set_god_mode(bool p_value) { god_mode = p_value; }
@@ -125,4 +125,4 @@ private:
 
 } // namespace godot
 
-#endif // SCAFFOLDER_MANIFEST_H
+#endif // SCAFFOLDER_SETTINGS_H

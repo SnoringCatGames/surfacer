@@ -2,13 +2,13 @@
 #define SURFACER_MODULE_H
 
 #include "snore_core/snore_core_module.h"
-#include "surfacer/surfacer_manifest.h"
+#include "surfacer/surfacer_settings.h"
 
 #include <godot_cpp/godot.hpp>
 
 namespace godot {
 
-class Surfacer : public SnoreCoreModule<SurfacerManifest> {
+class Surfacer : public SnoreCoreModule<SurfacerSettings> {
 	GDCLASS(Surfacer, SnoreCoreModule)
 
 public:
@@ -21,8 +21,8 @@ public:
 	virtual void reset() override;
 
 	virtual void set_up_from_binding(
-			const TypedArray<SnoreCoreManifest> &p_manifests) override {
-		SnoreCoreModule::set_up_from_binding(p_manifests);
+			const TypedArray<SnoreCoreSettings> &p_settings) override {
+		SnoreCoreModule::set_up_from_binding(p_settings);
 	}
 
 protected:

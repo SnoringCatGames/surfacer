@@ -1,7 +1,7 @@
 #include "surfacer/surfacer_geometry.h"
 
 #include "snore_core/internal_utils.h"
-#include "surfacer/surfacer_manifest.h"
+#include "surfacer/surfacer_settings.h"
 
 #include <godot_cpp/classes/capsule_shape2d.hpp>
 #include <godot_cpp/classes/circle_shape2d.hpp>
@@ -1677,11 +1677,11 @@ bool SurfacerGeometry::are_position_wrappers_equal_with_epsilon(
 Surface::Side SurfacerGeometry::get_surface_side_for_normal(
 		const Vector2 &p_normal) {
 	if (ABS(p_normal.angle_to(vector2_up)) <=
-		SurfacerManifest::get()->get_floor_max_angle() + wall_angle_epsilon) {
+		SurfacerSettings::get()->get_floor_max_angle() + wall_angle_epsilon) {
 		return Surface::Side::FLOOR;
 	} else if (
 			ABS(p_normal.angle_to(vector2_down)) <=
-			SurfacerManifest::get()->get_floor_max_angle() +
+			SurfacerSettings::get()->get_floor_max_angle() +
 					wall_angle_epsilon) {
 		return Surface::Side::CEILING;
 	} else if (p_normal.x > 0) {
@@ -1699,7 +1699,7 @@ Vector2 SurfacerGeometry::
 				const Ref<Surface> &p_destination_surface) {
 	Vector2 projection = vector2_invalid;
 
-	if (SurfacerManifest::get()->get_are_oddly_shaped_surfaces_used() &&
+	if (SurfacerSettings::get()->get_are_oddly_shaped_surfaces_used() &&
 		(IS_VALID_REF(p_origin_surface) ||
 		 IS_VALID_REF(p_destination_surface))) {
 		Vector2 destination_projection = vector2_invalid;
