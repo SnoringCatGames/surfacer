@@ -7,6 +7,8 @@
 	<tutorials>
 	</tutorials>
 	<members>
+		<member name="advanced_user_settings_path" type="String" setter="set_user_settings_path" getter="get_user_settings_path" default="&quot;user://user_settings.tres&quot;">
+		</member>
 		<member name="canvas_layers" type="CanvasLayerConfig[]" setter="set_canvas_layers" getter="get_canvas_layers" default="[]">
 		</member>
 		<member name="debug_time_scale" type="float" setter="set_debug_time_scale" getter="get_debug_time_scale" default="1.0">

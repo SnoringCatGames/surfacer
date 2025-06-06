@@ -10,7 +10,8 @@ void CanvasLayerConfig::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_name"), &CanvasLayerConfig::get_name);
 	ClassDB::bind_method(
 			D_METHOD("set_name", "p_name"), &CanvasLayerConfig::set_name);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
+	ADD_PROPERTY(
+			PropertyInfo(Variant::STRING_NAME, "name"), "set_name", "get_name");
 
 	ClassDB::bind_method(
 			D_METHOD("get_process_mode"), &CanvasLayerConfig::get_process_mode);
@@ -27,7 +28,7 @@ void CanvasLayerConfig::_bind_methods() {
 CanvasLayerConfig::CanvasLayerConfig() {}
 
 CanvasLayerConfig::CanvasLayerConfig(
-		const String &p_name,
+		const StringName &p_name,
 		Node::ProcessMode p_process_mode) {
 	name = p_name;
 	process_mode = p_process_mode;

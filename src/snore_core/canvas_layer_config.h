@@ -13,11 +13,13 @@ class CanvasLayerConfig : public Resource {
 
 public:
 	CanvasLayerConfig();
-	CanvasLayerConfig(const String &p_name, Node::ProcessMode p_process_mode);
+	CanvasLayerConfig(
+			const StringName &p_name,
+			Node::ProcessMode p_process_mode);
 	~CanvasLayerConfig() = default;
 
-	String get_name() const { return name; }
-	void set_name(const String &p_name) { name = p_name; }
+	const StringName &get_name() const { return name; }
+	void set_name(const StringName &p_name) { name = p_name; }
 
 	Node::ProcessMode get_process_mode() const { return process_mode; }
 	void set_process_mode(Node::ProcessMode p_process_mode) {
@@ -28,7 +30,7 @@ protected:
 	static void _bind_methods();
 
 private:
-	String name;
+	StringName name;
 	Node::ProcessMode process_mode = Node::PROCESS_MODE_INHERIT;
 };
 

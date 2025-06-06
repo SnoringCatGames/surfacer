@@ -11,7 +11,7 @@
 		</member>
 		<member name="friction_multiplier" type="float" setter="set_friction_multiplier" getter="get_friction_multiplier" default="1.0">
 		</member>
-		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
+		<member name="name" type="StringName" setter="set_name" getter="get_name" default="&amp;&quot;&quot;">
 		</member>
 		<member name="speed_multiplier" type="float" setter="set_speed_multiplier" getter="get_speed_multiplier" default="1.0">
 		</member>

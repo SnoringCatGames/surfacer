@@ -2,19 +2,21 @@ class_name DemoMain
 extends Node
 
 
-@export var manifest: ScaffolderManifest
+# FIXME: LEFT OFF HERE: Implement manifests. ------------------------------
+@export var manifests: Array[SnoreCoreSettings] = []
+
+@export var run_tests := true
 
 
 func _ready() -> void:
-    # FIXME: LEFT OFF HERE: Implement manifests. ------------------------------
-    var manifests: TypedArray[ScaffolderManifest] = []
-    
-    SnoreCore.connect("set_up_finished", self, "_on_snore_core_set_up_finished")
+    G.snore_core = SnoreCore.get_module("SnoreCore");
+    G.scaffolder = SnoreCore.get_module("Scaffolder");
+    G.surfacer = SnoreCore.get_module("Surfacer");
+    G.snore_core.connect("all_modules_set_up_finished", _on_snore_core_set_up_finished)
     SnoreCore.set_up(manifests)
 
-    G.main = self
-
-    S.set_up(manifest)
+    if run_tests:
+        SnoreCore.run_tests()
 
     # TODO: REMOVE
     var foo := Surface.new()
@@ -23,8 +25,6 @@ func _ready() -> void:
     foo.get_last_point()
     Geometry.are_colors_equal_with_epsilon(Color.WHITE, Color.BLACK, 0.0001)
     S.log.print(foo.to_string(false))
-
-    SnoreCore.run_tests()
 
 
 func _on_snore_core_set_up_finished() -> void:

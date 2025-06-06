@@ -12,21 +12,26 @@ class Surfacer : public SnoreCoreModule<SurfacerSettings> {
 	GDCLASS(Surfacer, SnoreCoreModule)
 
 public:
+	static const constexpr char *name = "Surfacer";
+
 	static void register_gdextension_types(ModuleInitializationLevel p_level);
 	static void unregister_gdextension_types(ModuleInitializationLevel p_level);
 
 	static Surfacer *get();
 
+	virtual const StringName &get_name() const override {
+		static const StringName string_name = StringName(name);
+		return string_name;
+	}
+
 	virtual void set_up() override;
 	virtual void reset() override;
 
-	virtual void set_up_from_binding(
-			const TypedArray<SnoreCoreSettings> &p_settings) override {
-		SnoreCoreModule::set_up_from_binding(p_settings);
-	}
-
 protected:
 	static void _bind_methods();
+
+private:
+	static bool are_types_registered;
 };
 
 } //namespace godot

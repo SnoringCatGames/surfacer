@@ -28,7 +28,20 @@
 
 using namespace godot;
 
+bool SnoreCore::are_types_registered = false;
+
 void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+
+	// This method is idempotent, so we check here whether it has been called
+	// already.
+	if (are_types_registered) {
+		return;
+	}
+	are_types_registered = true;
+
 	REGISTER_SNORE_CORE_ABSTRACT_CLASS(SnoreCoreSettings);
 	REGISTER_SNORE_CORE_ABSTRACT_CLASS(SnoreCoreModule);
 	REGISTER_SNORE_CORE_VIRTUAL_CLASS(Annotation);
@@ -56,60 +69,101 @@ void SnoreCore::unregister_gdextension_types(
 }
 
 void SnoreCore::_bind_methods() {
-	BIND_SNORE_CORE_MODULE_METHODS(SnoreCore);
 	ClassDB::bind_static_method(
-			"SnoreCore", D_METHOD("run_tests"), &SnoreCore::run_tests);
+			name, D_METHOD("set_up", "p_settings"),
+			&SnoreCore::set_up_from_binding);
+	ClassDB::bind_static_method(
+			name, D_METHOD("run_tests"), &SnoreCore::run_tests);
+	ClassDB::bind_static_method(
+			name, D_METHOD("get_module", "p_name"), &SnoreCore::get_module);
+	ClassDB::bind_static_method(
+			name, D_METHOD("get_modules"), &SnoreCore::get_modules);
+
+	ADD_SIGNAL(MethodInfo(
+			"module_set_up_finished",
+			PropertyInfo(Variant::STRING_NAME, "name")));
+	ADD_SIGNAL(MethodInfo("all_modules_set_up_finished"));
 }
 
 SnoreCore *SnoreCore::get() {
 	return static_cast<SnoreCore *>(
-			Engine::get_singleton()->get_singleton("SnoreCore"));
+			Engine::get_singleton()->get_singleton(name));
 }
 
-void SnoreCore::set_up() {
-	// Check that we're only set_upping once at the start of the app.
+void SnoreCore::set_up_from_binding(
+		const TypedArray<SnoreCoreSettings> &p_all_settings) {
+	SnoreCore *Main = SnoreCore::get();
+	CHECK_SIMPLE(Main);
+	Main->set_up_main(p_all_settings);
+}
+
+void SnoreCore::set_up_main(
+		const TypedArray<SnoreCoreSettings> &p_all_settings) {
+	// Check that we're only setting up once at the start of the app.
 	const Time *time = Time::get_singleton();
 	const uint64_t current_time_msec = time->get_ticks_msec();
 	ENSURE(current_time_msec > last_set_up_time_msec + 500,
 		   "Set_up should only be called once at the start of the app.");
 	last_set_up_time_msec = current_time_msec;
 
-	for (SnoreCoreModule *module : modules) {
-		module->set_up_base(settings);
+	for (const std::pair<const StringName, SnoreCoreModule *> &pair : modules) {
+		SnoreCoreSettings *settings_ptr =
+				pair.second->get_settings_from_list(p_all_settings);
+		Ref<SnoreCoreSettings> settings = Ref<SnoreCoreSettings>(settings_ptr);
+		pair.second->set_up_base(settings);
 	}
 }
+
+void SnoreCore::set_up() {}
 
 void SnoreCore::reset() {
 	// TODO: Clear state.
 	// TODO: Cancel any in-progress set_up operations.
 }
 
-void SnoreCore::on_module_set_up_finished() {
-	if (!ENSURE(set_up_phase == SET_UP_PHASE::IN_PROGRESS,
+void SnoreCore::on_module_set_up_finished(const StringName &p_name) {
+	SnoreCoreModule *module = get_module(p_name);
+	if (!ENSURE_SIMPLE(module)) {
+		return;
+	}
+
+	if (!ENSURE(module->get_set_up_phase() == SET_UP_PHASE::IN_PROGRESS,
 				"Cannot finish set_up when it is not in progress.")) {
 		return;
 	}
-	for (SnoreCoreModule *module : modules) {
-		if (module->get_is_set_up_finished()) {
+
+	if (p_name != StringName(SnoreCore::name)) {
+		// For non-SnoreCore modules, emit the signal now, before a possible
+		// early-out.
+		emit_signal("module_set_up_finished", p_name);
+	}
+
+	for (const std::pair<const StringName, SnoreCoreModule *> &pair : modules) {
+		if (!pair.second->get_is_set_up_finished() &&
+			pair.first != StringName(SnoreCore::name)) {
 			return;
 		}
 	}
+
 	on_set_up_finished();
+
+	// For the SnoreCore module, emit the signal now, after confirming that all
+	// other modules are finished.
+	emit_signal("module_set_up_finished", SnoreCore::name);
+
+	emit_signal("all_modules_set_up_finished");
 }
 
 void SnoreCore::register_module(Object *p_module) {
 	SnoreCoreModule *module = static_cast<SnoreCoreModule *>(p_module);
 	CHECK(module, "Cannot register a null module.");
-	modules.push_back(module);
+	modules[module->get_name()] = module;
 }
 
 void SnoreCore::unregister_module(Object *p_module) {
 	SnoreCoreModule *module = static_cast<SnoreCoreModule *>(p_module);
 	ENSURE(module, "Cannot unregister a null module.");
-	// Use std::remove to shift other modules to the beginning, then erase
-	// the remaining elements at the end.
-	modules.erase(
-			std::remove(modules.begin(), modules.end(), module), modules.end());
+	modules.erase(module->get_name());
 }
 
 void SnoreCore::run_tests() {

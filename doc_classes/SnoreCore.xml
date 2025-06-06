@@ -7,12 +7,23 @@
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="get_module" qualifiers="static">
+			<return type="SnoreCoreModule" />
+			<param index="0" name="p_name" type="StringName" />
+			<description>
+			</description>
+		</method>
+		<method name="get_modules" qualifiers="static">
+			<return type="SnoreCoreModule[]" />
+			<description>
+			</description>
+		</method>
 		<method name="run_tests" qualifiers="static">
 			<return type="void" />
 			<description>
 			</description>
 		</method>
-		<method name="set_up">
+		<method name="set_up" qualifiers="static">
 			<return type="void" />
 			<param index="0" name="p_settings" type="SnoreCoreSettings[]" />
 			<description>
@@ -20,7 +31,12 @@
 		</method>
 	</methods>
 	<signals>
-		<signal name="set_up_finished">
+		<signal name="all_modules_set_up_finished">
+			<description>
+			</description>
+		</signal>
+		<signal name="module_set_up_finished">
+			<param index="0" name="name" type="StringName" />
 			<description>
 			</description>
 		</signal>

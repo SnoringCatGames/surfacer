@@ -48,10 +48,19 @@
 
 using namespace godot;
 
+bool Surfacer::are_types_registered = false;
+
 void Surfacer::register_gdextension_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+
+	// This method is idempotent, so we check here whether it has been called
+	// already.
+	if (are_types_registered) {
+		return;
+	}
+	are_types_registered = true;
 
 	REGISTER_SNORE_CORE_CLASS(MovementProfile);
 	REGISTER_SNORE_CORE_CLASS(SurfaceGraph);
@@ -88,11 +97,11 @@ void Surfacer::unregister_gdextension_types(ModuleInitializationLevel p_level) {
 	UNREGISTER_SNORE_CORE_MODULE(Surfacer);
 }
 
-void Surfacer::_bind_methods() { BIND_SNORE_CORE_MODULE_METHODS(Surfacer); }
+void Surfacer::_bind_methods() {}
 
 Surfacer *Surfacer::get() {
 	return static_cast<Surfacer *>(
-			Engine::get_singleton()->get_singleton("Surfacer"));
+			Engine::get_singleton()->get_singleton(name));
 }
 
 void Surfacer::set_up() {

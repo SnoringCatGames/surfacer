@@ -10,7 +10,20 @@
 
 using namespace godot;
 
+bool Scaffolder::are_types_registered = false;
+
 void Scaffolder::register_gdextension_types(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+
+	// This method is idempotent, so we check here whether it has been called
+	// already.
+	if (are_types_registered) {
+		return;
+	}
+	are_types_registered = true;
+
 	REGISTER_SNORE_CORE_CLASS(Scaffolder);
 	REGISTER_SNORE_CORE_CLASS(ScaffolderSettings);
 
@@ -26,11 +39,11 @@ void Scaffolder::unregister_gdextension_types(
 	UNREGISTER_SNORE_CORE_MODULE(Scaffolder);
 }
 
-void Scaffolder::_bind_methods() { BIND_SNORE_CORE_MODULE_METHODS(Scaffolder); }
+void Scaffolder::_bind_methods() {}
 
 Scaffolder *Scaffolder::get() {
 	return static_cast<Scaffolder *>(
-			Engine::get_singleton()->get_singleton("Scaffolder"));
+			Engine::get_singleton()->get_singleton(name));
 }
 
 void Scaffolder::set_up() {

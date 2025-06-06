@@ -10,16 +10,10 @@
 
 namespace godot {
 
-#define BIND_SNORE_CORE_MODULE_METHODS(m_class)                                \
-	ADD_SIGNAL(MethodInfo("set_up_finished"));                                 \
-	ClassDB::bind_method(                                                      \
-			D_METHOD("set_up", "p_settings"), &m_class::set_up_from_binding)
-
 template <typename SettingsType> class SnoreCoreModule;
 
 namespace SnoreCoreModuleInternal {
-void set_up_main_module(const TypedArray<SnoreCoreSettings> &p_settings);
-void notify_main_module_of_module_set_up_finished(Object *p_module);
+void notify_main_module_of_module_set_up_finished(const StringName &p_name);
 } // namespace SnoreCoreModuleInternal
 
 template <typename SettingsType> class SnoreCoreModule : public Object {
@@ -39,6 +33,8 @@ public:
 	SnoreCoreModule() { settings = instantiate_ref<SettingsType>(); }
 	virtual ~SnoreCoreModule() { settings.unref(); }
 
+	virtual const StringName &get_name() const = 0;
+
 	// This is called during game runtime, after settings are loaded.
 	virtual void set_up() = 0;
 
@@ -47,29 +43,20 @@ public:
 
 	// This resets some base state before calling reset().
 	void reset_base() {
+		settings.unref();
 		set_up_phase = SET_UP_PHASE::NOT_STARTED;
 		reset();
 	}
 
 	// This sets some tracking state before calling set_up().
-	void set_up_base(const TypedArray<SnoreCoreSettings> &p_settings) {
-		SettingsType *settings_ptr = get_settings_from_list(p_settings);
-		CHECK(settings_ptr,
-			  "Cannot find settings of type: " +
-					  String(typeid(SettingsType).name()));
-		settings = Ref<SettingsType>(settings_ptr);
-
+	void set_up_base(const Ref<SettingsType> &p_settings) {
 		reset_base();
 		set_up_phase = SET_UP_PHASE::IN_PROGRESS;
+		settings = p_settings;
 		set_up();
 	}
 
-	// Redirect the overall set_up flow to start with the main module.
-	// This enables the client to call set_up() from any module.
-	virtual void set_up_from_binding(
-			const TypedArray<SnoreCoreSettings> &p_settings) {
-		SnoreCoreModuleInternal::set_up_main_module(p_settings);
-	}
+	SET_UP_PHASE get_set_up_phase() const { return set_up_phase; }
 
 	bool get_is_set_up_started() const {
 		return set_up_phase == SET_UP_PHASE::IN_PROGRESS ||
@@ -82,10 +69,30 @@ public:
 
 	Ref<SettingsType> get_settings() const { return settings; }
 
+	SettingsType *get_settings_from_list(
+			TypedArray<SnoreCoreSettings> p_all_settings) const {
+		const char *type_name = typeid(SettingsType).name();
+
+		for (int i = 0; i < p_all_settings.size(); i++) {
+			Object *object = p_all_settings[i].get_validated_object();
+			SnoreCoreSettings *settings_obj =
+					Object::cast_to<SnoreCoreSettings>(object);
+			CHECK_SIMPLE(settings_obj);
+			if (settings_obj->is_class(type_name)) {
+				return static_cast<SettingsType *>(settings_obj);
+			}
+		}
+
+		CHECK(false,
+			  "Cannot find settings of type: " +
+					  String(typeid(SettingsType).name()));
+
+		return nullptr;
+	}
+
 protected:
 	static void _bind_methods() {}
 
-	bool are_types_registered = false;
 	SET_UP_PHASE set_up_phase = SET_UP_PHASE::NOT_STARTED;
 
 	Ref<SettingsType> settings;
@@ -97,25 +104,9 @@ protected:
 		}
 
 		set_up_phase = SET_UP_PHASE::FINISHED;
-		emit_signal("set_up_finished");
 
 		SnoreCoreModuleInternal::notify_main_module_of_module_set_up_finished(
-				this);
-	}
-
-	SettingsType *get_settings_from_list(
-			TypedArray<SnoreCoreSettings> p_settings) const {
-		const char *type_name = typeid(SettingsType).name();
-		for (int i = 0; i < p_settings.size(); i++) {
-			Object *object = p_settings[i].get_validated_object();
-			SnoreCoreSettings *settings_obj =
-					Object::cast_to<SnoreCoreSettings>(object);
-			CHECK_SIMPLE(settings_obj);
-			if (settings_obj->is_class(type_name)) {
-				return static_cast<SettingsType *>(settings_obj);
-			}
-		}
-		return nullptr;
+				get_name());
 	}
 };
 

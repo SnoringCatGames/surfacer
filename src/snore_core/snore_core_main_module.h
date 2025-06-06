@@ -13,42 +13,75 @@ class SnoreCore : public SnoreCoreModule<SnoreCoreMainSettings> {
 	GDCLASS(SnoreCore, SnoreCoreModule)
 
 public:
+	static const constexpr char *name = "SnoreCore";
+
 	static void register_gdextension_types(ModuleInitializationLevel p_level);
 	static void unregister_gdextension_types(ModuleInitializationLevel p_level);
 
 	static void run_tests();
 
+	static void set_up_from_binding(
+			const TypedArray<SnoreCoreSettings> &p_all_settings);
+
 	static SnoreCore *get();
+
+	static SnoreCoreModule *get_module(const StringName &p_name) {
+		SnoreCore *Main = SnoreCore::get();
+		CHECK_SIMPLE(Main);
+		if (ENSURE(Main->modules.find(p_name) == Main->modules.end(),
+				   "Module not found: " + p_name)) {
+			return nullptr;
+		}
+		return Main->modules[p_name];
+	}
+
+	static TypedArray<SnoreCoreModule> get_modules() {
+		SnoreCore *Main = SnoreCore::get();
+		CHECK_SIMPLE(Main);
+
+		TypedArray<SnoreCoreModule> result;
+		result.resize(Main->modules.size());
+
+		for (const std::pair<const StringName, SnoreCoreModule *> &pair :
+			 Main->modules) {
+			result.push_back(pair.second);
+		}
+
+		return result;
+	}
 
 	SnoreCore() = default;
 	~SnoreCore() = default;
 
+	virtual const StringName &get_name() const override {
+		static const StringName string_name = StringName(name);
+		return string_name;
+	}
+
 	virtual void set_up() override;
 	virtual void reset() override;
 
-	virtual void set_up_from_binding(
-			const TypedArray<SnoreCoreSettings> &p_settings) override {
-		SnoreCoreModule::set_up_from_binding(p_settings);
-	}
+	void set_up_main(const TypedArray<SnoreCoreSettings> &p_all_settings);
 
-	void on_module_set_up_finished();
-
-	void register_all_settings(
-			const TypedArray<SnoreCoreSettings> &p_settings) {
-		settings = p_settings;
-	}
+	void on_module_set_up_finished(const StringName &p_name);
 
 	void register_module(Object *p_module);
 	void unregister_module(Object *p_module);
 
 	bool is_modules_empty() const { return modules.empty(); }
 
+	uint64_t get_last_set_up_time_msec() const { return last_set_up_time_msec; }
+	void set_last_set_up_time_msec(uint64_t p_value) {
+		last_set_up_time_msec = p_value;
+	}
+
 protected:
 	static void _bind_methods();
 
 private:
-	std::vector<SnoreCoreModule *> modules;
-	TypedArray<SnoreCoreSettings> settings;
+	static bool are_types_registered;
+
+	std::unordered_map<StringName, SnoreCoreModule *> modules;
 
 	uint64_t last_set_up_time_msec = 0;
 };

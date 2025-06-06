@@ -12,8 +12,8 @@ public:
 	SurfaceProperties() = default;
 	~SurfaceProperties() = default;
 
-	void set_name(String p_name) { name = p_name; }
-	String get_name() const { return name; }
+	void set_name(const StringName &p_name) { name = p_name; }
+	const StringName &get_name() const { return name; }
 
 	void set_can_grab(bool p_can_grab) { can_grab = p_can_grab; }
 	bool get_can_grab() const { return can_grab; }
@@ -39,7 +39,7 @@ private:
 	// - And add a way to validate that this matches the normal TileSet
 	// encoding.
 
-	String name;
+	StringName name;
 	bool can_grab = true;
 	float friction_multiplier = 1.0f;
 	float speed_multiplier = 1.0f;

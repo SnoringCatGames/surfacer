@@ -82,6 +82,19 @@ void SnoreCoreMainSettings::_bind_methods() {
 	ADD_PROPERTY(
 			EXPORTED_PROPERTY_INFO(Variant::BOOL, "render_debug_annotations"),
 			"set_render_debug_annotations", "get_render_debug_annotations");
+
+	ADD_GROUP("Advanced", "advanced_");
+
+	ClassDB::bind_method(
+			D_METHOD("get_user_settings_path"),
+			&SnoreCoreMainSettings::get_user_settings_path);
+	ClassDB::bind_method(
+			D_METHOD("set_user_settings_path", "p_value"),
+			&SnoreCoreMainSettings::set_user_settings_path);
+	ADD_PROPERTY(
+			EXPORTED_PROPERTY_INFO(
+					Variant::STRING_NAME, "advanced_user_settings_path"),
+			"set_user_settings_path", "get_user_settings_path");
 }
 
 Ref<SnoreCoreMainSettings> SnoreCoreMainSettings::get() {
