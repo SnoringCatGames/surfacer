@@ -27,6 +27,10 @@ public:
 	virtual void set_up() override;
 	virtual void reset() override;
 
+	// TODO: This probably shouldn't be needed, but the Binding logic complains
+	//       about duplicates when binding to the generic parent version.
+	Ref<ScaffolderSettings> get_scaffolder_settings() const { return settings; }
+
 protected:
 	static void _bind_methods();
 

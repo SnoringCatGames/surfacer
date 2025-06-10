@@ -18,6 +18,11 @@
 			<description>
 			</description>
 		</method>
+		<method name="get_settings" qualifiers="const">
+			<return type="SnoreCoreMainSettings" />
+			<description>
+			</description>
+		</method>
 		<method name="run_tests" qualifiers="static">
 			<return type="void" />
 			<description>

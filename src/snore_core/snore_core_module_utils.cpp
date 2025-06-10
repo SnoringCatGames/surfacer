@@ -7,9 +7,12 @@ using namespace godot;
 void SnoreCoreModuleUtils_Internal::RegisterSnoreCoreMainModuleIfNotPresent() {
 	if (!Engine::get_singleton()->has_singleton(SnoreCore::name)) {
 		REGISTER_ENGINE_SINGLETON(SnoreCore);
+		SnoreCoreModuleUtils_Internal::
+				RegisterSnoreCoreModuleToSnoreCoreMainModule(SnoreCore::name);
 	}
 }
 
+// FIXME: This will never work, since SnoreCore is registered to itself.
 void SnoreCoreModuleUtils_Internal::
 		UnregisterSnoreCoreMainModuleIfNoModulesRemain() {
 	SnoreCore *main = static_cast<SnoreCore *>(
@@ -25,7 +28,7 @@ void SnoreCoreModuleUtils_Internal::
 	SnoreCore *main = static_cast<SnoreCore *>(
 			Engine::get_singleton()->get_singleton(SnoreCore::name));
 	Object *module = Engine::get_singleton()->get_singleton(p_module_name);
-	if (main && module) {
+	if (ENSURE_SIMPLE(main && module)) {
 		main->register_module(module);
 	}
 }

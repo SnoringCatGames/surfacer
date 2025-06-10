@@ -83,6 +83,9 @@ void SnoreCore::_bind_methods() {
 			"module_set_up_finished",
 			PropertyInfo(Variant::STRING_NAME, "name")));
 	ADD_SIGNAL(MethodInfo("all_modules_set_up_finished"));
+
+	ClassDB::bind_method(
+			D_METHOD("get_settings"), &SnoreCore::get_snore_core_settings);
 }
 
 SnoreCore *SnoreCore::get() {

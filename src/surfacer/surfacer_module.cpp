@@ -97,7 +97,10 @@ void Surfacer::unregister_gdextension_types(ModuleInitializationLevel p_level) {
 	UNREGISTER_SNORE_CORE_MODULE(Surfacer);
 }
 
-void Surfacer::_bind_methods() {}
+void Surfacer::_bind_methods() {
+	ClassDB::bind_method(
+			D_METHOD("get_settings"), &Surfacer::get_surfacer_settings);
+}
 
 Surfacer *Surfacer::get() {
 	return static_cast<Surfacer *>(

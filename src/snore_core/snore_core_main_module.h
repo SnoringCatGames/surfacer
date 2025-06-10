@@ -28,8 +28,8 @@ public:
 	static SnoreCoreModule *get_module(const StringName &p_name) {
 		SnoreCore *Main = SnoreCore::get();
 		CHECK_SIMPLE(Main);
-		if (ENSURE(Main->modules.find(p_name) == Main->modules.end(),
-				   "Module not found: " + p_name)) {
+		if (!ENSURE(Main->modules.find(p_name) != Main->modules.end(),
+					"Module not found: " + p_name)) {
 			return nullptr;
 		}
 		return Main->modules[p_name];
@@ -73,6 +73,12 @@ public:
 	uint64_t get_last_set_up_time_msec() const { return last_set_up_time_msec; }
 	void set_last_set_up_time_msec(uint64_t p_value) {
 		last_set_up_time_msec = p_value;
+	}
+
+	// TODO: This probably shouldn't be needed, but the Binding logic complains
+	//       about duplicates when binding to the generic parent version.
+	Ref<SnoreCoreMainSettings> get_snore_core_settings() const {
+		return settings;
 	}
 
 protected:

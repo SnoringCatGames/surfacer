@@ -3,17 +3,22 @@ extends Node
 
 
 # FIXME: LEFT OFF HERE: Implement manifests. ------------------------------
-@export var manifests: Array[SnoreCoreSettings] = []
+@export var all_settings: Array[SnoreCoreSettings] = [
+    SnoreCoreMainSettings.new(),
+    ScaffolderSettings.new(),
+    SurfacerSettings.new(),
+]
 
 @export var run_tests := true
 
 
 func _ready() -> void:
-    G.snore_core = SnoreCore.get_module("SnoreCore");
-    G.scaffolder = SnoreCore.get_module("Scaffolder");
-    G.surfacer = SnoreCore.get_module("Surfacer");
+    G.snore_core = SnoreCore.get_module("SnoreCore")
+    G.scaffolder = SnoreCore.get_module("Scaffolder")
+    G.surfacer = SnoreCore.get_module("Surfacer")
+
     G.snore_core.connect("all_modules_set_up_finished", _on_snore_core_set_up_finished)
-    SnoreCore.set_up(manifests)
+    SnoreCore.set_up(all_settings)
 
     if run_tests:
         SnoreCore.run_tests()
@@ -29,6 +34,10 @@ func _ready() -> void:
 
 func _on_snore_core_set_up_finished() -> void:
     S.log.print("SnoreCore set up finished.")
+
+    G.snore_core_settings = G.snore_core.get_settings()
+    G.scaffolder_settings = G.scaffolder.get_settings()
+    G.surfacer_settings = G.surfacer.get_settings()
 
 
 func _on_gd_example_position_changed(node: Object, new_pos: Vector2) -> void:

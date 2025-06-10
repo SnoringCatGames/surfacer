@@ -39,7 +39,10 @@ void Scaffolder::unregister_gdextension_types(
 	UNREGISTER_SNORE_CORE_MODULE(Scaffolder);
 }
 
-void Scaffolder::_bind_methods() {}
+void Scaffolder::_bind_methods() {
+	ClassDB::bind_method(
+			D_METHOD("get_settings"), &Scaffolder::get_scaffolder_settings);
+}
 
 Scaffolder *Scaffolder::get() {
 	return static_cast<Scaffolder *>(

@@ -6,4 +6,11 @@
 	</description>
 	<tutorials>
 	</tutorials>
+	<methods>
+		<method name="get_settings" qualifiers="const">
+			<return type="ScaffolderSettings" />
+			<description>
+			</description>
+		</method>
+	</methods>
 </class>
