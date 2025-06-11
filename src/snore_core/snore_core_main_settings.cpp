@@ -99,8 +99,16 @@ void SnoreCoreMainSettings::_bind_methods() {
 
 Ref<SnoreCoreMainSettings> SnoreCoreMainSettings::get() {
 	SnoreCore *snore_core_main = SnoreCore::get();
-	CHECK(snore_core_main, "SnoreCore is not initialized.");
-	return snore_core_main->get_settings();
+	if (!ENSURE(snore_core_main, "SnoreCore is not initialized.")) {
+		return Ref<SnoreCoreMainSettings>();
+	}
+	Ref<SnoreCoreMainSettings> settings = snore_core_main->get_settings();
+	if (!ENSURE(settings.is_valid(),
+				"SnoreCore.set_up has not been called with "
+				"SnoreCoreMainSettings.")) {
+		return Ref<SnoreCoreMainSettings>();
+	}
+	return settings;
 }
 
 TypedArray<CanvasLayerConfig> SnoreCoreMainSettings::get_canvas_layers() const {

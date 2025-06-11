@@ -89,15 +89,19 @@ void SnoreCore::_bind_methods() {
 }
 
 SnoreCore *SnoreCore::get() {
-	return static_cast<SnoreCore *>(
+	SnoreCore *snore_core = static_cast<SnoreCore *>(
 			Engine::get_singleton()->get_singleton(name));
+	ENSURE(snore_core, "SnoreCore is not initialized.");
+	return snore_core;
 }
 
 void SnoreCore::set_up_from_binding(
 		const TypedArray<SnoreCoreSettings> &p_all_settings) {
-	SnoreCore *Main = SnoreCore::get();
-	CHECK_SIMPLE(Main);
-	Main->set_up_main(p_all_settings);
+	SnoreCore *main = SnoreCore::get();
+	if (!ENSURE(main, "SnoreCore is not initialized.")) {
+		return;
+	}
+	main->set_up_main(p_all_settings);
 }
 
 void SnoreCore::set_up_main(
@@ -159,7 +163,9 @@ void SnoreCore::on_module_set_up_finished(const StringName &p_name) {
 
 void SnoreCore::register_module(Object *p_module) {
 	SnoreCoreModule *module = static_cast<SnoreCoreModule *>(p_module);
-	CHECK(module, "Cannot register a null module.");
+	if (!ENSURE(module, "Cannot register a null module.")) {
+		return;
+	}
 	modules[module->get_name()] = module;
 }
 

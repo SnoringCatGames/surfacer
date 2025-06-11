@@ -9,9 +9,17 @@ using namespace godot;
 
 Ref<SurfaceParserSettings> SurfaceParserSettings::get() {
 	Ref<SurfacerSettings> surfacer_settings = SurfacerSettings::get();
-	return surfacer_settings.is_valid()
-			? surfacer_settings->get_surface_parser_settings()
-			: Ref<SurfaceParserSettings>();
+	if (!surfacer_settings.is_valid()) {
+		return Ref<SurfaceParserSettings>();
+	}
+	Ref<SurfaceParserSettings> surface_parser_settings =
+			surfacer_settings->get_surface_parser_settings();
+	if (!ENSURE(surface_parser_settings.is_valid(),
+				"SurfacerSettings has not been set-up with "
+				"SurfaceParserSettings.")) {
+		return Ref<SurfacerSettings>();
+	}
+	return surface_parser_settings;
 }
 
 void SurfaceParserSettings::_bind_methods() {

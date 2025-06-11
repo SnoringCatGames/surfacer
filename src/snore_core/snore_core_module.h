@@ -77,15 +77,17 @@ public:
 			Object *object = p_all_settings[i].get_validated_object();
 			SnoreCoreSettings *settings_obj =
 					Object::cast_to<SnoreCoreSettings>(object);
-			CHECK_SIMPLE(settings_obj);
+			if (!ENSURE_SIMPLE(settings_obj)) {
+				return nullptr;
+			}
 			if (settings_obj->is_class(type_name)) {
 				return static_cast<SettingsType *>(settings_obj);
 			}
 		}
 
-		CHECK(false,
-			  "Cannot find settings of type: " +
-					  String(typeid(SettingsType).name()));
+		ENSURE(false,
+			   "Cannot find settings of type: " +
+					   String(typeid(SettingsType).name()));
 
 		return nullptr;
 	}

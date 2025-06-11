@@ -29,15 +29,20 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 ### Limitations:
 
 - Breakpoint debugging when using the editor requires re-attaching the debugger to the project process when running the game through the editor (https://godotforums.org/d/32073-debug-c-gdextension/20).
+  - Alternatively, I use multiple VSCode launch configs, and switch between "Launch Editor" and "Launch Project" when I need to debug GDScript vs C++ logic.
 - GDExtension does not support arguments to constructors (https://github.com/godotengine/godot-cpp/issues/953).
+  - So I have a convention across my frameworks where most objects define a set_up method that is called after construction.
+- GDExtension does not support static properties.
+  - I have a handful of singletons used for interacting with my frameworks.
+  - It'd be nice if the client could access framework state with property syntax rather than getter method syntax.
 - `doctool` does not support automatically parsing code comments.
+  - So I'm adding all of my doc comments to header member declarations with the plan to hand-copy each comment to XML when publishing my frameworks (I'll probably ask AI to do this, so it shouldn't actually be _too_ incredibly painful...).
 
 ### Next
 
 FIXME: LEFT OFF HERE: ---------------------------------------------------
 
 - Fix GDScript errors.
-
 - Implement and pass-in settings from GDScript.
 - Also implement and pass-in MovementProfile as a Resource.
 

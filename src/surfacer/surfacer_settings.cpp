@@ -11,8 +11,16 @@ using namespace godot;
 
 Ref<SurfacerSettings> SurfacerSettings::get() {
 	Surfacer *surfacer = Surfacer::get();
-	CHECK(surfacer, "Surfacer is not initialized.");
-	return surfacer->get_settings();
+	if (!ENSURE(surfacer, "Surfacer is not initialized.")) {
+		return Ref<SurfacerSettings>();
+	}
+	Ref<SurfacerSettings> settings = surfacer->get_settings();
+	if (!ENSURE(settings.is_valid(),
+				"SnoreCore.set_up has not been called with "
+				"SurfacerSettings.")) {
+		return Ref<SurfacerSettings>();
+	}
+	return settings;
 }
 
 void SurfacerSettings::_bind_methods() {
@@ -25,6 +33,16 @@ void SurfacerSettings::_bind_methods() {
 	ADD_PROPERTY(
 			PropertyInfo(Variant::OBJECT, "movement_settings"),
 			"set_movement_settings", "get_movement_settings");
+
+	ClassDB::bind_method(
+			D_METHOD("get_surface_parser_settings"),
+			&SurfacerSettings::get_surface_parser_settings);
+	ClassDB::bind_method(
+			D_METHOD("set_surface_parser_settings", "p_value"),
+			&SurfacerSettings::set_surface_parser_settings);
+	ADD_PROPERTY(
+			PropertyInfo(Variant::OBJECT, "surface_parser_settings"),
+			"set_surface_parser_settings", "get_surface_parser_settings");
 
 	ClassDB::bind_method(
 			D_METHOD("get_log_surfacer_events"),

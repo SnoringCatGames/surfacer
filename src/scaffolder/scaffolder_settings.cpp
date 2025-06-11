@@ -207,8 +207,16 @@ void ScaffolderSettings::_bind_methods() {
 
 Ref<ScaffolderSettings> ScaffolderSettings::get() {
 	Scaffolder *scaffolder = Scaffolder::get();
-	CHECK(scaffolder, "Scaffolder is not initialized.");
-	return scaffolder->get_settings();
+	if (!ENSURE(scaffolder, "Scaffolder is not initialized.")) {
+		return Ref<ScaffolderSettings>();
+	}
+	Ref<ScaffolderSettings> settings = scaffolder->get_settings();
+	if (!ENSURE(settings.is_valid(),
+				"SnoreCore.set_up has not been called with "
+				"ScaffolderSettings.")) {
+		return Ref<ScaffolderSettings>();
+	}
+	return settings;
 }
 
 String ScaffolderSettings::get_initial_screen() const {

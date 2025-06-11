@@ -26,24 +26,28 @@ public:
 	static SnoreCore *get();
 
 	static SnoreCoreModule *get_module(const StringName &p_name) {
-		SnoreCore *Main = SnoreCore::get();
-		CHECK_SIMPLE(Main);
-		if (!ENSURE(Main->modules.find(p_name) != Main->modules.end(),
+		SnoreCore *main = SnoreCore::get();
+		if (!ENSURE(main, "SnoreCore is not initialized.")) {
+			return nullptr;
+		}
+		if (!ENSURE(main->modules.find(p_name) != main->modules.end(),
 					"Module not found: " + p_name)) {
 			return nullptr;
 		}
-		return Main->modules[p_name];
+		return main->modules[p_name];
 	}
 
 	static TypedArray<SnoreCoreModule> get_modules() {
-		SnoreCore *Main = SnoreCore::get();
-		CHECK_SIMPLE(Main);
+		SnoreCore *main = SnoreCore::get();
+		if (!ENSURE(main, "SnoreCore is not initialized.")) {
+			return TypedArray<SnoreCoreModule>();
+		}
 
 		TypedArray<SnoreCoreModule> result;
-		result.resize(Main->modules.size());
+		result.resize(main->modules.size());
 
 		for (const std::pair<const StringName, SnoreCoreModule *> &pair :
-			 Main->modules) {
+			 main->modules) {
 			result.push_back(pair.second);
 		}
 

@@ -103,8 +103,10 @@ void Surfacer::_bind_methods() {
 }
 
 Surfacer *Surfacer::get() {
-	return static_cast<Surfacer *>(
+	Surfacer *surfacer = static_cast<Surfacer *>(
 			Engine::get_singleton()->get_singleton(name));
+	ENSURE(surfacer, "Surfacer is not initialized.");
+	return surfacer;
 }
 
 void Surfacer::set_up() {

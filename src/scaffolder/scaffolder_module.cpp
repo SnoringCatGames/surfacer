@@ -45,8 +45,10 @@ void Scaffolder::_bind_methods() {
 }
 
 Scaffolder *Scaffolder::get() {
-	return static_cast<Scaffolder *>(
+	Scaffolder *scaffolder = static_cast<Scaffolder *>(
 			Engine::get_singleton()->get_singleton(name));
+	ENSURE(scaffolder, "Scaffolder is not initialized.");
+	return scaffolder;
 }
 
 void Scaffolder::set_up() {
