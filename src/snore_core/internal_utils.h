@@ -9,7 +9,7 @@
 namespace godot {
 
 // TODO: Update this when no longer debugging Surfacer.
-#define IS_SURFACER_RELEASE false
+#define IS_SNORE_CORE_RELEASE DEBUG_ENABLED
 
 #define IS_VALID_REF(m_ref) (m_ref.is_valid() && IS_VALID_OBJECT(m_ref.ptr()))
 #define IS_VALID_OBJECT(m_object_ptr) (m_object_ptr != nullptr)
@@ -49,21 +49,47 @@ template <typename T, typename... Args> Ref<T> set_up_ref(Args... args) {
 }
 
 static String join_strings(
-		const char *const arr[],
-		size_t size,
-		const char *delimiter) {
+		const char **p_strings,
+		int p_size,
+		const char *p_delimiter) {
 	String result;
-	for (size_t i = 0; i < size; ++i) {
-		result += arr[i];
-		if (i < size - 1) {
-			result += delimiter;
+	for (int i = 0; i < p_size; ++i) {
+		result += p_strings[i];
+		if (i < p_size - 1) {
+			result += p_delimiter;
+		}
+	}
+	return result;
+}
+
+static String join_strings(
+		const std::vector<const std::string> &p_strings,
+		const char *p_delimiter) {
+	String result;
+	for (int i = 0; i < p_strings.size(); ++i) {
+		result += p_strings[i].c_str();
+		if (i < p_strings.size() - 1) {
+			result += p_delimiter;
+		}
+	}
+	return result;
+}
+
+static String join_strings(
+		const TypedArray<String> &p_strings,
+		const char *p_delimiter) {
+	String result;
+	for (int i = 0; i < p_strings.size(); ++i) {
+		result += p_strings[i];
+		if (i < p_strings.size() - 1) {
+			result += p_delimiter;
 		}
 	}
 	return result;
 }
 
 // Pauses execution if this isn't a release version of the Surfacer framework.
-#if !IS_SURFACER_RELEASE
+#if !IS_SNORE_CORE_RELEASE
 #ifdef _MSC_VER
 #define DEBUG_BREAK() __debugbreak()
 #else
@@ -71,6 +97,46 @@ static String join_strings(
 #endif
 #else
 #define DEBUG_BREAK()
+#endif
+
+#if !IS_SNORE_CORE_RELEASE
+#ifdef _MSC_VER
+#include <dbghelp.h>
+#include <windows.h>
+String get_stack_trace() {
+	const int max_trace_size = 30;
+	void *trace[max_trace_size] = { 0 };
+	TypedArray<String> strings;
+	strings.resize(max_trace_size);
+
+	const int trace_size =
+			CaptureStackBackTrace(0, max_trace_size, trace, nullptr);
+
+	// Convert addresses to strings manually since we can't easily get symbols.
+	for (int i = 0; i < trace_size; ++i) {
+		strings[i] = vformat("    [%d] 0x%p\n", i, trace[i]);
+	}
+
+	return join_strings(strings, "\n    ");
+}
+#else
+#include <execinfo.h>
+String get_stack_trace() {
+	const int max_trace_size = 30;
+	void *trace[max_trace_size] = { 0 };
+
+	const int trace_size = backtrace(trace, max_trace_size);
+	const char **strings = backtrace_symbols(trace, trace_size);
+
+	String result = join_strings(strings, trace_size, "\n    ");
+
+	free(strings);
+
+	return result;
+}
+#endif
+#else
+String get_stack_trace() { return String(); }
 #endif
 
 // Ensures `m_cond` is true.
@@ -122,7 +188,7 @@ static String join_strings(
 	godot::UtilityFunctions::print_rich(                                       \
 			godot::vformat("[color=white]%s[/color]", m_msg))
 #else
-#define LOG_PRINT(m_msg) (m_cond)
+#define LOG_PRINT(m_msg)
 #endif
 
 #ifdef DEBUG_ENABLED
@@ -130,7 +196,7 @@ static String join_strings(
 	godot::UtilityFunctions::print_rich(                                       \
 			godot::vformat("[color=yellow]WARNING: %s[/color]", m_msg))
 #else
-#define LOG_WARNING(m_msg) (m_cond)
+#define LOG_WARNING(m_msg)
 #endif
 
 #ifdef DEBUG_ENABLED
@@ -138,9 +204,9 @@ static String join_strings(
 	godot::UtilityFunctions::print_rich(                                       \
 			godot::vformat("[color=red]ERROR: %s[/color]", m_msg))
 #else
-#define LOG_ERROR(m_msg) (m_cond)
+#define LOG_ERROR(m_msg)
 #endif
 
 } //namespace godot
 
-#endif
+#endif // INTERNAL_UTILS_H
