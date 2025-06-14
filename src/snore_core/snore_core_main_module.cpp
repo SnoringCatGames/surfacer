@@ -113,10 +113,6 @@ void SnoreCore::set_up_main(
 		   "Set_up should only be called once at the start of the app.");
 	last_set_up_time_msec = current_time_msec;
 
-	// FIXME: LEFT OFF HERE: Fix stack trace.
-	String FIXME = get_stack_trace();
-	ENSURE(false, FIXME);
-
 	for (const std::pair<const StringName, SnoreCoreModule *> &pair : modules) {
 		SnoreCoreSettings *settings_ptr =
 				pair.second->get_settings_from_list(p_all_settings);

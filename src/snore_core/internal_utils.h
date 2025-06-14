@@ -80,40 +80,38 @@ extern String join_strings(
 
 String get_stack_trace();
 
-// FIXME: LEFT OFF HERE: Fix get_stack_trace(), and uncomment it x4 below.
+#define PRINT_STACK_TRACE()                                                    \
+	godot::UtilityFunctions::print_rich(                                       \
+			"[color=gray]" + get_stack_trace() + "[/color]")
 
 // Ensures `m_cond` is true.
 // - If `m_cond` is false, this prints `m_msg`, pauses execution, and returns
-// false.
+//   false.
 // - If `m_cond` is true, this returns true.
 // - Use `CHECK` instead if the error is unrecoverable.
 #ifdef DEBUG_ENABLED
-#define ENSURE(m_cond, m_msg)                                                                       \
-	(unlikely(!(m_cond)) ? (::godot::_err_print_error(                                              \
-									FUNCTION_STR, __FILE__, __LINE__,                               \
-									(String("ENSURE failed: \"" _STR(                               \
-											 m_cond) "\" is false.\n    ") /*+ get_stack_trace()*/) \
-											.ascii()                                                \
-											.get_data(),                                            \
-									m_msg),                                                         \
-							::godot::_err_flush_stdout(), DEBUG_BREAK(),                            \
-							false)                                                                  \
-						 : true)
+#define ENSURE(m_cond, m_msg)                                                  \
+	(unlikely(!(m_cond))                                                       \
+			 ? (::godot::_err_print_error(                                     \
+						FUNCTION_STR, __FILE__, __LINE__,                      \
+						"ENSURE failed  \"" _STR(m_cond) "\" is false.",       \
+						m_msg),                                                \
+				::godot::_err_flush_stdout(), PRINT_STACK_TRACE(),             \
+				DEBUG_BREAK(), false)                                          \
+			 : true)
 #else
 #define ENSURE(m_cond, m_msg) (m_cond)
 #endif
 
 #ifdef DEBUG_ENABLED
-#define ENSURE_SIMPLE(m_cond)                                                                       \
-	(unlikely(!(m_cond)) ? (::godot::_err_print_error(                                              \
-									FUNCTION_STR, __FILE__, __LINE__,                               \
-									(String("ENSURE failed: \"" _STR(                               \
-											 m_cond) "\" is false.\n    ") /*+ get_stack_trace()*/) \
-											.ascii()                                                \
-											.get_data()),                                           \
-							::godot::_err_flush_stdout(), DEBUG_BREAK(),                            \
-							false)                                                                  \
-						 : true)
+#define ENSURE_SIMPLE(m_cond)                                                  \
+	(unlikely(!(m_cond))                                                       \
+			 ? (::godot::_err_print_error(                                     \
+						FUNCTION_STR, __FILE__, __LINE__,                      \
+						"ENSURE failed  \"" _STR(m_cond) "\" is false."),      \
+				::godot::_err_flush_stdout(), PRINT_STACK_TRACE(),             \
+				DEBUG_BREAK(), false)                                          \
+			 : true)
 #else
 #define ENSURE_SIMPLE(m_cond) (m_cond)
 #endif
@@ -121,21 +119,13 @@ String get_stack_trace();
 // This checks whether the condition is true. If not, the program will crash.
 // Use `ENSURE` instead, if the error is recoverable.
 #ifdef DEBUG_ENABLED
-#define CHECK(m_cond, m_msg)                                                   \
-	CRASH_COND_MSG(                                                            \
-			!(m_cond),                                                         \
-			m_msg(String("\n    ") /*+ get_stack_trace()*/)                    \
-					.ascii()                                                   \
-					.get_data())
+#define CHECK(m_cond, m_msg) CRASH_COND_MSG(!m_cond, m_msg)
 #else
 #define CHECK(m_cond, m_msg)
 #endif
 
 #ifdef DEBUG_ENABLED
-#define CHECK_SIMPLE(m_cond)                                                   \
-	CRASH_COND_MSG(                                                            \
-			!(m_cond),                                                         \
-			(String("\n    ") /*+ get_stack_trace()*/).ascii().get_data())
+#define CHECK_SIMPLE(m_cond) CRASH_COND(!m_cond)
 #else
 #define CHECK_SIMPLE(m_cond)
 #endif
