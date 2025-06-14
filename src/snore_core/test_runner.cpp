@@ -4,6 +4,8 @@
 
 namespace godot {
 
+TestRunner TestRunnerInternal::runner = TestRunner();
+
 bool TestRunnerFocusable::should_run() const {
 	return is_focused || (!runner->are_any_tests_focused && !is_excluded);
 }

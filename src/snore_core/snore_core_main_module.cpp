@@ -113,6 +113,10 @@ void SnoreCore::set_up_main(
 		   "Set_up should only be called once at the start of the app.");
 	last_set_up_time_msec = current_time_msec;
 
+	// FIXME: LEFT OFF HERE: Fix stack trace.
+	String FIXME = get_stack_trace();
+	ENSURE(false, FIXME);
+
 	for (const std::pair<const StringName, SnoreCoreModule *> &pair : modules) {
 		SnoreCoreSettings *settings_ptr =
 				pair.second->get_settings_from_list(p_all_settings);
@@ -134,8 +138,7 @@ void SnoreCore::on_module_set_up_finished(const StringName &p_name) {
 		return;
 	}
 
-	if (!ENSURE(module->get_set_up_phase() == SET_UP_PHASE::IN_PROGRESS,
-				"Cannot finish set_up when it is not in progress.")) {
+	if (!ENSURE_SIMPLE(module->get_set_up_phase() == SET_UP_PHASE::FINISHED)) {
 		return;
 	}
 
@@ -153,6 +156,8 @@ void SnoreCore::on_module_set_up_finished(const StringName &p_name) {
 	}
 
 	on_set_up_finished();
+
+	// TODO: Log that the frameworks are set up.
 
 	// For the SnoreCore module, emit the signal now, after confirming that all
 	// other modules are finished.

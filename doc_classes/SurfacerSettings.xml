@@ -17,5 +17,7 @@
 		</member>
 		<member name="movement_settings" type="MovementSettings" setter="set_movement_settings" getter="get_movement_settings">
 		</member>
+		<member name="surface_parser_settings" type="SurfaceParserSettings" setter="set_surface_parser_settings" getter="get_surface_parser_settings">
+		</member>
 	</members>
 </class>

@@ -32,8 +32,12 @@ public:
 		log_snore_core_events_verbose = p_value;
 	}
 
-	TypedArray<CanvasLayerConfig> get_canvas_layers() const;
-	void set_canvas_layers(const TypedArray<CanvasLayerConfig> &p_layers);
+	TypedArray<CanvasLayerConfig> get_canvas_layers() const {
+		return canvas_layers;
+	}
+	void set_canvas_layers(const TypedArray<CanvasLayerConfig> &p_layers) {
+		canvas_layers = p_layers;
+	}
 
 	double get_debug_time_scale() const { return debug_time_scale; }
 	void set_debug_time_scale(double p_scale) { debug_time_scale = p_scale; }

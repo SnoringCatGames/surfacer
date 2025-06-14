@@ -3,18 +3,22 @@
 
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/core/error_macros.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/variant.hpp>
 #include <godot_cpp/variant/vector2.hpp>
+#include <string>
+#include <vector>
 
 namespace godot {
 
 // TODO: Update this when no longer debugging Surfacer.
-#define IS_SNORE_CORE_RELEASE DEBUG_ENABLED
+#define IS_SNORE_CORE_RELEASE (!DEBUG_ENABLED)
 
-#define IS_VALID_REF(m_ref) (m_ref.is_valid() && IS_VALID_OBJECT(m_ref.ptr()))
-#define IS_VALID_OBJECT(m_object_ptr) (m_object_ptr != nullptr)
+#define IS_VALID_REF(m_ref)                                                    \
+	((m_ref).is_valid() && IS_VALID_OBJECT((m_ref).ptr()))
+#define IS_VALID_OBJECT(m_object_ptr) ((m_object_ptr) != nullptr)
 
-constexpr char *PROCESS_MODE_HINT_STRING =
+constexpr const char PROCESS_MODE_HINT_STRING[] =
 		"INHERIT,PAUSABLE,WHEN_PAUSED,ALWAYS,DISABLED";
 
 constexpr uint64_t PROPERTY_USAGE_EXPORTED_ITEM = PROPERTY_USAGE_STORAGE |
@@ -48,45 +52,20 @@ template <typename T, typename... Args> Ref<T> set_up_ref(Args... args) {
 	return ref;
 }
 
-static String join_strings(
+extern String join_strings(
 		const char **p_strings,
 		int p_size,
-		const char *p_delimiter) {
-	String result;
-	for (int i = 0; i < p_size; ++i) {
-		result += p_strings[i];
-		if (i < p_size - 1) {
-			result += p_delimiter;
-		}
-	}
-	return result;
-}
-
-static String join_strings(
-		const std::vector<const std::string> &p_strings,
-		const char *p_delimiter) {
-	String result;
-	for (int i = 0; i < p_strings.size(); ++i) {
-		result += p_strings[i].c_str();
-		if (i < p_strings.size() - 1) {
-			result += p_delimiter;
-		}
-	}
-	return result;
-}
-
-static String join_strings(
+		const char *p_delimiter);
+extern String join_strings(
+		const char *const p_strings[],
+		int p_size,
+		const char *p_delimiter);
+extern String join_strings(
+		const std::vector<std::string> &p_strings,
+		const char *p_delimiter);
+extern String join_strings(
 		const TypedArray<String> &p_strings,
-		const char *p_delimiter) {
-	String result;
-	for (int i = 0; i < p_strings.size(); ++i) {
-		result += p_strings[i];
-		if (i < p_strings.size() - 1) {
-			result += p_delimiter;
-		}
-	}
-	return result;
-}
+		const char *p_delimiter);
 
 // Pauses execution if this isn't a release version of the Surfacer framework.
 #if !IS_SNORE_CORE_RELEASE
@@ -99,72 +78,42 @@ static String join_strings(
 #define DEBUG_BREAK()
 #endif
 
-#if !IS_SNORE_CORE_RELEASE
-#ifdef _MSC_VER
-#include <dbghelp.h>
-#include <windows.h>
-String get_stack_trace() {
-	const int max_trace_size = 30;
-	void *trace[max_trace_size] = { 0 };
-	TypedArray<String> strings;
-	strings.resize(max_trace_size);
+String get_stack_trace();
 
-	const int trace_size =
-			CaptureStackBackTrace(0, max_trace_size, trace, nullptr);
-
-	// Convert addresses to strings manually since we can't easily get symbols.
-	for (int i = 0; i < trace_size; ++i) {
-		strings[i] = vformat("    [%d] 0x%p\n", i, trace[i]);
-	}
-
-	return join_strings(strings, "\n    ");
-}
-#else
-#include <execinfo.h>
-String get_stack_trace() {
-	const int max_trace_size = 30;
-	void *trace[max_trace_size] = { 0 };
-
-	const int trace_size = backtrace(trace, max_trace_size);
-	const char **strings = backtrace_symbols(trace, trace_size);
-
-	String result = join_strings(strings, trace_size, "\n    ");
-
-	free(strings);
-
-	return result;
-}
-#endif
-#else
-String get_stack_trace() { return String(); }
-#endif
+// FIXME: LEFT OFF HERE: Fix get_stack_trace(), and uncomment it x4 below.
 
 // Ensures `m_cond` is true.
-// - If `m_cond` is true, this prints `m_msg`, pauses execution, and evaluates
-// to true.
-// - If `m_cond` is false, this evaluates to false.
+// - If `m_cond` is false, this prints `m_msg`, pauses execution, and returns
+// false.
+// - If `m_cond` is true, this returns true.
 // - Use `CHECK` instead if the error is unrecoverable.
 #ifdef DEBUG_ENABLED
-#define ENSURE(m_cond, m_msg)                                                  \
-	(unlikely(!(m_cond))                                                       \
-			 ? (::godot::_err_print_error(                                     \
-						FUNCTION_STR, __FILE__, __LINE__,                      \
-						"ENSURE failed  \"" _STR(m_cond) "\" is false.",       \
-						m_msg),                                                \
-				::godot::_err_flush_stdout(), DEBUG_BREAK(), false)            \
-			 : true)
+#define ENSURE(m_cond, m_msg)                                                                       \
+	(unlikely(!(m_cond)) ? (::godot::_err_print_error(                                              \
+									FUNCTION_STR, __FILE__, __LINE__,                               \
+									(String("ENSURE failed: \"" _STR(                               \
+											 m_cond) "\" is false.\n    ") /*+ get_stack_trace()*/) \
+											.ascii()                                                \
+											.get_data(),                                            \
+									m_msg),                                                         \
+							::godot::_err_flush_stdout(), DEBUG_BREAK(),                            \
+							false)                                                                  \
+						 : true)
 #else
 #define ENSURE(m_cond, m_msg) (m_cond)
 #endif
 
 #ifdef DEBUG_ENABLED
-#define ENSURE_SIMPLE(m_cond)                                                  \
-	(unlikely(!(m_cond))                                                       \
-			 ? (::godot::_err_print_error(                                     \
-						FUNCTION_STR, __FILE__, __LINE__,                      \
-						"ENSURE failed  \"" _STR(m_cond) "\" is false."),      \
-				::godot::_err_flush_stdout(), DEBUG_BREAK(), false)            \
-			 : true)
+#define ENSURE_SIMPLE(m_cond)                                                                       \
+	(unlikely(!(m_cond)) ? (::godot::_err_print_error(                                              \
+									FUNCTION_STR, __FILE__, __LINE__,                               \
+									(String("ENSURE failed: \"" _STR(                               \
+											 m_cond) "\" is false.\n    ") /*+ get_stack_trace()*/) \
+											.ascii()                                                \
+											.get_data()),                                           \
+							::godot::_err_flush_stdout(), DEBUG_BREAK(),                            \
+							false)                                                                  \
+						 : true)
 #else
 #define ENSURE_SIMPLE(m_cond) (m_cond)
 #endif
@@ -172,13 +121,21 @@ String get_stack_trace() { return String(); }
 // This checks whether the condition is true. If not, the program will crash.
 // Use `ENSURE` instead, if the error is recoverable.
 #ifdef DEBUG_ENABLED
-#define CHECK(m_cond, m_msg) CRASH_COND_MSG(!m_cond, m_msg)
+#define CHECK(m_cond, m_msg)                                                   \
+	CRASH_COND_MSG(                                                            \
+			!(m_cond),                                                         \
+			m_msg(String("\n    ") /*+ get_stack_trace()*/)                    \
+					.ascii()                                                   \
+					.get_data())
 #else
 #define CHECK(m_cond, m_msg)
 #endif
 
 #ifdef DEBUG_ENABLED
-#define CHECK_SIMPLE(m_cond) CRASH_COND(!m_cond)
+#define CHECK_SIMPLE(m_cond)                                                   \
+	CRASH_COND_MSG(                                                            \
+			!(m_cond),                                                         \
+			(String("\n    ") /*+ get_stack_trace()*/).ascii().get_data())
 #else
 #define CHECK_SIMPLE(m_cond)
 #endif

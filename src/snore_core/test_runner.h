@@ -107,11 +107,11 @@ public:
 	void run_all_tests();
 };
 
-namespace {
+namespace TestRunnerInternal {
 
-TestRunner runner;
+extern TestRunner runner;
 
-} //namespace
+} // namespace Internal
 
 #define _LOCATION_TEMPLATE                                                     \
 	"[lb][color=gray]%s:%s[/color][rb] "                                       \
@@ -139,16 +139,18 @@ TestRunner runner;
 
 #define HandleExpectResult(actual, expected, check)                            \
 	do {                                                                       \
-		ENSURE(runner.is_spec_running, "Expect() called outside of it().");    \
+		ENSURE(TestRunnerInternal::runner.is_spec_running,                     \
+			   "Expect() called outside of it().");                            \
 		const bool passed = (check);                                           \
 		if (!passed) {                                                         \
-			runner.is_current_spec_passing = false;                            \
-			runner.is_current_suite_passing = false;                           \
-			runner.failing_spec_count++;                                       \
+			TestRunnerInternal::runner.is_current_spec_passing = false;        \
+			TestRunnerInternal::runner.is_current_suite_passing = false;       \
+			TestRunnerInternal::runner.failing_spec_count++;                   \
 			_PRINT_EXPECT_RESULT(                                              \
 					_FAIL_TEMPLATE, Variant(actual).stringify(),               \
 					Variant(expected).stringify(), #actual, #expected);        \
-		} else if (runner.print_passing_expects) {                             \
+			DEBUG_BREAK();                                                     \
+		} else if (TestRunnerInternal::runner.print_passing_expects) {         \
 			_PRINT_EXPECT_RESULT(                                              \
 					_PASS_TEMPLATE, Variant(actual).stringify(),               \
 					Variant(expected).stringify(), #actual, #expected);        \
@@ -171,98 +173,105 @@ TestRunner runner;
 _FORCE_INLINE_ void describe(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
-	runner.create_suite(p_description, p_callback, false, false);
+	TestRunnerInternal::runner.create_suite(
+			p_description, p_callback, false, false);
 }
 
 _FORCE_INLINE_ void fdescribe(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
-	runner.create_suite(p_description, p_callback, true, false);
+	TestRunnerInternal::runner.create_suite(
+			p_description, p_callback, true, false);
 }
 
 _FORCE_INLINE_ void xdescribe(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
-	runner.create_suite(p_description, p_callback, false, true);
+	TestRunnerInternal::runner.create_suite(
+			p_description, p_callback, false, true);
 }
 
 _FORCE_INLINE_ void it(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
-	runner.create_spec(p_description, p_callback, false, false);
+	TestRunnerInternal::runner.create_spec(
+			p_description, p_callback, false, false);
 }
 
 _FORCE_INLINE_ void fit(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
-	runner.create_spec(p_description, p_callback, true, false);
+	TestRunnerInternal::runner.create_spec(
+			p_description, p_callback, true, false);
 }
 
 _FORCE_INLINE_ void xit(
 		const std::string &p_description,
 		const std::function<void()> &p_callback) {
-	runner.create_spec(p_description, p_callback, false, true);
+	TestRunnerInternal::runner.create_spec(
+			p_description, p_callback, false, true);
 }
 
 _FORCE_INLINE_ void before_each(const std::function<void()> &p_callback) {
-	ENSURE(runner.is_compiling_a_suite(),
+	ENSURE(TestRunnerInternal::runner.is_compiling_a_suite(),
 		   "before_each() called outside of describe().");
 
 	TestRunnerCallable TestRunnerCallable;
 	TestRunnerCallable.callback = p_callback;
 
-	runner.compiling_suite->before_eaches.push_back(
+	TestRunnerInternal::runner.compiling_suite->before_eaches.push_back(
 			std::move(TestRunnerCallable));
 }
 
 _FORCE_INLINE_ void after_each(const std::function<void()> &p_callback) {
-	ENSURE(runner.is_compiling_a_suite(),
+	ENSURE(TestRunnerInternal::runner.is_compiling_a_suite(),
 		   "after_each() called outside of describe().");
 
 	TestRunnerCallable TestRunnerCallable;
 	TestRunnerCallable.callback = p_callback;
 
-	runner.compiling_suite->after_eaches.push_back(
+	TestRunnerInternal::runner.compiling_suite->after_eaches.push_back(
 			std::move(TestRunnerCallable));
 }
 
 _FORCE_INLINE_ void before_all(const std::function<void()> &p_callback) {
-	ENSURE(runner.is_compiling_a_suite(),
+	ENSURE(TestRunnerInternal::runner.is_compiling_a_suite(),
 		   "before_all() called outside of describe().");
 
 	TestRunnerCallable TestRunnerCallable;
 	TestRunnerCallable.callback = p_callback;
 
-	runner.compiling_suite->before_alls.push_back(
+	TestRunnerInternal::runner.compiling_suite->before_alls.push_back(
 			std::move(TestRunnerCallable));
 }
 
 _FORCE_INLINE_ void after_all(const std::function<void()> &p_callback) {
-	ENSURE(runner.is_compiling_a_suite(),
+	ENSURE(TestRunnerInternal::runner.is_compiling_a_suite(),
 		   "after_all() called outside of describe().");
 
 	TestRunnerCallable TestRunnerCallable;
 	TestRunnerCallable.callback = p_callback;
 
-	runner.compiling_suite->after_alls.push_back(std::move(TestRunnerCallable));
+	TestRunnerInternal::runner.compiling_suite->after_alls.push_back(
+			std::move(TestRunnerCallable));
 }
 
 _FORCE_INLINE_ void run_tests() {
-	runner.print_passing_units = false;
-	runner.print_passing_expects = false;
-	runner.run_all_tests();
+	TestRunnerInternal::runner.print_passing_units = false;
+	TestRunnerInternal::runner.print_passing_expects = false;
+	TestRunnerInternal::runner.run_all_tests();
 }
 
 _FORCE_INLINE_ void run_tests_verbose() {
-	runner.print_passing_units = true;
-	runner.print_passing_expects = false;
-	runner.run_all_tests();
+	TestRunnerInternal::runner.print_passing_units = true;
+	TestRunnerInternal::runner.print_passing_expects = false;
+	TestRunnerInternal::runner.run_all_tests();
 }
 
 _FORCE_INLINE_ void run_tests_very_verbose() {
-	runner.print_passing_units = true;
-	runner.print_passing_expects = true;
-	runner.run_all_tests();
+	TestRunnerInternal::runner.print_passing_units = true;
+	TestRunnerInternal::runner.print_passing_expects = true;
+	TestRunnerInternal::runner.run_all_tests();
 }
 
 // clang-format off
@@ -282,7 +291,7 @@ _FORCE_INLINE_ void run_tests_very_verbose() {
 // clang-format on
 
 #define REGISTER_SNORE_CORE_TEST_SUITE(m_test)                                 \
-	runner.test_modules.push_back(m_test)
+	TestRunnerInternal::runner.test_modules.push_back(m_test)
 
 #define REGISTER_SNORE_CORE_CLASS(m_class)                                     \
 	do {                                                                       \

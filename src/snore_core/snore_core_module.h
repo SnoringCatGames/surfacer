@@ -71,16 +71,10 @@ public:
 
 	SettingsType *get_settings_from_list(
 			TypedArray<SnoreCoreSettings> p_all_settings) const {
-		const char *type_name = typeid(SettingsType).name();
-
 		for (int i = 0; i < p_all_settings.size(); i++) {
 			Object *object = p_all_settings[i].get_validated_object();
-			SnoreCoreSettings *settings_obj =
-					Object::cast_to<SnoreCoreSettings>(object);
-			if (!ENSURE_SIMPLE(settings_obj)) {
-				return nullptr;
-			}
-			if (settings_obj->is_class(type_name)) {
+			SettingsType *settings_obj = Object::cast_to<SettingsType>(object);
+			if (settings_obj) {
 				return static_cast<SettingsType *>(settings_obj);
 			}
 		}
