@@ -4,7 +4,7 @@
 #ifdef DEBUG_ENABLED
 
 #include "snore_core/canvas_layer_config.h"
-#include "snore_core/test_runner.h"
+#include "snore_core/internal/test_runner.h"
 
 START_SNORE_CORE_TEST(CanvasLayerConfig)
 

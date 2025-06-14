@@ -5,7 +5,7 @@
 
 #include "surfacer/surface/agent_surface_state.h"
 
-#include "snore_core/test_runner.h"
+#include "snore_core/internal/test_runner.h"
 
 START_SNORE_CORE_TEST(AgentSurfaceState)
 

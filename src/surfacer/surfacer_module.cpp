@@ -1,5 +1,6 @@
 #include "surfacer/surfacer_module.h"
 
+#include "snore_core/internal/internal_registration_utils.h"
 #include "snore_core/snore_core_module_utils.h"
 #include "surfacer/annotations/jump_annotation.h"
 #include "surfacer/annotations/path_annotation.h"

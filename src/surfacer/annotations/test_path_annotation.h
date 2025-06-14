@@ -5,7 +5,7 @@
 
 #include "surfacer/annotations/path_annotation.h"
 
-#include "snore_core/test_runner.h"
+#include "snore_core/internal/test_runner.h"
 
 START_SNORE_CORE_TEST(PathAnnotation)
 

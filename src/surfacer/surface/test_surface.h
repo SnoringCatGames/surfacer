@@ -6,7 +6,7 @@
 #include "snore_core/geometry_constants.h"
 #include "surfacer/surface/surface.h"
 
-#include "snore_core/test_runner.h"
+#include "snore_core/internal/test_runner.h"
 
 START_SNORE_CORE_TEST(Surface)
 

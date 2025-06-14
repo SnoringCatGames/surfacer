@@ -111,7 +111,7 @@ namespace TestRunnerInternal {
 
 extern TestRunner runner;
 
-} // namespace Internal
+} //namespace TestRunnerInternal
 
 #define _LOCATION_TEMPLATE                                                     \
 	"[lb][color=gray]%s:%s[/color][rb] "                                       \
@@ -290,33 +290,6 @@ _FORCE_INLINE_ void run_tests_very_verbose() {
 
 // clang-format on
 
-#define REGISTER_SNORE_CORE_TEST_SUITE(m_test)                                 \
-	TestRunnerInternal::runner.test_modules.push_back(m_test)
-
-#define REGISTER_SNORE_CORE_CLASS(m_class)                                     \
-	do {                                                                       \
-		GDREGISTER_CLASS(m_class);                                             \
-		REGISTER_SNORE_CORE_TEST_SUITE(SnoreCoreTest_##m_class);               \
-	} while (0)
-
-#define REGISTER_SNORE_CORE_ABSTRACT_CLASS(m_class)                            \
-	do {                                                                       \
-		GDREGISTER_ABSTRACT_CLASS(m_class);                                    \
-		REGISTER_SNORE_CORE_TEST_SUITE(SnoreCoreTest_##m_class);               \
-	} while (0)
-
-#define REGISTER_SNORE_CORE_VIRTUAL_CLASS(m_class)                             \
-	do {                                                                       \
-		GDREGISTER_VIRTUAL_CLASS(m_class);                                     \
-		REGISTER_SNORE_CORE_TEST_SUITE(SnoreCoreTest_##m_class);               \
-	} while (0)
-
-} //namespace godot
-
-#else // DEBUG_ENABLED
-
-namespace godot {
-#define REGISTER_SNORE_CORE_CLASS(m_class) GDREGISTER_CLASS(m_class)
 } //namespace godot
 
 #endif // DEBUG_ENABLED

@@ -5,7 +5,7 @@
 
 #include "snore_core/rotated_shape.h"
 
-#include "snore_core/test_runner.h"
+#include "snore_core/internal/test_runner.h"
 
 #include <godot_cpp/classes/capsule_shape2d.hpp>
 #include <godot_cpp/classes/circle_shape2d.hpp>
