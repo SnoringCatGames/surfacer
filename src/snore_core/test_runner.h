@@ -3,7 +3,7 @@
 
 #ifdef DEBUG_ENABLED
 
-#include "snore_core/internal_utils.h"
+#include "snore_core/internal/internal_debug_utils.h"
 
 #include <functional>
 #include <string>

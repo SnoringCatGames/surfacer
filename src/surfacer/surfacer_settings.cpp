@@ -1,6 +1,5 @@
 #include "surfacer/surfacer_settings.h"
 
-#include "snore_core/internal_utils.h"
 #include "surfacer/movement_settings.h"
 #include "surfacer/surface_parser_settings.h"
 #include "surfacer/surfacer_module.h"

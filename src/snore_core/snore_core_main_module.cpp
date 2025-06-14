@@ -5,7 +5,6 @@
 #include "snore_core/annotations_manager.h"
 #include "snore_core/canvas_layer_config.h"
 #include "snore_core/geometry.h"
-#include "snore_core/internal_utils.h"
 #include "snore_core/rotated_shape.h"
 #include "snore_core/snore_core_main_settings.h"
 #include "snore_core/snore_core_module.h"

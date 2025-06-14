@@ -1,7 +1,7 @@
 #ifndef SNORE_CORE_MAIN_MODULE_H
 #define SNORE_CORE_MAIN_MODULE_H
 
-#include "snore_core/internal_utils.h"
+#include "snore_core/internal/internal_debug_utils.h"
 #include "snore_core/snore_core_main_settings.h"
 #include "snore_core/snore_core_module.h"
 
