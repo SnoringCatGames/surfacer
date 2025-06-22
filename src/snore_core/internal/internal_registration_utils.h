@@ -1,7 +1,7 @@
 #ifndef INTERNAL_REGISTRATION_UTILS_H
 #define INTERNAL_REGISTRATION_UTILS_H
 
-#include "snore_core/internal/test_runner.h"
+#include "snore_core/test_runner/test_runner.h"
 
 #include <godot_cpp/classes/object.hpp>
 
@@ -28,19 +28,19 @@ constexpr uint64_t PROPERTY_USAGE_EXPORTED_ITEM = PROPERTY_USAGE_STORAGE |
 #define REGISTER_SNORE_CORE_CLASS(m_class)                                     \
 	do {                                                                       \
 		GDREGISTER_CLASS(m_class);                                             \
-		REGISTER_SNORE_CORE_TEST_SUITE(SnoreCoreTest_##m_class);               \
+		REGISTER_SNORE_CORE_TEST_SUITE(TEST_MODULE_NAME(m_class));             \
 	} while (0)
 
 #define REGISTER_SNORE_CORE_ABSTRACT_CLASS(m_class)                            \
 	do {                                                                       \
 		GDREGISTER_ABSTRACT_CLASS(m_class);                                    \
-		REGISTER_SNORE_CORE_TEST_SUITE(SnoreCoreTest_##m_class);               \
+		REGISTER_SNORE_CORE_TEST_SUITE(TEST_MODULE_NAME(m_class));             \
 	} while (0)
 
 #define REGISTER_SNORE_CORE_VIRTUAL_CLASS(m_class)                             \
 	do {                                                                       \
 		GDREGISTER_VIRTUAL_CLASS(m_class);                                     \
-		REGISTER_SNORE_CORE_TEST_SUITE(SnoreCoreTest_##m_class);               \
+		REGISTER_SNORE_CORE_TEST_SUITE(TEST_MODULE_NAME(m_class));             \
 	} while (0)
 
 #else // DEBUG_ENABLED

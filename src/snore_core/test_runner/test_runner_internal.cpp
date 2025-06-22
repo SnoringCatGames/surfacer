@@ -1,4 +1,4 @@
-#include "snore_core/internal/test_runner.h"
+#include "snore_core/test_runner/test_runner.h"
 
 #ifdef DEBUG_ENABLED
 
@@ -14,7 +14,11 @@ void TestRunnerSpec::run() {
 	runner->is_spec_running = true;
 	runner->is_current_spec_passing = true;
 
-	callback();
+	if (suite->fixture) {
+		callback_with_fixture.value()(suite->fixture);
+	} else {
+		callback.value()();
+	}
 
 	if (!runner->is_current_spec_passing) {
 		// Print the TestRunnerSuite path, if we aren't already printing all
@@ -23,7 +27,7 @@ void TestRunnerSpec::run() {
 			godot::UtilityFunctions::print_rich(
 					godot::vformat(
 							"%s [color=white]>[/color]",
-							TestRunnerSuite->get_combined_rich_description()));
+							suite->get_combined_rich_description()));
 		}
 		godot::UtilityFunctions::print_rich(
 				godot::vformat(
@@ -67,41 +71,33 @@ void TestRunnerSuite::run() {
 	}
 
 	// Execute any before_all.
-	for (const TestRunnerCallable &TestRunnerCallable : before_alls) {
-		TestRunnerCallable.callback();
+	if (fixture) {
+		fixture->before_all();
 	}
 
 	// Execute specs for this TestRunnerSuite.
 	for (TestRunnerSpec &TestRunnerSpec : specs) {
 		if (TestRunnerSpec.should_run()) {
-			// Execute any before_each.
-			for (const TestRunnerCallable &TestRunnerCallable : before_eaches) {
-				TestRunnerCallable.callback();
-			}
-
-			runner->is_spec_running = true;
+			// Execute before_eaches.
+			before_spec();
 
 			TestRunnerSpec.run();
 
-			runner->is_spec_running = false;
-
-			// Execute any after_each.
-			for (const TestRunnerCallable &TestRunnerCallable : after_eaches) {
-				TestRunnerCallable.callback();
-			}
+			// Execute after_eaches.
+			after_spec();
 		}
 	}
 
 	// Recurse.
-	for (TestRunnerSuite &TestRunnerSuite : suites) {
-		if (TestRunnerSuite.should_run()) {
-			TestRunnerSuite.run();
+	for (TestRunnerSuite &suite : suites) {
+		if (suite.should_run()) {
+			suite.run();
 		}
 	}
 
 	// Execute any after_all.
-	for (const TestRunnerCallable &TestRunnerCallable : after_alls) {
-		TestRunnerCallable.callback();
+	if (fixture) {
+		fixture->after_all();
 	}
 
 	runner->is_current_suite_passing =
@@ -109,9 +105,32 @@ void TestRunnerSuite::run() {
 	runner->running_suite_count--;
 }
 
+void TestRunnerSuite::before_spec() {
+	// Execute any before_each.
+	if (fixture) {
+		fixture->before_each();
+	}
+	// Execute ancestor before_eaches.
+	if (parent_suite) {
+		parent_suite->before_spec();
+	}
+}
+
+void TestRunnerSuite::after_spec() {
+	// Execute any after_each.
+	if (fixture) {
+		fixture->after_each();
+	}
+	// Execute ancestor after_eaches.
+	if (parent_suite) {
+		parent_suite->after_spec();
+	}
+}
+
 void TestRunner::create_suite(
-		const std::string &p_description,
-		const std::function<void()> &p_callback,
+		std::shared_ptr<TestRunnerFixture> p_fixture,
+		std::string &&p_description,
+		CallbackWithoutFixture &&p_callback,
 		bool p_is_focused,
 		bool p_is_excluded) {
 	compiling_suite_count++;
@@ -120,15 +139,16 @@ void TestRunner::create_suite(
 		are_any_tests_focused = true;
 	}
 
-	TestRunnerSuite TestRunnerSuite;
-	TestRunnerSuite.runner = this;
-	TestRunnerSuite.description = p_description;
-	TestRunnerSuite.callback = p_callback;
-	TestRunnerSuite.is_focused = p_is_focused || compiling_suite->is_focused;
-	TestRunnerSuite.is_excluded = p_is_excluded || compiling_suite->is_excluded;
-	TestRunnerSuite.parent_suite = compiling_suite;
+	TestRunnerSuite suite;
+	suite.fixture = std::move(p_fixture);
+	suite.runner = this;
+	suite.description = std::move(p_description);
+	suite.callback = std::move(p_callback);
+	suite.is_focused = p_is_focused || compiling_suite->is_focused;
+	suite.is_excluded = p_is_excluded || compiling_suite->is_excluded;
+	suite.parent_suite = compiling_suite;
 
-	compiling_suite->suites.push_back(std::move(TestRunnerSuite));
+	compiling_suite->suites.push_back(std::move(suite));
 
 	compiling_suite = &compiling_suite->suites.back();
 
@@ -140,8 +160,9 @@ void TestRunner::create_suite(
 }
 
 void TestRunner::create_spec(
-		const std::string &p_description,
-		const std::function<void()> &p_callback,
+		std::string &&p_description,
+		std::optional<CallbackWithFixture> p_callback_with_fixture,
+		std::optional<CallbackWithoutFixture> p_callback,
 		bool p_is_focused,
 		bool p_is_excluded) {
 	if (p_is_focused) {
@@ -150,11 +171,12 @@ void TestRunner::create_spec(
 
 	TestRunnerSpec TestRunnerSpec;
 	TestRunnerSpec.runner = this;
-	TestRunnerSpec.description = p_description;
+	TestRunnerSpec.description = std::move(p_description);
+	TestRunnerSpec.callback_with_fixture = p_callback_with_fixture;
 	TestRunnerSpec.callback = p_callback;
 	TestRunnerSpec.is_focused = p_is_focused || compiling_suite->is_focused;
 	TestRunnerSpec.is_excluded = p_is_excluded || compiling_suite->is_excluded;
-	TestRunnerSpec.TestRunnerSuite = compiling_suite;
+	TestRunnerSpec.suite = compiling_suite;
 
 	compiling_suite->specs.push_back(std::move(TestRunnerSpec));
 }

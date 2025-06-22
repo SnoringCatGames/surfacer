@@ -3,97 +3,127 @@
 
 #ifdef DEBUG_ENABLED
 
-#include "snore_core/rotated_shape.h"
+// #include "snore_core/rotated_shape.h"
 
-#include "snore_core/internal/test_runner.h"
+// #include "snore_core/test_runner/test_runner.h"
 
-#include <godot_cpp/classes/capsule_shape2d.hpp>
-#include <godot_cpp/classes/circle_shape2d.hpp>
-#include <godot_cpp/classes/rectangle_shape2d.hpp>
+// #include <godot_cpp/classes/capsule_shape2d.hpp>
+// #include <godot_cpp/classes/circle_shape2d.hpp>
+// #include <godot_cpp/classes/rectangle_shape2d.hpp>
 
-START_SNORE_CORE_TEST(RotatedShape)
+// // FIXME
+// // START_TEST_FIXTURE(RotatedShape)
+// namespace godot {
+// struct TestRunnerFixture_RotatedShape : public TestRunnerFixture {
+// public:
+// 	Ref<RotatedShape> rect_0_degrees;
+// 	Ref<RotatedShape> rect_90_degrees;
+// 	Ref<RotatedShape> rect_270_degrees;
+// 	Ref<RotatedShape> rect_180_degrees;
+// 	Ref<RotatedShape> capsule_0_degrees;
+// 	Ref<RotatedShape> capsule_90_degrees;
+// 	Ref<RotatedShape> circle_0_degrees;
+// 	Ref<RotatedShape> circle_90_degrees;
 
-// FIXME: LEFT OFF HERE: Refactor test_runner to use a TestFixture class to
-// define logic that is re-used across multiple units, and get rid of the naked
-// before_each and after_each. LOOK AT:
-// https://google.github.io/googletest/primer.html
+// 	virtual void before_each() override {
+// 		Ref<RectangleShape2D> rectangle = instantiate_ref<RectangleShape2D>();
+// 		rectangle->set_size(Vector2(1, 2));
 
-// Ref<RotatedShape> rect_0_degrees;
-// Ref<RotatedShape> rect_90_degrees;
-// Ref<RotatedShape> rect_270_degrees;
-// Ref<RotatedShape> rect_180_degrees;
-// Ref<RotatedShape> capsule_0_degrees;
-// Ref<RotatedShape> capsule_90_degrees;
-// Ref<RotatedShape> circle_0_degrees;
-// Ref<RotatedShape> circle_90_degrees;
+// 		Ref<CapsuleShape2D> capsule = instantiate_ref<CapsuleShape2D>();
+// 		capsule->set_radius(1);
+// 		capsule->set_height(1);
 
-// before_each([&]() {
-// 	Ref<RectangleShape2D> rectangle = instantiate_ref<RectangleShape2D>();
-// 	rectangle->set_size(Vector2(1, 2));
+// 		Ref<CircleShape2D> circle = instantiate_ref<CircleShape2D>();
+// 		circle->set_radius(1);
 
-// 	Ref<CapsuleShape2D> capsule = instantiate_ref<CapsuleShape2D>();
-// 	capsule->set_radius(1);
-// 	capsule->set_height(1);
+// 		rect_0_degrees = set_up_ref<RotatedShape>(rectangle, 0);
+// 		rect_90_degrees = set_up_ref<RotatedShape>(rectangle, 90);
+// 		rect_270_degrees = set_up_ref<RotatedShape>(rectangle, 270);
+// 		rect_180_degrees = set_up_ref<RotatedShape>(rectangle, 180);
+// 		capsule_0_degrees = set_up_ref<RotatedShape>(capsule, 0);
+// 		capsule_90_degrees = set_up_ref<RotatedShape>(capsule, 90);
+// 		circle_0_degrees = set_up_ref<RotatedShape>(circle, 0);
+// 		circle_90_degrees = set_up_ref<RotatedShape>(circle, 90);
+// 	}
 
-// 	Ref<CircleShape2D> circle = instantiate_ref<CircleShape2D>();
-// 	circle->set_radius(1);
+// 	virtual void after_each() override {
+// 		rect_0_degrees.unref();
+// 		rect_90_degrees.unref();
+// 		rect_270_degrees.unref();
+// 		rect_180_degrees.unref();
+// 		capsule_0_degrees.unref();
+// 		capsule_90_degrees.unref();
+// 		circle_0_degrees.unref();
+// 		circle_90_degrees.unref();
+// 	}
 
-// 	rect_0_degrees = set_up_ref<RotatedShape>(rectangle, 0);
-// 	rect_90_degrees = set_up_ref<RotatedShape>(rectangle, 90);
-// 	rect_270_degrees = set_up_ref<RotatedShape>(rectangle, 270);
-// 	rect_180_degrees = set_up_ref<RotatedShape>(rectangle, 180);
-// 	capsule_0_degrees = set_up_ref<RotatedShape>(rectangle, 0);
-// 	capsule_90_degrees = set_up_ref<RotatedShape>(rectangle, 90);
-// 	circle_0_degrees = set_up_ref<RotatedShape>(rectangle, 0);
-// 	circle_90_degrees = set_up_ref<RotatedShape>(rectangle, 90);
-// });
+// 	// FIXME
+// 	// END_TEST_FIXTURE
+// };
+// } //namespace godot
 
-// after_each([&]() {
-// 	rect_0_degrees.unref();
-// 	rect_90_degrees.unref();
-// 	rect_270_degrees.unref();
-// 	rect_180_degrees.unref();
-// 	capsule_0_degrees.unref();
-// 	capsule_90_degrees.unref();
-// 	circle_0_degrees.unref();
-// 	circle_90_degrees.unref();
-// });
+// START_TEST_F(RotatedShape, RotatedShape)
+START_TEST(RotatedShape)
 
-// it("get_is_rotated_90_degrees", [&]() {
-// 	Expect(rect_0_degrees->get_is_rotated_90_degrees(), false);
-// 	Expect(rect_90_degrees->get_is_rotated_90_degrees(), true);
-// 	Expect(rect_270_degrees->get_is_rotated_90_degrees(), true);
-// 	Expect(rect_180_degrees->get_is_rotated_90_degrees(), false);
-// 	Expect(capsule_0_degrees->get_is_rotated_90_degrees(), false);
-// 	Expect(capsule_90_degrees->get_is_rotated_90_degrees(), true);
-// 	Expect(circle_0_degrees->get_is_rotated_90_degrees(), false);
-// 	Expect(circle_90_degrees->get_is_rotated_90_degrees(), true);
-// });
+// // FIXME: LEFT OFF HERE: Refactor test_runner to use a TFOSTNHOESMKROKE
+// // class to define logic that is re-used across multiple units, and get rid
+// // of the naked before_each and after_each. LOOK AT:
+// // https://google.github.io/googletest/primer.html
 
-// it("get_is_axially_aligned", [&]() {
-// 	Expect(rect_0_degrees->get_is_axially_aligned(), true);
-// 	Expect(rect_90_degrees->get_is_axially_aligned(), true);
-// 	Expect(rect_270_degrees->get_is_axially_aligned(), true);
-// 	Expect(rect_180_degrees->get_is_axially_aligned(), true);
-// 	Expect(capsule_0_degrees->get_is_axially_aligned(), true);
-// 	Expect(capsule_90_degrees->get_is_axially_aligned(), true);
-// 	Expect(circle_0_degrees->get_is_axially_aligned(), true);
-// 	Expect(circle_90_degrees->get_is_axially_aligned(), true);
-// });
+// it_f(RotatedShape,
+// 	 "get_is_rotated_90_degrees",
+// 	 [&](TestRunnerFixture_RotatedShape &f) {
+// 		 expect(f.rect_0_degrees->get_is_rotated_90_degrees(), false);
+// 		 expect(f.rect_90_degrees->get_is_rotated_90_degrees(), true);
+// 		 expect(f.rect_270_degrees->get_is_rotated_90_degrees(), true);
+// 		 expect(f.rect_180_degrees->get_is_rotated_90_degrees(), false);
+// 		 expect(f.capsule_0_degrees->get_is_rotated_90_degrees(), false);
+// 		 expect(f.capsule_90_degrees->get_is_rotated_90_degrees(), true);
+// 		 expect(f.circle_0_degrees->get_is_rotated_90_degrees(), false);
+// 		 expect(f.circle_90_degrees->get_is_rotated_90_degrees(), true);
+// 	 });
 
-// it("get_half_width_height", [&]() {
-// 	Expect(rect_0_degrees->get_half_width_height(), Vector2(0.5f, 1));
-// 	Expect(rect_90_degrees->get_half_width_height(), Vector2(0.5f, 1));
-// 	Expect(rect_270_degrees->get_half_width_height(), Vector2(0.5f, 1));
-// 	Expect(rect_180_degrees->get_half_width_height(), Vector2(0.5f, 1));
-// 	Expect(capsule_0_degrees->get_half_width_height(), Vector2(1.5f, 0.5f));
-// 	Expect(capsule_90_degrees->get_half_width_height(), Vector2(0.5f, 1.5f));
-// 	Expect(circle_0_degrees->get_half_width_height(), Vector2(1, 1));
-// 	Expect(circle_90_degrees->get_half_width_height(), Vector2(1, 1));
-// });
+// it_f(RotatedShape,
+// 	 "get_is_axially_aligned",
+// 	 [&](TestRunnerFixture_RotatedShape &f) {
+// 		 expect(f.rect_0_degrees->get_is_axially_aligned(), true);
+// 		 expect(f.rect_90_degrees->get_is_axially_aligned(), true);
+// 		 expect(f.rect_270_degrees->get_is_axially_aligned(), true);
+// 		 expect(f.rect_180_degrees->get_is_axially_aligned(), true);
+// 		 expect(f.capsule_0_degrees->get_is_axially_aligned(), true);
+// 		 expect(f.capsule_90_degrees->get_is_axially_aligned(), true);
+// 		 expect(f.circle_0_degrees->get_is_axially_aligned(), true);
+// 		 expect(f.circle_90_degrees->get_is_axially_aligned(), true);
+// 	 });
 
-END_SNORE_CORE_TEST
+// it_f(RotatedShape,
+// 	 "get_half_width_height",
+// 	 [&](TestRunnerFixture_RotatedShape &f) {
+// 		 expect(f.rect_0_degrees->get_half_width_height(), Vector2(0.5f, 1));
+// 		 expect(f.rect_90_degrees->get_half_width_height(), Vector2(0.5f, 1));
+// 		 expect(f.rect_270_degrees->get_half_width_height(), Vector2(0.5f, 1));
+// 		 expect(f.rect_180_degrees->get_half_width_height(), Vector2(0.5f, 1));
+// 		 expect(f.capsule_0_degrees->get_half_width_height(),
+// 				Vector2(1.5f, 0.5f));
+// 		 expect(f.capsule_90_degrees->get_half_width_height(),
+// 				Vector2(0.5f, 1.5f));
+// 		 expect(f.circle_0_degrees->get_half_width_height(), Vector2(1, 1));
+// 		 expect(f.circle_90_degrees->get_half_width_height(), Vector2(1, 1));
+// 	 });
+
+END_TEST
+
+// FIXME: LEFT OFF HERE: ------------------------------
+
+#include "gtest/gtest.h"
+
+TEST(HelloTestCase, HelloTest) {
+	EXPECT_EQ(2, 1 + 1);
+	// EXPECT_EQ(3, 2 + 2);
+}
 
 #endif // DEBUG_ENABLED
 
 #endif // TEST_ROTATED_SHAPE_H
+
+// FIXME: LEFT OFF HERE: Use or remove googletest.

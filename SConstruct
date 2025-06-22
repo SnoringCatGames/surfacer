@@ -48,7 +48,13 @@ env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 #     env["CXXFLAGS"].insert(0, "-std=c++23")
 
 # NOTE: Levi updated this.
-env.Append(CPPPATH=["src/", "godot-sft/"])
+env.Append(CPPPATH=[
+    "src/",
+    "googletest/googletest/src/",
+    "googletest/googletest/include/",
+    "googletest/googlemock/src/",
+    "googletest/googlemock/include/",
+])
 
 # NOTE: Levi updated this.
 sources = (
@@ -56,10 +62,27 @@ sources = (
     Glob("src/scaffolder/*.cpp") +
     Glob("src/snore_core/*.cpp") +
     Glob("src/snore_core/internal/*.cpp") +
+    Glob("src/snore_core/test_runner/*.cpp") +
     Glob("src/surfacer/*.cpp") +
     Glob("src/surfacer/annotations/*.cpp") +
     Glob("src/surfacer/surface/*.cpp")
 )
+
+# NOTE: Levi added this, to include GoogleTest.
+#       (tests=true is set when dev_mode=true is set).
+if "tests" in env and env["tests"]:
+    googletest_sources = (
+        Glob("googletest/src/*.cc") +
+        Glob("googlemock/src/*.cc")
+    )
+    googletest_exclusions = [
+        "googletest/src/gtest-all.cc",
+        "googletest/src/gtest_main.cc",
+        "googlemock/src/gmock-all.cc",
+        # NOTE: This file actually triggers the tests.
+        # "googlemock/src/gmock_main.cc",
+    ]
+    sources.append([x for x in googletest_sources if str(x) not in googletest_exclusions])
 
 if env["target"] in ["editor", "template_debug"]:
     try:

@@ -42,6 +42,28 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 
 FIXME: LEFT OFF HERE: ---------------------------------------------------
 
+- Adapt gtest_main, and plan how to test logic in the build
+- Create a simple test with GoogleTest.
+  - Read the docs.
+  - All the deps should be setup in SConstruct now!
+- Figure out the best way to incorporate the GoogleTest dependencies, such that no GoogleTest file gets included when DEBUG is false.
+  - ACTUALLY, is there a TESTS precompiler variable I can check, instead of using DEBUG for this?
+- Figure out how to run this on presubmit!!
+
+- Commit latest attempts to fix my own test runner.
+- Then delete my custom test runner.
+
+- Create a new dev branch.
+
+- CI:
+  - Checkout this example for running the test, and recording the results.
+    https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-net
+  - Switch to using a dev branch separately from the main branch.
+  - Run tests on each push to dev.
+  - Require passing tests before merging to main.
+  - Add a job for zipping and creating a new Release on GitHub whenever merging to main.
+    - Could I make this replace a single special Head Release (with v0.0.0, but always marked as latest, and marked as a pre-release)?
+
 - Fix GDScript errors.
 - Implement and pass-in settings from GDScript.
 - Also implement and pass-in MovementProfile as a Resource.
