@@ -9,3 +9,6 @@
 	path = godot
 	url = https://github.com/godotengine/godot.git
 	branch = 4.4
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest.git
