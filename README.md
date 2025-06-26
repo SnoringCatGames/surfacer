@@ -7,6 +7,10 @@
 
 --------
 
+**UPDATE**: Development is currently underway to rerelease this as a GDExtension.
+
+--------
+
 > **NOTE:** _Consider this a **pre-alpha** release._
 > -   This framework still has many rough edges, is still changing a lot, and is probably a lot more inflexible than you would need (it makes a lot of assumptions about how you've structured your app).
 > -   See the [Still not working?](https://github.com/SnoringCatGames/scaffolder/blob/master/docs/getting_set_up.md#still-not-working) docs for more context into how difficult this may be for you to use.
