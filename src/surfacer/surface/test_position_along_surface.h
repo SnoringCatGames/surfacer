@@ -5,17 +5,11 @@
 
 #include "surfacer/surface/position_along_surface.h"
 
-#include "snore_core/test_runner/test_runner.h"
+// START_TEST(PositionAlongSurface)
 
-START_TEST(PositionAlongSurface)
+// TODO: Write tests.
 
-it("TODO", []() {
-	// TODO
-	// expect(Surface::get_normal_from_side(Surface::Side::FLOOR),
-	// 	   Vector2(0, -1));
-});
-
-END_TEST
+// END_TEST
 
 #endif // DEBUG_ENABLED
 

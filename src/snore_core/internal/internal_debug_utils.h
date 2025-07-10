@@ -6,6 +6,13 @@
 
 namespace godot {
 
+#define _RAINBOW_BAR                                                           \
+	"[color=red]=[/color][color=orange]=[/color][color=yellow]=[/color]"       \
+	"[color=green]=[/color][color=blue]=[/color][color=purple]=[/color]"
+#define _REVERSE_RAINBOW_BAR                                                   \
+	"[color=purple]=[/color][color=blue]=[/color][color=green]=[/color]"       \
+	"[color=yellow]=[/color][color=orange]=[/color][color=red]=[/color]"
+
 String get_stack_trace();
 
 #define PRINT_STACK_TRACE()                                                    \

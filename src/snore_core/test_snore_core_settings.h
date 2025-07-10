@@ -5,17 +5,11 @@
 
 #include "snore_core/snore_core_settings.h"
 
-#include "snore_core/test_runner/test_runner.h"
+// START_TEST(SnoreCoreSettings)
 
-START_TEST(SnoreCoreSettings)
+// TODO: Write tests.
 
-it("TODO", []() {
-	// TODO
-	// expect(Surface::get_normal_from_side(Surface::Side::FLOOR),
-	// 	   Vector2(0, -1));
-});
-
-END_TEST
+// END_TEST
 
 #endif // DEBUG_ENABLED
 

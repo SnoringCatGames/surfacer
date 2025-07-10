@@ -6,7 +6,7 @@
 namespace godot {
 
 // Infinity is used rather than NaN to avoid issues with NaN comparisons.
-static const Vector2 vector2_invalid = Vector2(Math_INF, Math_INF);
+static const Vector2 vector2_invalid = Vector2(INFINITY, INFINITY);
 static const Vector2 vector2_zero = Vector2(0, 0);
 static const Vector2 vector2_one = Vector2(1, 1);
 static const Vector2 vector2_up = Vector2(0, -1);

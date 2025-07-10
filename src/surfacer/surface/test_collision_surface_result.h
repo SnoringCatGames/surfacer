@@ -5,17 +5,11 @@
 
 #include "surfacer/surface/collision_surface_result.h"
 
-#include "snore_core/test_runner/test_runner.h"
+// START_TEST(CollisionSurfaceResult)
 
-START_TEST(CollisionSurfaceResult)
+// TODO: Write tests.
 
-it("TODO", []() {
-	// TODO
-	// expect(Surface::get_normal_from_side(Surface::Side::FLOOR),
-	// 	   Vector2(0, -1));
-});
-
-END_TEST
+// END_TEST
 
 #endif // DEBUG_ENABLED
 

@@ -4,17 +4,12 @@
 #ifdef DEBUG_ENABLED
 
 #include "snore_core/canvas_layer_config.h"
-#include "snore_core/test_runner/test_runner.h"
 
-START_TEST(CanvasLayerConfig)
+// START_TEST(CanvasLayerConfig)
 
-it("TODO", []() {
-	// TODO
-	// expect(Surface::get_normal_from_side(Surface::Side::FLOOR),
-	// 	   Vector2(0, -1));
-});
+// TODO: Write tests.
 
-END_TEST
+// END_TEST
 
 #endif // DEBUG_ENABLED
 

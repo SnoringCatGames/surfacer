@@ -18,7 +18,7 @@ public:
 	static void register_gdextension_types(ModuleInitializationLevel p_level);
 	static void unregister_gdextension_types(ModuleInitializationLevel p_level);
 
-	static void run_tests();
+	static bool run_tests();
 
 	static void set_up_from_binding(
 			const TypedArray<SnoreCoreSettings> &p_all_settings);

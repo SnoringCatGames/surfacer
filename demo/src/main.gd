@@ -21,7 +21,7 @@ func _ready() -> void:
     SnoreCore.set_up(all_settings)
 
     if run_tests:
-        SnoreCore.run_tests()
+        var tests_passed = SnoreCore.run_tests()
 
     # TODO: REMOVE
     var foo := Surface.new()
@@ -33,11 +33,11 @@ func _ready() -> void:
 
 
 func _on_snore_core_set_up_finished() -> void:
-    S.log.print("SnoreCore set up finished.")
-
     G.snore_core_settings = G.snore_core.get_settings()
     G.scaffolder_settings = G.scaffolder.get_settings()
     G.surfacer_settings = G.surfacer.get_settings()
+    
+    S.set_up(G.scaffolder_settings)
 
 
 func _on_gd_example_position_changed(node: Object, new_pos: Vector2) -> void:

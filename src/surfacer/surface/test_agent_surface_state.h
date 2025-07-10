@@ -5,17 +5,11 @@
 
 #include "surfacer/surface/agent_surface_state.h"
 
-#include "snore_core/test_runner/test_runner.h"
+// START_TEST(AgentSurfaceState)
 
-START_TEST(AgentSurfaceState)
+// TODO: Write tests.
 
-it("TODO", []() {
-	// TODO
-	// expect(Surface::get_normal_from_side(Surface::Side::FLOOR),
-	// 	   Vector2(0, -1));
-});
-
-END_TEST
+// END_TEST
 
 #endif // DEBUG_ENABLED
 

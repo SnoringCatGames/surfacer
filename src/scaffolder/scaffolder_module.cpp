@@ -25,8 +25,8 @@ void Scaffolder::register_gdextension_types(ModuleInitializationLevel p_level) {
 	}
 	are_types_registered = true;
 
-	REGISTER_SNORE_CORE_CLASS(Scaffolder);
-	REGISTER_SNORE_CORE_CLASS(ScaffolderSettings);
+	GDREGISTER_CLASS(Scaffolder);
+	GDREGISTER_CLASS(ScaffolderSettings);
 
 	REGISTER_SNORE_CORE_MODULE(Scaffolder);
 }

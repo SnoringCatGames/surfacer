@@ -30,7 +30,7 @@ public:
 
 	void set_up(
 			const Ref<Shape2D> &p_shape = nullptr,
-			double p_rotation = Math_INF);
+			double p_rotation = INFINITY);
 
 	void reset();
 
@@ -39,7 +39,7 @@ protected:
 
 private:
 	Ref<Shape2D> shape;
-	double rotation = Math_INF;
+	double rotation = INFINITY;
 	Vector2 half_width_height = vector2_invalid;
 };
 

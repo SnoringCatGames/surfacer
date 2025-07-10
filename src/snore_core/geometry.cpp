@@ -407,7 +407,7 @@ Vector2 Geometry::get_closest_point_on_polyline_to_polyline(
 	}
 
 	Vector2 closest_point = vector2_invalid;
-	float closest_distance_squared = Math_INF;
+	float closest_distance_squared = INFINITY;
 
 	for (const auto &vertex_b : p_b) {
 		Vector2 current_point =
@@ -1320,7 +1320,7 @@ float Geometry::get_radius(const Ref<Shape2D> &p_shape) {
 		return capsule->get_radius();
 	} else {
 		ENSURE(false, "Geometry.get_radius: Invalid shape.");
-		return Math_INF;
+		return INFINITY;
 	}
 }
 

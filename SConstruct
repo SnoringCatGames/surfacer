@@ -50,9 +50,9 @@ env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 # NOTE: Levi updated this.
 env.Append(CPPPATH=[
     "src/",
-    "googletest/googletest/src/",
+    "googletest/googletest/",
     "googletest/googletest/include/",
-    "googletest/googlemock/src/",
+    "googletest/googlemock/",
     "googletest/googlemock/include/",
 ])
 
@@ -70,17 +70,21 @@ sources = (
 
 # NOTE: Levi added this, to include GoogleTest.
 #       (tests=true is set when dev_mode=true is set).
-if "tests" in env and env["tests"]:
+# FIXME: Update build targets to optionally include `tests` and ensure all builds compile.
+includes_tests = True
+# includes_tests = "tests" in env and env["tests"]
+if includes_tests:
     googletest_sources = (
-        Glob("googletest/src/*.cc") +
-        Glob("googlemock/src/*.cc")
+        Glob("googletest/googletest/src/gtest-all.cc") +
+        Glob("googletest/googlemock/src/gmock-all.cc")
+        # Glob("googletest/googletest/src/*.cc") +
+        # Glob("googletest/googlemock/src/*.cc")
     )
     googletest_exclusions = [
-        "googletest/src/gtest-all.cc",
-        "googletest/src/gtest_main.cc",
-        "googlemock/src/gmock-all.cc",
-        # NOTE: This file actually triggers the tests.
-        # "googlemock/src/gmock_main.cc",
+        # "googletest/googletest/src/gtest-all.cc",
+        # "googletest/googletest/src/gtest_main.cc",
+        # "googletest/googlemock/src/gmock-all.cc",
+        # "googletest/googlemock/src/gmock_main.cc",
     ]
     sources.append([x for x in googletest_sources if str(x) not in googletest_exclusions])
 

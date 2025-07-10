@@ -24,7 +24,7 @@
 			</description>
 		</method>
 		<method name="run_tests" qualifiers="static">
-			<return type="void" />
+			<return type="bool" />
 			<description>
 			</description>
 		</method>

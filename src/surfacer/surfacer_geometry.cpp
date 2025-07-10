@@ -512,7 +512,7 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 			Geometry::get_perpendicular_vector(segment_normal);
 	const double segment_slope = (segment_tangent.x != 0.0)
 			? segment_tangent.y / segment_tangent.x
-			: Math_INF;
+			: INFINITY;
 
 	bool is_shape_effectively_circle = p_shape->is_class("CircleShape2D");
 	const bool is_shape_capsule = p_shape->is_class("CapsuleShape2D");
@@ -522,8 +522,8 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 			is_shape_effectively_circle || is_shape_capsule ||
 			is_shape_effectively_rectangle);
 
-	double projection_displacement_x = Math_INF;
-	double projection_displacement_y = Math_INF;
+	double projection_displacement_x = INFINITY;
+	double projection_displacement_y = INFINITY;
 
 	if (is_shape_capsule) {
 		// All of our capsule-projection cases involve modifying parameters and
@@ -765,8 +765,8 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 
 				projection_displacement_x = 0.0;
 				projection_displacement_y =
-						(p_surface_side == Surface::Side::FLOOR) ? Math_INF
-																 : -Math_INF;
+						(p_surface_side == Surface::Side::FLOOR) ? INFINITY
+																 : -INFINITY;
 
 				if (shape_min_x < leftward_segment_point.x) {
 					// The shape overlaps with the segment left side.
@@ -856,8 +856,8 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 								shape_position, radius, true);
 
 				projection_displacement_x =
-						(p_surface_side == Surface::Side::LEFT_WALL) ? -Math_INF
-																	 : Math_INF;
+						(p_surface_side == Surface::Side::LEFT_WALL) ? -INFINITY
+																	 : INFINITY;
 				projection_displacement_y = 0.0;
 
 				if (shape_min_y < upper_segment_point.y) {
@@ -958,8 +958,8 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 																 : shape_min_y;
 				projection_displacement_x = 0.0;
 				projection_displacement_y =
-						(p_surface_side == Surface::Side::FLOOR) ? Math_INF
-																 : -Math_INF;
+						(p_surface_side == Surface::Side::FLOOR) ? INFINITY
+																 : -INFINITY;
 
 				if (shape_min_x < leftward_segment_point.x) {
 					// The shape overlaps with the segment left side.
@@ -1039,8 +1039,8 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 						? shape_max_x
 						: shape_min_x;
 				projection_displacement_x =
-						(p_surface_side == Surface::Side::LEFT_WALL) ? -Math_INF
-																	 : Math_INF;
+						(p_surface_side == Surface::Side::LEFT_WALL) ? -INFINITY
+																	 : INFINITY;
 				projection_displacement_y = 0.0;
 
 				if (shape_min_y < upper_segment_point.y) {
@@ -1275,7 +1275,7 @@ Vector2 SurfacerGeometry::get_closest_point_on_surface_to_shape(
 		return p_surface->get_first_point();
 	}
 
-	double closest_distance_squared = Math_INF;
+	double closest_distance_squared = INFINITY;
 	Vector2 closest_point_on_surface = vector2_invalid;
 
 	const Array &vertices = p_surface->get_vertices();
@@ -1824,7 +1824,7 @@ double SurfacerGeometry::
 			   "Invalid Shape2D provided for "
 			   "calculate_displacement_x_for_vertical_distance_past_edge. "
 			   "Supported: CircleShape2D, CapsuleShape2D, RectangleShape2D.");
-		return Math_INF;
+		return INFINITY;
 	}
 }
 
@@ -1894,7 +1894,7 @@ double SurfacerGeometry::
 			   "Invalid Shape2D provided for "
 			   "calculate_displacement_y_for_horizontal_distance_past_edge. "
 			   "Supported: CircleShape2D, CapsuleShape2D, RectangleShape2D.");
-		return Math_INF;
+		return INFINITY;
 	}
 }
 

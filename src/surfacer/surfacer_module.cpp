@@ -63,29 +63,29 @@ void Surfacer::register_gdextension_types(ModuleInitializationLevel p_level) {
 	}
 	are_types_registered = true;
 
-	REGISTER_SNORE_CORE_CLASS(MovementProfile);
-	REGISTER_SNORE_CORE_CLASS(SurfaceGraph);
-	REGISTER_SNORE_CORE_CLASS(Surfacer);
-	REGISTER_SNORE_CORE_CLASS(SurfacerAgent);
-	REGISTER_SNORE_CORE_CLASS(SurfacerGeometry);
-	REGISTER_SNORE_CORE_CLASS(SurfacerSettings);
-	REGISTER_SNORE_CORE_CLASS(MovementSettings);
-	REGISTER_SNORE_CORE_CLASS(SurfaceParserSettings);
+	GDREGISTER_CLASS(MovementProfile);
+	GDREGISTER_CLASS(SurfaceGraph);
+	GDREGISTER_CLASS(Surfacer);
+	GDREGISTER_CLASS(SurfacerAgent);
+	GDREGISTER_CLASS(SurfacerGeometry);
+	GDREGISTER_CLASS(SurfacerSettings);
+	GDREGISTER_CLASS(MovementSettings);
+	GDREGISTER_CLASS(SurfaceParserSettings);
 
-	REGISTER_SNORE_CORE_CLASS(JumpAnnotation);
-	REGISTER_SNORE_CORE_CLASS(PathAnnotation);
-	REGISTER_SNORE_CORE_CLASS(PositionAlongSurfaceAnnotation);
-	REGISTER_SNORE_CORE_CLASS(SurfaceAnnotation);
-	REGISTER_SNORE_CORE_CLASS(SurfacerAgentAnnotation);
+	GDREGISTER_CLASS(JumpAnnotation);
+	GDREGISTER_CLASS(PathAnnotation);
+	GDREGISTER_CLASS(PositionAlongSurfaceAnnotation);
+	GDREGISTER_CLASS(SurfaceAnnotation);
+	GDREGISTER_CLASS(SurfacerAgentAnnotation);
 
-	REGISTER_SNORE_CORE_CLASS(AgentSurfaceState);
-	REGISTER_SNORE_CORE_CLASS(CollisionSurfaceResult);
-	REGISTER_SNORE_CORE_CLASS(PositionAlongSurface);
-	REGISTER_SNORE_CORE_CLASS(Surface);
-	REGISTER_SNORE_CORE_CLASS(SurfaceChunk);
-	REGISTER_SNORE_CORE_CLASS(SurfaceProperties);
-	REGISTER_SNORE_CORE_CLASS(SurfaceStore);
-	REGISTER_SNORE_CORE_CLASS(TileMapSurfaceParser);
+	GDREGISTER_CLASS(AgentSurfaceState);
+	GDREGISTER_CLASS(CollisionSurfaceResult);
+	GDREGISTER_CLASS(PositionAlongSurface);
+	GDREGISTER_CLASS(Surface);
+	GDREGISTER_CLASS(SurfaceChunk);
+	GDREGISTER_CLASS(SurfaceProperties);
+	GDREGISTER_CLASS(SurfaceStore);
+	GDREGISTER_CLASS(TileMapSurfaceParser);
 
 	REGISTER_SNORE_CORE_MODULE(Surfacer);
 }

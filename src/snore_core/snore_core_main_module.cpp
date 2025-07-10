@@ -16,11 +16,13 @@
 #include "snore_core/test_canvas_layer_config.h"
 #include "snore_core/test_geometry.h"
 #include "snore_core/test_rotated_shape.h"
-#include "snore_core/test_runner/test_runner.h"
 #include "snore_core/test_snore_core_main_module.h"
 #include "snore_core/test_snore_core_main_settings.h"
 #include "snore_core/test_snore_core_module.h"
 #include "snore_core/test_snore_core_settings.h"
+
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/time.hpp>
@@ -42,16 +44,16 @@ void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
 	}
 	are_types_registered = true;
 
-	REGISTER_SNORE_CORE_ABSTRACT_CLASS(SnoreCoreSettings);
-	REGISTER_SNORE_CORE_ABSTRACT_CLASS(SnoreCoreModule);
-	REGISTER_SNORE_CORE_VIRTUAL_CLASS(Annotation);
+	GDREGISTER_ABSTRACT_CLASS(SnoreCoreSettings);
+	GDREGISTER_ABSTRACT_CLASS(SnoreCoreModule);
+	GDREGISTER_VIRTUAL_CLASS(Annotation);
 
-	REGISTER_SNORE_CORE_CLASS(AnnotationsManager);
-	REGISTER_SNORE_CORE_CLASS(CanvasLayerConfig);
-	REGISTER_SNORE_CORE_CLASS(Geometry);
-	REGISTER_SNORE_CORE_CLASS(RotatedShape);
-	REGISTER_SNORE_CORE_CLASS(SnoreCore);
-	REGISTER_SNORE_CORE_CLASS(SnoreCoreMainSettings);
+	GDREGISTER_CLASS(AnnotationsManager);
+	GDREGISTER_CLASS(CanvasLayerConfig);
+	GDREGISTER_CLASS(Geometry);
+	GDREGISTER_CLASS(RotatedShape);
+	GDREGISTER_CLASS(SnoreCore);
+	GDREGISTER_CLASS(SnoreCoreMainSettings);
 
 	GDREGISTER_CLASS(GDExample);
 
@@ -73,11 +75,11 @@ void SnoreCore::_bind_methods() {
 			name, D_METHOD("set_up", "p_settings"),
 			&SnoreCore::set_up_from_binding);
 	ClassDB::bind_static_method(
-			name, D_METHOD("run_tests"), &SnoreCore::run_tests);
-	ClassDB::bind_static_method(
 			name, D_METHOD("get_module", "p_name"), &SnoreCore::get_module);
 	ClassDB::bind_static_method(
 			name, D_METHOD("get_modules"), &SnoreCore::get_modules);
+	ClassDB::bind_static_method(
+			name, D_METHOD("run_tests"), &SnoreCore::run_tests);
 
 	ADD_SIGNAL(MethodInfo(
 			"module_set_up_finished",
@@ -176,8 +178,13 @@ void SnoreCore::unregister_module(Object *p_module) {
 	modules.erase(module->get_name());
 }
 
-void SnoreCore::run_tests() {
-	// TODO: Swap these.
-	// run_tests();
-	run_tests_verbose();
+bool SnoreCore::run_tests() {
+	int argc = 1;
+	const auto arg0 = "dummy";
+	char *argv0 = const_cast<char *>(arg0);
+	char **argv = &argv0;
+
+	testing::InitGoogleMock(&argc, argv);
+
+	return RUN_ALL_TESTS() == 0;
 }

@@ -5,17 +5,11 @@
 
 #include "scaffolder/scaffolder_settings.h"
 
-#include "snore_core/test_runner/test_runner.h"
+// START_TEST(ScaffolderSettings)
 
-START_TEST(ScaffolderSettings)
+// TODO: Write tests.
 
-it("TODO", []() {
-	// TODO
-	// expect(Surface::get_normal_from_side(Surface::Side::FLOOR),
-	// 	   Vector2(0, -1));
-});
-
-END_TEST
+// END_TEST
 
 #endif // DEBUG_ENABLED
 

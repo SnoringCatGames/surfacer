@@ -18,6 +18,9 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	SnoreCore::register_gdextension_types(p_level);
 	Scaffolder::register_gdextension_types(p_level);
 	Surfacer::register_gdextension_types(p_level);
+
+	// FIXME: Remove?
+	SnoreCore::run_tests();
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {

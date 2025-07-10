@@ -47,7 +47,7 @@ void RotatedShape::_bind_methods() {
 
 	ClassDB::bind_method(
 			D_METHOD("set_up", "shape", "rotation"), &RotatedShape::set_up,
-			DEFVAL(Ref<Shape2D>()), DEFVAL(Math_INF));
+			DEFVAL(Ref<Shape2D>()), DEFVAL(INFINITY));
 	ClassDB::bind_method(D_METHOD("reset"), &RotatedShape::reset);
 }
 
@@ -92,7 +92,7 @@ void RotatedShape::set_up(const Ref<Shape2D> &p_shape, double p_rotation) {
 
 void RotatedShape::reset() {
 	shape.unref();
-	rotation = Math_INF;
+	rotation = INFINITY;
 	half_width_height = vector2_invalid;
 }
 
