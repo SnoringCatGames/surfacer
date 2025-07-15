@@ -1,6 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://dd6yp3qtgdlum"]
+[gd_scene load_steps=5 format=3 uid="uid://dd6yp3qtgdlum"]
 
 [ext_resource type="Script" uid="uid://48ej5xloh5ng" path="res://src/main.gd" id="1_0xm2m"]
+[ext_resource type="SnoreCoreMainSettings" uid="uid://d2jdaphu1qs1f" path="res://src/snore_core_main_settings.tres" id="2_3cfgd"]
+[ext_resource type="ScaffolderSettings" uid="uid://majbbkc1bvpb" path="res://src/scaffolder_settings.tres" id="2_gh0ne"]
+[ext_resource type="SurfacerSettings" uid="uid://68oksfihr485" path="res://src/surfacer_settings.tres" id="4_fyndt"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_0xm2m")
+snore_core_settings = ExtResource("2_3cfgd")
+scaffolder_settings = ExtResource("2_gh0ne")
+surfacer_settings = ExtResource("4_fyndt")

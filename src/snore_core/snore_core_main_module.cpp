@@ -116,10 +116,9 @@ void SnoreCore::set_up_main(
 	last_set_up_time_msec = current_time_msec;
 
 	for (const std::pair<const StringName, SnoreCoreModule *> &pair : modules) {
-		SnoreCoreSettings *settings_ptr =
+		SnoreCoreSettings *settings =
 				pair.second->get_settings_from_list(p_all_settings);
-		Ref<SnoreCoreSettings> settings = Ref<SnoreCoreSettings>(settings_ptr);
-		pair.second->set_up_base(settings);
+		pair.second->set_up_base(pair.second->cast_to_settings(settings));
 	}
 }
 

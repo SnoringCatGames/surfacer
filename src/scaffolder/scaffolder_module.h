@@ -33,6 +33,10 @@ public:
 		return Object::cast_to<ScaffolderSettings>(p_object);
 	}
 
+	virtual void set_settings(ScaffolderSettings *p_settings) {
+		settings = Ref<ScaffolderSettings>(p_settings);
+	}
+
 	virtual void set_up() override;
 	virtual void reset() override;
 

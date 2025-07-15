@@ -33,6 +33,10 @@ public:
 		return Object::cast_to<SurfacerSettings>(p_object);
 	}
 
+	virtual void set_settings(SurfacerSettings *p_settings) {
+		settings = Ref<SurfacerSettings>(p_settings);
+	}
+
 	virtual void set_up() override;
 	virtual void reset() override;
 

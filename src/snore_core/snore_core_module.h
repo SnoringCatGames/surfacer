@@ -5,9 +5,9 @@
 #include "snore_core/internal/internal_ref_utils.h"
 #include "snore_core/snore_core_settings.h"
 
+#include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/core/object.hpp>
 
 namespace godot {
 
@@ -17,8 +17,8 @@ namespace SnoreCoreModuleInternal {
 void notify_main_module_of_module_set_up_finished(const StringName &p_name);
 } // namespace SnoreCoreModuleInternal
 
-template <typename SettingsType> class SnoreCoreModule : public Object {
-	GDCLASS(SnoreCoreModule, Object)
+template <typename SettingsType> class SnoreCoreModule : public RefCounted {
+	GDCLASS(SnoreCoreModule, RefCounted)
 
 	static_assert(
 			std::is_base_of<SnoreCoreSettings, SettingsType>::value,
@@ -37,6 +37,7 @@ public:
 	virtual const StringName &get_name() const = 0;
 	virtual const StringName &get_settings_class_name() const = 0;
 	virtual SettingsType *cast_to_settings(Object *p_object) const = 0;
+	virtual void set_settings(SettingsType *p_settings) = 0;
 
 	// This is called during game runtime, after settings are loaded.
 	virtual void set_up() = 0;
@@ -52,10 +53,10 @@ public:
 	}
 
 	// This sets some tracking state before calling set_up().
-	void set_up_base(const Ref<SettingsType> &p_settings) {
+	void set_up_base(SettingsType *p_settings) {
 		reset_base();
 		set_up_phase = SET_UP_PHASE::IN_PROGRESS;
-		settings = p_settings;
+		set_settings(p_settings);
 		set_up();
 	}
 
@@ -79,9 +80,9 @@ public:
 		for (int i = 0; i < p_all_settings.size(); i++) {
 			Object *object = p_all_settings[i].get_validated_object();
 			// NOTE: Godot's ClassDB fails to correctly handle generic types, so
-			// Object::cast_to<SettingsType>(object) won't work here (even
-			// though object->get_class() _will_ correctly return the subclass's
-			// name).
+			//       Object::cast_to<SettingsType>(object) won't work here (even
+			//       though object->get_class() _will_ correctly return the
+			//       subclass's name).
 			SettingsType *settings_obj = cast_to_settings(object);
 			if (settings_obj) {
 				return settings_obj;

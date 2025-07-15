@@ -1,0 +1,9 @@
+[gd_resource type="SurfacerSettings" load_steps=3 format=3 uid="uid://68oksfihr485"]
+
+[sub_resource type="MovementSettings" id="MovementSettings_ew3sw"]
+
+[sub_resource type="SurfaceParserSettings" id="SurfaceParserSettings_jv4uo"]
+
+[resource]
+movement_settings = SubResource("MovementSettings_ew3sw")
+surface_parser_settings = SubResource("SurfaceParserSettings_jv4uo")
