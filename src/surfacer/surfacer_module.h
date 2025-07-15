@@ -24,6 +24,15 @@ public:
 		return string_name;
 	}
 
+	virtual const StringName &get_settings_class_name() const override {
+		return SurfacerSettings::get_class_static();
+	}
+
+	virtual SurfacerSettings *cast_to_settings(
+			Object *p_object) const override {
+		return Object::cast_to<SurfacerSettings>(p_object);
+	}
+
 	virtual void set_up() override;
 	virtual void reset() override;
 

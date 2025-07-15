@@ -35,6 +35,8 @@ public:
 	virtual ~SnoreCoreModule() { settings.unref(); }
 
 	virtual const StringName &get_name() const = 0;
+	virtual const StringName &get_settings_class_name() const = 0;
+	virtual SettingsType *cast_to_settings(Object *p_object) const = 0;
 
 	// This is called during game runtime, after settings are loaded.
 	virtual void set_up() = 0;
@@ -72,17 +74,21 @@ public:
 
 	SettingsType *get_settings_from_list(
 			TypedArray<SnoreCoreSettings> p_all_settings) const {
+		const StringName target_class_name = get_settings_class_name();
+
 		for (int i = 0; i < p_all_settings.size(); i++) {
 			Object *object = p_all_settings[i].get_validated_object();
-			SettingsType *settings_obj = Object::cast_to<SettingsType>(object);
+			// NOTE: Godot's ClassDB fails to correctly handle generic types, so
+			// Object::cast_to<SettingsType>(object) won't work here (even
+			// though object->get_class() _will_ correctly return the subclass's
+			// name).
+			SettingsType *settings_obj = cast_to_settings(object);
 			if (settings_obj) {
-				return static_cast<SettingsType *>(settings_obj);
+				return settings_obj;
 			}
 		}
 
-		ENSURE(false,
-			   "Cannot find settings of type: " +
-					   String(typeid(SettingsType).name()));
+		ENSURE(false, "Cannot find settings of type: " + target_class_name);
 
 		return nullptr;
 	}

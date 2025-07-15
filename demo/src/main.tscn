@@ -1,8 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://dd6yp3qtgdlum"]
+[gd_scene load_steps=2 format=3 uid="uid://dd6yp3qtgdlum"]
 
 [ext_resource type="Script" uid="uid://48ej5xloh5ng" path="res://src/main.gd" id="1_0xm2m"]
-[ext_resource type="ScaffolderSettings" uid="uid://c50dr8c5hls6c" path="res://src/scaffolder_settings.tres" id="2_5q4o7"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_0xm2m")
-manifests = Array[SnoreCoreSettings]([ExtResource("2_5q4o7")])
