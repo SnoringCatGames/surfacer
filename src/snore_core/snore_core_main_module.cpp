@@ -178,10 +178,8 @@ void SnoreCore::unregister_module(Object *p_module) {
 }
 
 bool SnoreCore::run_tests() {
-	int argc = 1;
-	const auto arg0 = "dummy";
-	char *argv0 = const_cast<char *>(arg0);
-	char **argv = &argv0;
+	int argc = 2;
+	char *argv[] = { "dummy", "--gtest_brief=1" };
 
 	testing::InitGoogleMock(&argc, argv);
 
