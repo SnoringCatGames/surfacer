@@ -5,9 +5,9 @@
 #include "snore_core/internal/internal_ref_utils.h"
 #include "snore_core/snore_core_settings.h"
 
-#include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/binder_common.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/core/object.hpp>
 
 namespace godot {
 
@@ -17,8 +17,8 @@ namespace SnoreCoreModuleInternal {
 void notify_main_module_of_module_set_up_finished(const StringName &p_name);
 } // namespace SnoreCoreModuleInternal
 
-template <typename SettingsType> class SnoreCoreModule : public RefCounted {
-	GDCLASS(SnoreCoreModule, RefCounted)
+template <typename SettingsType> class SnoreCoreModule : public Object {
+	GDCLASS(SnoreCoreModule, Object)
 
 	static_assert(
 			std::is_base_of<SnoreCoreSettings, SettingsType>::value,
