@@ -7,11 +7,6 @@
 #include "surfacer/annotations/position_along_surface_annotation.h"
 #include "surfacer/annotations/surface_annotation.h"
 #include "surfacer/annotations/surfacer_agent_annotation.h"
-#include "surfacer/annotations/test_jump_annotation.h"
-#include "surfacer/annotations/test_path_annotation.h"
-#include "surfacer/annotations/test_position_along_surface_annotation.h"
-#include "surfacer/annotations/test_surface_annotation.h"
-#include "surfacer/annotations/test_surfacer_agent_annotation.h"
 #include "surfacer/movement_settings.h"
 #include "surfacer/surface/agent_surface_state.h"
 #include "surfacer/surface/collision_surface_result.h"
@@ -20,6 +15,23 @@
 #include "surfacer/surface/surface_chunk.h"
 #include "surfacer/surface/surface_properties.h"
 #include "surfacer/surface/surface_store.h"
+#include "surfacer/surface/tile_shape_data.h"
+#include "surfacer/surface_graph.h"
+#include "surfacer/surface_parser_settings.h"
+#include "surfacer/surfacer_agent.h"
+#include "surfacer/surfacer_geometry.h"
+#include "surfacer/surfacer_settings.h"
+#include "surfacer/tile_map_surface_parser.h"
+
+#include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/core/class_db.hpp>
+
+#ifdef DEBUG_ENABLED
+#include "surfacer/annotations/test_jump_annotation.h"
+#include "surfacer/annotations/test_path_annotation.h"
+#include "surfacer/annotations/test_position_along_surface_annotation.h"
+#include "surfacer/annotations/test_surface_annotation.h"
+#include "surfacer/annotations/test_surfacer_agent_annotation.h"
 #include "surfacer/surface/test_agent_surface_state.h"
 #include "surfacer/surface/test_collision_surface_result.h"
 #include "surfacer/surface/test_position_along_surface.h"
@@ -27,12 +39,6 @@
 #include "surfacer/surface/test_surface_chunk.h"
 #include "surfacer/surface/test_surface_properties.h"
 #include "surfacer/surface/test_surface_store.h"
-#include "surfacer/surface/tile_shape_data.h"
-#include "surfacer/surface_graph.h"
-#include "surfacer/surface_parser_settings.h"
-#include "surfacer/surfacer_agent.h"
-#include "surfacer/surfacer_geometry.h"
-#include "surfacer/surfacer_settings.h"
 #include "surfacer/test_movement_profile.h"
 #include "surfacer/test_movement_settings.h"
 #include "surfacer/test_surface_graph.h"
@@ -42,10 +48,7 @@
 #include "surfacer/test_surfacer_module.h"
 #include "surfacer/test_surfacer_settings.h"
 #include "surfacer/test_tile_map_surface_parser.h"
-#include "surfacer/tile_map_surface_parser.h"
-
-#include <godot_cpp/classes/engine.hpp>
-#include <godot_cpp/core/class_db.hpp>
+#endif // DEBUG_ENABLED
 
 using namespace godot;
 

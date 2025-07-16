@@ -1,13 +1,16 @@
 #include "scaffolder/scaffolder_module.h"
 
 #include "scaffolder/scaffolder_settings.h"
-#include "scaffolder/test_scaffolder_module.h"
-#include "scaffolder/test_scaffolder_settings.h"
 #include "snore_core/internal/internal_registration_utils.h"
 #include "snore_core/snore_core_module_utils.h"
 
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/core/class_db.hpp>
+
+#ifdef DEBUG_ENABLED
+#include "scaffolder/test_scaffolder_module.h"
+#include "scaffolder/test_scaffolder_settings.h"
+#endif // DEBUG_ENABLED
 
 using namespace godot;
 

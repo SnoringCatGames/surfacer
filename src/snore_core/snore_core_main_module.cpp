@@ -11,6 +11,16 @@
 #include "snore_core/snore_core_module.h"
 #include "snore_core/snore_core_module_utils.h"
 #include "snore_core/snore_core_settings.h"
+#include "snore_core/time/stopwatch.h"
+
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
+#include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/time.hpp>
+#include <godot_cpp/core/class_db.hpp>
+
+#ifdef DEBUG_ENABLED
 #include "snore_core/test_annotation.h"
 #include "snore_core/test_annotations_manager.h"
 #include "snore_core/test_canvas_layer_config.h"
@@ -20,13 +30,8 @@
 #include "snore_core/test_snore_core_main_settings.h"
 #include "snore_core/test_snore_core_module.h"
 #include "snore_core/test_snore_core_settings.h"
-
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
-
-#include <godot_cpp/classes/engine.hpp>
-#include <godot_cpp/classes/time.hpp>
-#include <godot_cpp/core/class_db.hpp>
+#include "snore_core/time/test_stopwatch.h"
+#endif // DEBUG_ENABLED
 
 using namespace godot;
 
@@ -54,6 +59,7 @@ void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(RotatedShape);
 	GDREGISTER_CLASS(SnoreCore);
 	GDREGISTER_CLASS(SnoreCoreMainSettings);
+	GDREGISTER_CLASS(Stopwatch);
 
 	GDREGISTER_CLASS(GDExample);
 

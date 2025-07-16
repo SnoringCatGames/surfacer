@@ -95,7 +95,7 @@
 // 		 expect(f.circle_90_degrees->get_half_width_height(), Vector2(1, 1));
 // 	 });
 
-// FIXME: LEFT OFF HERE: ------------------------------
+// FIXME: LEFT OFF HERE: -------------------------------
 
 TEST(HelloTestCase, HelloTest) {
 	EXPECT_EQ(2, 1 + 1);

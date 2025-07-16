@@ -62,7 +62,7 @@ sources = (
     Glob("src/scaffolder/*.cpp") +
     Glob("src/snore_core/*.cpp") +
     Glob("src/snore_core/internal/*.cpp") +
-    Glob("src/snore_core/test_runner/*.cpp") +
+    Glob("src/snore_core/time/*.cpp") +
     Glob("src/surfacer/*.cpp") +
     Glob("src/surfacer/annotations/*.cpp") +
     Glob("src/surfacer/surface/*.cpp")

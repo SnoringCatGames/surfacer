@@ -6,6 +6,7 @@
 
 namespace godot {
 
+// FIXME: Use this for various significant framework events.
 #define _RAINBOW_BAR                                                           \
 	"[color=red]=[/color][color=orange]=[/color][color=yellow]=[/color]"       \
 	"[color=green]=[/color][color=blue]=[/color][color=purple]=[/color]"
@@ -77,28 +78,24 @@ String get_stack_trace();
 #endif
 
 #ifdef DEBUG_ENABLED
+#define LOG_DEBUG(m_msg)                                                       \
+	godot::UtilityFunctions::print_rich(                                       \
+			godot::vformat("[color=white][SC] %s[/color]", m_msg))
+#else
+#define LOG_DEBUG(m_msg)
+#endif
+
 #define LOG_PRINT(m_msg)                                                       \
 	godot::UtilityFunctions::print_rich(                                       \
-			godot::vformat("[color=white]%s[/color]", m_msg))
-#else
-#define LOG_PRINT(m_msg)
-#endif
+			godot::vformat("[color=white][SC] %s[/color]", m_msg))
 
-#ifdef DEBUG_ENABLED
 #define LOG_WARNING(m_msg)                                                     \
 	godot::UtilityFunctions::print_rich(                                       \
-			godot::vformat("[color=yellow]WARNING: %s[/color]", m_msg))
-#else
-#define LOG_WARNING(m_msg)
-#endif
+			godot::vformat("[color=yellow]WARNING [SC]: %s[/color]", m_msg))
 
-#ifdef DEBUG_ENABLED
 #define LOG_ERROR(m_msg)                                                       \
 	godot::UtilityFunctions::print_rich(                                       \
-			godot::vformat("[color=red]ERROR: %s[/color]", m_msg))
-#else
-#define LOG_ERROR(m_msg)
-#endif
+			godot::vformat("[color=red]ERROR [SC]: %s[/color]", m_msg))
 
 } //namespace godot
 
