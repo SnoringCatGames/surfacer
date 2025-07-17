@@ -262,6 +262,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: true
+          token: ${{ secrets.PRIVATESURFACER2ACCESSTOKEN}}
 
       # Lint
       #- name: Setup clang-format
