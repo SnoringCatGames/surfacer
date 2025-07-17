@@ -46,7 +46,7 @@ jobs:
         with:
           path: |
             ./godot/bin
-        key: ${{ steps.godot-restore.outputs.cache-primary-key }}
+          key: ${{ steps.godot-restore.outputs.cache-primary-key }}
 
       # Setup dependencies.
       - name: Setup godot-cpp
