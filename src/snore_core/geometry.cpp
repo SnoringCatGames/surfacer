@@ -1190,8 +1190,7 @@ Vector2 Geometry::calculate_half_width_height(
 			CapsuleShape2D *capsule =
 					Object::cast_to<CapsuleShape2D>(p_shape.ptr())) {
 		half_width_height =
-				Vector2(capsule->get_radius(),
-						capsule->get_radius() + capsule->get_height() / 2.0f);
+				Vector2(capsule->get_radius(), capsule->get_height() / 2.0f);
 	} else if (
 			RectangleShape2D *rectangle =
 					Object::cast_to<RectangleShape2D>(p_shape.ptr())) {

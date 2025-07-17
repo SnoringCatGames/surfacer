@@ -1,5 +1,7 @@
 #include "snore_core/internal/internal_debug_utils.h"
 
+#include "snore_core/internal/internal_string_utils.h"
+
 #include <godot_cpp/variant/variant.hpp>
 
 using namespace godot;
@@ -29,7 +31,9 @@ String godot::get_stack_trace() {
 		symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 		symbol->MaxNameLen = MAX_SYM_NAME;
 
-		result += vformat("    [%d] ", i);
+		result += "    ";
+
+		// result += vformat("[%d] ", i);
 
 		if (SymFromAddr(GetCurrentProcess(), address, &displacement, symbol)) {
 			result += symbol->Name;
