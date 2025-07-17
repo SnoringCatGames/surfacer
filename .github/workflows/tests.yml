@@ -1,9 +1,13 @@
 name: Run tests on Windows
 on:
-  workflow_call:
+  # workflow_call:
   push:
   pull_request:
-  merge_group:
+  # merge_group:
+
+env:
+  # Update this to invalidate the cached godot build.
+  GODOT_VERSION: 4.4
 
 jobs:
   test:
@@ -21,6 +25,29 @@ jobs:
           #   lfs: true
           token: ${{ secrets.PRIVATESURFACER2ACCESSTOKEN}}
 
+      # Cache the Godot build, so we don't have to rebuild it for every push.
+      - name: Restore cached Godot Editor
+        id: godot-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ./godot/bin
+          key: godot-${{ env.GODOT_VERSION }}
+      - name: Build Godot Editor
+        if: steps.godot-restore.outputs.cache-hit != 'true'
+        shell: sh
+        run: |
+          cd godot
+          scons target=editor platform=windows
+        # scons target=editor platform=linux
+      - name: Save Godot Editor
+        id: godot-save
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ./godot/bin
+        key: ${{ steps.godot-restore.outputs.cache-primary-key }}
+
       # Setup dependencies.
       - name: Setup godot-cpp
         uses: ./godot-cpp/.github/actions/setup-godot-cpp
@@ -28,14 +55,6 @@ jobs:
           platform: windows
           # platform: linux
           em-version: 3.1.62
-
-      # Build Godot Editor.
-      - name: Build Godot Editor
-        shell: sh
-        run: |
-          cd godot
-          scons target=editor platform=windows
-        # scons target=editor platform=linux
 
       # Build GDExtension.
       - name: Build GDExtension Debug Build
