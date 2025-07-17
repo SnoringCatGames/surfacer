@@ -48,7 +48,7 @@ String godot::join_strings(
 		const char *p_delimiter) {
 	String result;
 	for (int i = 0; i < p_strings.size(); ++i) {
-		result += p_strings[i];
+		result += String(p_strings[i]);
 		if (i < p_strings.size() - 1) {
 			result += p_delimiter;
 		}

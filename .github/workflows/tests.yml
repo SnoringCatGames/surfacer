@@ -9,8 +9,8 @@ jobs:
   test:
     strategy:
       fail-fast: false
-    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
-    # runs-on: windows-latest
+    runs-on: windows-latest
+    # runs-on: ubuntu-22.04
     steps:
       # Clone this repository.
       - name: Checkout
@@ -25,8 +25,8 @@ jobs:
       - name: Setup godot-cpp
         uses: ./godot-cpp/.github/actions/setup-godot-cpp
         with:
-          platform: linux
-          # platform: windows
+          platform: windows
+          # platform: linux
           em-version: 3.1.62
 
       # Build Godot Editor.
@@ -34,19 +34,20 @@ jobs:
         shell: sh
         run: |
           cd godot
-          scons target=editor platform=linux
+          scons target=editor platform=windows
+        # scons target=editor platform=linux
 
       # Build GDExtension.
       - name: Build GDExtension Debug Build
         shell: sh
         run: |
-          scons optimize=debug target=template_debug platform=linux arch=x86_64 precision=single custom_api_file=./demo/extension_api.json
-        #   scons optimize=debug target=template_debug platform=windows arch=x86_64 precision=single optimize=debug custom_api_file=./demo/extension_api.json
+          scons optimize=debug target=template_debug platform=windows arch=x86_64 precision=single optimize=debug custom_api_file=./demo/extension_api.json
+        # scons optimize=debug target=template_debug platform=linux arch=x86_64 precision=single optimize=debug custom_api_file=./demo/extension_api.json
 
       - name: Run tests
         run: |
-          ./godot/bin/godot.linuxbsd.editor.x86_64 --headless --quit --path ./demo
-        # ./godot/bin/godot.windows.editor.x86_64 --headless --quit --path ./demo
+          ./godot/bin/godot.windows.editor.x86_64 --headless --quit --path ./demo
+        # ./godot/bin/godot.linuxbsd.editor.x86_64 --headless --quit --path ./demo
 
       # TODO: Only needed for Windows?
       # # Clean up compilation files.
