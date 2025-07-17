@@ -5,11 +5,7 @@
 
 #include "snore_core/annotation.h"
 
-// START_TEST(Annotation)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

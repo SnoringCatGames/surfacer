@@ -5,11 +5,13 @@
 
 #include "surfacer/surfacer_module.h"
 
-// START_TEST(Surfacer)
+#include <gtest/gtest.h>
 
-// TODO: Write tests.
+namespace godot {
 
-// END_TEST
+// Add tests here when needed.
+
+} // namespace godot
 
 #endif // DEBUG_ENABLED
 

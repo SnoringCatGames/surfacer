@@ -1,4 +1,4 @@
-#include "snore_core/internal/internal_string_utils.h"
+#include "snore_core/internal/string_utils.h"
 
 using namespace godot;
 

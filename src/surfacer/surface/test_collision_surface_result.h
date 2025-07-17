@@ -5,11 +5,7 @@
 
 #include "surfacer/surface/collision_surface_result.h"
 
-// START_TEST(CollisionSurfaceResult)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

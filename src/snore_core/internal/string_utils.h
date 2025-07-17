@@ -1,5 +1,5 @@
-#ifndef INTERNAL_STRING_UTILS_H
-#define INTERNAL_STRING_UTILS_H
+#ifndef STRING_UTILS_H
+#define STRING_UTILS_H
 
 #include <godot_cpp/variant/string.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
@@ -26,4 +26,4 @@ extern String join_strings(
 
 } //namespace godot
 
-#endif // INTERNAL_STRING_UTILS_H
+#endif // STRING_UTILS_H

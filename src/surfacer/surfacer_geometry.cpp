@@ -1,8 +1,8 @@
 #include "surfacer/surfacer_geometry.h"
 
 #include "snore_core/geometry.h"
-#include "snore_core/internal/internal_debug_utils.h"
-#include "snore_core/internal/internal_ref_utils.h"
+#include "snore_core/internal/debug_utils.h"
+#include "snore_core/internal/ref_utils.h"
 #include "snore_core/rotated_shape.h"
 #include "surfacer/surface/position_along_surface.h"
 #include "surfacer/surfacer_settings.h"

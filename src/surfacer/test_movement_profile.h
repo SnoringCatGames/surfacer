@@ -5,11 +5,7 @@
 
 #include "surfacer/movement_profile.h"
 
-// START_TEST(MovementProfile)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

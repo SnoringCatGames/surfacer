@@ -5,11 +5,7 @@
 
 #include "surfacer/annotations/surface_annotation.h"
 
-// START_TEST(SurfaceAnnotation)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

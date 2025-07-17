@@ -5,11 +5,7 @@
 
 #include "surfacer/surface/surface_parser.h"
 
-// START_TEST(SurfaceParser)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

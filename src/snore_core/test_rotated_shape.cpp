@@ -4,8 +4,8 @@
 #ifdef DEBUG_ENABLED
 
 #include "snore_core/geometry_constants.h"
-#include "snore_core/internal/internal_ref_utils.h"
-#include "snore_core/internal/internal_test_utils.h"
+#include "snore_core/internal/ref_utils.h"
+#include "snore_core/internal/test_utils.h"
 #include "snore_core/rotated_shape.h"
 
 #include <gtest/gtest.h>

@@ -5,11 +5,7 @@
 
 #include "surfacer/movement_settings.h"
 
-// START_TEST(MovementSettings)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

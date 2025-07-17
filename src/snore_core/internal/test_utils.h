@@ -1,5 +1,5 @@
-#ifndef INTERNAL_TEST_UTILS_H
-#define INTERNAL_TEST_UTILS_H
+#ifndef TEST_UTILS_H
+#define TEST_UTILS_H
 
 #ifdef DEBUG_ENABLED
 
@@ -18,4 +18,4 @@ namespace godot {
 
 #endif // DEBUG_ENABLED
 
-#endif // INTERNAL_TEST_UTILS_H
+#endif // TEST_UTILS_H

@@ -1,6 +1,6 @@
-#include "snore_core/internal/internal_debug_utils.h"
+#include "snore_core/internal/debug_utils.h"
 
-#include "snore_core/internal/internal_string_utils.h"
+#include "snore_core/internal/string_utils.h"
 
 #include <godot_cpp/variant/variant.hpp>
 

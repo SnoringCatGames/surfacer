@@ -5,11 +5,13 @@
 
 #include "snore_core/snore_core_main_settings.h"
 
-// START_TEST(SnoreCoreMainSettings)
+#include <gtest/gtest.h>
 
-// TODO: Write tests.
+namespace godot {
 
-// END_TEST
+// Add tests here when needed.
+
+} // namespace godot
 
 #endif // DEBUG_ENABLED
 

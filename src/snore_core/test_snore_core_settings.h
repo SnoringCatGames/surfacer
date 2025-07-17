@@ -5,11 +5,7 @@
 
 #include "snore_core/snore_core_settings.h"
 
-// START_TEST(SnoreCoreSettings)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

@@ -1,8 +1,8 @@
 #ifndef SNORE_CORE_MODULE_H
 #define SNORE_CORE_MODULE_H
 
-#include "snore_core/internal/internal_debug_utils.h"
-#include "snore_core/internal/internal_ref_utils.h"
+#include "snore_core/internal/debug_utils.h"
+#include "snore_core/internal/ref_utils.h"
 #include "snore_core/snore_core_settings.h"
 
 #include <godot_cpp/core/binder_common.hpp>

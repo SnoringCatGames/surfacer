@@ -5,11 +5,7 @@
 
 #include "surfacer/surface/agent_surface_state.h"
 
-// START_TEST(AgentSurfaceState)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

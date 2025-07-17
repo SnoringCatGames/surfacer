@@ -5,11 +5,7 @@
 
 #include "surfacer/surface/surface_properties.h"
 
-// START_TEST(SurfaceProperties)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

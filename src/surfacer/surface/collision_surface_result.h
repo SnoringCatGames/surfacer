@@ -2,7 +2,7 @@
 #define COLLISION_SURFACE_RESULT_H
 
 #include "snore_core/geometry_constants.h"
-#include "snore_core/internal/internal_debug_utils.h"
+#include "snore_core/internal/debug_utils.h"
 #include "surfacer/surface/surface.h"
 
 #include <godot_cpp/classes/ref.hpp>

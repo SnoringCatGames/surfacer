@@ -5,11 +5,7 @@
 
 #include "snore_core/annotations_manager.h"
 
-// START_TEST(AnnotationsManager)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

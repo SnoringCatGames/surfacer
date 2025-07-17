@@ -5,7 +5,7 @@
 #include "snore_core/annotations_manager.h"
 #include "snore_core/canvas_layer_config.h"
 #include "snore_core/geometry.h"
-#include "snore_core/internal/internal_registration_utils.h"
+#include "snore_core/internal/registration_utils.h"
 #include "snore_core/rotated_shape.h"
 #include "snore_core/snore_core_main_settings.h"
 #include "snore_core/snore_core_module.h"
@@ -21,6 +21,7 @@
 #include <godot_cpp/core/class_db.hpp>
 
 #ifdef DEBUG_ENABLED
+#include "snore_core/internal/test_internal_string_utils.h"
 #include "snore_core/test_annotation.h"
 #include "snore_core/test_annotations_manager.h"
 #include "snore_core/test_canvas_layer_config.h"

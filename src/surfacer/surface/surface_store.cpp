@@ -1,6 +1,6 @@
 #include "surfacer/surface/surface_store.h"
 
-#include "snore_core/internal/internal_debug_utils.h"
+#include "snore_core/internal/debug_utils.h"
 #include "surfacer/movement_profile.h"
 
 #include <godot_cpp/core/class_db.hpp>

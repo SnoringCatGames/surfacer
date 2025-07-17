@@ -5,11 +5,7 @@
 
 #include "surfacer/surface/surface_store.h"
 
-// START_TEST(SurfaceStore)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

@@ -1,5 +1,5 @@
-#ifndef INTERNAL_REF_UTILS_H
-#define INTERNAL_REF_UTILS_H
+#ifndef REF_UTILS_H
+#define REF_UTILS_H
 
 #include <godot_cpp/classes/ref.hpp>
 
@@ -32,4 +32,4 @@ template <typename T, typename... Args> Ref<T> set_up_ref(Args... args) {
 
 } //namespace godot
 
-#endif // INTERNAL_REF_UTILS_H
+#endif // REF_UTILS_H

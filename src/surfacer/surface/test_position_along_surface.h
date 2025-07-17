@@ -5,11 +5,7 @@
 
 #include "surfacer/surface/position_along_surface.h"
 
-// START_TEST(PositionAlongSurface)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

@@ -1,7 +1,7 @@
 #ifndef NAVIGATION_INTERRUPTION_RESOLUTION_H
 #define NAVIGATION_INTERRUPTION_RESOLUTION_H
 
-#include "snore_core/internal/internal_string_utils.h"
+#include "snore_core/internal/string_utils.h"
 
 #include <godot_cpp/core/binder_common.hpp>
 

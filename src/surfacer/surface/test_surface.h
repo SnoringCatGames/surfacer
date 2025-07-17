@@ -6,8 +6,6 @@
 #include "snore_core/geometry_constants.h"
 #include "surfacer/surface/surface.h"
 
-// START_TEST(Surface)
-
 // TODO: Write tests.
 
 // it("get_normal_from_side", []() {
@@ -21,8 +19,6 @@
 // 	expect(Surface::get_normal_from_side(Surface::Side::UNKNOWN_SIDE),
 // 		   vector2_invalid);
 // });
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

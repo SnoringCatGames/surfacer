@@ -5,11 +5,7 @@
 
 #include "surfacer/surface/surface_chunk.h"
 
-// START_TEST(SurfaceChunk)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

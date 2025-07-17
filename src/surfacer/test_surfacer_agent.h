@@ -5,11 +5,7 @@
 
 #include "surfacer/surfacer_agent.h"
 
-// START_TEST(SurfacerAgent)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

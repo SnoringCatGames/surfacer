@@ -5,11 +5,7 @@
 
 #include "snore_core/geometry.h"
 
-// START_TEST(Geometry)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

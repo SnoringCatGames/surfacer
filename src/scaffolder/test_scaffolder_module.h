@@ -5,11 +5,13 @@
 
 #include "scaffolder/scaffolder_module.h"
 
-// START_TEST(Scaffolder)
+#include <gtest/gtest.h>
 
-// TODO: Write tests.
+namespace godot {
 
-// END_TEST
+// Add tests here when needed.
+
+} // namespace godot
 
 #endif // DEBUG_ENABLED
 

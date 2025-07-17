@@ -5,11 +5,7 @@
 
 #include "surfacer/annotations/jump_annotation.h"
 
-// START_TEST(JumpAnnotation)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

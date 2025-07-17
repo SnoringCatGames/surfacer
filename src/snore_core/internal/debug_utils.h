@@ -1,5 +1,5 @@
-#ifndef INTERNAL_DEBUG_UTILS_H
-#define INTERNAL_DEBUG_UTILS_H
+#ifndef DEBUG_UTILS_H
+#define DEBUG_UTILS_H
 
 #include <godot_cpp/core/error_macros.hpp>
 #include <godot_cpp/variant/string.hpp>
@@ -99,4 +99,4 @@ String get_stack_trace();
 
 } //namespace godot
 
-#endif // INTERNAL_DEBUG_UTILS_H
+#endif // DEBUG_UTILS_H

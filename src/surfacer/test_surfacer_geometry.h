@@ -5,11 +5,7 @@
 
 #include "surfacer/surfacer_geometry.h"
 
-// START_TEST(SurfacerGeometry)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

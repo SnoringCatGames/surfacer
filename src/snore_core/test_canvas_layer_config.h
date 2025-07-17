@@ -5,11 +5,7 @@
 
 #include "snore_core/canvas_layer_config.h"
 
-// START_TEST(CanvasLayerConfig)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

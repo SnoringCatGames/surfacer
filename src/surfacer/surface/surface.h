@@ -1,7 +1,7 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include "snore_core/internal/internal_string_utils.h"
+#include "snore_core/internal/string_utils.h"
 
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>

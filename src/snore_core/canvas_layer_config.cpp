@@ -1,6 +1,6 @@
 #include "snore_core/canvas_layer_config.h"
 
-#include "snore_core/internal/internal_registration_utils.h"
+#include "snore_core/internal/registration_utils.h"
 
 #include <godot_cpp/core/class_db.hpp>
 

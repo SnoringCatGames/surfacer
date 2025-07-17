@@ -5,11 +5,7 @@
 
 #include "surfacer/surface/surface_finder.h"
 
-// START_TEST(SurfaceFinder)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

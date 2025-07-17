@@ -5,11 +5,7 @@
 
 #include "surfacer/surface_graph.h"
 
-// START_TEST(SurfaceGraph)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

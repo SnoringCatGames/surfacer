@@ -5,11 +5,7 @@
 
 #include "surfacer/annotations/path_annotation.h"
 
-// START_TEST(PathAnnotation)
-
 // TODO: Write tests.
-
-// END_TEST
 
 #endif // DEBUG_ENABLED
 

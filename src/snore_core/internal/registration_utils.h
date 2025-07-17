@@ -1,5 +1,5 @@
-#ifndef INTERNAL_REGISTRATION_UTILS_H
-#define INTERNAL_REGISTRATION_UTILS_H
+#ifndef REGISTRATION_UTILS_H
+#define REGISTRATION_UTILS_H
 
 #include <godot_cpp/classes/object.hpp>
 
@@ -20,4 +20,4 @@ constexpr uint64_t PROPERTY_USAGE_EXPORTED_ITEM = PROPERTY_USAGE_STORAGE |
 
 } //namespace godot
 
-#endif // INTERNAL_REGISTRATION_UTILS_H
+#endif // REGISTRATION_UTILS_H
