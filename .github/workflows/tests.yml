@@ -11,8 +11,6 @@ env:
 
 jobs:
   test:
-    strategy:
-      fail-fast: false
     runs-on: windows-latest
     # runs-on: ubuntu-22.04
     steps:
