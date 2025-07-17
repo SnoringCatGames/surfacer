@@ -1,0 +1,50 @@
+name: Run tests on Windows
+on:
+  workflow_call:
+  push:
+  pull_request:
+  merge_group:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+    # runs-on: windows-latest
+    container:
+      image: barichello/godot-ci:4.4
+    steps:
+      # Clone this repository.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          # --------------------------------------------------------------------
+          # NOTE: Levi added this to support checking out private repositories.
+          token: ${{ secrets.PRIVATESURFACER2ACCESSTOKEN}}
+          # --------------------------------------------------------------------
+
+      # Setup dependencies.
+      - name: Setup godot-cpp
+        uses: ./godot-cpp/.github/actions/setup-godot-cpp
+        with:
+          platform: ${{ matrix.platform }}
+          em-version: 3.1.62
+
+      # Build GDExtension.
+      - name: Build GDExtension Debug Build
+        shell: sh
+        run: |
+          scons optimize=debug target=template_debug platform=linux arch=x86_64 precision=single optimize=debug custom_api_file=${{ github.workspace }}/demo/extension_api.json
+        #   scons optimize=debug target=template_debug platform=windows arch=x86_64 precision=single optimize=debug custom_api_file=${{ github.workspace }}/demo/extension_api.json
+
+      - name: Run tests
+        run: |
+          godot --headless --quit --path ${{ github.workspace }}/demo
+
+      # Clean up compilation files.
+      - name: Windows - Delete compilation files
+        if: ${{ matrix.platform == 'windows' }}
+        shell: pwsh
+        run: |
+          Remove-Item bin/* -Include *.exp,*.lib,*.pdb -Force
