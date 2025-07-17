@@ -23,6 +23,14 @@ jobs:
           #   lfs: true
           token: ${{ secrets.PRIVATESURFACER2ACCESSTOKEN}}
 
+      # Setup dependencies (like installing scons).
+      - name: Setup godot-cpp
+        uses: ./godot-cpp/.github/actions/setup-godot-cpp
+        with:
+          platform: windows
+          # platform: linux
+          em-version: 3.1.62
+
       # Cache the Godot build, so we don't have to rebuild it for every push.
       - name: Restore cached Godot Editor
         id: godot-restore
@@ -45,14 +53,6 @@ jobs:
           path: |
             ./godot/bin
           key: ${{ steps.godot-restore.outputs.cache-primary-key }}
-
-      # Setup dependencies.
-      - name: Setup godot-cpp
-        uses: ./godot-cpp/.github/actions/setup-godot-cpp
-        with:
-          platform: windows
-          # platform: linux
-          em-version: 3.1.62
 
       # Build GDExtension.
       - name: Build GDExtension Debug Build
