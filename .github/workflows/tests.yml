@@ -11,18 +11,15 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-22.04  # Use 22.04 with godot 4
     # runs-on: windows-latest
-    container:
-      image: barichello/godot-ci:4.4
     steps:
       # Clone this repository.
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: true
-          # --------------------------------------------------------------------
-          # NOTE: Levi added this to support checking out private repositories.
+          # with:
+          #   lfs: true
           token: ${{ secrets.PRIVATESURFACER2ACCESSTOKEN}}
-          # --------------------------------------------------------------------
 
       # Setup dependencies.
       - name: Setup godot-cpp
@@ -31,6 +28,13 @@ jobs:
           platform: linux
           # platform: windows
           em-version: 3.1.62
+
+      # Build Godot Editor.
+      - name: Build Godot Editor
+        shell: sh
+        run: |
+          cd godot
+          scons target=editor platform=linux
 
       # Build GDExtension.
       - name: Build GDExtension Debug Build
@@ -41,7 +45,8 @@ jobs:
 
       - name: Run tests
         run: |
-          godot --headless --quit --path ./demo
+          ./godot/bin/godot.linuxbsd.editor.x86_64 --headless --quit --path ./demo
+        # ./godot/bin/godot.windows.editor.x86_64 --headless --quit --path ./demo
 
       # TODO: Only needed for Windows?
       # # Clean up compilation files.
