@@ -1,20 +1,20 @@
-#ifndef STOPWATCH_H
-#define STOPWATCH_H
+#ifndef SC_STOPWATCH_H
+#define SC_STOPWATCH_H
 
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/variant/string_name.hpp>
 
 namespace godot {
 
-class Stopwatch : public RefCounted {
-	GDCLASS(Stopwatch, RefCounted)
+class SCStopwatch : public RefCounted {
+	GDCLASS(SCStopwatch, RefCounted)
 
 protected:
 	static void _bind_methods();
 
 public:
-	Stopwatch() = default;
-	~Stopwatch() = default;
+	SCStopwatch() = default;
+	~SCStopwatch() = default;
 
 	void start(const StringName &p_metric_key);
 
@@ -28,4 +28,4 @@ private:
 
 } //namespace godot
 
-#endif // STOPWATCH_H
+#endif // SC_STOPWATCH_H
