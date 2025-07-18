@@ -77,6 +77,13 @@ void SnoreCore::unregister_gdextension_types(
 		return;
 	}
 
+	// Clean up all modules before unregistering.
+	SnoreCore *main = static_cast<SnoreCore *>(
+			Engine::get_singleton()->get_singleton(SnoreCore::name));
+	if (main) {
+		main->reset();
+	}
+
 	SnoreCoreModuleUtils_Internal::
 			UnregisterSnoreCoreMainModuleIfNoModulesRemain();
 }
@@ -136,8 +143,13 @@ void SnoreCore::set_up_main(
 void SnoreCore::set_up() {}
 
 void SnoreCore::reset() {
-	// TODO: Clear state.
-	// TODO: Cancel any in-progress set_up operations.
+	// Clear all modules to ensure proper cleanup.
+	static const StringName snore_core_name = StringName(SnoreCore::name);
+	for (auto &pair : modules) {
+		if (pair.second && pair.first != snore_core_name) {
+			pair.second->reset_base();
+		}
+	}
 }
 
 void SnoreCore::on_module_set_up_finished(const StringName &p_name) {
@@ -184,7 +196,13 @@ void SnoreCore::register_module(Object *p_module) {
 
 void SnoreCore::unregister_module(Object *p_module) {
 	SnoreCoreModule *module = static_cast<SnoreCoreModule *>(p_module);
-	ENSURE(module, "Cannot unregister a null module.");
+	if (!ENSURE(module, "Cannot unregister a null module.")) {
+		return;
+	}
+
+	// Reset the module before removing it to ensure proper cleanup.
+	module->reset_base();
+
 	modules.erase(module->get_name());
 }
 
@@ -194,5 +212,17 @@ bool SnoreCore::run_tests() {
 
 	testing::InitGoogleMock(&argc, argv);
 
-	return RUN_ALL_TESTS() == 0;
+	const bool did_all_tests_pass = RUN_ALL_TESTS() == 0;
+
+	// NOTE: The GitHub Actions CI checks for the text "SnoreCore test result"
+	//       in order to determine whether the tests passed or failed.
+	LOG_EMPTY_LINE();
+	if (did_all_tests_pass) {
+		LOG_PRINT("SnoreCore test result: ALL TESTS PASSED!");
+	} else {
+		LOG_PRINT("SnoreCore test result: SOME TESTS FAILED!");
+	}
+	LOG_EMPTY_LINE();
+
+	return did_all_tests_pass;
 }

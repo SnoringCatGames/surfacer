@@ -55,7 +55,10 @@ public:
 	}
 
 	SnoreCore() = default;
-	~SnoreCore() = default;
+	~SnoreCore() {
+		// Clear the modules map to ensure proper cleanup.
+		modules.clear();
+	}
 
 	virtual const StringName &get_name() const override {
 		static const StringName string_name = StringName(name);
@@ -71,7 +74,7 @@ public:
 		return Object::cast_to<SnoreCoreMainSettings>(p_object);
 	}
 
-	virtual void set_settings(SnoreCoreMainSettings *p_settings) {
+	virtual void set_settings(SnoreCoreMainSettings *p_settings) override {
 		settings = Ref<SnoreCoreMainSettings>(p_settings);
 	}
 

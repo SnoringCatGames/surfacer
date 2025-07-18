@@ -97,6 +97,8 @@ String get_stack_trace();
 	godot::UtilityFunctions::print_rich(                                       \
 			godot::vformat("[color=red]ERROR [SC]: %s[/color]", m_msg))
 
+#define LOG_EMPTY_LINE() LOG_PRINT("")
+
 } //namespace godot
 
 #endif // DEBUG_UTILS_H

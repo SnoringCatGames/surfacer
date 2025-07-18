@@ -32,7 +32,7 @@ public:
 	};
 
 	SnoreCoreModule() { settings = instantiate_ref<SettingsType>(); }
-	virtual ~SnoreCoreModule() { settings.unref(); }
+	virtual ~SnoreCoreModule() = default;
 
 	virtual const StringName &get_name() const = 0;
 	virtual const StringName &get_settings_class_name() const = 0;
@@ -47,7 +47,7 @@ public:
 
 	// This resets some base state before calling reset().
 	void reset_base() {
-		settings.unref();
+		settings = Ref<SettingsType>();
 		set_up_phase = SET_UP_PHASE::NOT_STARTED;
 		reset();
 	}
