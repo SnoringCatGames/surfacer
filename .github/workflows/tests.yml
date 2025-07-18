@@ -45,6 +45,7 @@ jobs:
         run: |
           cd godot
           scons target=editor platform=windows
+          cd ..
         # scons target=editor platform=linux
       - if: steps.godot-restore.outputs.cache-hit != 'true'
         name: Save Godot Editor
@@ -65,8 +66,8 @@ jobs:
       - name: Trigger asset imports
         shell: sh
         run: |
-          ./godot/bin/godot.windows.editor.x86_64 --editor --headless --quit --path ./demo
-        # ./godot/bin/godot.linuxbsd.editor.x86_64 --editor --headless --quit --path ./demo
+          ./godot/bin/godot.windows.editor.x86_64 --verbose --editor --headless --quit --path ./demo
+        # ./godot/bin/godot.linuxbsd.editor.x86_64 --verbose --editor --headless --quit --path ./demo
 
       - name: Create test output file
         shell: sh
