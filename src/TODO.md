@@ -41,9 +41,6 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdextension/gdextensi
 ### Next
 
 FIXME: LEFT OFF HERE: ---------------------------------------------------
-- Integrate testing into Actions.
-  - Make sure tests don't run unless the tests flag is included.
-  - Make sure tests don't get _included_ unless the tests flag is included.
 - Figure out DDLs and moving SnoreCore, Scaffolder, and Surfacer into three separate repos.
   - Also create SquirrelAway2.
   - Then, also create Bootstrapper as my main repo to work from, with all four others as submodules.
