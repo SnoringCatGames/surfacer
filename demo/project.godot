@@ -26,4 +26,4 @@ G="*res://src/demo_globals.gd"
 
 [native_extensions]
 
-paths=["res://surfacer.gdextension"]
+paths=["res://bin/surfacer.gdextension"]

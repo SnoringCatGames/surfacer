@@ -99,9 +99,7 @@ if is_debug_build:
 
 # .dev doesn't inhibit compatibility, so we don't need to key it.
 # .universal just means "compatible with all relevant arches" so we don't need to key it.
-# NOTE: Levi updated this.
-# suffix = env['suffix'].replace(".dev", "").replace(".universal", "")
-suffix = env['suffix']
+suffix = env['suffix'].replace(".dev", "").replace(".universal", "")
 
 lib_filename = "{}{}{}{}".format(env.subst('$SHLIBPREFIX'), libname, suffix, env.subst('$SHLIBSUFFIX'))
 
