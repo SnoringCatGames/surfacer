@@ -70,8 +70,8 @@ jobs:
       - name: Run tests
         shell: sh
         run: |
-          ./godot/bin/godot.windows.editor.x86_64 --headless --quit --path ./demo &> test_output.txt
-        # ./godot/bin/godot.linuxbsd.editor.x86_64 --headless --quit --path ./demo &> test_output.txt
+          ./godot/bin/godot.windows.editor.x86_64 --headless --quit --path ./demo &> >(tee test_output.txt)
+        # ./godot/bin/godot.linuxbsd.editor.x86_64 --headless --quit --path ./demo &> >(tee test_output.txt)
 
       - name: Check test output
         shell: sh

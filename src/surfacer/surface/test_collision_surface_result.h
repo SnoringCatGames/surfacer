@@ -5,7 +5,13 @@
 
 #include "surfacer/surface/collision_surface_result.h"
 
+#include "snore_core/internal/test_utils.h"
+
+namespace godot {
+
 // TODO: Write tests.
+
+} // namespace godot
 
 #endif // DEBUG_ENABLED
 

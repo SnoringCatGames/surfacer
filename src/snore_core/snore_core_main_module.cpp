@@ -12,15 +12,15 @@
 #include "snore_core/snore_core_settings.h"
 #include "snore_core/time/stopwatch.h"
 
-#include "snore_core/internal/test_utils.h"
-#include <gmock/gmock.h>
-
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
 // Only include test files in debug builds.
 #ifdef DEBUG_ENABLED
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
 #include "snore_core/internal/test_internal_string_utils.h"
 #include "snore_core/test_annotation.h"
 #include "snore_core/test_annotations_manager.h"
@@ -207,6 +207,7 @@ void SnoreCore::unregister_module(Object *p_module) {
 }
 
 bool SnoreCore::run_tests() {
+#ifdef DEBUG_ENABLED
 	int argc = 2;
 	char *argv[] = { "dummy", "--gtest_brief=1" };
 
@@ -225,4 +226,10 @@ bool SnoreCore::run_tests() {
 	LOG_EMPTY_LINE();
 
 	return did_all_tests_pass;
+#else
+	LOG_EMPTY_LINE();
+	LOG_PRINT("SnoreCore test result: TESTS NOT INCLUDED IN RELEASE BUILDS!");
+	LOG_EMPTY_LINE();
+	return false;
+#endif // DEBUG_ENABLED
 }

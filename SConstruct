@@ -68,11 +68,13 @@ sources = (
     Glob("src/surfacer/surface/*.cpp")
 )
 
+# NOTE: Levi added this
+is_debug_build = env["target"] in ["editor", "template_debug"]
+
 # NOTE: Levi added this, to include GoogleTest.
 #       (tests=true is set when dev_mode=true is set).
 # FIXME: Update build targets to optionally include `tests` and ensure all builds compile.
-includes_tests = True
-# includes_tests = "tests" in env and env["tests"]
+includes_tests = is_debug_build
 if includes_tests:
     googletest_sources = (
         Glob("googletest/googletest/src/gtest-all.cc") +
@@ -88,7 +90,7 @@ if includes_tests:
     ]
     sources.append([x for x in googletest_sources if str(x) not in googletest_exclusions])
 
-if env["target"] in ["editor", "template_debug"]:
+if is_debug_build:
     try:
         doc_data = env.GodotCPPDocData("src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
         sources.append(doc_data)

@@ -80,22 +80,22 @@ String get_stack_trace();
 #ifdef DEBUG_ENABLED
 #define LOG_DEBUG(m_msg)                                                       \
 	godot::UtilityFunctions::print_rich(                                       \
-			godot::vformat("[color=white][SC] %s[/color]", m_msg))
+			godot::vformat("[color=white]S: %s[/color]", m_msg))
 #else
 #define LOG_DEBUG(m_msg)
 #endif
 
 #define LOG_PRINT(m_msg)                                                       \
 	godot::UtilityFunctions::print_rich(                                       \
-			godot::vformat("[color=white][SC] %s[/color]", m_msg))
+			godot::vformat("[color=white]S: %s[/color]", m_msg))
 
 #define LOG_WARNING(m_msg)                                                     \
 	godot::UtilityFunctions::print_rich(                                       \
-			godot::vformat("[color=yellow]WARNING [SC]: %s[/color]", m_msg))
+			godot::vformat("[color=yellow]WARNING S: %s[/color]", m_msg))
 
 #define LOG_ERROR(m_msg)                                                       \
 	godot::UtilityFunctions::print_rich(                                       \
-			godot::vformat("[color=red]ERROR [SC]: %s[/color]", m_msg))
+			godot::vformat("[color=red]ERROR S: %s[/color]", m_msg))
 
 #define LOG_EMPTY_LINE() LOG_PRINT("")
 
