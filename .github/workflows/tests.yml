@@ -62,6 +62,12 @@ jobs:
           scons optimize=debug target=template_debug platform=windows arch=x86_64 precision=single custom_api_file=./demo/extension_api.json
         # scons optimize=debug target=template_debug platform=linux arch=x86_64 precision=single custom_api_file=./demo/extension_api.json
 
+      - name: Trigger asset imports
+        shell: sh
+        run: |
+          ./godot/bin/godot.windows.editor.x86_64 --editor --headless --quit --path ./demo
+        # ./godot/bin/godot.linuxbsd.editor.x86_64 --editor --headless --quit --path ./demo
+
       - name: Create test output file
         shell: sh
         run: |
