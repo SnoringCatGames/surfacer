@@ -1,6 +1,5 @@
 #include "snore_core/snore_core_main_module.h"
 
-#include "gdexample.h"
 #include "snore_core/annotation.h"
 #include "snore_core/annotations_manager.h"
 #include "snore_core/canvas_layer_config.h"
@@ -13,13 +12,14 @@
 #include "snore_core/snore_core_settings.h"
 #include "snore_core/time/stopwatch.h"
 
+#include "snore_core/internal/test_utils.h"
 #include <gmock/gmock.h>
-#include <gtest/gtest.h>
 
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
+// Only include test files in debug builds.
 #ifdef DEBUG_ENABLED
 #include "snore_core/internal/test_internal_string_utils.h"
 #include "snore_core/test_annotation.h"
@@ -62,7 +62,11 @@ void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(SnoreCoreMainSettings);
 	GDREGISTER_CLASS(Stopwatch);
 
-	GDREGISTER_CLASS(GDExample);
+	// Only include test classes in debug builds.
+#ifdef DEBUG_ENABLED
+	GDREGISTER_CLASS(FakeSnoreCoreSettings);
+	GDREGISTER_CLASS(FakeSnoreCoreModule);
+#endif // DEBUG_ENABLED
 
 	SnoreCoreModuleUtils_Internal::RegisterSnoreCoreMainModuleIfNotPresent();
 }

@@ -5,7 +5,7 @@
 
 #include "snore_core/time/stopwatch.h"
 
-#include <gtest/gtest.h>
+#include "snore_core/internal/test_utils.h"
 #include <godot_cpp/classes/ref.hpp>
 
 using namespace godot;

@@ -8,7 +8,7 @@
 #include "snore_core/internal/test_utils.h"
 #include "snore_core/rotated_shape.h"
 
-#include <gtest/gtest.h>
+#include "snore_core/internal/test_utils.h"
 #include <godot_cpp/classes/capsule_shape2d.hpp>
 #include <godot_cpp/classes/circle_shape2d.hpp>
 #include <godot_cpp/classes/rectangle_shape2d.hpp>

@@ -5,7 +5,7 @@
 
 #include "snore_core/snore_core_main_module.h"
 
-#include <gtest/gtest.h>
+#include "snore_core/internal/test_utils.h"
 
 namespace godot {
 

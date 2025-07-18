@@ -5,7 +5,7 @@
 
 #include "surfacer/surfacer_module.h"
 
-#include <gtest/gtest.h>
+#include "snore_core/internal/test_utils.h"
 
 namespace godot {
 
