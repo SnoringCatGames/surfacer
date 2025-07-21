@@ -1,0 +1,157 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        // "buildGodot",
+        "buildExtension",
+        "buildDocs"
+      ],
+    },
+    {
+      "label": "buildRelease",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "buildGodotRelease",
+        "buildExtensionRelease",
+        "buildDocs"
+      ],
+    },
+    {
+      "label": "buildAll",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "buildGodot",
+        "buildExtension",
+        "buildDocs"
+      ],
+    },
+    {
+      "label": "buildExtension",
+      "group": "build",
+      "type": "shell",
+      "command": "scons",
+      "args": [
+        // Include and run SnoreCore tests
+        "tests=yes",
+        // Disable SnoreCore breakpoints when running in CI.
+        "ci=yes",
+        // Enable dev_build for debugging with breakpoints.
+        "dev_build=yes",
+        "dev_mode=yes",
+        "debug_symbols=yes",
+        // "dev_mode=yes",
+        // TODO: Consider toggling.
+        "optimize=debug",
+        // TODO: Consider toggling.
+        // "tests=yes",
+        // TODO: Consider toggling.
+        // "target=editor",
+        "target=template_debug",
+        "platform=windows",
+        "custom_api_file=${workspaceFolder}/demo/extension_api.json"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "buildExtensionRelease",
+      "group": "build",
+      "type": "shell",
+      "command": "scons",
+      "args": [
+        // Include and run SnoreCore tests
+        // "tests=yes",
+        // Disable SnoreCore breakpoints when running in CI.
+        // "ci=yes",
+        // Enable dev_build for debugging with breakpoints.
+        // "dev_build=yes",
+        // "dev_mode=yes",
+        // "debug_symbols=yes",
+        // "dev_mode=yes",
+        // TODO: Consider toggling.
+        // "optimize=debug",
+        // TODO: Consider toggling.
+        // "tests=yes",
+        // TODO: Consider toggling.
+        // "target=editor",
+        "target=template_release",
+        "platform=windows",
+        "custom_api_file=${workspaceFolder}/demo/extension_api.json"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "buildDocs",
+      "group": "build",
+      "type": "shell",
+      "command": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+      // "command": "C:/Program Files/Godot/Godot_v4.4.1-stable_win64.exe",
+      "args": [
+        // Enable dev_build for debugging with breakpoints.
+        "--doctool",
+        "../",
+        "--gdextension-docs",
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}/demo"
+      }
+    },
+    {
+      "label": "buildGodot",
+      "group": "build",
+      "type": "shell",
+      "command": "scons",
+      "args": [
+        // Enable dev_build for debugging with breakpoints.
+        "dev_build=yes",
+        "dev_mode=yes",
+        // TODO: Consider toggling.
+        "debug_symbols=yes",
+        // TODO: Consider toggling.
+        "optimize=debug",
+        // TODO: Consider toggling.
+        "target=editor",
+        // "target=template_debug",
+        "platform=windows"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}/godot"
+      }
+    },
+    {
+      "label": "buildGodotRelease",
+      "group": "build",
+      "type": "shell",
+      "command": "scons",
+      "args": [
+        // Enable dev_build for debugging with breakpoints.
+        // "dev_build=yes",
+        // "dev_mode=yes",
+        // TODO: Consider toggling.
+        // "debug_symbols=yes",
+        // TODO: Consider toggling.
+        "optimize=debug",
+        // TODO: Consider toggling.
+        "target=editor",
+        // "target=template_debug",
+        "platform=windows"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}/godot"
+      }
+    }
+  ]
+}

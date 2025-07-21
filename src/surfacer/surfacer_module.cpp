@@ -26,7 +26,7 @@
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 #include "surfacer/annotations/test_jump_annotation.h"
 #include "surfacer/annotations/test_path_annotation.h"
 #include "surfacer/annotations/test_position_along_surface_annotation.h"
@@ -48,7 +48,7 @@
 #include "surfacer/test_surfacer_module.h"
 #include "surfacer/test_surfacer_settings.h"
 #include "surfacer/test_tile_map_surface_parser.h"
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 using namespace godot;
 

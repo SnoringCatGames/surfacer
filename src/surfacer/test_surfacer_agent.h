@@ -1,7 +1,7 @@
 #ifndef TEST_SURFACER_AGENT_H
 #define TEST_SURFACER_AGENT_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "surfacer/surfacer_agent.h"
 
@@ -13,6 +13,6 @@ namespace godot {
 
 } // namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_SURFACER_AGENT_H

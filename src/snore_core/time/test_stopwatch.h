@@ -1,7 +1,7 @@
 #ifndef TEST_STOPWATCH_H
 #define TEST_STOPWATCH_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "snore_core/time/stopwatch.h"
 
@@ -51,6 +51,6 @@ TEST(StopwatchTest, TestMultipleMetrics) {
 	EXPECT_GE(elapsed1, elapsed2);
 }
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_STOPWATCH_H

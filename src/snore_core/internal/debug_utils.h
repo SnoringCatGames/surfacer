@@ -21,15 +21,21 @@ String get_stack_trace();
 			"[color=gray]" + get_stack_trace() + "[/color]")
 
 // Pauses execution if this isn't a release version of the Surfacer framework.
+#ifdef SC_CI_ENABLED
+// Disable breakpoints when running in continuous integration.
+#define DEBUG_BREAK()
+#else
 #if DEBUG_ENABLED
 #ifdef _MSC_VER
 #define DEBUG_BREAK() __debugbreak()
 #else
 #define DEBUG_BREAK() __builtin_debugtrap()
-#endif
+#endif // _MSC_VER
 #else
+// Disable breakpoints when running in release mode.
 #define DEBUG_BREAK()
-#endif
+#endif // DEBUG_ENABLED
+#endif // SC_CI_ENABLED
 
 // Ensures `m_cond` is true.
 // - If `m_cond` is false, this prints `m_msg`, pauses execution, and returns

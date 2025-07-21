@@ -1,4 +1,4 @@
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #ifndef TEST_MOVEMENT_PROFILE_H
 #define TEST_MOVEMENT_PROFILE_H
@@ -13,6 +13,6 @@ namespace godot {
 
 } // namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_MOVEMENT_PROFILE_H

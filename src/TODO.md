@@ -44,7 +44,18 @@ FIXME: LEFT OFF HERE: ---------------------------------------------------
 - Figure out DDLs and moving SnoreCore, Scaffolder, and Surfacer into three separate repos.
   - Also create SquirrelAway2.
   - Then, also create Bootstrapper as my main repo to work from, with all four others as submodules.
-
+  - OTHER NOTES:
+    - Split apart Scaffolder, Surfacer, and SnoreCore into separate repos
+      - Figure out build commands to make DLLs for each.
+      - Update includes and SCons logic to use these DLLs.
+      - Add GitHub Actions workflows to automatically build these DLLs for each push.
+      - Figure out how nested submodules will work...
+      - Also, figure out if I can mark a file/directory to be excluded from git history. I only want the latest DLL to be recorded. Or should I rather calculated the SnoreCore DLL separately for each submodule dependency for Scaffolder and Surfacer?
+      - Ah, actually, I suppose that, for Squirrel away or Bootstrapper, I don't care whether the nested submodules ever get updated, since the root repo will have all needed nested submodules as first level submodules.
+      - So the problem then is just a matter of maintaining separate build logic in each repo's SCons file.
+      - Maybe ignore the issue of rewriting history to store fewer DLL versions until I actually see it become an issue.
+      - Same thing for GDExtension exports.
+      - Maybe both of these builds should be button activated, rather than push activated.
 - Adapt gtest_main, and plan how to test logic in the build
 - Create a simple test with GoogleTest.
   - Read the docs.
@@ -53,8 +64,26 @@ FIXME: LEFT OFF HERE: ---------------------------------------------------
   - ACTUALLY, is there a TESTS precompiler variable I can check, instead of using DEBUG for this?
 - Figure out how to run this on presubmit!!
 
-- Commit latest attempts to fix my own test runner.
-- Then delete my custom test runner.
+- DOCS:
+  - Write some architecture documentation for SnoreCore.
+  - And draw some box diagrams
+  - Mention:
+    - DLLs
+    - Module and settings classes
+    - App registration process and lifecycle
+    - Where tests get included
+    - Submit my launch and tasks VSCode Jason files in the repo, and reference them for build commands
+    - Also reference the GitHub Actions workflow file
+    - SnoreCore is a separate DLL. It knows nothing about the other modules at compile time.
+    - Surfacer and Scaffolder are also separate DLLs. They do depend on files from the SnoreCore DLL. But they do not know about each other.
+  - Describe the build process. There's a CI workflow that automatically builds the DLLs whenever for each push to the repo.
+  - Add these workflows!
+
+
+
+
+
+
 
 - Create a new dev branch.
 

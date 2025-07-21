@@ -1,0 +1,129 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Editor",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+            "args": [
+                // "--headless",
+                // "--upwards",
+                // "--quit",
+                // "--verbose",
+                "--editor",
+                "--path",
+                "${workspaceFolder}/demo"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            // TODO: Consider toggling.
+            // "console": "internalConsole",
+            "console": "integratedTerminal",
+            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "Launch Project",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+            "args": [
+                // "--headless",
+                // "--upwards",
+                // "--quit",
+                // "--editor",
+                "--verbose",
+                "--path",
+                "${workspaceFolder}/demo"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            // TODO: Consider toggling.
+            // "console": "internalConsole",
+            "console": "integratedTerminal",
+            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "Run Tests",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+            "args": [
+                "--headless",
+                "--quit",
+                "--verbose",
+                // "--upwards",
+                // "--editor",
+                "--path",
+                "${workspaceFolder}/demo"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            // TODO: Consider toggling.
+            // "console": "internalConsole",
+            "console": "integratedTerminal",
+            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "Build Godot",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+            "args": [
+                // "--headless",
+                // "--upwards",
+                // "--quit",
+                // "--editor",
+                // "--verbose",
+                "--path",
+                "${workspaceFolder}/demo"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            // TODO: Consider toggling.
+            // "console": "internalConsole",
+            "console": "integratedTerminal",
+            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
+            "preLaunchTask": "buildAll"
+        },
+        {
+            "name": "Build Release (Windows)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.x86_64.exe",
+            "args": [
+                // "--headless",
+                // "--upwards",
+                // "--quit",
+                // "--editor",
+                // "--verbose",
+                "--path",
+                "${workspaceFolder}/demo"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            // TODO: Consider toggling.
+            // "console": "internalConsole",
+            "console": "integratedTerminal",
+            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
+            "preLaunchTask": "buildRelease"
+        },
+        {
+            "name": "Attach to Godot Editor",
+            "type": "cppvsdbg",
+            "request": "attach",
+            "processId": "${command:pickProcess}",
+        }
+    ]
+}

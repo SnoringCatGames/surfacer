@@ -1,7 +1,7 @@
 #ifndef TEST_ROTATED_SHAPE_H
 #define TEST_ROTATED_SHAPE_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "snore_core/geometry_constants.h"
 #include "snore_core/internal/ref_utils.h"
@@ -105,6 +105,6 @@ TEST_F(RotatedShapeTest, GetHalfWidthHeight) {
 
 } // namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_ROTATED_SHAPE_H

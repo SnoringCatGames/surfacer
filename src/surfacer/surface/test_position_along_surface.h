@@ -1,7 +1,7 @@
 #ifndef TEST_POSITION_ALONG_SURFACE_H
 #define TEST_POSITION_ALONG_SURFACE_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "surfacer/surface/position_along_surface.h"
 
@@ -13,6 +13,6 @@ namespace godot {
 
 } // namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_POSITION_ALONG_SURFACE_H

@@ -1,7 +1,7 @@
 #ifndef TEST_SNORE_CORE_MODULE_H
 #define TEST_SNORE_CORE_MODULE_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "snore_core/internal/ref_utils.h"
 #include "snore_core/internal/string_utils.h"
@@ -180,6 +180,6 @@ TEST_F(SnoreCoreModuleTest, GetSettingsFromList) {
 	EXPECT_EQ(test_settings.ptr(), found_settings);
 }
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_SNORE_CORE_MODULE_H

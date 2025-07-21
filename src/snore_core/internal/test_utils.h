@@ -1,7 +1,7 @@
 #ifndef TEST_UTILS_H
 #define TEST_UTILS_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "snore_core/internal/test_utils.h"
 #include <gtest/gtest.h>
@@ -20,6 +20,6 @@ namespace godot {
 
 } //namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_UTILS_H

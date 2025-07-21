@@ -18,6 +18,7 @@ public:
 	static void register_gdextension_types(ModuleInitializationLevel p_level);
 	static void unregister_gdextension_types(ModuleInitializationLevel p_level);
 
+	static bool get_are_tests_enabled();
 	static bool run_tests();
 
 	static void set_up_from_binding(

@@ -1,7 +1,7 @@
 #ifndef TEST_CANVAS_LAYER_CONFIG_H
 #define TEST_CANVAS_LAYER_CONFIG_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "snore_core/canvas_layer_config.h"
 
@@ -13,6 +13,6 @@ namespace godot {
 
 } // namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_CANVAS_LAYER_CONFIG_H

@@ -1,7 +1,7 @@
 #ifndef TEST_TILE_MAP_SURFACE_PARSER_H
 #define TEST_TILE_MAP_SURFACE_PARSER_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "surfacer/tile_map_surface_parser.h"
 
@@ -13,6 +13,6 @@ namespace godot {
 
 } // namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_TILE_MAP_SURFACE_PARSER_H

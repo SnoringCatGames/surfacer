@@ -1,7 +1,7 @@
 #ifndef TEST_ANNOTATIONS_MANAGER_H
 #define TEST_ANNOTATIONS_MANAGER_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "snore_core/annotations_manager.h"
 
@@ -13,6 +13,6 @@ namespace godot {
 
 } // namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_ANNOTATIONS_MANAGER_H

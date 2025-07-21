@@ -1,4 +1,4 @@
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "surfacer/annotations/surfacer_agent_annotation.h"
 
@@ -10,4 +10,4 @@ namespace godot {
 
 } // namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED

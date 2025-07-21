@@ -71,11 +71,16 @@ sources = (
 # NOTE: Levi added this
 is_debug_build = env["target"] in ["editor", "template_debug"]
 
-# NOTE: Levi added this, to include GoogleTest.
-#       (tests=true is set when dev_mode=true is set).
-# FIXME: Update build targets to optionally include `tests` and ensure all builds compile.
-includes_tests = is_debug_build
+# NOTE: Levi added this, to disable breakpoints when running in CI.
+is_continuous_integration = ARGUMENTS.get("ci", "") == "yes"
+if is_continuous_integration:
+    env.Append(CPPDEFINES=["SC_CI_ENABLED"])
+
+# NOTE: Levi added this, to include and run tests.
+includes_tests = ARGUMENTS.get("tests", "") == "yes"
 if includes_tests:
+    env.Append(CPPDEFINES=["SC_TESTS_ENABLED"])
+
     googletest_sources = (
         Glob("googletest/googletest/src/gtest-all.cc") +
         Glob("googletest/googlemock/src/gmock-all.cc")

@@ -1,7 +1,7 @@
 #ifndef TEST_JUMP_ANNOTATION_H
 #define TEST_JUMP_ANNOTATION_H
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 
 #include "surfacer/annotations/jump_annotation.h"
 
@@ -13,6 +13,6 @@ namespace godot {
 
 } // namespace godot
 
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 #endif // TEST_JUMP_ANNOTATION_H

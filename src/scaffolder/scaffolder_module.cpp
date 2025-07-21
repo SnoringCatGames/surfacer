@@ -7,10 +7,10 @@
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 #include "scaffolder/test_scaffolder_module.h"
 #include "scaffolder/test_scaffolder_settings.h"
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 using namespace godot;
 

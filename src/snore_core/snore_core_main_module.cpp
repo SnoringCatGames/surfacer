@@ -17,7 +17,7 @@
 #include <godot_cpp/core/class_db.hpp>
 
 // Only include test files in debug builds.
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -32,7 +32,7 @@
 #include "snore_core/test_snore_core_module.h"
 #include "snore_core/test_snore_core_settings.h"
 #include "snore_core/time/test_stopwatch.h"
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 using namespace godot;
 
@@ -63,10 +63,10 @@ void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(Stopwatch);
 
 	// Only include test classes in debug builds.
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 	GDREGISTER_CLASS(FakeSnoreCoreSettings);
 	GDREGISTER_CLASS(FakeSnoreCoreModule);
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 
 	snore_core_module_utils_internal::
 			register_snore_core_main_module_if_not_present();
@@ -219,8 +219,16 @@ void SnoreCore::unregister_module(Object *p_module) {
 	modules.erase(module->get_name());
 }
 
+static bool get_are_tests_enabled() {
+#ifdef SC_TESTS_ENABLED
+	return true;
+#else
+	return false;
+#endif
+}
+
 bool SnoreCore::run_tests() {
-#ifdef DEBUG_ENABLED
+#ifdef SC_TESTS_ENABLED
 	int argc = 2;
 	char *argv[] = { "dummy", "--gtest_brief=1" };
 
@@ -244,5 +252,5 @@ bool SnoreCore::run_tests() {
 	LOG_PRINT("SnoreCore test result: TESTS NOT INCLUDED IN RELEASE BUILDS!");
 	LOG_EMPTY_LINE();
 	return false;
-#endif // DEBUG_ENABLED
+#endif // SC_TESTS_ENABLED
 }
