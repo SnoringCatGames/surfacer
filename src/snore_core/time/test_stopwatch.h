@@ -10,8 +10,8 @@
 
 using namespace godot;
 
-TEST(SCStopwatchTest, TestBasicStartStop) {
-	Ref<SCStopwatch> stopwatch;
+TEST(StopwatchTest, TestBasicStartStop) {
+	Ref<Stopwatch> stopwatch;
 	stopwatch.instantiate();
 
 	String metric_key = "test_metric";
@@ -28,8 +28,8 @@ TEST(SCStopwatchTest, TestBasicStartStop) {
 	EXPECT_LT(elapsed_time, 1000.0); // Less than 1 second in milliseconds.
 }
 
-TEST(SCStopwatchTest, TestMultipleMetrics) {
-	Ref<SCStopwatch> stopwatch;
+TEST(StopwatchTest, TestMultipleMetrics) {
+	Ref<Stopwatch> stopwatch;
 	stopwatch.instantiate();
 
 	String metric1 = "metric1";

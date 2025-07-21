@@ -60,7 +60,7 @@ void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(RotatedShape);
 	GDREGISTER_CLASS(SnoreCore);
 	GDREGISTER_CLASS(SnoreCoreMainSettings);
-	GDREGISTER_CLASS(SCStopwatch);
+	GDREGISTER_CLASS(Stopwatch);
 
 	// Only include test classes in debug builds.
 #ifdef DEBUG_ENABLED

@@ -6,15 +6,15 @@
 
 namespace godot {
 
-class SCStopwatch : public RefCounted {
-	GDCLASS(SCStopwatch, RefCounted)
+class Stopwatch : public RefCounted {
+	GDCLASS(Stopwatch, RefCounted)
 
 protected:
 	static void _bind_methods();
 
 public:
-	SCStopwatch() = default;
-	~SCStopwatch() = default;
+	Stopwatch() = default;
+	~Stopwatch() = default;
 
 	void start(const StringName &p_metric_key);
 
