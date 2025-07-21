@@ -18,6 +18,7 @@ public:
 	static void unregister_gdextension_types(ModuleInitializationLevel p_level);
 
 	static Scaffolder *get();
+	static Scaffolder *get_maybe();
 
 	virtual const StringName &get_name() const override {
 		static const StringName string_name = StringName(name);

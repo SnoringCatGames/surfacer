@@ -49,10 +49,18 @@ void Scaffolder::_bind_methods() {
 }
 
 Scaffolder *Scaffolder::get() {
-	Scaffolder *scaffolder = static_cast<Scaffolder *>(
-			Engine::get_singleton()->get_singleton(name));
-	ENSURE(scaffolder, "Scaffolder is not initialized.");
+	Scaffolder *scaffolder = get_maybe();
+	if (!ENSURE(scaffolder, "Scaffolder is not initialized.")) {
+		return nullptr;
+	}
 	return scaffolder;
+}
+
+Scaffolder *Scaffolder::get_maybe() {
+	Engine *engine = Engine::get_singleton();
+	return engine->has_singleton(Scaffolder::name)
+			? static_cast<Scaffolder *>(engine->get_singleton(name))
+			: nullptr;
 }
 
 void Scaffolder::set_up() {

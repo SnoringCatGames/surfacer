@@ -18,6 +18,7 @@ public:
 	static void unregister_gdextension_types(ModuleInitializationLevel p_level);
 
 	static Surfacer *get();
+	static Surfacer *get_maybe();
 
 	virtual const StringName &get_name() const override {
 		static const StringName string_name = StringName(name);

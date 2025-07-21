@@ -68,7 +68,8 @@ void SnoreCore::register_gdextension_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(FakeSnoreCoreModule);
 #endif // DEBUG_ENABLED
 
-	SnoreCoreModuleUtils_Internal::RegisterSnoreCoreMainModuleIfNotPresent();
+	snore_core_module_utils_internal::
+			register_snore_core_main_module_if_not_present();
 }
 
 void SnoreCore::unregister_gdextension_types(
@@ -77,15 +78,19 @@ void SnoreCore::unregister_gdextension_types(
 		return;
 	}
 
-	// Clean up all modules before unregistering.
-	SnoreCore *main = static_cast<SnoreCore *>(
-			Engine::get_singleton()->get_singleton(SnoreCore::name));
+	// Unregister all modules.
+	SnoreCore *main = SnoreCore::get();
 	if (main) {
-		main->reset();
+		// Unregister all other modules before SnoreCore.
+		for (const std::pair<const StringName, SnoreCoreModule *> &pair :
+			 main->modules) {
+			if (pair.first != main->get_name()) {
+				pair.second->reset();
+				unregister_engine_singleton(pair.first);
+			}
+		}
+		unregister_engine_singleton(SnoreCore::name);
 	}
-
-	SnoreCoreModuleUtils_Internal::
-			UnregisterSnoreCoreMainModuleIfNoModulesRemain();
 }
 
 void SnoreCore::_bind_methods() {
@@ -109,10 +114,18 @@ void SnoreCore::_bind_methods() {
 }
 
 SnoreCore *SnoreCore::get() {
-	SnoreCore *snore_core = static_cast<SnoreCore *>(
-			Engine::get_singleton()->get_singleton(name));
-	ENSURE(snore_core, "SnoreCore is not initialized.");
+	SnoreCore *snore_core = get_maybe();
+	if (!ENSURE(snore_core, "SnoreCore is not initialized.")) {
+		return nullptr;
+	}
 	return snore_core;
+}
+
+SnoreCore *SnoreCore::get_maybe() {
+	Engine *engine = Engine::get_singleton();
+	return engine->has_singleton(SnoreCore::name)
+			? static_cast<SnoreCore *>(engine->get_singleton(name))
+			: nullptr;
 }
 
 void SnoreCore::set_up_from_binding(

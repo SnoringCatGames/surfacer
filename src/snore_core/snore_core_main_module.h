@@ -24,6 +24,7 @@ public:
 			const TypedArray<SnoreCoreSettings> &p_all_settings);
 
 	static SnoreCore *get();
+	static SnoreCore *get_maybe();
 
 	static SnoreCoreModule *get_module(const StringName &p_name) {
 		SnoreCore *main = SnoreCore::get();
