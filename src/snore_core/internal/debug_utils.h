@@ -20,20 +20,27 @@ String get_stack_trace();
 	godot::UtilityFunctions::print_rich(                                       \
 			"[color=gray]" + get_stack_trace() + "[/color]")
 
-// Pauses execution if this isn't a release version of the Surfacer framework.
+// - DEBUG_BREAK pauses execution if this isn't a release version of the
+//   Surfacer framework.
+// - DEBUG_BREAK_OR_FALSE allows us to use breakpoints in the ENSURE
+//   macro, which relies on the comma operator (otherwise, the compiler would
+//   complain about two adjacent commas with no operand in between).
 #ifdef SC_CI_ENABLED
 // Disable breakpoints when running in continuous integration.
 #define DEBUG_BREAK()
+#define DEBUG_BREAK_OR_FALSE() false
 #else
-#if DEBUG_ENABLED
+#ifdef DEBUG_ENABLED
 #ifdef _MSC_VER
 #define DEBUG_BREAK() __debugbreak()
 #else
 #define DEBUG_BREAK() __builtin_debugtrap()
 #endif // _MSC_VER
+#define DEBUG_BREAK_OR_FALSE() DEBUG_BREAK()
 #else
 // Disable breakpoints when running in release mode.
 #define DEBUG_BREAK()
+#define DEBUG_BREAK_OR_FALSE() false
 #endif // DEBUG_ENABLED
 #endif // SC_CI_ENABLED
 
@@ -50,7 +57,7 @@ String get_stack_trace();
 						"ENSURE failed  \"" _STR(m_cond) "\" is false.",       \
 						m_msg),                                                \
 				::godot::_err_flush_stdout(), PRINT_STACK_TRACE(),             \
-				DEBUG_BREAK(), false)                                          \
+				DEBUG_BREAK_OR_FALSE(), false)                                 \
 			 : true)
 #else
 #define ENSURE(m_cond, m_msg) (m_cond)
@@ -63,7 +70,7 @@ String get_stack_trace();
 						FUNCTION_STR, __FILE__, __LINE__,                      \
 						"ENSURE failed  \"" _STR(m_cond) "\" is false."),      \
 				::godot::_err_flush_stdout(), PRINT_STACK_TRACE(),             \
-				DEBUG_BREAK(), false)                                          \
+				DEBUG_BREAK_OR_FALSE(), false)                                 \
 			 : true)
 #else
 #define ENSURE_SIMPLE(m_cond) (m_cond)
