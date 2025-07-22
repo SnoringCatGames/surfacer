@@ -12,3 +12,6 @@
 	path = godot-cpp
 	url = https://github.com/godotengine/godot-cpp
 	branch = 4.4
+[submodule "demo/addons/scaffolder"]
+	path = demo/addons/scaffolder
+	url = https://github.com/SnoringCatGames/scaffolder2
