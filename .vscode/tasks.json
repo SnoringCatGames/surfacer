@@ -53,7 +53,7 @@
         // "target=editor",
         "target=template_debug",
         "platform=windows",
-        "custom_api_file=${workspaceFolder}/demo/extension_api.json"
+        "custom_api_file=${workspaceFolder}/extension_api.json"
       ],
       "problemMatcher": "$msCompile",
       "options": {
@@ -83,7 +83,7 @@
         // "target=editor",
         "target=template_release",
         "platform=windows",
-        "custom_api_file=${workspaceFolder}/demo/extension_api.json"
+        "custom_api_file=${workspaceFolder}/extension_api.json"
       ],
       "problemMatcher": "$msCompile",
       "options": {

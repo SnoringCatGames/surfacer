@@ -80,6 +80,16 @@ FIXME: LEFT OFF HERE: ---------------------------------------------------
     - Surfacer and Scaffolder are also separate DLLs. They do depend on files from the SnoreCore DLL. But they do not know about each other.
   - Describe the build process. There's a CI workflow that automatically builds the DLLs whenever for each push to the repo.
   - Add these workflows!
+  - Snippets stuff:
+    - Split-apart SnoreCore, Scaffolder, and Surfacer logic into separate Git repositories.
+      - I also created a separate SquirrelAway and Bootstrapper repository.
+      - SnoreCore, Scaffolder, and Surfacer contain C++ GDExtension logic and are built into DLLs.
+      - They also contain GDScript logic, which is included when publishing them for use as Godot Addons.
+      - SquirrelAway and Bootstrapper only contain GDScript logic.
+      - Each repository contains SCons build rules for building each of the submodules that the particular module depends on.
+      - Additionally, each SCons build creates a symlink so that its particular demo/ Godot project can access the GDExtension and GDScript logic for each of its dependencies.
+      - The symlink is better than copying files, since I want to be able to update submodule GDScript logic as needed from within the Bootstrapper or SquirrelAway Godot project.
+
 
 
 

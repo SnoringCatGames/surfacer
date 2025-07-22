@@ -60,8 +60,8 @@ jobs:
       - name: Build GDExtension Debug Build
         shell: sh
         run: |
-          scons ci=yes tests=yes optimize=debug target=template_debug platform=windows arch=x86_64 precision=single custom_api_file=./demo/extension_api.json
-        # scons ci=yes tests=yes optimize=debug target=template_debug platform=linux arch=x86_64 precision=single custom_api_file=./demo/extension_api.json
+          scons ci=yes tests=yes optimize=debug target=template_debug platform=windows arch=x86_64 precision=single custom_api_file=extension_api.json
+        # scons ci=yes tests=yes optimize=debug target=template_debug platform=linux arch=x86_64 precision=single custom_api_file=extension_api.json
 
       - name: Trigger asset imports
         shell: sh

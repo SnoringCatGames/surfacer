@@ -2,24 +2,27 @@
 import os
 import sys
 
-from scaffolder.build_utils import set_up_scaffolder
-from snore_core.methods import print_error
-from snore_core.build_utils import post_setup, pre_setup, set_up_snore_core
-from squirrel_away.build_utils import set_up_squirrel_away
-from surfacer.build_utils import set_up_surfacer
+from scaffolder.build_utils import set_up as set_up_scaffolder
+from snore_core.build_utils import \
+    post_setup as post_setup_snore_core, \
+    pre_setup as pre_setup_snore_core, \
+    set_up as set_up_snore_core
+from build_utils import set_up as set_up_surfacer
 
 
-libname = "Surfacer"
-projectdir = "demo"
+lib_name = "Surfacer"
+addon_dir_name = "surfacer"
 
-env = pre_setup()
+env = pre_setup_snore_core()
 
-cpppaths = []
+cpp_paths = []
 sources = []
 
-set_up_snore_core(env, cpppaths, sources)
-set_up_scaffolder(env, cpppaths, sources)
-set_up_surfacer(env, cpppaths, sources)
-set_up_squirrel_away(env, cpppaths, sources)
+set_up_snore_core(env, cpp_paths, sources)
+set_up_scaffolder(env, cpp_paths, sources)
+set_up_surfacer(env, cpp_paths, sources)
 
-post_setup(env, cpppaths, sources, libname, projectdir)
+post_setup_snore_core(env, cpp_paths, sources, lib_name, addon_dir_name)
+
+# Make the SnoreCore GDExtension and GDScript addon files accessible from the Surfacer demo.
+os.symlink("snore_core/demo/addons/snore_core", "demo/addons/snore_core", target_is_directory=True)
