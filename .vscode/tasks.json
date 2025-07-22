@@ -39,7 +39,7 @@
         // Include and run SnoreCore tests
         "tests=yes",
         // Disable SnoreCore breakpoints when running in CI.
-        "ci=yes",
+        // "ci=yes",
         // Enable dev_build for debugging with breakpoints.
         "dev_build=yes",
         "dev_mode=yes",
@@ -113,6 +113,10 @@
       "type": "shell",
       "command": "scons",
       "args": [
+        // Include and run SnoreCore tests
+        // "tests=yes",
+        // Disable SnoreCore breakpoints when running in CI.
+        // "ci=yes",
         // Enable dev_build for debugging with breakpoints.
         "dev_build=yes",
         "dev_mode=yes",
