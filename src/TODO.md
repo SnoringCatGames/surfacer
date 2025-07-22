@@ -63,6 +63,8 @@ FIXME: LEFT OFF HERE: ---------------------------------------------------
 - Figure out the best way to incorporate the GoogleTest dependencies, such that no GoogleTest file gets included when DEBUG is false.
   - ACTUALLY, is there a TESTS precompiler variable I can check, instead of using DEBUG for this?
 - Figure out how to run this on presubmit!!
+- **** Update GitHub Actions workflows for each repo to run tests for itself.
+- **** Update bootstrapper GitHub Actions workflow to run tests for squirrel away.
 
 - DOCS:
   - Write some architecture documentation for SnoreCore.

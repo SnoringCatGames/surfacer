@@ -1,14 +1,14 @@
-[submodule "godot-cpp"]
-	path = godot-cpp
-	url = https://github.com/godotengine/godot-cpp
-	branch = 4.4
-[submodule "demo/addons/scaffolder2"]
-	path = demo/addons/scaffolder2
-	url = https://github.com/SnoringCatGames/scaffolder2
+[submodule "snore_core"]
+	path = snore_core
+	url = https://github.com/SnoringCatGames/snore_core
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest.git
 [submodule "godot"]
 	path = godot
 	url = https://github.com/godotengine/godot.git
 	branch = 4.4
-[submodule "googletest"]
-	path = googletest
-	url = https://github.com/google/googletest.git
+[submodule "godot-cpp"]
+	path = godot-cpp
+	url = https://github.com/godotengine/godot-cpp
+	branch = 4.4

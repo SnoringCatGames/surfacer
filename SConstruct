@@ -2,118 +2,24 @@
 import os
 import sys
 
-from methods import print_error
+from scaffolder.build_utils import set_up_scaffolder
+from snore_core.methods import print_error
+from snore_core.build_utils import post_setup, pre_setup, set_up_snore_core
+from squirrel_away.build_utils import set_up_squirrel_away
+from surfacer.build_utils import set_up_surfacer
 
 
-# NOTE: Levi updated this.
 libname = "Surfacer"
 projectdir = "demo"
 
-localEnv = Environment(tools=["default"], PLATFORM="")
+env = pre_setup()
 
-# Build profiles can be used to decrease compile times.
-# You can either specify "disabled_classes", OR
-# explicitly specify "enabled_classes" which disables all other classes.
-# Modify the example file as needed and uncomment the line below or
-# manually specify the build_profile parameter when running SCons.
+cpppaths = []
+sources = []
 
-# localEnv["build_profile"] = "build_profile.json"
+set_up_snore_core(env, cpppaths, sources)
+set_up_scaffolder(env, cpppaths, sources)
+set_up_surfacer(env, cpppaths, sources)
+set_up_squirrel_away(env, cpppaths, sources)
 
-customs = ["custom.py"]
-customs = [os.path.abspath(path) for path in customs]
-
-opts = Variables(customs, ARGUMENTS)
-opts.Update(localEnv)
-
-Help(opts.GenerateHelpText(localEnv))
-
-env = localEnv.Clone()
-
-if not (os.path.isdir("godot-cpp") and os.listdir("godot-cpp")):
-    print_error("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.
-Run the following command to download godot-cpp:
-
-    git submodule update --init --recursive""")
-    sys.exit(1)
-
-env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
-
-# NOTE: Levi added this, to enable C++23.
-# if env.get("is_msvc", False):
-#     env["CXXFLAGS"].remove("/std:c++17")
-#     env["CXXFLAGS"].insert(0, "/std:c++23preview")
-#     env["CXXFLAGS"].insert(0, "/Zc:preprocessor")
-# else:
-#     env["CXXFLAGS"].remove("-std=c++17")
-#     env["CXXFLAGS"].insert(0, "-std=c++23")
-
-# NOTE: Levi updated this.
-env.Append(CPPPATH=[
-    "src/",
-    "googletest/googletest/",
-    "googletest/googletest/include/",
-    "googletest/googlemock/",
-    "googletest/googlemock/include/",
-])
-
-# NOTE: Levi updated this.
-sources = (
-    Glob("src/*.cpp") +
-    Glob("src/scaffolder/*.cpp") +
-    Glob("src/snore_core/*.cpp") +
-    Glob("src/snore_core/internal/*.cpp") +
-    Glob("src/snore_core/time/*.cpp") +
-    Glob("src/surfacer/*.cpp") +
-    Glob("src/surfacer/annotations/*.cpp") +
-    Glob("src/surfacer/surface/*.cpp")
-)
-
-# NOTE: Levi added this
-is_debug_build = env["target"] in ["editor", "template_debug"]
-
-# NOTE: Levi added this, to disable breakpoints when running in CI.
-is_continuous_integration = ARGUMENTS.get("ci", "") == "yes"
-if is_continuous_integration:
-    env.Append(CPPDEFINES=["SC_CI_ENABLED"])
-
-# NOTE: Levi added this, to include and run tests.
-includes_tests = ARGUMENTS.get("tests", "") == "yes"
-if includes_tests:
-    env.Append(CPPDEFINES=["SC_TESTS_ENABLED"])
-
-    googletest_sources = (
-        Glob("googletest/googletest/src/gtest-all.cc") +
-        Glob("googletest/googlemock/src/gmock-all.cc")
-        # Glob("googletest/googletest/src/*.cc") +
-        # Glob("googletest/googlemock/src/*.cc")
-    )
-    googletest_exclusions = [
-        # "googletest/googletest/src/gtest-all.cc",
-        # "googletest/googletest/src/gtest_main.cc",
-        # "googletest/googlemock/src/gmock-all.cc",
-        # "googletest/googlemock/src/gmock_main.cc",
-    ]
-    sources.append([x for x in googletest_sources if str(x) not in googletest_exclusions])
-
-if is_debug_build:
-    try:
-        doc_data = env.GodotCPPDocData("src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
-        sources.append(doc_data)
-    except AttributeError:
-        print("Not including class reference as we're targeting a pre-4.3 baseline.")
-
-# .dev doesn't inhibit compatibility, so we don't need to key it.
-# .universal just means "compatible with all relevant arches" so we don't need to key it.
-suffix = env['suffix'].replace(".dev", "").replace(".universal", "")
-
-lib_filename = "{}{}{}{}".format(env.subst('$SHLIBPREFIX'), libname, suffix, env.subst('$SHLIBSUFFIX'))
-
-library = env.SharedLibrary(
-    "bin/{}/{}".format(env['platform'], lib_filename),
-    source=sources,
-)
-
-copy = env.Install("{}/bin/{}/".format(projectdir, env["platform"]), library)
-
-default_args = [library, copy]
-Default(*default_args)
+post_setup(env, cpppaths, sources, libname, projectdir)
