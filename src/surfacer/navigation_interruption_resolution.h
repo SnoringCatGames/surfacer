@@ -7,7 +7,7 @@
 
 namespace godot {
 
-enum NavigationInterruptionResolution {
+enum GDE_EXPORT NavigationInterruptionResolution {
 	UNKNOWN_RESOLUTION,
 	CANCEL_NAV,
 	RETRY_NAV,

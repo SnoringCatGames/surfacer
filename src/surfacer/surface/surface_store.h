@@ -20,7 +20,7 @@ namespace godot {
 class MovementProfile;
 class SurfaceParser;
 
-class SurfaceStore : public RefCounted {
+class GDE_EXPORT SurfaceStore : public RefCounted {
 	GDCLASS(SurfaceStore, RefCounted);
 
 public:

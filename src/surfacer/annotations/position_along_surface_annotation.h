@@ -5,7 +5,7 @@
 
 namespace godot {
 
-class PositionAlongSurfaceAnnotation : public RefCounted {
+class GDE_EXPORT PositionAlongSurfaceAnnotation : public RefCounted {
 	GDCLASS(PositionAlongSurfaceAnnotation, RefCounted)
 
 public:

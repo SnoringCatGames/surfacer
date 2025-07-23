@@ -17,7 +17,7 @@ class RotatedShape;
 //   along the axis the surface is aligned to.
 // - The position always indicates the center of the character's bounding
 //   box.
-class PositionAlongSurface : public RefCounted {
+class GDE_EXPORT PositionAlongSurface : public RefCounted {
 	GDCLASS(PositionAlongSurface, RefCounted)
 
 public:

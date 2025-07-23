@@ -5,7 +5,7 @@
 
 namespace godot {
 
-class TileMapSurfaceParser : public RefCounted {
+class GDE_EXPORT TileMapSurfaceParser : public RefCounted {
 	GDCLASS(TileMapSurfaceParser, RefCounted)
 
 public:

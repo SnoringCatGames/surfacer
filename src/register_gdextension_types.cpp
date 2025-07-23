@@ -1,6 +1,5 @@
 #include "register_gdextension_types.h"
 
-#include "snore_core/snore_core_main_module.h"
 #include "surfacer/surfacer_module.h"
 
 #include <gdextension_interface.h>
@@ -13,8 +12,6 @@ void initialize_surfacer_gdextension_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-
-	SnoreCore::register_gdextension_types(p_level);
 	Surfacer::register_gdextension_types(p_level);
 }
 
@@ -23,8 +20,6 @@ void uninitialize_surfacer_gdextension_types(
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-
-	SnoreCore::unregister_gdextension_types(p_level);
 	Surfacer::unregister_gdextension_types(p_level);
 }
 

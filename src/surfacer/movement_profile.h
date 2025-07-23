@@ -10,7 +10,7 @@ namespace godot {
 // - This defines how your character will move.
 // - There are a _lot_ of parameters you can adjust here.
 // - You can adjust these parameters within the editor's inspector panel.
-class MovementProfile : public Resource {
+class GDE_EXPORT MovementProfile : public Resource {
 	GDCLASS(MovementProfile, Resource)
 
 public:

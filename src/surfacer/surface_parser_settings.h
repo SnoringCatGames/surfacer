@@ -7,7 +7,7 @@
 
 namespace godot {
 
-class SurfaceParserSettings : public SnoreCoreSettings {
+class GDE_EXPORT SurfaceParserSettings : public SnoreCoreSettings {
 	GDCLASS(SurfaceParserSettings, SnoreCoreSettings)
 
 public:

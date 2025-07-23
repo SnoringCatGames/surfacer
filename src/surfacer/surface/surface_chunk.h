@@ -9,7 +9,7 @@ namespace godot {
 
 class Surface;
 
-class SurfaceChunk : public RefCounted {
+class GDE_EXPORT SurfaceChunk : public RefCounted {
 	GDCLASS(SurfaceChunk, RefCounted)
 
 public:

@@ -8,7 +8,7 @@ namespace godot {
 
 class SurfaceParser;
 
-class SurfaceParser : public RefCounted {
+class GDE_EXPORT SurfaceParser : public RefCounted {
 	GDCLASS(SurfaceParser, RefCounted);
 
 public:

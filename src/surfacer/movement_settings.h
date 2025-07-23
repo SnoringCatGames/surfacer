@@ -11,7 +11,7 @@ namespace godot {
 //       logic.
 // TODO: Port validation and _calculate_dependent_movement_params.
 
-class MovementSettings : public SnoreCoreSettings {
+class GDE_EXPORT MovementSettings : public SnoreCoreSettings {
 	GDCLASS(MovementSettings, SnoreCoreSettings)
 
 public:

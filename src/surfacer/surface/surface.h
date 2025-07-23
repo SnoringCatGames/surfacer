@@ -2,6 +2,8 @@
 #define SURFACE_H
 
 #include "snore_core/internal/string_utils.h"
+#include "surfacer/surface/surface_chunk.h"
+#include "surfacer/surface/surface_properties.h"
 
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
@@ -14,10 +16,7 @@
 
 namespace godot {
 
-class SurfaceChunk;
-class SurfaceProperties;
-
-class Surface : public RefCounted {
+class GDE_EXPORT Surface : public RefCounted {
 	GDCLASS(Surface, RefCounted)
 
 public:
@@ -202,7 +201,7 @@ private:
 	NeighborCurvature counter_clockwise_neighbor_curvature =
 			NeighborCurvature::UNKNOWN_CURVATURE;
 	Ref<Surface> counter_clockwise_neighbor;
-}; //namespace godot
+};
 
 } //namespace godot
 

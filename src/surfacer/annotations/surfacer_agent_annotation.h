@@ -5,7 +5,7 @@
 
 namespace godot {
 
-class SurfacerAgentAnnotation : public RefCounted {
+class GDE_EXPORT SurfacerAgentAnnotation : public RefCounted {
 	GDCLASS(SurfacerAgentAnnotation, RefCounted)
 
 public:

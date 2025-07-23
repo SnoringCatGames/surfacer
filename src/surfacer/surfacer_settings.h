@@ -2,15 +2,14 @@
 #define SURFACER_SETTINGS_H
 
 #include "snore_core/snore_core_settings.h"
+#include "surfacer/movement_settings.h"
+#include "surfacer/surface_parser_settings.h"
 
 #include <godot_cpp/core/binder_common.hpp>
 
 namespace godot {
 
-class MovementSettings;
-class SurfaceParserSettings;
-
-class SurfacerSettings : public SnoreCoreSettings {
+class GDE_EXPORT SurfacerSettings : public SnoreCoreSettings {
 	GDCLASS(SurfacerSettings, SnoreCoreSettings)
 
 public:
