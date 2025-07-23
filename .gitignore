@@ -61,6 +61,8 @@ compile_commands.json
 
 # Custom changes
 
+~*
+
 ## Ignore built binaries
 
 /bin

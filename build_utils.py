@@ -2,18 +2,25 @@ import glob
 import os
 import sys
 
-from ..snore_core.methods import print_error
+from snore_core.build_utils import print_error
 
 
-def set_up_snore_core(*env: object, cpppaths: list[str], sources: list[str], path_prefix="surfacer/") -> None:
+def set_up(env: object, cpp_paths: list[str], sources: list[str], addon_dir_name="surfacer/", is_setup_for_self = False) -> None:
     if not os.path.isdir('snore_core'):
         print_error("snore_core must be a submodule of the root repository.")
         sys.exit(1)
 
-    cpppaths.extend([
-        path_prefix + "src/",
-    ])
-
-    sources.extend(
-        glob.glob(path_prefix + "src/surfacer/**/*.cpp", recursive=True)
-    )
+    if is_setup_for_self:
+        cpp_paths.extend([
+            "src/",
+        ])
+        sources.extend(
+            glob.glob("src/**/*.cpp", recursive=True)
+        )
+    else:
+        cpp_paths.extend([
+            addon_dir_name + "/src/",
+        ])
+        sources.extend(
+            glob.glob(addon_dir_name + "/src/surfacer/**/*.cpp", recursive=True)
+        )

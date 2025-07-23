@@ -1,9 +1,0 @@
-# TODO: Remove/update these after we remove/update the need for scaffolder as a GDScript addon?
-#       (Or will we need to keep using some GDScript files from Scaffolder?)
-addons/scaffolder/godot/
-addons/scaffolder/godot-cpp/
-addons/scaffolder/googletest/
-addons/scaffolder/snore_core/
-addons/scaffolder/src/
-addons/scaffolder/__init__.py
-addons/scaffolder/build_utils.py

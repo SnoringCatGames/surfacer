@@ -1,6 +1,6 @@
 - In C++, always prefix parameter names with 'p_'.
-- Group getters and setters together if they correspond to the same private field.
-- Prefer using ENSURE over ERR_FAIL_COND_MSG.
-- Modify variables with the const keyword when reasonable.
+- In C++, group getters and setters together if they correspond to the same private field.
+- Prefer using `ENSURE` over `ERR_FAIL_COND_MSG`.
+- Modify variables with the `const` keyword when reasonable.
 - Include periods after comments.
-- Include one-line member function definitions in the header file.
+- In C++, include one-line member function definitions in the header file.

@@ -8,7 +8,8 @@
       "dependsOrder": "sequence",
       "dependsOn": [
         // "buildGodot",
-        "buildExtension",
+        "buildSnoreCore",
+        "buildSurfacer",
         "buildDocs"
       ],
     },
@@ -17,7 +18,8 @@
       "dependsOrder": "sequence",
       "dependsOn": [
         "buildGodotRelease",
-        "buildExtensionRelease",
+        "buildSnoreCoreRelease",
+        "buildSurfacerRelease",
         "buildDocs"
       ],
     },
@@ -26,12 +28,73 @@
       "dependsOrder": "sequence",
       "dependsOn": [
         "buildGodot",
-        "buildExtension",
+        "buildSnoreCore",
+        "buildSurfacer",
         "buildDocs"
       ],
     },
     {
-      "label": "buildExtension",
+      "label": "buildSnoreCore",
+      "group": "build",
+      "type": "shell",
+      "command": "scons",
+      "args": [
+        // Include and run SnoreCore tests
+        "tests=yes",
+        // Disable SnoreCore breakpoints when running in CI.
+        // "ci=yes",
+        // Enable dev_build for debugging with breakpoints.
+        "dev_build=yes",
+        "dev_mode=yes",
+        "debug_symbols=yes",
+        // "dev_mode=yes",
+        // TODO: Consider toggling.
+        "optimize=debug",
+        // TODO: Consider toggling.
+        // "tests=yes",
+        // TODO: Consider toggling.
+        // "target=editor",
+        "target=template_debug",
+        "platform=windows",
+        "custom_api_file=${workspaceFolder}/extension_api.json"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}/snore_core"
+      }
+    },
+    {
+      "label": "buildSnoreCoreRelease",
+      "group": "build",
+      "type": "shell",
+      "command": "scons",
+      "args": [
+        // Include and run SnoreCore tests
+        // "tests=yes",
+        // Disable SnoreCore breakpoints when running in CI.
+        // "ci=yes",
+        // Enable dev_build for debugging with breakpoints.
+        // "dev_build=yes",
+        // "dev_mode=yes",
+        // "debug_symbols=yes",
+        // "dev_mode=yes",
+        // TODO: Consider toggling.
+        // "optimize=debug",
+        // TODO: Consider toggling.
+        // "tests=yes",
+        // TODO: Consider toggling.
+        // "target=editor",
+        "target=template_release",
+        "platform=windows",
+        "custom_api_file=${workspaceFolder}/extension_api.json"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}/snore_core"
+      }
+    },
+    {
+      "label": "buildSurfacer",
       "group": "build",
       "type": "shell",
       "command": "scons",
@@ -61,7 +124,7 @@
       }
     },
     {
-      "label": "buildExtensionRelease",
+      "label": "buildSurfacerRelease",
       "group": "build",
       "type": "shell",
       "command": "scons",

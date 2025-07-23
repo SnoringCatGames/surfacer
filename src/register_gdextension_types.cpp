@@ -1,6 +1,5 @@
 #include "register_gdextension_types.h"
 
-#include "scaffolder/scaffolder_module.h"
 #include "snore_core/snore_core_main_module.h"
 #include "surfacer/surfacer_module.h"
 
@@ -10,23 +9,22 @@
 
 using namespace godot;
 
-void initialize_gdextension_types(ModuleInitializationLevel p_level) {
+void initialize_surfacer_gdextension_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
 
 	SnoreCore::register_gdextension_types(p_level);
-	Scaffolder::register_gdextension_types(p_level);
 	Surfacer::register_gdextension_types(p_level);
 }
 
-void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
+void uninitialize_surfacer_gdextension_types(
+		ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
 
 	SnoreCore::unregister_gdextension_types(p_level);
-	Scaffolder::unregister_gdextension_types(p_level);
 	Surfacer::unregister_gdextension_types(p_level);
 }
 
@@ -42,8 +40,8 @@ GDExtensionBool GDE_EXPORT surfacer_extension_init(
 		GDExtensionInitialization *r_initialization) {
 	GDExtensionBinding::InitObject init_obj(
 			p_get_proc_address, p_library, r_initialization);
-	init_obj.register_initializer(initialize_gdextension_types);
-	init_obj.register_terminator(uninitialize_gdextension_types);
+	init_obj.register_initializer(initialize_surfacer_gdextension_types);
+	init_obj.register_terminator(uninitialize_surfacer_gdextension_types);
 	init_obj.set_minimum_library_initialization_level(
 			MODULE_INITIALIZATION_LEVEL_SCENE);
 

@@ -56,8 +56,17 @@ jobs:
             ./godot/bin
           key: ${{ steps.godot-restore.outputs.cache-primary-key }}
 
-      # Build GDExtension.
-      - name: Build GDExtension Debug Build
+      # Build SnoreCore GDExtension.
+      - name: Build SnoreCore GDExtension Debug Build
+        shell: sh
+        run: |
+          cd snore_core
+          scons ci=yes tests=yes optimize=debug target=template_debug platform=windows arch=x86_64 precision=single custom_api_file=extension_api.json
+          cd ..
+        # scons ci=yes tests=yes optimize=debug target=template_debug platform=linux arch=x86_64 precision=single custom_api_file=extension_api.json
+
+      # Build Surfacer GDExtension.
+      - name: Build Surfacer GDExtension Debug Build
         shell: sh
         run: |
           scons ci=yes tests=yes optimize=debug target=template_debug platform=windows arch=x86_64 precision=single custom_api_file=extension_api.json
