@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Geometry" inherits="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="are_colors_equal_with_epsilon" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="a" type="Color" />
+			<param index="1" name="b" type="Color" />
+			<param index="2" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="are_floats_equal_with_epsilon" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="a" type="float" />
+			<param index="1" name="b" type="float" />
+			<param index="2" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="are_points_collinear" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="p1" type="Vector2" />
+			<param index="1" name="p2" type="Vector2" />
+			<param index="2" name="p3" type="Vector2" />
+			<param index="3" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="are_points_equal_with_epsilon" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="a" type="Vector2" />
+			<param index="1" name="b" type="Vector2" />
+			<param index="2" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="are_rects_equal_with_epsilon" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="a" type="Rect2" />
+			<param index="1" name="b" type="Rect2" />
+			<param index="2" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="are_three_points_clockwise" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="a" type="Vector2" />
+			<param index="1" name="b" type="Vector2" />
+			<param index="2" name="c" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="calculate_half_width_height" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="shape" type="Shape2D" />
+			<param index="1" name="is_rotated_90_degrees" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="calculate_manhattan_distance" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="a" type="Vector2" />
+			<param index="1" name="b" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="check_for_shape_to_rect_intersection" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="p_shape_position" type="Vector2" />
+			<param index="1" name="p_shape" type="RotatedShape" />
+			<param index="2" name="p_rect" type="Rect2" />
+			<param index="3" name="p_epsilon" type="float" default="0.0" />
+			<description>
+			</description>
+		</method>
+		<method name="clamp_vector_length" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="vector" type="Vector2" />
+			<param index="1" name="min_length" type="float" />
+			<param index="2" name="max_length" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="distance_squared_from_point_to_rect" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="point" type="Vector2" />
+			<param index="1" name="rect" type="Rect2" />
+			<description>
+			</description>
+		</method>
+		<method name="do_point_and_segment_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="point" type="Vector2" />
+			<param index="1" name="segment_a" type="Vector2" />
+			<param index="2" name="segment_b" type="Vector2" />
+			<param index="3" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="do_polyline_and_polygon_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="vertices" type="PackedVector2Array" />
+			<param index="1" name="polygon" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="do_polyline_and_rectangle_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="vertices" type="PackedVector2Array" />
+			<param index="1" name="rectangle_min" type="Vector2" />
+			<param index="2" name="rectangle_max" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="do_polyline_and_triangle_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="vertices" type="PackedVector2Array" />
+			<param index="1" name="triangle_a" type="Vector2" />
+			<param index="2" name="triangle_b" type="Vector2" />
+			<param index="3" name="triangle_c" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="do_rectangles_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="a_min" type="Vector2" />
+			<param index="1" name="a_max" type="Vector2" />
+			<param index="2" name="b_min" type="Vector2" />
+			<param index="3" name="b_max" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="do_segment_and_polygon_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="segment_a" type="Vector2" />
+			<param index="1" name="segment_b" type="Vector2" />
+			<param index="2" name="polygon" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="do_segment_and_rectangle_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="segment_a" type="Vector2" />
+			<param index="1" name="segment_b" type="Vector2" />
+			<param index="2" name="rectangle_min" type="Vector2" />
+			<param index="3" name="rectangle_max" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="do_segment_and_triangle_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="segment_a" type="Vector2" />
+			<param index="1" name="segment_b" type="Vector2" />
+			<param index="2" name="triangle_a" type="Vector2" />
+			<param index="3" name="triangle_b" type="Vector2" />
+			<param index="4" name="triangle_c" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="do_shapes_match" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="shape_a" type="Shape2D" />
+			<param index="1" name="shape_b" type="Shape2D" />
+			<description>
+			</description>
+		</method>
+		<method name="does_rectangle_and_circle_intersect" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="rectangle_min" type="Vector2" />
+			<param index="1" name="rectangle_max" type="Vector2" />
+			<param index="2" name="circle_center" type="Vector2" />
+			<param index="3" name="circle_radius" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="get_bounding_box_for_points" qualifiers="static">
+			<return type="Rect2" />
+			<param index="0" name="points" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="get_closest_point_on_polyline_to_point" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="point" type="Vector2" />
+			<param index="1" name="polyline" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="get_closest_point_on_polyline_to_polyline" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="a" type="PackedVector2Array" />
+			<param index="1" name="b" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="get_closest_point_on_segment_to_point" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="point" type="Vector2" />
+			<param index="1" name="segment_a" type="Vector2" />
+			<param index="2" name="segment_b" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_distance_squared_between_non_intersecting_segments" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="segment_1_a" type="Vector2" />
+			<param index="1" name="segment_1_b" type="Vector2" />
+			<param index="2" name="segment_2_a" type="Vector2" />
+			<param index="3" name="segment_2_b" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_distance_squared_from_point_to_polyline" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="point" type="Vector2" />
+			<param index="1" name="polyline" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="get_distance_squared_from_point_to_segment" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="point" type="Vector2" />
+			<param index="1" name="segment_a" type="Vector2" />
+			<param index="2" name="segment_b" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_distance_squared_from_rect_to_rect" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="a" type="Rect2" />
+			<param index="1" name="b" type="Rect2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_furthest_shape_boundary_point_in_direction" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="p_shape_position" type="Vector2" />
+			<param index="1" name="p_shape" type="RotatedShape" />
+			<param index="2" name="p_direction" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_grid_coord_from_tile_map_index" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="index" type="int" />
+			<param index="1" name="tile_map_layer" type="TileMapLayer" />
+			<description>
+			</description>
+		</method>
+		<method name="get_intersection_of_segment_and_circle" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="segment_a" type="Vector2" />
+			<param index="1" name="segment_b" type="Vector2" />
+			<param index="2" name="center" type="Vector2" />
+			<param index="3" name="radius" type="float" />
+			<param index="4" name="uses_first_possible_intersection" type="bool" default="true" />
+			<description>
+			</description>
+		</method>
+		<method name="get_intersection_of_segment_and_polyline" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="segment_a" type="Vector2" />
+			<param index="1" name="segment_b" type="Vector2" />
+			<param index="2" name="vertices" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="get_intersection_of_segments" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="segment_1_a" type="Vector2" />
+			<param index="1" name="segment_1_b" type="Vector2" />
+			<param index="2" name="segment_2_a" type="Vector2" />
+			<param index="3" name="segment_2_b" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_perpendicular_vector" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="vector" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="get_radius" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="shape" type="Shape2D" />
+			<description>
+			</description>
+		</method>
+		<method name="get_tile_map_bounds_in_world_coordinates" qualifiers="static">
+			<return type="Rect2" />
+			<param index="0" name="tile_map_layer" type="TileMapLayer" />
+			<description>
+			</description>
+		</method>
+		<method name="get_tile_map_index_from_grid_coord" qualifiers="static">
+			<return type="int" />
+			<param index="0" name="position" type="Vector2" />
+			<param index="1" name="tile_map_layer" type="TileMapLayer" />
+			<description>
+			</description>
+		</method>
+		<method name="get_tile_map_index_from_world_coord" qualifiers="static">
+			<return type="int" />
+			<param index="0" name="position" type="Vector2" />
+			<param index="1" name="tile_map_layer" type="TileMapLayer" />
+			<description>
+			</description>
+		</method>
+		<method name="get_vector2_array_back" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="vertices" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="get_vector2_array_front" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="vertices" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="get_vector_string" qualifiers="static">
+			<return type="String" />
+			<param index="0" name="vector" type="Vector2" />
+			<param index="1" name="decimal_place_count" type="int" default="2" />
+			<description>
+			</description>
+		</method>
+		<method name="is_float_gte_with_epsilon" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="a" type="float" />
+			<param index="1" name="b" type="float" />
+			<param index="2" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="is_float_integer_aligned_with_epsilon" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="number" type="float" />
+			<param index="1" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="is_float_lte_with_epsilon" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="a" type="float" />
+			<param index="1" name="b" type="float" />
+			<param index="2" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="is_point_in_rectangle" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="point" type="Vector2" />
+			<param index="1" name="rectangle_min" type="Vector2" />
+			<param index="2" name="rectangle_max" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="is_point_in_triangle" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="point" type="Vector2" />
+			<param index="1" name="a" type="Vector2" />
+			<param index="2" name="b" type="Vector2" />
+			<param index="3" name="c" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="is_point_inf" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="point" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="is_point_partial_inf" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="point" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="is_polygon_clockwise" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="vertices" type="PackedVector2Array" />
+			<description>
+			</description>
+		</method>
+		<method name="is_polygon_convex" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="vertices" type="PackedVector2Array" />
+			<param index="1" name="epsilon" type="float" default="0.001" />
+			<description>
+			</description>
+		</method>
+		<method name="is_vector_valid" qualifiers="static">
+			<return type="bool" />
+			<param index="0" name="vector" type="Vector2" />
+			<description>
+			</description>
+		</method>
+		<method name="snap_float_to_integer" qualifiers="static">
+			<return type="float" />
+			<param index="0" name="number" type="float" />
+			<param index="1" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="snap_vector2_to_integers" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="point" type="Vector2" />
+			<param index="1" name="epsilon" type="float" default="1e-05" />
+			<description>
+			</description>
+		</method>
+		<method name="tile_map_to_world" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="position" type="Vector2" />
+			<param index="1" name="tile_map_layer" type="TileMapLayer" />
+			<description>
+			</description>
+		</method>
+		<method name="world_to_tile_map" qualifiers="static">
+			<return type="Vector2" />
+			<param index="0" name="position" type="Vector2" />
+			<param index="1" name="tile_map_layer" type="TileMapLayer" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

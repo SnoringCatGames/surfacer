@@ -5,7 +5,7 @@ import sys
 from snore_core.build_utils import print_error
 
 
-def set_up(env: object, cpp_paths: list[str], sources: list[str], addon_dir_name="surfacer/", is_setup_for_self = False) -> None:
+def set_up(env: object, cpp_paths: list[str], sources: list[str], addon_dir_name: str, is_setup_for_self = False) -> None:
     if not os.path.isdir('snore_core'):
         print_error("snore_core must be a submodule of the root repository.")
         sys.exit(1)
