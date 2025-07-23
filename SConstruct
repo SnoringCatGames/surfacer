@@ -24,5 +24,7 @@ set_up_surfacer(env, cpp_paths, sources, surfacer_addon_dir_name, is_setup_for_s
 post_setup_snore_core(env, cpp_paths, sources, surfacer_lib_name, surfacer_addon_dir_name, Default)
 
 # Make the SnoreCore GDExtension and GDScript addon files accessible from the Surfacer demo.
-if not os.path.lexists("demo/addons/snore_core"):
-    os.symlink("snore_core/demo/addons/snore_core", "demo/addons/snore_core", target_is_directory=True)
+original_path = os.path.abspath("snore_core/demo/addons/snore_core")
+link_path = os.path.abspath("demo/addons/snore_core")
+if not os.path.lexists(link_path):
+    os.symlink(original_path, link_path, target_is_directory=True)
