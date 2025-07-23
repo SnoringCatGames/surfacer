@@ -21,7 +21,7 @@ jobs:
           submodules: true
           # with:
           #   lfs: true
-          token: ${{ secrets.PRIVATESURFACER2ACCESSTOKEN}}
+          token: ${{ secrets.PRIVATECHECKOUTACCESSTOKEN}}
 
       # Setup dependencies (like installing scons).
       - name: Setup godot-cpp

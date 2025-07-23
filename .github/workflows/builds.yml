@@ -264,7 +264,7 @@ jobs:
           submodules: true
           # --------------------------------------------------------------------
           # NOTE: Levi added this to support checking out private repositories.
-          token: ${{ secrets.PRIVATESURFACER2ACCESSTOKEN}}
+          token: ${{ secrets.PRIVATECHECKOUTACCESSTOKEN}}
           # --------------------------------------------------------------------
 
       # Lint
