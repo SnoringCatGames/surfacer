@@ -15,8 +15,9 @@ void initialize_surfacer_gdextension_types(ModuleInitializationLevel p_level) {
 	}
 	// NOTE: Godot currently doesn't support dependencies between separate
 	//       GDExtensions. If support is added later, each SnoreCore should
-	//       register its own types, rather than Surfacer doing it here.
-	//       See https://github.com/godot-rust/gdext/issues/615.
+	//       register its own types, rather than Surfacer doing it here. And we
+	//       should update the build system to use DLLs. See
+	//       https://github.com/godot-rust/gdext/issues/615.
 	SnoreCore::register_gdextension_types(p_level);
 	Surfacer::register_gdextension_types(p_level);
 }
@@ -28,8 +29,9 @@ void uninitialize_surfacer_gdextension_types(
 	}
 	// NOTE: Godot currently doesn't support dependencies between separate
 	//       GDExtensions. If support is added later, each SnoreCore should
-	//       unregister its own types, rather than Surfacer doing it here.
-	//       See https://github.com/godot-rust/gdext/issues/615.
+	//       unregister its own types, rather than Surfacer doing it here. And
+	//       we should update the build system to use DLLs. See
+	//       https://github.com/godot-rust/gdext/issues/615.
 	SnoreCore::unregister_gdextension_types(p_level);
 	Surfacer::unregister_gdextension_types(p_level);
 }

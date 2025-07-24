@@ -8,7 +8,7 @@ namespace godot {
 
 class SurfaceFinder;
 
-class GDE_EXPORT SurfaceFinder : public RefCounted {
+class SurfaceFinder : public RefCounted {
 	GDCLASS(SurfaceFinder, RefCounted);
 
 public:

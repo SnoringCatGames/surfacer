@@ -25,13 +25,10 @@ func _ready() -> void:
     Surface.get_normal_from_side(side)
     foo.get_last_point()
     Geometry.are_colors_equal_with_epsilon(Color.WHITE, Color.BLACK, 0.0001)
-    S.log.print(foo.to_string(false))
+    # FIXME
+    #S.log.print(foo.to_string(false))
 
 
 func _on_snore_core_set_up_finished() -> void:
     G.snore_core_settings = G.snore_core.get_settings()
     G.surfacer_settings = G.surfacer.get_settings()
-
-
-func _on_gd_example_position_changed(node: Object, new_pos: Vector2) -> void:
-    print("The position of " + node.get_class() + " is now " + str(new_pos))

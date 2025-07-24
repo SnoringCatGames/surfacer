@@ -13,7 +13,7 @@
 
 namespace godot {
 
-class GDE_EXPORT CollisionSurfaceResult : public RefCounted {
+class CollisionSurfaceResult : public RefCounted {
 	GDCLASS(CollisionSurfaceResult, RefCounted);
 
 public:

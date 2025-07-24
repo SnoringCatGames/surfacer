@@ -11,7 +11,7 @@ namespace godot {
 class PositionAlongSurface;
 class RotatedShape;
 
-class GDE_EXPORT SurfacerGeometry : public Object {
+class SurfacerGeometry : public Object {
 	GDCLASS(SurfacerGeometry, Object)
 
 private:

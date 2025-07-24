@@ -5,7 +5,7 @@
 
 namespace godot {
 
-class GDE_EXPORT AgentSurfaceState : public RefCounted {
+class AgentSurfaceState : public RefCounted {
 	GDCLASS(AgentSurfaceState, RefCounted)
 
 public:

@@ -5,7 +5,7 @@
 
 namespace godot {
 
-class GDE_EXPORT SurfaceProperties : public RefCounted {
+class SurfaceProperties : public RefCounted {
 	GDCLASS(SurfaceProperties, RefCounted)
 
 public:

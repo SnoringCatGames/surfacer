@@ -8,7 +8,7 @@
 
 namespace godot {
 
-class GDE_EXPORT Surfacer : public SnoreCoreModule<SurfacerSettings> {
+class Surfacer : public SnoreCoreModule<SurfacerSettings> {
 	GDCLASS(Surfacer, SnoreCoreModule)
 
 public:

@@ -5,7 +5,7 @@
 
 namespace godot {
 
-class GDE_EXPORT PathAnnotation : public RefCounted {
+class PathAnnotation : public RefCounted {
 	GDCLASS(PathAnnotation, RefCounted)
 
 public:

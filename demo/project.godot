@@ -21,7 +21,6 @@ buses/default_bus_layout="res://src/default_bus_layout.tres"
 
 [autoload]
 
-S="*res://addons/scaffolder2/src/core/s.gd"
 G="*res://src/demo_globals.gd"
 
 [native_extensions]

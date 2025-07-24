@@ -5,7 +5,7 @@
 
 namespace godot {
 
-class GDE_EXPORT JumpAnnotation : public RefCounted {
+class JumpAnnotation : public RefCounted {
 	GDCLASS(JumpAnnotation, RefCounted)
 
 public:
