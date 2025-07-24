@@ -53,4 +53,4 @@ post_setup_snore_core(
     Default,
 )
 
-create_symlink_snore_core()
+create_symlink_snore_core(False)
