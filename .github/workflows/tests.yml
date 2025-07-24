@@ -23,8 +23,8 @@ jobs:
           #   lfs: true
           token: ${{ secrets.PRIVATECHECKOUTACCESSTOKEN}}
 
-      # Setup dependencies (like installing scons).
-      - name: Setup godot-cpp
+      # Set up dependencies (like installing scons).
+      - name: Set up godot-cpp
         uses: ./godot-cpp/.github/actions/setup-godot-cpp
         with:
           platform: windows
@@ -55,15 +55,6 @@ jobs:
           path: |
             ./godot/bin
           key: ${{ steps.godot-restore.outputs.cache-primary-key }}
-
-      # Build SnoreCore GDExtension.
-      - name: Build SnoreCore GDExtension Debug Build
-        shell: sh
-        run: |
-          cd snore_core
-          scons ci=yes tests=yes optimize=debug target=template_debug platform=windows arch=x86_64 precision=single custom_api_file=extension_api.json
-          cd ..
-        # scons ci=yes tests=yes optimize=debug target=template_debug platform=linux arch=x86_64 precision=single custom_api_file=extension_api.json
 
       # Build Surfacer GDExtension.
       - name: Build Surfacer GDExtension Debug Build
