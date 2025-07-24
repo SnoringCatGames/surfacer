@@ -45,15 +45,7 @@ def create_symlink(includes_shared_library=False) -> None:
     """
     Make the Surfacer GDScript addon files (and maybe the GDExtension shared library) accessible from the root module's demo.
     """
-    original_path = (
-        includes_shared_library
-        and os.path.abspath("surfacer/demo/addons/surfacer")
-        or os.path.abspath("surfacer/demo/addons/surfacer/src")
-    )
-    link_path = (
-        includes_shared_library
-        and os.path.abspath("demo/addons/surfacer")
-        or os.path.abspath("demo/addons/surfacer/src")
-    )
+    original_path = os.path.abspath("surfacer/demo/addons/surfacer")
+    link_path = os.path.abspath("demo/addons/surfacer")
     if not os.path.lexists(link_path):
         os.symlink(original_path, link_path, target_is_directory=True)
