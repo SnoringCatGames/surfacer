@@ -4,11 +4,39 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build",
+      "label": "buildDev",
       "dependsOrder": "sequence",
       "dependsOn": [
         // "buildGodot",
-        "build",
+        "buildExtensionDev",
+        "buildDocs"
+      ],
+    },
+    {
+      "label": "buildAssetLibRelease",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        // For now, we only publish template_debug versions of the extension.
+        "buildDebug"
+      ],
+      "group": "build",
+      "type": "shell",
+      "command": "scons",
+      "args": [
+        // Skip the normal build process, and just zip the current build.
+        "sc_zip=yes",
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "buildDebug",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        // "buildGodot",
+        "buildExtensionDebug",
         "buildDocs"
       ],
     },
@@ -16,8 +44,8 @@
       "label": "buildRelease",
       "dependsOrder": "sequence",
       "dependsOn": [
-        "buildGodotRelease",
-        "buildRelease",
+        // "buildGodotRelease",
+        "buildExtensionRelease",
         "buildDocs"
       ],
     },
@@ -26,20 +54,23 @@
       "dependsOrder": "sequence",
       "dependsOn": [
         "buildGodot",
-        "build",
+        "buildExtensionDev",
         "buildDocs"
       ],
     },
     {
-      "label": "build",
+      // Use this for internal development on the extension.
+      "label": "buildExtensionDev",
       "group": "build",
       "type": "shell",
       "command": "scons",
       "args": [
-        // Include and run SnoreCore tests.
-        "tests=yes",
-        // Disable SnoreCore breakpoints when running in CI.
-        // "ci=yes",
+        // Include SnoreCore debug logic used for internal development (defines SC_DEV_ENABLED).
+        "sc_dev=yes",
+        // Include and run SnoreCore tests (defines SC_TESTS_ENABLED).
+        "sc_tests=yes",
+        // Disable SnoreCore breakpoints when running in CI (defines SC_CI_ENABLED).
+        // "sc_ci=yes",
         // Enable dev_build for debugging with breakpoints.
         "dev_build=yes",
         "dev_mode=yes",
@@ -61,15 +92,51 @@
       }
     },
     {
-      "label": "buildRelease",
+      // Use this for publishing the extension with the debug export template.
+      "label": "buildExtensionDebug",
       "group": "build",
       "type": "shell",
       "command": "scons",
       "args": [
-        // Include and run SnoreCore tests.
+        // Exclude SnoreCore debug logic used for internal development (defines SC_DEV_ENABLED).
+        // "sc_dev=yes",
+        // Include and run SnoreCore tests (defines SC_TESTS_ENABLED).
+        "sc_tests=yes",
+        // Disable SnoreCore breakpoints when running in CI (defines SC_CI_ENABLED).
+        // "sc_ci=yes",
+        // Enable dev_build for debugging with breakpoints.
+        "dev_build=yes",
+        "dev_mode=yes",
+        "debug_symbols=yes",
+        // "dev_mode=yes",
+        // TODO: Consider toggling.
+        "optimize=debug",
+        // TODO: Consider toggling.
         // "tests=yes",
+        // TODO: Consider toggling.
+        // "target=editor",
+        "target=template_debug",
+        "platform=windows",
+        "custom_api_file=${workspaceFolder}/extension_api.json"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      // Use this for publishing the extension with the release export template.
+      "label": "buildExtensionRelease",
+      "group": "build",
+      "type": "shell",
+      "command": "scons",
+      "args": [
+        // Exclude SnoreCore debug logic used for internal development (defines SC_DEV_ENABLED).
+        // "sc_dev=yes",
+        // Exclude SnoreCore tests.
+        // "sc_tests=yes",
         // Disable SnoreCore breakpoints when running in CI.
-        // "ci=yes",
+        // "sc_ci=yes",
         // Enable dev_build for debugging with breakpoints.
         // "dev_build=yes",
         // "dev_mode=yes",
@@ -91,6 +158,9 @@
       }
     },
     {
+      // Create doc XML files for symbols in the extension.
+      // - These files can then be hand-edited to add descriptions.
+      // - The SCons build will then add the edited documentation to the GDExtension.
       "label": "buildDocs",
       "group": "build",
       "type": "shell",
@@ -113,10 +183,12 @@
       "type": "shell",
       "command": "scons",
       "args": [
+        // exclude SnoreCore debug logic used for internal development (defines SC_DEV_ENABLED).
+        // "sc_dev=yes",
         // Include and run SnoreCore tests.
-        // "tests=yes",
+        // "sc_tests=yes",
         // Disable SnoreCore breakpoints when running in CI.
-        // "ci=yes",
+        // "sc_ci=yes",
         // Enable dev_build for debugging with breakpoints.
         "dev_build=yes",
         "dev_mode=yes",

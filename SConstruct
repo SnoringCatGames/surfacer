@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-import os
 import sys
+import zipfile
 
 from snore_core.build_utils import (
+    add_submodule_to_zip,
+    create_submodule_addons_symlinks,
     default_addon_dir_name as snore_core_addon_dir_name,
     post_setup as post_setup_snore_core,
     pre_setup as pre_setup_snore_core,
@@ -16,6 +18,15 @@ from build_utils import (
 
 
 env = pre_setup_snore_core(ARGUMENTS, Environment, Variables, Help, SConscript)
+
+if env["is_zipping"]:
+    # Skip the normal build process, and just zip the current build.
+    with zipfile.ZipFile(
+        "build/{}.zip".format(surfacer_lib_name), "w", zipfile.ZIP_DEFLATED
+    ) as zf:
+        add_submodule_to_zip(zf, snore_core_addon_dir_name, False)
+        add_submodule_to_zip(zf, surfacer_addon_dir_name, True)
+    sys.exit(0)
 
 cpp_paths = []
 sources = []
@@ -43,3 +54,6 @@ post_setup_snore_core(
     surfacer_addon_dir_name,
     Default,
 )
+
+create_submodule_addons_symlinks(snore_core_addon_dir_name, False)
+create_submodule_addons_symlinks(surfacer_addon_dir_name, True)

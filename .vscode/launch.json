@@ -25,7 +25,7 @@
             // "console": "internalConsole",
             "console": "integratedTerminal",
             "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
-            "preLaunchTask": "build"
+            "preLaunchTask": "buildDev"
         },
         {
             "name": "Launch Project",
@@ -48,7 +48,7 @@
             // "console": "internalConsole",
             "console": "integratedTerminal",
             "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
-            "preLaunchTask": "build"
+            "preLaunchTask": "buildDev"
         },
         {
             "name": "Run Tests",
@@ -71,7 +71,7 @@
             // "console": "internalConsole",
             "console": "integratedTerminal",
             "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
-            "preLaunchTask": "build"
+            "preLaunchTask": "buildDev"
         },
         {
             "name": "Build Godot",
@@ -97,27 +97,19 @@
             "preLaunchTask": "buildAll"
         },
         {
-            "name": "Build Release (Windows)",
+            "name": "Build Asset Lib Release",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.x86_64.exe",
+            "program": "cmd.exe",
             "args": [
-                // "--headless",
-                // "--upwards",
-                // "--quit",
-                // "--editor",
-                // "--verbose",
-                "--path",
-                "${workspaceFolder}/demo"
+                "/c",
+                "echo Zip Zap!"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            // TODO: Consider toggling.
-            // "console": "internalConsole",
             "console": "integratedTerminal",
-            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
-            "preLaunchTask": "buildRelease"
+            "preLaunchTask": "buildAssetLibRelease"
         },
         {
             "name": "Attach to Godot Editor",

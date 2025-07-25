@@ -45,6 +45,7 @@ compile_commands.json
 *.includes
 *.idb
 *.exp
+*.ilk
 
 # Other stuff
 *.log
@@ -65,4 +66,5 @@ compile_commands.json
 
 ## Ignore built binaries
 
-/bin
+bin/**/*.dll
+build/

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SurfaceStore" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_surface_for_tile" qualifiers="const">
+			<return type="Surface" />
+			<param index="0" name="p_tile_map" type="TileMapLayer" />
+			<param index="1" name="p_tilemap_index" type="int" />
+			<param index="2" name="p_side" type="int" enum="Surface.Side" />
+			<description>
+			</description>
+		</method>
+		<method name="get_surface_set" qualifiers="const">
+			<return type="Dictionary" />
+			<param index="0" name="p_movement_profile" type="MovementProfile" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="ceilings" type="Surface[]" setter="" getter="get_ceilings" default="[]">
+		</member>
+		<member name="combined_tilemap_rect" type="Rect2" setter="" getter="get_combined_tilemap_rect" default="Rect2(0, 0, 0, 0)">
+		</member>
+		<member name="floors" type="Surface[]" setter="" getter="get_floors" default="[]">
+		</member>
+		<member name="left_walls" type="Surface[]" setter="" getter="get_left_walls" default="[]">
+		</member>
+		<member name="max_tilemap_cell_size" type="Vector2" setter="" getter="get_max_tilemap_cell_size" default="Vector2(0, 0)">
+		</member>
+		<member name="right_walls" type="Surface[]" setter="" getter="get_right_walls" default="[]">
+		</member>
+	</members>
+</class>

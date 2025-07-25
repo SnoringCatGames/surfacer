@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SurfaceParserSettings" inherits="SnoreCoreSettings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="collision_between_cells_distance_threshold" type="float" setter="set_collision_between_cells_distance_threshold" getter="get_collision_between_cells_distance_threshold" default="0.5">
+		</member>
+		<member name="corner_target_less_preferred_surface_side_offset" type="float" setter="set_corner_target_less_preferred_surface_side_offset" getter="get_corner_target_less_preferred_surface_side_offset" default="0.02">
+		</member>
+		<member name="corner_target_more_preferred_surface_side_offset" type="float" setter="set_corner_target_more_preferred_surface_side_offset" getter="get_corner_target_more_preferred_surface_side_offset" default="0.01">
+		</member>
+		<member name="surfaces_tile_maps_collision_layer" type="float" setter="set_surfaces_tile_maps_collision_layer" getter="get_surfaces_tile_maps_collision_layer" default="1.0">
+		</member>
+	</members>
+</class>
