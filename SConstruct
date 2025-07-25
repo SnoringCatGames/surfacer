@@ -2,7 +2,7 @@
 import sys
 import zipfile
 
-from snore_core.build_utils import (
+from submodules.snore_core.build_utils import (
     add_submodule_to_zip,
     create_submodule_addons_symlinks,
     default_addon_dir_name as snore_core_addon_dir_name,
