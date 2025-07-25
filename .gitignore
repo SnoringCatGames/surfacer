@@ -66,5 +66,5 @@ compile_commands.json
 
 ## Ignore built binaries
 
-bin/**/*.dll
+**/bin/**/*.dll
 build/
