@@ -164,7 +164,7 @@
       "label": "buildDocs",
       "group": "build",
       "type": "shell",
-      "command": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+      "command": "${workspaceFolder}/submodules/godot/bin/godot.windows.editor.dev.x86_64.exe",
       // "command": "C:/Program Files/Godot/Godot_v4.4.1-stable_win64.exe",
       "args": [
         // Enable dev_build for debugging with breakpoints.
@@ -203,7 +203,7 @@
       ],
       "problemMatcher": "$msCompile",
       "options": {
-        "cwd": "${workspaceFolder}/godot"
+        "cwd": "${workspaceFolder}/submodules/godot"
       }
     },
     {
@@ -226,7 +226,7 @@
       ],
       "problemMatcher": "$msCompile",
       "options": {
-        "cwd": "${workspaceFolder}/godot"
+        "cwd": "${workspaceFolder}/submodules/godot"
       }
     }
   ]

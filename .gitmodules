@@ -1,14 +1,14 @@
 [submodule "snore_core"]
-	path = snore_core
+	path = submodules/snore_core
 	url = https://github.com/SnoringCatGames/snore_core
 [submodule "googletest"]
-	path = googletest
+	path = submodules/googletest
 	url = https://github.com/google/googletest.git
 [submodule "godot"]
-	path = godot
+	path = submodules/godot
 	url = https://github.com/godotengine/godot.git
 	branch = 4.4
 [submodule "godot-cpp"]
-	path = godot-cpp
+	path = submodules/godot-cpp
 	url = https://github.com/godotengine/godot-cpp
 	branch = 4.4

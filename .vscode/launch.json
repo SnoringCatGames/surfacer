@@ -8,7 +8,7 @@
             "name": "Launch Editor",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+            "program": "${workspaceFolder}/submodules/godot/bin/godot.windows.editor.dev.x86_64.exe",
             "args": [
                 // "--headless",
                 // "--upwards",
@@ -24,14 +24,14 @@
             // TODO: Consider toggling.
             // "console": "internalConsole",
             "console": "integratedTerminal",
-            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
+            "visualizerFile": "${workspaceFolder}/submodules/godot/platform/windows/godot.natvis",
             "preLaunchTask": "buildDev"
         },
         {
             "name": "Launch Project",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+            "program": "${workspaceFolder}/submodules/godot/bin/godot.windows.editor.dev.x86_64.exe",
             "args": [
                 // "--headless",
                 // "--upwards",
@@ -47,14 +47,14 @@
             // TODO: Consider toggling.
             // "console": "internalConsole",
             "console": "integratedTerminal",
-            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
+            "visualizerFile": "${workspaceFolder}/submodules/godot/platform/windows/godot.natvis",
             "preLaunchTask": "buildDev"
         },
         {
             "name": "Run Tests",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+            "program": "${workspaceFolder}/submodules/godot/bin/godot.windows.editor.dev.x86_64.exe",
             "args": [
                 "--headless",
                 "--quit",
@@ -70,14 +70,14 @@
             // TODO: Consider toggling.
             // "console": "internalConsole",
             "console": "integratedTerminal",
-            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
+            "visualizerFile": "${workspaceFolder}/submodules/godot/platform/windows/godot.natvis",
             "preLaunchTask": "buildDev"
         },
         {
             "name": "Build Godot",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/godot/bin/godot.windows.editor.dev.x86_64.exe",
+            "program": "${workspaceFolder}/submodules/godot/bin/godot.windows.editor.dev.x86_64.exe",
             "args": [
                 // "--headless",
                 // "--upwards",
@@ -93,7 +93,7 @@
             // TODO: Consider toggling.
             // "console": "internalConsole",
             "console": "integratedTerminal",
-            "visualizerFile": "${workspaceFolder}/godot/platform/windows/godot.natvis",
+            "visualizerFile": "${workspaceFolder}/submodules/godot/platform/windows/godot.natvis",
             "preLaunchTask": "buildAll"
         },
         {
