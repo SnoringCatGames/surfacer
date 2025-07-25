@@ -1,6 +1,17 @@
 name: Build GDExtension
 on:
-  release
+  # This support manually triggering the workflow from the GitHub UI.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version to build.'
+        required: true
+        type: string
+      description:
+        description: 'Release description.'
+        required: true
+        type: string
+  # release
   # workflow_call:
   # push:
   # pull_request:
