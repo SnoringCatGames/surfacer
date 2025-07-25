@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MovementProfile" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="ability_can_dash" type="bool" setter="set_can_dash" getter="get_can_dash" default="false">
+		</member>
+		<member name="ability_can_double_jump" type="bool" setter="set_can_double_jump" getter="get_can_double_jump" default="false">
+		</member>
+		<member name="ability_can_grab_ceilings" type="bool" setter="set_can_grab_ceilings" getter="get_can_grab_ceilings" default="false">
+		</member>
+		<member name="ability_can_grab_floors" type="bool" setter="set_can_grab_floors" getter="get_can_grab_floors" default="true">
+		</member>
+		<member name="ability_can_grab_walls" type="bool" setter="set_can_grab_walls" getter="get_can_grab_walls" default="false">
+		</member>
+		<member name="ability_can_jump" type="bool" setter="set_can_jump" getter="get_can_jump" default="true">
+		</member>
+		<member name="ability_can_target_in_air_destinations" type="bool" setter="set_can_target_in_air_destinations" getter="get_can_target_in_air_destinations" default="true">
+		</member>
+		<member name="dash_cooldown_multiplier" type="float" setter="set_dash_cooldown_multiplier" getter="get_dash_cooldown_multiplier" default="1.0">
+		</member>
+		<member name="dash_duration_multiplier" type="float" setter="set_dash_duration_multiplier" getter="get_dash_duration_multiplier" default="1.0">
+		</member>
+		<member name="dash_fade_duration_multiplier" type="float" setter="set_dash_fade_duration_multiplier" getter="get_dash_fade_duration_multiplier" default="1.0">
+		</member>
+		<member name="dash_speed_multiplier_multiplier" type="float" setter="set_dash_speed_multiplier_multiplier" getter="get_dash_speed_multiplier_multiplier" default="1.0">
+		</member>
+		<member name="dash_vertical_boost_multiplier" type="float" setter="set_dash_vertical_boost_multiplier" getter="get_dash_vertical_boost_multiplier" default="1.0">
+		</member>
+		<member name="double_jump_max_jump_chain" type="int" setter="set_max_jump_chain" getter="get_max_jump_chain" default="1">
+		</member>
+		<member name="edge_weight_additional_edge_weight_offset_override" type="float" setter="set_additional_edge_weight_offset_override" getter="get_additional_edge_weight_offset_override" default="-1.0">
+		</member>
+		<member name="edge_weight_air_edge_weight_multiplier_override" type="float" setter="set_air_edge_weight_multiplier_override" getter="get_air_edge_weight_multiplier_override" default="-1.0">
+		</member>
+		<member name="edge_weight_ceiling_crawling_edge_weight_multiplier_override" type="float" setter="set_ceiling_crawling_edge_weight_multiplier_override" getter="get_ceiling_crawling_edge_weight_multiplier_override" default="-1.0">
+		</member>
+		<member name="edge_weight_climb_to_adjacent_surface_edge_weight_multiplier_override" type="float" setter="set_climb_to_adjacent_surface_edge_weight_multiplier_override" getter="get_climb_to_adjacent_surface_edge_weight_multiplier_override" default="-1.0">
+		</member>
+		<member name="edge_weight_climbing_edge_weight_multiplier_override" type="float" setter="set_climbing_edge_weight_multiplier_override" getter="get_climbing_edge_weight_multiplier_override" default="-1.0">
+		</member>
+		<member name="edge_weight_move_to_collinear_surface_edge_weight_multiplier_override" type="float" setter="set_move_to_collinear_surface_edge_weight_multiplier_override" getter="get_move_to_collinear_surface_edge_weight_multiplier_override" default="-1.0">
+		</member>
+		<member name="edge_weight_uses_duration_instead_of_distance_for_edge_weight" type="bool" setter="set_uses_duration_instead_of_distance_for_edge_weight" getter="get_uses_duration_instead_of_distance_for_edge_weight" default="true">
+		</member>
+		<member name="edge_weight_walking_edge_weight_multiplier_override" type="float" setter="set_walking_edge_weight_multiplier_override" getter="get_walking_edge_weight_multiplier_override" default="-1.0">
+		</member>
+		<member name="graph_calc_additional_edge_weight_offset" type="float" setter="" getter="get_additional_edge_weight_offset" default="0.0">
+		</member>
+		<member name="graph_calc_air_edge_weight_multiplier" type="float" setter="" getter="get_air_edge_weight_multiplier" default="1.0">
+		</member>
+		<member name="graph_calc_also_optimizes_preselection_path" type="bool" setter="set_also_optimizes_preselection_path" getter="get_also_optimizes_preselection_path" default="true">
+		</member>
+		<member name="graph_calc_always_includes_jump_land_positions_at_surface_ends" type="bool" setter="set_always_includes_jump_land_positions_at_surface_ends" getter="get_always_includes_jump_land_positions_at_surface_ends" default="false">
+		</member>
+		<member name="graph_calc_always_tries_to_face_direction_of_motion" type="bool" setter="set_always_tries_to_face_direction_of_motion" getter="get_always_tries_to_face_direction_of_motion" default="true">
+		</member>
+		<member name="graph_calc_asserts_no_preexisting_collisions_during_edge_calculations" type="bool" setter="set_asserts_no_preexisting_collisions_during_edge_calculations" getter="get_asserts_no_preexisting_collisions_during_edge_calculations" default="false">
+		</member>
+		<member name="graph_calc_backtracks_for_higher_jumps_during_hor_step_calculations" type="bool" setter="set_backtracks_for_higher_jumps_during_hor_step_calculations" getter="get_backtracks_for_higher_jumps_during_hor_step_calculations" default="true">
+		</member>
+		<member name="graph_calc_bypasses_runtime_physics" type="bool" setter="set_bypasses_runtime_physics" getter="get_bypasses_runtime_physics" default="false">
+		</member>
+		<member name="graph_calc_calculates_all_valid_edges_for_a_surface_pair" type="bool" setter="set_calculates_all_valid_edges_for_a_surface_pair" getter="get_calculates_all_valid_edges_for_a_surface_pair" default="false">
+		</member>
+		<member name="graph_calc_ceiling_crawl_speed" type="float" setter="" getter="get_ceiling_crawl_speed" default="230.0">
+		</member>
+		<member name="graph_calc_ceiling_crawling_edge_weight_multiplier" type="float" setter="" getter="get_ceiling_crawling_edge_weight_multiplier" default="2.0">
+		</member>
+		<member name="graph_calc_checks_for_alt_intersection_points_for_oblique_collisions" type="bool" setter="set_checks_for_alt_intersection_points_for_oblique_collisions" getter="get_checks_for_alt_intersection_points_for_oblique_collisions" default="true">
+		</member>
+		<member name="graph_calc_climb_down_speed" type="float" setter="" getter="get_climb_down_speed" default="120.0">
+		</member>
+		<member name="graph_calc_climb_to_adjacent_surface_edge_weight_multiplier" type="float" setter="" getter="get_climb_to_adjacent_surface_edge_weight_multiplier" default="1.0">
+		</member>
+		<member name="graph_calc_climb_up_speed" type="float" setter="" getter="get_climb_up_speed" default="-230.0">
+		</member>
+		<member name="graph_calc_climbing_edge_weight_multiplier" type="float" setter="" getter="get_climbing_edge_weight_multiplier" default="1.8">
+		</member>
+		<member name="graph_calc_collision_margin_for_edge_calculations" type="float" setter="set_collision_margin_for_edge_calculations" getter="get_collision_margin_for_edge_calculations" default="1.0">
+		</member>
+		<member name="graph_calc_collision_margin_for_waypoint_positions" type="float" setter="set_collision_margin_for_waypoint_positions" getter="get_collision_margin_for_waypoint_positions" default="4.0">
+		</member>
+		<member name="graph_calc_dash_cooldown" type="float" setter="" getter="get_dash_cooldown" default="1.0">
+		</member>
+		<member name="graph_calc_dash_duration" type="float" setter="" getter="get_dash_duration" default="0.3">
+		</member>
+		<member name="graph_calc_dash_fade_duration" type="float" setter="" getter="get_dash_fade_duration" default="0.1">
+		</member>
+		<member name="graph_calc_dash_speed_multiplier" type="float" setter="" getter="get_dash_speed_multiplier" default="3.0">
+		</member>
+		<member name="graph_calc_dash_vertical_boost" type="float" setter="" getter="get_dash_vertical_boost" default="-300.0">
+		</member>
+		<member name="graph_calc_default_nav_interrupt_resolution_mode" type="int" setter="set_default_nav_interrupt_resolution_mode" getter="get_default_nav_interrupt_resolution_mode" default="4">
+		</member>
+		<member name="graph_calc_dist_sq_thres_for_considering_additional_jump_land_points" type="float" setter="set_dist_sq_thres_for_considering_additional_jump_land_points" getter="get_dist_sq_thres_for_considering_additional_jump_land_points" default="1024.0">
+		</member>
+		<member name="graph_calc_exceptional_jump_instruction_duration_increase" type="float" setter="set_exceptional_jump_instruction_duration_increase" getter="get_exceptional_jump_instruction_duration_increase" default="0.2">
+		</member>
+		<member name="graph_calc_forces_character_position_to_match_edge_at_start" type="bool" setter="set_forces_character_position_to_match_edge_at_start" getter="get_forces_character_position_to_match_edge_at_start" default="true">
+		</member>
+		<member name="graph_calc_forces_character_position_to_match_path_at_end" type="bool" setter="set_forces_character_position_to_match_path_at_end" getter="get_forces_character_position_to_match_path_at_end" default="false">
+		</member>
+		<member name="graph_calc_forces_character_velocity_to_match_edge_at_start" type="bool" setter="set_forces_character_velocity_to_match_edge_at_start" getter="get_forces_character_velocity_to_match_edge_at_start" default="true">
+		</member>
+		<member name="graph_calc_forces_character_velocity_to_zero_at_path_end" type="bool" setter="set_forces_character_velocity_to_zero_at_path_end" getter="get_forces_character_velocity_to_zero_at_path_end" default="false">
+		</member>
+		<member name="graph_calc_friction_coeff_with_sideways_input" type="float" setter="" getter="get_friction_coeff_with_sideways_input" default="1.25">
+		</member>
+		<member name="graph_calc_friction_coeff_without_sideways_input" type="float" setter="" getter="get_friction_coeff_without_sideways_input" default="1.0">
+		</member>
+		<member name="graph_calc_gravity_fast_fall" type="float" setter="" getter="get_gravity_fast_fall" default="5000.0">
+		</member>
+		<member name="graph_calc_gravity_slow_rise" type="float" setter="" getter="get_gravity_slow_rise" default="1900.0">
+		</member>
+		<member name="graph_calc_in_air_horizontal_acceleration" type="float" setter="" getter="get_in_air_horizontal_acceleration" default="2500.0">
+		</member>
+		<member name="graph_calc_includes_continuous_trajectory_positions" type="bool" setter="set_includes_continuous_trajectory_positions" getter="get_includes_continuous_trajectory_positions" default="true">
+		</member>
+		<member name="graph_calc_includes_continuous_trajectory_velocities" type="bool" setter="set_includes_continuous_trajectory_velocities" getter="get_includes_continuous_trajectory_velocities" default="true">
+		</member>
+		<member name="graph_calc_includes_discrete_trajectory_state" type="bool" setter="set_includes_discrete_trajectory_state" getter="get_includes_discrete_trajectory_state" default="true">
+		</member>
+		<member name="graph_calc_includes_redundant_j_l_positions_with_zero_start_velocity" type="bool" setter="set_includes_redundant_j_l_positions_with_zero_start_velocity" getter="get_includes_redundant_j_l_positions_with_zero_start_velocity" default="true">
+		</member>
+		<member name="graph_calc_is_trajectory_state_stored_at_build_time" type="bool" setter="set_is_trajectory_state_stored_at_build_time" getter="get_is_trajectory_state_stored_at_build_time" default="false">
+		</member>
+		<member name="graph_calc_jump_boost" type="float" setter="" getter="get_jump_boost" default="-900.0">
+		</member>
+		<member name="graph_calc_max_air_horizontal_speed" type="float" setter="" getter="get_max_air_horizontal_speed" default="320.0">
+		</member>
+		<member name="graph_calc_max_distance_for_reachable_surface_tracking" type="float" setter="set_max_distance_for_reachable_surface_tracking" getter="get_max_distance_for_reachable_surface_tracking" default="1024.0">
+		</member>
+		<member name="graph_calc_max_edges_to_remove_from_path_for_opt_to_in_air_dest" type="int" setter="set_max_edges_to_remove_from_path_for_opt_to_in_air_dest" getter="get_max_edges_to_remove_from_path_for_opt_to_in_air_dest" default="2">
+		</member>
+		<member name="graph_calc_max_horizontal_speed_default" type="float" setter="" getter="get_max_horizontal_speed_default" default="320.0">
+		</member>
+		<member name="graph_calc_max_possible_speed" type="float" setter="" getter="get_max_possible_speed" default="2800.0">
+		</member>
+		<member name="graph_calc_max_surface_speed" type="float" setter="" getter="get_max_surface_speed" default="320.0">
+		</member>
+		<member name="graph_calc_max_vertical_speed" type="float" setter="" getter="get_max_vertical_speed" default="2800.0">
+		</member>
+		<member name="graph_calc_min_frame_count_when_colliding_early_with_expected_surface" type="int" setter="set_min_frame_count_when_colliding_early_with_expected_surface" getter="get_min_frame_count_when_colliding_early_with_expected_surface" default="4">
+		</member>
+		<member name="graph_calc_min_intra_surface_distance_to_optimize_jump_for" type="float" setter="set_min_intra_surface_distance_to_optimize_jump_for" getter="get_min_intra_surface_distance_to_optimize_jump_for" default="16.0">
+		</member>
+		<member name="graph_calc_minimizes_velocity_change_when_jumping" type="bool" setter="set_minimizes_velocity_change_when_jumping" getter="get_minimizes_velocity_change_when_jumping" default="false">
+		</member>
+		<member name="graph_calc_move_to_collinear_surface_edge_weight_multiplier" type="float" setter="" getter="get_move_to_collinear_surface_edge_weight_multiplier" default="0.0">
+		</member>
+		<member name="graph_calc_normal_jump_instruction_duration_increase" type="float" setter="set_normal_jump_instruction_duration_increase" getter="get_normal_jump_instruction_duration_increase" default="0.08">
+		</member>
+		<member name="graph_calc_oblique_collison_normal_aspect_ratio_threshold" type="float" setter="set_oblique_collison_normal_aspect_ratio_threshold" getter="get_oblique_collison_normal_aspect_ratio_threshold" default="10.0">
+		</member>
+		<member name="graph_calc_optimizes_edge_jump_positions_at_run_time" type="bool" setter="set_optimizes_edge_jump_positions_at_run_time" getter="get_optimizes_edge_jump_positions_at_run_time" default="true">
+		</member>
+		<member name="graph_calc_optimizes_edge_land_positions_at_run_time" type="bool" setter="set_optimizes_edge_land_positions_at_run_time" getter="get_optimizes_edge_land_positions_at_run_time" default="true">
+		</member>
+		<member name="graph_calc_prevents_path_ends_from_exceeding_surface_ends_with_offsets" type="bool" setter="set_prevents_path_ends_from_exceeding_surface_ends_with_offsets" getter="get_prevents_path_ends_from_exceeding_surface_ends_with_offsets" default="true">
+		</member>
+		<member name="graph_calc_reached_in_air_destination_distance_squared_threshold" type="float" setter="set_reached_in_air_destination_distance_squared_threshold" getter="get_reached_in_air_destination_distance_squared_threshold" default="256.0">
+		</member>
+		<member name="graph_calc_recurses_when_colliding_during_horizontal_step_calculations" type="bool" setter="set_recurses_when_colliding_during_horizontal_step_calculations" getter="get_recurses_when_colliding_during_horizontal_step_calculations" default="true">
+		</member>
+		<member name="graph_calc_reuses_previous_waypoints_when_backtracking_on_jump_height" type="bool" setter="set_reuses_previous_waypoints_when_backtracking_on_jump_height" getter="get_reuses_previous_waypoints_when_backtracking_on_jump_height" default="false">
+		</member>
+		<member name="graph_calc_rise_double_jump_gravity" type="float" setter="" getter="get_rise_double_jump_gravity" default="3400.0">
+		</member>
+		<member name="graph_calc_rise_double_jump_gravity_multiplier" type="float" setter="" getter="get_rise_double_jump_gravity_multiplier" default="0.68">
+		</member>
+		<member name="graph_calc_skips_less_likely_jump_land_positions" type="bool" setter="set_skips_less_likely_jump_land_positions" getter="get_skips_less_likely_jump_land_positions" default="false">
+		</member>
+		<member name="graph_calc_slow_rise_gravity_multiplier" type="float" setter="" getter="get_slow_rise_gravity_multiplier" default="0.38">
+		</member>
+		<member name="graph_calc_smaller_of_max_surface_and_air_horizontal_speed" type="float" setter="" getter="get_smaller_of_max_surface_and_air_horizontal_speed" default="320.0">
+		</member>
+		<member name="graph_calc_stops_after_finding_first_valid_edge_for_a_surface_pair" type="bool" setter="set_stops_after_finding_first_valid_edge_for_a_surface_pair" getter="get_stops_after_finding_first_valid_edge_for_a_surface_pair" default="false">
+		</member>
+		<member name="graph_calc_syncs_character_position_to_edge_trajectory" type="bool" setter="set_syncs_character_position_to_edge_trajectory" getter="get_syncs_character_position_to_edge_trajectory" default="true">
+		</member>
+		<member name="graph_calc_syncs_character_velocity_to_edge_trajectory" type="bool" setter="set_syncs_character_velocity_to_edge_trajectory" getter="get_syncs_character_velocity_to_edge_trajectory" default="true">
+		</member>
+		<member name="graph_calc_walk_acceleration" type="float" setter="" getter="get_walk_acceleration" default="8000.0">
+		</member>
+		<member name="graph_calc_walking_edge_weight_multiplier" type="float" setter="" getter="get_walking_edge_weight_multiplier" default="1.2">
+		</member>
+		<member name="graph_calc_wall_fall_horizontal_boost" type="float" setter="" getter="get_wall_fall_horizontal_boost" default="20.0">
+		</member>
+		<member name="graph_calc_wall_jump_horizontal_boost" type="float" setter="" getter="get_wall_jump_horizontal_boost" default="200.0">
+		</member>
+		<member name="physics_air_horizontal_speed_multiplier" type="float" setter="set_air_horizontal_speed_multiplier" getter="get_air_horizontal_speed_multiplier" default="1.0">
+		</member>
+		<member name="physics_ceiling_crawl_speed_multiplier" type="float" setter="set_ceiling_crawl_speed_multiplier" getter="get_ceiling_crawl_speed_multiplier" default="1.0">
+		</member>
+		<member name="physics_ceiling_fall_velocity_boost" type="float" setter="set_ceiling_fall_velocity_boost" getter="get_ceiling_fall_velocity_boost" default="100.0">
+		</member>
+		<member name="physics_climb_down_speed_multiplier" type="float" setter="set_climb_down_speed_multiplier" getter="get_climb_down_speed_multiplier" default="1.0">
+		</member>
+		<member name="physics_climb_up_speed_multiplier" type="float" setter="set_climb_up_speed_multiplier" getter="get_climb_up_speed_multiplier" default="1.0">
+		</member>
+		<member name="physics_fall_through_floor_velocity_boost" type="float" setter="set_fall_through_floor_velocity_boost" getter="get_fall_through_floor_velocity_boost" default="100.0">
+		</member>
+		<member name="physics_friction_coefficient_multiplier" type="float" setter="set_friction_coefficient_multiplier" getter="get_friction_coefficient_multiplier" default="1.0">
+		</member>
+		<member name="physics_gravity_double_jump_slow_rise_multiplier_multiplier" type="float" setter="set_gravity_double_jump_slow_rise_multiplier_multiplier" getter="get_gravity_double_jump_slow_rise_multiplier_multiplier" default="1.0">
+		</member>
+		<member name="physics_gravity_multiplier" type="float" setter="set_gravity_multiplier" getter="get_gravity_multiplier" default="1.0">
+		</member>
+		<member name="physics_gravity_slow_rise_multiplier_multiplier" type="float" setter="set_gravity_slow_rise_multiplier_multiplier" getter="get_gravity_slow_rise_multiplier_multiplier" default="1.0">
+		</member>
+		<member name="physics_in_air_horizontal_acceleration_multiplier" type="float" setter="set_in_air_horizontal_acceleration_multiplier" getter="get_in_air_horizontal_acceleration_multiplier" default="1.0">
+		</member>
+		<member name="physics_jump_boost_multiplier" type="float" setter="set_jump_boost_multiplier" getter="get_jump_boost_multiplier" default="1.0">
+		</member>
+		<member name="physics_max_horizontal_speed_default_multiplier" type="float" setter="set_max_horizontal_speed_default_multiplier" getter="get_max_horizontal_speed_default_multiplier" default="1.0">
+		</member>
+		<member name="physics_max_vertical_speed_multiplier" type="float" setter="set_max_vertical_speed_multiplier" getter="get_max_vertical_speed_multiplier" default="1.0">
+		</member>
+		<member name="physics_stops_on_slope" type="bool" setter="set_stops_on_slope" getter="get_stops_on_slope" default="true">
+		</member>
+		<member name="physics_surface_speed_multiplier" type="float" setter="set_surface_speed_multiplier" getter="get_surface_speed_multiplier" default="1.0">
+		</member>
+		<member name="physics_walk_acceleration_multiplier" type="float" setter="set_walk_acceleration_multiplier" getter="get_walk_acceleration_multiplier" default="1.0">
+		</member>
+		<member name="physics_wall_fall_horizontal_boost_multiplier" type="float" setter="set_wall_fall_horizontal_boost_multiplier" getter="get_wall_fall_horizontal_boost_multiplier" default="1.0">
+		</member>
+		<member name="physics_wall_jump_horizontal_boost_multiplier" type="float" setter="set_wall_jump_horizontal_boost_multiplier" getter="get_wall_jump_horizontal_boost_multiplier" default="1.0">
+		</member>
+	</members>
+</class>

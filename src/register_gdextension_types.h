@@ -1,0 +1,7 @@
+#ifndef REGISTER_SURFACER_GDEXTENSION_TYPES_H
+#define REGISTER_SURFACER_GDEXTENSION_TYPES_H
+
+void initialize_surfacer_gdextension_types();
+void uninitialize_surfacer_gdextension_types();
+
+#endif // REGISTER_SURFACER_GDEXTENSION_TYPES_H
