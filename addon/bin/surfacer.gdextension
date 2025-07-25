@@ -29,4 +29,4 @@ android.release.arm64 = "res://addons/surfacer/bin/android/Surfacer.android.temp
 
 ; FIXME
 ; TODO: Add other icons.
-GDExample = "res://addons/surfacer/addons/scaffolder2/assets/editor_icons/ScaffolderNode.svg"
+GDExample = "res://addons/surfacer/addons/scaffolder/assets/editor_icons/ScaffolderNode.svg"
