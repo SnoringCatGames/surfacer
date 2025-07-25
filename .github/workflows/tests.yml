@@ -61,12 +61,12 @@ jobs:
             ./godot/bin
           key: ${{ steps.godot-restore.outputs.cache-primary-key }}
 
-      # Build Surfacer GDExtension.
-      - name: Build Surfacer GDExtension Debug Build
+      # Build the GDExtension.
+      - name: Build the GDExtension Debug Build
         shell: sh
         run: |
-          scons ci=yes tests=yes optimize=debug target=template_debug platform=windows arch=x86_64 precision=single custom_api_file=extension_api.json
-        # scons ci=yes tests=yes optimize=debug target=template_debug platform=linux arch=x86_64 precision=single custom_api_file=extension_api.json
+          scons sc_ci=yes sc_tests=yes optimize=debug target=template_debug platform=windows arch=x86_64 precision=single custom_api_file=extension_api.json
+        # scons sc_ci=yes sc_tests=yes optimize=debug target=template_debug platform=linux arch=x86_64 precision=single custom_api_file=extension_api.json
 
       - name: Trigger asset imports
         shell: sh
