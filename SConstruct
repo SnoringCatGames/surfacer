@@ -52,6 +52,7 @@ post_setup_snore_core(
     sources,
     surfacer_lib_name,
     surfacer_addon_dir_name,
+    True,
     Default,
 )
 
