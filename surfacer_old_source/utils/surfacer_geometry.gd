@@ -899,10 +899,10 @@ static func project_shape_onto_segment(
                                 possible_contact_point_displacement_x)
                     
                 else:
-                    ScaffolderLog.static_error(".project_shape_onto_segment")
+                    Logger.static_error(".project_shape_onto_segment")
                 
             _:
-                ScaffolderLog.static_error(".project_shape_onto_segment")
+                Logger.static_error(".project_shape_onto_segment")
     
     return original_shape_position + \
             Vector2(projection_displacement_x, projection_displacement_y)
@@ -1149,7 +1149,7 @@ static func get_furthest_shape_boundary_point_in_direction(
                 return capsule_end_center + shape.shape.radius * direction
         
     else:
-        ScaffolderLog.static_error(".get_furthest_shape_boundary_point_in_direction")
+        Logger.static_error(".get_furthest_shape_boundary_point_in_direction")
         return Vector2.INF
 
 
@@ -1215,7 +1215,7 @@ static func nudge_point_along_axially_aligned_segment_toward_shape_center(
                     segment_end.x,
                     segment_start.x)
         _:
-            ScaffolderLog.static_error(".nudge_point_along_axially_aligned_segment_toward_shape_center")
+            Logger.static_error(".nudge_point_along_axially_aligned_segment_toward_shape_center")
     
     return nudged_point
 

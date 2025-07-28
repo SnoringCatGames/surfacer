@@ -65,7 +65,7 @@ static func calculate_vertical_step(
     # From a basic equation of motion:
     #     v = v_0 + a*t
     var duration_to_reach_peak_after_release := \
-            -velocity_at_jump_button_release / \
+            - velocity_at_jump_button_release / \
             movement_params.gravity_fast_fall
     var time_peak_height := \
             time_instruction_end + duration_to_reach_peak_after_release
@@ -154,9 +154,7 @@ static func calculate_time_to_jump_to_waypoint(
     if can_hold_jump_button_at_start:
         # If we can currently hold the jump button, then there is slow-rise and
         # variable-jump-height to consider.
-    
         ### Calculate the time needed to move upward.
-        
         # Calculate how long it will take for the jump to reach some minimum
         # peak height.
         # 
@@ -224,7 +222,7 @@ static func calculate_time_to_jump_to_waypoint(
                 # From a basic equation of motion:
                 #     v = v_0 + a*t
                 var duration_to_reach_peak_after_release := \
-                        -velocity_at_jump_button_release / \
+                        - velocity_at_jump_button_release / \
                         movement_params.gravity_fast_fall
                 assert(duration_to_reach_peak_after_release >= 0)
         
@@ -286,7 +284,7 @@ static func calculate_time_to_jump_to_waypoint(
         if is_inf(duration_to_reach_horizontal_displacement):
             # If we can't reach the destination with that acceleration
             # direction, try the other direction.
-            horizontal_acceleration_sign = -horizontal_acceleration_sign
+            horizontal_acceleration_sign = - horizontal_acceleration_sign
             duration_to_reach_horizontal_displacement = \
                     MovementUtils.calculate_duration_for_displacement(
                             displacement.x,
@@ -337,7 +335,6 @@ static func calculate_time_to_jump_to_waypoint(
             # vertically on the upward side of the trajectory. In that case, we
             # need to consider the minimum time for the upward and downward
             # motion of the jump.
-            
             var duration_to_reach_upward_displacement_with_only_fast_fall = \
                     MovementUtils.calculate_movement_duration(
                             displacement.y,
@@ -527,7 +524,6 @@ static func calculate_time_for_passing_through_waypoint(
                     
                 else: # waypoint.is_at_end_of_surface
                     # Passing a protrusion in the middle of the wall.
-                    
                     # TODO: Make this smarter. This heuristic is very loose.
                     var is_next_waypoint_higher := \
                             waypoint.next_waypoint.position.y < target_height
@@ -547,7 +543,7 @@ static func calculate_time_for_passing_through_waypoint(
                 is_position_before_instruction_end = false
                 is_position_before_peak = false
         _:
-            ScaffolderLog.static_error(".calculate_time_for_passing_through_waypoint")
+            Logger.static_error(".calculate_time_for_passing_through_waypoint")
     
     if is_position_before_instruction_end:
         var displacement := target_height - position_start_y
@@ -624,7 +620,6 @@ static func calculate_vertical_state_for_time(
     else:
         # We need to consider both the slow-rise and fast-fall parabolic
         # sections.
-        
         var fast_fall_duration := time - slow_rise_end_time
         
         # Basic equations of motion.
@@ -650,12 +645,11 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
     # Algebra...:
     #     t = -v_0 / a
     var duration_to_slow_rise_peak := \
-            -velocity_y_start / movement_params.gravity_slow_rise
+            - velocity_y_start / movement_params.gravity_slow_rise
     
     if duration_to_slow_rise_peak >= duration:
         # We hit the end-time before reaching the peak, so we don't need to
         # consider any displacement with fast-fall gravity.
-        
         # From a basic equation of motion:
         #     s = s_0 + v_0*t + 1/2*a*t^2
         # Algebra...:
@@ -666,7 +660,6 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
         # We hit the end-time after reaching the peak, so we need to consider
         # both the displacement with slow-rise gravity and the displacement
         # with fast-fall gravity.
-        
         # From a basic equation of motion:
         #     s = s_0 + v_0*t + 1/2*a*t^2
         # Algebra...:
@@ -696,7 +689,6 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
 static func calculate_max_upward_distance(
         movement_params: MovementParameters) -> float:
     # TODO: Add support for double jumps, dash, etc.
-    
     # From a basic equation of motion:
     #     v^2 = v_0^2 + 2*a*(s - s_0)
     #     s_0 = 0
