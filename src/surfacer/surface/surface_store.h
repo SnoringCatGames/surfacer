@@ -1,10 +1,11 @@
 #ifndef SURFACE_STORE_H
 #define SURFACE_STORE_H
 
+#include "snore_core/snore_core_submodule.h"
 #include "surfacer/surface/surface.h"
+#include "surfacer/surfacer_module.h"
 
 #include <godot_cpp/classes/ref.hpp>
-#include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/tile_map_layer.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
@@ -20,8 +21,9 @@ namespace godot {
 class MovementProfile;
 class SurfaceParser;
 
-class SurfaceStore : public RefCounted {
-	GDCLASS(SurfaceStore, RefCounted);
+class SurfaceStore : public SnoreCoreSubmodule {
+	GDCLASS(SurfaceStore, SnoreCoreSubmodule);
+	SC_SUBMODULE_CLASS(SurfaceStore, Surfacer)
 
 public:
 	SurfaceStore() = default;

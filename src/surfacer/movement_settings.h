@@ -13,10 +13,9 @@ namespace godot {
 
 class MovementSettings : public SnoreCoreSettings {
 	GDCLASS(MovementSettings, SnoreCoreSettings)
+	SC_SETTINGS_CLASS_DECLARATION(MovementSettings)
 
 public:
-	static Ref<MovementSettings> get();
-
 	MovementSettings() = default;
 	~MovementSettings() = default;
 

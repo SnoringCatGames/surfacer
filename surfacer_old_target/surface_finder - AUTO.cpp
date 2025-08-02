@@ -16,7 +16,7 @@ godot::Vector2 GeometryUtils::world_to_tilemap(
 		godot::TileMap *p_tile_map) {
 	if (p_tile_map)
 		return p_tile_map->local_to_map(p_tile_map->to_local(p_world_pos));
-	return godot::Vector2(INFINITY, INFINITY);
+	return godot::Vector2(infinity, infinity);
 }
 
 int GeometryUtils::get_tilemap_index_from_grid_coord(
@@ -148,13 +148,6 @@ bool GlobalAccessors::are_reachable_surfaces_per_player_tracked() {
 	return true; // Placeholder
 }
 // --- End of Static helper implementations ---
-
-void SurfaceFinder::_bind_methods() {
-	// If you need to expose static methods to GDScript, bind them here.
-	// Example: ClassDB::bind_static_method("SurfaceFinder",
-	// D_METHOD("find_closest_surface_in_direction", ...),
-	// &SurfaceFinder::find_closest_surface_in_direction);
-}
 
 SurfaceFinder::SurfaceFinder() {}
 SurfaceFinder::~SurfaceFinder() {}
@@ -334,8 +327,8 @@ Array SurfaceFinder::find_closest_positions_on_surfaces(
 				true, true, true);
 
 		if (position->get_target_point() !=
-			Vector2(INFINITY,
-					INFINITY)) { // Assuming
+			Vector2(infinity,
+					infinity)) { // Assuming
 								 // PositionAlongSurface::get_target_point()
 			closest_positions[valid_position_count] = position;
 			valid_position_count++;
@@ -372,7 +365,7 @@ Array SurfaceFinder::get_closest_surfaces(
 	}
 
 	Vector2 basis_point =
-			(p_max_distance_basis_point == Vector2(INFINITY, INFINITY))
+			(p_max_distance_basis_point == Vector2(infinity, infinity))
 			? p_target
 			: p_max_distance_basis_point;
 	double next_distance_squared_to_beat = p_max_distance_squared_threshold;
@@ -695,7 +688,7 @@ void SurfaceFinder::calculate_collision_surface(
 	godot::Surface::Side determined_surface_side =
 			godot::Surface::Side::UNKNOWN_SIDE;
 	godot::Vector2 determined_tile_coord = godot::Vector2(
-			INFINITY, INFINITY); // Using float Vector2 for map coords
+			infinity, infinity); // Using float Vector2 for map coords
 	godot::String error_message = "";
 	godot::Ref<godot::Surface> found_surface = nullptr;
 
@@ -1079,7 +1072,7 @@ void SurfaceFinder::calculate_collision_surface(
 		}
 	}
 
-	if (determined_tile_coord != godot::Vector2(INFINITY, INFINITY) &&
+	if (determined_tile_coord != godot::Vector2(infinity, infinity) &&
 		determined_surface_side != godot::Surface::Side::UNKNOWN_SIDE) {
 		found_surface =
 				p_surface_store->get_surface_for_tile_by_map_coord_and_side(
@@ -1156,7 +1149,7 @@ void SurfaceFinder::calculate_collision_surface(
 		p_result->set_surface(nullptr); // Clear potentially incorrect surface
 										// from reversed attempt
 		p_result->set_surface_side(godot::Surface::Side::UNKNOWN_SIDE);
-		p_result->set_tilemap_coord(godot::Vector2(INFINITY, INFINITY));
+		p_result->set_tilemap_coord(godot::Vector2(infinity, infinity));
 
 		if (p_tries_adjusted_collision_normal &&
 			p_collision_normal_or_side.get_type() == godot::Variant::VECTOR2) {
@@ -1235,4 +1228,11 @@ void SurfaceFinder::calculate_collision_surface(
 				"Warning: Collision Tilemap State (allows_errors=true): " +
 				p_result->get_error_message());
 	}
+}
+
+void SurfaceFinder::_bind_methods() {
+	// If you need to expose static methods to GDScript, bind them here.
+	// Example: ClassDB::bind_static_method("SurfaceFinder",
+	// D_METHOD("find_closest_surface_in_direction", ...),
+	// &SurfaceFinder::find_closest_surface_in_direction);
 }

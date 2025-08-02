@@ -7,42 +7,9 @@
 
 using namespace godot;
 
-void SurfaceStore::_bind_methods() {
-	ClassDB::bind_method(
-			D_METHOD(
-					"get_surface_for_tile", "p_tile_map", "p_tilemap_index",
-					"p_side"),
-			&SurfaceStore::get_surface_for_tile);
-	ClassDB::bind_method(
-			D_METHOD("get_surface_set", "p_movement_profile"),
-			&SurfaceStore::get_surface_set);
+void SurfaceStore::set_up() {}
 
-	ClassDB::bind_method(D_METHOD("get_floors"), &SurfaceStore::get_floors);
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "floors"), "", "get_floors");
-	ClassDB::bind_method(D_METHOD("get_ceilings"), &SurfaceStore::get_ceilings);
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "ceilings"), "", "get_ceilings");
-	ClassDB::bind_method(
-			D_METHOD("get_left_walls"), &SurfaceStore::get_left_walls);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::ARRAY, "left_walls"), "", "get_left_walls");
-	ClassDB::bind_method(
-			D_METHOD("get_right_walls"), &SurfaceStore::get_right_walls);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::ARRAY, "right_walls"), "", "get_right_walls");
-
-	ClassDB::bind_method(
-			D_METHOD("get_max_tilemap_cell_size"),
-			&SurfaceStore::get_max_tile_map_cell_size);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::VECTOR2, "max_tilemap_cell_size"), "",
-			"get_max_tilemap_cell_size");
-	ClassDB::bind_method(
-			D_METHOD("get_combined_tilemap_rect"),
-			&SurfaceStore::get_combined_tile_map_rect);
-	ADD_PROPERTY(
-			PropertyInfo(Variant::RECT2, "combined_tilemap_rect"), "",
-			"get_combined_tilemap_rect");
-}
+void SurfaceStore::reset() {}
 
 Ref<Surface> SurfaceStore::get_surface_for_tile(
 		TileMapLayer *p_tile_map,
@@ -176,4 +143,41 @@ Dictionary SurfaceStore::get_surface_set(
 	// 	}
 
 	return set;
+}
+
+void SurfaceStore::_bind_methods() {
+	ClassDB::bind_method(
+			D_METHOD(
+					"get_surface_for_tile", "p_tile_map", "p_tilemap_index",
+					"p_side"),
+			&SurfaceStore::get_surface_for_tile);
+	ClassDB::bind_method(
+			D_METHOD("get_surface_set", "p_movement_profile"),
+			&SurfaceStore::get_surface_set);
+
+	ClassDB::bind_method(D_METHOD("get_floors"), &SurfaceStore::get_floors);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "floors"), "", "get_floors");
+	ClassDB::bind_method(D_METHOD("get_ceilings"), &SurfaceStore::get_ceilings);
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "ceilings"), "", "get_ceilings");
+	ClassDB::bind_method(
+			D_METHOD("get_left_walls"), &SurfaceStore::get_left_walls);
+	ADD_PROPERTY(
+			PropertyInfo(Variant::ARRAY, "left_walls"), "", "get_left_walls");
+	ClassDB::bind_method(
+			D_METHOD("get_right_walls"), &SurfaceStore::get_right_walls);
+	ADD_PROPERTY(
+			PropertyInfo(Variant::ARRAY, "right_walls"), "", "get_right_walls");
+
+	ClassDB::bind_method(
+			D_METHOD("get_max_tilemap_cell_size"),
+			&SurfaceStore::get_max_tile_map_cell_size);
+	ADD_PROPERTY(
+			PropertyInfo(Variant::VECTOR2, "max_tilemap_cell_size"), "",
+			"get_max_tilemap_cell_size");
+	ClassDB::bind_method(
+			D_METHOD("get_combined_tilemap_rect"),
+			&SurfaceStore::get_combined_tile_map_rect);
+	ADD_PROPERTY(
+			PropertyInfo(Variant::RECT2, "combined_tilemap_rect"), "",
+			"get_combined_tilemap_rect");
 }

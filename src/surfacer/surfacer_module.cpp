@@ -1,7 +1,6 @@
 #include "surfacer/surfacer_module.h"
 
-#include "snore_core/internal/registration_utils.h"
-#include "snore_core/snore_core_module_utils.h"
+#include "snore_core/internal/snore_core_module_utils.h"
 #include "surfacer/annotations/jump_annotation.h"
 #include "surfacer/annotations/path_annotation.h"
 #include "surfacer/annotations/position_along_surface_annotation.h"
@@ -90,7 +89,7 @@ void Surfacer::register_gdextension_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(SurfaceStore);
 	GDREGISTER_CLASS(TileMapSurfaceParser);
 
-	REGISTER_SNORE_CORE_MODULE(Surfacer);
+	REGISTER_SNORE_CORE_ROOT_MODULE(Surfacer);
 }
 
 void Surfacer::unregister_gdextension_types(ModuleInitializationLevel p_level) {
@@ -98,27 +97,14 @@ void Surfacer::unregister_gdextension_types(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	UNREGISTER_SNORE_CORE_MODULE(Surfacer);
+	UNREGISTER_SNORE_CORE_ROOT_MODULE(Surfacer);
 }
 
-void Surfacer::_bind_methods() {
-	ClassDB::bind_method(
-			D_METHOD("get_settings"), &Surfacer::get_surfacer_settings);
-}
-
-Surfacer *Surfacer::get() {
-	Surfacer *surfacer = get_maybe();
-	if (!ENSURE(surfacer, "Surfacer is not initialized.")) {
-		return nullptr;
-	}
-	return surfacer;
-}
-
-Surfacer *Surfacer::get_maybe() {
-	Engine *engine = Engine::get_singleton();
-	return engine->has_singleton(Surfacer::name)
-			? static_cast<Surfacer *>(engine->get_singleton(name))
-			: nullptr;
+std::vector<SnoreCoreSubmodule *> Surfacer::instantiate_submodules() {
+	return {
+		memnew(SurfaceStore),
+		memnew(TileMapSurfaceParser),
+	};
 }
 
 void Surfacer::set_up() {
@@ -129,4 +115,8 @@ void Surfacer::set_up() {
 void Surfacer::reset() {
 	// TODO: Clear state.
 	// TODO: Cancel any in-progress set_up operations.
+}
+
+void Surfacer::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_settings"), &Surfacer::get_settings);
 }

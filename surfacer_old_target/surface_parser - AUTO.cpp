@@ -5,6 +5,8 @@
 #include <godot_cpp/classes/convex_polygon_shape2d.hpp>
 #include <godot_cpp/classes/tile_data.hpp> // For Godot 4 TileSet interactions
 
+using namespace godot;
+
 // Placeholder initializations for Sc and Su statics
 // These need to be properly defined and initialized in your project.
 // Example:
@@ -15,7 +17,6 @@
 
 // --- Helper struct for Sc and Su placeholders ---
 // This should be replaced by your actual implementation of these utilities.
-namespace godot {
 
 // Default Sc::Levels::Config::cell_size if not set elsewhere
 Vector2 Sc::Levels::Config::cell_size =
@@ -196,13 +197,6 @@ constexpr double Sc::Geometry::FLOOR_MAX_ANGLE;
 constexpr double Sc::Geometry::WALL_ANGLE_EPSILON;
 
 // SurfaceParser Method Implementations
-void SurfaceParser::_bind_methods() {
-	ClassDB::bind_method(
-			D_METHOD(
-					"parse", "p_surface_store", "p_tilemaps",
-					"p_surface_marks"),
-			&SurfaceParser::parse);
-}
 
 SurfaceParser::SurfaceParser() {}
 SurfaceParser::~SurfaceParser() {}
@@ -859,8 +853,8 @@ Ref<TileShapeData> SurfaceParser::_parse_tile_shape(
 
 	const double FLOOR_MAX_ANGLE_BELOW_90 =
 			Sc::Geometry::FLOOR_MAX_ANGLE + Sc::Geometry::WALL_ANGLE_EPSILON;
-	const double FLOOR_MIN_ANGLE_ABOVE_90 = Math_PI -
-			Sc::Geometry::FLOOR_MAX_ANGLE - Sc::Geometry::WALL_ANGLE_EPSILON;
+	const double FLOOR_MIN_ANGLE_ABOVE_90 = pi - Sc::Geometry::FLOOR_MAX_ANGLE -
+			Sc::Geometry::WALL_ANGLE_EPSILON;
 
 	// Find the start of the top-side.
 	i1 = left_most_vertex_index;
@@ -3745,4 +3739,10 @@ void SurfaceParser::_parse_surface_mark(
 	}
 }
 
-} // namespace godot
+void SurfaceParser::_bind_methods() {
+	ClassDB::bind_method(
+			D_METHOD(
+					"parse", "p_surface_store", "p_tilemaps",
+					"p_surface_marks"),
+			&SurfaceParser::parse);
+}

@@ -11,10 +11,9 @@ namespace godot {
 
 class SurfacerSettings : public SnoreCoreSettings {
 	GDCLASS(SurfacerSettings, SnoreCoreSettings)
+	SC_SETTINGS_CLASS_DECLARATION(SurfacerSettings)
 
 public:
-	static Ref<SurfacerSettings> get();
-
 	SurfacerSettings();
 	~SurfacerSettings();
 
@@ -57,7 +56,7 @@ private:
 	bool log_surfacer_events_verbose = false;
 
 	bool are_oddly_shaped_surfaces_used = true;
-	double floor_max_angle = Math_PI / 4.0;
+	double floor_max_angle = pi / 4.0;
 };
 
 } // namespace godot

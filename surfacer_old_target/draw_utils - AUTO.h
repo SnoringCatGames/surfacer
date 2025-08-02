@@ -21,7 +21,7 @@ class ScaffolderDrawUtils : public RefCounted {
 	GDCLASS(ScaffolderDrawUtils, RefCounted);
 
 public:
-	static constexpr double STRIKE_THROUGH_ANGLE = -Math_PI / 3.0;
+	static constexpr double STRIKE_THROUGH_ANGLE = -pi / 3.0;
 	static constexpr double EXCLAMATION_MARK_GAP_LENGTH_TO_WIDTH_RATIO = 0.5;
 	static constexpr double EXCLAMATION_MARK_BODY_LOWER_END_WIDTH_RATIO = 0.5;
 	static constexpr double EXCLAMATION_MARK_DOT_WIDTH_RATIO = 1.0;

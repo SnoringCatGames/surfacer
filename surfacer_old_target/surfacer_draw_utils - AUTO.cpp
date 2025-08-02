@@ -163,10 +163,10 @@ void SurfacerDrawUtils::draw_surface_segment(
 							following_angular_bisector_segment_end);
 
 	// Handle cases where intersection might not be found (e.g. parallel lines)
-	if (next_depth_division_segment_start.x == INFINITY)
+	if (next_depth_division_segment_start.x == infinity)
 		next_depth_division_segment_start =
 				p_segment_start + segment_depth_division_offset;
-	if (next_depth_division_segment_end.x == INFINITY)
+	if (next_depth_division_segment_end.x == infinity)
 		next_depth_division_segment_end =
 				p_segment_end + segment_depth_division_offset;
 
@@ -673,14 +673,14 @@ godot::Vector2 SurfacerDrawUtilsPlaceholders::Geometry::
 		}
 	}
 	return godot::Vector2(
-			INFINITY, INFINITY); // No intersection or not within segments
+			infinity, infinity); // No intersection or not within segments
 }
 godot::Vector2 SurfacerDrawUtilsPlaceholders::Geometry::
 		project_point_onto_surface(
 				const godot::Vector2 &p_point,
 				godot::Surface *p_surface) {
 	if (!p_surface || p_surface->get_vertices().is_empty())
-		return godot::Vector2(INFINITY, INFINITY);
+		return godot::Vector2(infinity, infinity);
 	// Simplified: project onto the first segment for placeholder
 	if (p_surface->get_vertices().size() == 1)
 		return p_surface->get_vertices()[0];
@@ -940,10 +940,10 @@ void SurfacerDrawUtils::draw_surface_segment(
 							following_angular_bisector_segment_end);
 
 	// Handle cases where intersection might not be found (e.g. parallel lines)
-	if (next_depth_division_segment_start.x == INFINITY)
+	if (next_depth_division_segment_start.x == infinity)
 		next_depth_division_segment_start =
 				p_segment_start + segment_depth_division_offset;
-	if (next_depth_division_segment_end.x == INFINITY)
+	if (next_depth_division_segment_end.x == infinity)
 		next_depth_division_segment_end =
 				p_segment_end + segment_depth_division_offset;
 
@@ -1451,7 +1451,7 @@ void SurfacerDrawUtils::draw_position_along_surface(
 
 	if (p_t_value_drawn) {
 		if (p_position->get_target_projection_onto_surface().x ==
-			INFINITY) { // Check for Vector2.INF
+			infinity) { // Check for Vector2.INF
 			p_position->set_target_projection_onto_surface(
 					SurfacerDrawUtilsPlaceholders::Geometry::
 							project_point_onto_surface(
@@ -1540,7 +1540,7 @@ void SurfacerDrawUtils::draw_origin_marker(
 	// Let's assume it's a static method available:
 	ScaffolderDrawUtils::draw_circle_outline(
 			p_canvas, p_target, actual_radius, p_color, p_border_width,
-			p_sector_arc_length, 0.0, godot::Math_PI * 2.0,
+			p_sector_arc_length, 0.0, godot::pi * 2.0,
 			false); // Added default angle_from, angle_to, is_filled
 }
 
@@ -1581,7 +1581,7 @@ void SurfacerDrawUtils::draw_destination_marker(
 			circle_center = p_destination->get_target_point();
 		} else {
 			if (p_destination->get_target_projection_onto_surface().x ==
-				INFINITY) {
+				infinity) {
 				p_destination->set_target_projection_onto_surface(
 						SurfacerDrawUtilsPlaceholders::Geometry::
 								project_point_onto_surface(
@@ -1609,7 +1609,7 @@ void SurfacerDrawUtils::draw_destination_marker(
 			godot::Vector2 circle_offset =
 					godot::Vector2(0.0, -cone_center_displacement)
 							.rotated(
-									(2.0 * Math_PI * i) /
+									(2.0 * pi * i) /
 									params.in_air_destination_indicator_cone_count);
 			ScaffolderDrawUtils::draw_ice_cream_cone(
 					p_canvas, cone_end_point, cone_end_point + circle_offset,
@@ -1655,7 +1655,7 @@ void SurfacerDrawUtils::draw_instruction_indicator(
 			p_length * params.instruction_indicator_head_length_ratio;
 	float head_width = p_length * params.instruction_indicator_head_width_ratio;
 	float strike_through_length = p_is_pressed
-			? INFINITY
+			? infinity
 			: (p_length *
 			   params.instruction_indicator_strike_trough_length_ratio);
 
@@ -2166,7 +2166,7 @@ void SurfacerDrawUtils::draw_edge(
 				ScaffolderDrawUtils::draw_circle_outline(
 						p_canvas, waypoint_positions[i],
 						annotator_params.edge_waypoint_radius, waypoint_color,
-						actual_stroke_width, 4.0f, 0.0, Math_PI * 2.0, false);
+						actual_stroke_width, 4.0f, 0.0, pi * 2.0, false);
 			}
 		}
 

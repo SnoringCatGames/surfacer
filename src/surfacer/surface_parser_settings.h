@@ -9,10 +9,9 @@ namespace godot {
 
 class SurfaceParserSettings : public SnoreCoreSettings {
 	GDCLASS(SurfaceParserSettings, SnoreCoreSettings)
+	SC_SETTINGS_CLASS_DECLARATION(SurfaceParserSettings)
 
 public:
-	static Ref<SurfaceParserSettings> get();
-
 	SurfaceParserSettings() = default;
 	~SurfaceParserSettings() = default;
 

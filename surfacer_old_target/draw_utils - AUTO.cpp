@@ -5,166 +5,13 @@
 using namespace godot;
 
 ScaffolderDrawUtils::ScaffolderDrawUtils() {
-	// GDScript: Sc.logger.on_global_init(self, "ScaffolderDrawUtils")
-	// This would be replaced by your C++ project's logging/initialization
-	// mechanism if needed. UtilityFunctions::print("ScaffolderDrawUtils
-	// initialized.");
+	// GDScript: Sc.logger.report_submodule_initialized(self,
+	// "ScaffolderDrawUtils") This would be replaced by your C++ project's
+	// logging/initialization mechanism if needed.
+	// UtilityFunctions::print("ScaffolderDrawUtils initialized.");
 }
 
 ScaffolderDrawUtils::~ScaffolderDrawUtils() {}
-
-void ScaffolderDrawUtils::_bind_methods() {
-	// Binding all methods to make them callable from GDScript
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_closed_polyline", "p_canvas", "p_points", "p_color",
-					"p_stroke_width", "p_antialiased"),
-			&ScaffolderDrawUtils::draw_closed_polyline, DEFVAL(1.0),
-			DEFVAL(false));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_dashed_line", "p_canvas", "p_from", "p_to", "p_color",
-					"p_dash_length", "p_dash_gap", "p_dash_offset", "p_width",
-					"p_antialiased"),
-			&ScaffolderDrawUtils::draw_dashed_line, DEFVAL(0.0), DEFVAL(1.0),
-			DEFVAL(false));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_dashed_polyline", "p_canvas", "p_vertices", "p_color",
-					"p_dash_length", "p_dash_gap", "p_dash_offset", "p_width",
-					"p_antialiased"),
-			&ScaffolderDrawUtils::draw_dashed_polyline, DEFVAL(0.0),
-			DEFVAL(1.0), DEFVAL(false));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_dashed_rectangle", "p_canvas", "p_center",
-					"p_half_width_height", "p_is_rotated_90_degrees", "p_color",
-					"p_dash_length", "p_dash_gap", "p_dash_offset",
-					"p_stroke_width", "p_antialiased"),
-			&ScaffolderDrawUtils::draw_dashed_rectangle, DEFVAL(0.0),
-			DEFVAL(1.0), DEFVAL(false));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_dashed_circle", "p_canvas", "p_center", "p_radius",
-					"p_color", "p_dash_length", "p_dash_gap", "p_dash_offset",
-					"p_width", "p_antialiased"),
-			&ScaffolderDrawUtils::draw_dashed_circle, DEFVAL(0.0), DEFVAL(1.0),
-			DEFVAL(false));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_dashed_arc", "p_canvas", "p_center", "p_radius",
-					"p_start_angle", "p_end_angle", "p_color", "p_dash_length",
-					"p_dash_gap", "p_dash_offset", "p_width", "p_antialiased"),
-			&ScaffolderDrawUtils::draw_dashed_arc, DEFVAL(0.0), DEFVAL(1.0),
-			DEFVAL(false));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_dashed_capsule", "p_canvas", "p_center", "p_radius",
-					"p_height", "p_is_rotated_90_degrees", "p_color",
-					"p_dash_length", "p_dash_gap", "p_dash_offset",
-					"p_thickness", "p_antialiased"),
-			&ScaffolderDrawUtils::draw_dashed_capsule, DEFVAL(0.0), DEFVAL(1.0),
-			DEFVAL(false));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_x", "p_canvas", "p_center", "p_width", "p_height",
-					"p_color", "p_stroke_width"),
-			&ScaffolderDrawUtils::draw_x);
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_plus", "p_canvas", "p_center", "p_width", "p_height",
-					"p_color", "p_stroke_width"),
-			&ScaffolderDrawUtils::draw_plus);
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_asterisk", "p_canvas", "p_center", "p_width",
-					"p_height", "p_color", "p_stroke_width"),
-			&ScaffolderDrawUtils::draw_asterisk);
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_checkmark", "p_canvas", "p_position", "p_width",
-					"p_color", "p_stroke_width"),
-			&ScaffolderDrawUtils::draw_checkmark);
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_exclamation_mark", "p_canvas", "p_center", "p_width",
-					"p_length", "p_color", "p_is_filled", "p_stroke_width",
-					"p_sector_arc_length"),
-			&ScaffolderDrawUtils::draw_exclamation_mark, DEFVAL(4.0));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_arrow", "p_canvas", "p_start", "p_end",
-					"p_head_length", "p_head_width", "p_color",
-					"p_stroke_width"),
-			&ScaffolderDrawUtils::draw_arrow);
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_strike_through_arrow", "p_canvas", "p_start", "p_end",
-					"p_head_length", "p_head_width", "p_strike_through_length",
-					"p_color", "p_stroke_width"),
-			&ScaffolderDrawUtils::draw_strike_through_arrow);
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_diamond_outline", "p_canvas", "p_center", "p_width",
-					"p_height", "p_color", "p_stroke_width"),
-			&ScaffolderDrawUtils::draw_diamond_outline);
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_shape_outline", "p_canvas", "p_position",
-					"p_shape_data", "p_color", "p_thickness"),
-			&ScaffolderDrawUtils::draw_shape_outline);
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_dashed_shape", "p_canvas", "p_position",
-					"p_shape_data", "p_color", "p_dash_length", "p_dash_gap",
-					"p_dash_offset", "p_thickness"),
-			&ScaffolderDrawUtils::draw_dashed_shape, DEFVAL(0.0), DEFVAL(1.0));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_circle_outline", "p_canvas", "p_center", "p_radius",
-					"p_color", "p_border_width", "p_sector_arc_length"),
-			&ScaffolderDrawUtils::draw_circle_outline, DEFVAL(1.0),
-			DEFVAL(4.0));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_arc", "p_canvas", "p_center", "p_radius",
-					"p_start_angle", "p_end_angle", "p_color", "p_border_width",
-					"p_sector_arc_length"),
-			&ScaffolderDrawUtils::draw_arc, DEFVAL(1.0), DEFVAL(4.0));
-	ClassDB::bind_method(
-			D_METHOD(
-					"compute_arc_points", "p_center", "p_radius",
-					"p_start_angle", "p_end_angle", "p_sector_arc_length"),
-			&ScaffolderDrawUtils::compute_arc_points, DEFVAL(4.0));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_rectangle_outline", "p_canvas", "p_center",
-					"p_half_width_height", "p_is_rotated_90_degrees", "p_color",
-					"p_thickness"),
-			&ScaffolderDrawUtils::draw_rectangle_outline, DEFVAL(1.0));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_capsule_outline", "p_canvas", "p_center", "p_radius",
-					"p_height", "p_is_rotated_90_degrees", "p_color",
-					"p_thickness", "p_sector_arc_length"),
-			&ScaffolderDrawUtils::draw_capsule_outline, DEFVAL(1.0),
-			DEFVAL(4.0));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_ice_cream_cone", "p_canvas", "p_cone_end_point",
-					"p_circle_center", "p_circle_radius", "p_color",
-					"p_is_filled", "p_border_width", "p_sector_arc_length"),
-			&ScaffolderDrawUtils::draw_ice_cream_cone, DEFVAL(1.0),
-			DEFVAL(4.0));
-	ClassDB::bind_method(
-			D_METHOD(
-					"draw_smooth_segment_with_two_circular_ends", "p_canvas",
-					"p_center_1", "p_radius_1", "p_center_2", "p_radius_2",
-					"p_color", "p_is_filled", "p_stroke_width",
-					"p_sector_arc_length"),
-			&ScaffolderDrawUtils::draw_smooth_segment_with_two_circular_ends,
-			DEFVAL(4.0));
-}
 
 void ScaffolderDrawUtils::draw_closed_polyline(
 		CanvasItem *p_canvas,
@@ -566,7 +413,7 @@ void ScaffolderDrawUtils::draw_dashed_circle(
 	if (!p_canvas)
 		return;
 	draw_dashed_arc(
-			p_canvas, p_center, p_radius, 0.0, Math_TAU, p_color, p_dash_length,
+			p_canvas, p_center, p_radius, 0.0, tau, p_color, p_dash_length,
 			p_dash_gap, p_dash_offset, p_width, p_antialiased);
 }
 
@@ -590,19 +437,19 @@ void ScaffolderDrawUtils::draw_dashed_arc(
 		return; // Nothing to draw for zero radius
 
 	// Normalize angles
-	p_start_angle = Math::fposmod(p_start_angle, Math_TAU);
-	p_end_angle = Math::fposmod(p_end_angle, Math_TAU);
+	p_start_angle = Math::fposmod(p_start_angle, tau);
+	p_end_angle = Math::fposmod(p_end_angle, tau);
 	if (p_end_angle <= p_start_angle &&
 		std::abs(p_end_angle - p_start_angle) >
 				CMP_EPSILON) { // Handle wrap around TAU for full circle or arc
 							   // across 0
 		if ((p_start_angle > p_end_angle) &&
 			((p_start_angle - p_end_angle) <
-			 Math_PI)) { // Small arc crossing 0 backwards
+			 pi)) { // Small arc crossing 0 backwards
 			// This case is tricky, often draw_arc handles it by taking total
 			// angle. For dashing, we need a consistent direction.
 		} else {
-			p_end_angle += Math_TAU;
+			p_end_angle += tau;
 		}
 	}
 
@@ -684,22 +531,22 @@ void ScaffolderDrawUtils::draw_dashed_capsule(
 	Vector2 p1_start, p1_end, p2_start, p2_end;
 
 	if (p_is_rotated_90_degrees) {
-		start_angle1 = Math_PI;
-		end_angle1 = Math_TAU; // Top semi-circle (0 to PI in Godot angles if
-							   // center1 is top) Corrected: center1 is top, so
-							   // angles PI to 2PI (TAU)
+		start_angle1 = pi;
+		end_angle1 = tau; // Top semi-circle (0 to PI in Godot angles if
+						  // center1 is top) Corrected: center1 is top, so
+						  // angles PI to 2PI (TAU)
 		start_angle2 = 0.0;
-		end_angle2 = Math_PI; // Bottom semi-circle
+		end_angle2 = pi; // Bottom semi-circle
 
 		p1_start = center1 + Vector2(p_radius, 0); // Right point of top arc
 		p1_end = center2 + Vector2(p_radius, 0); // Right point of bottom arc
 		p2_start = center2 + Vector2(-p_radius, 0); // Left point of bottom arc
 		p2_end = center1 + Vector2(-p_radius, 0); // Left point of top arc
 	} else { // Horizontal capsule
-		start_angle1 = Math_PI / 2.0;
-		end_angle1 = Math_PI * 3.0 / 2.0; // Left semi-circle
-		start_angle2 = -Math_PI / 2.0;
-		end_angle2 = Math_PI / 2.0; // Right semi-circle
+		start_angle1 = pi / 2.0;
+		end_angle1 = pi * 3.0 / 2.0; // Left semi-circle
+		start_angle2 = -pi / 2.0;
+		end_angle2 = pi / 2.0; // Right semi-circle
 
 		p1_start = center1 + Vector2(0, -p_radius); // Top point of left arc
 		p1_end = center2 + Vector2(0, -p_radius); // Top point of right arc
@@ -721,7 +568,7 @@ void ScaffolderDrawUtils::draw_dashed_capsule(
 			p_antialiased);
 
 	// Calculate offset for straight lines based on arc lengths
-	double arc_len = Math_PI * p_radius;
+	double arc_len = pi * p_radius;
 	double offset_line1 = p_dash_offset;
 	if (p_dash_length + p_dash_gap > CMP_EPSILON) {
 		offset_line1 =
@@ -893,7 +740,7 @@ void ScaffolderDrawUtils::draw_arrow(
 	if (!p_canvas)
 		return;
 	draw_strike_through_arrow(
-			p_canvas, p_start, p_end, p_head_length, p_head_width, INFINITY,
+			p_canvas, p_start, p_end, p_head_length, p_head_width, infinity,
 			p_color, p_stroke_width);
 }
 
@@ -1082,7 +929,7 @@ void ScaffolderDrawUtils::draw_circle_outline(
 		return;
 
 	PackedVector2Array points = compute_arc_points(
-			p_center, p_radius, 0.0, Math_TAU, p_sector_arc_length);
+			p_center, p_radius, 0.0, tau, p_sector_arc_length);
 	if (points.size() < 2)
 		return;
 
@@ -1283,15 +1130,15 @@ void ScaffolderDrawUtils::draw_capsule_outline(
 	// Angles for the semicircles
 	double start_angle1, end_angle1, start_angle2, end_angle2;
 	if (p_is_rotated_90_degrees) { // Vertical capsule
-		start_angle1 = Math_PI;
-		end_angle1 = Math_TAU; // Top semicircle (c1 is upper)
+		start_angle1 = pi;
+		end_angle1 = tau; // Top semicircle (c1 is upper)
 		start_angle2 = 0.0;
-		end_angle2 = Math_PI; // Bottom semicircle (c2 is lower)
+		end_angle2 = pi; // Bottom semicircle (c2 is lower)
 	} else { // Horizontal capsule
-		start_angle1 = Math_PI / 2.0;
-		end_angle1 = Math_PI * 3.0 / 2.0; // Left semicircle (c1 is left)
-		start_angle2 = -Math_PI / 2.0;
-		end_angle2 = Math_PI / 2.0; // Right semicircle (c2 is right)
+		start_angle1 = pi / 2.0;
+		end_angle1 = pi * 3.0 / 2.0; // Left semicircle (c1 is left)
+		start_angle2 = -pi / 2.0;
+		end_angle2 = pi / 2.0; // Right semicircle (c2 is right)
 	}
 
 	PackedVector2Array arc1_points = compute_arc_points(
@@ -1423,8 +1270,8 @@ void ScaffolderDrawUtils::draw_ice_cream_cone(
 							  // point
 	double gd_start_angle = gd_angle_from_circle_center_to_cone_end_point +
 			angle_offset_to_tangency;
-	double gd_end_angle = gd_angle_from_circle_center_to_cone_end_point +
-			Math_TAU - angle_offset_to_tangency;
+	double gd_end_angle = gd_angle_from_circle_center_to_cone_end_point + tau -
+			angle_offset_to_tangency;
 
 	PackedVector2Array arc_points = compute_arc_points(
 			p_circle_center, p_circle_radius, gd_start_angle, gd_end_angle,
@@ -1485,17 +1332,6 @@ void ScaffolderDrawUtils::draw_ice_cream_cone(
 		}
 	}
 }
-
-// -----------------------
-
-ScaffolderDrawUtils::ScaffolderDrawUtils() {
-	// GDScript: Sc.logger.on_global_init(self, "ScaffolderDrawUtils")
-	// This would be replaced by your C++ project's logging/initialization
-	// mechanism if needed. UtilityFunctions::print("ScaffolderDrawUtils
-	// initialized.");
-}
-
-ScaffolderDrawUtils::~ScaffolderDrawUtils() {}
 
 void ScaffolderDrawUtils::_bind_methods() {
 	// Binding all methods to make them callable from GDScript
@@ -1649,6 +1485,17 @@ void ScaffolderDrawUtils::_bind_methods() {
 			&ScaffolderDrawUtils::draw_smooth_segment_with_two_circular_ends,
 			DEFVAL(4.0));
 }
+
+// -----------------------
+
+ScaffolderDrawUtils::ScaffolderDrawUtils() {
+	// GDScript: Sc.logger.report_submodule_initialized(self,
+	// "ScaffolderDrawUtils") This would be replaced by your C++ project's
+	// logging/initialization mechanism if needed.
+	// UtilityFunctions::print("ScaffolderDrawUtils initialized.");
+}
+
+ScaffolderDrawUtils::~ScaffolderDrawUtils() {}
 
 void ScaffolderDrawUtils::draw_closed_polyline(
 		CanvasItem *p_canvas,
@@ -2050,7 +1897,7 @@ void ScaffolderDrawUtils::draw_dashed_circle(
 	if (!p_canvas)
 		return;
 	draw_dashed_arc(
-			p_canvas, p_center, p_radius, 0.0, Math_TAU, p_color, p_dash_length,
+			p_canvas, p_center, p_radius, 0.0, tau, p_color, p_dash_length,
 			p_dash_gap, p_dash_offset, p_width, p_antialiased);
 }
 
@@ -2074,19 +1921,19 @@ void ScaffolderDrawUtils::draw_dashed_arc(
 		return; // Nothing to draw for zero radius
 
 	// Normalize angles
-	p_start_angle = Math::fposmod(p_start_angle, Math_TAU);
-	p_end_angle = Math::fposmod(p_end_angle, Math_TAU);
+	p_start_angle = Math::fposmod(p_start_angle, tau);
+	p_end_angle = Math::fposmod(p_end_angle, tau);
 	if (p_end_angle <= p_start_angle &&
 		std::abs(p_end_angle - p_start_angle) >
 				CMP_EPSILON) { // Handle wrap around TAU for full circle or arc
 							   // across 0
 		if ((p_start_angle > p_end_angle) &&
 			((p_start_angle - p_end_angle) <
-			 Math_PI)) { // Small arc crossing 0 backwards
+			 pi)) { // Small arc crossing 0 backwards
 			// This case is tricky, often draw_arc handles it by taking total
 			// angle. For dashing, we need a consistent direction.
 		} else {
-			p_end_angle += Math_TAU;
+			p_end_angle += tau;
 		}
 	}
 
@@ -2168,22 +2015,22 @@ void ScaffolderDrawUtils::draw_dashed_capsule(
 	Vector2 p1_start, p1_end, p2_start, p2_end;
 
 	if (p_is_rotated_90_degrees) {
-		start_angle1 = Math_PI;
-		end_angle1 = Math_TAU; // Top semi-circle (0 to PI in Godot angles if
-							   // center1 is top) Corrected: center1 is top, so
-							   // angles PI to 2PI (TAU)
+		start_angle1 = pi;
+		end_angle1 = tau; // Top semi-circle (0 to PI in Godot angles if
+						  // center1 is top) Corrected: center1 is top, so
+						  // angles PI to 2PI (TAU)
 		start_angle2 = 0.0;
-		end_angle2 = Math_PI; // Bottom semi-circle
+		end_angle2 = pi; // Bottom semi-circle
 
 		p1_start = center1 + Vector2(p_radius, 0); // Right point of top arc
 		p1_end = center2 + Vector2(p_radius, 0); // Right point of bottom arc
 		p2_start = center2 + Vector2(-p_radius, 0); // Left point of bottom arc
 		p2_end = center1 + Vector2(-p_radius, 0); // Left point of top arc
 	} else { // Horizontal capsule
-		start_angle1 = Math_PI / 2.0;
-		end_angle1 = Math_PI * 3.0 / 2.0; // Left semi-circle
-		start_angle2 = -Math_PI / 2.0;
-		end_angle2 = Math_PI / 2.0; // Right semi-circle
+		start_angle1 = pi / 2.0;
+		end_angle1 = pi * 3.0 / 2.0; // Left semi-circle
+		start_angle2 = -pi / 2.0;
+		end_angle2 = pi / 2.0; // Right semi-circle
 
 		p1_start = center1 + Vector2(0, -p_radius); // Top point of left arc
 		p1_end = center2 + Vector2(0, -p_radius); // Top point of right arc
@@ -2205,7 +2052,7 @@ void ScaffolderDrawUtils::draw_dashed_capsule(
 			p_antialiased);
 
 	// Calculate offset for straight lines based on arc lengths
-	double arc_len = Math_PI * p_radius;
+	double arc_len = pi * p_radius;
 	double offset_line1 = p_dash_offset;
 	if (p_dash_length + p_dash_gap > CMP_EPSILON) {
 		offset_line1 =
@@ -2327,9 +2174,9 @@ void ScaffolderDrawUtils::draw_smooth_segment_with_two_circular_ends(
 	// *perpendicular* to these tangent lines at the circle circumference.
 
 	double gd_smaller_start_angle =
-			angle_between_circle_centers - beta + Math_PI / 2.0;
+			angle_between_circle_centers - beta + pi / 2.0;
 	double gd_smaller_end_angle =
-			angle_between_circle_centers + beta - Math_PI / 2.0;
+			angle_between_circle_centers + beta - pi / 2.0;
 
 	double gd_larger_start_angle = gd_smaller_end_angle;
 	double gd_larger_end_angle = gd_smaller_start_angle;
@@ -2361,10 +2208,10 @@ void ScaffolderDrawUtils::draw_smooth_segment_with_two_circular_ends(
 		if ((gd_smaller_end_angle - gd_smaller_start_angle) >
 			0) { // Assuming positive sweep for smaller
 			if (gd_larger_end_angle > gd_larger_start_angle)
-				gd_larger_end_angle -= Math_TAU;
+				gd_larger_end_angle -= tau;
 		} else { // Assuming negative sweep for smaller
 			if (gd_larger_end_angle < gd_larger_start_angle)
-				gd_larger_end_angle += Math_TAU;
+				gd_larger_end_angle += tau;
 		}
 		// A simpler way: ensure the total angular span of each arc is roughly
 		// PI. The GDScript logic `if smaller_end_angle > smaller_start_angle:
@@ -2497,7 +2344,7 @@ void ScaffolderDrawUtils::draw_smooth_segment_with_two_circular_ends(
 // up)
 
 // Assuming the following constants are defined in ScaffolderDrawUtils.h or
-// accessible: static constexpr double STRIKE_THROUGH_ANGLE = -Math_PI / 3.0;
+// accessible: static constexpr double STRIKE_THROUGH_ANGLE = -pi / 3.0;
 // static constexpr double EXCLAMATION_MARK_GAP_LENGTH_TO_WIDTH_RATIO = 0.5;
 // static constexpr double EXCLAMATION_MARK_BODY_LOWER_END_WIDTH_RATIO = 0.5;
 // static constexpr double EXCLAMATION_MARK_DOT_WIDTH_RATIO = 1.0;
@@ -2828,7 +2675,7 @@ void ScaffolderDrawUtils::draw_circle_outline(
 
 	PackedVector2Array points = compute_arc_points(
 			p_center, p_radius, 0.0,
-			Math_TAU, // 2.0 * PI
+			tau, // 2.0 * PI
 			p_sector_arc_length);
 
 	if (points.size() < 2)
@@ -3053,18 +2900,16 @@ void ScaffolderDrawUtils::draw_capsule_outline(
 	double start_angle1, end_angle1, start_angle2, end_angle2;
 
 	if (p_is_rotated_90_degrees) { // Vertical capsule
-		start_angle1 = Math_PI;
-		end_angle1 = Math_TAU; // Top semicircle (end_center1 is upper)
+		start_angle1 = pi;
+		end_angle1 = tau; // Top semicircle (end_center1 is upper)
 		start_angle2 = 0.0;
-		end_angle2 = Math_PI; // Bottom semicircle (end_center2 is lower)
+		end_angle2 = pi; // Bottom semicircle (end_center2 is lower)
 	} else { // Horizontal capsule
-		start_angle1 = Math_PI / 2.0;
-		end_angle1 =
-				Math_PI * 3.0 / 2.0; // Left semicircle (end_center1 is left)
-		start_angle2 = -Math_PI / 2.0;
-		end_angle2 =
-				Math_PI / 2.0; // Right semicircle (end_center2 is right)
-							   // Or Math_PI * 3.0/2.0 to Math_PI / 2.0 + TAU
+		start_angle1 = pi / 2.0;
+		end_angle1 = pi * 3.0 / 2.0; // Left semicircle (end_center1 is left)
+		start_angle2 = -pi / 2.0;
+		end_angle2 = pi / 2.0; // Right semicircle (end_center2 is right)
+							   // Or pi * 3.0/2.0 to pi / 2.0 + TAU
 	}
 
 	PackedVector2Array arc1_points = compute_arc_points(
@@ -3095,8 +2940,7 @@ void ScaffolderDrawUtils::draw_capsule_outline(
 	int sector_count_per_half = 0;
 	if (p_radius > CMP_EPSILON && p_sector_arc_length > CMP_EPSILON) {
 		sector_count_per_half = static_cast<int>(
-				Math::ceil((Math_PI * p_radius / p_sector_arc_length) / 2.0) *
-				2.0);
+				Math::ceil((pi * p_radius / p_sector_arc_length) / 2.0) * 2.0);
 	}
 	if (sector_count_per_half == 0 && p_radius > CMP_EPSILON)
 		sector_count_per_half = 2; // Minimum segments for a curve
@@ -3111,16 +2955,16 @@ void ScaffolderDrawUtils::draw_capsule_outline(
 	// `theta` initialization and `delta_theta` calculation
 	double initial_theta, delta_theta_capsule;
 	if (p_radius > CMP_EPSILON && sector_count_per_half > 0) {
-		delta_theta_capsule = Math_PI / sector_count_per_half;
+		delta_theta_capsule = pi / sector_count_per_half;
 	} else {
 		delta_theta_capsule =
-				Math_PI; // Effectively 2 points per arc if sector_count is 0
+				pi; // Effectively 2 points per arc if sector_count is 0
 		points_per_arc = 2; // Start and end point for each "arc"
 	}
 
 	if (p_is_rotated_90_degrees) { // Vertical
-		initial_theta = Math_PI /
-				2.0; // Starts from rightmost point of top circle, goes CCW
+		initial_theta =
+				pi / 2.0; // Starts from rightmost point of top circle, goes CCW
 	} else { // Horizontal
 		initial_theta =
 				0.0; // Starts from rightmost point of left circle, goes CCW
@@ -3304,7 +3148,7 @@ void ScaffolderDrawUtils::draw_ice_cream_cone(
 
 	double arc_start_angle = angle_dir_cc_to_cep + angle_offset_to_tangency;
 	double arc_end_angle = angle_dir_cc_to_cep - angle_offset_to_tangency +
-			Math_TAU; // Ensure positive sweep for compute_arc_points
+			tau; // Ensure positive sweep for compute_arc_points
 
 	PackedVector2Array arc_points = compute_arc_points(
 			p_circle_center, p_circle_radius, arc_start_angle, arc_end_angle,
@@ -3473,8 +3317,8 @@ void ScaffolderDrawUtils::draw_smooth_segment_with_two_circular_ends(
 	// "outer" arc. So from (angle_between_centers + beta) around to
 	// (angle_between_centers - beta + TAU).
 	double smaller_arc_start = angle_between_centers + beta;
-	double smaller_arc_end = angle_between_centers - beta +
-			Math_TAU; // Ensure it's a positive sweep
+	double smaller_arc_end =
+			angle_between_centers - beta + tau; // Ensure it's a positive sweep
 
 	// Arc on larger circle
 	double larger_arc_start = angle_between_centers - beta;
@@ -3508,7 +3352,7 @@ void ScaffolderDrawUtils::draw_smooth_segment_with_two_circular_ends(
 	// TAU)
 	PackedVector2Array arc_s = compute_arc_points(
 			smaller_center, smaller_radius, angle_between_centers + beta,
-			angle_between_centers - beta + Math_TAU, p_sector_arc_length);
+			angle_between_centers - beta + tau, p_sector_arc_length);
 	// Arc on larger circle: from l_p2 (angle_between_centers - beta) to l_p1
 	// (angle_between_centers + beta)
 	PackedVector2Array arc_l = compute_arc_points(
@@ -3543,4 +3387,157 @@ void ScaffolderDrawUtils::draw_smooth_segment_with_two_circular_ends(
 		p_canvas->draw_line(s_p1, l_p1, p_color, p_stroke_width);
 		p_canvas->draw_line(s_p2, l_p2, p_color, p_stroke_width);
 	}
+}
+
+void ScaffolderDrawUtils::_bind_methods() {
+	// Binding all methods to make them callable from GDScript
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_closed_polyline", "p_canvas", "p_points", "p_color",
+					"p_stroke_width", "p_antialiased"),
+			&ScaffolderDrawUtils::draw_closed_polyline, DEFVAL(1.0),
+			DEFVAL(false));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_dashed_line", "p_canvas", "p_from", "p_to", "p_color",
+					"p_dash_length", "p_dash_gap", "p_dash_offset", "p_width",
+					"p_antialiased"),
+			&ScaffolderDrawUtils::draw_dashed_line, DEFVAL(0.0), DEFVAL(1.0),
+			DEFVAL(false));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_dashed_polyline", "p_canvas", "p_vertices", "p_color",
+					"p_dash_length", "p_dash_gap", "p_dash_offset", "p_width",
+					"p_antialiased"),
+			&ScaffolderDrawUtils::draw_dashed_polyline, DEFVAL(0.0),
+			DEFVAL(1.0), DEFVAL(false));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_dashed_rectangle", "p_canvas", "p_center",
+					"p_half_width_height", "p_is_rotated_90_degrees", "p_color",
+					"p_dash_length", "p_dash_gap", "p_dash_offset",
+					"p_stroke_width", "p_antialiased"),
+			&ScaffolderDrawUtils::draw_dashed_rectangle, DEFVAL(0.0),
+			DEFVAL(1.0), DEFVAL(false));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_dashed_circle", "p_canvas", "p_center", "p_radius",
+					"p_color", "p_dash_length", "p_dash_gap", "p_dash_offset",
+					"p_width", "p_antialiased"),
+			&ScaffolderDrawUtils::draw_dashed_circle, DEFVAL(0.0), DEFVAL(1.0),
+			DEFVAL(false));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_dashed_arc", "p_canvas", "p_center", "p_radius",
+					"p_start_angle", "p_end_angle", "p_color", "p_dash_length",
+					"p_dash_gap", "p_dash_offset", "p_width", "p_antialiased"),
+			&ScaffolderDrawUtils::draw_dashed_arc, DEFVAL(0.0), DEFVAL(1.0),
+			DEFVAL(false));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_dashed_capsule", "p_canvas", "p_center", "p_radius",
+					"p_height", "p_is_rotated_90_degrees", "p_color",
+					"p_dash_length", "p_dash_gap", "p_dash_offset",
+					"p_thickness", "p_antialiased"),
+			&ScaffolderDrawUtils::draw_dashed_capsule, DEFVAL(0.0), DEFVAL(1.0),
+			DEFVAL(false));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_x", "p_canvas", "p_center", "p_width", "p_height",
+					"p_color", "p_stroke_width"),
+			&ScaffolderDrawUtils::draw_x);
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_plus", "p_canvas", "p_center", "p_width", "p_height",
+					"p_color", "p_stroke_width"),
+			&ScaffolderDrawUtils::draw_plus);
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_asterisk", "p_canvas", "p_center", "p_width",
+					"p_height", "p_color", "p_stroke_width"),
+			&ScaffolderDrawUtils::draw_asterisk);
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_checkmark", "p_canvas", "p_position", "p_width",
+					"p_color", "p_stroke_width"),
+			&ScaffolderDrawUtils::draw_checkmark);
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_exclamation_mark", "p_canvas", "p_center", "p_width",
+					"p_length", "p_color", "p_is_filled", "p_stroke_width",
+					"p_sector_arc_length"),
+			&ScaffolderDrawUtils::draw_exclamation_mark, DEFVAL(4.0));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_arrow", "p_canvas", "p_start", "p_end",
+					"p_head_length", "p_head_width", "p_color",
+					"p_stroke_width"),
+			&ScaffolderDrawUtils::draw_arrow);
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_strike_through_arrow", "p_canvas", "p_start", "p_end",
+					"p_head_length", "p_head_width", "p_strike_through_length",
+					"p_color", "p_stroke_width"),
+			&ScaffolderDrawUtils::draw_strike_through_arrow);
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_diamond_outline", "p_canvas", "p_center", "p_width",
+					"p_height", "p_color", "p_stroke_width"),
+			&ScaffolderDrawUtils::draw_diamond_outline);
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_shape_outline", "p_canvas", "p_position",
+					"p_shape_data", "p_color", "p_thickness"),
+			&ScaffolderDrawUtils::draw_shape_outline);
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_dashed_shape", "p_canvas", "p_position",
+					"p_shape_data", "p_color", "p_dash_length", "p_dash_gap",
+					"p_dash_offset", "p_thickness"),
+			&ScaffolderDrawUtils::draw_dashed_shape, DEFVAL(0.0), DEFVAL(1.0));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_circle_outline", "p_canvas", "p_center", "p_radius",
+					"p_color", "p_border_width", "p_sector_arc_length"),
+			&ScaffolderDrawUtils::draw_circle_outline, DEFVAL(1.0),
+			DEFVAL(4.0));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_arc", "p_canvas", "p_center", "p_radius",
+					"p_start_angle", "p_end_angle", "p_color", "p_border_width",
+					"p_sector_arc_length"),
+			&ScaffolderDrawUtils::draw_arc, DEFVAL(1.0), DEFVAL(4.0));
+	ClassDB::bind_method(
+			D_METHOD(
+					"compute_arc_points", "p_center", "p_radius",
+					"p_start_angle", "p_end_angle", "p_sector_arc_length"),
+			&ScaffolderDrawUtils::compute_arc_points, DEFVAL(4.0));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_rectangle_outline", "p_canvas", "p_center",
+					"p_half_width_height", "p_is_rotated_90_degrees", "p_color",
+					"p_thickness"),
+			&ScaffolderDrawUtils::draw_rectangle_outline, DEFVAL(1.0));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_capsule_outline", "p_canvas", "p_center", "p_radius",
+					"p_height", "p_is_rotated_90_degrees", "p_color",
+					"p_thickness", "p_sector_arc_length"),
+			&ScaffolderDrawUtils::draw_capsule_outline, DEFVAL(1.0),
+			DEFVAL(4.0));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_ice_cream_cone", "p_canvas", "p_cone_end_point",
+					"p_circle_center", "p_circle_radius", "p_color",
+					"p_is_filled", "p_border_width", "p_sector_arc_length"),
+			&ScaffolderDrawUtils::draw_ice_cream_cone, DEFVAL(1.0),
+			DEFVAL(4.0));
+	ClassDB::bind_method(
+			D_METHOD(
+					"draw_smooth_segment_with_two_circular_ends", "p_canvas",
+					"p_center_1", "p_radius_1", "p_center_2", "p_radius_2",
+					"p_color", "p_is_filled", "p_stroke_width",
+					"p_sector_arc_length"),
+			&ScaffolderDrawUtils::draw_smooth_segment_with_two_circular_ends,
+			DEFVAL(4.0));
 }

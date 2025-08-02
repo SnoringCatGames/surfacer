@@ -16,8 +16,8 @@ public:
 	SurfaceChunk() = default;
 	~SurfaceChunk() = default;
 
-	void set_surfaces(TypedArray<Surface> p_surfaces);
-	TypedArray<Surface> get_surfaces() const;
+	void set_surfaces(TypedArray<Surface> p_surfaces) { surfaces = p_surfaces; }
+	TypedArray<Surface> get_surfaces() const { return surfaces; }
 
 	void set_bounding_box(Rect2 p_bounding_box) {
 		bounding_box = p_bounding_box;

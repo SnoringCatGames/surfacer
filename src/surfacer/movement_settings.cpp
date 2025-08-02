@@ -7,20 +7,7 @@
 
 using namespace godot;
 
-Ref<MovementSettings> MovementSettings::get() {
-	Ref<SurfacerSettings> surfacer_settings = SurfacerSettings::get();
-	if (!surfacer_settings.is_valid()) {
-		return Ref<MovementSettings>();
-	}
-	Ref<MovementSettings> movement_settings =
-			surfacer_settings->get_movement_settings();
-	if (!ENSURE(movement_settings.is_valid(),
-				"SurfacerSettings has not been set-up with "
-				"MovementSettings.")) {
-		return Ref<MovementSettings>();
-	}
-	return movement_settings;
-}
+SC_SETTINGS_CLASS_DEFINITION(MovementSettings, SurfacerSettings)
 
 void MovementSettings::_bind_methods() {
 	// --- Navigation settings ---
