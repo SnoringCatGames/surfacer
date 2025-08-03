@@ -5,7 +5,7 @@
 using namespace godot;
 
 ScaffolderDrawUtils::ScaffolderDrawUtils() {
-	// GDScript: Sc.logger.report_submodule_initialized(self,
+	// GDScript: Sc.log_service.report_submodule_initialized(self,
 	// "ScaffolderDrawUtils") This would be replaced by your C++ project's
 	// logging/initialization mechanism if needed.
 	// UtilityFunctions::print("ScaffolderDrawUtils initialized.");
@@ -1489,7 +1489,7 @@ void ScaffolderDrawUtils::_bind_methods() {
 // -----------------------
 
 ScaffolderDrawUtils::ScaffolderDrawUtils() {
-	// GDScript: Sc.logger.report_submodule_initialized(self,
+	// GDScript: Sc.log_service.report_submodule_initialized(self,
 	// "ScaffolderDrawUtils") This would be replaced by your C++ project's
 	// logging/initialization mechanism if needed.
 	// UtilityFunctions::print("ScaffolderDrawUtils initialized.");
