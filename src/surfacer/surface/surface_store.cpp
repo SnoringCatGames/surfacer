@@ -89,8 +89,8 @@ Dictionary SurfaceStore::get_surface_set(
 
 	// 		bool does_mark_match_character = false;
 	// 		// Assuming SurfaceMark has get_character_category_names() -> Array
-	// 		// Assuming MovementParameters has character_category_name (String
-	// or
+	// 		// Assuming MovementParameters has character_category_name
+	// (StringName or
 	// 		// StringName)
 	// 		Array category_names = mark->get_character_category_names();
 	// 		StringName char_category_name =

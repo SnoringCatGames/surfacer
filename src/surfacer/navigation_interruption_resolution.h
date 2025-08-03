@@ -22,12 +22,12 @@ static constexpr const char
 			"UNKNOWN", "FLOOR", "CEILING", "LEFT_WALL", "RIGHT_WALL",
 		};
 
-static String navigation_interruption_resolution_to_string(
+static StringName navigation_interruption_resolution_to_string(
 		NavigationInterruptionResolution p_resolution) {
 	return resolution_strings[p_resolution];
 }
 
-static String get_navigation_interruption_resolution_hint_string() {
+static StringName get_navigation_interruption_resolution_hint_string() {
 	return join_strings(
 			resolution_strings,
 			NavigationInterruptionResolution::
