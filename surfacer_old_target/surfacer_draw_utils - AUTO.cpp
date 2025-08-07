@@ -189,7 +189,7 @@ void SurfacerDrawUtils::draw_surface_segment(
 				? 1.0f
 				: static_cast<float>(i) /
 						(params.surface_depth_divisions_count - 1.0f);
-		progress = SurfacerDrawUtilsPlaceholders::Utils::ease_by_name(
+		progress = SurfacerDrawUtilsPlaceholders::Utils::ease(
 				progress, "ease_out");
 		current_color.a = alpha_start + progress * (alpha_end - alpha_start);
 
@@ -724,11 +724,11 @@ godot::Vector2 SurfacerDrawUtilsPlaceholders::Geometry::
 	return p_seg_b; // Fallback
 }
 
-double SurfacerDrawUtilsPlaceholders::Utils::ease_by_name(
+double SurfacerDrawUtilsPlaceholders::Utils::ease(
 		double p_value,
-		const godot::String &p_ease_name) {
+		EaseType &p_ease_type) {
 	// Implement or call an easing function library. Placeholder.
-	if (p_ease_name == "ease_out")
+	if (p_ease_type == EaseType::EASE_OUT)
 		return 1.0 - pow(1.0 - p_value, 2.0); // Simple easeOutQuad
 	return p_value; // Linear
 }
@@ -966,8 +966,8 @@ void SurfacerDrawUtils::draw_surface_segment(
 				? 1.0f
 				: static_cast<float>(i) /
 						(params.surface_depth_divisions_count - 1.0f);
-		progress = SurfacerDrawUtilsPlaceholders::Utils::ease_by_name(
-				progress, "ease_out");
+		progress = SurfacerDrawUtilsPlaceholders::Utils::ease(
+				progress, EaseType::EASE_OUT);
 		current_color.a = alpha_start + progress * (alpha_end - alpha_start);
 
 		p_canvas->draw_line(
@@ -1795,7 +1795,7 @@ void SurfacerDrawUtils::draw_path_duration_segment(
 				index_before_segment = static_cast<int>(
 						(p_segment_time_start - edge_start_time) /
 						SurfacerDrawUtilsPlaceholders::ScaffolderTime::
-								PHYSICS_TIME_STEP);
+								physics_time_step);
 				index_before_segment =
 						MIN(index_before_segment, edge_vertices.size() - 1);
 				index_before_segment =
@@ -1803,10 +1803,10 @@ void SurfacerDrawUtils::draw_path_duration_segment(
 				time_of_index_before = edge_start_time +
 						index_before_segment *
 								SurfacerDrawUtilsPlaceholders::ScaffolderTime::
-										PHYSICS_TIME_STEP;
+										physics_time_step;
 				time_of_index_after = time_of_index_before +
 						SurfacerDrawUtilsPlaceholders::ScaffolderTime::
-								PHYSICS_TIME_STEP;
+								physics_time_step;
 			} else { // No trajectory or empty vertices, treat as single segment
 					 // from edge start to end
 				index_before_segment = 0; // Effectively, use edge start
@@ -1860,7 +1860,7 @@ void SurfacerDrawUtils::draw_path_duration_segment(
 						static_cast<int>(
 								(p_segment_time_end - edge_start_time) /
 								SurfacerDrawUtilsPlaceholders::ScaffolderTime::
-										PHYSICS_TIME_STEP) +
+										physics_time_step) +
 						1;
 				index_after_segment =
 						MIN(index_after_segment,
@@ -1870,10 +1870,10 @@ void SurfacerDrawUtils::draw_path_duration_segment(
 				time_of_index_after = edge_start_time +
 						index_after_segment *
 								SurfacerDrawUtilsPlaceholders::ScaffolderTime::
-										PHYSICS_TIME_STEP;
+										physics_time_step;
 				time_of_index_before = time_of_index_after -
 						SurfacerDrawUtilsPlaceholders::ScaffolderTime::
-								PHYSICS_TIME_STEP;
+								physics_time_step;
 			} else {
 				index_after_segment =
 						(edge_vertices.is_empty() ? 0
