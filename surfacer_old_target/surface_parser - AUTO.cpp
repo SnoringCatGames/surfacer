@@ -78,7 +78,7 @@ Rect2 Sc::Geometry::get_tilemap_bounds_in_world_coordinates(
 					->get_used_rect(); // Gets combined used_rect of all layers
 	if (p_tile_map->get_layers_count() > 0) {
 		Ref<TileSet> ts = p_tile_map->get_tile_set();
-		if (ts.is_valid()) {
+		if (is_valid(ts)) {
 			Vector2 tile_size = ts->get_tile_size();
 			// TileMap position is (0,0) in Godot 4 for the node itself.
 			// The GDScript assumes tile_map.position.
@@ -134,7 +134,7 @@ bool Sc::Geometry::do_surface_and_rectangle_intersect(
 		const Ref<Surface> &p_surface,
 		Vector2 p_rect_min,
 		Vector2 p_rect_max) {
-	if (!p_surface.is_valid())
+	if (!is_valid(p_surface))
 		return false;
 	Rect2 rect(p_rect_min, p_rect_max - p_rect_min);
 	// This is a simplified check. A real check would involve segment-rectangle
@@ -269,8 +269,8 @@ void SurfaceParser::_validate_tilemap_collection(
 	SurfacesTilemap *stm_first =
 			Object::cast_to<SurfacesTilemap>(first_tile_map);
 	if (stm_first &&
-		stm_first->get_tileset().is_valid()) { // Assuming SurfacesTilemap has
-											   // get_cell_size or similar
+		stm_first->get_tileset() is_valid()) { // Assuming SurfacesTilemap has
+		// get_cell_size or similar
 		cell_size = stm_first->get_tileset()->get_tile_size();
 	} else {
 		UtilityFunctions::printerr(
@@ -294,7 +294,7 @@ void SurfaceParser::_validate_tilemap_collection(
 		Vector2 current_tm_cell_size;
 		SurfacesTilemap *stm_current =
 				Object::cast_to<SurfacesTilemap>(tile_map);
-		if (stm_current && stm_current->get_tileset().is_valid()) {
+		if (stm_current && stm_current->get_tileset() is_valid()) {
 			current_tm_cell_size = stm_current->get_tileset()->get_tile_size();
 		} else {
 			// UtilityFunctions::printerr("TileMap at index ", i, " is not
@@ -328,7 +328,7 @@ void SurfaceParser::_calculate_max_tilemap_cell_size(
 	Vector2 max_tilemap_cell_size = Vector2::ZERO;
 	for (int i = 0; i < p_tilemaps.size(); ++i) {
 		TileMap *tile_map_node = Object::cast_to<TileMap>(p_tilemaps[i]);
-		if (tile_map_node && tile_map_node->get_tileset().is_valid()) {
+		if (tile_map_node && tile_map_node->get_tileset() is_valid()) {
 			Vector2 current_cell_size =
 					tile_map_node->get_tileset()->get_tile_size();
 			if (current_cell_size.x + current_cell_size.y >
@@ -593,7 +593,7 @@ void SurfaceParser::_validate_tileset(TileMap *p_tile_map) {
 
 		// Ref<SurfaceProperties> props =
 		// surfaces_tileset->get_tile_properties(tile_name); // Custom method
-		// ERR_FAIL_COND_MSG(!props.is_valid(),
+		// ERR_FAIL_COND_MSG(!is_valid(props),
 		//         ("Tile ID is not recognized by
 		//         SurfacesTileset.get_tile_properties: " +
 		//         tile_name).utf8().get_data());
@@ -636,7 +636,7 @@ void SurfaceParser::_validate_tileset(TileMap *p_tile_map) {
 			ERR_FAIL_COND_MSG(shape.is_null(), "Shape in TileSet is null.");
 			Ref<ConvexPolygonShape2D> convex_shape = shape; // Try direct cast
 			ERR_FAIL_COND_MSG(
-					!convex_shape.is_valid(),
+					!is_valid(convex_shape),
 					"TileSet collision shapes must be ConvexPolygonShape2D.");
 
 			PackedVector2Array points = convex_shape->get_points();
@@ -1265,7 +1265,7 @@ void SurfaceParser::_merge_continuous_surfaces(
 				current_floor = r_tilemap_index_to_floor.has(tilemap_index)
 						? r_tilemap_index_to_floor[tilemap_index]
 						: Ref<_TmpSurface>();
-				if (current_floor.is_valid() && is_valid_bottom_left_neighbor &&
+				if (is_valid(current_floor) && is_valid_bottom_left_neighbor &&
 					r_tilemap_index_to_floor.has(bottom_left_neighbor_index)) {
 					Ref<_TmpSurface> bottom_left_floor =
 							r_tilemap_index_to_floor
@@ -1321,8 +1321,7 @@ void SurfaceParser::_merge_continuous_surfaces(
 				current_floor = r_tilemap_index_to_floor.has(tilemap_index)
 						? r_tilemap_index_to_floor[tilemap_index]
 						: Ref<_TmpSurface>();
-				if (current_floor.is_valid() &&
-					is_valid_bottom_right_neighbor &&
+				if (is_valid(current_floor) && is_valid_bottom_right_neighbor &&
 					r_tilemap_index_to_floor.has(bottom_right_neighbor_index)) {
 					Ref<_TmpSurface> bottom_right_floor =
 							r_tilemap_index_to_floor
@@ -1423,7 +1422,7 @@ void SurfaceParser::_merge_continuous_surfaces(
 				current_ceiling = r_tilemap_index_to_ceiling.has(tilemap_index)
 						? r_tilemap_index_to_ceiling[tilemap_index]
 						: Ref<_TmpSurface>();
-				if (current_ceiling.is_valid() &&
+				if (is_valid(current_ceiling) &&
 					is_valid_bottom_left_neighbor &&
 					r_tilemap_index_to_ceiling.has(
 							bottom_left_neighbor_index)) {
@@ -1475,7 +1474,7 @@ void SurfaceParser::_merge_continuous_surfaces(
 				current_ceiling = r_tilemap_index_to_ceiling.has(tilemap_index)
 						? r_tilemap_index_to_ceiling[tilemap_index]
 						: Ref<_TmpSurface>();
-				if (current_ceiling.is_valid() &&
+				if (is_valid(current_ceiling) &&
 					is_valid_bottom_right_neighbor &&
 					r_tilemap_index_to_ceiling.has(
 							bottom_right_neighbor_index)) {
@@ -1582,7 +1581,7 @@ void SurfaceParser::_merge_continuous_surfaces(
 						r_tilemap_index_to_left_wall.has(tilemap_index)
 						? r_tilemap_index_to_left_wall[tilemap_index]
 						: Ref<_TmpSurface>();
-				if (current_left_wall.is_valid() &&
+				if (is_valid(current_left_wall) &&
 					is_valid_bottom_left_neighbor &&
 					r_tilemap_index_to_left_wall.has(
 							bottom_left_neighbor_index)) {
@@ -1641,7 +1640,7 @@ void SurfaceParser::_merge_continuous_surfaces(
 						r_tilemap_index_to_left_wall.has(tilemap_index)
 						? r_tilemap_index_to_left_wall[tilemap_index]
 						: Ref<_TmpSurface>();
-				if (current_left_wall.is_valid() &&
+				if (is_valid(current_left_wall) &&
 					is_valid_bottom_right_neighbor &&
 					r_tilemap_index_to_left_wall.has(
 							bottom_right_neighbor_index)) {
@@ -1749,7 +1748,7 @@ void SurfaceParser::_merge_continuous_surfaces(
 						r_tilemap_index_to_right_wall.has(tilemap_index)
 						? r_tilemap_index_to_right_wall[tilemap_index]
 						: Ref<_TmpSurface>();
-				if (current_right_wall.is_valid() &&
+				if (is_valid(current_right_wall) &&
 					is_valid_bottom_left_neighbor &&
 					r_tilemap_index_to_right_wall.has(
 							bottom_left_neighbor_index)) {
@@ -1804,7 +1803,7 @@ void SurfaceParser::_merge_continuous_surfaces(
 						r_tilemap_index_to_right_wall.has(tilemap_index)
 						? r_tilemap_index_to_right_wall[tilemap_index]
 						: Ref<_TmpSurface>();
-				if (current_right_wall.is_valid() &&
+				if (is_valid(current_right_wall) &&
 					is_valid_bottom_right_neighbor &&
 					r_tilemap_index_to_right_wall.has(
 							bottom_right_neighbor_index)) {
@@ -1955,22 +1954,22 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 			if (r_tilemap_index_to_floor.has(tilemap_index)) {
 				Ref<_TmpSurface> current_floor =
 						r_tilemap_index_to_floor[tilemap_index];
-				if (current_floor.is_valid() &&
+				if (is_valid(current_floor) &&
 					current_floor->vertices_array.size() > 1) {
 					// Check with Bottom Neighbor
 					if (is_valid_bottom_neighbor &&
 						r_tilemap_index_to_floor.has(bottom_neighbor_index)) {
 						Ref<_TmpSurface> bottom_floor =
 								r_tilemap_index_to_floor[bottom_neighbor_index];
-						if (bottom_floor.is_valid() &&
+						if (is_valid(bottom_floor) &&
 							current_floor->properties ==
 									bottom_floor->properties) {
 							Ref<TileShapeData> tile_shape_data_bottom =
 									_get_tile_shape_data_for_cell_static(
 											p_tile_map, bottom_grid_coord,
 											p_tile_id_to_coord_to_shape_data);
-							if (tile_shape_data_current.is_valid() &&
-								tile_shape_data_bottom.is_valid() &&
+							if (is_valid(tile_shape_data_current) &&
+								is_valid(tile_shape_data_bottom) &&
 								tile_shape_data_current
 										->get_is_bottom_along_cell_boundary() &&
 								tile_shape_data_bottom
@@ -1990,8 +1989,7 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 						// Re-fetch current_floor in case it was modified by
 						// other logic (though not in this function directly)
 						current_floor = r_tilemap_index_to_floor[tilemap_index];
-						if (current_floor.is_valid() &&
-							right_floor.is_valid() &&
+						if (is_valid(current_floor) && is_valid(right_floor) &&
 							current_floor->properties ==
 									right_floor->properties &&
 							!current_floor->vertices_array.is_empty() &&
@@ -2016,22 +2014,22 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 			if (r_tilemap_index_to_ceiling.has(tilemap_index)) {
 				Ref<_TmpSurface> current_ceiling =
 						r_tilemap_index_to_ceiling[tilemap_index];
-				if (current_ceiling.is_valid() &&
+				if (is_valid(current_ceiling) &&
 					current_ceiling->vertices_array.size() > 1) {
 					// Check with Top Neighbor
 					if (is_valid_top_neighbor &&
 						r_tilemap_index_to_ceiling.has(top_neighbor_index)) {
 						Ref<_TmpSurface> top_ceiling =
 								r_tilemap_index_to_ceiling[top_neighbor_index];
-						if (top_ceiling.is_valid() &&
+						if (is_valid(top_ceiling) &&
 							current_ceiling->properties ==
 									top_ceiling->properties) {
 							Ref<TileShapeData> tile_shape_data_top =
 									_get_tile_shape_data_for_cell_static(
 											p_tile_map, top_grid_coord,
 											p_tile_id_to_coord_to_shape_data);
-							if (tile_shape_data_current.is_valid() &&
-								tile_shape_data_top.is_valid() &&
+							if (is_valid(tile_shape_data_current) &&
+								is_valid(tile_shape_data_top) &&
 								tile_shape_data_current
 										->get_is_top_along_cell_boundary() &&
 								tile_shape_data_top
@@ -2051,8 +2049,8 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 										[right_neighbor_index];
 						current_ceiling =
 								r_tilemap_index_to_ceiling[tilemap_index];
-						if (current_ceiling.is_valid() &&
-							right_ceiling.is_valid() &&
+						if (is_valid(current_ceiling) &&
+							is_valid(right_ceiling) &&
 							current_ceiling->properties ==
 									right_ceiling->properties &&
 							!current_ceiling->vertices_array.is_empty() &&
@@ -2081,7 +2079,7 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 			if (r_tilemap_index_to_left_wall.has(tilemap_index)) {
 				Ref<_TmpSurface> current_left_wall =
 						r_tilemap_index_to_left_wall[tilemap_index];
-				if (current_left_wall.is_valid() &&
+				if (is_valid(current_left_wall) &&
 					current_left_wall->vertices_array.size() > 1) {
 					// Check with Right Neighbor (of type LeftWall)
 					if (is_valid_right_neighbor &&
@@ -2090,15 +2088,15 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 						Ref<_TmpSurface> right_lw_neighbor =
 								r_tilemap_index_to_left_wall
 										[right_neighbor_index];
-						if (right_lw_neighbor.is_valid() &&
+						if (is_valid(right_lw_neighbor) &&
 							current_left_wall->properties ==
 									right_lw_neighbor->properties) {
 							Ref<TileShapeData> tile_shape_data_right =
 									_get_tile_shape_data_for_cell_static(
 											p_tile_map, right_grid_coord,
 											p_tile_id_to_coord_to_shape_data);
-							if (tile_shape_data_current.is_valid() &&
-								tile_shape_data_right.is_valid() &&
+							if (is_valid(tile_shape_data_current) &&
+								is_valid(tile_shape_data_right) &&
 								tile_shape_data_current
 										->get_is_right_along_cell_boundary() &&
 								tile_shape_data_right
@@ -2121,8 +2119,8 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 										[bottom_neighbor_index];
 						current_left_wall =
 								r_tilemap_index_to_left_wall[tilemap_index];
-						if (current_left_wall.is_valid() &&
-							bottom_lw_neighbor.is_valid() &&
+						if (is_valid(current_left_wall) &&
+							is_valid(bottom_lw_neighbor) &&
 							current_left_wall->properties ==
 									bottom_lw_neighbor->properties &&
 							!current_left_wall->vertices_array.is_empty() &&
@@ -2149,7 +2147,7 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 			if (r_tilemap_index_to_right_wall.has(tilemap_index)) {
 				Ref<_TmpSurface> current_right_wall =
 						r_tilemap_index_to_right_wall[tilemap_index];
-				if (current_right_wall.is_valid() &&
+				if (is_valid(current_right_wall) &&
 					current_right_wall->vertices_array.size() > 1) {
 					// Check with Left Neighbor (of type RightWall)
 					if (is_valid_left_neighbor &&
@@ -2158,15 +2156,15 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 						Ref<_TmpSurface> left_rw_neighbor =
 								r_tilemap_index_to_right_wall
 										[left_neighbor_index];
-						if (left_rw_neighbor.is_valid() &&
+						if (is_valid(left_rw_neighbor) &&
 							current_right_wall->properties ==
 									left_rw_neighbor->properties) {
 							Ref<TileShapeData> tile_shape_data_left =
 									_get_tile_shape_data_for_cell_static(
 											p_tile_map, left_grid_coord,
 											p_tile_id_to_coord_to_shape_data);
-							if (tile_shape_data_current.is_valid() &&
-								tile_shape_data_left.is_valid() &&
+							if (is_valid(tile_shape_data_current) &&
+								is_valid(tile_shape_data_left) &&
 								tile_shape_data_current
 										->get_is_left_along_cell_boundary() &&
 								tile_shape_data_left
@@ -2189,8 +2187,8 @@ void SurfaceParser::_remove_internal_multi_vertex_surfaces(
 										[bottom_neighbor_index];
 						current_right_wall =
 								r_tilemap_index_to_right_wall[tilemap_index];
-						if (current_right_wall.is_valid() &&
-							bottom_rw_neighbor.is_valid() &&
+						if (is_valid(current_right_wall) &&
+							is_valid(bottom_rw_neighbor) &&
 							current_right_wall->properties ==
 									bottom_rw_neighbor->properties &&
 							!current_right_wall->vertices_array.is_empty() &&
@@ -2290,8 +2288,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					r_tilemap_index_to_floor.has(right_neighbor_index)) {
 					Ref<_TmpSurface> right_neighbor_surface =
 							r_tilemap_index_to_floor[right_neighbor_index];
-					if (current_surface.is_valid() &&
-						right_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(right_neighbor_surface) &&
 						current_surface != right_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!right_neighbor_surface->vertices_array.is_empty()) {
@@ -2347,8 +2345,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					Ref<_TmpSurface> bl_neighbor_surface =
 							r_tilemap_index_to_floor
 									[bottom_left_neighbor_index];
-					if (current_surface.is_valid() &&
-						bl_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(bl_neighbor_surface) &&
 						current_surface != bl_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!bl_neighbor_surface->vertices_array.is_empty()) {
@@ -2417,8 +2415,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					Ref<_TmpSurface> br_neighbor_surface =
 							r_tilemap_index_to_floor
 									[bottom_right_neighbor_index];
-					if (current_surface.is_valid() &&
-						br_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(br_neighbor_surface) &&
 						current_surface != br_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!br_neighbor_surface->vertices_array.is_empty()) {
@@ -2470,8 +2468,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					r_tilemap_index_to_ceiling.has(right_neighbor_index)) {
 					Ref<_TmpSurface> right_neighbor_surface =
 							r_tilemap_index_to_ceiling[right_neighbor_index];
-					if (current_surface.is_valid() &&
-						right_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(right_neighbor_surface) &&
 						current_surface != right_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!right_neighbor_surface->vertices_array.is_empty()) {
@@ -2532,8 +2530,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					Ref<_TmpSurface> bl_neighbor_surface =
 							r_tilemap_index_to_ceiling
 									[bottom_left_neighbor_index];
-					if (current_surface.is_valid() &&
-						bl_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(bl_neighbor_surface) &&
 						current_surface != bl_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!bl_neighbor_surface->vertices_array.is_empty()) {
@@ -2584,8 +2582,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					Ref<_TmpSurface> br_neighbor_surface =
 							r_tilemap_index_to_ceiling
 									[bottom_right_neighbor_index];
-					if (current_surface.is_valid() &&
-						br_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(br_neighbor_surface) &&
 						current_surface != br_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!br_neighbor_surface->vertices_array.is_empty()) {
@@ -2646,8 +2644,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					r_tilemap_index_to_left_wall.has(bottom_neighbor_index)) {
 					Ref<_TmpSurface> bottom_neighbor_surface =
 							r_tilemap_index_to_left_wall[bottom_neighbor_index];
-					if (current_surface.is_valid() &&
-						bottom_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(bottom_neighbor_surface) &&
 						current_surface != bottom_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!bottom_neighbor_surface->vertices_array.is_empty()) {
@@ -2701,8 +2699,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					Ref<_TmpSurface> bl_neighbor_surface =
 							r_tilemap_index_to_left_wall
 									[bottom_left_neighbor_index];
-					if (current_surface.is_valid() &&
-						bl_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(bl_neighbor_surface) &&
 						current_surface != bl_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!bl_neighbor_surface->vertices_array.is_empty()) {
@@ -2755,8 +2753,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					Ref<_TmpSurface> br_neighbor_surface =
 							r_tilemap_index_to_left_wall
 									[bottom_right_neighbor_index];
-					if (current_surface.is_valid() &&
-						br_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(br_neighbor_surface) &&
 						current_surface != br_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!br_neighbor_surface->vertices_array.is_empty()) {
@@ -2811,8 +2809,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					Ref<_TmpSurface> bottom_neighbor_surface =
 							r_tilemap_index_to_right_wall
 									[bottom_neighbor_index];
-					if (current_surface.is_valid() &&
-						bottom_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(bottom_neighbor_surface) &&
 						current_surface != bottom_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!bottom_neighbor_surface->vertices_array.is_empty()) {
@@ -2870,8 +2868,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					Ref<_TmpSurface> bl_neighbor_surface =
 							r_tilemap_index_to_right_wall
 									[bottom_left_neighbor_index];
-					if (current_surface.is_valid() &&
-						bl_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(bl_neighbor_surface) &&
 						current_surface != bl_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!bl_neighbor_surface->vertices_array.is_empty()) {
@@ -2927,8 +2925,8 @@ void SurfaceParser::_merge_continuous_surfaces(
 					Ref<_TmpSurface> br_neighbor_surface =
 							r_tilemap_index_to_right_wall
 									[bottom_right_neighbor_index];
-					if (current_surface.is_valid() &&
-						br_neighbor_surface.is_valid() &&
+					if (is_valid(current_surface) &&
+						is_valid(br_neighbor_surface) &&
 						current_surface != br_neighbor_surface &&
 						!current_surface->vertices_array.is_empty() &&
 						!br_neighbor_surface->vertices_array.is_empty()) {
@@ -2988,7 +2986,7 @@ Array SurfaceParser::_get_surface_list_from_map(
 	Array keys = p_tilemap_index_to_surface.keys();
 	for (int i = 0; i < keys.size(); ++i) {
 		Ref<_TmpSurface> surface = p_tilemap_index_to_surface[keys[i]];
-		if (surface.is_valid()) {
+		if (is_valid(surface)) {
 			unique_surfaces_dict[surface] =
 					true; // Using Ref as key relies on its Variant conversion
 		}
@@ -3100,9 +3098,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				floor_surface->set_counter_clockwise_convex_neighbor(
 						right_wall);
 				right_wall->set_clockwise_convex_neighbor(floor_surface);
-				if (floor_surface->get_clockwise_neighbor().is_valid() &&
+				if (floor_surface->get_clockwise_neighbor() is_valid() &&
 					floor_surface->get_counter_clockwise_neighbor()
-							.is_valid()) { // Adjusted break condition
+							is_valid()) { // Adjusted break condition
 					break;
 				}
 			}
@@ -3114,15 +3112,15 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				floor_surface->set_clockwise_concave_neighbor(right_wall);
 				right_wall->set_counter_clockwise_concave_neighbor(
 						floor_surface);
-				if (floor_surface->get_clockwise_neighbor().is_valid() &&
+				if (floor_surface->get_clockwise_neighbor() is_valid() &&
 					floor_surface->get_counter_clockwise_neighbor()
-							.is_valid()) { // Adjusted break condition
+							is_valid()) { // Adjusted break condition
 					break;
 				}
 			}
 		}
-		if (floor_surface->get_clockwise_neighbor().is_valid() &&
-			floor_surface->get_counter_clockwise_neighbor().is_valid())
+		if (floor_surface->get_clockwise_neighbor() is_valid() &&
+			floor_surface->get_counter_clockwise_neighbor() is_valid())
 			continue;
 
 		for (int j = 0; j < p_left_walls.size(); ++j) {
@@ -3134,9 +3132,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 						_EQUAL_POINT_EPSILON)) {
 				floor_surface->set_clockwise_convex_neighbor(left_wall);
 				left_wall->set_counter_clockwise_convex_neighbor(floor_surface);
-				if (floor_surface->get_clockwise_neighbor().is_valid() &&
+				if (floor_surface->get_clockwise_neighbor() is_valid() &&
 					floor_surface->get_counter_clockwise_neighbor()
-							.is_valid()) {
+							is_valid()) {
 					break;
 				}
 			}
@@ -3148,9 +3146,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				floor_surface->set_counter_clockwise_concave_neighbor(
 						left_wall);
 				left_wall->set_clockwise_concave_neighbor(floor_surface);
-				if (floor_surface->get_clockwise_neighbor().is_valid() &&
+				if (floor_surface->get_clockwise_neighbor() is_valid() &&
 					floor_surface->get_counter_clockwise_neighbor()
-							.is_valid()) {
+							is_valid()) {
 					break;
 				}
 			}
@@ -3175,9 +3173,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				ceiling_surface->set_counter_clockwise_convex_neighbor(
 						left_wall);
 				left_wall->set_clockwise_convex_neighbor(ceiling_surface);
-				if (ceiling_surface->get_clockwise_neighbor().is_valid() &&
+				if (ceiling_surface->get_clockwise_neighbor() is_valid() &&
 					ceiling_surface->get_counter_clockwise_neighbor()
-							.is_valid()) {
+							is_valid()) {
 					break;
 				}
 			}
@@ -3189,15 +3187,15 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				ceiling_surface->set_clockwise_concave_neighbor(left_wall);
 				left_wall->set_counter_clockwise_concave_neighbor(
 						ceiling_surface);
-				if (ceiling_surface->get_clockwise_neighbor().is_valid() &&
+				if (ceiling_surface->get_clockwise_neighbor() is_valid() &&
 					ceiling_surface->get_counter_clockwise_neighbor()
-							.is_valid()) {
+							is_valid()) {
 					break;
 				}
 			}
 		}
-		if (ceiling_surface->get_clockwise_neighbor().is_valid() &&
-			ceiling_surface->get_counter_clockwise_neighbor().is_valid())
+		if (ceiling_surface->get_clockwise_neighbor() is_valid() &&
+			ceiling_surface->get_counter_clockwise_neighbor() is_valid())
 			continue;
 
 		for (int j = 0; j < p_right_walls.size(); ++j) {
@@ -3210,9 +3208,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				ceiling_surface->set_clockwise_convex_neighbor(right_wall);
 				right_wall->set_counter_clockwise_convex_neighbor(
 						ceiling_surface);
-				if (ceiling_surface->get_clockwise_neighbor().is_valid() &&
+				if (ceiling_surface->get_clockwise_neighbor() is_valid() &&
 					ceiling_surface->get_counter_clockwise_neighbor()
-							.is_valid()) {
+							is_valid()) {
 					break;
 				}
 			}
@@ -3224,9 +3222,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				ceiling_surface->set_counter_clockwise_concave_neighbor(
 						right_wall);
 				right_wall->set_clockwise_concave_neighbor(ceiling_surface);
-				if (ceiling_surface->get_clockwise_neighbor().is_valid() &&
+				if (ceiling_surface->get_clockwise_neighbor() is_valid() &&
 					ceiling_surface->get_counter_clockwise_neighbor()
-							.is_valid()) {
+							is_valid()) {
 					break;
 				}
 			}
@@ -3236,8 +3234,8 @@ void SurfaceParser::_assign_neighbor_surfaces(
 	// Check for collinear neighbors
 	for (int i = 0; i < p_floors.size(); ++i) {
 		Ref<Surface> floor_surface = p_floors[i];
-		if (floor_surface->get_counter_clockwise_neighbor().is_valid() &&
-			floor_surface->get_clockwise_neighbor().is_valid()) {
+		if (floor_surface->get_counter_clockwise_neighbor() is_valid() &&
+			floor_surface->get_clockwise_neighbor() is_valid()) {
 			continue;
 		}
 		Vector2 floor_left_edge = floor_surface->get_first_point();
@@ -3248,7 +3246,7 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				continue;
 			Ref<Surface> other_floor = p_floors[j];
 
-			if (!floor_surface->get_clockwise_neighbor().is_valid()) {
+			if (!floor_surface->get_clockwise_neighbor() is_valid()) {
 				if (_are_points_equal_componentwise(
 							floor_right_edge, other_floor->get_first_point(),
 							_EQUAL_POINT_EPSILON)) {
@@ -3258,7 +3256,7 @@ void SurfaceParser::_assign_neighbor_surfaces(
 							floor_surface);
 				}
 			}
-			if (!floor_surface->get_counter_clockwise_neighbor().is_valid()) {
+			if (!floor_surface->get_counter_clockwise_neighbor() is_valid()) {
 				if (_are_points_equal_componentwise(
 							floor_left_edge, other_floor->get_last_point(),
 							_EQUAL_POINT_EPSILON)) {
@@ -3268,8 +3266,8 @@ void SurfaceParser::_assign_neighbor_surfaces(
 							floor_surface);
 				}
 			}
-			if (floor_surface->get_counter_clockwise_neighbor().is_valid() &&
-				floor_surface->get_clockwise_neighbor().is_valid()) {
+			if (floor_surface->get_counter_clockwise_neighbor() is_valid() &&
+				floor_surface->get_clockwise_neighbor() is_valid()) {
 				break;
 			}
 		}
@@ -3277,8 +3275,8 @@ void SurfaceParser::_assign_neighbor_surfaces(
 
 	for (int i = 0; i < p_ceilings.size(); ++i) {
 		Ref<Surface> ceiling_surface = p_ceilings[i];
-		if (ceiling_surface->get_counter_clockwise_neighbor().is_valid() &&
-			ceiling_surface->get_clockwise_neighbor().is_valid()) {
+		if (ceiling_surface->get_counter_clockwise_neighbor() is_valid() &&
+			ceiling_surface->get_clockwise_neighbor() is_valid()) {
 			continue;
 		}
 		Vector2 ceiling_right_edge = ceiling_surface->get_first_point();
@@ -3290,8 +3288,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 			Ref<Surface> other_ceiling = p_ceilings[j];
 
 			if (!ceiling_surface->get_clockwise_neighbor()
-						 .is_valid()) { // Clockwise for ceiling is its left
-										// edge connecting to other's right
+						 is_valid()) { // Clockwise for ceiling is its
+									   // left
+				// edge connecting to other's right
 				if (_are_points_equal_componentwise(
 							ceiling_left_edge, other_ceiling->get_first_point(),
 							_EQUAL_POINT_EPSILON)) {
@@ -3302,8 +3301,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				}
 			}
 			if (!ceiling_surface->get_counter_clockwise_neighbor()
-						 .is_valid()) { // Counter-clockwise for ceiling is its
-										// right edge connecting to other's left
+						 is_valid()) { // Counter-clockwise for ceiling
+									   // is its
+				// right edge connecting to other's left
 				if (_are_points_equal_componentwise(
 							ceiling_right_edge, other_ceiling->get_last_point(),
 							_EQUAL_POINT_EPSILON)) {
@@ -3313,8 +3313,8 @@ void SurfaceParser::_assign_neighbor_surfaces(
 							ceiling_surface);
 				}
 			}
-			if (ceiling_surface->get_counter_clockwise_neighbor().is_valid() &&
-				ceiling_surface->get_clockwise_neighbor().is_valid()) {
+			if (ceiling_surface->get_counter_clockwise_neighbor() is_valid() &&
+				ceiling_surface->get_clockwise_neighbor() is_valid()) {
 				break;
 			}
 		}
@@ -3322,8 +3322,8 @@ void SurfaceParser::_assign_neighbor_surfaces(
 
 	for (int i = 0; i < p_left_walls.size(); ++i) {
 		Ref<Surface> left_wall = p_left_walls[i];
-		if (left_wall->get_counter_clockwise_neighbor().is_valid() &&
-			left_wall->get_clockwise_neighbor().is_valid()) {
+		if (left_wall->get_counter_clockwise_neighbor() is_valid() &&
+			left_wall->get_clockwise_neighbor() is_valid()) {
 			continue;
 		}
 		Vector2 lw_top_edge = left_wall->get_first_point();
@@ -3335,8 +3335,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 			Ref<Surface> other_lw = p_left_walls[j];
 
 			if (!left_wall->get_clockwise_neighbor()
-						 .is_valid()) { // Clockwise for left_wall is its bottom
-										// edge connecting to other's top
+						 is_valid()) { // Clockwise for left_wall is
+									   // its bottom
+				// edge connecting to other's top
 				if (_are_points_equal_componentwise(
 							lw_bottom_edge, other_lw->get_first_point(),
 							_EQUAL_POINT_EPSILON)) {
@@ -3346,9 +3347,10 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				}
 			}
 			if (!left_wall->get_counter_clockwise_neighbor()
-						 .is_valid()) { // Counter-clockwise for left_wall is
-										// its top edge connecting to other's
-										// bottom
+						 is_valid()) { // Counter-clockwise for
+									   // left_wall is
+				// its top edge connecting to other's
+				// bottom
 				if (_are_points_equal_componentwise(
 							lw_top_edge, other_lw->get_last_point(),
 							_EQUAL_POINT_EPSILON)) {
@@ -3357,8 +3359,8 @@ void SurfaceParser::_assign_neighbor_surfaces(
 					other_lw->set_clockwise_collinear_neighbor(left_wall);
 				}
 			}
-			if (left_wall->get_counter_clockwise_neighbor().is_valid() &&
-				left_wall->get_clockwise_neighbor().is_valid()) {
+			if (left_wall->get_counter_clockwise_neighbor() is_valid() &&
+				left_wall->get_clockwise_neighbor() is_valid()) {
 				break;
 			}
 		}
@@ -3366,8 +3368,8 @@ void SurfaceParser::_assign_neighbor_surfaces(
 
 	for (int i = 0; i < p_right_walls.size(); ++i) {
 		Ref<Surface> right_wall = p_right_walls[i];
-		if (right_wall->get_counter_clockwise_neighbor().is_valid() &&
-			right_wall->get_clockwise_neighbor().is_valid()) {
+		if (right_wall->get_counter_clockwise_neighbor() is_valid() &&
+			right_wall->get_clockwise_neighbor() is_valid()) {
 			continue;
 		}
 		Vector2 rw_bottom_edge =
@@ -3382,8 +3384,9 @@ void SurfaceParser::_assign_neighbor_surfaces(
 			Ref<Surface> other_rw = p_right_walls[j];
 
 			if (!right_wall->get_clockwise_neighbor()
-						 .is_valid()) { // Clockwise for right_wall is its top
-										// edge connecting to other's bottom
+						 is_valid()) { // Clockwise for right_wall is
+									   // its top
+				// edge connecting to other's bottom
 				if (_are_points_equal_componentwise(
 							rw_top_edge, other_rw->get_first_point(),
 							_EQUAL_POINT_EPSILON)) {
@@ -3393,9 +3396,10 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				}
 			}
 			if (!right_wall->get_counter_clockwise_neighbor()
-						 .is_valid()) { // Counter-clockwise for right_wall is
-										// its bottom edge connecting to other's
-										// top
+						 is_valid()) { // Counter-clockwise for
+									   // right_wall is
+				// its bottom edge connecting to other's
+				// top
 				if (_are_points_equal_componentwise(
 							rw_bottom_edge, other_rw->get_last_point(),
 							_EQUAL_POINT_EPSILON)) {
@@ -3404,8 +3408,8 @@ void SurfaceParser::_assign_neighbor_surfaces(
 					other_rw->set_clockwise_collinear_neighbor(right_wall);
 				}
 			}
-			if (right_wall->get_counter_clockwise_neighbor().is_valid() &&
-				right_wall->get_clockwise_neighbor().is_valid()) {
+			if (right_wall->get_counter_clockwise_neighbor() is_valid() &&
+				right_wall->get_clockwise_neighbor() is_valid()) {
 				break;
 			}
 		}
@@ -3414,7 +3418,7 @@ void SurfaceParser::_assign_neighbor_surfaces(
 	// Final pass for unassigned neighbors (concave floor-ceiling, wall-wall)
 	for (int i = 0; i < p_floors.size(); ++i) {
 		Ref<Surface> floor_surface = p_floors[i];
-		if (!floor_surface->get_counter_clockwise_neighbor().is_valid()) {
+		if (!floor_surface->get_counter_clockwise_neighbor() is_valid()) {
 			Vector2 floor_left_edge = floor_surface->get_first_point();
 			for (int j = 0; j < p_ceilings.size(); ++j) {
 				Ref<Surface> ceiling_surface = p_ceilings[j];
@@ -3429,7 +3433,7 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				}
 			}
 		}
-		if (!floor_surface->get_clockwise_neighbor().is_valid()) {
+		if (!floor_surface->get_clockwise_neighbor() is_valid()) {
 			Vector2 floor_right_edge = floor_surface->get_last_point();
 			for (int j = 0; j < p_ceilings.size(); ++j) {
 				Ref<Surface> ceiling_surface = p_ceilings[j];
@@ -3449,7 +3453,7 @@ void SurfaceParser::_assign_neighbor_surfaces(
 
 	for (int i = 0; i < p_right_walls.size(); ++i) {
 		Ref<Surface> right_wall = p_right_walls[i];
-		if (!right_wall->get_counter_clockwise_neighbor().is_valid()) {
+		if (!right_wall->get_counter_clockwise_neighbor() is_valid()) {
 			Vector2 rw_bottom_edge = right_wall->get_first_point();
 			for (int j = 0; j < p_left_walls.size(); ++j) {
 				Ref<Surface> left_wall = p_left_walls[j];
@@ -3463,7 +3467,7 @@ void SurfaceParser::_assign_neighbor_surfaces(
 				}
 			}
 		}
-		if (!right_wall->get_clockwise_neighbor().is_valid()) {
+		if (!right_wall->get_clockwise_neighbor() is_valid()) {
 			Vector2 rw_top_edge = right_wall->get_last_point();
 			for (int j = 0; j < p_left_walls.size(); ++j) {
 				Ref<Surface> left_wall = p_left_walls[j];
@@ -3515,7 +3519,7 @@ void SurfaceParser::_calculate_shape_bounding_boxes_for_surfaces(
 							->get_counter_clockwise_neighbor(); // Assuming
 																// method exists
 
-			if (cw_neighbor.is_valid() && !visited.has(cw_neighbor)) {
+			if (is_valid(cw_neighbor) && !visited.has(cw_neighbor)) {
 				visited[cw_neighbor] = true;
 				q.push_back(cw_neighbor);
 				component_surfaces.push_back(cw_neighbor);
@@ -3523,7 +3527,7 @@ void SurfaceParser::_calculate_shape_bounding_boxes_for_surfaces(
 						connected_region_bounding_box.merge(
 								cw_neighbor->get_bounding_box());
 			}
-			if (ccw_neighbor.is_valid() && !visited.has(ccw_neighbor)) {
+			if (is_valid(ccw_neighbor) && !visited.has(ccw_neighbor)) {
 				visited[ccw_neighbor] = true;
 				q.push_back(ccw_neighbor);
 				component_surfaces.push_back(ccw_neighbor);
@@ -3565,7 +3569,7 @@ void SurfaceParser::_populate_surface_objects(
 		Surface::Side p_side) {
 	for (int i = 0; i < p_tmp_surfaces.size(); ++i) {
 		Ref<_TmpSurface> tmp_surface = p_tmp_surfaces[i];
-		if (tmp_surface.is_valid()) {
+		if (is_valid(tmp_surface)) {
 			Ref<Surface> final_surface = memnew(
 					Surface(tmp_surface->vertices_array, // This should be
 														 // PackedVector2Array
@@ -3584,7 +3588,7 @@ void SurfaceParser::_copy_surfaces_to_main_collection(
 		Array &r_main_collection) { // Array of Ref<Surface>
 	for (int i = 0; i < p_tmp_surfaces.size(); ++i) {
 		Ref<_TmpSurface> tmp_surface = p_tmp_surfaces[i];
-		if (tmp_surface.is_valid() && tmp_surface->surface.is_valid()) {
+		if (is_valid(tmp_surface) && tmp_surface->is_valid(surface)) {
 			r_main_collection.push_back(tmp_surface->surface);
 		}
 	}
@@ -3596,7 +3600,7 @@ Dictionary SurfaceParser::_create_tilemap_mapping_from_surfaces(
 	Dictionary result;
 	for (int i = 0; i < p_surfaces.size(); ++i) {
 		Ref<Surface> surface = p_surfaces[i];
-		if (surface.is_valid() &&
+		if (is_valid(surface) &&
 			surface->get_tile_map() ==
 					p_tile_map) { // Assuming Surface has get_tile_map()
 			PackedInt32Array tilemap_indices =
@@ -3709,7 +3713,7 @@ void SurfaceParser::_parse_surface_mark(
 							p_tile_map, tilemap_index,
 							Surface::Side::RIGHT_WALL);
 
-			if (floor_surface.is_valid() &&
+			if (is_valid(floor_surface) &&
 				Sc::Geometry::do_surface_and_rectangle_intersect(
 						floor_surface, mark_cell_min_world_coords,
 						mark_cell_max_world_coords)) {
@@ -3717,19 +3721,19 @@ void SurfaceParser::_parse_surface_mark(
 						floor_surface); // Assuming SurfaceMark has
 										// add_surface(Ref<Surface>)
 			}
-			if (ceiling_surface.is_valid() &&
+			if (is_valid(ceiling_surface) &&
 				Sc::Geometry::do_surface_and_rectangle_intersect(
 						ceiling_surface, mark_cell_min_world_coords,
 						mark_cell_max_world_coords)) {
 				p_surface_mark->add_surface(ceiling_surface);
 			}
-			if (left_wall_surface.is_valid() &&
+			if (is_valid(left_wall_surface) &&
 				Sc::Geometry::do_surface_and_rectangle_intersect(
 						left_wall_surface, mark_cell_min_world_coords,
 						mark_cell_max_world_coords)) {
 				p_surface_mark->add_surface(left_wall_surface);
 			}
-			if (right_wall_surface.is_valid() &&
+			if (is_valid(right_wall_surface) &&
 				Sc::Geometry::do_surface_and_rectangle_intersect(
 						right_wall_surface, mark_cell_min_world_coords,
 						mark_cell_max_world_coords)) {

@@ -7,7 +7,10 @@
 
 using namespace godot;
 
-SC_SETTINGS_CLASS_DEFINITION(SurfaceParserSettings, SurfacerSettings)
+SC_SETTINGS_CLASS_DEFINITION_ON_SETTINGS(
+		SurfaceParserSettings,
+		SurfacerSettings,
+		get_surface_parser_settings)
 
 void SurfaceParserSettings::_bind_methods() {
 	ClassDB::bind_method(

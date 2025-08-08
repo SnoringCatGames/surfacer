@@ -65,11 +65,12 @@ Dictionary SurfaceStore::get_surface_set(
 	// similar
 	// 			// For 'surface.properties.can_grab', this implies Surface has a
 	// way
-	// 			// to get this boolean. Example: if (surface.is_valid() &&
+	// 			// to get this boolean. Example: if (is_valid(surface)
+	// &&
 	// 			// surface->get_properties_config()->can_grab) For simplicity,
 	// let's
 	// 			// assume a method: surface->allows_grabbing()
-	// 			if (surface.is_valid() &&
+	// 			if (is_valid(surface) &&
 	// 				surface->allows_grabbing_via_properties()) {
 	// 				set[surface] = true;
 	// 			}
@@ -78,7 +79,7 @@ Dictionary SurfaceStore::get_surface_set(
 
 	// 	for (int i = 0; i < marks.size(); ++i) {
 	// 		Ref<SurfaceMark> mark = marks[i];
-	// 		if (!mark.is_valid())
+	// 		if (!is_valid(mark))
 	// 			continue;
 
 	// 		SurfaceEnablement *enablement_mark =
@@ -113,7 +114,7 @@ Dictionary SurfaceStore::get_surface_set(
 	// current_surfaces_in_set[k];
 	// 					// Assuming SurfaceMark has
 	// 					// get_is_surface_marked(Ref<Surface>) -> bool
-	// 					if (surface_in_set.is_valid() &&
+	// 					if (is_valid(surface_in_set) &&
 	// 						!mark->is_surface_marked(surface_in_set)) {
 	// 						set.erase(surface_in_set);
 	// 					}
@@ -128,7 +129,7 @@ Dictionary SurfaceStore::get_surface_set(
 	// ++k) { 					Ref<Surface> marked_surface =
 	// marked_surfaces_by_this_mark[k];
 	// 					// Assuming Surface has get_first_point() -> Vector2
-	// 					if (marked_surface.is_valid() &&
+	// 					if (is_valid(marked_surface) &&
 	// 						marked_surface->get_first_point() ==
 	// 								Vector2(-352, 256)) {
 	// 						UtilityFunctions::print(

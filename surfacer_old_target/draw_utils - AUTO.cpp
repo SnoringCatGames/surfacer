@@ -740,8 +740,8 @@ void ScaffolderDrawUtils::draw_arrow(
 	if (!p_canvas)
 		return;
 	draw_strike_through_arrow(
-			p_canvas, p_start, p_end, p_head_length, p_head_width, infinity,
-			p_color, p_stroke_width);
+			p_canvas, p_start, p_end, p_head_length, p_head_width, inf, p_color,
+			p_stroke_width);
 }
 
 void ScaffolderDrawUtils::draw_strike_through_arrow(
@@ -825,8 +825,8 @@ void ScaffolderDrawUtils::draw_shape_outline(
 		const Ref<RotatedShapeData> &p_shape_data,
 		Color p_color,
 		double p_thickness) const {
-	if (!p_canvas || !p_shape_data.is_valid() ||
-		!p_shape_data->get_shape().is_valid()) {
+	if (!p_canvas || !is_valid(p_shape_data) ||
+		!p_shape_data->get_shape() is_valid()) {
 		// UtilityFunctions::print_error("Invalid shape data provided for
 		// draw_shape_outline.");
 		return;
@@ -836,21 +836,21 @@ void ScaffolderDrawUtils::draw_shape_outline(
 
 	// Need to cast to specific shape types
 	Ref<CircleShape2D> circle = shape;
-	if (circle.is_valid()) {
+	if (is_valid(circle)) {
 		draw_circle_outline(
 				p_canvas, p_position, circle->get_radius(), p_color,
 				p_thickness);
 		return;
 	}
 	Ref<CapsuleShape2D> capsule = shape;
-	if (capsule.is_valid()) {
+	if (is_valid(capsule)) {
 		draw_capsule_outline(
 				p_canvas, p_position, capsule->get_radius(),
 				capsule->get_height(), is_rotated, p_color, p_thickness);
 		return;
 	}
 	Ref<RectangleShape2D> rect = shape;
-	if (rect.is_valid()) {
+	if (is_valid(rect)) {
 		draw_rectangle_outline(
 				p_canvas, p_position, rect->get_size() / 2.0, is_rotated,
 				p_color, p_thickness); // RectangleShape2D uses size (full
@@ -871,8 +871,8 @@ void ScaffolderDrawUtils::draw_dashed_shape(
 		double p_dash_gap,
 		double p_dash_offset,
 		double p_thickness) const {
-	if (!p_canvas || !p_shape_data.is_valid() ||
-		!p_shape_data->get_shape().is_valid()) {
+	if (!p_canvas || !is_valid(p_shape_data) ||
+		!p_shape_data->get_shape() is_valid()) {
 		// UtilityFunctions::print_error("Invalid shape data provided for
 		// draw_dashed_shape.");
 		return;
@@ -881,14 +881,14 @@ void ScaffolderDrawUtils::draw_dashed_shape(
 	bool is_rotated = p_shape_data->get_is_rotated_90_degrees();
 
 	Ref<CircleShape2D> circle = shape;
-	if (circle.is_valid()) {
+	if (is_valid(circle)) {
 		draw_dashed_circle(
 				p_canvas, p_position, circle->get_radius(), p_color,
 				p_dash_length, p_dash_gap, p_dash_offset, p_thickness);
 		return;
 	}
 	Ref<CapsuleShape2D> capsule = shape;
-	if (capsule.is_valid()) {
+	if (is_valid(capsule)) {
 		draw_dashed_capsule(
 				p_canvas, p_position, capsule->get_radius(),
 				capsule->get_height(), is_rotated, p_color, p_dash_length,
@@ -896,7 +896,7 @@ void ScaffolderDrawUtils::draw_dashed_shape(
 		return;
 	}
 	Ref<RectangleShape2D> rect = shape;
-	if (rect.is_valid()) {
+	if (is_valid(rect)) {
 		draw_dashed_rectangle(
 				p_canvas, p_position, rect->get_size() / 2.0, is_rotated,
 				p_color, p_dash_length, p_dash_gap, p_dash_offset, p_thickness);
@@ -2569,8 +2569,8 @@ void ScaffolderDrawUtils::draw_shape_outline(
 		const Ref<RotatedShapeData> &p_shape_data,
 		Color p_color,
 		double p_thickness) const {
-	if (!p_canvas || !p_shape_data.is_valid() ||
-		!p_shape_data->get_shape().is_valid()) {
+	if (!p_canvas || !is_valid(p_shape_data) ||
+		!p_shape_data->get_shape() is_valid()) {
 		UtilityFunctions::printerr(
 				"ScaffolderDrawUtils::draw_shape_outline: Invalid shape data "
 				"provided.");
@@ -2580,14 +2580,14 @@ void ScaffolderDrawUtils::draw_shape_outline(
 	bool is_rotated = p_shape_data->get_is_rotated_90_degrees();
 
 	Ref<CircleShape2D> circle = shape;
-	if (circle.is_valid()) {
+	if (is_valid(circle)) {
 		draw_circle_outline(
 				p_canvas, p_position, circle->get_radius(), p_color,
 				p_thickness);
 		return;
 	}
 	Ref<CapsuleShape2D> capsule = shape;
-	if (capsule.is_valid()) {
+	if (is_valid(capsule)) {
 		draw_capsule_outline(
 				p_canvas, p_position, capsule->get_radius(),
 				capsule->get_height(), is_rotated, p_color, p_thickness);
@@ -2595,7 +2595,7 @@ void ScaffolderDrawUtils::draw_shape_outline(
 	}
 	Ref<RectangleShape2D> rect_shape =
 			shape; // Renamed to avoid conflict with Rect2
-	if (rect_shape.is_valid()) {
+	if (is_valid(rect_shape)) {
 		// RectangleShape2D::get_size() returns full size,
 		// draw_rectangle_outline expects half_width_height
 		draw_rectangle_outline(
@@ -2618,8 +2618,8 @@ void ScaffolderDrawUtils::draw_dashed_shape(
 		double p_dash_gap,
 		double p_dash_offset,
 		double p_thickness) const {
-	if (!p_canvas || !p_shape_data.is_valid() ||
-		!p_shape_data->get_shape().is_valid()) {
+	if (!p_canvas || !is_valid(p_shape_data) ||
+		!p_shape_data->get_shape() is_valid()) {
 		UtilityFunctions::printerr(
 				"ScaffolderDrawUtils::draw_dashed_shape: Invalid shape data "
 				"provided.");
@@ -2629,14 +2629,14 @@ void ScaffolderDrawUtils::draw_dashed_shape(
 	bool is_rotated = p_shape_data->get_is_rotated_90_degrees();
 
 	Ref<CircleShape2D> circle = shape;
-	if (circle.is_valid()) {
+	if (is_valid(circle)) {
 		draw_dashed_circle(
 				p_canvas, p_position, circle->get_radius(), p_color,
 				p_dash_length, p_dash_gap, p_dash_offset, p_thickness);
 		return;
 	}
 	Ref<CapsuleShape2D> capsule = shape;
-	if (capsule.is_valid()) {
+	if (is_valid(capsule)) {
 		draw_dashed_capsule(
 				p_canvas, p_position, capsule->get_radius(),
 				capsule->get_height(), is_rotated, p_color, p_dash_length,
@@ -2644,7 +2644,7 @@ void ScaffolderDrawUtils::draw_dashed_shape(
 		return;
 	}
 	Ref<RectangleShape2D> rect_shape = shape;
-	if (rect_shape.is_valid()) {
+	if (is_valid(rect_shape)) {
 		draw_dashed_rectangle(
 				p_canvas, p_position, rect_shape->get_size() / 2.0, is_rotated,
 				p_color, p_dash_length, p_dash_gap, p_dash_offset, p_thickness);

@@ -8,7 +8,7 @@
 #include <godot_cpp/classes/physics_server2d.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/tile_map.hpp>
-#include <godot_cpp/godot.hpp> // For infinity if not in cmath
+#include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/variant.hpp>
@@ -57,26 +57,26 @@ public:
 			const Vector2 &p_target,
 			Character *p_character, // Assuming Character is a defined C++ class
 			SurfaceReachability p_surface_reachability,
-			double p_max_distance_squared_threshold = infinity,
+			double p_max_distance_squared_threshold = inf,
 			const Vector2 &p_max_distance_basis_point =
-					Vector2(infinity, infinity));
+					Vector2(inf, inf));
 
 	static Array find_closest_positions_on_surfaces(
 			const Vector2 &p_target,
 			Character *p_character,
 			int p_position_count,
-			double p_max_distance_squared_threshold = infinity,
+			double p_max_distance_squared_threshold = inf,
 			const Vector2 &p_max_distance_basis_point =
-					Vector2(infinity, infinity),
+					Vector2(inf, inf),
 			const Variant &p_surfaces = Array()); // Can be Array or Dictionary
 
 	static Array get_closest_surfaces(
 			const Vector2 &p_target,
 			const Variant &p_surfaces, // Can be Array or Dictionary
 			int p_surface_count,
-			double p_max_distance_squared_threshold = infinity,
+			double p_max_distance_squared_threshold = inf,
 			const Vector2 &p_max_distance_basis_point =
-					Vector2(infinity, infinity));
+					Vector2(inf, inf));
 
 	static bool maybe_add_surface_to_closest_n_collection(
 			Array &p_collection, // Array of [Surface, distance_squared]

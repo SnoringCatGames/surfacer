@@ -101,7 +101,7 @@ Vector2 SurfacerGeometry::project_point_onto_surface(
 Vector2 SurfacerGeometry::get_surface_normal_at_point(
 		const Ref<Surface> &p_surface,
 		const Vector2 &p_point) {
-	if (!IS_VALID_REF(p_surface)) {
+	if (!is_valid(p_surface)) {
 		return vector2_invalid;
 	}
 	if (p_surface->get_vertices().size() <= 1) {
@@ -142,7 +142,7 @@ Vector2 SurfacerGeometry::project_shape_onto_surface(
 	const bool is_horizontal_surface = surface_side == Surface::Side::FLOOR ||
 			surface_side == Surface::Side::CEILING;
 
-	if (!IS_VALID_REF(p_surface)) {
+	if (!is_valid(p_surface)) {
 		return vector2_invalid;
 	}
 
@@ -151,7 +151,7 @@ Vector2 SurfacerGeometry::project_shape_onto_surface(
 		return vector2_invalid;
 	}
 
-	if (!IS_VALID_REF(p_shape)) {
+	if (!is_valid(p_shape)) {
 		return project_point_onto_surface(
 				p_shape_position, p_surface, surface_side);
 	}
@@ -308,7 +308,7 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 	const Vector2 surface_normal =
 			Surface::get_normal_from_side(p_surface_side);
 
-	if (!IS_VALID_REF(p_shape)) {
+	if (!is_valid(p_shape)) {
 		return Geometry::get_intersection_of_segments(
 				p_shape_position - surface_normal * 100000.0,
 				p_shape_position + surface_normal * 100000.0, p_segment_start,
@@ -359,7 +359,7 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 			Geometry::get_perpendicular_vector(segment_normal);
 	const double segment_slope = (segment_tangent.x != 0.0)
 			? segment_tangent.y / segment_tangent.x
-			: infinity;
+			: inf;
 
 	bool is_shape_effectively_circle = p_shape->is_class("CircleShape2D");
 	const bool is_shape_capsule = p_shape->is_class("CapsuleShape2D");
@@ -369,8 +369,8 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 			is_shape_effectively_circle || is_shape_capsule ||
 			is_shape_effectively_rectangle);
 
-	double projection_displacement_x = infinity;
-	double projection_displacement_y = infinity;
+	double projection_displacement_x = inf;
+	double projection_displacement_y = inf;
 
 	if (is_shape_capsule) {
 		// All of our capsule-projection cases involve modifying parameters and
@@ -612,8 +612,7 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 
 				projection_displacement_x = 0.0;
 				projection_displacement_y =
-						(p_surface_side == Surface::Side::FLOOR) ? infinity
-																 : -infinity;
+						(p_surface_side == Surface::Side::FLOOR) ? inf : -inf;
 
 				if (shape_min_x < leftward_segment_point.x) {
 					// The shape overlaps with the segment left side.
@@ -703,8 +702,8 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 								shape_position, radius, true);
 
 				projection_displacement_x =
-						(p_surface_side == Surface::Side::LEFT_WALL) ? -infinity
-																	 : infinity;
+						(p_surface_side == Surface::Side::LEFT_WALL) ? -inf
+																	 : inf;
 				projection_displacement_y = 0.0;
 
 				if (shape_min_y < upper_segment_point.y) {
@@ -805,8 +804,7 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 																 : shape_min_y;
 				projection_displacement_x = 0.0;
 				projection_displacement_y =
-						(p_surface_side == Surface::Side::FLOOR) ? infinity
-																 : -infinity;
+						(p_surface_side == Surface::Side::FLOOR) ? inf : -inf;
 
 				if (shape_min_x < leftward_segment_point.x) {
 					// The shape overlaps with the segment left side.
@@ -886,8 +884,8 @@ Vector2 SurfacerGeometry::project_shape_onto_segment(
 						? shape_max_x
 						: shape_min_x;
 				projection_displacement_x =
-						(p_surface_side == Surface::Side::LEFT_WALL) ? -infinity
-																	 : infinity;
+						(p_surface_side == Surface::Side::LEFT_WALL) ? -inf
+																	 : inf;
 				projection_displacement_y = 0.0;
 
 				if (shape_min_y < upper_segment_point.y) {
@@ -1122,7 +1120,7 @@ Vector2 SurfacerGeometry::get_closest_point_on_surface_to_shape(
 		return p_surface->get_first_point();
 	}
 
-	double closest_distance_squared = infinity;
+	double closest_distance_squared = inf;
 	Vector2 closest_point_on_surface = vector2_invalid;
 
 	const Array &vertices = p_surface->get_vertices();
@@ -1271,7 +1269,7 @@ PackedVector2Array SurfacerGeometry::get_surface_segment_at_point(
 		bool p_uses_end_segment_if_outside_bounds) {
 	PackedVector2Array segment_points_result;
 
-	if (!IS_VALID_REF(p_surface)) {
+	if (!is_valid(p_surface)) {
 		return segment_points_result;
 	}
 
@@ -1397,7 +1395,7 @@ PackedVector2Array SurfacerGeometry::get_vertices_around_range(
 		double p_range_max_x,
 		double p_range_min_y,
 		double p_range_max_y) {
-	if (!IS_VALID_REF(p_surface)) {
+	if (!is_valid(p_surface)) {
 		return {};
 	}
 
@@ -1510,9 +1508,9 @@ bool SurfacerGeometry::are_position_wrappers_equal_with_epsilon(
 		const Ref<PositionAlongSurface> &p_a,
 		const Ref<PositionAlongSurface> &p_b,
 		double p_epsilon) {
-	if (!IS_VALID_REF(p_a) && !IS_VALID_REF(p_b)) {
+	if (!is_valid(p_a) && !is_valid(p_b)) {
 		return true;
-	} else if (!IS_VALID_REF(p_a) || !IS_VALID_REF(p_b)) {
+	} else if (!is_valid(p_a) || !is_valid(p_b)) {
 		return false;
 	} else if (p_a->get_surface() != p_b->get_surface()) {
 		return false;
@@ -1527,11 +1525,11 @@ bool SurfacerGeometry::are_position_wrappers_equal_with_epsilon(
 
 Surface::Side SurfacerGeometry::get_surface_side_for_normal(
 		const Vector2 &p_normal) {
-	if (ABS(p_normal.angle_to(vector2_up)) <=
+	if (Math::abs(p_normal.angle_to(vector2_up)) <=
 		SurfacerSettings::get()->get_floor_max_angle() + wall_angle_epsilon) {
 		return Surface::Side::FLOOR;
 	} else if (
-			ABS(p_normal.angle_to(vector2_down)) <=
+			Math::abs(p_normal.angle_to(vector2_down)) <=
 			SurfacerSettings::get()->get_floor_max_angle() +
 					wall_angle_epsilon) {
 		return Surface::Side::CEILING;
@@ -1551,17 +1549,16 @@ Vector2 SurfacerGeometry::
 	Vector2 projection = vector2_invalid;
 
 	if (SurfacerSettings::get()->get_are_oddly_shaped_surfaces_used() &&
-		(IS_VALID_REF(p_origin_surface) ||
-		 IS_VALID_REF(p_destination_surface))) {
+		(is_valid(p_origin_surface) || is_valid(p_destination_surface))) {
 		Vector2 destination_projection = vector2_invalid;
-		if (IS_VALID_REF(p_destination_surface)) {
+		if (is_valid(p_destination_surface)) {
 			destination_projection = project_shape_onto_surface(
 					p_shape_position, p_shape, p_destination_surface, true,
 					p_origin_surface->get_side());
 		}
 
 		Vector2 origin_projection = vector2_invalid;
-		if (IS_VALID_REF(p_origin_surface)) {
+		if (is_valid(p_origin_surface)) {
 			origin_projection = project_shape_onto_surface(
 					p_shape_position, p_shape, p_origin_surface, true,
 					p_origin_surface->get_side());
@@ -1671,7 +1668,7 @@ double SurfacerGeometry::
 			   "Invalid Shape2D provided for "
 			   "calculate_displacement_x_for_vertical_distance_past_edge. "
 			   "Supported: CircleShape2D, CapsuleShape2D, RectangleShape2D.");
-		return infinity;
+		return inf;
 	}
 }
 
@@ -1741,7 +1738,7 @@ double SurfacerGeometry::
 			   "Invalid Shape2D provided for "
 			   "calculate_displacement_y_for_horizontal_distance_past_edge. "
 			   "Supported: CircleShape2D, CapsuleShape2D, RectangleShape2D.");
-		return infinity;
+		return inf;
 	}
 }
 

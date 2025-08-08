@@ -9,7 +9,7 @@
 
 using namespace godot;
 
-SC_SETTINGS_CLASS_DEFINITION(SurfacerSettings, Surfacer)
+SC_SETTINGS_CLASS_DEFINITION_ON_MODULE(SurfacerSettings, Surfacer)
 
 SurfacerSettings::SurfacerSettings() {
 	movement_settings = instantiate_ref<MovementSettings>();

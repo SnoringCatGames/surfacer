@@ -163,10 +163,10 @@ void SurfacerDrawUtils::draw_surface_segment(
 							following_angular_bisector_segment_end);
 
 	// Handle cases where intersection might not be found (e.g. parallel lines)
-	if (next_depth_division_segment_start.x == infinity)
+	if (next_depth_division_segment_start.x == inf)
 		next_depth_division_segment_start =
 				p_segment_start + segment_depth_division_offset;
-	if (next_depth_division_segment_end.x == infinity)
+	if (next_depth_division_segment_end.x == inf)
 		next_depth_division_segment_end =
 				p_segment_end + segment_depth_division_offset;
 
@@ -529,7 +529,7 @@ void SurfacerDrawUtils::draw_tilemap_indices(
 						godot::Vector2(map_pos_i), p_tile_map);
 
 		if (tilemap_index % 5 == 0) {
-			if (font.is_valid()) {
+			if (is_valid(font)) {
 				p_canvas->draw_string(
 						font, cell_center,
 						godot::String::num_int64(tilemap_index),
@@ -584,7 +584,7 @@ void SurfacerDrawUtils::draw_tile_grid_positions(
 		p_canvas->draw_circle(cell_center, 1.0f, p_color);
 
 		if ((map_pos_i.x % 4) == 0 && (map_pos_i.y % 4) == 0) {
-			if (font.is_valid()) {
+			if (is_valid(font)) {
 				p_canvas->draw_string(
 						font, cell_center,
 						"(" + godot::String::num_int64(map_pos_i.x) + "," +
@@ -672,15 +672,14 @@ godot::Vector2 SurfacerDrawUtilsPlaceholders::Geometry::
 			return intersection_point;
 		}
 	}
-	return godot::Vector2(
-			infinity, infinity); // No intersection or not within segments
+	return godot::Vector2(inf, inf); // No intersection or not within segments
 }
 godot::Vector2 SurfacerDrawUtilsPlaceholders::Geometry::
 		project_point_onto_surface(
 				const godot::Vector2 &p_point,
 				godot::Surface *p_surface) {
 	if (!p_surface || p_surface->get_vertices().is_empty())
-		return godot::Vector2(infinity, infinity);
+		return godot::Vector2(inf, inf);
 	// Simplified: project onto the first segment for placeholder
 	if (p_surface->get_vertices().size() == 1)
 		return p_surface->get_vertices()[0];
@@ -940,10 +939,10 @@ void SurfacerDrawUtils::draw_surface_segment(
 							following_angular_bisector_segment_end);
 
 	// Handle cases where intersection might not be found (e.g. parallel lines)
-	if (next_depth_division_segment_start.x == infinity)
+	if (next_depth_division_segment_start.x == inf)
 		next_depth_division_segment_start =
 				p_segment_start + segment_depth_division_offset;
-	if (next_depth_division_segment_end.x == infinity)
+	if (next_depth_division_segment_end.x == inf)
 		next_depth_division_segment_end =
 				p_segment_end + segment_depth_division_offset;
 
@@ -1306,7 +1305,7 @@ void SurfacerDrawUtils::draw_tilemap_indices(
 						godot::Vector2(map_pos_i), p_tile_map);
 
 		if (tilemap_index % 5 == 0) {
-			if (font.is_valid()) {
+			if (is_valid(font)) {
 				p_canvas->draw_string(
 						font, cell_center,
 						godot::String::num_int64(tilemap_index),
@@ -1361,7 +1360,7 @@ void SurfacerDrawUtils::draw_tile_grid_positions(
 		p_canvas->draw_circle(cell_center, 1.0f, p_color);
 
 		if ((map_pos_i.x % 4) == 0 && (map_pos_i.y % 4) == 0) {
-			if (font.is_valid()) {
+			if (is_valid(font)) {
 				p_canvas->draw_string(
 						font, cell_center,
 						"(" + godot::String::num_int64(map_pos_i.x) + "," +
@@ -1442,7 +1441,7 @@ void SurfacerDrawUtils::draw_position_along_surface(
 		bool p_surface_drawn) {
 	if (!p_canvas || !p_position)
 		return;
-	if (!p_position->get_surface().is_valid()) { // Check if surface is valid
+	if (!p_position->get_surface() is_valid()) { // Check if surface is valid
 		godot::UtilityFunctions::printerr(
 				"SurfacerDrawUtils::draw_position_along_surface: "
 				"PositionAlongSurface has no valid surface.");
@@ -1451,7 +1450,7 @@ void SurfacerDrawUtils::draw_position_along_surface(
 
 	if (p_t_value_drawn) {
 		if (p_position->get_target_projection_onto_surface().x ==
-			infinity) { // Check for Vector2.INF
+			inf) { // Check for Vector2.INF
 			p_position->set_target_projection_onto_surface(
 					SurfacerDrawUtilsPlaceholders::Geometry::
 							project_point_onto_surface(
@@ -1568,7 +1567,7 @@ void SurfacerDrawUtils::draw_destination_marker(
 			? params.edge_waypoint_stroke_width
 			: p_border_width_param;
 
-	if (p_destination->get_surface().is_valid()) {
+	if (p_destination->get_surface() is_valid()) {
 		godot::Vector2 normal =
 				godot::Surface::get_normal_for_side(p_destination->get_side());
 
@@ -1580,8 +1579,7 @@ void SurfacerDrawUtils::draw_destination_marker(
 					normal * actual_cone_length;
 			circle_center = p_destination->get_target_point();
 		} else {
-			if (p_destination->get_target_projection_onto_surface().x ==
-				infinity) {
+			if (p_destination->get_target_projection_onto_surface().x == inf) {
 				p_destination->set_target_projection_onto_surface(
 						SurfacerDrawUtilsPlaceholders::Geometry::
 								project_point_onto_surface(
@@ -1655,7 +1653,7 @@ void SurfacerDrawUtils::draw_instruction_indicator(
 			p_length * params.instruction_indicator_head_length_ratio;
 	float head_width = p_length * params.instruction_indicator_head_width_ratio;
 	float strike_through_length = p_is_pressed
-			? infinity
+			? inf
 			: (p_length *
 			   params.instruction_indicator_strike_trough_length_ratio);
 
@@ -1696,7 +1694,7 @@ void SurfacerDrawUtils::draw_path(
 								 // returns Array
 	for (int i = 0; i < edges.size(); ++i) {
 		godot::Ref<godot::Edge> edge = edges[i];
-		if (edge.is_valid()) {
+		if (is_valid(edge)) {
 			// Defaulting to continuous, true for includes_end_points, false for
 			// removes_too_close for basic path
 			vertices.append_array(_get_edge_trajectory_vertices(
@@ -1765,7 +1763,7 @@ void SurfacerDrawUtils::draw_path_duration_segment(
 	godot::Array edges_arr = p_path->get_edges();
 	for (int i = 0; i < edges_arr.size(); ++i) {
 		godot::Ref<godot::Edge> edge = edges_arr[i];
-		if (!edge.is_valid())
+		if (!is_valid(edge))
 			continue;
 
 		float edge_end_time = edge_start_time + edge->get_duration();
@@ -1788,7 +1786,7 @@ void SurfacerDrawUtils::draw_path_duration_segment(
 			float time_of_index_after = 0.0f;
 			godot::Ref<godot::Trajectory> trajectory = edge->get_trajectory();
 
-			if (trajectory.is_valid() &&
+			if (is_valid(trajectory) &&
 				!edge_vertices
 						 .is_empty()) { // trajectory implies edge_vertices
 										// might be populated based on steps
@@ -1855,7 +1853,7 @@ void SurfacerDrawUtils::draw_path_duration_segment(
 			float time_of_index_after = 0.0f;
 			godot::Ref<godot::Trajectory> trajectory = edge->get_trajectory();
 
-			if (trajectory.is_valid() && !edge_vertices.is_empty()) {
+			if (is_valid(trajectory) && !edge_vertices.is_empty()) {
 				index_after_segment =
 						static_cast<int>(
 								(p_segment_time_end - edge_start_time) /
@@ -2059,7 +2057,7 @@ void SurfacerDrawUtils::draw_beat_hashes(
 	for (int i = 0; i < p_beats.size(); ++i) {
 		godot::Ref<godot::Beat> beat =
 				p_beats[i]; // Assuming Beat derives from RefCounted
-		if (!beat.is_valid())
+		if (!is_valid(beat))
 			continue;
 
 		float hash_length;
@@ -2157,7 +2155,7 @@ void SurfacerDrawUtils::draw_edge(
 
 	if (p_includes_waypoints) {
 		godot::Ref<godot::Trajectory> trajectory = p_edge->get_trajectory();
-		if (trajectory.is_valid()) {
+		if (is_valid(trajectory)) {
 			godot::PackedVector2Array waypoint_positions =
 					trajectory->get_waypoint_positions();
 			// GDScript iterates size() - 1, meaning it skips the last waypoint
@@ -2172,7 +2170,7 @@ void SurfacerDrawUtils::draw_edge(
 
 		godot::Ref<godot::PositionAlongSurface> end_pos_along_surface =
 				p_edge->get_end_position_along_surface();
-		if (end_pos_along_surface.is_valid()) {
+		if (is_valid(end_pos_along_surface)) {
 			draw_destination_marker(
 					p_canvas, end_pos_along_surface.ptr(), true,
 					waypoint_color);
@@ -2184,13 +2182,13 @@ void SurfacerDrawUtils::draw_edge(
 
 	if (p_includes_instruction_indicators) {
 		godot::Ref<godot::Trajectory> trajectory = p_edge->get_trajectory();
-		if (trajectory.is_valid()) {
+		if (is_valid(trajectory)) {
 			godot::Array horizontal_instructions =
 					trajectory->get_horizontal_instructions();
 			for (int i = 0; i < horizontal_instructions.size(); ++i) {
 				godot::Ref<godot::Instruction> instruction =
 						horizontal_instructions[i];
-				if (instruction.is_valid()) {
+				if (is_valid(instruction)) {
 					draw_instruction_indicator(
 							p_canvas, instruction->get_input_key(),
 							instruction->is_pressed(),
@@ -2201,7 +2199,7 @@ void SurfacerDrawUtils::draw_edge(
 			}
 			godot::Ref<godot::Instruction> jump_instruction_end =
 					trajectory->get_jump_instruction_end();
-			if (jump_instruction_end.is_valid()) {
+			if (is_valid(jump_instruction_end)) {
 				draw_instruction_indicator(
 						p_canvas, "j", false,
 						jump_instruction_end->get_position(),

@@ -16,7 +16,7 @@ godot::Vector2 GeometryUtils::world_to_tilemap(
 		godot::TileMap *p_tile_map) {
 	if (p_tile_map)
 		return p_tile_map->local_to_map(p_tile_map->to_local(p_world_pos));
-	return godot::Vector2(infinity, infinity);
+	return godot::Vector2(inf, inf);
 }
 
 int GeometryUtils::get_tilemap_index_from_grid_coord(
@@ -327,9 +327,9 @@ Array SurfaceFinder::find_closest_positions_on_surfaces(
 				true, true, true);
 
 		if (position->get_target_point() !=
-			Vector2(infinity,
-					infinity)) { // Assuming
-								 // PositionAlongSurface::get_target_point()
+			Vector2(inf,
+					inf)) { // Assuming
+							// PositionAlongSurface::get_target_point()
 			closest_positions[valid_position_count] = position;
 			valid_position_count++;
 		}
@@ -364,8 +364,7 @@ Array SurfaceFinder::get_closest_surfaces(
 		return Array();
 	}
 
-	Vector2 basis_point =
-			(p_max_distance_basis_point == Vector2(infinity, infinity))
+	Vector2 basis_point = (p_max_distance_basis_point == Vector2(inf, inf))
 			? p_target
 			: p_max_distance_basis_point;
 	double next_distance_squared_to_beat = p_max_distance_squared_threshold;
@@ -687,8 +686,8 @@ void SurfaceFinder::calculate_collision_surface(
 
 	godot::Surface::Side determined_surface_side =
 			godot::Surface::Side::UNKNOWN_SIDE;
-	godot::Vector2 determined_tile_coord = godot::Vector2(
-			infinity, infinity); // Using float Vector2 for map coords
+	godot::Vector2 determined_tile_coord =
+			godot::Vector2(inf, inf); // Using float Vector2 for map coords
 	godot::String error_message = "";
 	godot::Ref<godot::Surface> found_surface = nullptr;
 
@@ -715,128 +714,120 @@ void SurfaceFinder::calculate_collision_surface(
 						p_collision_position.y + half_cell_size.y));
 
 		if (is_touching_floor && is_touching_left_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, bottom_right_cell_coord,
-								godot::Surface::Side::FLOOR)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, bottom_right_cell_coord,
+						godot::Surface::Side::FLOOR) is_valid()) {
 				determined_tile_coord = bottom_right_cell_coord;
 				determined_surface_side = godot::Surface::Side::FLOOR;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, bottom_right_cell_coord,
 									   godot::Surface::Side::LEFT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = bottom_right_cell_coord;
 				determined_surface_side = godot::Surface::Side::LEFT_WALL;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, top_left_cell_coord,
 									   godot::Surface::Side::FLOOR)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = top_left_cell_coord;
 				determined_surface_side = godot::Surface::Side::FLOOR;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, top_left_cell_coord,
 									   godot::Surface::Side::LEFT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = top_left_cell_coord;
 				determined_surface_side = godot::Surface::Side::LEFT_WALL;
 			} else {
 				error_message = "between_hv floor_left_wall";
 			}
 		} else if (is_touching_floor && is_touching_right_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, bottom_left_cell_coord,
-								godot::Surface::Side::FLOOR)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, bottom_left_cell_coord,
+						godot::Surface::Side::FLOOR) is_valid()) {
 				determined_tile_coord = bottom_left_cell_coord;
 				determined_surface_side = godot::Surface::Side::FLOOR;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, bottom_left_cell_coord,
 									   godot::Surface::Side::RIGHT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = bottom_left_cell_coord;
 				determined_surface_side = godot::Surface::Side::RIGHT_WALL;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, top_right_cell_coord,
 									   godot::Surface::Side::FLOOR)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = top_right_cell_coord;
 				determined_surface_side = godot::Surface::Side::FLOOR;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, top_right_cell_coord,
 									   godot::Surface::Side::RIGHT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = top_right_cell_coord;
 				determined_surface_side = godot::Surface::Side::RIGHT_WALL;
 			} else {
 				error_message = "between_hv floor_right_wall";
 			}
 		} else if (is_touching_ceiling && is_touching_left_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, top_right_cell_coord,
-								godot::Surface::Side::CEILING)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, top_right_cell_coord,
+						godot::Surface::Side::CEILING) is_valid()) {
 				determined_tile_coord = top_right_cell_coord;
 				determined_surface_side = godot::Surface::Side::CEILING;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, top_right_cell_coord,
 									   godot::Surface::Side::LEFT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = top_right_cell_coord;
 				determined_surface_side = godot::Surface::Side::LEFT_WALL;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, bottom_left_cell_coord,
 									   godot::Surface::Side::CEILING)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = bottom_left_cell_coord;
 				determined_surface_side = godot::Surface::Side::CEILING;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, bottom_left_cell_coord,
 									   godot::Surface::Side::LEFT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = bottom_left_cell_coord;
 				determined_surface_side = godot::Surface::Side::LEFT_WALL;
 			} else {
 				error_message = "between_hv ceiling_left_wall";
 			}
 		} else if (is_touching_ceiling && is_touching_right_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, top_left_cell_coord,
-								godot::Surface::Side::CEILING)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, top_left_cell_coord,
+						godot::Surface::Side::CEILING) is_valid()) {
 				determined_tile_coord = top_left_cell_coord;
 				determined_surface_side = godot::Surface::Side::CEILING;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, top_left_cell_coord,
 									   godot::Surface::Side::RIGHT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = top_left_cell_coord;
 				determined_surface_side = godot::Surface::Side::RIGHT_WALL;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, bottom_right_cell_coord,
 									   godot::Surface::Side::CEILING)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = bottom_right_cell_coord;
 				determined_surface_side = godot::Surface::Side::CEILING;
 			} else if (p_surface_store
 							   ->get_surface_for_tile_by_map_coord_and_side(
 									   p_tile_map, bottom_right_cell_coord,
 									   godot::Surface::Side::RIGHT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = bottom_right_cell_coord;
 				determined_surface_side = godot::Surface::Side::RIGHT_WALL;
 			} else {
@@ -855,11 +846,9 @@ void SurfaceFinder::calculate_collision_surface(
 						p_collision_position.x,
 						p_collision_position.y - half_cell_size.y));
 		if (is_touching_floor) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord_plus_one_y,
-								godot::Surface::Side::FLOOR)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord_plus_one_y,
+						godot::Surface::Side::FLOOR) is_valid()) {
 				determined_tile_coord = current_cell_coord_plus_one_y;
 				determined_surface_side = godot::Surface::Side::FLOOR;
 			} else if (p_surface_store
@@ -867,18 +856,16 @@ void SurfaceFinder::calculate_collision_surface(
 									   p_tile_map,
 									   current_cell_coord_minus_one_y,
 									   godot::Surface::Side::FLOOR)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = current_cell_coord_minus_one_y;
 				determined_surface_side = godot::Surface::Side::FLOOR;
 			} else {
 				error_message = "between_v floor";
 			}
 		} else if (is_touching_ceiling) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord_minus_one_y,
-								godot::Surface::Side::CEILING)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord_minus_one_y,
+						godot::Surface::Side::CEILING) is_valid()) {
 				determined_tile_coord = current_cell_coord_minus_one_y;
 				determined_surface_side = godot::Surface::Side::CEILING;
 			} else if (p_surface_store
@@ -886,18 +873,16 @@ void SurfaceFinder::calculate_collision_surface(
 									   p_tile_map,
 									   current_cell_coord_plus_one_y,
 									   godot::Surface::Side::CEILING)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = current_cell_coord_plus_one_y;
 				determined_surface_side = godot::Surface::Side::CEILING;
 			} else {
 				error_message = "between_v ceiling";
 			}
 		} else if (is_touching_left_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord_plus_one_y,
-								godot::Surface::Side::LEFT_WALL)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord_plus_one_y,
+						godot::Surface::Side::LEFT_WALL) is_valid()) {
 				determined_tile_coord = current_cell_coord_plus_one_y;
 				determined_surface_side = godot::Surface::Side::LEFT_WALL;
 			} else if (p_surface_store
@@ -905,18 +890,16 @@ void SurfaceFinder::calculate_collision_surface(
 									   p_tile_map,
 									   current_cell_coord_minus_one_y,
 									   godot::Surface::Side::LEFT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = current_cell_coord_minus_one_y;
 				determined_surface_side = godot::Surface::Side::LEFT_WALL;
 			} else {
 				error_message = "between_v left_wall";
 			}
 		} else if (is_touching_right_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord_plus_one_y,
-								godot::Surface::Side::RIGHT_WALL)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord_plus_one_y,
+						godot::Surface::Side::RIGHT_WALL) is_valid()) {
 				determined_tile_coord = current_cell_coord_plus_one_y;
 				determined_surface_side = godot::Surface::Side::RIGHT_WALL;
 			} else if (p_surface_store
@@ -924,7 +907,7 @@ void SurfaceFinder::calculate_collision_surface(
 									   p_tile_map,
 									   current_cell_coord_minus_one_y,
 									   godot::Surface::Side::RIGHT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = current_cell_coord_minus_one_y;
 				determined_surface_side = godot::Surface::Side::RIGHT_WALL;
 			} else {
@@ -943,11 +926,9 @@ void SurfaceFinder::calculate_collision_surface(
 						p_collision_position.x - half_cell_size.x,
 						p_collision_position.y));
 		if (is_touching_floor) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord_plus_one_x,
-								godot::Surface::Side::FLOOR)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord_plus_one_x,
+						godot::Surface::Side::FLOOR) is_valid()) {
 				determined_tile_coord = current_cell_coord_plus_one_x;
 				determined_surface_side = godot::Surface::Side::FLOOR;
 			} else if (p_surface_store
@@ -955,18 +936,16 @@ void SurfaceFinder::calculate_collision_surface(
 									   p_tile_map,
 									   current_cell_coord_minus_one_x,
 									   godot::Surface::Side::FLOOR)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = current_cell_coord_minus_one_x;
 				determined_surface_side = godot::Surface::Side::FLOOR;
 			} else {
 				error_message = "between_h floor";
 			}
 		} else if (is_touching_ceiling) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord_plus_one_x,
-								godot::Surface::Side::CEILING)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord_plus_one_x,
+						godot::Surface::Side::CEILING) is_valid()) {
 				determined_tile_coord = current_cell_coord_plus_one_x;
 				determined_surface_side = godot::Surface::Side::CEILING;
 			} else if (p_surface_store
@@ -974,18 +953,16 @@ void SurfaceFinder::calculate_collision_surface(
 									   p_tile_map,
 									   current_cell_coord_minus_one_x,
 									   godot::Surface::Side::CEILING)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = current_cell_coord_minus_one_x;
 				determined_surface_side = godot::Surface::Side::CEILING;
 			} else {
 				error_message = "between_h ceiling";
 			}
 		} else if (is_touching_left_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord_plus_one_x,
-								godot::Surface::Side::LEFT_WALL)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord_plus_one_x,
+						godot::Surface::Side::LEFT_WALL) is_valid()) {
 				determined_tile_coord = current_cell_coord_plus_one_x;
 				determined_surface_side = godot::Surface::Side::LEFT_WALL;
 			} else if (p_surface_store
@@ -993,18 +970,16 @@ void SurfaceFinder::calculate_collision_surface(
 									   p_tile_map,
 									   current_cell_coord_minus_one_x,
 									   godot::Surface::Side::LEFT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = current_cell_coord_minus_one_x;
 				determined_surface_side = godot::Surface::Side::LEFT_WALL;
 			} else {
 				error_message = "between_h left_wall";
 			}
 		} else if (is_touching_right_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord_plus_one_x,
-								godot::Surface::Side::RIGHT_WALL)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord_plus_one_x,
+						godot::Surface::Side::RIGHT_WALL) is_valid()) {
 				determined_tile_coord = current_cell_coord_plus_one_x;
 				determined_surface_side = godot::Surface::Side::RIGHT_WALL;
 			} else if (p_surface_store
@@ -1012,7 +987,7 @@ void SurfaceFinder::calculate_collision_surface(
 									   p_tile_map,
 									   current_cell_coord_minus_one_x,
 									   godot::Surface::Side::RIGHT_WALL)
-							   .is_valid()) {
+									   is_valid()) {
 				determined_tile_coord = current_cell_coord_minus_one_x;
 				determined_surface_side = godot::Surface::Side::RIGHT_WALL;
 			} else {
@@ -1024,44 +999,36 @@ void SurfaceFinder::calculate_collision_surface(
 	} else { // In cell interior
 		godot::Vector2 current_cell_coord = get_map_coord(p_collision_position);
 		if (is_touching_floor) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord,
-								godot::Surface::Side::FLOOR)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord,
+						godot::Surface::Side::FLOOR) is_valid()) {
 				determined_tile_coord = current_cell_coord;
 				determined_surface_side = godot::Surface::Side::FLOOR;
 			} else {
 				error_message = "interior no_floor_in_cell";
 			}
 		} else if (is_touching_ceiling) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord,
-								godot::Surface::Side::CEILING)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord,
+						godot::Surface::Side::CEILING) is_valid()) {
 				determined_tile_coord = current_cell_coord;
 				determined_surface_side = godot::Surface::Side::CEILING;
 			} else {
 				error_message = "interior no_ceiling_in_cell";
 			}
 		} else if (is_touching_left_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord,
-								godot::Surface::Side::LEFT_WALL)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord,
+						godot::Surface::Side::LEFT_WALL) is_valid()) {
 				determined_tile_coord = current_cell_coord;
 				determined_surface_side = godot::Surface::Side::LEFT_WALL;
 			} else {
 				error_message = "interior no_left_wall_in_cell";
 			}
 		} else if (is_touching_right_wall) {
-			if (p_surface_store
-						->get_surface_for_tile_by_map_coord_and_side(
-								p_tile_map, current_cell_coord,
-								godot::Surface::Side::RIGHT_WALL)
-						.is_valid()) {
+			if (p_surface_store->get_surface_for_tile_by_map_coord_and_side(
+						p_tile_map, current_cell_coord,
+						godot::Surface::Side::RIGHT_WALL) is_valid()) {
 				determined_tile_coord = current_cell_coord;
 				determined_surface_side = godot::Surface::Side::RIGHT_WALL;
 			} else {
@@ -1072,7 +1039,7 @@ void SurfaceFinder::calculate_collision_surface(
 		}
 	}
 
-	if (determined_tile_coord != godot::Vector2(infinity, infinity) &&
+	if (determined_tile_coord != godot::Vector2(inf, inf) &&
 		determined_surface_side != godot::Surface::Side::UNKNOWN_SIDE) {
 		found_surface =
 				p_surface_store->get_surface_for_tile_by_map_coord_and_side(
@@ -1081,7 +1048,7 @@ void SurfaceFinder::calculate_collision_surface(
 		if (found_surface.is_null() && error_message.is_empty()) {
 			error_message =
 					"Determined cell/side but no surface found in store.";
-		} else if (found_surface.is_valid()) {
+		} else if (is_valid(found_surface)) {
 			error_message = ""; // Clear error if surface is successfully found
 		}
 	} else if (error_message.is_empty()) { // No specific error but also no
@@ -1149,7 +1116,7 @@ void SurfaceFinder::calculate_collision_surface(
 		p_result->set_surface(nullptr); // Clear potentially incorrect surface
 										// from reversed attempt
 		p_result->set_surface_side(godot::Surface::Side::UNKNOWN_SIDE);
-		p_result->set_tilemap_coord(godot::Vector2(infinity, infinity));
+		p_result->set_tilemap_coord(godot::Vector2(inf, inf));
 
 		if (p_tries_adjusted_collision_normal &&
 			p_collision_normal_or_side.get_type() == godot::Variant::VECTOR2) {

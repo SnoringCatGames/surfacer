@@ -1,6 +1,7 @@
 #ifndef SURFACER_SETTINGS_H
 #define SURFACER_SETTINGS_H
 
+#include "snore_core/geometry_constants.h"
 #include "snore_core/snore_core_settings.h"
 #include "surfacer/movement_settings.h"
 #include "surfacer/surface_parser_settings.h"

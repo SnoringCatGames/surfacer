@@ -7,7 +7,10 @@
 
 using namespace godot;
 
-SC_SETTINGS_CLASS_DEFINITION(MovementSettings, SurfacerSettings)
+SC_SETTINGS_CLASS_DEFINITION_ON_SETTINGS(
+		MovementSettings,
+		SurfacerSettings,
+		get_movement_settings)
 
 void MovementSettings::_bind_methods() {
 	// --- Navigation settings ---
