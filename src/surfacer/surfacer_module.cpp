@@ -108,7 +108,7 @@ std::vector<SnoreCoreSubmodule *> Surfacer::instantiate_submodules() {
 }
 
 void Surfacer::set_up() {
-	// TODO: Do any initialization that depends on runtime settings settings.
+	// TODO: Do any initialization that depends on runtime settings.
 	on_set_up_finished();
 }
 
