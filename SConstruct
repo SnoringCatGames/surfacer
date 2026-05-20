@@ -1,8 +1,12 @@
 #!/usr/bin/env python
+import os
 import sys
 import zipfile
 
-from submodules.snore_core.build_utils import (
+# Workspace-sibling layout: snore_core lives next to surfacer, not nested.
+sys.path.insert(0, os.path.abspath(".."))
+
+from snore_core.build_utils import (
     add_submodule_to_zip,
     create_submodule_addons_symlinks,
     default_addon_dir_name as snore_core_addon_dir_name,
