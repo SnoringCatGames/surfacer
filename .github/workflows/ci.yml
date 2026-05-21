@@ -58,6 +58,30 @@ jobs:
           repository: google/googletest
           path: googletest
 
+      - name: Compute cache key inputs
+        id: cache_inputs
+        # Cache key components: godot-cpp's actual commit SHA (catches
+        # branch shifts on upstream) and the runner's GCC major.minor
+        # (catches runner-image refreshes that bump the compiler ABI).
+        # Bump the trailing -v<n> in the cache key to force a clean
+        # rebuild if cache poisoning is ever suspected.
+        run: |
+          echo "godot_cpp_sha=$(git -C godot-cpp rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "gcc_version=$(gcc -dumpversion)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache godot-cpp build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            godot-cpp/bin
+            godot-cpp/gen
+            godot-cpp/.sconsign.dblite
+            godot-cpp/src/**/*.os
+          key: godot-cpp-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-${{ steps.cache_inputs.outputs.godot_cpp_sha }}-v1
+          restore-keys: |
+            godot-cpp-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-
+            godot-cpp-${{ runner.os }}-
+
       - name: Install SCons
         run: |
           python3 -m pip install --upgrade pip
