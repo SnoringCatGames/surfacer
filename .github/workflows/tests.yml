@@ -1,14 +1,12 @@
 name: Run tests on Windows
+# Auto-triggers disabled 2026-05-20. The workflow still expects the
+# old nested-submodule layout (./godot-cpp, ./godot, ./submodules/*
+# inside the repo), but Phase 2.5 moved every dep to a workspace-
+# sibling directory that CI's actions/checkout doesn't fetch. Until
+# the workflows are audited + rewritten (see bootstrapper ROADMAP),
+# leave this as workflow_dispatch-only so it doesn't fail every push.
 on:
-  push:
-    branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
-  # merge_group:
+  workflow_dispatch:
 
 env:
   # Update this to invalidate the cached godot build.
