@@ -63,8 +63,9 @@ jobs:
         # Cache key components: godot-cpp's actual commit SHA (catches
         # branch shifts on upstream) and the runner's GCC major.minor
         # (catches runner-image refreshes that bump the compiler ABI).
-        # Bump the trailing -v<n> in the cache key to force a clean
-        # rebuild if cache poisoning is ever suspected.
+        # Bump the leading v<n> in the cache key to force a clean
+        # rebuild if cache poisoning is ever suspected (v1 broke
+        # because Linux uses .o not .os for static-lib objects).
         run: |
           echo "godot_cpp_sha=$(git -C godot-cpp rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "gcc_version=$(gcc -dumpversion)" >> "$GITHUB_OUTPUT"
@@ -77,10 +78,10 @@ jobs:
             godot-cpp/gen
             godot-cpp/src/**/*.o
             **/.sconsign.dblite
-          key: godot-cpp-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-${{ steps.cache_inputs.outputs.godot_cpp_sha }}-v1
+          key: godot-cpp-v2-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-${{ steps.cache_inputs.outputs.godot_cpp_sha }}
           restore-keys: |
-            godot-cpp-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-
-            godot-cpp-${{ runner.os }}-
+            godot-cpp-v2-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-
+            godot-cpp-v2-${{ runner.os }}-
 
       - name: Install SCons
         run: |
