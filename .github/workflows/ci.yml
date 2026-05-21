@@ -1,0 +1,73 @@
+name: CI
+
+# Build verification on push / PR. The framework expects its
+# dependencies as workspace siblings (snore_core at ../snore_core,
+# godot-cpp at ../godot-cpp, etc. — see build_utils.py post-Phase
+# 2.5), so this workflow recreates that layout in the runner by
+# checking out each sibling into the runner workspace root.
+#
+# What this catches: changes to surfacer that break compilation
+# under sc_ci=yes sc_dev=yes sc_tests=yes. It does NOT run tests yet
+# (those need a Godot binary against the demo project — followup).
+
+on:
+  push:
+    branches: [dev, main, master]
+  pull_request:
+    branches: [dev, main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (Linux, x86_64, debug)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout surfacer
+        uses: actions/checkout@v4
+        with:
+          path: surfacer
+
+      - name: Checkout snore_core (private)
+        uses: actions/checkout@v4
+        with:
+          repository: SnoringCatGames/snore_core
+          ref: dev
+          token: ${{ secrets.PRIVATECHECKOUTACCESSTOKEN }}
+          path: snore_core
+
+      - name: Checkout godot-cpp (4.4)
+        uses: actions/checkout@v4
+        with:
+          repository: godotengine/godot-cpp
+          ref: '4.4'
+          path: godot-cpp
+
+      - name: Checkout googletest
+        uses: actions/checkout@v4
+        with:
+          repository: google/googletest
+          path: googletest
+
+      - name: Install SCons
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install scons
+
+      - name: Build surfacer (CI mode, dev features + tests)
+        working-directory: surfacer
+        # sc_ci=yes disables Clang/MSVC-only __builtin_debugtrap on GCC.
+        # sc_dev=yes turns on dev-gated code. sc_tests=yes compiles
+        # tests + links googletest.
+        run: scons sc_ci=yes sc_dev=yes sc_tests=yes
+
+      - name: Verify artifact landed in addon/bin
+        working-directory: surfacer
+        run: |
+          set -e
+          ls -lR addon/bin/
+          find addon/bin -name 'libSurfacer.*.so' -o -name 'libSurfacer.*.dylib' \
+              | grep -q . || (echo 'No shared library produced.'; exit 1)
