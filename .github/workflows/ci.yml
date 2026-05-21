@@ -60,28 +60,24 @@ jobs:
 
       - name: Compute cache key inputs
         id: cache_inputs
-        # Cache key components: godot-cpp's actual commit SHA (catches
-        # branch shifts on upstream) and the runner's GCC major.minor
-        # (catches runner-image refreshes that bump the compiler ABI).
-        # Bump the leading v<n> in the cache key to force a clean
-        # rebuild if cache poisoning is ever suspected (v1 broke
-        # because Linux uses .o not .os for static-lib objects).
         run: |
           echo "godot_cpp_sha=$(git -C godot-cpp rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "gcc_version=$(gcc -dumpversion)" >> "$GITHUB_OUTPUT"
 
-      - name: Cache godot-cpp build artifacts
+      - name: Cache SCons compiled objects
+        # godot-cpp's SConstruct calls env.CacheDir($SCONS_CACHE) when
+        # the env var is set, giving content-addressed (MD5) caching of
+        # every compile output. Same env carries over to the framework
+        # build, so framework objects get cached too. See snore_core's
+        # ci.yml for the full design rationale.
         uses: actions/cache@v4
         with:
-          path: |
-            godot-cpp/bin
-            godot-cpp/gen
-            godot-cpp/src/**/*.o
-            **/.sconsign.dblite
-          key: godot-cpp-v2-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-${{ steps.cache_inputs.outputs.godot_cpp_sha }}
+          path: .scons-cache
+          key: scons-v3-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-${{ steps.cache_inputs.outputs.godot_cpp_sha }}-${{ github.sha }}
           restore-keys: |
-            godot-cpp-v2-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-
-            godot-cpp-v2-${{ runner.os }}-
+            scons-v3-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-${{ steps.cache_inputs.outputs.godot_cpp_sha }}-
+            scons-v3-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-
+            scons-v3-${{ runner.os }}-
 
       - name: Install SCons
         run: |
@@ -90,6 +86,8 @@ jobs:
 
       - name: Build surfacer (CI mode, dev features + tests)
         working-directory: surfacer
+        env:
+          SCONS_CACHE: ${{ github.workspace }}/.scons-cache
         # sc_ci=yes disables Clang/MSVC-only __builtin_debugtrap on GCC.
         # sc_dev=yes turns on dev-gated code. sc_tests=yes compiles
         # tests + links googletest.
