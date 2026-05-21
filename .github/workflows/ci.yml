@@ -31,6 +31,10 @@ jobs:
   build:
     name: Build (Linux, x86_64, debug)
     runs-on: ubuntu-latest
+    env:
+      # Opt actions/checkout@v4 (and other Node-20-based actions)
+      # into Node 24 ahead of the June 2026 forced switch.
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout surfacer
         uses: actions/checkout@v4
