@@ -75,8 +75,8 @@ jobs:
           path: |
             godot-cpp/bin
             godot-cpp/gen
-            godot-cpp/.sconsign.dblite
-            godot-cpp/src/**/*.os
+            godot-cpp/src/**/*.o
+            **/.sconsign.dblite
           key: godot-cpp-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-${{ steps.cache_inputs.outputs.godot_cpp_sha }}-v1
           restore-keys: |
             godot-cpp-${{ runner.os }}-gcc${{ steps.cache_inputs.outputs.gcc_version }}-
