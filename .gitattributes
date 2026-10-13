@@ -1,2 +1,7 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
+
+# The ledger is a bullet list edited from both machines; union merge
+# keeps both sides instead of conflicting (claude-config
+# rules/ledger.md, "Merge conflicts").
+LEDGER.md merge=union
